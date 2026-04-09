@@ -241,4 +241,60 @@
 		<iconPath>GUI/Buildings/militia</iconPath>
 	</FactionColonies.BuildingFCDef>
 
+	<!-- Feralisk Hunter -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>feraliskhunter</defName> <!--Name of Def -->
+		<label>Feralisk Hunting Lodge</label> <!--Lable of Def -->
+		<desc>A lodge dedicated to producing highly trained hunter teams specialising in hunting deadly feralisks.</desc> <!-- Description of trait -->
+		<cost>600</cost>
+		<constructionDuration>50000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>-3</value></li>
+			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+			<li><stat>militaryCombatEfficiency</stat><value>1.2</value></li>
+			<li><stat>happinessGainedBase</stat><value>0.4</value></li>
+		</statModifiers>
+		<applicableBiomes>
+		<li>AB_FeraliskInfestedJungle</li>
+	</applicableBiomes>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/feraliskhunter</iconPath>
+	</FactionColonies.BuildingFCDef>
+	
+		<!-- Salvage Guild -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>salvageGuild</defName> <!--Name of Def -->
+		<label>Salvage Guild</label> <!--Lable of Def -->
+		<desc>A guild of trained salage crews that searches the ruins of destroyed and abandoned settlements, recovering weapons and apparel while also potentially recovering research notes.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>40000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionMultiplier</stat><value>1.10</value></li>
+			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>1.10</value></li>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.10</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/salvageGuild</iconPath>
+	</FactionColonies.BuildingFCDef>
+	
+	<!-- Fungal Farm -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>mushfarmer</defName> <!--Name of Def -->
+		<label>Fungal Farms</label> <!--Lable of Def -->
+		<desc>Farmlands adapted to the local ecosystem by growing fungi for food and medicine.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>35000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>-3</value></li>
+			<li><stat>RTD_Food_ProductionAdditive</stat><value>0.2</value></li>
+			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.2</value></li>
+		</statModifiers>
+		<applicableBiomes>
+		<li>Glowforest</li>
+		<li>AB_MycoticJungle</li>
+	</applicableBiomes>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/mushfarmer</iconPath>
+	</FactionColonies.BuildingFCDef>
+
 </Defs>
