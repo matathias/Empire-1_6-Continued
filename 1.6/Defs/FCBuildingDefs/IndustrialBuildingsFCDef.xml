@@ -321,5 +321,42 @@
 		<iconPath>GUI/Buildings/ApartmentHousing</iconPath>
 	</FactionColonies.BuildingFCDef>
 
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>mechLab</defName> <!--Name of Def -->
+		<label>Techno-organic Research Facility</label> <!--Lable of Def -->
+		<desc>A research facility dedicated to studying the partly assimilated flora and terrain of mechanoid intrusions, potentially leading to advancements in many fields.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>30000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.5</value></li>
+			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.2</value></li>
+			<li><stat>RTD_Power_ProductionAdditive</stat><value>0.2</value></li>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>0.2</value></li>
+			<li><stat>RTD_Food_ProductionAdditive</stat><value>0.2</value></li>
+		</statModifiers>
+		<applicableBiomes> <!-- If the building requires it to be in a biome, put it here-->
+			<li>AB_MechanoidIntrusion</li>
+		</applicableBiomes>
+		<upkeep>100</upkeep> <!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/mechLab</iconPath>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>ocularLab</defName> <!--Name of Def -->
+		<label>Exotic Reality Research Facility</label> <!--Lable of Def -->
+		<desc>A research facility dedicated to studying the extradimensional properties of ocular forests, sometimes resulting in medical advances.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>30000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.5</value></li>
+			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.2</value></li>
+		</statModifiers>
+		<applicableBiomes> <!-- If the building requires it to be in a biome, put it here-->
+			<li>AB_OcularForest</li>
+		</applicableBiomes>
+		<upkeep>100</upkeep> <!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/ocularLab</iconPath>
+	</FactionColonies.BuildingFCDef>
+
 
 </Defs>
