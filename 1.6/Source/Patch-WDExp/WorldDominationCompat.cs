@@ -2,6 +2,7 @@ using HarmonyLib;
 using RimWorld;
 using RimWorld.Planet;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using TSA_WorldDomination;
 using Verse;
@@ -66,30 +67,15 @@ namespace FactionColonies.WDExp
             if (empireSettlement == null) return true;
 
             if (traveler.Faction == null) return true;
-
-            // Convert WD traveler strength to Empire military force
-            double techLevel;
-            double efficiency;
-            MilitaryForce.GetMilitaryLevelAndEfficiencyFromTechLevel(
-                traveler.Faction.def.techLevel, out techLevel, out efficiency);
-
-            double wdMilitaryLevel = traveler.travelerStrength / WDStrengthBattleModifier.SCALE_FACTOR;
-            MilitaryForce attackingForce = new MilitaryForce(wdMilitaryLevel, efficiency, null, traveler.Faction);
+            
+            MilitaryForce WDE_AttackForce = WDEForceConverter.FromWDEStrength(traveler.Faction, traveler.Faction.def.techLevel, traveler.travelerStrength);
 
             // Route through Empire's defense system (1-day warning + auto-battle/manual)
-            bool queued = MilitaryUtilFC.AttackPlayerSettlement(attackingForce, empireSettlement, traveler.Faction);
+            MilitaryUtilFC.AttackPlayerSettlement(WDE_AttackForce, empireSettlement, traveler.Faction);
 
-            if (queued)
-            {
-                LogUtil.Message("WD raid on Empire settlement " + empireSettlement.Name +
-                    " intercepted (WD strength " + traveler.travelerStrength.ToString("F0") +
-                    " -> Empire force " + attackingForce.forceRemaining + ")");
-            }
-            else
-            {
-                LogUtil.Message("WD raid on Empire settlement " + empireSettlement.Name +
-                    " dropped (settlement already under attack).");
-            }
+            LogUtil.Message("WD raid on Empire settlement " + empireSettlement.Name +
+                " intercepted (WD strength " + traveler.travelerStrength.ToString("F0") +
+                " -> Empire force " + WDE_AttackForce.forceRemaining + ")");
 
             return false;
         }
@@ -105,10 +91,9 @@ namespace FactionColonies.WDExp
     {
         private static void Postfix(Settlement s, ref bool __result)
         {
-            if (__result) return;
             if (s is WorldSettlementFC)
             {
-                __result = true;
+                __result = false;
             }
         }
     }
@@ -157,9 +142,10 @@ namespace FactionColonies.WDExp
             float totalDefense = comp.GetTotalLocalDefensePower();
             if (totalDefense <= 0f) return;
 
-            double wdForce = totalDefense / SCALE_FACTOR;
-            force.militaryLevel = wdForce;
-            force.forceRemaining = Math.Round(wdForce * force.militaryEfficiency);
+            MilitaryForce WDE_DefenceForce = WDEForceConverter.FromWDEStrength(comp.parent.Faction, comp.parent.Faction.def.techLevel, totalDefense);
+
+            force.militaryLevel = WDE_DefenceForce.militaryLevel;
+            force.forceRemaining = WDE_DefenceForce.forceRemaining;
 
             LogUtil.Message("WD defense power " + totalDefense.ToString("F0") + " (tier " + comp.tier + ") -> Empire defender force " + force.forceRemaining);
         }
@@ -249,6 +235,109 @@ namespace FactionColonies.WDExp
         private static bool Prefix(Settlement factionBase)
         {
             return !(factionBase is WorldSettlementFC);
+        }
+    }
+    
+
+    [HarmonyPatch(typeof(WorldActions_Utils), "IsVassal")]
+    public static class Patch_AddEmpireSettlementsInIsVassalCheck
+    {
+        private static Dictionary<WorldSettlementFC, int> lastUpdateTick = new Dictionary<WorldSettlementFC, int>();
+        private const int UPDATE_INTERVAL_TICKS = 7 * 60000; // 7 in-game days
+
+        private static void Postfix(WorldObject obj, bool __result)
+        {
+            if (obj is WorldSettlementFC)
+            {
+                __result = true;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(WorldActions_Utils), "GetWorldObjectsWithCompByFaction")]
+    public static class Patch_AddCompToEmpireSettlements
+    {
+        private static Dictionary<WorldSettlementFC, int> lastUpdateTick = new Dictionary<WorldSettlementFC, int>();
+        private const int UPDATE_INTERVAL_TICKS = 7 * 60000; // 7 in-game days
+
+        private static void Postfix(ref Dictionary<Faction, List<WorldObject>> __result)
+        {
+            int currentTick = Find.TickManager.TicksGame;
+
+            foreach (var kvp in __result)
+            {
+                foreach (var obj in kvp.Value)
+                {
+                    if (!(obj is WorldSettlementFC empire))
+                        continue;
+
+                    var comp = empire.GetComponent<CompViralSpread>();
+
+                    bool needsCreate = comp == null;
+                    bool needsUpdate = false;
+
+                    if (!needsCreate)
+                    {
+                        if (!lastUpdateTick.TryGetValue(empire, out int lastTick))
+                        {
+                            needsUpdate = true;
+                        }
+                        else if (currentTick - lastTick > UPDATE_INTERVAL_TICKS)
+                        {
+                            needsUpdate = true;
+                        }
+                    }
+
+                    if (needsCreate)
+                    {
+                        comp = new CompViralSpread();
+                        comp.parent = empire;
+                        empire.AllComps.Add(comp);
+                        needsUpdate = true;
+                    }
+
+                    if (needsUpdate)
+                    {
+                        float equipmentCost = (float)empire.MilitaryComp.militarySquad.outfit.equipmentTotalCost;
+                        comp.defensiveStrength = (float)(equipmentCost + empire.GetDefenseBonus()) / 100f;
+                        comp.strength = equipmentCost / 100f;
+                        lastUpdateTick[empire] = currentTick;
+                    }
+                }
+            }
+        }
+    }
+    
+    public static class WDEForceConverter
+    {
+        public const double SCALE_FACTOR = 100.0;
+
+        public static MilitaryForce FromWDEStrength(
+            Faction faction,
+            TechLevel techLevel,
+            float strengthValue)
+        {
+            if (faction == null || strengthValue <= 0f)
+                return null;
+
+            double tech;
+            double efficiency;
+
+            MilitaryForce.GetMilitaryLevelAndEfficiencyFromTechLevel(
+                techLevel, out tech, out efficiency);
+
+            double wdMilitaryLevel = strengthValue / SCALE_FACTOR;
+
+            MilitaryForce result = new MilitaryForce(
+                wdMilitaryLevel,
+                efficiency,
+                null,
+                faction);
+
+            result.militaryLevel = wdMilitaryLevel;
+            result.forceRemaining = Math.Round(wdMilitaryLevel * result.militaryEfficiency);
+
+            return result;
         }
     }
 }
