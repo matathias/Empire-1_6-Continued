@@ -29,6 +29,7 @@ namespace FactionColonies.WDExp
         {
             new Harmony("com.Matathias.Empire.WDExp").PatchAll(Assembly.GetExecutingAssembly());
             BattleModifierRegistry.Register(new WDStrengthBattleModifier());
+            FactionCache.EmpireFactionDef.hidden = false;
             LogUtil.MessageForce("World Domination (Experimental) compatibility module loaded.");
         }
     }
@@ -237,22 +238,6 @@ namespace FactionColonies.WDExp
             return !(factionBase is WorldSettlementFC);
         }
     }
-    
-
-    [HarmonyPatch(typeof(WorldActions_Utils), "IsVassal")]
-    public static class Patch_AddEmpireSettlementsInIsVassalCheck
-    {
-        private static Dictionary<WorldSettlementFC, int> lastUpdateTick = new Dictionary<WorldSettlementFC, int>();
-        private const int UPDATE_INTERVAL_TICKS = 7 * 60000; // 7 in-game days
-
-        private static void Postfix(WorldObject obj, bool __result)
-        {
-            if (obj is WorldSettlementFC)
-            {
-                __result = true;
-            }
-        }
-    }
 
     [HarmonyPatch(typeof(WorldActions_Utils), "GetWorldObjectsWithCompByFaction")]
     public static class Patch_AddCompToEmpireSettlements
@@ -263,48 +248,84 @@ namespace FactionColonies.WDExp
         private static void Postfix(ref Dictionary<Faction, List<WorldObject>> __result)
         {
             int currentTick = Find.TickManager.TicksGame;
+            List<WorldObject> empireSettlementsToAdd = new List<WorldObject>();
 
-            foreach (var kvp in __result)
+            foreach (WorldSettlementFC empireSettlement in FactionCache.FactionComp.settlements)
             {
-                foreach (var obj in kvp.Value)
+                if (empireSettlement == null)
                 {
-                    if (!(obj is WorldSettlementFC empire))
-                        continue;
+                    continue;
+                }
+                CompViralSpread comp = null;
+                empireSettlement.TryGetComponent<CompViralSpread>(out comp);
+                bool needsCreate = comp == null;
+                bool needsUpdate = false;
 
-                    var comp = empire.GetComponent<CompViralSpread>();
-
-                    bool needsCreate = comp == null;
-                    bool needsUpdate = false;
-
-                    if (!needsCreate)
+                if (!needsCreate)
+                {
+                    if (!lastUpdateTick.TryGetValue(empireSettlement, out int lastTick))
                     {
-                        if (!lastUpdateTick.TryGetValue(empire, out int lastTick))
-                        {
-                            needsUpdate = true;
-                        }
-                        else if (currentTick - lastTick > UPDATE_INTERVAL_TICKS)
-                        {
-                            needsUpdate = true;
-                        }
-                    }
-
-                    if (needsCreate)
-                    {
-                        comp = new CompViralSpread();
-                        comp.parent = empire;
-                        empire.AllComps.Add(comp);
                         needsUpdate = true;
                     }
-
-                    if (needsUpdate)
+                    else if (currentTick - lastTick > UPDATE_INTERVAL_TICKS)
                     {
-                        float equipmentCost = (float)empire.MilitaryComp.militarySquad.outfit.equipmentTotalCost;
-                        comp.defensiveStrength = (float)(equipmentCost + empire.GetDefenseBonus()) / 100f;
-                        comp.strength = equipmentCost / 100f;
-                        lastUpdateTick[empire] = currentTick;
+                        needsUpdate = true;
                     }
                 }
+
+                if (needsCreate)
+                {
+                    comp = new CompViralSpread();
+                    comp.parent = empireSettlement;
+
+                    //LogUtil.Message("Adding Comp via reflection");
+                    var compsField = typeof(WorldObject).GetField("comps", BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (compsField != null)
+                    {
+                        var compsList = (List<WorldObjectComp>)compsField.GetValue(empireSettlement);
+                        compsList?.Add(comp);
+                    }
+                    else
+                    {
+                        LogUtil.Error("Could not find 'comps' field on WorldObject via reflection.");
+                    }
+
+                    // Call PostAdd if it exists (some comps rely on it)
+                    empireSettlement.PostAdd();
+                    comp.defensiveStrength = 0;
+                    comp.strength = 0;
+                    needsUpdate = true;
+                }
+
+                if (needsUpdate && empireSettlement.MilitaryComp.militarySquad != null && empireSettlement.MilitaryComp.militarySquad.outfit != null)
+                {
+                    float equipmentCost = (float)empireSettlement.MilitaryComp.militarySquad.outfit.equipmentTotalCost;
+                    comp.defensiveStrength = (float)(equipmentCost + empireSettlement.GetDefenseBonus()) / 50f;
+                    comp.strength = equipmentCost / 50f;
+                    comp.defenseCooldownTick = -1;
+                    if (comp.strength > 650)
+                    {
+                        comp.tier = SettlementTier.T2;
+                    } else if (comp.strength > 1150)
+                    {
+                        comp.tier = SettlementTier.T3;
+                    } else if (comp.strength > 1750)
+                    {
+                        //comp.tier = SettlementTier.T4;
+                    }
+
+                    lastUpdateTick[empireSettlement] = currentTick;
+                }
+                
+                empireSettlementsToAdd.Add(empireSettlement);
             }
+
+            if (__result == null)
+            {
+                __result = new Dictionary<Faction, List<WorldObject>>();
+            }
+            __result.SetOrAdd(FactionCache.PlayerColonyFaction,empireSettlementsToAdd);
+            LogUtil.Message("World Domination (Experimental) compatibility -> Fetched " + empireSettlementsToAdd.Count + " empire settlement candidates");
         }
     }
     
