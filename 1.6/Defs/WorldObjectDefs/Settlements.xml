@@ -25,6 +25,7 @@
 	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementBuildings" />
 	  <li Class="FactionColonies.WorldObjectCompProperties_FormCaravanFC" />
 	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementPrisoners" />
+      <li Class="FactionColonies.WorldObjectCompProperties_Situations" />
     </comps>
 	<modExtensions>
 		<li Class="FactionColonies.SettlementTypeExtension" />
@@ -61,6 +62,7 @@
 	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementMilitary" />
 	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementBuildings" />
 	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementPrisoners" />
+      <li Class="FactionColonies.WorldObjectCompProperties_Situations" />
     </comps>
 	<modExtensions>
 		<li Class="FactionColonies.SettlementTypeExtension_Orbital">

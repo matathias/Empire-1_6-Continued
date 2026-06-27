@@ -173,6 +173,9 @@ namespace FactionColonies
         public IReadOnlyList<FCEvent> Events => eventManager.Events;
         public int EventsVersion => eventManager.Version;
 
+        /* Situations — long-lived progress meters; effects delegate to the event system. */
+        public FCSituationManager situationManager = new FCSituationManager();
+
         /// <summary>
         /// Holds and indexes all active <see cref="MilitaryOperation"/>s. Single source of truth
         /// for military operation state. <c>SendMilitary</c> / <c>AttackPlayerSettlement</c>
@@ -344,6 +347,9 @@ namespace FactionColonies
 
             Scribe_Deep.Look(ref eventManager, "eventManager");
             if (eventManager is null) eventManager = new FCEventManager();
+
+            Scribe_Deep.Look(ref situationManager, "situationManager");
+            if (situationManager is null) situationManager = new FCSituationManager();
 
             Scribe_Deep.Look(ref militaryOperationManager, "militaryOperationManager");
             if (militaryOperationManager is null) militaryOperationManager = new MilitaryOperationManager();
@@ -760,6 +766,9 @@ namespace FactionColonies
             EmpireRegistry.Register(new SquadSizeValidator());
             EmpireRegistry.Register(new SquadValueValidator());
 
+            /* Situation approach upkeep (faction-wide, once per tax cycle). */
+            EmpireRegistry.Register(new SituationUpkeepTaxParticipant());
+
             roadBuilder.FirstTick();
 
             if (!(faction is null))
@@ -893,6 +902,8 @@ namespace FactionColonies
             RelationsUtilFC.ResetPlayerColonyRelations();
             UpdateDailyResourcePools();
             PruneCaravanHomeSettlements();
+            // After settlement stats + averages are fresh, so condition extensions read current values.
+            FCSituationMaker.ProcessSituations(this);
             MakeRandomEvent();
         }
 

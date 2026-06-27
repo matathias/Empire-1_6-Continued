@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Situations: tabs & panels -->
+	<FCSituations>Situations</FCSituations>
+	<FCSituationsTab>Situations</FCSituationsTab>
+	<FCActiveSituationsCount>Active situations: {0}</FCActiveSituationsCount>
+	<FCNoActiveSituations>No active situations.</FCNoActiveSituations>
+	<FCNoSituationsHere>This settlement has no active situations.</FCNoSituationsHere>
+	<FCSituationFactionWide>Faction-wide</FCSituationFactionWide>
+	<FCSituationNoStage>Building</FCSituationNoStage>
+	<FCSituationPerDay>/day</FCSituationPerDay>
+
+	<!-- Situations: approach selector -->
+	<FCSituationApproachLabel>Approach: {0}</FCSituationApproachLabel>
+	<FCSituationNoApproach>Approach: none</FCSituationNoApproach>
+	<FCSituationApproachOption>{0}  ({1}/day, {2} silver upkeep)</FCSituationApproachOption>
+	<FCSituationApproachOptionFree>{0}  ({1}/day, free)</FCSituationApproachOptionFree>
+	<FCSituationApproachNeedsResearch>Requires research: {0}</FCSituationApproachNeedsResearch>
+	<FCSituationApproachNeedsPolicy>Requires policy: {0}</FCSituationApproachNeedsPolicy>
+	<FCSituationApproachNeedsPolicyAny>Requires one of: {0}</FCSituationApproachNeedsPolicyAny>
+
+	<!-- Situations: actions & notifications -->
+	<FCSituationConfirmAction>Are you sure you want to: {0}?</FCSituationConfirmAction>
+	<FCSituationBlocksRemovalDefault>{0} prevents this settlement from being dissolved.</FCSituationBlocksRemovalDefault>
+	<FCSituationUpkeepUnpaid>Could not afford the upkeep for {0}; its approach reverted to {1}.</FCSituationUpkeepUnpaid>
+
+</LanguageData>

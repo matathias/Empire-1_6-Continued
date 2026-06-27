@@ -26,7 +26,8 @@ namespace FactionColonies
             "FCEvents".Translate(),
             "FCMilitary".Translate(),
             "FCEdicts".Translate(),
-            "FCPrisoners".Translate()
+            "FCPrisoners".Translate(),
+            "FCSituations".Translate()
         };
         private Dictionary<string, Action<Rect>> overviewFuncs = new Dictionary<string, Action<Rect>>();
 
@@ -55,6 +56,7 @@ namespace FactionColonies
 
         // ===== PRISONERS STATE =====
         private Vector2 prisonersScroll;
+        private Vector2 situationsScroll;
         private HashSet<int> collapsedPrisonerSections = new HashSet<int>();
 
         // ===== SORTED LIST CACHES =====
@@ -125,6 +127,16 @@ namespace FactionColonies
                 prisonersScroll = Vector2.zero;
             }, () => curTab == overviewTabs[5]));
             overviewFuncs.Add(overviewTabs[5], DrawPrisonersTab);
+            // Situations tab — only registered when any situation defs exist in the database.
+            if (DefDatabase<FCSituationDef>.AllDefsListForReading.Count > 0)
+            {
+                tabs.Add(new TabRecord(overviewTabs[6], delegate
+                {
+                    curTab = overviewTabs[6];
+                    situationsScroll = Vector2.zero;
+                }, () => curTab == overviewTabs[6]));
+                overviewFuncs.Add(overviewTabs[6], DrawSituationsTab);
+            }
         }
 
         public override void PostClose()
@@ -1215,6 +1227,53 @@ namespace FactionColonies
             }
 
             Text.Font = fontBefore;
+        }
+
+        private void DrawSituationsTab(Rect rect)
+        {
+            List<FCSituation> sits = new List<FCSituation>(faction.situationManager.Situations);
+            const float pad = 8f;
+            float innerX = rect.x + pad;
+            float innerW = rect.width - pad * 2f;
+
+            GameFont fontBefore = Text.Font;
+            TextAnchor anchorBefore = Text.Anchor;
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleLeft;
+            UIUtil.DrawColoredLabel(new Rect(innerX, rect.y + pad, innerW, 24f),
+                "FCActiveSituationsCount".Translate(sits.Count), Color.gray);
+            Text.Font = fontBefore;
+            Text.Anchor = anchorBefore;
+
+            if (sits.Count == 0)
+            {
+                Text.Font = GameFont.Medium;
+                Text.Anchor = TextAnchor.MiddleCenter;
+                UIUtil.DrawColoredLabel(new Rect(rect.x, rect.y + rect.height * 0.35f, rect.width, 40f),
+                    "FCNoActiveSituations".Translate(), Color.gray);
+                Text.Font = fontBefore;
+                Text.Anchor = anchorBefore;
+                return;
+            }
+
+            float listY = rect.y + pad + 24f + 6f;
+            float viewH = rect.yMax - listY - pad;
+            Rect viewRect = new Rect(innerX, listY, innerW, viewH);
+            const float gap = 4f;
+            float contentH = 0f;
+            foreach (FCSituation sit in sits) contentH += SituationsUI.RowHeight(sit, includeActions: false) + gap;
+
+            Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref situationsScroll, contentH);
+            float y = 0f;
+            for (int i = 0; i < sits.Count; i++)
+            {
+                float h = SituationsUI.RowHeight(sits[i], includeActions: false);
+                Rect rowRect = new Rect(0f, y, scrollRect.width, h);
+                if (i % 2 == 0) Widgets.DrawHighlight(rowRect);
+                SituationsUI.DrawRow(rowRect, sits[i], faction, showTarget: true, includeActions: false);
+                y += h + gap;
+            }
+            ScrollUtil.EndScrollView();
         }
 
         private void DrawEventsTab(Rect rect)
