@@ -47,16 +47,17 @@
     <label>Purchase emergency food imports to soften the blow.</label>
     <parentEvent>foodShortage_0</parentEvent>
     <baseChanceOfSuccess>100</baseChanceOfSuccess>
-    <silverCost>700</silverCost>
+    <silverCost>100</silverCost>
     <successEvent>foodShortage_1-2</successEvent>
     <modExtensions>
       <li Class="FactionColonies.FCDynamicCostExtension">
-        <costPerResourceProduction>
+        <costPerResourceDelta>
           <li>
             <resource>RTD_Food</resource>
-            <coefficient>15</coefficient>
+            <additiveDelta>0.5</additiveDelta>
+            <coefficient>0.5</coefficient>
           </li>
-        </costPerResourceProduction>
+        </costPerResourceDelta>
       </li>
     </modExtensions>
   </FactionColonies.FCOptionDef>

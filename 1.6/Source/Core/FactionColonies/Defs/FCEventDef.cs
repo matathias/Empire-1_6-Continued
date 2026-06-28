@@ -193,7 +193,7 @@ namespace FactionColonies
                     // A positive dynamic cost makes the option not truly free.
                     FCDynamicCostExtension dyn = opt.GetModExtension<FCDynamicCostExtension>();
                     if (dyn != null && (dyn.costPerEmpireIncomeUnit > 0f
-                        || (dyn.costPerResourceProduction != null && dyn.costPerResourceProduction.Count > 0)))
+                        || (dyn.costPerResourceDelta != null && dyn.costPerResourceDelta.Count > 0)))
                         continue;
 
                     hasFreeUngated = true;

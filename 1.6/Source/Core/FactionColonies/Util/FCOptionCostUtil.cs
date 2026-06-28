@@ -92,19 +92,23 @@ namespace FactionColonies.util
                     }
                 }
 
-                if (ext.costPerResourceProduction is object)
+                if (ext.costPerResourceDelta is object)
                 {
-                    foreach (ResourceCostCoefficient pair in ext.costPerResourceProduction)
+                    foreach (ResourceProductionDeltaCost pair in ext.costPerResourceDelta)
                     {
-                        if (pair is null || pair.resource is null || pair.coefficient == 0f) continue;
-                        double production = ComputeResourceProduction(evt, pair.resource, ext.productionScope);
-                        double contribution = production * pair.coefficient;
+                        if (pair?.resource is null || pair.coefficient == 0f || pair.additiveDelta == 0f) continue;
+                        double delta = ComputeProductionDelta(evt, pair.resource, pair.additiveDelta, ext.productionScope);
+                        // coefficient is a fraction of the resource's silver-per-unit value.
+                        double contribution = delta * FCSettings.silverPerResource * pair.coefficient;
                         total += contribution;
                         if (lines != null && contribution > 0)
                         {
-                            lines.Add("FCOptionCostResource".Translate(
+                            string key = pair.framing == FCResourceCostFraming.Added
+                                ? "FCOptionCostResourceAdded"
+                                : "FCOptionCostResourceMitigated";
+                            lines.Add(key.Translate(
                                 pair.resource.LabelCap,
-                                production.ToString("0.##"),
+                                delta.ToString("0.##"),
                                 ((int)Math.Round(contribution)).ToString("N0")));
                         }
                     }
@@ -130,7 +134,13 @@ namespace FactionColonies.util
             return faction is object ? faction.income : 0;
         }
 
-        private static double ComputeResourceProduction(FCEvent evt, ResourceTypeDef resourceDef, FCProductionCostScope scope)
+        /* Marginal production the option changes for one resource. A change of additiveDelta in the
+         * resource's production additive shifts InstantaneousProduction by
+         * additiveDelta * productionMult * assignedWorkers per settlement (since
+         * InstantaneousProduction = productionBase * productionMult * assignedWorkers). Summed over
+         * the scope. Charges for the production the option actually rescues or adds, not the
+         * settlement's total output. Sign-agnostic: framing is presentational, the math is the same. */
+        private static double ComputeProductionDelta(FCEvent evt, ResourceTypeDef resourceDef, float additiveDelta, FCProductionCostScope scope)
         {
             if (resourceDef is null) return 0;
             double sum = 0;
@@ -140,8 +150,7 @@ namespace FactionColonies.util
                 foreach (WorldSettlementFC s in evt.settlementTraitLocations)
                 {
                     if (s is null) continue;
-                    ResourceFC res = s.GetResource(resourceDef);
-                    if (res is object) sum += res.InstantaneousProduction;
+                    sum += DeltaAt(s, resourceDef, additiveDelta);
                 }
                 return sum;
             }
@@ -151,10 +160,17 @@ namespace FactionColonies.util
             foreach (WorldSettlementFC s in faction.settlements)
             {
                 if (s is null) continue;
-                ResourceFC res = s.GetResource(resourceDef);
-                if (res is object) sum += res.InstantaneousProduction;
+                sum += DeltaAt(s, resourceDef, additiveDelta);
             }
             return sum;
+        }
+
+        private static double DeltaAt(WorldSettlementFC s, ResourceTypeDef resourceDef, float additiveDelta)
+        {
+            ResourceFC res = s.GetResource(resourceDef);
+            if (res is null) return 0;
+            double delta = additiveDelta * res.productionMult * res.assignedWorkers;
+            return delta > 0 ? delta : 0;
         }
 
         private static bool HasLiveTargets(FCEvent evt)

@@ -35,7 +35,8 @@
 	<FCOptionCostBase>Base: {0}</FCOptionCostBase>
 	<FCOptionCostPerSettlement>× {0} affected settlements: {1}</FCOptionCostPerSettlement>
 	<FCOptionCostIncome>+ {0}% of {2} income: {1}</FCOptionCostIncome>
-	<FCOptionCostResource>+ {0} scaling ({1} produced): {2}</FCOptionCostResource>
+	<FCOptionCostResourceMitigated>+ {0} ({1} mitigated): {2}</FCOptionCostResourceMitigated>
+	<FCOptionCostResourceAdded>+ {0} ({1} added): {2}</FCOptionCostResourceAdded>
 	<FCOptionCostMultiplier>× {0} (global cost setting)</FCOptionCostMultiplier>
 	<FCOptionCostTotal>Total: {0}</FCOptionCostTotal>
 

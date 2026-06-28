@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FactionColonies.util;
+using Verse;
 
 namespace FactionColonies
 {
@@ -114,9 +115,112 @@ namespace FactionColonies
                 TestAssert.AreEqual(3, FCOptionCostUtil.ComputeScaledCost(opt, evt)));
         }
 
+        /* Shared setup for the production-delta tests: the non-null current settlements, the food
+         * resource def (skips the test if either is unavailable), and helpers that build the option
+         * and compute the expected pre-coefficient delta from the same public ResourceFC accessors
+         * the util uses (so the assertions check wiring/scope, not a hardcoded constant). */
+        private static List<WorldSettlementFC> DeltaTestSettlements()
+        {
+            var settlements = FindFC.Settlements;
+            if (settlements is null || settlements.Count < 1) TestAssert.Skip("Need >= 1 settlement");
+            var list = new List<WorldSettlementFC>();
+            foreach (WorldSettlementFC s in settlements)
+                if (s is object) list.Add(s);
+            if (list.Count == 0) TestAssert.Skip("No usable settlements");
+            return list;
+        }
+
+        private static double ExpectedDelta(List<WorldSettlementFC> list, ResourceTypeDef res, float additiveDelta)
+        {
+            double sum = 0;
+            foreach (WorldSettlementFC s in list)
+            {
+                ResourceFC r = s.GetResource(res);
+                if (r is null) continue;
+                double d = additiveDelta * r.productionMult * r.assignedWorkers;
+                if (d > 0) sum += d;
+            }
+            return sum;
+        }
+
+        private static FCOptionDef DeltaOption(ResourceTypeDef res, float additiveDelta, float coeff, FCResourceCostFraming framing)
+        {
+            var ext = new FCDynamicCostExtension
+            {
+                costPerResourceDelta = new List<ResourceProductionDeltaCost>
+                {
+                    new ResourceProductionDeltaCost { resource = res, additiveDelta = additiveDelta, coefficient = coeff, framing = framing }
+                }
+            };
+            return new FCOptionDef { silverCost = 100, modExtensions = new List<DefModExtension> { ext } };
+        }
+
+        [EmpireTest("EventCost")]
+        public static void ComputeScaledCost_ResourceDelta_ChargesMarginalProduction()
+        {
+            // The resource term charges for the production the option changes, not total output:
+            // per settlement, additiveDelta * productionMult * assignedWorkers, summed over the
+            // affected settlements, times silverPerResource times the coefficient (plus base * affected).
+            var list = DeltaTestSettlements();
+            ResourceTypeDef food = DefDatabase<ResourceTypeDef>.GetNamedSilentFail("RTD_Food");
+            if (food is null) TestAssert.Skip("RTD_Food not loaded");
+
+            const float additive = 0.5f;
+            const float coeff = 0.5f; // fraction of silver-per-unit value
+            double delta = ExpectedDelta(list, food, additive);
+            var evt = new FCEvent { settlementTraitLocations = list };
+
+            WithEventCostMultiplier(1f, () =>
+            {
+                double raw = 100.0 * list.Count + delta * FCSettings.silverPerResource * coeff;
+                int expected = Math.Max(0, (int)Math.Round(raw, MidpointRounding.AwayFromZero));
+                TestAssert.AreEqual(expected, FCOptionCostUtil.ComputeScaledCost(
+                    DeltaOption(food, additive, coeff, FCResourceCostFraming.Mitigated), evt));
+            });
+        }
+
+        [EmpireTest("EventCost")]
+        public static void ComputeScaledCost_Framing_DoesNotAffectCost()
+        {
+            // Framing is presentational only — Added vs Mitigated must yield identical silver.
+            var list = DeltaTestSettlements();
+            ResourceTypeDef food = DefDatabase<ResourceTypeDef>.GetNamedSilentFail("RTD_Food");
+            if (food is null) TestAssert.Skip("RTD_Food not loaded");
+            var evt = new FCEvent { settlementTraitLocations = list };
+
+            WithEventCostMultiplier(1f, () =>
+            {
+                int mit = FCOptionCostUtil.ComputeScaledCost(DeltaOption(food, 0.5f, 0.5f, FCResourceCostFraming.Mitigated), evt);
+                int add = FCOptionCostUtil.ComputeScaledCost(DeltaOption(food, 0.5f, 0.5f, FCResourceCostFraming.Added), evt);
+                TestAssert.AreEqual(mit, add);
+            });
+        }
+
         // ============================
         // FCOptionCostUtil.BuildCostBreakdown
         // ============================
+
+        [EmpireTest("EventCost")]
+        public static void BuildCostBreakdown_Framing_PicksWording()
+        {
+            // The breakdown line wording follows the framing flag. Case-insensitive so it passes
+            // whether the keyed string is translated ("added") or falls back to the key ("...Added").
+            var list = DeltaTestSettlements();
+            ResourceTypeDef food = DefDatabase<ResourceTypeDef>.GetNamedSilentFail("RTD_Food");
+            if (food is null) TestAssert.Skip("RTD_Food not loaded");
+            // Need a non-zero contribution (delta * silverPerResource * coeff) for the resource line to appear.
+            if (ExpectedDelta(list, food, 0.5f) <= 0 || FCSettings.silverPerResource <= 0)
+                TestAssert.Skip("No food production or zero silver-per-resource to scale on");
+            var evt = new FCEvent { settlementTraitLocations = list };
+
+            WithEventCostMultiplier(1f, () =>
+            {
+                string added = FCOptionCostUtil.BuildCostBreakdown(DeltaOption(food, 0.5f, 0.5f, FCResourceCostFraming.Added), evt);
+                string mit = FCOptionCostUtil.BuildCostBreakdown(DeltaOption(food, 0.5f, 0.5f, FCResourceCostFraming.Mitigated), evt);
+                TestAssert.IsTrue(added != null && added.ToLowerInvariant().Contains("added"), "Added framing should read 'added'");
+                TestAssert.IsTrue(mit != null && mit.ToLowerInvariant().Contains("mitigated"), "Mitigated framing should read 'mitigated'");
+            });
+        }
 
         [EmpireTest("EventCost")]
         public static void BuildCostBreakdown_NullEvent_ReturnsNull()
