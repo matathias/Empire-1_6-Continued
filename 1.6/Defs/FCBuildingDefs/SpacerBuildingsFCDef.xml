@@ -22,7 +22,8 @@
 		<statModifiers>
 			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.5</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/GlitterworldResearchFacility</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -36,7 +37,8 @@
 		<statModifiers>
 			<li><stat>militaryBaseLevel</stat><value>2</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/AutomatedDefenseSystems</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -53,7 +55,8 @@
 		<statModifiers>
 			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.5</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/TastyPaste</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -73,6 +76,7 @@
 			<li><stat>RTD_Weapons_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/MechSalvage</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -91,6 +95,7 @@
 			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>1.5</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/Printer</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -109,6 +114,7 @@
 			<li><stat>RTD_Logging_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/Vinyl</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -129,6 +135,7 @@
 			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>1.2</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/Magnet</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -147,7 +154,8 @@
 			<li><stat>workerBaseMax</stat><value>10</value></li>
 			<li><stat>workerBaseOverMax</stat><value>7</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/WorkerBots</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -166,7 +174,8 @@
 			<li><stat>loyaltyGainedBase</stat><value>0.5</value></li>
 			<li><stat>unrestLostBase</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/TheyLive</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -185,7 +194,8 @@
 			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>1.2</value></li>
 			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.25</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/CloningLab</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -200,7 +210,8 @@
 		<statModifiers>
 			<li><stat>RTD_Power_ProductionMultiplier</stat><value>1.5</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep> <!-- cost per week for the building -->
+		<upkeep>80</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/PerpetualMotionGenerator</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -215,7 +226,8 @@
 			<li><stat>militaryCombatEfficiency</stat><value>1.1</value></li>
 			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>200</upkeep> <!-- cost per week for the building -->
+		<upkeep>40</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/BionicsManufacturingPlant</iconPath>
 	</FactionColonies.BuildingFCDef>
 

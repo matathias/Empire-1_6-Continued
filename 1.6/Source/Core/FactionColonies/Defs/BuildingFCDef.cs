@@ -30,6 +30,12 @@ namespace FactionColonies
         public List<string> applicableBiomes = new List<string>();
         public int upkeep;
         /// <summary>
+        /// True if this def's upkeep is authored at the post-rework per-day scale. Base-mod defs set this
+        /// true (and divide their upkeep by 5). Third-party/legacy defs default false and are divided by
+        /// LEGACY_UPKEEP_DIVISOR at runtime to approximate a per-day value.
+        /// </summary>
+        public bool postRework = false;
+        /// <summary>
         /// Marks this as a military building for cost/upkeep classification (buildingCost*_Military,
         /// buildingUpkeepBase_Military, the Militaristic upkeep discount).
         /// </summary>
@@ -57,6 +63,15 @@ namespace FactionColonies
 
         private bool didCacheBuildingAttributeDesc = false;
         private TaggedString cachedBuildingAttributeDesc = "";
+
+        public double Upkeep
+        {
+            get
+            {
+                if (postRework) return upkeep;
+                return upkeep / (double)FCSettings.LEGACY_UPKEEP_DIVISOR;
+            }
+        }
 
         public TaggedString AttributeDesc
         {

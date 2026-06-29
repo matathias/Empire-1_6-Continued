@@ -15,7 +15,8 @@
 			<li><stat>taxBaseRandomModifier</stat><value>10</value></li>
 			<li><stat>taxBasePercentage</stat><value>5</value></li>
 		</statModifiers>
-		<upkeep>600</upkeep>
+		<upkeep>120</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/ShuttlePort</iconPath>
 		<modExtensions>
 		  <li Class="FactionColonies.BuildingFCExtension_Shuttles">

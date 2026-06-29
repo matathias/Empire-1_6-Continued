@@ -489,9 +489,31 @@ namespace FactionColonies
         }
         public void AddBuildingStatModifiers(int buildingSlot)
         {
+            if (!buildings[buildingSlot].active) return; // dormant building contributes no stats
             BuildingFCDef def = buildings[buildingSlot].def;
             if (def == BuildingFCDefOf.Empty || def == BuildingFCDefOf.Construction) return;
             WorldSettlement.AddStatModifiers(def.statModifiers, BuildingID(buildingSlot), def.label);
+        }
+
+        /* Idempotent dormancy toggle. On change, add/remove the slot's stat modifiers and invalidate the
+         * stat + resource caches so production/stat values recompute. capBonuses are intentionally NOT
+         * gated (storage capacity is passive -- a mothballed warehouse still stores). */
+        public void SetBuildingActive(int buildingSlot, bool active)
+        {
+            BuildingFC b = buildings[buildingSlot];
+            if (b.active == active) return;
+            if (active)
+            {
+                b.active = true;
+                AddBuildingStatModifiers(buildingSlot); // re-add (now that active is true)
+            }
+            else
+            {
+                RemoveBuildingStatModifiers(buildingSlot); // remove while still registered
+                b.active = false;
+            }
+            WorldSettlement.InvalidateStatCache();
+            WorldSettlement.InvalidateResourceCaches();
         }
         public void RemoveBuildingStatModifiers(int buildingSlot)
         {
@@ -513,6 +535,7 @@ namespace FactionColonies
 
         public int GetBuildingUpkeep(int buildingSlot)
         {
+            if (!buildings[buildingSlot].active) return 0; // mothballed: no upkeep and no income
             return GetBuildingUpkeep(GetBuildingInSlot(buildingSlot));
         }
         public int GetBuildingUpkeep(BuildingFCDef building)
@@ -520,7 +543,8 @@ namespace FactionColonies
             if (building == null)
                 return 0;
 
-            double upkeep = building.upkeep + WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepBase);
+            // building.Upkeep applies the legacy per-day divisor for non-postRework (external) defs.
+            double upkeep = building.Upkeep + WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepBase);
             upkeep += building.isMilitary
                 ? WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepBase_Military)
                 : WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepBase_Civilian);
@@ -533,7 +557,12 @@ namespace FactionColonies
 
             upkeep = FindFC.PolicyManager.FoldBehaviors(upkeep, (b, u) => b.ModifyBuildingUpkeep(building, u, WorldSettlement));
 
-            if (upkeep < 0) upkeep = 0;   // central floor (previously done inside the Militaristic override)
+            // Final per-difficulty factor (sign-preserving).
+            upkeep *= FCSettings.buildingUpkeepDifficultyMult;
+
+            // Floor at 0 only for normal buildings, so stat/policy modifiers can't push a regular building
+            // negative. Buildings authored as income sources (Upkeep < 0) keep their signed value.
+            if (building.Upkeep >= 0 && upkeep < 0) upkeep = 0;
             return (int)upkeep;
         }
 
@@ -619,6 +648,9 @@ namespace FactionColonies
             int upkeep = 0;
             foreach (BuildingFC building in buildings)
             {
+                if (!building.active) continue; // dormant: no upkeep and no income
+                // Signed: income buildings (negative upkeep) reduce the total; a net-negative total is
+                // routed to income by RecomputeProfit's buildingsUpkeep < 0 branch.
                 upkeep += GetBuildingUpkeep(building.def);
             }
             return upkeep;

@@ -27,7 +27,8 @@
 			<li><stat>RTD_Weapons_ProductionMultiplier</stat><value>0.85</value></li>
 			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>0.85</value></li>
 		</statModifiers>
-		<upkeep>250</upkeep>
+		<upkeep>50</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/AdventurersGuild</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -107,6 +108,7 @@
 			<li><stat>happinessGainedBase</stat><value>0.5</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/AdventurersGuild</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -125,6 +127,7 @@
 			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>0.95</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/Smithy</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -144,6 +147,7 @@
 			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>0.95</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/UndergroundMine</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -165,7 +169,8 @@
 			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>1.05</value></li>
 			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>1.05</value></li>
 		</statModifiers>
-		<upkeep>300</upkeep>
+		<upkeep>60</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/Mills</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -185,7 +190,8 @@
 			<li><stat>workerBaseOverMax</stat><value>4</value></li>
 			<li><stat>workerBaseCost</stat><value>5</value></li>
 		</statModifiers>
-		<upkeep>250</upkeep>
+		<upkeep>50</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/Servant</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -203,6 +209,7 @@
 			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.4</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/PlagueCamps</iconPath>
 	</FactionColonies.BuildingFCDef>
 

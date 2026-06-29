@@ -457,7 +457,7 @@ namespace FactionColonies
             float rowHeight = 23f;
             float labelHeight = rowHeight - (smallMargin * 2);
 
-            double extBudget = res.externalTitheBudget;
+            double extBudget = res.DailyExternalTitheBudget;
             bool hasInjection = extBudget > 0.01;
             double titheMult = res.GetTitheValueMultiplier();
             bool showMult = Math.Abs(titheMult - 1.0) > 0.001;
@@ -589,24 +589,38 @@ namespace FactionColonies
 
             KeepTitheDictBuffersUpdated(res);
 
-            List<ThingQualityTuple> titheItems = res.GetTitheListKeys();
+            IReadOnlyList<TitheEntry> orderedTithes = res.Tithes;
+
+            /* Compute waterline: projected full-cycle tithe budget */
+            double projectedBudget = res.AccruedTitheBudget + res.GetTitheIncome() * settlement.DaysRemaining;
+            double runningCost = 0.0;
 
             /* Doing weird box-in-a-box to try and fix some UI drawing issues */
             Rect drawBox = new Rect(boundingBox.x + margin, header.yMax, boundingBox.width - (margin * 2), boundingBox.yMax - header.yMax - margin);
             Rect selectedListBox = new Rect(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
-            float listHeight = titheItems.Count * rowHeight;
+            float listHeight = orderedTithes.Count * rowHeight;
             Widgets.DrawMenuSection(selectedListBox);
             Rect innerScrollBox = ScrollUtil.BeginScrollView(selectedListBox, ref titheScrollBar, listHeight);
-            for (int i = 0; i < titheItems.Count; i++)
+            for (int i = 0; i < orderedTithes.Count; i++)
             {
-                ThingQualityTuple thingTuple = titheItems[i];
+                TitheEntry entry = orderedTithes[i];
+                ThingQualityTuple thingTuple = entry.thing;
                 ThingDef iThing = thingTuple.thingDef;
                 QualityCategory iQuality = thingTuple.quality;
                 ThingDef iStuff = thingTuple.stuffDef;
                 bool labelExtended = false;
 
+                /* Waterline: check if this entry will be fulfilled this cycle */
+                double entryCost = CraftUtil.ThingValue(thingTuple) * entry.quantity;
+                bool belowWaterline = runningCost + entryCost > projectedBudget;
+                runningCost += entryCost;
+
                 Rect row = new Rect(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
-                Rect icon = new Rect(row.x + margin, row.y, rowHeight, rowHeight);
+                /* Up/down reorder arrows (left-most, 12px wide each) */
+                float arrowW = 12f;
+                Rect upArrow = new Rect(row.x + margin, row.y + 2, arrowW, (rowHeight - 4) / 2f);
+                Rect downArrow = new Rect(row.x + margin, upArrow.yMax, arrowW, (rowHeight - 4) / 2f);
+                Rect icon = new Rect(downArrow.xMax + margin, row.y, rowHeight, rowHeight);
                 Rect info = new Rect(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
                 Rect xBox = new Rect(row.xMax - margin - 20f, row.y + 2, rowHeight - 4, rowHeight - 4);
                 Rect fieldBox = new Rect(xBox.x - margin - 180f, row.y + 2, 180f, rowHeight - 4);
@@ -619,8 +633,21 @@ namespace FactionColonies
                     Widgets.DrawHighlight(row);
                 }
 
-
+                /* Up/Down arrows */
                 Text.Anchor = TextAnchor.MiddleCenter;
+                if (i > 0 && Widgets.ButtonText(upArrow, "^"))
+                {
+                    res.MoveTitheEntry(i, i - 1);
+                    UpdateTitheDictBuffers(res);
+                    break;
+                }
+                if (i < orderedTithes.Count - 1 && Widgets.ButtonText(downArrow, "v"))
+                {
+                    res.MoveTitheEntry(i, i + 1);
+                    UpdateTitheDictBuffers(res);
+                    break;
+                }
+
                 Widgets.Label(icon, new GUIContent(iThing.uiIcon));
                 Widgets.InfoCardButton(info, iThing);
                 if (Widgets.ButtonText(xBox, "X"))
@@ -630,7 +657,12 @@ namespace FactionColonies
                 }
                 TooltipHandler.TipRegion(xBox, "FCTitheXDesc".Translate());
                 Text.Anchor = TextAnchor.MiddleLeft;
+
+                /* Below-waterline: grey out label value */
+                Color origRowColor = GUI.color;
+                if (belowWaterline) GUI.color = new Color(0.5f, 0.5f, 0.5f);
                 Widgets.Label(valueLabel, $"${Math.Round(res.TitheThingValue(thingTuple), 2)}");
+                if (belowWaterline) GUI.color = origRowColor;
 
                 QualityCategory maxQuality = QualityCategory.Legendary;
                 if (CraftUtil.ThingHasQuality(iThing) && res.CanSetTitheQuality(out maxQuality))
@@ -707,12 +739,21 @@ namespace FactionColonies
                 {
                     label.width += stuffBox.width;
                 }
-                string nulabel = Text.ClampTextWithEllipsis(label, iThing.LabelCap);
+
+                /* Item label — append won't-deliver note if below waterline */
+                string itemLabelText = iThing.LabelCap;
+                if (belowWaterline)
+                    itemLabelText = itemLabelText + " " + "FCTitheWontThisCycle".Translate();
+                string nulabel = Text.ClampTextWithEllipsis(label, itemLabelText);
+                Color origLabelColor = GUI.color;
+                if (belowWaterline) GUI.color = new Color(0.5f, 0.5f, 0.5f);
                 Widgets.Label(label, nulabel);
-                if (nulabel != iThing.LabelCap)
+                GUI.color = origLabelColor;
+                if (nulabel != itemLabelText)
                 {
-                    TooltipHandler.TipRegion(label, iThing.LabelCap);
+                    TooltipHandler.TipRegion(label, itemLabelText);
                 }
+
                 // This seems like a *really* hacky way to handle these buffers. Seems like it'd be prone to UI jitteryness, or just general bad feel
                 //   keep this in mind when testing...
                 int quantity = res.GetTitheListValue(thingTuple);
@@ -840,30 +881,23 @@ namespace FactionColonies
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
 
-            /* Available Budget */
-            float budgetWidth = (boundingBox.width * 0.5f);
-            Rect availBudgetBox = new Rect(boundingBox.xMax - budgetWidth, boundingBox.y, budgetWidth, boundingBox.height);
-            Rect availLabel = new Rect(availBudgetBox.x + smallMargin, availBudgetBox.y + smallMargin, (availBudgetBox.width - smallMargin * 2) / 2f, availBudgetBox.height - smallMargin * 2);
-            Rect availNum = new Rect(availLabel.xMax, availLabel.y, availLabel.width, availLabel.height);
-            double totalTithe = Math.Round(res.GetTitheIncome(), 2);
-            double usedTithe = Math.Round(res.titheTotalValue, 2);
-            TaggedString usedTitheStr = usedTithe.ToString();
-            if (usedTithe > totalTithe)
-            {
-                usedTitheStr = usedTitheStr.Colorize(Color.red);
-                TooltipHandler.TipRegion(availNum, "FCTitheOverBudget".Translate());
-            }
-            else if (res.actualIncome < 0)
-            {
-                usedTitheStr = usedTitheStr.Colorize(Color.yellow);
-            }
+            /* Waterline readout: selected total vs. projected full-cycle budget */
+            double projectedBudget = res.AccruedTitheBudget + res.GetTitheIncome() * settlement.DaysRemaining;
+            double selectedTotal = res.titheTotalValue;
+
+            Widgets.DrawHighlight(boundingBox);
+            Rect readoutLabel = new Rect(boundingBox.x + smallMargin, boundingBox.y + smallMargin,
+                boundingBox.width - (smallMargin * 2), boundingBox.height - (smallMargin * 2));
+            Color origColor = GUI.color;
+            if (selectedTotal > projectedBudget)
+                GUI.color = Color.red;
+            else if (selectedTotal > projectedBudget * 0.8)
+                GUI.color = Color.yellow;
             else
-            {
-                usedTitheStr = usedTitheStr.Colorize(Color.green);
-            }
-            Widgets.DrawHighlight(availBudgetBox);
-            Widgets.Label(availLabel, "FCUsedTitheBudget".Translate() + ":");
-            Widgets.Label(availNum, "FCNumRatio".Translate(usedTitheStr, totalTithe));
+                GUI.color = Color.green;
+            Widgets.Label(readoutLabel, "FCTitheSelectedVsProjected".Translate(
+                Math.Round(selectedTotal), Math.Round(projectedBudget)));
+            GUI.color = origColor;
         }
 
         //Original: 125 wide, 215ish tall
@@ -1351,11 +1385,18 @@ namespace FactionColonies
                 Widgets.DrawMenuSection(nBox);
                 if (i < settlement.BuildingsComp.NumBuildingSlots)
                 {
-                    TooltipHandler.TipRegion(nBuilding, settlement.BuildingsComp.GetBuildingDescFull(building));
+                    string buildingTooltip = settlement.BuildingsComp.GetBuildingDescFull(building);
+                    if (!buildingfc.active)
+                        buildingTooltip = buildingTooltip + "\n" + "FCBuildingDormant".Translate();
+                    TooltipHandler.TipRegion(nBuilding, buildingTooltip);
+                    Color prevColor = GUI.color;
+                    if (!buildingfc.active)
+                        GUI.color = new Color(0.5f, 0.5f, 0.5f);
                     if (Widgets.ButtonImage(nBuilding, building.Icon))
                     {
                         Find.WindowStack.Add(new FCBuildingWindow(settlement, i));
                     }
+                    GUI.color = prevColor;
                 }
                 else
                 {
@@ -1512,10 +1553,10 @@ namespace FactionColonies
         private const float costsH = profitBoxH + margin + cardH;
         private (bool showProfitSub, bool showIncomeSub, bool showUpkeepSub) ComputeSubtitleVisibility()
         {
-            bool hasAvg = settlement.HasTaxAverageData;
-            bool sp = hasAvg && Math.Round(settlement.averageTotalProfit) != Math.Round(settlement.totalProfit);
-            bool si = hasAvg && Math.Round(settlement.averageTotalIncome) != Math.Round(settlement.totalIncome);
-            bool su = hasAvg && Math.Round(settlement.averageTotalUpkeep) != Math.Round(settlement.totalUpkeep);
+            bool hasAvg = settlement.TaxAccrualDays > 0;
+            bool sp = hasAvg && Math.Round(settlement.ProjectedProfit) != Math.Round(settlement.totalProfit);
+            bool si = hasAvg && Math.Round(settlement.ProjectedIncome) != Math.Round(settlement.totalIncome);
+            bool su = hasAvg && Math.Round(settlement.ProjectedUpkeep) != Math.Round(settlement.totalUpkeep);
             return (sp, si, su);
         }
         private void DrawProductionHeader(Rect boundingBox)
@@ -1534,12 +1575,12 @@ namespace FactionColonies
             bool showProfitSub = sub.showProfitSub;
             bool showIncomeSub = sub.showIncomeSub;
             bool showUpkeepSub = sub.showUpkeepSub;
-            bool hasAvg = settlement.HasTaxAverageData;
-            double avgProfit = settlement.averageTotalProfit;
+            bool hasAvg = settlement.TaxAccrualDays > 0;
+            double avgProfit = settlement.ProjectedProfit;
             double liveProfit = settlement.totalProfit;
-            double avgIncome = settlement.averageTotalIncome;
+            double avgIncome = settlement.ProjectedIncome;
             double liveIncome = settlement.totalIncome;
-            double avgUpkeep = settlement.averageTotalUpkeep;
+            double avgUpkeep = settlement.ProjectedUpkeep;
             double liveUpkeep = settlement.totalUpkeep;
             Color subColor = new Color(0.7f, 0.7f, 0.7f);
 
@@ -1547,27 +1588,28 @@ namespace FactionColonies
             // isn't drawn, the headline rects span the full box so their MiddleRight/MiddleLeft
             // anchors vertically center the label and value into the freed space.
             Rect profitBox = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, profitBoxH);
-            float headlineH = showProfitSub ? profitHeadlineH : profitBoxH;
+            float headlineH = hasAvg ? profitHeadlineH : profitBoxH;
             Rect profitLabel = new Rect(profitBox.x, profitBox.y, labelWidth, headlineH);
             Rect profitNum = new Rect(profitLabel.xMax + margin, profitLabel.y, labelWidth, headlineH);
             UIUtil.DrawColoredHighlight(profitBox, highlightColor);
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(profitLabel, "FCSettlementEstimatedProfit".Translate() + ":");
+            Widgets.Label(profitLabel, "FCSettlementProjectedProfit".Translate() + ":");
             Text.Anchor = TextAnchor.MiddleLeft;
             double displayProfit = hasAvg ? avgProfit : liveProfit;
             Widgets.Label(profitNum, new GUIContent(Math.Round(displayProfit).ToString(), ThingDefOf.Silver.uiIcon));
 
-            if (showProfitSub)
+            if (hasAvg)
             {
                 Rect profitSubtitle = new Rect(profitBox.x, profitLabel.yMax, profitBox.width, subtitleH);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 Color origColor = GUI.color;
                 GUI.color = subColor;
-                Widgets.Label(profitSubtitle, "FCDailyRate".Translate() + ": " + Math.Round(liveProfit));
+                Widgets.Label(profitSubtitle, "FCDailyRate".Translate() + ": " + Math.Round(liveProfit)
+                    + "  |  " + "FCAccruedThisCycle".Translate(Math.Round(settlement.AccruedGrossIncome), settlement.DaysRemaining));
                 GUI.color = origColor;
             }
-            TooltipHandler.TipRegion(profitBox, TextUtil.BuildPeriodAverageTooltip(hasAvg));
+            TooltipHandler.TipRegion(profitBox, TextUtil.BuildProjectedTooltip());
 
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.LowerCenter;
@@ -1587,7 +1629,7 @@ namespace FactionColonies
             UIUtil.DrawColoredHighlight(costsBox, highlightColor);
             UIUtil.DrawColoredHighlight(taxBonusBox, highlightColor);
 
-            Widgets.Label(incomeLabel, "FCSettlementEstimatedIncome".Translate());
+            Widgets.Label(incomeLabel, "FCSettlementProjectedIncome".Translate());
             Widgets.Label(costLabel, "FCUpkeep".Translate());
             Widgets.Label(taxBonusLabel, "FCTaxBase".Translate());
 
@@ -1598,9 +1640,9 @@ namespace FactionColonies
             DrawCardValueAndSubtitle(taxBonusBox, false,
                 (settlement.GetSettlementTaxBonus() * 100d).ToString() + "%", null, subColor);
 
-            string avgTooltip = TextUtil.BuildPeriodAverageTooltip(hasAvg);
-            TooltipHandler.TipRegion(incomeBox, settlement.incomeExp + "\n\n" + avgTooltip);
-            TooltipHandler.TipRegion(costsBox, settlement.upkeepExp + "\n\n" + avgTooltip);
+            string projTooltip = TextUtil.BuildProjectedTooltip();
+            TooltipHandler.TipRegion(incomeBox, settlement.incomeExp + "\n\n" + projTooltip);
+            TooltipHandler.TipRegion(costsBox, settlement.upkeepExp + "\n\n" + projTooltip);
             TooltipHandler.TipRegion(taxBonusBox, settlement.GetTaxBaseDesc());
         }
 
@@ -1752,8 +1794,8 @@ namespace FactionColonies
             // actually renders (RimWorld eats the boundary pixels otherwise).
             float availableWidth = needsScroll ? boundingBox.width - scrollSpacing - 2f : boundingBox.width;
 
-            /* Header */
-            float colWidth = (availableWidth - (margin * 7)) / 8f;
+            /* Header — 9 columns: icon | workers | base | mult | final | total | per-day | accrued | net-income */
+            float colWidth = (availableWidth - (margin * 8)) / 9f;
 
             Rect workersBox = new Rect(boundingBox.x + colWidth + margin, boundingBox.y, colWidth, headerHeight);
             Rect prodHeaderBox = new Rect(workersBox.xMax + margin, boundingBox.y, colWidth * 3 + margin * 2, headerHeight / 2f);
@@ -1762,9 +1804,11 @@ namespace FactionColonies
             Rect prodFinalBox = new Rect(prodMultBox.xMax + margin, prodMultBox.y, colWidth, prodMultBox.height);
             Rect prodTotalBox = new Rect(prodHeaderBox.xMax + margin, boundingBox.y, colWidth, headerHeight);
 
-            Rect incomeBox = new Rect(prodTotalBox.xMax + margin, boundingBox.y, colWidth * 2 + margin, headerHeight / 2f);
-            Rect incomeRawBox = new Rect(incomeBox.x, incomeBox.yMax, colWidth, headerHeight / 2f);
-            Rect incomeNetBox = new Rect(incomeRawBox.xMax + margin, incomeRawBox.y, colWidth, headerHeight / 2f);
+            Rect incomeBox = new Rect(prodTotalBox.xMax + margin, boundingBox.y, colWidth * 3 + margin * 2, headerHeight / 2f);
+            Rect incomePerDayBox = new Rect(incomeBox.x, incomeBox.yMax, colWidth, headerHeight / 2f);
+            Rect incomeAccruedBox = new Rect(incomePerDayBox.xMax + margin, incomePerDayBox.y, colWidth, headerHeight / 2f);
+            Rect incomeNetBox = new Rect(incomeAccruedBox.xMax + margin, incomeAccruedBox.y, colWidth, headerHeight / 2f);
+
             UIUtil.DrawColoredHighlight(workersBox, highlightColor);
             Widgets.Label(workersBox, "FCWorkers".Translate());
 
@@ -1784,11 +1828,13 @@ namespace FactionColonies
             UIUtil.DrawColoredHighlight(incomeBox, highlightColor);
             Widgets.Label(incomeBox, "FCIncome".Translate());
             UIUtil.DrawColoredHorizontalLine(incomeBox.x, incomeBox.yMax, incomeBox.width, accentColor);
-            UIUtil.DrawColoredHighlight(incomeRawBox, highlightColor);
-            Widgets.Label(incomeRawBox, "FCRaw".Translate());
-            TooltipHandler.TipRegion(incomeRawBox, "FCRawIncomeDesc".Translate());
+            UIUtil.DrawColoredHighlight(incomePerDayBox, highlightColor);
+            Widgets.Label(incomePerDayBox, "FCProductionPerDay".Translate());
+            TooltipHandler.TipRegion(incomePerDayBox, "FCRawIncomeDesc".Translate());
+            UIUtil.DrawColoredHighlight(incomeAccruedBox, highlightColor);
+            Widgets.Label(incomeAccruedBox, "FCTotalAccrued".Translate());
             UIUtil.DrawColoredHighlight(incomeNetBox, highlightColor);
-            Widgets.Label(incomeNetBox, "FCNet".Translate());
+            Widgets.Label(incomeNetBox, "FCNetIncome".Translate());
             TooltipHandler.TipRegion(incomeNetBox, "FCNetIncomeDesc".Translate());
 
             DrawResources(resourceArea, colWidth, incomeResources, poolResources, contentHeight);
@@ -1866,19 +1912,21 @@ namespace FactionColonies
             ScrollUtil.EndScrollView();
         }
 
-        /* Draws the total/raw/net column background bands spanning the given vertical range.
+        /* Draws the total/per-day/accrued/net column background bands spanning the given vertical range.
          * Called once per resource section so the bands stop clear of the Non-Income header. */
         private void DrawResourceColumnBands(float colWidth, float yTop, float yBottom)
         {
             float h = yBottom - yTop;
             if (h <= 0f) return;
             Rect totalProdCol = new Rect(5f * (colWidth + margin), yTop, colWidth, h);
-            Rect incomeRawCol = new Rect(6f * (colWidth + margin), yTop, colWidth, h);
-            Rect incomeNetCol = new Rect(7f * (colWidth + margin), yTop, colWidth, h);
+            Rect incomePerDayCol = new Rect(6f * (colWidth + margin), yTop, colWidth, h);
+            Rect incomeAccruedCol = new Rect(7f * (colWidth + margin), yTop, colWidth, h);
+            Rect incomeNetCol = new Rect(8f * (colWidth + margin), yTop, colWidth, h);
             UIUtil.DrawColoredHighlight(totalProdCol, highlightColor);
-            UIUtil.DrawColoredHighlight(incomeRawCol, highlightColor);
+            UIUtil.DrawColoredHighlight(incomePerDayCol, highlightColor);
+            UIUtil.DrawColoredHighlight(incomeAccruedCol, highlightColor);
             Widgets.DrawMenuSection(incomeNetCol);
-            TooltipHandler.TipRegion(incomeRawCol, "FCRawIncomeDesc".Translate());
+            TooltipHandler.TipRegion(incomePerDayCol, "FCRawIncomeDesc".Translate());
         }
 
         /* Section header dividing income resources from the pool (non-income) resources below.
@@ -1937,23 +1985,17 @@ namespace FactionColonies
             //Total Production
             Rect totalProd = new Rect(finalProd.xMax + margin, rectY, colWidth, rowHeight);
             Widgets.Label(totalProd, (TextUtil.FloorStat(resource.rawTotalProduction)));
-            if (resource.AccumulationDays > 0)
-            {
-                int totalPeriodDays = FCSettings.timeBetweenTaxes / GenDate.TicksPerDay;
-                string tooltip = "FCTotalProdTooltip".Translate(
-                    TextUtil.FloorStat(resource.InstantaneousProduction),
-                    TextUtil.FloorStat(resource.AccumulatedAverageProduction),
-                    resource.AccumulationDays.ToString(),
-                    totalPeriodDays.ToString());
-                TooltipHandler.TipRegion(totalProd, tooltip);
-            }
 
-            //Raw Income (total production as silver, before stockpile diversions and tithes)
-            Rect incomeRawBox = new Rect(totalProd.xMax + margin, rectY, colWidth, rowHeight);
-            Widgets.Label(incomeRawBox, (TextUtil.FloorStat(resource.grossMarketValue)));
+            //Per Day: effective silver per day (post-stockpile diversion)
+            Rect incomePerDayBox = new Rect(totalProd.xMax + margin, rectY, colWidth, rowHeight);
+            Widgets.Label(incomePerDayBox, TextUtil.FloorStat(resource.effectiveRawTotalProduction * FCSettings.silverPerResource));
 
-            //Net Income, after stockpile diversions and tithes
-            Rect incomeNetBox = new Rect(incomeRawBox.xMax + margin, rectY, colWidth, rowHeight);
+            //Total Accrued: accrued taxable silver this cycle
+            Rect incomeAccruedBox = new Rect(incomePerDayBox.xMax + margin, rectY, colWidth, rowHeight);
+            Widgets.Label(incomeAccruedBox, TextUtil.FloorStat(resource.AccruedTaxableValue));
+
+            //Net Income: live net (after stockpile and tithes)
+            Rect incomeNetBox = new Rect(incomeAccruedBox.xMax + margin, rectY, colWidth, rowHeight);
             Widgets.Label(incomeNetBox, (TextUtil.FloorStat(resource.actualIncome)));
 
             StringBuilder sb = new StringBuilder();
@@ -1962,19 +2004,10 @@ namespace FactionColonies
                 sb.AppendLine("FCNetIncomeBreakdownStockpile".Translate(TextUtil.FloorStat(resource.stockpileMarketValue)));
             if (resource.titheTotalValue > 0)
                 sb.AppendLine("FCNetIncomeBreakdownTithes".Translate(TextUtil.FloorStat(resource.titheTotalValue)));
-            double titheOffset = Math.Min(resource.titheTotalValue, resource.externalTitheBudget);
+            double titheOffset = Math.Min(resource.titheTotalValue, resource.DailyExternalTitheBudget);
             if (titheOffset > 0)
                 sb.AppendLine("FCNetIncomeBreakdownTitheInjection".Translate(TextUtil.FloorStat(titheOffset)));
-            sb.AppendLine("FCNetIncomeBreakdownNet".Translate(TextUtil.FloorStat(resource.actualIncome)));
-            if (resource.AccumulationDays > 0)
-            {
-                int totalPeriodDays = FCSettings.timeBetweenTaxes / GenDate.TicksPerDay;
-                sb.AppendLine("-----");
-                sb.Append("FCNetIncomeBreakdownAvg".Translate(
-                    TextUtil.FloorStat(resource.averageActualIncome),
-                    resource.AccumulationDays.ToString(),
-                    totalPeriodDays.ToString()));
-            }
+            sb.Append("FCNetIncomeBreakdownNet".Translate(TextUtil.FloorStat(resource.actualIncome)));
             TooltipHandler.TipRegion(incomeNetBox, sb.ToString());
         }
 

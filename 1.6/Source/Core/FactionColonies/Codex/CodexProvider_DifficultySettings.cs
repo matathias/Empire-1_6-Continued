@@ -17,20 +17,23 @@ namespace FactionColonies
             string result = "FCCodexDiffCurrent".Translate(current.ToString()) + "\n\n";
             result += "FCCodexDiffHeader".Translate() + "\n";
 
-            result += FormatRow(EmpireDifficultyLevel.Peaceful, 200, 2, 50, 75, current);
-            result += FormatRow(EmpireDifficultyLevel.CommunityBuilder, 150, 5, 25, 100, current);
-            result += FormatRow(EmpireDifficultyLevel.AdventureStory, 100, 5, 25, 100, current);
-            result += FormatRow(EmpireDifficultyLevel.StriveToSurvive, 100, 10, 20, 125, current);
-            result += FormatRow(EmpireDifficultyLevel.BloodAndDust, 80, 15, 15, 125, current);
-            result += FormatRow(EmpireDifficultyLevel.LosingIsFun, 70, 30, 10, 150, current);
+            result += FormatRow(EmpireDifficultyLevel.Peaceful,        FCSettings.DEFAULT_SILVER_PER_RESOURCE_PEACEFUL,        FCSettings.DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL,        FCSettings.DEFAULT_PRODUCTION_TITHE_MOD_PEACEFUL,        FCSettings.DEFAULT_WORKER_COST_PEACEFUL,        current);
+            result += FormatRow(EmpireDifficultyLevel.CommunityBuilder, FCSettings.DEFAULT_SILVER_PER_RESOURCE_COMMUNITYBUILDER, FCSettings.DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER, FCSettings.DEFAULT_PRODUCTION_TITHE_MOD_COMMUNITYBUILDER, FCSettings.DEFAULT_WORKER_COST_COMMUNITYBUILDER, current);
+            result += FormatRow(EmpireDifficultyLevel.AdventureStory,   FCSettings.DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY,   FCSettings.DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY,   FCSettings.DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY,   FCSettings.DEFAULT_WORKER_COST_ADVENTURESTORY,   current);
+            result += FormatRow(EmpireDifficultyLevel.StriveToSurvive,  FCSettings.DEFAULT_SILVER_PER_RESOURCE_STRIVETOSURVIVE,  FCSettings.DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE,  FCSettings.DEFAULT_PRODUCTION_TITHE_MOD_STRIVETOSURVIVE,  FCSettings.DEFAULT_WORKER_COST_STRIVETOSURVIVE,  current);
+            result += FormatRow(EmpireDifficultyLevel.BloodAndDust,     FCSettings.DEFAULT_SILVER_PER_RESOURCE_BLOODANDDUST,     FCSettings.DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST,     FCSettings.DEFAULT_PRODUCTION_TITHE_MOD_BLOODANDDUST,     FCSettings.DEFAULT_WORKER_COST_BLOODANDDUST,     current);
+            result += FormatRow(EmpireDifficultyLevel.LosingIsFun,      FCSettings.DEFAULT_SILVER_PER_RESOURCE_LOSINGISFUN,      FCSettings.DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN,      FCSettings.DEFAULT_PRODUCTION_TITHE_MOD_LOSINGISFUN,      FCSettings.DEFAULT_WORKER_COST_LOSINGISFUN,      current);
+
+            result += "\n" + "FCCodexDiffUpkeepMult".Translate(FCSettings.buildingUpkeepDifficultyMult.ToString("F2"));
 
             if (current == EmpireDifficultyLevel.Custom)
             {
                 result += "\n" + "FCCodexDiffCustomLabel".Translate() + "\n";
-                result += "FCCodexDiffCustomRow".Translate("Silver/Res", FCSettings.silverPerResource) + "\n";
+                result += "FCCodexDiffCustomRow".Translate("Silver/Res (per day)", FCSettings.silverPerResource) + "\n";
                 result += "FCCodexDiffCustomRow".Translate("Tax Days", FCSettings.timeBetweenTaxes / GenDate.TicksPerDay) + "\n";
                 result += "FCCodexDiffCustomRow".Translate("Tithe Mod", FCSettings.productionTitheMod) + "\n";
-                result += "FCCodexDiffCustomRow".Translate("Worker Cost", FCSettings.workerCost);
+                result += "FCCodexDiffCustomRow".Translate("Worker Cost (per day)", FCSettings.workerCost) + "\n";
+                result += "FCCodexDiffCustomRow".Translate("Upkeep Mult", FCSettings.buildingUpkeepDifficultyMult.ToString("F2"));
             }
 
             return result;

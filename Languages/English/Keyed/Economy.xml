@@ -235,6 +235,19 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCPeriodAverageTooltipNone>No snapshots have been taken yet this tax cycle. The headline value shows the current daily rate.\n\nOnce a day has passed, the headline will switch to the period-averaged value, which is what actually gets paid at tax time.</FCPeriodAverageTooltipNone>
 	<FCPeriodAverageTooltipFaction>This is the sum of every settlement's expected payout, minus edict upkeep. Each settlement snapshots its income and upkeep daily, with the silver paid at tax time being the average of those snapshots.</FCPeriodAverageTooltipFaction>
 
+	<!-- Projected / daily-accrual display -->
+	<FCSettlementProjectedProfit>Projected Profit</FCSettlementProjectedProfit>
+	<FCSettlementProjectedIncome>Projected Income</FCSettlementProjectedIncome>
+	<FCProductionPerDay>Per Day</FCProductionPerDay>
+	<FCTotalAccrued>Accrued</FCTotalAccrued>
+	<FCNetIncome>Net Income</FCNetIncome>
+	<FCBuildingDormant>Dormant: inputs unmet — this building is mothballed and contributes nothing until its inputs are supplied.</FCBuildingDormant>
+	<FCProjectedTooltip>Income and upkeep accrue into the treasury every day. The headline shows the projected full-cycle total: what has accrued so far this cycle plus the current daily rate times the days remaining until tax. At tax you collect the accumulated net, minus tithe goods.</FCProjectedTooltip>
+	<FCProjectedTooltipFaction>The sum of every settlement's projected full-cycle payout, minus edict upkeep. Each settlement accrues income and upkeep daily; at tax it pays the accumulated net.</FCProjectedTooltipFaction>
+	<FCAccruedThisCycle>accrued this cycle: {0} — next tax in {1} days</FCAccruedThisCycle>
+	<FCTitheWontThisCycle>(won't deliver this cycle)</FCTitheWontThisCycle>
+	<FCTitheSelectedVsProjected>Selected: {0} / Projected budget: {1}</FCTitheSelectedVsProjected>
+
 	<!-- Power Output -->
 	<FCSetAsEmpirePowerOutput>Set as {0} Power Output</FCSetAsEmpirePowerOutput>
 	<FCSetAsOutput>Set Power Output</FCSetAsOutput>

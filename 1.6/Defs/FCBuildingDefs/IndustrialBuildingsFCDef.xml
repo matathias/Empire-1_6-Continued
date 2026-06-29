@@ -10,7 +10,8 @@
 		<statModifiers>
 			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>150</upkeep>
+		<upkeep>30</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/ResearchLab</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -62,7 +63,8 @@
 			<li><stat>militaryBaseLevel</stat><value>1</value></li>
 			<li><stat>taxBasePercentage</stat><value>-10</value></li>
 		</statModifiers>
-		<upkeep>200</upkeep>
+		<upkeep>40</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/InHouseMercCompany</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -102,7 +104,8 @@
 		<statModifiers>
 			<li><stat>militaryBaseLevel</stat><value>1</value></li>
 		</statModifiers>
-		<upkeep>300</upkeep>
+		<upkeep>60</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/ArtilleryOutpost</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -121,7 +124,8 @@
 			<li><stat>unrestLostBase</stat><value>0.5</value></li>
 			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.25</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/JunkFood</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -139,7 +143,8 @@
 		<statModifiers>
 			<li><stat>RTD_Apparel_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>250</upkeep>
+		<upkeep>50</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/TextileFactory</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -158,7 +163,8 @@
 			<li><stat>happinessGainedBase</stat><value>0.3</value></li>
 			<li><stat>RTD_Animals_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>350</upkeep>
+		<upkeep>70</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/Zoo</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -179,6 +185,7 @@
 			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>1.05</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/TreeFarm</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -196,7 +203,8 @@
 		<statModifiers>
 			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>1.2</value></li>
 		</statModifiers>
-		<upkeep>550</upkeep>
+		<upkeep>110</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/IMED</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -213,7 +221,8 @@
 		<applicableBiomes> <!-- If the building requires it to be in a biome, put it here-->
 			<li>Scarlands</li>
 		</applicableBiomes>
-		<upkeep>200</upkeep> <!-- cost per week for the building -->
+		<upkeep>40</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/soilFixer</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -230,7 +239,8 @@
 			<li>AB_PyroclasticConflagration</li>
 			<li>LavaField</li>
 		</applicableBiomes>
-		<upkeep>100</upkeep> <!-- cost per week for the building -->
+		<upkeep>20</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/lavaPlant</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -247,7 +257,8 @@
 			<li>AB_PyroclasticConflagration</li>
 			<li>LavaField</li>
 		</applicableBiomes>
-		<upkeep>100</upkeep> <!-- cost per week for the building -->
+		<upkeep>20</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/lavaLab</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -261,7 +272,8 @@
 		<statModifiers>
 			<li><stat>RTD_Power_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>200</upkeep> <!-- cost per week for the building -->
+		<upkeep>40</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/BatteryElectricStation</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -276,6 +288,7 @@
 			<li><stat>RTD_Power_ProductionMultiplier</stat><value>1.25</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/SolarPlant</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -290,7 +303,8 @@
 			<li><stat>RTD_Power_ProductionMultiplier</stat><value>1.25</value></li>
 			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.25</value></li>
 		</statModifiers>
-		<upkeep>150</upkeep> <!-- cost per week for the building -->
+		<upkeep>30</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/CleanEnergyLab</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -305,7 +319,8 @@
 			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.25</value></li>
 			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.25</value></li>
 		</statModifiers>
-		<upkeep>100</upkeep> <!-- cost per week for the building -->
+		<upkeep>20</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/AnimalTestingFacility</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -319,7 +334,8 @@
 			<li><stat>workerBaseMax</stat><value>10</value></li>
 			<li><stat>workerBaseOverMax</stat><value>5</value></li>
 		</statModifiers>
-		<upkeep>500</upkeep> <!-- cost per week for the building -->
+		<upkeep>100</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/ApartmentHousing</iconPath>
 	</FactionColonies.BuildingFCDef>
 

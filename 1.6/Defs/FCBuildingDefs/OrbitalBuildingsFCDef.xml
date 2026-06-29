@@ -16,7 +16,8 @@
 			<li><stat>RTD_Power_ProductionAdditive</stat><value>0.5</value></li>
 			<li><stat>RTD_Chemfuel_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/OrbitalFuelDepot</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -30,7 +31,8 @@
 		<statModifiers>
 			<li><stat>RTD_Mining_ProductionAdditive</stat><value>0.8</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/asteroidMining</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -44,7 +46,8 @@
 		<statModifiers>
 			<li><stat>RTD_Power_ProductionAdditive</stat><value>2</value></li>
 		</statModifiers>
-		<upkeep>650</upkeep>
+		<upkeep>130</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalSolarArray</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -62,7 +65,8 @@
 		<statModifiers>
 			<li><stat>RTD_Food_ProductionAdditive</stat><value>1</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalHydroponics</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -76,7 +80,8 @@
 		<statModifiers>
 			<li><stat>RTD_Logging_ProductionAdditive</stat><value>1</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalTreeFarm</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -91,7 +96,8 @@
 			<li><stat>RTD_Weapons_ProductionAdditive</stat><value>1</value></li>
 			<li><stat>RTD_Apparel_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>500</upkeep>
+		<upkeep>100</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/fabricationModules</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -106,7 +112,8 @@
 			<li><stat>RTD_Research_ProductionAdditive</stat><value>1</value></li>
 			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>500</upkeep>
+		<upkeep>100</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalLaboratory</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -121,7 +128,8 @@
 			<li><stat>workerBaseMax</stat><value>10</value></li>
 			<li><stat>workerBaseOverMax</stat><value>5</value></li>
 		</statModifiers>
-		<upkeep>300</upkeep>
+		<upkeep>60</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/workforceQuarters</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -137,7 +145,8 @@
 			<li><stat>workerBaseOverMax</stat><value>3</value></li>
 			<li><stat>happinessGainedBase</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>500</upkeep>
+		<upkeep>100</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/habitatRings</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -153,7 +162,8 @@
 			<li><stat>militaryBaseLevel</stat><value>2</value></li>
 			<li><stat>militaryEfficiencyBonusDefending</stat><value>1.15</value></li>
 		</statModifiers>
-		<upkeep>600</upkeep>
+		<upkeep>120</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalDefenseArray</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -169,7 +179,8 @@
 			<li><stat>militaryBaseLevel</stat><value>1</value></li>
 			<li><stat>militaryEfficiencyBonusDefending</stat><value>1.05</value></li>
 		</statModifiers>
-		<upkeep>300</upkeep>
+		<upkeep>60</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/pointDefense</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -184,7 +195,8 @@
 			<li><stat>loyaltyGainedBase</stat><value>0.5</value></li>
 			<li><stat>unrestLostBase</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalComms</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -199,7 +211,8 @@
 			<li><stat>happinessGainedBase</stat><value>1</value></li>
 			<li><stat>loyaltyGainedBase</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>600</upkeep>
+		<upkeep>120</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalLuxury</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -218,7 +231,8 @@
 			<li><stat>taxBasePercentage</stat><value>15</value></li>
 			<li><stat>titheValueMultiplier</stat><value>1.2</value></li>
 		</statModifiers>
-		<upkeep>600</upkeep>
+		<upkeep>120</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/tradeHub</iconPath>
 		<settlementTypeAllowList Inherit="False">
 			<li>WorldSettlementDef_Orbital_Logistics</li>
@@ -236,7 +250,8 @@
 			<li><stat>RTD_Chemfuel_ProductionAdditive</stat><value>1</value></li>
 			<li><stat>taxBasePercentage</stat><value>5</value></li>
 		</statModifiers>
-		<upkeep>400</upkeep>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/spaceDistillery</iconPath>
 		<settlementTypeAllowList Inherit="False">
 			<li>WorldSettlementDef_Orbital_Logistics</li>
@@ -258,7 +273,8 @@
 			<li><stat>buildTimeMultiplier</stat><value>0.75</value></li>
 			<li><stat>RTD_Chemfuel_ProductionAdditive</stat><value>1</value></li>
 		</statModifiers>
-		<upkeep>600</upkeep>
+		<upkeep>120</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalShipyard</iconPath>
 		<settlementTypeAllowList Inherit="False">
 			<li>WorldSettlementDef_Orbital_Advanced</li>
@@ -276,7 +292,8 @@
 			<li><stat>RTD_Animals_ProductionAdditive</stat><value>1.5</value></li>
 			<li><stat>RTD_Mining_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
-		<upkeep>500</upkeep>
+		<upkeep>100</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalSurfaceClearing</iconPath>
 		<settlementTypeAllowList Inherit="False">
 			<li>WorldSettlementDef_Orbital_Advanced</li>
@@ -298,7 +315,8 @@
 			<li><stat>RTD_Research_ProductionAdditive</stat><value>1.5</value></li>
 			<li><stat>researchContributionMultiplier</stat><value>1.2</value></li>
 		</statModifiers>
-		<upkeep>700</upkeep>
+		<upkeep>140</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/orbitalAcademy</iconPath>
 		<settlementTypeAllowList Inherit="False">
 			<li>WorldSettlementDef_Orbital_Glitter</li>
@@ -318,7 +336,8 @@
 			<li><stat>militaryCombatEfficiency</stat><value>1.15</value></li>
 			<li><stat>militaryCooldownOffset</stat><value>-5000</value></li>
 		</statModifiers>
-		<upkeep>800</upkeep>
+		<upkeep>160</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Orbital/navalAcademy</iconPath>
 		<settlementTypeAllowList Inherit="False">
 			<li>WorldSettlementDef_Orbital_Glitter</li>

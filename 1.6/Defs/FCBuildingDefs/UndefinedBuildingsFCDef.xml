@@ -10,7 +10,8 @@
 		<statModifiers>
 			<li><stat>militaryBaseLevel</stat><value>1</value></li>
 		</statModifiers>
-		<upkeep>150</upkeep>
+		<upkeep>30</upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Barracks</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -126,6 +127,7 @@
 			<li><stat>RTD_Food_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/Farmland</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -145,6 +147,7 @@
 			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>0.85</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/AmmoMines</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -164,6 +167,7 @@
 			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>0.85</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/Tanning</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -184,6 +188,7 @@
 			<li><stat>RTD_Medicine_ProductionMultiplier</stat><value>0.95</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/DrugDen</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -203,6 +208,7 @@
 			<li><stat>RTD_Power_ProductionAdditive</stat><value>0.25</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/HamsterWheel</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -225,6 +231,7 @@
 			<li>TemperateGuldenForest</li>
 		</applicableBiomes>
 		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/DeforestationCamp</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -238,6 +245,7 @@
 			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.25</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/HerbalMedicineFarm</iconPath>
 	</FactionColonies.BuildingFCDef>
 

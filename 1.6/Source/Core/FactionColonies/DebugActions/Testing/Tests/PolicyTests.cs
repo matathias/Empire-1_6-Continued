@@ -438,26 +438,26 @@ namespace FactionColonies
 
                 var settlement = faction.settlements.First();
 
-                // The Militaristic discount is now the buildingUpkeepBase_Military stat (-50), applied
+                // The Militaristic discount is the buildingUpkeepBase_Military stat (-10 post-rework), applied
                 // via the live GetBuildingUpkeep path. Military classification is the explicit isMilitary flag.
                 BuildingFCDef milBuilding = DefDatabase<BuildingFCDef>.AllDefsListForReading
-                    .FirstOrDefault(b => b.isMilitary && b.upkeep > 0);
+                    .FirstOrDefault(b => b.isMilitary && b.Upkeep > 0);
 
                 if (milBuilding == null)
                     TestAssert.Skip("No military buildings with upkeep found");
 
-                TestAssert.AreEqual(Math.Max(milBuilding.upkeep - 50, 0),
+                TestAssert.AreEqual(Math.Max(milBuilding.Upkeep - 10, 0.0),
                     settlement.BuildingsComp.GetBuildingUpkeep(milBuilding), 0.001,
-                    $"Military building '{milBuilding.defName}' upkeep should be discounted by 50 (base {milBuilding.upkeep})");
+                    $"Military building '{milBuilding.defName}' upkeep should be discounted by 10 (base {milBuilding.Upkeep})");
 
                 // Non-military (unflagged) building should not be discounted
                 BuildingFCDef civBuilding = DefDatabase<BuildingFCDef>.AllDefsListForReading
-                    .FirstOrDefault(b => !b.isMilitary && b.upkeep > 0
+                    .FirstOrDefault(b => !b.isMilitary && b.Upkeep > 0
                         && b != BuildingFCDefOf.Empty && b != BuildingFCDefOf.Construction);
 
                 if (civBuilding != null)
                 {
-                    TestAssert.AreEqual(civBuilding.upkeep,
+                    TestAssert.AreEqual(civBuilding.Upkeep,
                         settlement.BuildingsComp.GetBuildingUpkeep(civBuilding), 0.001,
                         $"Civilian building '{civBuilding.defName}' upkeep should not be discounted");
                 }

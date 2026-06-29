@@ -33,7 +33,7 @@
 			<li><stat>militaryCombatEfficiency</stat><value>1.1</value></li>
 			<li><stat>mercenaryDeathHappinessPenalty</stat><value>-0.5</value></li>
 			<li><stat>happinessLostBase</stat><value>0.5</value></li>
-			<li><stat>buildingUpkeepBase_Military</stat><value>-50</value></li>
+			<li><stat>buildingUpkeepBase_Military</stat><value>-10</value></li>
 		</statModifiers>
 		<enabledActions>
 			<li>DeployExtraSquad</li>

@@ -11,27 +11,27 @@ namespace FactionColonies
     public interface IProfitContributor
     {
         /// <summary>
-        /// Returns the total upkeep cost (in silver) to add to the settlement's upkeep per tax period.
+        /// Returns the total upkeep cost (in silver) to add to the settlement's upkeep per day.
         /// Return 0 for no effect.
         /// </summary>
-        double GetUpkeepContribution();
+        double GetDailyUpkeepContribution();
 
         /// <summary>
         /// Returns a formatted description line for the upkeep tooltip breakdown.
         /// Return null or empty to add no tooltip line.
         /// </summary>
-        string GetUpkeepContributionDesc();
+        string GetDailyUpkeepContributionDesc();
 
         /// <summary>
-        /// Returns additional silver income to add to the settlement's income per tax period.
+        /// Returns additional silver income to add to the settlement's income per day.
         /// Return 0 for no effect.
         /// </summary>
-        double GetIncomeContribution();
+        double GetDailyIncomeContribution();
 
         /// <summary>
         /// Returns a formatted description line for the income tooltip breakdown.
         /// Return null or empty to add no tooltip line.
         /// </summary>
-        string GetIncomeContributionDesc();
+        string GetDailyIncomeContributionDesc();
     }
 }

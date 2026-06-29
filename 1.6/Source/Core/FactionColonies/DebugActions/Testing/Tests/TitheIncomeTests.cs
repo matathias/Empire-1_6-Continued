@@ -76,11 +76,11 @@ namespace FactionColonies
                 resource.SetDirtyCache();
 
                 double multForTotal = FindFC.FactionComp.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
-                double expected = resource.taxableProductionMarketValue * multForTotal + resource.externalTitheBudget;
+                double expected = resource.taxableProductionMarketValue * multForTotal + resource.DailyExternalTitheBudget;
                 double actual = resource.GetTitheIncome();
 
                 TestAssert.AreEqual(expected, actual,
-                    message: "With 0 workers, tithe income should equal taxableProductionMarketValue * titheValueMultiplier + externalTitheBudget");
+                    message: "With 0 workers, tithe income should equal taxableProductionMarketValue * titheValueMultiplier + DailyExternalTitheBudget");
             }
             finally
             {
@@ -101,11 +101,11 @@ namespace FactionColonies
             // Manually compute using the same formula that GetTitheIncome should use
             double workerMod = resource.GetTitheModifierPerWorker() * resource.assignedWorkers;
             double multForTotal = FindFC.FactionComp.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
-            double expected = (resource.taxableProductionMarketValue + workerMod) * multForTotal + resource.externalTitheBudget;
+            double expected = (resource.taxableProductionMarketValue + workerMod) * multForTotal + resource.DailyExternalTitheBudget;
             double actual = resource.GetTitheIncome();
 
             TestAssert.AreEqual(expected, actual,
-                message: "GetTitheIncome should equal (taxableMarketValue + workerMod) * titheValueMultiplier + externalTitheBudget");
+                message: "GetTitheIncome should equal (taxableMarketValue + workerMod) * titheValueMultiplier + DailyExternalTitheBudget");
         }
 
         [EmpireTest("TitheIncome")]
@@ -169,7 +169,7 @@ namespace FactionColonies
             double mult = resource.GetTitheValueMultiplier();
             double prodComponent = resource.taxableProductionMarketValue * mult;
             double workerComponent = resource.GetTotalTitheModifierForWorkers() * mult;
-            double expected = prodComponent + workerComponent + resource.externalTitheBudget;
+            double expected = prodComponent + workerComponent + resource.DailyExternalTitheBudget;
             double actual = resource.GetTitheIncome();
 
             TestAssert.AreEqual(expected, actual,
@@ -193,6 +193,37 @@ namespace FactionColonies
                     TestAssert.IsFalse(double.IsNaN(tithe),
                         $"{settlement.Name}/{resource.def?.defName}: tithe income should not be NaN");
                 }
+            }
+        }
+
+        [EmpireTest("TitheIncome")]
+        public static void TitheList_AddAndReorder_PreservesOrder()
+        {
+            var settlement = GetFirstSettlement();
+            if (settlement == null) TestAssert.Skip("No settlement");
+            ResourceFC resource = GetFirstNonPoolResource(settlement);
+            if (resource == null) TestAssert.Skip("No non-pool resource");
+
+            int before = resource.Tithes.Count;
+            var a = new ThingQualityTuple { thingDef = RimWorld.ThingDefOf.MealSimple };
+            var b = new ThingQualityTuple { thingDef = RimWorld.ThingDefOf.Silver };
+            try
+            {
+                resource.AddToTitheList(a, 1);
+                resource.AddToTitheList(b, 1);
+                int idxA = System.Array.FindIndex(System.Linq.Enumerable.ToArray(resource.Tithes), e => e.thing == a);
+                int idxB = System.Array.FindIndex(System.Linq.Enumerable.ToArray(resource.Tithes), e => e.thing == b);
+                TestAssert.IsTrue(idxA < idxB, "first-added entry should be higher priority (lower index)");
+
+                resource.MoveTitheEntry(idxB, idxA); // move b above a
+                int newIdxB = System.Array.FindIndex(System.Linq.Enumerable.ToArray(resource.Tithes), e => e.thing == b);
+                TestAssert.AreEqual(idxA, newIdxB, message: "reorder should move b to a's index");
+            }
+            finally
+            {
+                resource.RemoveFromTitheList(a);
+                resource.RemoveFromTitheList(b);
+                TestAssert.AreEqual(before, resource.Tithes.Count, message: "cleanup should restore the list");
             }
         }
     }

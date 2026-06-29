@@ -9,6 +9,7 @@
 		<techLevel>Undefined</techLevel>
 		<constructionDuration>0</constructionDuration> <!-- Ticks it takes until construction is finished -->
 		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Empty</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -20,6 +21,7 @@
 		<techLevel>Undefined</techLevel>
 		<constructionDuration>0</constructionDuration>
 		<upkeep></upkeep>
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Construction</iconPath>
 	</FactionColonies.BuildingFCDef>
 
