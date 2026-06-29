@@ -727,4 +727,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_46</defName>
+		<label>Caravan Defense Bugfix</label>
+		<description>Fixes a few issues with starting or joining manual battles from the map.</description>
+		<releaseDate>2026-06-29</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: it is possible to &quot;defend&quot; a settlement that is already in an active battle, causing errors and preventing caravans from joining in-progress battles</li>
+		<li>Bugfix: the &quot;defend&quot; gizmo appears even once the battle is already underway; clicking it at that point spawns a new wave to the battle, which is incorrect behavior</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
