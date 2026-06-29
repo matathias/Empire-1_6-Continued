@@ -497,9 +497,14 @@ namespace FactionColonies
             return Array.Empty<MilitaryOperation>();
         }
 
-        public bool HasDefenseAt(WorldSettlementFC settlement)
+        public bool HasDefenseAt(WorldSettlementFC settlement) => GetDefensiveOpAt(settlement) is object;
+
+        /// <summary>Returns the live defensive op targeting <paramref name="settlement"/>, or null.
+        /// This is the source of truth for "under attack" — the warning event may already be gone
+        /// (StartDefense strips it once the battle begins), but the op lives on through Engaged.</summary>
+        public MilitaryOperation GetDefensiveOpAt(WorldSettlementFC settlement)
         {
-            if (settlement is null) return false;
+            if (settlement is null) return null;
             // "Under attack" is target-based, not defender-based: when a foreign auto-defender
             // is selected, op.defender.homeSettlement points at the foreign billet (the squad's
             // home), not the settlement actually being attacked. Look up by target tile and
@@ -513,9 +518,9 @@ namespace FactionColonies
                 if (op.targetObject != settlement) continue;
                 if (op.phase == MilitaryOperationPhase.CooldownPending) continue;
                 if (op.phase == MilitaryOperationPhase.Resolved) continue;
-                return true;
+                return op;
             }
-            return false;
+            return null;
         }
 
         public bool HasOffensiveOpFrom(WorldSettlementFC settlement)

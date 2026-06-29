@@ -237,6 +237,20 @@ namespace FactionColonies
         /// <summary>True when this settlement is the target of any active defensive op.</summary>
         public bool isUnderAttack => FindFC.MilitaryManager?.HasDefenseAt(WorldSettlement) ?? false;
 
+        /// <summary>True while a defensive op targets this settlement but its battle has NOT yet
+        /// begun (24h warning window still open). Once the op engages, the manual Defend entry
+        /// points hide so re-firing StartDefence can't spawn a duplicate attacker wave. An
+        /// in-flight caravan that arrives post-engagement joins via CaravanDefend instead (see
+        /// StartDefence).</summary>
+        public bool canStartDefense
+        {
+            get
+            {
+                MilitaryOperation op = FindFC.MilitaryManager?.GetDefensiveOpAt(WorldSettlement);
+                return op is object && op.phase != MilitaryOperationPhase.Engaged;
+            }
+        }
+
         /// <summary>Aggressor's force in the active defensive battle on this tile, or null.</summary>
         public MilitaryForce attackerForce => FindIncomingDefensiveOp()?.aggressor?.force;
 
@@ -356,7 +370,7 @@ namespace FactionColonies
             {
                 yield return gizmo;
             }
-            if (isUnderAttack)
+            if (canStartDefense)
             {
                 yield return DefendColonyAction();
             }
@@ -548,11 +562,29 @@ namespace FactionColonies
                 FindFC.FactionComp?.RemoveEvent(evt);
                 return;
             }
-            MilitaryOperation op = evt.linkedOperation;
+
+            // The op — not the warning event — is the source of truth. StartDefense strips the
+            // warning event from the queue the instant a battle begins, so by the time the player
+            // clicks Defend (or a caravan arrives) the op can be live with no event in the queue,
+            // making evt null. Resolve via the manager by tile in that case; only when no live op
+            // exists is this a genuine orphaned isUnderAttack flag worth clearing.
+            MilitaryOperation op = evt?.linkedOperation ?? manager.GetDefensiveOpAt(WorldSettlement);
             if (op is null)
             {
-                LogUtil.Error($"StartDefence: warning event for {WorldSettlement?.Name} has no linked op.");
+                LogUtil.Warning($"StartDefence: no live defensive op for {WorldSettlement?.Name}; clearing stuck attack state.");
                 FindFC.FactionComp?.RemoveEvent(evt);
+                ClearAttackState();
+                return;
+            }
+
+            // Battle already underway (op engaged, or past it): re-running StartDefense would spawn
+            // a duplicate attacker wave via its "add to existing battle" path. Run the caller's
+            // follow-up (e.g. an arriving caravan's reinforcement join) and bail instead of
+            // restarting.
+            if (op.phase != MilitaryOperationPhase.Scheduled
+                && op.phase != MilitaryOperationPhase.Traveling)
+            {
+                after?.Invoke();
                 return;
             }
 
@@ -560,11 +592,7 @@ namespace FactionColonies
             // timer. Without this, the op stays in Scheduled phase and CompleteBattle silently
             // bails at battle end, with no result letter. OnEventFired's auto-trigger path runs the
             // same transition before calling StartDefense.
-            if (op.phase == MilitaryOperationPhase.Scheduled
-                || op.phase == MilitaryOperationPhase.Traveling)
-            {
-                op.BeginEngagement();
-            }
+            op.BeginEngagement();
 
             BattlefieldContext bf = manager.GetOrCreateBattlefield(WorldSettlement.Tile);
             bf.StartDefense(op, after);
