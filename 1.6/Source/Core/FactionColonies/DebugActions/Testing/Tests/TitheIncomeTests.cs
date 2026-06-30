@@ -209,8 +209,8 @@ namespace FactionColonies
             var b = new ThingQualityTuple { thingDef = RimWorld.ThingDefOf.Silver };
             try
             {
-                resource.AddToTitheList(a, 1);
-                resource.AddToTitheList(b, 1);
+                resource.AddTitheEntry(a, 1);
+                resource.AddTitheEntry(b, 1);
                 int idxA = System.Array.FindIndex(System.Linq.Enumerable.ToArray(resource.Tithes), e => e.thing == a);
                 int idxB = System.Array.FindIndex(System.Linq.Enumerable.ToArray(resource.Tithes), e => e.thing == b);
                 TestAssert.IsTrue(idxA < idxB, "first-added entry should be higher priority (lower index)");
@@ -221,8 +221,40 @@ namespace FactionColonies
             }
             finally
             {
-                resource.RemoveFromTitheList(a);
-                resource.RemoveFromTitheList(b);
+                resource.RemoveTitheAt(before); // remove the two appended entries (regardless of order)
+                resource.RemoveTitheAt(before);
+                TestAssert.AreEqual(before, resource.Tithes.Count, message: "cleanup should restore the list");
+            }
+        }
+
+        [EmpireTest("TitheIncome")]
+        public static void TitheList_AllowsDuplicateEntries()
+        {
+            var settlement = GetFirstSettlement();
+            if (settlement == null) TestAssert.Skip("No settlement");
+            ResourceFC resource = GetFirstNonPoolResource(settlement);
+            if (resource == null) TestAssert.Skip("No non-pool resource");
+
+            int before = resource.Tithes.Count;
+            var a = new ThingQualityTuple { thingDef = RimWorld.ThingDefOf.MealSimple };
+            try
+            {
+                // The same thing may appear multiple times; each AddTitheEntry appends an independent entry.
+                resource.AddTitheEntry(a, 2);
+                resource.AddTitheEntry(a, 100);
+                TestAssert.AreEqual(before + 2, resource.Tithes.Count, message: "both duplicate entries should persist");
+                TestAssert.AreEqual(2, resource.Tithes[before].quantity, message: "first duplicate keeps its quantity");
+                TestAssert.AreEqual(100, resource.Tithes[before + 1].quantity, message: "second duplicate keeps its quantity");
+
+                // Editing one duplicate by index must not touch the other.
+                resource.SetTitheQuantityAt(before, 5);
+                TestAssert.AreEqual(5, resource.Tithes[before].quantity, message: "first duplicate updated");
+                TestAssert.AreEqual(100, resource.Tithes[before + 1].quantity, message: "second duplicate unchanged");
+            }
+            finally
+            {
+                resource.RemoveTitheAt(before);
+                resource.RemoveTitheAt(before);
                 TestAssert.AreEqual(before, resource.Tithes.Count, message: "cleanup should restore the list");
             }
         }

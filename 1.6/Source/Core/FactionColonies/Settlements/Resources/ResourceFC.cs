@@ -52,7 +52,6 @@ namespace FactionColonies
          * cached values appropriately. */
         private List<TitheEntry> tithes = new List<TitheEntry>();
         public IReadOnlyList<TitheEntry> Tithes => tithes;
-        private TitheEntry FindTitheEntry(ThingQualityTuple thing) => tithes.Find(e => e.thing == thing);
         private bool dirtyTitheCache = true;
         private double cachedTitheTotalValue = 0;
         /// <summary>
@@ -478,11 +477,11 @@ namespace FactionColonies
             foreach (var kv in new List<KeyValuePair<string, StockpileEntry>>(stockpileAllocations)) // snapshot: realize may mutate
             {
                 double requested = kv.Value.amount;
-                double actual = System.Math.Min(requested, System.Math.Max(0, remaining));
+                double actual = Math.Min(requested, Math.Max(0, remaining));
                 remaining -= actual;
                 kv.Value.realize?.Invoke(requested, actual);
             }
-            double dayEffective = System.Math.Max(0, remaining);
+            double dayEffective = Math.Max(0, remaining);
             accruedEffectiveProduction += dayEffective;
 
             // Per-day tithe budget accrual (only for tithe-eligible resources).
@@ -870,90 +869,59 @@ namespace FactionColonies
          *   Tithe functions                                                                                                                                             *
          * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - */
         /// <summary>
-        /// Adds a given quantity of thing to the tithes list.
+        /// Appends a new entry to the tithes list at lowest priority. The same thing may appear
+        /// multiple times — entries are identified by position, not by their ThingQualityTuple.
         /// <para>This function does not check if the given <paramref name="quantity"/> of <paramref name="thing"/> can actually be afforded.</para>
         /// <para>This function dirties the tithe cache, forcing a recalculation of the total tithe value.</para>
         /// </summary>
         /// <param name="thing">A ThingQualityTuple specifying the ThingDef, QualityCategory, and StuffDef of the thing to add.</param>
-        /// <param name="quantity">The quantity to add to the tithes list. Should always be a non-zero positive value.</param>
-        /// <returns>TRUE if the thing was successfully added to the tithes dictionary, FALSE otherwise.</returns>
-        public bool AddToTitheList(ThingQualityTuple thing, int quantity, bool forceToQuantity = false)
+        /// <param name="quantity">The quantity for the new entry. Should always be a non-negative value.</param>
+        /// <returns>TRUE if the entry was successfully appended, FALSE otherwise.</returns>
+        public bool AddTitheEntry(ThingQualityTuple thing, int quantity)
         {
             if (quantity < 0)
             {
-                LogUtil.Error($"Tried to add a negative quantity to the tithes list for resource {def.LabelCap}. Use DecrementInTitheList() instead.");
+                LogUtil.Error($"Tried to add a negative quantity to the tithes list for resource {def.LabelCap}.");
                 return false;
             }
-            TitheEntry existing = FindTitheEntry(thing);
-            if (existing is object)
-                existing.quantity = forceToQuantity ? quantity : existing.quantity + quantity;
-            else
-                tithes.Add(new TitheEntry(thing, quantity)); // appended at lowest priority
+            tithes.Add(new TitheEntry(thing, quantity)); // appended at lowest priority
             dirtyTitheCache = true;
             settlement.DirtyProfitCache();
             return true;
         }
         /// <summary>
-        /// Removes a given <paramref name="quantity"/> of <paramref name="thing"/> from the tithes list.
+        /// Sets the quantity of the tithe entry at <paramref name="index"/> (clamped to non-negative).
         /// <para>This function dirties the tithe cache, forcing a recalculation of the total tithe value.</para>
-        /// <para>This function does not remove <paramref name="thing"/> from the tithes list if its quantity reaches 0. For that, use RemoveFromTitheList().</para>
         /// </summary>
-        /// <param name="thing">A ThingQualityTuple specifying the ThingDef, QualityCategory, and StuffDef of the thing to decrement.</param>
-        /// <param name="quantity">The quantity to remove from the tithes list. Should always be a non-zero positive value.</param>
-        public void DecrementInTitheList(ThingQualityTuple thing, int quantity)
+        public void SetTitheQuantityAt(int index, int quantity)
         {
-            if (quantity <= 0)
-            {
-                LogUtil.Warning($"DecrementInTitheList called with non-positive quantity for resource {def.LabelCap}");
-                return;
-            }
-            TitheEntry e = FindTitheEntry(thing);
-            if (e is null)
-            {
-                LogUtil.Warning($"Tried to decrement {thing.thingDef.LabelCap} in tithes for {def.LabelCap}, but it doesn't exist");
-                return;
-            }
-            e.quantity = System.Math.Max(0, e.quantity - quantity);
+            if (index < 0 || index >= tithes.Count) return;
+            tithes[index].quantity = Math.Max(0, quantity);
             dirtyTitheCache = true;
             settlement.DirtyProfitCache();
         }
         /// <summary>
-        /// Fully removes the given <paramref name="thing"/> from the tithes list.
+        /// Replaces the ThingQualityTuple of the tithe entry at <paramref name="index"/> in place,
+        /// preserving the entry's quantity and priority. Used by the quality/stuff edit buttons.
         /// <para>This function dirties the tithe cache, forcing a recalculation of the total tithe value.</para>
-        /// <para>We should only fully remove an item from the tithes list if the player commands it so. Use DecrementInTitheList() otherwise, so that things with a quantity of 0 remain in the tithes list.</para>
         /// </summary>
-        /// <param name="thing">A ThingQualityTuple specifying the ThingDef, QualityCategory, and StuffDef of the thing to remove.</param>
-        public void RemoveFromTitheList(ThingQualityTuple thing)
+        public void SetTitheThingAt(int index, ThingQualityTuple newThing)
         {
-            int idx = tithes.FindIndex(e => e.thing == thing);
-            if (idx >= 0)
-            {
-                tithes.RemoveAt(idx);
-                dirtyTitheCache = true;
-                settlement.DirtyProfitCache();
-            }
+            if (index < 0 || index >= tithes.Count) return;
+            tithes[index].thing = newThing;
+            dirtyTitheCache = true;
+            settlement.DirtyProfitCache();
         }
-        public ThingQualityTuple GetTitheListKey(ThingQualityTuple thing)
+        /// <summary>
+        /// Removes the tithe entry at <paramref name="index"/>.
+        /// <para>This function dirties the tithe cache, forcing a recalculation of the total tithe value.</para>
+        /// </summary>
+        public void RemoveTitheAt(int index)
         {
-            TitheEntry e = FindTitheEntry(thing);
-            return e is object ? e.thing : null;
-        }
-        public bool HasTitheListKey(ThingQualityTuple thing)
-        {
-            return FindTitheEntry(thing) is object;
-        }
-        public int GetTitheListValue(ThingQualityTuple thing)
-        {
-            TitheEntry e = FindTitheEntry(thing);
-            return e is object ? e.quantity : 0;
-        }
-        public List<ThingQualityTuple> GetTitheListKeys()
-        {
-            return tithes.Select(e => e.thing).ToList();
-        }
-        public List<int> GetTitheListValues()
-        {
-            return tithes.Select(e => e.quantity).ToList();
+            if (index < 0 || index >= tithes.Count) return;
+            tithes.RemoveAt(index);
+            dirtyTitheCache = true;
+            settlement.DirtyProfitCache();
         }
         public int GetTitheListCount()
         {

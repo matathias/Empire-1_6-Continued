@@ -216,12 +216,6 @@ namespace FactionColonies
                     quality = thingHasQuality ? SelectedQuality : QualityCategory.Normal,
                     stuffDef = thingIsStuffable ? selectedStuff : null
                 };
-                if (canConfirm && resource.HasTitheListKey(tuple))
-                {
-                    canConfirm = false;
-                    confirmTooltip = "FCItemAlreadyInTitheList".Translate();
-                }
-
                 if (!canConfirm)
                 {
                     GUI.color = Color.gray;
@@ -230,14 +224,10 @@ namespace FactionColonies
                 {
                     if (canConfirm)
                     {
-                        if (resource.CanAffordThingAmount(tuple, 1))
-                        {
-                            resource.AddToTitheList(tuple, 1);
-                        }
-                        else
-                        {
-                            resource.AddToTitheList(tuple, 0);
-                        }
+                        // The same thing may appear multiple times in the priority list, so always
+                        // append a fresh entry at lowest priority. No affordability gate — over-budget
+                        // entries are allowed and persist across cycles.
+                        resource.AddTitheEntry(tuple, 1);
                         selectedThing = null;
                         selectedStuff = null;
                         selectedQuality = null;

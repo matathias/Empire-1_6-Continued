@@ -241,8 +241,8 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCProductionPerDay>Per Day</FCProductionPerDay>
 	<FCTotalAccrued>Accrued</FCTotalAccrued>
 	<FCNetIncome>Net Income</FCNetIncome>
-	<FCBuildingDormant>Dormant: inputs unmet — this building is mothballed and contributes nothing until its inputs are supplied.</FCBuildingDormant>
-	<FCProjectedTooltip>Income and upkeep accrue into the treasury every day. The headline shows the projected full-cycle total: what has accrued so far this cycle plus the current daily rate times the days remaining until tax. At tax you collect the accumulated net, minus tithe goods.</FCProjectedTooltip>
+	<FCBuildingDormant>Dormant: inputs unmet. This building is mothballed and contributes nothing until its inputs are supplied.</FCBuildingDormant>
+	<FCProjectedTooltip>Income and upkeep accrue daily. The headline shows the projected full-cycle total: what has accrued so far this cycle plus the current daily rate times the days remaining until tax. At tax you collect the accumulated net, minus tithe goods.</FCProjectedTooltip>
 	<FCProjectedTooltipFaction>The sum of every settlement's projected full-cycle payout, minus edict upkeep. Each settlement accrues income and upkeep daily; at tax it pays the accumulated net.</FCProjectedTooltipFaction>
 	<FCAccruedThisCycle>accrued this cycle: {0} — next tax in {1} days</FCAccruedThisCycle>
 	<FCTitheWontThisCycle>(won't deliver this cycle)</FCTitheWontThisCycle>

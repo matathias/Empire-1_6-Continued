@@ -31,7 +31,7 @@ namespace FactionColonies
     {
         public override Vector2 InitialSize
         {
-            get { return new Vector2(1250f, 645f); }
+            get { return new Vector2(1300f, 645f); }
         }
 
 
@@ -156,7 +156,7 @@ namespace FactionColonies
             float validHeight = InitialSize.y - (Margin * 2);
 
             float leftWidth = 150f;
-            float rightWidth = 415f;
+            float rightWidth = 465f;
             float centerWidth = validWidth - leftWidth - rightWidth - (margin * 2);
 
             Rect headerBox = new Rect(inRect.x, inRect.y, leftWidth + centerWidth + margin, 30 + (margin * 2) + 60);
@@ -553,10 +553,9 @@ namespace FactionColonies
             titheBuffers.Clear();
             if (res != null)
             {
-                List<ThingQualityTuple> items = res.GetTitheListKeys();
-                for (int i = 0; i < items.Count; i++)
+                foreach (TitheEntry e in res.Tithes)
                 {
-                    titheBuffers.Add(res.GetTitheListValue(items[i]).ToString());
+                    titheBuffers.Add(e.quantity.ToString());
                 }
                 res.storedRandomTitheBudgetBuffer = res.storedRandomTitheBudget.ToString();
             }
@@ -652,7 +651,7 @@ namespace FactionColonies
                 Widgets.InfoCardButton(info, iThing);
                 if (Widgets.ButtonText(xBox, "X"))
                 {
-                    res.RemoveFromTitheList(thingTuple);
+                    res.RemoveTitheAt(i);
                     break;
                 }
                 TooltipHandler.TipRegion(xBox, "FCTitheXDesc".Translate());
@@ -670,28 +669,20 @@ namespace FactionColonies
                     List<QualityCategory> categoryList = res.GetValidTitheQualities(maxQuality);
                     if (Widgets.ButtonText(qualityBox, TextUtil.GetQualityLabelCap(iQuality)))
                     {
+                        int index = i; // capture for the deferred FloatMenu delegate (loop var would be stale)
                         List<FloatMenuOption> options = new List<FloatMenuOption>();
                         foreach (QualityCategory cat in categoryList)
                         {
                             options.Add(new FloatMenuOption(TextUtil.GetQualityLabelCap(cat), delegate
                             {
-                                int qty = res.GetTitheListValue(thingTuple);
                                 ThingQualityTuple newTuple = new ThingQualityTuple
                                 {
                                     thingDef = iThing,
                                     quality = cat,
                                     stuffDef = iStuff
                                 };
-                                if (res.HasTitheListKey(newTuple))
-                                {
-                                    Messages.Message(newTuple.ListRejectionMessage(), MessageTypeDefOf.RejectInput);
-                                }
-                                else
-                                {
-                                    res.RemoveFromTitheList(thingTuple);
-                                    res.AddToTitheList(newTuple, qty);
-                                    UpdateTitheDictBuffers(res);
-                                }
+                                res.SetTitheThingAt(index, newTuple);
+                                UpdateTitheDictBuffers(res);
                             }));
                         }
                         Find.WindowStack.Add(new FloatMenu(options));
@@ -708,28 +699,20 @@ namespace FactionColonies
                     List<ThingDef> stuffList = res.GetStuffListForThingDef(iThing);
                     if (Widgets.ButtonText(stuffBox, iStuff?.LabelCap ?? "None"))
                     {
+                        int index = i; // capture for the deferred FloatMenu delegate (loop var would be stale)
                         List<FloatMenuOption> options = new List<FloatMenuOption>();
                         foreach (ThingDef stuff in stuffList)
                         {
                             options.Add(new FloatMenuOption(stuff.LabelCap, delegate
                             {
-                                int qty = res.GetTitheListValue(thingTuple);
                                 ThingQualityTuple newTuple = new ThingQualityTuple
                                 {
                                     thingDef = iThing,
                                     quality = iQuality,
                                     stuffDef = stuff
                                 };
-                                if (res.HasTitheListKey(newTuple))
-                                {
-                                    Messages.Message(newTuple.ListRejectionMessage(), MessageTypeDefOf.RejectInput);
-                                }
-                                else
-                                {
-                                    res.RemoveFromTitheList(thingTuple);
-                                    res.AddToTitheList(newTuple, qty);
-                                    UpdateTitheDictBuffers(res);
-                                }
+                                res.SetTitheThingAt(index, newTuple);
+                                UpdateTitheDictBuffers(res);
                             }));
                         }
                         Find.WindowStack.Add(new FloatMenu(options));
@@ -756,24 +739,17 @@ namespace FactionColonies
 
                 // This seems like a *really* hacky way to handle these buffers. Seems like it'd be prone to UI jitteryness, or just general bad feel
                 //   keep this in mind when testing...
-                int quantity = res.GetTitheListValue(thingTuple);
+                // No affordability cap: this is a priority list, so over-budget entries are allowed.
+                // The waterline grey-out above shows what won't deliver this cycle; unaffordable entries persist.
+                int quantity = entry.quantity;
                 int oldQuantity = quantity;
-                int max = Math.Max(0, quantity + res.MaxThingCanAfford(thingTuple));
                 string buf = titheBuffers[i];
                 Widgets.IntEntry(fieldBox, ref quantity, ref buf);
-                int unclamped = quantity;
-                quantity = Math.Clamp(quantity, 0, max);
+                quantity = Math.Max(0, quantity);
                 buf = quantity.ToString();
-                if (unclamped > max)
-                {
-                    if (res.GetTitheIncome() <= 0)
-                        Messages.Message("FCTitheBudgetNoWorkers".Translate(), MessageTypeDefOf.RejectInput);
-                    else
-                        Messages.Message("FCTitheBudgetInsufficient".Translate(), MessageTypeDefOf.RejectInput);
-                }
                 if (oldQuantity != quantity)
                 {
-                    res.AddToTitheList(thingTuple, quantity, true);
+                    res.SetTitheQuantityAt(i, quantity);
                 }
                 titheBuffers[i] = buf;
             }
