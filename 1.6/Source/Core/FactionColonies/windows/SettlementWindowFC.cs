@@ -1527,13 +1527,12 @@ namespace FactionColonies
         private const float profitBoxH = profitHeadlineH + subtitleH;
         private const float cardH = cardLabelH + cardValueH + subtitleH;
         private const float costsH = profitBoxH + margin + cardH;
-        private (bool showProfitSub, bool showIncomeSub, bool showUpkeepSub) ComputeSubtitleVisibility()
+        private (bool showIncomeSub, bool showUpkeepSub) ComputeSubtitleVisibility()
         {
             bool hasAvg = settlement.TaxAccrualDays > 0;
-            bool sp = hasAvg && Math.Round(settlement.ProjectedProfit) != Math.Round(settlement.totalProfit);
             bool si = hasAvg && Math.Round(settlement.ProjectedIncome) != Math.Round(settlement.totalIncome);
             bool su = hasAvg && Math.Round(settlement.ProjectedUpkeep) != Math.Round(settlement.totalUpkeep);
-            return (sp, si, su);
+            return (si, su);
         }
         private void DrawProductionHeader(Rect boundingBox)
         {
@@ -1548,7 +1547,6 @@ namespace FactionColonies
             float labelWidth = (boundingBox.width - margin) / 2f;
 
             var sub = ComputeSubtitleVisibility();
-            bool showProfitSub = sub.showProfitSub;
             bool showIncomeSub = sub.showIncomeSub;
             bool showUpkeepSub = sub.showUpkeepSub;
             bool hasAvg = settlement.TaxAccrualDays > 0;
@@ -1560,31 +1558,17 @@ namespace FactionColonies
             double liveUpkeep = settlement.totalUpkeep;
             Color subColor = new Color(0.7f, 0.7f, 0.7f);
 
-            // Profit box always reserves the full headline+subtitle height. When the subtitle
-            // isn't drawn, the headline rects span the full box so their MiddleRight/MiddleLeft
-            // anchors vertically center the label and value into the freed space.
+            // Profit box: single projected-profit headline (net of upkeep AND tithes), no subtitle.
+            // The headline spans the full box so its MiddleRight/MiddleLeft anchors vertically center it.
             Rect profitBox = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, profitBoxH);
-            float headlineH = hasAvg ? profitHeadlineH : profitBoxH;
-            Rect profitLabel = new Rect(profitBox.x, profitBox.y, labelWidth, headlineH);
-            Rect profitNum = new Rect(profitLabel.xMax + margin, profitLabel.y, labelWidth, headlineH);
+            Rect profitLabel = new Rect(profitBox.x, profitBox.y, labelWidth, profitBoxH);
+            Rect profitNum = new Rect(profitLabel.xMax + margin, profitLabel.y, labelWidth, profitBoxH);
             UIUtil.DrawColoredHighlight(profitBox, highlightColor);
             Text.Anchor = TextAnchor.MiddleRight;
             Widgets.Label(profitLabel, "FCSettlementProjectedProfit".Translate() + ":");
             Text.Anchor = TextAnchor.MiddleLeft;
             double displayProfit = hasAvg ? avgProfit : liveProfit;
             Widgets.Label(profitNum, new GUIContent(Math.Round(displayProfit).ToString(), ThingDefOf.Silver.uiIcon));
-
-            if (hasAvg)
-            {
-                Rect profitSubtitle = new Rect(profitBox.x, profitLabel.yMax, profitBox.width, subtitleH);
-                Text.Font = GameFont.Tiny;
-                Text.Anchor = TextAnchor.MiddleCenter;
-                Color origColor = GUI.color;
-                GUI.color = subColor;
-                Widgets.Label(profitSubtitle, "FCDailyRate".Translate() + ": " + Math.Round(liveProfit)
-                    + "  |  " + "FCAccruedThisCycle".Translate(Math.Round(settlement.AccruedGrossIncome), settlement.DaysRemaining));
-                GUI.color = origColor;
-            }
             TooltipHandler.TipRegion(profitBox, TextUtil.BuildProjectedTooltip());
 
             Text.Font = GameFont.Tiny;
@@ -1610,11 +1594,11 @@ namespace FactionColonies
             Widgets.Label(taxBonusLabel, "FCTaxBase".Translate());
 
             DrawCardValueAndSubtitle(incomeBox, showIncomeSub,
-                Math.Round(hasAvg ? avgIncome : liveIncome, 2).ToString(), Math.Round(liveIncome).ToString(), subColor);
+                Math.Round(hasAvg ? avgIncome : liveIncome, 2).ToString(), Math.Round(liveIncome).ToString(), subColor, "FCDailyIncome".Translate());
             DrawCardValueAndSubtitle(costsBox, showUpkeepSub,
-                Math.Round(hasAvg ? avgUpkeep : liveUpkeep, 2).ToString(), Math.Round(liveUpkeep).ToString(), subColor);
+                Math.Round(hasAvg ? avgUpkeep : liveUpkeep, 2).ToString(), Math.Round(liveUpkeep).ToString(), subColor, "FCDailyUpkeep".Translate());
             DrawCardValueAndSubtitle(taxBonusBox, false,
-                (settlement.GetSettlementTaxBonus() * 100d).ToString() + "%", null, subColor);
+                (settlement.GetSettlementTaxBonus() * 100d).ToString() + "%", null, subColor, null);
 
             string projTooltip = TextUtil.BuildProjectedTooltip();
             TooltipHandler.TipRegion(incomeBox, settlement.incomeExp + "\n\n" + projTooltip);
@@ -1626,7 +1610,7 @@ namespace FactionColonies
          * THIS card doesn't render a subtitle, the value rect fills the entire post-label
          * region and uses MiddleCenter anchoring so the value sits centered in the freed
          * space instead of hugging the top. */
-        private void DrawCardValueAndSubtitle(Rect cardBox, bool thisCardHasSubtitle, string valueText, string subtitleLiveValue, Color subColor)
+        private void DrawCardValueAndSubtitle(Rect cardBox, bool thisCardHasSubtitle, string valueText, string subtitleLiveValue, Color subColor, string subtitleLabel)
         {
             float postLabelStart = cardBox.y + cardLabelH + smallMargin;
             float postLabelHeight = cardBox.yMax - postLabelStart;
@@ -1638,7 +1622,7 @@ namespace FactionColonies
                 Widgets.Label(numRect, valueText);
                 Color origColor = GUI.color;
                 GUI.color = subColor;
-                Widgets.Label(subRect, "FCDailyRate".Translate() + ": " + subtitleLiveValue);
+                Widgets.Label(subRect, subtitleLabel + ": " + subtitleLiveValue);
                 GUI.color = origColor;
             }
             else
@@ -1744,10 +1728,16 @@ namespace FactionColonies
             if (body.NullOrEmpty())
                 body = "FCNoActiveModifiers".Translate();
 
-            // Header + breakdown, then keep the existing cost explanation below. Resolve()d as in
+            // Per-day cost of one more overmax worker: the overwork penalty adds (workers * baseWorkerCost)
+            // * (overWork/20) * overworkMult, so each extra overmax worker raises daily worker upkeep by
+            // 5% (1/20) of the base worker cost, scaled by the overwork multiplier.
+            double overworkMult = settlement.GetStatValue(FCStatDefOf.workerOverworkPenaltyMultiplier);
+            double perOvermaxPerDay = (settlement.GetBaseWorkerCost() / 20.0) * overworkMult;
+
+            // Header + breakdown, then the cost explanation below. Resolve()d as in
             // BuildWorkerCapacityTooltip to keep the concatenation string-typed (preserves color).
             return "FCAssignedOvermaxWorkersBreakdownTooltip".Translate().Resolve() + "\n\n" + body
-                + "\n\n" + "FCAssignedOvermaxWorkersTooltip".Translate().Resolve();
+                + "\n\n" + "FCAssignedOvermaxWorkersTooltip".Translate(perOvermaxPerDay).Resolve();
         }
 
         private void DrawProductionOverview(Rect boundingBox)
@@ -1810,8 +1800,8 @@ namespace FactionColonies
             UIUtil.DrawColoredHighlight(incomeAccruedBox, highlightColor);
             Widgets.Label(incomeAccruedBox, "FCTotalAccrued".Translate());
             UIUtil.DrawColoredHighlight(incomeNetBox, highlightColor);
-            Widgets.Label(incomeNetBox, "FCNetIncome".Translate());
-            TooltipHandler.TipRegion(incomeNetBox, "FCNetIncomeDesc".Translate());
+            Widgets.Label(incomeNetBox, "FCProjectedIncome".Translate());
+            TooltipHandler.TipRegion(incomeNetBox, "FCProjectedIncomeDesc".Translate());
 
             DrawResources(resourceArea, colWidth, incomeResources, poolResources, contentHeight);
         }
@@ -1970,20 +1960,16 @@ namespace FactionColonies
             Rect incomeAccruedBox = new Rect(incomePerDayBox.xMax + margin, rectY, colWidth, rowHeight);
             Widgets.Label(incomeAccruedBox, TextUtil.FloorStat(resource.AccruedTaxableValue));
 
-            //Net Income: live net (after stockpile and tithes)
+            //Projected Income: accrued so far + per-day rate * days remaining (gross, post-diversion)
+            double perDay = resource.effectiveRawTotalProduction * FCSettings.silverPerResource;
+            double projectedIncome = resource.AccruedTaxableValue + perDay * settlement.DaysRemaining;
             Rect incomeNetBox = new Rect(incomeAccruedBox.xMax + margin, rectY, colWidth, rowHeight);
-            Widgets.Label(incomeNetBox, (TextUtil.FloorStat(resource.actualIncome)));
+            Widgets.Label(incomeNetBox, (TextUtil.FloorStat(projectedIncome)));
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("FCNetIncomeBreakdownGross".Translate(TextUtil.FloorStat(resource.grossMarketValue)));
-            if (resource.stockpileMarketValue > 0)
-                sb.AppendLine("FCNetIncomeBreakdownStockpile".Translate(TextUtil.FloorStat(resource.stockpileMarketValue)));
-            if (resource.titheTotalValue > 0)
-                sb.AppendLine("FCNetIncomeBreakdownTithes".Translate(TextUtil.FloorStat(resource.titheTotalValue)));
-            double titheOffset = Math.Min(resource.titheTotalValue, resource.DailyExternalTitheBudget);
-            if (titheOffset > 0)
-                sb.AppendLine("FCNetIncomeBreakdownTitheInjection".Translate(TextUtil.FloorStat(titheOffset)));
-            sb.Append("FCNetIncomeBreakdownNet".Translate(TextUtil.FloorStat(resource.actualIncome)));
+            sb.AppendLine("FCProjectedIncomeBreakdownAccrued".Translate(TextUtil.FloorStat(resource.AccruedTaxableValue)));
+            sb.AppendLine("FCProjectedIncomeBreakdownPerDay".Translate(TextUtil.FloorStat(perDay), settlement.DaysRemaining));
+            sb.Append("FCProjectedIncomeBreakdownProjected".Translate(TextUtil.FloorStat(projectedIncome)));
             TooltipHandler.TipRegion(incomeNetBox, sb.ToString());
         }
 

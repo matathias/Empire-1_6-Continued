@@ -384,7 +384,27 @@ namespace FactionColonies
         /* Forward-looking full-cycle projection: accrued so far + live per-day rate * days remaining. */
         public double ProjectedIncome => AccruedGrossIncome + totalIncome * DaysRemaining;
         public double ProjectedUpkeep => AccruedUpkeep + totalUpkeep * DaysRemaining;
-        public double ProjectedProfit => ProjectedIncome - ProjectedUpkeep;
+
+        /* Projected silver value of tithe goods that will be delivered this cycle: per tithing resource,
+         * the selected tithe demand capped by the projected tithe budget (accrued + daily rate * days left).
+         * Mirrors the fulfilledTitheValue deduction in CreateTax. */
+        public double ProjectedTitheValue
+        {
+            get
+            {
+                double total = 0;
+                foreach (ResourceFC r in resources)
+                {
+                    if (!r.canTithe || r.tithesPaused) continue;
+                    double projBudget = r.AccruedTitheBudget + r.GetTitheIncome() * DaysRemaining;
+                    total += Math.Min(r.titheTotalValue, projBudget);
+                }
+                return total;
+            }
+        }
+
+        /* Net of upkeep AND projected tithe goods (diversions are already netted via post-diversion production). */
+        public double ProjectedProfit => ProjectedIncome - ProjectedUpkeep - ProjectedTitheValue;
 
         // Jealously guard our resources. Only we can modify them!
         private List<ResourceFC> resources = new List<ResourceFC>();

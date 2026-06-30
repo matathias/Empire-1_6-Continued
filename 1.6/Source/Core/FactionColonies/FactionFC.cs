@@ -140,7 +140,7 @@ namespace FactionColonies
         public bool HasTaxAverageData => settlements.Any(s => s.TaxAccrualDays > 0);
         public double averageIncome => settlements.Sum(s => s.ProjectedIncome);
         public double averageUpkeep => settlements.Sum(s => s.ProjectedUpkeep) + policyManager.GetEdictUpkeep();
-        public double averageProfit => averageIncome - averageUpkeep;
+        public double averageProfit => averageIncome - averageUpkeep - settlements.Sum(s => s.ProjectedTitheValue);
 
         /* Lazy-Cached Tech Level */
         /* Tech level — lazy-cached via dirtyTechLevelCache */

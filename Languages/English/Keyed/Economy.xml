@@ -190,7 +190,7 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCAssignedWorkersValue>{0}/{1}</FCAssignedWorkersValue>
 	<FCAssignedOvermaxWorkers>Assigned Overmax Workers</FCAssignedOvermaxWorkers>
 	<FCAssignedOvermaxWorkersValue>{0}/{1}</FCAssignedOvermaxWorkersValue>
-	<FCAssignedOvermaxWorkersTooltip>Each addtional overmax worker increases the cost of all workers by 5.</FCAssignedOvermaxWorkersTooltip>
+	<FCAssignedOvermaxWorkersTooltip>Each additional overmax worker increases the cost of all workers by {0}.</FCAssignedOvermaxWorkersTooltip>
 	<FCAssignedOvermaxWorkersBreakdownTooltip>Modifiers affecting overmax worker capacity:</FCAssignedOvermaxWorkersBreakdownTooltip>
 	<FCAssignedWorkersTooltip>Modifiers affecting worker capacity:</FCAssignedWorkersTooltip>
 	<FCExtraWorkersSoftcapTooltipSub>Per settlement level:</FCExtraWorkersSoftcapTooltipSub>
@@ -241,6 +241,13 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCProductionPerDay>Per Day</FCProductionPerDay>
 	<FCTotalAccrued>Accrued</FCTotalAccrued>
 	<FCNetIncome>Net Income</FCNetIncome>
+	<FCProjectedIncome>Proj. Income</FCProjectedIncome>
+	<FCProjectedIncomeDesc>The silver this resource is projected to produce by the next tax: accrued so far this cycle plus its current daily rate times the days remaining. Stockpile diversions are already deducted; tithes are settled at the settlement level.</FCProjectedIncomeDesc>
+	<FCProjectedIncomeBreakdownAccrued>Accrued so far: {0}</FCProjectedIncomeBreakdownAccrued>
+	<FCProjectedIncomeBreakdownPerDay>Per day: {0} (× {1} days remaining)</FCProjectedIncomeBreakdownPerDay>
+	<FCProjectedIncomeBreakdownProjected>Projected total: {0}</FCProjectedIncomeBreakdownProjected>
+	<FCDailyIncome>Daily Income</FCDailyIncome>
+	<FCDailyUpkeep>Daily Upkeep</FCDailyUpkeep>
 	<FCBuildingDormant>Dormant: inputs unmet. This building is mothballed and contributes nothing until its inputs are supplied.</FCBuildingDormant>
 	<FCProjectedTooltip>Income and upkeep accrue daily. The headline shows the projected full-cycle total: what has accrued so far this cycle plus the current daily rate times the days remaining until tax. At tax you collect the accumulated net, minus tithe goods.</FCProjectedTooltip>
 	<FCProjectedTooltipFaction>The sum of every settlement's projected full-cycle payout, minus edict upkeep. Each settlement accrues income and upkeep daily; at tax it pays the accumulated net.</FCProjectedTooltipFaction>
