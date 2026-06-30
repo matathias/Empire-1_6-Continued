@@ -180,6 +180,17 @@ namespace FactionColonies
             return hasAverage ? "FCPeriodAverageTooltipFaction".Translate() : "FCPeriodAverageTooltipNone".Translate();
         }
 
+        /* Forward-looking projection tooltips for the daily-accrual model. */
+        public static string BuildProjectedTooltip()
+        {
+            return "FCProjectedTooltip".Translate();
+        }
+
+        public static string BuildProjectedFactionTooltip()
+        {
+            return "FCProjectedTooltipFaction".Translate();
+        }
+
         /// <summary>
         /// Converts the given string <paramref name="name"/> into a shorter version. The resulting string contains the first word and every uppercase char of the following words
         /// </summary>

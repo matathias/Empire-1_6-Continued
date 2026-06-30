@@ -37,7 +37,7 @@ namespace FactionColonies
             result += "FCCodexResStage3".Translate(workers, Math.Round(totalProd, 2)) + "\n\n";
             result += "FCCodexResSilver".Translate(
                 FCSettings.silverPerResource,
-                Math.Round(totalProd * FCSettings.silverPerResource, 0));
+                Math.Round(totalProd, 2));
 
             return result;
         }

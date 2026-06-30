@@ -505,10 +505,10 @@ namespace FactionColonies
             curY = DrawStatLine(curY, x, textW, "FCCodexBuildingCost".Translate(selectedBuilding.cost.ToString("F0")));
             curY = DrawStatLine(curY, x, textW, "FCCodexBuildingDuration".Translate(selectedBuilding.constructionDuration.ToTimeString()));
 
-            if (selectedBuilding.upkeep > 0)
-                curY = DrawStatLine(curY, x, textW, "FCCodexBuildingUpkeep".Translate(selectedBuilding.upkeep.ToString()));
-            else if (selectedBuilding.upkeep < 0)
-                curY = DrawStatLine(curY, x, textW, "FCCodexBuildingIncome".Translate(Math.Abs(selectedBuilding.upkeep).ToString()));
+            if (selectedBuilding.Upkeep > 0)
+                curY = DrawStatLine(curY, x, textW, "FCCodexBuildingUpkeep".Translate(selectedBuilding.Upkeep.ToString("F0")));
+            else if (selectedBuilding.Upkeep < 0)
+                curY = DrawStatLine(curY, x, textW, "FCCodexBuildingIncome".Translate(Math.Abs(selectedBuilding.Upkeep).ToString("F0")));
 
             if (selectedBuilding.techLevel != TechLevel.Undefined)
                 curY = DrawStatLine(curY, x, textW, "FCCodexBuildingTechLevel".Translate(selectedBuilding.techLevel.ToStringHuman()));
@@ -780,7 +780,7 @@ namespace FactionColonies
 
             // Core stats section
             int statLines = 2; // cost, duration
-            if (selectedBuilding.upkeep != 0) statLines++;
+            if (selectedBuilding.Upkeep != 0) statLines++;
             if (selectedBuilding.techLevel != TechLevel.Undefined) statLines++;
             total += SectionHeaderHeight + SmallMargin + statLines * StatRowHeight + Margin;
 

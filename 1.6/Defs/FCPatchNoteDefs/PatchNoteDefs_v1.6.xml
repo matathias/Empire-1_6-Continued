@@ -29,4 +29,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_2</defName>
+		<label>Production Rework</label>
+		<description>Reworks how resource production is calculated and displayed. All values are now calculated in per-day increments, added up each day before being disbursed on the tax tick. The net income should be the same, but the affect of mid-cycle production differences should be more obvious than the old average-of-daily-snapshots system.\n\nAlso, tithing has been slightly reworked. The tithes list is now a priority list of items. You can list more items than your settlement can afford, and when the tax tick comes, you will be sent the first N items that fit within the tithe limit.</description>
+		<releaseDate>2026-06-29</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Resource production rework: all values are calculated on a daily basis. The length of the tax cycle merely determines how frequently acrued production is sent to the player</li>
+		<li>Minor tithes rework: the tithe item list is now a priority list, sending the first N items that fit within the tithe budget</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

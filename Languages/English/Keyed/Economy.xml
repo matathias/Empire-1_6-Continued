@@ -190,7 +190,7 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCAssignedWorkersValue>{0}/{1}</FCAssignedWorkersValue>
 	<FCAssignedOvermaxWorkers>Assigned Overmax Workers</FCAssignedOvermaxWorkers>
 	<FCAssignedOvermaxWorkersValue>{0}/{1}</FCAssignedOvermaxWorkersValue>
-	<FCAssignedOvermaxWorkersTooltip>Each addtional overmax worker increases the cost of all workers by 5.</FCAssignedOvermaxWorkersTooltip>
+	<FCAssignedOvermaxWorkersTooltip>Each additional overmax worker increases the cost of all workers by {0}.</FCAssignedOvermaxWorkersTooltip>
 	<FCAssignedOvermaxWorkersBreakdownTooltip>Modifiers affecting overmax worker capacity:</FCAssignedOvermaxWorkersBreakdownTooltip>
 	<FCAssignedWorkersTooltip>Modifiers affecting worker capacity:</FCAssignedWorkersTooltip>
 	<FCExtraWorkersSoftcapTooltipSub>Per settlement level:</FCExtraWorkersSoftcapTooltipSub>
@@ -234,6 +234,26 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCPeriodAverageTooltipHas>Income and upkeep are snapshot each day. At tax time, the silver paid out is the average of those daily snapshots.</FCPeriodAverageTooltipHas>
 	<FCPeriodAverageTooltipNone>No snapshots have been taken yet this tax cycle. The headline value shows the current daily rate.\n\nOnce a day has passed, the headline will switch to the period-averaged value, which is what actually gets paid at tax time.</FCPeriodAverageTooltipNone>
 	<FCPeriodAverageTooltipFaction>This is the sum of every settlement's expected payout, minus edict upkeep. Each settlement snapshots its income and upkeep daily, with the silver paid at tax time being the average of those snapshots.</FCPeriodAverageTooltipFaction>
+
+	<!-- Projected / daily-accrual display -->
+	<FCSettlementProjectedProfit>Projected Profit</FCSettlementProjectedProfit>
+	<FCSettlementProjectedIncome>Projected Income</FCSettlementProjectedIncome>
+	<FCProductionPerDay>Per Day</FCProductionPerDay>
+	<FCTotalAccrued>Accrued</FCTotalAccrued>
+	<FCNetIncome>Net Income</FCNetIncome>
+	<FCProjectedIncome>Proj. Income</FCProjectedIncome>
+	<FCProjectedIncomeDesc>The silver this resource is projected to produce by the next tax: accrued so far this cycle plus its current daily rate times the days remaining. Stockpile diversions are already deducted; tithes are settled at the settlement level.</FCProjectedIncomeDesc>
+	<FCProjectedIncomeBreakdownAccrued>Accrued so far: {0}</FCProjectedIncomeBreakdownAccrued>
+	<FCProjectedIncomeBreakdownPerDay>Per day: {0} (× {1} days remaining)</FCProjectedIncomeBreakdownPerDay>
+	<FCProjectedIncomeBreakdownProjected>Projected total: {0}</FCProjectedIncomeBreakdownProjected>
+	<FCDailyIncome>Daily Income</FCDailyIncome>
+	<FCDailyUpkeep>Daily Upkeep</FCDailyUpkeep>
+	<FCBuildingDormant>Dormant: inputs unmet. This building is mothballed and contributes nothing until its inputs are supplied.</FCBuildingDormant>
+	<FCProjectedTooltip>Income and upkeep accrue daily. The headline shows the projected full-cycle total: what has accrued so far this cycle plus the current daily rate times the days remaining until tax. At tax you collect the accumulated net, minus tithe goods.</FCProjectedTooltip>
+	<FCProjectedTooltipFaction>The sum of every settlement's projected full-cycle payout, minus edict upkeep. Each settlement accrues income and upkeep daily; at tax it pays the accumulated net.</FCProjectedTooltipFaction>
+	<FCAccruedThisCycle>accrued this cycle: {0} — next tax in {1} days</FCAccruedThisCycle>
+	<FCTitheWontThisCycle>(won't deliver this cycle)</FCTitheWontThisCycle>
+	<FCTitheSelectedVsProjected>Selected: {0} / Projected budget: {1}</FCTitheSelectedVsProjected>
 
 	<!-- Power Output -->
 	<FCSetAsEmpirePowerOutput>Set as {0} Power Output</FCSetAsEmpirePowerOutput>

@@ -127,66 +127,44 @@ namespace FactionColonies
         {
             var res = MakeResource(10.0, 3);
             bool callbackFired = false;
-            res.SetStockpileAllocation("mod.a", 10.0, () => callbackFired = true);
+            res.SetStockpileAllocation("mod.a", 10.0, (req, act) => callbackFired = true);
             res.ClearStockpileAllocation("mod.a");
             TestAssert.IsFalse(callbackFired, "Callback should not fire on voluntary clear");
         }
 
-        // --- PruneStockpileAllocations ---
+        // --- realize callback via AccumulateDailyProduction ---
 
         [EmpireTest("StockpileAllocation")]
-        public static void Prune_WithinCapacity_NothingEvicted()
+        public static void Realize_CallbackInvokedOnAccumulate()
         {
-            var res = MakeResource(10.0, 5); // rawTotalProduction = 50
-            res.SetStockpileAllocation("mod.a", 20.0);
-            res.PruneStockpileAllocations();
-            TestAssert.AreEqual(20.0, res.totalStockpileAllocation);
-        }
-
-        [EmpireTest("StockpileAllocation")]
-        public static void Prune_NoAllocations_NoOp()
-        {
-            var res = MakeResource(10.0, 3);
-            res.PruneStockpileAllocations(); // must not throw
-            TestAssert.AreEqual(0.0, res.totalStockpileAllocation);
-        }
-
-        [EmpireTest("StockpileAllocation")]
-        public static void Prune_EvictsLargestFirst()
-        {
-            // rawTotalProduction = 30 at 3 workers; both allocations fit exactly.
-            var res = MakeResource(10.0, 3);
-            res.SetStockpileAllocation("mod.small", 5.0);
-            res.SetStockpileAllocation("mod.large", 25.0);
-            // Drop to 2 workers: rawTotalProduction = 20, total alloc = 30 → over capacity.
-            res.assignedWorkers = 2;
-            res.PruneStockpileAllocations();
-            // mod.large (25) should be evicted; mod.small (5) fits and survives.
-            TestAssert.AreEqual(5.0, res.totalStockpileAllocation);
-        }
-
-        [EmpireTest("StockpileAllocation")]
-        public static void Prune_CallbackFiredOnEviction()
-        {
-            var res = MakeResource(10.0, 3);
-            res.SetStockpileAllocation("mod.small", 5.0);
+            var res = MakeResource(10.0, 3); // rawTotalProduction = 30
             bool callbackFired = false;
-            res.SetStockpileAllocation("mod.large", 25.0, () => callbackFired = true);
-            res.assignedWorkers = 2; // rawTotalProduction drops to 20
-            res.PruneStockpileAllocations();
-            TestAssert.IsTrue(callbackFired, "Eviction callback should have fired");
+            res.SetStockpileAllocation("mod.a", 10.0, (req, act) => callbackFired = true);
+            res.AccumulateDailyProduction();
+            TestAssert.IsTrue(callbackFired, "Realize callback should fire during AccumulateDailyProduction");
         }
 
         [EmpireTest("StockpileAllocation")]
-        public static void Prune_CallbackNotFiredForSurvivingEntry()
+        public static void Realize_ActualClampedToAvailable()
         {
-            var res = MakeResource(10.0, 3);
-            bool smallCallbackFired = false;
-            res.SetStockpileAllocation("mod.small", 5.0, () => smallCallbackFired = true);
-            res.SetStockpileAllocation("mod.large", 25.0);
-            res.assignedWorkers = 2; // rawTotalProduction drops to 20; large is evicted
-            res.PruneStockpileAllocations();
-            TestAssert.IsFalse(smallCallbackFired, "Surviving entry's callback should not fire");
+            // Production = 10, allocation = 20 (over capacity). Actual should be clamped to 10.
+            var res = MakeResource(10.0, 1); // rawTotalProduction = 10
+            double actualReceived = -1;
+            res.SetStockpileAllocation("mod.a", 20.0, (req, act) => actualReceived = act);
+            res.AccumulateDailyProduction();
+            TestAssert.AreEqual(10.0, actualReceived, "Actual diversion should be clamped to available production");
+        }
+
+        [EmpireTest("StockpileAllocation")]
+        public static void Realize_NeverNegative()
+        {
+            // Two allocations totaling 30; production = 20. First gets 20, second gets 0.
+            var res = MakeResource(10.0, 2); // rawTotalProduction = 20
+            double secondActual = -99;
+            res.SetStockpileAllocation("mod.a", 20.0);
+            res.SetStockpileAllocation("mod.b", 10.0, (req, act) => secondActual = act);
+            res.AccumulateDailyProduction();
+            TestAssert.AreEqual(0.0, secondActual, "Second diversion should be 0 when first exhausts production");
         }
     }
 }

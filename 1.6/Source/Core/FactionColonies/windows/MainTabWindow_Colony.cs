@@ -530,7 +530,7 @@ namespace FactionColonies
             Color profitColor = factionDisplay >= 0 ? AccentUtil.Income : AccentUtil.Expense;
             Widgets.Label(profitNum, new GUIContent(Math.Round(factionDisplay).ToString().Colorize(profitColor), ThingDefOf.Silver.uiIcon));
 
-            TooltipHandler.TipRegion(profitBox, TextUtil.BuildPeriodAverageFactionTooltip(factionHasAvg));
+            TooltipHandler.TipRegion(profitBox, TextUtil.BuildProjectedFactionTooltip());
 
             y += profitBox.height + margin;
 
@@ -823,8 +823,8 @@ namespace FactionColonies
 
                 // Top-right: Profit value. Shows the period-averaged silver — what the player
                 // will actually be paid at the next tax tick. Tooltip explains the averaging.
-                bool hasAvg = s.HasTaxAverageData;
-                int displayProfit = (int)(hasAvg ? s.averageTotalProfit : s.totalProfit);
+                bool hasAvg = s.TaxAccrualDays > 0;
+                int displayProfit = (int)(hasAvg ? s.ProjectedProfit : s.totalProfit);
                 string profitStr = "$" + (displayProfit >= 0 ? "+" : "") + displayProfit;
                 fontBefore = Text.Font;
                 anchorBefore = Text.Anchor;
@@ -834,7 +834,7 @@ namespace FactionColonies
                 UIUtil.DrawColoredLabel(profitRect, profitStr, displayProfit >= 0 ? AccentUtil.Income : AccentUtil.Expense);
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
-                TooltipHandler.TipRegion(profitRect, TextUtil.BuildPeriodAverageTooltip(hasAvg));
+                TooltipHandler.TipRegion(profitRect, TextUtil.BuildProjectedTooltip());
 
                 // Bottom-left: Town title + free workers
                 string townTitle = TextUtil.GetTownTitle(s);

@@ -42,12 +42,16 @@ namespace FactionColonies
         private TaggedString cachedProdMultDesc = "";
         private Texture2D iconLoaded;
 
-        private double accumulatedProduction = 0;
-        private int accumulationDays = 0;
+        private double accruedRawProduction = 0;        // Sigma per-day raw production over the cycle
+        private double accruedEffectiveProduction = 0;  // Sigma per-day post-stockpile production over the cycle
+        private double accruedTitheBudget = 0;          // Sigma per-day tithe budget (post-multiplier + external)
+        private double accruedExternalTitheBudget = 0;  // Sigma per-day external tithe budget (for breakdown)
+        private int accrualDays = 0;
 
-        /* Don't expost tithes publicly. We want values to be added or removed *only* through our special functions, so that we can dirty or set
+        /* Don't expose tithes publicly. We want values to be added or removed *only* through our special functions, so that we can dirty or set
          * cached values appropriately. */
-        private Dictionary<ThingQualityTuple, int> tithes = new Dictionary<ThingQualityTuple, int>();
+        private List<TitheEntry> tithes = new List<TitheEntry>();
+        public IReadOnlyList<TitheEntry> Tithes => tithes;
         private bool dirtyTitheCache = true;
         private double cachedTitheTotalValue = 0;
         /// <summary>
@@ -75,8 +79,8 @@ namespace FactionColonies
         // Not persisted — submods are expected to re-register their allocations on load.
         private struct StockpileEntry
         {
-            public double amount;
-            public Action onEvicted; // invoked if the entry is evicted at tax time; null is allowed
+            public double amount;                   // units diverted per DAY
+            public Action<double, double> realize;  // (requested, actual) invoked each day; null allowed
         }
         private Dictionary<string, StockpileEntry> stockpileAllocations = new Dictionary<string, StockpileEntry>();
         public double totalStockpileAllocation => stockpileAllocations.Values.Sum(e => e.amount);
@@ -87,13 +91,13 @@ namespace FactionColonies
         /// If the key already exists, the old entry is replaced (using the new amount in the capacity check).
         /// </summary>
         /// <param name="key">Unique identifier for the calling mod (e.g. "MyMod.MyFeature").</param>
-        /// <param name="onEvicted">Optional callback invoked if this entry is later evicted at tax time due to insufficient production.</param>
-        public bool SetStockpileAllocation(string key, double amount, Action onEvicted = null)
+        /// <param name="realize">Optional callback invoked each day with (requested, actual) units diverted.</param>
+        public bool SetStockpileAllocation(string key, double amount, Action<double, double> realize = null)
         {
             double currentForKey = stockpileAllocations.TryGetValue(key, out var existing) ? existing.amount : 0;
             if (totalStockpileAllocation - currentForKey + amount > rawTotalProduction)
                 return false;
-            stockpileAllocations[key] = new StockpileEntry { amount = amount, onEvicted = onEvicted };
+            stockpileAllocations[key] = new StockpileEntry { amount = amount, realize = realize };
             settlement?.DirtyProfitCache();
             return true;
         }
@@ -105,25 +109,6 @@ namespace FactionColonies
             settlement?.DirtyProfitCache();
         }
 
-        /// <summary>
-        /// Evicts stockpile entries (largest first) until the total allocation fits within <see cref="rawTotalProduction"/>.
-        /// Called at tax time after resource caches are refreshed. Invokes each evicted entry's callback.
-        /// </summary>
-        public void PruneStockpileAllocations()
-        {
-            if (totalStockpileAllocation <= rawTotalProduction + 0.01)
-                return;
-            foreach (var key in stockpileAllocations
-                         .OrderByDescending(kv => kv.Value.amount)
-                         .Select(kv => kv.Key)
-                         .ToList())
-            {
-                if (totalStockpileAllocation <= rawTotalProduction + 0.01) break;
-                var entry = stockpileAllocations[key];
-                stockpileAllocations.Remove(key);
-                entry.onEvicted?.Invoke();
-            }
-        }
         public int randomTitheBudget
         {
             get
@@ -172,7 +157,6 @@ namespace FactionColonies
         {
             if (dirtyTitheCache)
             {
-                PruneTitheList();
                 cachedTitheTotalValue = CalcTotalTitheValue();
                 dirtyTitheCache = false;
             }
@@ -207,16 +191,19 @@ namespace FactionColonies
          */
         /// <summary>Current snapshot: production * workers, ignoring accumulation.</summary>
         public double InstantaneousProduction => production * assignedWorkers;
-        /// <summary>Period average if available, otherwise falls back to instantaneous.</summary>
-        public double AccumulatedAverageProduction => accumulationDays > 0
-            ? accumulatedProduction / accumulationDays
-            : InstantaneousProduction;
-        public int AccumulationDays => accumulationDays;
 
-        public double rawTotalProduction =>
-            (settlement != null && settlement.IsCalculatingTax && accumulationDays > 0)
-                ? AccumulatedAverageProduction
-                : InstantaneousProduction;
+        public double AccruedRawProduction => accruedRawProduction;
+        public double AccruedEffectiveProduction => accruedEffectiveProduction;
+        public double AccruedEffectiveProductionForTest => accruedEffectiveProduction; // test hook
+        public double AccruedTitheBudget => accruedTitheBudget;
+        public double AccruedExternalTitheBudget => accruedExternalTitheBudget;
+        public int AccrualDays => accrualDays;
+
+        /// <summary>Accrued gross silver value (post-stockpile, pre-tithe). Zero for pool resources.</summary>
+        public double AccruedTaxableValue => def.isPoolResource ? 0 : accruedEffectiveProduction * FCSettings.silverPerResource;
+
+        /// <summary>Live instantaneous per-day rate (production * workers). For display and projections.</summary>
+        public double rawTotalProduction => InstantaneousProduction;
         public double effectiveRawTotalProduction => rawTotalProduction - totalStockpileAllocation;
         public double grossMarketValue => rawTotalProduction * FCSettings.silverPerResource;
         public double stockpileMarketValue => totalStockpileAllocation * FCSettings.silverPerResource;
@@ -226,27 +213,23 @@ namespace FactionColonies
         /// on this settlement. Added to the tithe income cap; in actualIncome, only the portion of tithe
         /// covered by this budget is offset (capped to titheTotalValue).
         /// </summary>
-        public double externalTitheBudget
+        public double DailyExternalTitheBudget
         {
             get
             {
                 double total = 0;
-                if (settlement != null)
+                if (settlement is object)
                 {
                     foreach (WorldObjectComp comp in settlement.AllComps)
                     {
                         if (comp is ITitheBudgetModifier provider)
-                            total += provider.GetExternalTitheBudget(this);
+                            total += provider.GetDailyExternalTitheBudget(this);
                     }
                 }
                 return total;
             }
         }
-        public double actualIncome => taxableProductionMarketValue - titheTotalValue + Math.Min(titheTotalValue, externalTitheBudget);
-        /// <summary>What actualIncome would be at tax time, using the period average instead of instantaneous production.</summary>
-        public double averageActualIncome => accumulationDays > 0
-            ? (AccumulatedAverageProduction - totalStockpileAllocation) * FCSettings.silverPerResource - titheTotalValue + Math.Min(titheTotalValue, externalTitheBudget)
-            : actualIncome;
+        public double actualIncome => taxableProductionMarketValue - titheTotalValue + Math.Min(titheTotalValue, DailyExternalTitheBudget);
 
         public bool canTithe => !def.isPoolResource && def.canTithe;
 
@@ -302,7 +285,21 @@ namespace FactionColonies
 
             //tithe and income data
             Scribe_Values.Look(ref savedAssignedWorkers, "assignedWorkers");
-            Scribe_Collections.Look(ref tithes, "tithes", LookMode.Deep, LookMode.Value);
+            // New ordered-list node. Legacy dictionary dual-read below seeds it from old saves.
+            Scribe_Collections.Look(ref tithes, "titheList", LookMode.Deep);
+            if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                if (tithes is null) tithes = new List<TitheEntry>();
+                if (tithes.Count == 0)
+                {
+                    // Legacy: read the old Dictionary<ThingQualityTuple,int> node "tithes" and seed the list.
+                    Dictionary<ThingQualityTuple, int> legacy = null;
+                    Scribe_Collections.Look(ref legacy, "tithes", LookMode.Deep, LookMode.Value);
+                    if (legacy is object)
+                        foreach (var kv in legacy)
+                            tithes.Add(new TitheEntry(kv.Key, kv.Value)); // arbitrary order — player re-prioritizes
+                }
+            }
             Scribe_Deep.Look(ref randomTitheFilter, "filter");
             Scribe_Values.Look(ref storedRandomTitheBudget, "randomTitheBudget");
             Scribe_Values.Look(ref hasRandomTithe, "hasRandomTithe");
@@ -315,8 +312,11 @@ namespace FactionColonies
 
             Scribe_References.Look(ref settlement, "settlement");
 
-            Scribe_Values.Look(ref accumulatedProduction, "accumulatedProduction", 0);
-            Scribe_Values.Look(ref accumulationDays, "accumulationDays", 0);
+            Scribe_Values.Look(ref accruedRawProduction, "accruedRawProduction", 0);
+            Scribe_Values.Look(ref accruedEffectiveProduction, "accruedEffectiveProduction", 0);
+            Scribe_Values.Look(ref accruedTitheBudget, "accruedTitheBudget", 0);
+            Scribe_Values.Look(ref accruedExternalTitheBudget, "accruedExternalTitheBudget", 0);
+            Scribe_Values.Look(ref accrualDays, "accrualDays", 0);
         }
 
         /// <summary>
@@ -383,7 +383,7 @@ namespace FactionColonies
         public double GetTitheIncome()
         {
             double multForTotal = GetTitheValueMultiplier();
-            return ((taxableProductionMarketValue + GetTotalTitheModifierForWorkers()) * multForTotal) + externalTitheBudget;
+            return ((taxableProductionMarketValue + GetTotalTitheModifierForWorkers()) * multForTotal) + DailyExternalTitheBudget;
         }
         public void RefreshOnRandomTitheBudgetChange()
         {
@@ -469,14 +469,42 @@ namespace FactionColonies
 
         public void AccumulateDailyProduction()
         {
-            accumulatedProduction += InstantaneousProduction;
-            accumulationDays++;
+            double dayProduction = InstantaneousProduction; // per-day raw
+            accruedRawProduction += dayProduction;
+
+            // Daily stockpile diversion: deliver what exists, never drive effective negative.
+            double remaining = dayProduction;
+            foreach (var kv in new List<KeyValuePair<string, StockpileEntry>>(stockpileAllocations)) // snapshot: realize may mutate
+            {
+                double requested = kv.Value.amount;
+                double actual = Math.Min(requested, Math.Max(0, remaining));
+                remaining -= actual;
+                kv.Value.realize?.Invoke(requested, actual);
+            }
+            double dayEffective = Math.Max(0, remaining);
+            accruedEffectiveProduction += dayEffective;
+
+            // Per-day tithe budget accrual (only for tithe-eligible resources).
+            if (canTithe)
+            {
+                double mult = GetTitheValueMultiplier();
+                double dayExternal = DailyExternalTitheBudget;
+                double dayTaxable = dayEffective * FCSettings.silverPerResource;
+                double dayWorkerMod = GetTotalTitheModifierForWorkers(); // uses per-day productionTitheMod
+                accruedExternalTitheBudget += dayExternal;
+                accruedTitheBudget += (dayTaxable + dayWorkerMod) * mult + dayExternal;
+            }
+
+            accrualDays++;
         }
 
         public void ResetAccumulator()
         {
-            accumulatedProduction = 0;
-            accumulationDays = 0;
+            accruedRawProduction = 0;
+            accruedEffectiveProduction = 0;
+            accruedTitheBudget = 0;
+            accruedExternalTitheBudget = 0;
+            accrualDays = 0;
         }
 
         public ResourcePool CreatePool()
@@ -488,7 +516,7 @@ namespace FactionColonies
             };
             if (def.isPoolResource)
             {
-                pool.pool += def.GetModExtension<ResourcePoolExtension>().CreatePool(effectiveRawTotalProduction, settlement);
+                pool.pool += def.GetModExtension<ResourcePoolExtension>().CreatePool(AccruedEffectiveProduction, settlement);
             }
             return pool;
         }
@@ -841,132 +869,75 @@ namespace FactionColonies
          *   Tithe functions                                                                                                                                             *
          * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - */
         /// <summary>
-        /// Adds a given quantity of thing to the tithes list.
+        /// Appends a new entry to the tithes list at lowest priority. The same thing may appear
+        /// multiple times — entries are identified by position, not by their ThingQualityTuple.
         /// <para>This function does not check if the given <paramref name="quantity"/> of <paramref name="thing"/> can actually be afforded.</para>
         /// <para>This function dirties the tithe cache, forcing a recalculation of the total tithe value.</para>
         /// </summary>
         /// <param name="thing">A ThingQualityTuple specifying the ThingDef, QualityCategory, and StuffDef of the thing to add.</param>
-        /// <param name="quantity">The quantity to add to the tithes list. Should always be a non-zero positive value.</param>
-        /// <returns>TRUE if the thing was successfully added to the tithes dictionary, FALSE otherwise.</returns>
-        public bool AddToTitheList(ThingQualityTuple thing, int quantity, bool forceToQuantity = false)
+        /// <param name="quantity">The quantity for the new entry. Should always be a non-negative value.</param>
+        /// <returns>TRUE if the entry was successfully appended, FALSE otherwise.</returns>
+        public bool AddTitheEntry(ThingQualityTuple thing, int quantity)
         {
             if (quantity < 0)
             {
-                LogUtil.Error($"Tried to add a negative quantity of objects to the tithes list for resource {def.LabelCap}. You should use DecrementInTitheList() instead.");
+                LogUtil.Error($"Tried to add a negative quantity to the tithes list for resource {def.LabelCap}.");
                 return false;
             }
-            LogUtil.Message($"Resource {def.LabelCap} adding new thing to tithe list: [{thing.thingDef.LabelCap} | {TextUtil.GetQualityLabelCap(thing.quality)} | {thing.stuffDef?.LabelCap ?? "null stuff"}] with quantity {quantity}");
-
-            if (tithes.ContainsKey(thing))
-            {
-                int totalNum;
-                if (forceToQuantity)
-                {
-                    totalNum = quantity;
-                }
-                else
-                {
-                    totalNum = tithes[thing] + quantity;
-                }
-                tithes[thing] = totalNum;
-            }
-            else
-            {
-                tithes.Add(thing, quantity);
-            }
-
+            tithes.Add(new TitheEntry(thing, quantity)); // appended at lowest priority
             dirtyTitheCache = true;
             settlement.DirtyProfitCache();
             return true;
         }
         /// <summary>
-        /// Removes a given <paramref name="quantity"/> of <paramref name="thing"/> from the tithes list.
+        /// Sets the quantity of the tithe entry at <paramref name="index"/> (clamped to non-negative).
         /// <para>This function dirties the tithe cache, forcing a recalculation of the total tithe value.</para>
-        /// <para>This function does not remove <paramref name="thing"/> from the tithes list if its quantity reaches 0. For that, use RemoveFromTitheList().</para>
         /// </summary>
-        /// <param name="thing">A ThingQualityTuple specifying the ThingDef, QualityCategory, and StuffDef of the thing to decrement.</param>
-        /// <param name="quantity">The quantity to remove from the tithes list. Should always be a non-zero positive value.</param>
-        public void DecrementInTitheList(ThingQualityTuple thing, int quantity)
+        public void SetTitheQuantityAt(int index, int quantity)
         {
-            if (quantity == 0)
-            {
-                LogUtil.Warning($"Tried to remove 0 objects from the tithes list for resource {def.LabelCap}");
-                return;
-            }
-            if (quantity < 0)
-            {
-                LogUtil.Error($"Tried to remove a negative quantity of objects from the tithes list for resource {def.LabelCap}. You should use addToTithesList() instead.");
-                return;
-            }
-
-            if (tithes.ContainsKey(thing))
-            {
-                tithes[thing] -= quantity;
-                if (tithes[thing] < 0)
-                {
-                    tithes[thing] = 0;
-                }
-            }
-            else
-            {
-                LogUtil.Warning($"Tried to remove {thing.thingDef.LabelCap} from tithes list for resource {def.LabelCap}, but it doesn't exist");
-            }
+            if (index < 0 || index >= tithes.Count) return;
+            tithes[index].quantity = Math.Max(0, quantity);
             dirtyTitheCache = true;
             settlement.DirtyProfitCache();
         }
         /// <summary>
-        /// Fully removes the given <paramref name="thing"/> from the tithes list.
+        /// Replaces the ThingQualityTuple of the tithe entry at <paramref name="index"/> in place,
+        /// preserving the entry's quantity and priority. Used by the quality/stuff edit buttons.
         /// <para>This function dirties the tithe cache, forcing a recalculation of the total tithe value.</para>
-        /// <para>We should only fully remove an item from the tithes list if the player commands it so. Use DecrementInTitheList() otherwise, so that things with a quantity of 0 remain in the tithes list.</para>
         /// </summary>
-        /// <param name="thing">A ThingQualityTuple specifying the ThingDef, QualityCategory, and StuffDef of the thing to remove.</param>
-        public void RemoveFromTitheList(ThingQualityTuple thing)
+        public void SetTitheThingAt(int index, ThingQualityTuple newThing)
         {
-            if (tithes.ContainsKey(thing))
-            {
-                LogUtil.Message($"Resource {def.LabelCap} removing thing from tithe list: {thing.thingDef.LabelCap} | {TextUtil.GetQualityLabelCap(thing.quality)} | {thing.stuffDef?.LabelCap ?? "null stuff"}");
-                tithes.Remove(thing);
-                dirtyTitheCache = true;
-                settlement.DirtyProfitCache();
-            }
+            if (index < 0 || index >= tithes.Count) return;
+            tithes[index].thing = newThing;
+            dirtyTitheCache = true;
+            settlement.DirtyProfitCache();
         }
-        public ThingQualityTuple GetTitheListKey(ThingQualityTuple thing)
+        /// <summary>
+        /// Removes the tithe entry at <paramref name="index"/>.
+        /// <para>This function dirties the tithe cache, forcing a recalculation of the total tithe value.</para>
+        /// </summary>
+        public void RemoveTitheAt(int index)
         {
-            if (tithes.ContainsKey(thing))
-            {
-                return thing;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        public bool HasTitheListKey(ThingQualityTuple thing)
-        {
-            return tithes.ContainsKey(thing);
-        }
-        public int GetTitheListValue(ThingQualityTuple thing)
-        {
-            if (tithes.ContainsKey(thing))
-            {
-                return tithes[thing];
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        public List<ThingQualityTuple> GetTitheListKeys()
-        {
-            return tithes.Keys.ToList();
-        }
-        public List<int> GetTitheListValues()
-        {
-            return tithes.Values.ToList();
+            if (index < 0 || index >= tithes.Count) return;
+            tithes.RemoveAt(index);
+            dirtyTitheCache = true;
+            settlement.DirtyProfitCache();
         }
         public int GetTitheListCount()
         {
             return tithes.Count;
+        }
+        /* Reorder a tithe entry (index 0 = highest priority). Clamps indices; no-op if out of range. */
+        public void MoveTitheEntry(int fromIndex, int toIndex)
+        {
+            if (fromIndex < 0 || fromIndex >= tithes.Count) return;
+            toIndex = Mathf.Clamp(toIndex, 0, tithes.Count - 1);
+            if (fromIndex == toIndex) return;
+            TitheEntry e = tithes[fromIndex];
+            tithes.RemoveAt(fromIndex);
+            tithes.Insert(toIndex, e);
+            dirtyTitheCache = true;
+            settlement.DirtyProfitCache();
         }
         public bool CanSetTitheQuality(out QualityCategory maxQuality)
         {
@@ -1043,94 +1014,21 @@ namespace FactionColonies
         public float CalcTotalTitheValue()
         {
             float total = 0;
-            foreach (var (key, value) in tithes)
-            {
-                total += TitheThingTotalValue(key, value);
-            }
-
+            foreach (TitheEntry e in tithes)
+                total += TitheThingTotalValue(e.thing, e.quantity);
             return total;
         }
         public ThingQualityTuple FindHighestValueTitheThing()
         {
             ThingQualityTuple maxthing = null;
             float maxval = 0;
-            foreach (var (key, value) in tithes)
+            foreach (TitheEntry e in tithes)
             {
-                if (value <= 0) continue; // skip zero-quantity entries
-                float val = TitheThingValue(key);
-                if (val > maxval)
-                {
-                    maxthing = key;
-                    maxval = val;
-                }
+                if (e.quantity <= 0) continue;
+                float val = TitheThingValue(e.thing);
+                if (val > maxval) { maxthing = e.thing; maxval = val; }
             }
             return maxthing;
-        }
-        /// <summary>
-        /// Removes items from the tithes dictionary if the total value of the tithes is higher than the raw total production.
-        /// <para>This function dirties the tithe cache, forcing a recalculation of the total tithe value.</para>
-        /// <para>NOTE: The algorithm is heavy-handed. Calling this function with high frequency is ill-advised.</para>
-        /// </summary>
-        // Could probably make the algorithm slightly less heavy by just subtracting values from totalValue instead of constantly re-calling
-        //   CalcTotalTitheValue(), but I'm paranoid about the values misaligning. So leaving as is. If optimization is necessary, that's a
-        //   decent place to start.
-        public void PruneTitheList()
-        {
-            if (tithesPaused)
-            {
-                return;
-            }
-            if (tithes.Count == 0)
-            {
-                return;
-            }
-
-            double totalValue = 0;
-            double titheIncome = GetTitheIncome();
-            int maxIterations = tithes.Count * 3 + 5;
-            int iterations = 0;
-            while ((totalValue = CalcTotalTitheValue()) > titheIncome && tithes.Count > 0)
-            {
-                if (++iterations > maxIterations)
-                {
-                    LogUtil.Error($"PruneTitheList() for resource {def.LabelCap} exceeded max iterations ({maxIterations}). Bailing out to prevent freeze.");
-                    break;
-                }
-                ThingQualityTuple maxValueThing = FindHighestValueTitheThing();
-                if (maxValueThing == null)
-                {
-                    /* This case shouldn't be possible. But *just* in case, we'll throw an error and bail out if we get here. */
-                    /* With tithe injections, this case IS now possible. Downgrade the error to a regular message */
-                    LogUtil.Message($"Got NULL when trying to find highest value thing in tithes list for resource {def.LabelCap}. Bailing out of PruneTitheList()");
-                    return;
-                }
-                int quantity = tithes[maxValueThing];
-                double totalThingValue = TitheThingTotalValue(maxValueThing, quantity);
-                if (totalValue - totalThingValue < titheIncome)
-                {
-                    double budget = titheIncome - (totalValue - totalThingValue);
-                    int newQuantity = MaxThingCanAfford(maxValueThing, budget);
-                    int removeNum = quantity - newQuantity;
-                    DecrementInTitheList(maxValueThing, removeNum);
-                }
-                else
-                {
-                    DecrementInTitheList(maxValueThing, quantity);
-                }
-            }
-            if (totalValue > titheIncome && tithes.Count == 0 && !autoMaxRandomTithe)
-            {
-                /* In this case, the total tithe value must consist entirely of the random tithe budget. So just cap the random tithe budget at
-                 * titheIncome */
-                randomTitheBudget = (int)titheIncome;
-            }
-
-            /* One final sanity check. Probably not necessary? If this impacts performance too much, then nuke it. Probably fine though */
-            if ((totalValue = CalcTotalTitheValue()) > titheIncome)
-            {
-                LogUtil.Error($"Reached end of PruneTitheList() for resource {def.LabelCap}, but total tithe value {totalValue} is still greater than tithe income {titheIncome}!");
-            }
-            dirtyTitheCache = true;
         }
         public List<Thing> GenerateTithe(out int extraSilver)
         {
@@ -1162,32 +1060,69 @@ namespace FactionColonies
                 ResetThingFilter();
             }
 
-            // Determine random tithing budget
+            // Determine random tithing budget (computed here; consumed after the specified-tithe walk below)
             if (disburseTitheStock && randomTitheStock > 0)
             {
                 outSilver += (int)randomTitheStock;
                 randomTitheStock = 0;
             }
             double randomBudget = randomTitheBudget + randomTitheStock;
-            if (hasRandomTithe && randomBudget > 0)
+
+            // Walk the ordered priority list against the accrued tithe budget. Fully fulfil while affordable,
+            // partial-fill the straddler, then stop. Unfulfilled entries persist untouched (no prune).
+            double budgetRemaining = AccruedTitheBudget; // accrued over the whole cycle
+            foreach (TitheEntry entry in tithes)
+            {
+                if (entry.quantity <= 0) continue;
+                float unit = CraftUtil.ThingValue(entry.thing);
+                if (unit <= 0) continue;
+
+                int affordable = entry.quantity;
+                double entryCost = unit * entry.quantity;
+                if (entryCost > budgetRemaining)
+                    affordable = ResourceFormulas.MaxThingCanAfford(budgetRemaining, unit); // partial straddler
+                if (affordable <= 0) break; // budget exhausted; remaining entries persist for next cycle
+
+                budgetRemaining -= unit * affordable;
+
+                List<Thing> things = def.GetModExtension<ResourceFilterExtension>()
+                    ?.GenerateSpecificThings(entry.thing.thingDef, affordable, entry.thing.quality, entry.thing.stuffDef, this);
+                if (things is null)
+                {
+                    for (int i = 0; i < affordable; i++)
+                    {
+                        Thing thing = ThingMaker.MakeThing(entry.thing.thingDef, entry.thing.stuffDef);
+                        if (CraftUtil.ThingHasQuality(entry.thing.thingDef))
+                            thing.TryGetComp<CompQuality>().SetQuality(entry.thing.quality, ArtGenerationContext.Outsider);
+                        titheItems.Add(thing);
+                    }
+                }
+                else
+                {
+                    titheItems.AddRange(things);
+                }
+            }
+
+            // Random tithe is the lowest-priority consumer; it draws from the post-specified remainder.
+            double effectiveRandomBudget = Math.Min(randomBudget, budgetRemaining);
+            if (hasRandomTithe && effectiveRandomBudget > 0)
             {
                 if (!randomTitheFilter.AllowedThingDefs.Any())
                 {
-                    randomTitheStock = randomBudget;
+                    randomTitheStock = effectiveRandomBudget;
                     Find.LetterStack.ReceiveLetter("FCNoTitheLetterLabel".Translate(settlement.Name), "FCNoTitheLetterDesc".Translate(settlement.Name, label, randomTitheStock), LetterDefOf.NeutralEvent);
                 }
                 else
                 {
                     // Calculate the random tithe
-
                     double minimum = randomTitheFilter.AllowedThingDefs.Aggregate<ThingDef, double>(double.MaxValue, (current, thing) => Math.Min(thing?.BaseMarketValue ?? 100, current));
-                    LogUtil.Message($"{settlement.Name}, resource {label}, minimum random tithe: {minimum}, budget: {randomBudget}");
-                    if (minimum <= randomBudget)
+                    LogUtil.Message($"{settlement.Name}, resource {label}, minimum random tithe: {minimum}, budget: {effectiveRandomBudget}");
+                    if (minimum <= effectiveRandomBudget)
                     {
                         List<Thing> randomTitheList = new List<Thing>();
                         ThingSetMaker thingSetMaker = new ThingSetMaker_MarketValue();
                         ThingSetMakerParams param = new ThingSetMakerParams();
-                        param.totalMarketValueRange = new FloatRange((float)randomBudget, (float)(randomBudget + GetTotalTitheModifierForWorkers()));
+                        param.totalMarketValueRange = new FloatRange((float)effectiveRandomBudget, (float)(effectiveRandomBudget + GetTotalTitheModifierForWorkers()));
                         param.filter = randomTitheFilter;
                         param.techLevel = FindFC.EmpireFaction.def.techLevel;
 
@@ -1222,45 +1157,8 @@ namespace FactionColonies
                     }
                     else
                     {
-                        randomTitheStock = randomBudget;
+                        randomTitheStock = effectiveRandomBudget;
                         Find.LetterStack.ReceiveLetter("FCNoTitheLetterLabel".Translate(settlement.Name), "FCNoTitheLetterDesc2".Translate(settlement.Name, label, randomTitheStock), LetterDefOf.NeutralEvent);
-                    }
-
-                }
-            }
-
-            // Now handle specified tithes. We (should) have called PruneTitheList before this, so we shouldn't have to worry about the math adding up
-            if (tithes.Count > 0)
-            {
-                /* Iterate over the dictionary, creating a new thing for each entry, and adding each such thing to the list of tithe items */
-                foreach (ThingQualityTuple key in tithes.Keys)
-                {
-                    int quantity = tithes[key];
-                    if (quantity == 0)
-                    {
-                        continue;
-                    }
-
-                    /* Try to generate the list through the resource's ResourceFilterExtension */
-                    List<Thing> things = def.GetModExtension<ResourceFilterExtension>()?.GenerateSpecificThings(key.thingDef, quantity, key.quality, key.stuffDef, this);
-                    if (things is null)
-                    {
-                        /* If we're here, then the resource doesn't have a special implementation for GenerateSpecificThings(). So try to make things the generic way. */
-                        for (int i = 0; i < quantity; i++)
-                        {
-                            Thing thing = ThingMaker.MakeThing(key.thingDef, key.stuffDef);
-
-                            if (CraftUtil.ThingHasQuality(key.thingDef))
-                            {
-                                CompQuality thingQuality = thing.TryGetComp<CompQuality>();
-                                thingQuality.SetQuality(key.quality, ArtGenerationContext.Outsider);
-                            }
-                            titheItems.Add(thing);
-                        }
-                    }
-                    else
-                    {
-                        titheItems.AddRange(things);
                     }
                 }
             }

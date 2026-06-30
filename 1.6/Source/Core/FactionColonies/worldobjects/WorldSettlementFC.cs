@@ -361,6 +361,7 @@ namespace FactionColonies
         }
 
         //ui only — lazy-cached via dirtyProfitCache
+        private double _buildingsUpkeep;
         private double _totalUpkeep;
         private string _upkeepExp = "";
         private double _totalIncome;
@@ -373,14 +374,37 @@ namespace FactionColonies
         public string incomeExp { get { if (dirtyProfitCache) RecomputeProfit(); return _incomeExp; } }
         public double totalProfit { get { if (dirtyProfitCache) RecomputeProfit(); return _totalProfit; } }
 
-        /* Period-averaged values, derived from the daily samples accumulated in
-         * AccumulateDailyProduction. These are what the player will actually be paid at
-         * tax time; UI surfaces should headline these and treat the live values above
-         * as a "current daily rate" subtitle. */
-        public bool HasTaxAverageData => taxAccumulationDays > 0;
-        public double averageTotalIncome => HasTaxAverageData ? accumulatedTotalIncome / taxAccumulationDays : totalIncome;
-        public double averageTotalUpkeep => HasTaxAverageData ? accumulatedTotalUpkeep / taxAccumulationDays : totalUpkeep;
-        public double averageTotalProfit => averageTotalIncome - averageTotalUpkeep;
+        /* Accrued-this-cycle aggregates. Resource income is DERIVED by summing each resource's accrual
+         * (never reconstructed at the settlement level). */
+        public int TaxAccrualDays => taxAccrualDays;
+        public double AccruedGrossIncome => resources.Sum(r => r.AccruedTaxableValue) + accruedNonResourceIncome;
+        public double AccruedUpkeep => accruedTotalUpkeep;
+        public int DaysRemaining => Math.Max(0, FCSettings.timeBetweenTaxes / GenDate.TicksPerDay - taxAccrualDays);
+
+        /* Forward-looking full-cycle projection: accrued so far + live per-day rate * days remaining. */
+        public double ProjectedIncome => AccruedGrossIncome + totalIncome * DaysRemaining;
+        public double ProjectedUpkeep => AccruedUpkeep + totalUpkeep * DaysRemaining;
+
+        /* Projected silver value of tithe goods that will be delivered this cycle: per tithing resource,
+         * the selected tithe demand capped by the projected tithe budget (accrued + daily rate * days left).
+         * Mirrors the fulfilledTitheValue deduction in CreateTax. */
+        public double ProjectedTitheValue
+        {
+            get
+            {
+                double total = 0;
+                foreach (ResourceFC r in resources)
+                {
+                    if (!r.canTithe || r.tithesPaused) continue;
+                    double projBudget = r.AccruedTitheBudget + r.GetTitheIncome() * DaysRemaining;
+                    total += Math.Min(r.titheTotalValue, projBudget);
+                }
+                return total;
+            }
+        }
+
+        /* Net of upkeep AND projected tithe goods (diversions are already netted via post-diversion production). */
+        public double ProjectedProfit => ProjectedIncome - ProjectedUpkeep - ProjectedTitheValue;
 
         // Jealously guard our resources. Only we can modify them!
         private List<ResourceFC> resources = new List<ResourceFC>();
@@ -400,14 +424,12 @@ namespace FactionColonies
         private bool calculatingTax = false;
         public bool IsCalculatingTax => calculatingTax;
 
-        /* Sampled daily, in lockstep with per-resource production accumulation. The upkeep
-         * accumulator closes the unassign-before-tax exploit. The income accumulator backs
-         * the averaged-value UI surfaces so the player sees the silver they'll actually
-         * receive at tax time, not the instantaneous rate. taxAccumulationDays counts
-         * samples for both. */
-        private double accumulatedTotalIncome = 0;
-        private double accumulatedTotalUpkeep = 0;
-        private int taxAccumulationDays = 0;
+        /* Accrued over the current tax cycle. Resources accrue their own taxable/tithe budget;
+         * non-resource income and all upkeep terms are tracked here.
+         * taxAccrualDays closes the unassign-before-tax exploit for the upkeep path. */
+        private double accruedNonResourceIncome = 0; // negative-building income + IProfitContributor income
+        private double accruedTotalUpkeep = 0;       // worker upkeep + positive building upkeep + contributor upkeep
+        private int taxAccrualDays = 0;
         public WorldObjectComp_SettlementMilitary MilitaryComp
         {
             get
@@ -900,9 +922,9 @@ namespace FactionColonies
             Scribe_Values.Look(ref _prosperity, "prosperity");
             Scribe_Values.Look(ref _workerCost, "workerCost");
             Scribe_Values.Look(ref _workerTotalUpkeep, "workerTotalUpkeep");
-            Scribe_Values.Look(ref accumulatedTotalIncome, "accumulatedTotalIncome", 0);
-            Scribe_Values.Look(ref accumulatedTotalUpkeep, "accumulatedTotalUpkeep", 0);
-            Scribe_Values.Look(ref taxAccumulationDays, "taxAccumulationDays", 0);
+            Scribe_Values.Look(ref accruedNonResourceIncome, "accruedNonResourceIncome", 0);
+            Scribe_Values.Look(ref accruedTotalUpkeep, "accruedTotalUpkeep", 0);
+            Scribe_Values.Look(ref taxAccrualDays, "taxAccrualDays", 0);
 
             Scribe_Collections.Look(ref resources, "resources", LookMode.Deep);
 
@@ -1512,6 +1534,7 @@ namespace FactionColonies
             upkeep += _workerTotalUpkeep;
 
             double buildingsUpkeep = BuildingsComp?.TotalUpkeep() ?? 0;
+            _buildingsUpkeep = buildingsUpkeep;
             if (buildingsUpkeep > 0)
             {
                 upkeep += buildingsUpkeep;
@@ -1525,15 +1548,12 @@ namespace FactionColonies
 
             foreach (ResourceFC resource in resources)
             {
-                if (resource.actualIncome > 0)
+                if (resource.def.isPoolResource) continue; // pools feed CreatePool, not silver income
+                double resIncome = resource.taxableProductionMarketValue; // gross/day, post-stockpile, pre-tithe
+                if (resIncome > 0)
                 {
-                    income += resource.actualIncome;
-                    _incomeExp += $"+{Math.Round(resource.actualIncome, 2)} - {resource.label} {"FCIncome".Translate()}\n";
-                }
-                else if (resource.actualIncome < 0)
-                {
-                    upkeep += (-1) * resource.actualIncome;
-                    _upkeepExp += $"+{Math.Round(-1 * resource.actualIncome, 2)} - {resource.label} {"FCTithing".Translate()}\n";
+                    income += resIncome;
+                    _incomeExp += $"+{Math.Round(resIncome, 2)} - {resource.label} {"FCIncome".Translate()}\n";
                 }
             }
 
@@ -1541,22 +1561,22 @@ namespace FactionColonies
             {
                 if (comp is IProfitContributor contributor)
                 {
-                    double upkeepContrib = contributor.GetUpkeepContribution();
+                    double upkeepContrib = contributor.GetDailyUpkeepContribution();
                     if (upkeepContrib > 0)
                     {
                         upkeep += upkeepContrib;
-                        string upkeepDesc = contributor.GetUpkeepContributionDesc();
+                        string upkeepDesc = contributor.GetDailyUpkeepContributionDesc();
                         if (!upkeepDesc.NullOrEmpty())
                         {
                             _upkeepExp += upkeepDesc + "\n";
                         }
                     }
 
-                    double incomeContrib = contributor.GetIncomeContribution();
+                    double incomeContrib = contributor.GetDailyIncomeContribution();
                     if (incomeContrib > 0)
                     {
                         income += incomeContrib;
-                        string incomeDesc = contributor.GetIncomeContributionDesc();
+                        string incomeDesc = contributor.GetDailyIncomeContributionDesc();
                         if (!incomeDesc.NullOrEmpty())
                         {
                             _incomeExp += incomeDesc + "\n";
@@ -1568,9 +1588,7 @@ namespace FactionColonies
             _upkeepExp = _upkeepExp.Trim();
             _incomeExp = _incomeExp.Trim();
 
-            _totalUpkeep = (calculatingTax && taxAccumulationDays > 0)
-                ? accumulatedTotalUpkeep / taxAccumulationDays
-                : upkeep;
+            _totalUpkeep = upkeep; // live per-day rate; tax pays the accrued sum (see CreateTax)
             _totalIncome = income;
             _workerCost = _workers == 0 ? GetBaseWorkerCost() : (_workerTotalUpkeep / _workers);
             _totalProfit = _totalIncome - _totalUpkeep;
@@ -2414,16 +2432,6 @@ namespace FactionColonies
             return pools;
         }
 
-        public void PruneResourceTithes()
-        {
-            foreach (ResourceFC res in resources)
-            {
-                if (res.canTithe)
-                {
-                    res.PruneTitheList();
-                }
-            }
-        }
         public void DirtyResourceCache(ResourceTypeDef resDef)
         {
             GetResource(resDef)?.SetDirtyCache();
@@ -2445,38 +2453,47 @@ namespace FactionColonies
         private void PreTaxPrep()
         {
             DirtyResourceCaches();
-            foreach (ResourceFC res in resources)
-                res.PruneStockpileAllocations();
-            PruneResourceTithes();
             DirtyStatsCache();
             calculatingTax = true;
         }
         public void AccumulateDailyProduction()
         {
             foreach (ResourceFC res in resources)
+                res.AccumulateDailyProduction(); // each resource accrues its own taxable/tithe budget
+
+            // Non-resource terms for the day. Negative building upkeep is income (2b-bis).
+            DirtyProfitCache();
+            // Force RecomputeProfit so _workerTotalUpkeep is fresh before we read it below.
+            double _ignore = totalUpkeep;
+            double dayNonResourceIncome = 0;
+            double buildingsUpkeep = _buildingsUpkeep;
+            if (buildingsUpkeep < 0) dayNonResourceIncome += -buildingsUpkeep;
+
+            double dayUpkeep = _workerTotalUpkeep + (buildingsUpkeep > 0 ? buildingsUpkeep : 0);
+
+            foreach (WorldObjectComp comp in AllComps)
             {
-                res.AccumulateDailyProduction();
+                if (comp is IProfitContributor contributor)
+                {
+                    double inc = contributor.GetDailyIncomeContribution();
+                    if (inc > 0) dayNonResourceIncome += inc;
+                    double up = contributor.GetDailyUpkeepContribution();
+                    if (up > 0) dayUpkeep += up;
+                }
             }
 
-            /* Snapshot total income and upkeep at the same instant production is sampled.
-             * calculatingTax is false here, so RecomputeProfit uses each resource's instantaneous
-             * actualIncome for the day rather than the (still-accumulating) average. The first
-             * accessor below triggers RecomputeProfit; the second reads the cached value. */
-            DirtyProfitCache();
-            accumulatedTotalIncome += totalIncome;
-            accumulatedTotalUpkeep += totalUpkeep;
-            taxAccumulationDays++;
+            accruedNonResourceIncome += dayNonResourceIncome;
+            accruedTotalUpkeep += dayUpkeep; // deliberately excludes the resource tithe term — tithes deducted once at tax
+            taxAccrualDays++;
         }
         private void PostTaxPrep()
         {
             calculatingTax = false;
             foreach (ResourceFC res in resources)
-            {
                 res.ResetAccumulator();
-            }
-            accumulatedTotalIncome = 0;
-            accumulatedTotalUpkeep = 0;
-            taxAccumulationDays = 0;
+            accruedNonResourceIncome = 0;
+            accruedTotalUpkeep = 0;
+            taxAccrualDays = 0;
         }
         /// <summary>
         /// This function handles the calculations for determining this settlement's taxes at tax time. It handles both tithes and silver taxes.
@@ -2490,21 +2507,26 @@ namespace FactionColonies
             TaxTickRegistry.InvokePreSettlementCreateTax(this);
 
             List<Thing> titheThings = new List<Thing>();
-            int tmpSilverAmount = (int)((totalIncome - totalUpkeep) + ReturnOneTimeSilverIncome(true));
+            // Accrued gross (post-stockpile, pre-tithe) + accrued non-resource income - accrued upkeep + one-time silver.
+            double accruedNet = AccruedGrossIncome - AccruedUpkeep;
 
+            double fulfilledTitheValue = 0;
             foreach (ResourceFC resource in resources)
             {
                 if (resource.canTithe && !resource.tithesPaused)
                 {
                     List<Thing> resTitheThings = resource.GenerateTithe(out int resExtraSilver);
-
-                    if (resTitheThings.Count > 0)
+                    if (resTitheThings is object && resTitheThings.Count > 0)
                     {
                         titheThings.AddRange(resTitheThings);
+                        foreach (Thing t in resTitheThings)
+                            fulfilledTitheValue += t.MarketValue * t.stackCount;
                     }
-                    tmpSilverAmount += resExtraSilver;
+                    accruedNet += resExtraSilver; // random-tithe stock disbursement, post-tax hook silver
                 }
             }
+
+            int tmpSilverAmount = (int)(accruedNet - fulfilledTitheValue + ReturnOneTimeSilverIncome(true));
 
             PostTaxPrep();
             silverAmount = tmpSilverAmount;

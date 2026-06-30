@@ -20,7 +20,8 @@
 			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>1.75</value></li>
 			<li><stat>RTD_Medicine_ProductionMultiplier</stat><value>1.75</value></li>
 		</statModifiers>
-		<upkeep>4000</upkeep>
+		<upkeep>800</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/LightConverter</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -38,7 +39,8 @@
 		<statModifiers>
 			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>2.0</value></li>
 		</statModifiers>
-		<upkeep>1000</upkeep>
+		<upkeep>200</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/BaconBeacon</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -57,7 +59,8 @@
 			<li><stat>unrestGainedBase</stat><value>0.5</value></li>
 			<li><stat>RTD_Research_ProductionMultiplier</stat><value>2.0</value></li>
 		</statModifiers>
-		<upkeep>2000</upkeep>
+		<upkeep>400</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/HAL9000</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -80,7 +83,8 @@
 			<li><stat>workerBaseMax</stat><value>10</value></li>
 			<li><stat>workerBaseOverMax</stat><value>10</value></li>
 		</statModifiers>
-		<upkeep>1000</upkeep>
+		<upkeep>200</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/CapitalismSucks</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -99,7 +103,8 @@
 		<statModifiers>
 			<li><stat>militaryBaseLevel</stat><value>2</value></li>
 		</statModifiers>
-		<upkeep>1000</upkeep>
+		<upkeep>200</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/CFinder</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -119,6 +124,7 @@
 			<li><stat>taxBasePercentage</stat><value>25</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep>
+		<postRework>true</postRework>
 		<!-- cost per week for the building -->
 		<iconPath>GUI/Buildings/NetherPortal</iconPath>
 	</FactionColonies.BuildingFCDef>
@@ -132,7 +138,8 @@
 		<statModifiers>
 			<li><stat>RTD_Power_ProductionMultiplier</stat><value>2.0</value></li>
 		</statModifiers>
-		<upkeep>1000</upkeep> <!-- cost per week for the building -->
+		<upkeep>200</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/ArchotechGenerator</iconPath>
 	</FactionColonies.BuildingFCDef>
 

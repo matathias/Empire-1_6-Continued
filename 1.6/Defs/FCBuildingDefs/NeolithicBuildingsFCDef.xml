@@ -16,6 +16,7 @@
 		</statModifiers>
 		<maxhilliness>Flat</maxhilliness>
 		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/cerealFarmland</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -29,7 +30,8 @@
 		<statModifiers>
 			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.15</value></li>
 		</statModifiers>
-		<upkeep>25</upkeep> <!-- cost per week for the building -->
+		<upkeep>5</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/grainMill</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -43,7 +45,8 @@
 		<statModifiers>
 			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.10</value></li>
 		</statModifiers>
-		<upkeep>75</upkeep> <!-- cost per week for the building -->
+		<upkeep>15</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/granary</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -59,6 +62,7 @@
 			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>0.85</value></li>
 		</statModifiers>
 		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/fletcher</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -72,7 +76,8 @@
 		<statModifiers>
 			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>1.20</value></li>
 		</statModifiers>
-		<upkeep>100</upkeep> <!-- cost per week for the building -->
+		<upkeep>20</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/stoneMason</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -94,6 +99,7 @@
 			<li>TemperateGuldenForest</li>
 		</applicableBiomes>
 		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/furrier</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -114,7 +120,8 @@
 			<li>TropicalRainforest</li>
 			<li>TemperateGuldenForest</li>
 		</applicableBiomes>
-		<upkeep>50</upkeep> <!-- cost per week for the building -->
+		<upkeep>10</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/huntersHut</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -129,7 +136,8 @@
 			<li><stat>happinessGainedBase</stat><value>0.4</value></li>
 			<li><stat>RTD_Food_ProductionMultiplier</stat><value>0.95</value></li>
 		</statModifiers>
-		<upkeep>150</upkeep> <!-- cost per week for the building -->
+		<upkeep>30</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/brewer</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -145,6 +153,7 @@
 			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>0.8</value></li>
 		</statModifiers>
 		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/carpenter</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -159,7 +168,8 @@
 			<li><stat>happinessGainedBase</stat><value>0.2</value></li>
 			<li><stat>RTD_Medicine_ProductionMultiplier</stat><value>1.15</value></li>
 		</statModifiers>
-		<upkeep>50</upkeep> <!-- cost per week for the building -->
+		<upkeep>10</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/apothecary</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -175,6 +185,7 @@
 			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.10</value></li>
 		</statModifiers>
 		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/alchemist</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -189,7 +200,8 @@
 			<li><stat>workerBaseCost</stat><value>2</value></li>
 			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.2</value></li>
 		</statModifiers>
-		<upkeep>200</upkeep> <!-- cost per week for the building -->
+		<upkeep>40</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/ancientAcademy</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -206,6 +218,7 @@
 			<li><stat>happinessLostBase</stat><value>0.4</value></li>
 		</statModifiers>
 		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/slaveMarket</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -220,7 +233,8 @@
 			<li><stat>unrestGainedMultiplier</stat><value>1.10</value></li>
 			<li><stat>taxBasePercentage</stat><value>10</value></li>
 		</statModifiers>
-		<upkeep>-50</upkeep> <!-- cost per week for the building -->
+		<upkeep>-10</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/bailiff</iconPath>
 	</FactionColonies.BuildingFCDef>
 
@@ -239,6 +253,7 @@
 			<li><stat>militaryCombatEfficiency</stat><value>0.8</value></li>
 		</statModifiers>
 		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/militia</iconPath>
 	</FactionColonies.BuildingFCDef>
 	
@@ -255,6 +270,7 @@
 			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.10</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/salvageGuild</iconPath>
 	</FactionColonies.BuildingFCDef>
 	
@@ -275,6 +291,7 @@
 		<li>AB_MycoticJungle</li>
 	</applicableBiomes>
 		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/mushfarmer</iconPath>
 	</FactionColonies.BuildingFCDef>
 	
@@ -289,6 +306,7 @@
 			<li><stat>RTD_Logging_ProductionAdditive</stat><value>0.5</value></li>
 		</statModifiers>
 		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/woodgatherer</iconPath>
 	</FactionColonies.BuildingFCDef>
 	
@@ -303,7 +321,8 @@
 			<li><stat>workerBaseMax</stat><value>-2</value></li>
 			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>1.15</value></li>
 		</statModifiers>
-		<upkeep>25</upkeep> <!-- cost per week for the building -->
+		<upkeep>5</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/woodcutter</iconPath>
 	</FactionColonies.BuildingFCDef>
 

@@ -48,6 +48,7 @@ namespace FactionColonies
 
             /* Tax cycle */
             if (participant is ITaxTickParticipant tt)          { TaxTickRegistry.Register(tt);            any = true; }
+            if (participant is IDailyAccrualParticipant da)     { DailyAccrualRegistry.Register(da);       any = true; }
             if (participant is ITaxDeliveryInterceptor td)      { TaxDeliveryRegistry.Register(td);        any = true; }
 
             /* UI / external-target collections */
@@ -91,6 +92,7 @@ namespace FactionColonies
             if (participant is IThreatScalingContributor ts)    ThreatScalingRegistry.Unregister(ts);
             if (participant is IMercAutoTendProvider mat)       MercAutoTendRegistry.Unregister(mat);
             if (participant is ITaxTickParticipant tt)          TaxTickRegistry.Unregister(tt);
+            if (participant is IDailyAccrualParticipant da)     DailyAccrualRegistry.Unregister(da);
             if (participant is ITaxDeliveryInterceptor td)      TaxDeliveryRegistry.Unregister(td);
             if (participant is IMainTabWindowOverview mt)       MainTableRegistry.Unregister(mt);
             if (participant is ISettlementWindowButton swb)     SettlementButtonRegistry.Unregister(swb);
@@ -122,6 +124,7 @@ namespace FactionColonies
             ThreatScalingRegistry.ClearAll();
             MercAutoTendRegistry.ClearAll();
             TaxTickRegistry.ClearAll();
+            DailyAccrualRegistry.ClearAll();
             TaxDeliveryRegistry.ClearAll();
             MainTableRegistry.ClearAll();
             SettlementButtonRegistry.ClearAll();

@@ -108,8 +108,8 @@ namespace FactionColonies
                 {
                     faction.AddExperienceToFactionLevel(2f);
 
-                    List<Thing> list = settlement.CreateTax(out int silverAmount);
                     List<ResourcePool> billResourcePools = settlement.CreateResourcePools();
+                    List<Thing> list = settlement.CreateTax(out int silverAmount);
 
                     BillFC bill = new BillFC(settlement);
                     bill.label = "FCBillKindTax".Translate();

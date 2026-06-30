@@ -21,41 +21,44 @@ namespace FactionColonies
         public const int MINIMUM_TAX_INTERVAL_DAYS = 1;
         public const EmpireDifficultyLevel DEFAULT_DIFFICULTY_LEVEL = EmpireDifficultyLevel.AdventureStory;
         //Peaceful
-        public const int DEFAULT_SILVER_PER_RESOURCE_PEACEFUL = 200;
+        public const int DEFAULT_SILVER_PER_RESOURCE_PEACEFUL = 100;          // was 200, interval 2
         public const int DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL = 2;
-        public const int DEFAULT_PRODUCTION_TITHE_MOD_PEACEFUL = 50;
-        public const int DEFAULT_WORKER_COST_PEACEFUL = 75;
+        public const int DEFAULT_PRODUCTION_TITHE_MOD_PEACEFUL = 25;          // was 50, interval 2
+        public const int DEFAULT_WORKER_COST_PEACEFUL = 38;                   // was 75, interval 2 (75/2)
         //Community Builder
-        public const int DEFAULT_SILVER_PER_RESOURCE_COMMUNITYBUILDER = 150;
+        public const int DEFAULT_SILVER_PER_RESOURCE_COMMUNITYBUILDER = 30;   // was 150, interval 5
         public const int DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER = 5;
-        public const int DEFAULT_PRODUCTION_TITHE_MOD_COMMUNITYBUILDER = 25;
-        public const int DEFAULT_WORKER_COST_COMMUNITYBUILDER = 100;
+        public const int DEFAULT_PRODUCTION_TITHE_MOD_COMMUNITYBUILDER = 5;   // was 25, interval 5
+        public const int DEFAULT_WORKER_COST_COMMUNITYBUILDER = 20;           // was 100, interval 5
         //Adventure Story
-        public const int DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY = 100;
+        public const int DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY = 20;     // was 100, interval 5
         public const int DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY = 5;
-        public const int DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY = 25;
-        public const int DEFAULT_WORKER_COST_ADVENTURESTORY = 100;
+        public const int DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY = 5;     // was 25, interval 5
+        public const int DEFAULT_WORKER_COST_ADVENTURESTORY = 20;             // was 100, interval 5
         //Strive to Survive
-        public const int DEFAULT_SILVER_PER_RESOURCE_STRIVETOSURVIVE = 100;
+        public const int DEFAULT_SILVER_PER_RESOURCE_STRIVETOSURVIVE = 10;    // was 100, interval 10
         public const int DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE = 10;
-        public const int DEFAULT_PRODUCTION_TITHE_MOD_STRIVETOSURVIVE = 20;
-        public const int DEFAULT_WORKER_COST_STRIVETOSURVIVE = 125;
+        public const int DEFAULT_PRODUCTION_TITHE_MOD_STRIVETOSURVIVE = 2;    // was 20, interval 10
+        public const int DEFAULT_WORKER_COST_STRIVETOSURVIVE = 13;            // was 125, interval 10 (125/10)
         //Blood and Dust
-        public const int DEFAULT_SILVER_PER_RESOURCE_BLOODANDDUST = 80;
+        public const int DEFAULT_SILVER_PER_RESOURCE_BLOODANDDUST = 5;        // was 80, interval 15
         public const int DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST = 15;
-        public const int DEFAULT_PRODUCTION_TITHE_MOD_BLOODANDDUST = 15;
-        public const int DEFAULT_WORKER_COST_BLOODANDDUST = 125;
+        public const int DEFAULT_PRODUCTION_TITHE_MOD_BLOODANDDUST = 1;       // was 15, interval 15
+        public const int DEFAULT_WORKER_COST_BLOODANDDUST = 8;                // was 125, interval 15 (125/15)
         //Losing is Fun
-        public const int DEFAULT_SILVER_PER_RESOURCE_LOSINGISFUN = 70;
+        public const int DEFAULT_SILVER_PER_RESOURCE_LOSINGISFUN = 2;         // was 70, interval 30
         public const int DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN = 30;
-        public const int DEFAULT_PRODUCTION_TITHE_MOD_LOSINGISFUN = 10;
-        public const int DEFAULT_WORKER_COST_LOSINGISFUN = 150;
+        public const int DEFAULT_PRODUCTION_TITHE_MOD_LOSINGISFUN = 1;        // was 10, interval 30 -> clamp to 1
+        public const int DEFAULT_WORKER_COST_LOSINGISFUN = 5;                 // was 150, interval 30
         // Global defaults
         // The default difficulty setting is Adventure Story, so set the global defaults accordingly
         public const int DEFAULT_SILVER_PER_RESOURCE = DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY;
         public const int DEFAULT_TAX_INTERVAL_DAYS = DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY;
         public const int DEFAULT_PRODUCTION_TITHE_MOD = DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY;
         public const int DEFAULT_WORKER_COST = DEFAULT_WORKER_COST_ADVENTURESTORY;
+        /* Legacy/external BuildingFCDef upkeep is authored at the old per-cycle scale; divide by the
+         * default interval to approximate a per-day value. See postRework on BuildingFCDef. */
+        public const int LEGACY_UPKEEP_DIVISOR = DEFAULT_TAX_INTERVAL_DAYS; // 5
         /* Defaults for Research settings */
         public const bool DEFAULT_MEDIEVAL_TECH_ONLY = false;
         public const bool DEFAULT_MIRROR_PLAYER_TECH_LEVEL = false;
@@ -134,6 +137,9 @@ namespace FactionColonies
 
         public static int productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD;
         public static int workerCost = DEFAULT_WORKER_COST;
+        /* Final per-difficulty multiplier on building upkeep, tuning the per-difficulty building burden
+         * independently of the interval-scaling. Ratio (sign-preserving). Defaults to 1.0 everywhere. */
+        public static float buildingUpkeepDifficultyMult = 1.0f;
 
         public static EmpireDifficultyLevel difficultyLevel = DEFAULT_DIFFICULTY_LEVEL;
 
@@ -402,6 +408,7 @@ namespace FactionColonies
             }
             Scribe_Values.Look(ref productionTitheMod, "productionTitheMod", DEFAULT_PRODUCTION_TITHE_MOD);
             Scribe_Values.Look(ref workerCost, "workerCost", DEFAULT_WORKER_COST);
+            Scribe_Values.Look(ref buildingUpkeepDifficultyMult, "buildingUpkeepDifficultyMult", 1.0f);
             Scribe_Values.Look(ref settlementMaxLevel, "settlementMaxLevel", DEFAULT_SETTLEMENT_MAX_LEVEL);
             Scribe_Values.Look(ref settlementUpgradeTimeMultiplier, "settlementUpgradeTimeMultiplier", DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER);
             Scribe_Values.Look(ref buildingConstructTimeMultiplier, "buildingConstructTimeMultiplier", DEFAULT_BUILDING_CONSTRUCT_TIME_MULTIPLIER);
@@ -552,6 +559,15 @@ namespace FactionColonies
             lastSeenVersions[modId] = major + "." + minor + "." + patch;
         }
 
+        /* Per-day rescale used by the 1.6.2 settings migration. Round-to-nearest (NOT floor) so a
+         * migrated save lands on the same value as a fresh install of the same difficulty; clamp min 1. */
+        public static int RescalePerDay(int legacyValue, int interval)
+        {
+            if (interval < 1) interval = 1;
+            int scaled = (int)Math.Round(legacyValue / (double)interval, MidpointRounding.AwayFromZero);
+            return Math.Max(1, scaled);
+        }
+
         // Detects whether the settings file was written by a different mod version than the active one,
         // and is the single entry point for version-gated settings migrations. No migrations exist yet.
         // Returns true if the settings were stamped/migrated and should be written back to disk.
@@ -572,8 +588,27 @@ namespace FactionColonies
             LogUtil.MessageForce($"Settings were written with Empire {loadedSettingsVersion}; active version is {activeModVersion}.");
             if (FCVersion.TryParse(loadedSettingsVersion, out FCVersion loaded))
             {
-                // Future: version-gated settings migrations, ordered oldest-first, e.g.
-                //   if (loaded.IsOlderThan(new FCVersion(1, 6, 0))) { /* adjust a renamed/rescaled setting ... */ }
+                if (loaded.IsOlderThan(new FCVersion(1, 6, 2)))
+                {
+                    // The three int economy settings were authored per-cycle before 1.6.2; they are now per-day.
+                    // For a preset difficulty, re-apply the preset so the values land exactly on the fresh per-day
+                    // defaults (no rounding drift). Only a Custom difficulty needs the per-day rescale calculation.
+                    if (difficultyLevel != EmpireDifficultyLevel.Custom)
+                    {
+                        ApplyDifficultyPreset(difficultyLevel);
+                        LogUtil.MessageForce($"1.6.2 settings migration: re-applied {difficultyLevel} preset (per-day values).");
+                    }
+                    else
+                    {
+                        int interval = timeBetweenTaxes_days < 1 ? DEFAULT_TAX_INTERVAL_DAYS : timeBetweenTaxes_days;
+                        int oldSilver = silverPerResource, oldWorker = workerCost, oldTithe = productionTitheMod;
+                        silverPerResource = RescalePerDay(silverPerResource, interval);
+                        workerCost = RescalePerDay(workerCost, interval);
+                        productionTitheMod = RescalePerDay(productionTitheMod, interval);
+                        LogUtil.MessageForce($"1.6.2 settings rescale (Custom, /{interval}): silver {oldSilver}->{silverPerResource}, " +
+                            $"worker {oldWorker}->{workerCost}, tithe {oldTithe}->{productionTitheMod}.");
+                    }
+                }
             }
             settingsModVersion = activeModVersion;
             return true;
@@ -598,36 +633,42 @@ namespace FactionColonies
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_PEACEFUL;
                     workerCost = DEFAULT_WORKER_COST_PEACEFUL;
+                    buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.CommunityBuilder:
                     silverPerResource = DEFAULT_SILVER_PER_RESOURCE_COMMUNITYBUILDER;
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_COMMUNITYBUILDER;
                     workerCost = DEFAULT_WORKER_COST_COMMUNITYBUILDER;
+                    buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.AdventureStory:
                     silverPerResource = DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY;
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY;
                     workerCost = DEFAULT_WORKER_COST_ADVENTURESTORY;
+                    buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.StriveToSurvive:
                     silverPerResource = DEFAULT_SILVER_PER_RESOURCE_STRIVETOSURVIVE;
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_STRIVETOSURVIVE;
                     workerCost = DEFAULT_WORKER_COST_STRIVETOSURVIVE;
+                    buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.BloodAndDust:
                     silverPerResource = DEFAULT_SILVER_PER_RESOURCE_BLOODANDDUST;
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_BLOODANDDUST;
                     workerCost = DEFAULT_WORKER_COST_BLOODANDDUST;
+                    buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.LosingIsFun:
                     silverPerResource = DEFAULT_SILVER_PER_RESOURCE_LOSINGISFUN;
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_LOSINGISFUN;
                     workerCost = DEFAULT_WORKER_COST_LOSINGISFUN;
+                    buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.Custom:
                     // Don't change anything for custom
