@@ -14,7 +14,7 @@
 	<!-- Situations: approach selector -->
 	<FCSituationApproachLabel>Approach: {0}</FCSituationApproachLabel>
 	<FCSituationNoApproach>Approach: none</FCSituationNoApproach>
-	<FCSituationApproachOption>{0}  ({1}/day, {2} silver upkeep)</FCSituationApproachOption>
+	<FCSituationApproachOption>{0}  ({1}/day, {2} silver/day upkeep)</FCSituationApproachOption>
 	<FCSituationApproachOptionFree>{0}  ({1}/day, free)</FCSituationApproachOptionFree>
 	<FCSituationApproachNeedsResearch>Requires research: {0}</FCSituationApproachNeedsResearch>
 	<FCSituationApproachNeedsPolicy>Requires policy: {0}</FCSituationApproachNeedsPolicy>

@@ -21,7 +21,7 @@ namespace FactionColonies
          * direction. A positive approach pushes the bar up even while the base rate recedes it. */
         public float ratePerDay = 0f;
 
-        /* Silver charged once per tax cycle while this approach is active (v1 upkeep is silver only). */
+        /* Silver charged per day while this approach is active. */
         public int upkeepSilver = 0;
 
         /* Gating — reuses the FCOptionDef policy-gate shape. */

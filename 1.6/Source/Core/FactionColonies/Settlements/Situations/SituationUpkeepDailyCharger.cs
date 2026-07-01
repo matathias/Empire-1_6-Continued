@@ -6,21 +6,17 @@ using FactionColonies.util;
 namespace FactionColonies
 {
     /// <summary>
-    /// Charges each active situation's approach upkeep once per tax cycle, from the faction-level
-    /// <see cref="PostTaxResolution"/> callback (not the per-settlement callbacks, which fire once per
-    /// settlement). The draw is empire-wide — <c>TryPaySilver</c>'s settlement arg only feeds payment
-    /// modifiers; the silver comes from the shared bank. If an approach's upkeep cannot be paid, the
-    /// situation auto-reverts to its default approach and the player is notified.
+    /// Charges each active situation's approach upkeep once per day, from the
+    /// <see cref="PostDailyAccrual"/> callback that fires after the faction's daily accrual loop
+    /// completes. The draw is empire-wide — <c>TryPaySilver</c>'s settlement arg only feeds payment
+    /// modifiers; the silver comes diretly from the player's coffers. If an approach's upkeep cannot
+    /// be paid, the situation auto-reverts to its default approach and the player is notified.
     /// </summary>
-    public class SituationUpkeepTaxParticipant : ITaxTickParticipant
+    public class SituationUpkeepDailyCharger : IDailyAccrualParticipant
     {
         private const string UpkeepReason = "SituationUpkeep";
 
-        public void PreTaxResolution(FactionFC faction) { }
-        public void PreSettlementCreateTax(WorldSettlementFC settlement) { }
-        public void PostSettlementCreateTax(WorldSettlementFC settlement, ref int silverAmount, List<Thing> titheThings) { }
-
-        public void PostTaxResolution(FactionFC faction)
+        public void PostDailyAccrual(FactionFC faction)
         {
             FCSituationManager manager = faction?.situationManager;
             if (manager == null) return;

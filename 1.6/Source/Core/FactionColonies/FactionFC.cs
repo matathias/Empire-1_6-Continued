@@ -766,8 +766,8 @@ namespace FactionColonies
             EmpireRegistry.Register(new SquadSizeValidator());
             EmpireRegistry.Register(new SquadValueValidator());
 
-            /* Situation approach upkeep (faction-wide, once per tax cycle). */
-            EmpireRegistry.Register(new SituationUpkeepTaxParticipant());
+            /* Situation approach upkeep (faction-wide, charged daily). */
+            EmpireRegistry.Register(new SituationUpkeepDailyCharger());
 
             roadBuilder.FirstTick();
 

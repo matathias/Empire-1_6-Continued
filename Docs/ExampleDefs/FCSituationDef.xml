@@ -68,9 +68,9 @@
     <label>concessions</label>
     <description>Buy calm with silver and softened policy. Pulls the crisis bar down.</description>
     <ratePerDay>-2</ratePerDay>
-    <!-- Silver charged once per tax cycle while active (v1 upkeep is silver only). If it can't be      -->
+    <!-- Silver charged per day while active (v1 upkeep is silver only). If it can't be                 -->
     <!-- paid, the situation auto-reverts to its defaultApproach and notifies the player.               -->
-    <upkeepSilver>250</upkeepSilver>
+    <upkeepSilver>50</upkeepSilver>
     <statModifiers>
       <li><stat>happinessGainedBase</stat><value>1</value></li>
     </statModifiers>
@@ -86,7 +86,7 @@
     <label>crackdown</label>
     <description>Garrison the streets. Drives the crisis bar up but suppresses overt unrest.</description>
     <ratePerDay>2</ratePerDay>
-    <upkeepSilver>400</upkeepSilver>
+    <upkeepSilver>80</upkeepSilver>
     <statModifiers>
       <li><stat>unrestGainedBase</stat><value>-2</value></li>
     </statModifiers>

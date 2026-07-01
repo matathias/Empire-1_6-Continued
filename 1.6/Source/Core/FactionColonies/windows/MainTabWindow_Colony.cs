@@ -26,8 +26,7 @@ namespace FactionColonies
             "FCEvents".Translate(),
             "FCMilitary".Translate(),
             "FCEdicts".Translate(),
-            "FCPrisoners".Translate(),
-            "FCSituations".Translate()
+            "FCPrisoners".Translate()
         };
         private Dictionary<string, Action<Rect>> overviewFuncs = new Dictionary<string, Action<Rect>>();
 
@@ -46,6 +45,9 @@ namespace FactionColonies
 
         // ===== EVENT FILTER STATE =====
         private static readonly HashSet<FCEventCategoryDef> hiddenEventCategories = new HashSet<FCEventCategoryDef>();
+
+        // ===== EVENTS/SITUATIONS SUBTAB STATE (0 = Events, 1 = Situations) =====
+        private int eventsSubtab = 0;
 
         // ===== SETTLEMENT SORT =====
         private int currentSettlementSortIndex = 0;
@@ -127,16 +129,6 @@ namespace FactionColonies
                 prisonersScroll = Vector2.zero;
             }, () => curTab == overviewTabs[5]));
             overviewFuncs.Add(overviewTabs[5], DrawPrisonersTab);
-            // Situations tab — only registered when any situation defs exist in the database.
-            if (DefDatabase<FCSituationDef>.AllDefsListForReading.Count > 0)
-            {
-                tabs.Add(new TabRecord(overviewTabs[6], delegate
-                {
-                    curTab = overviewTabs[6];
-                    situationsScroll = Vector2.zero;
-                }, () => curTab == overviewTabs[6]));
-                overviewFuncs.Add(overviewTabs[6], DrawSituationsTab);
-            }
         }
 
         public override void PostClose()
@@ -1229,7 +1221,7 @@ namespace FactionColonies
             Text.Font = fontBefore;
         }
 
-        private void DrawSituationsTab(Rect rect)
+        private void DrawSituationsContent(Rect rect)
         {
             List<FCSituation> sits = new List<FCSituation>(faction.situationManager.Situations);
             const float pad = 8f;
@@ -1277,6 +1269,32 @@ namespace FactionColonies
         }
 
         private void DrawEventsTab(Rect rect)
+        {
+            // With no active situations the tab renders plainly, exactly as before. Once a situation
+            // is active, split into Events/Situations subtabs (mirrors the military tab's subtab row).
+            bool hasSituations = faction.situationManager is object
+                && faction.situationManager.Situations.Count > 0;
+            if (!hasSituations)
+            {
+                eventsSubtab = 0;
+                DrawEventsContent(rect);
+                return;
+            }
+
+            Text.Font = GameFont.Small;
+            List<string> subtabs = new List<string>
+            {
+                "FCEvents".Translate(),
+                "FCSituations".Translate(),
+            };
+            Rect contentRect;
+            eventsSubtab = UIUtil.DrawTabRow(rect, subtabs, eventsSubtab, out contentRect, tabHeight: 24f);
+
+            if (eventsSubtab == 0) DrawEventsContent(contentRect);
+            else DrawSituationsContent(contentRect);
+        }
+
+        private void DrawEventsContent(Rect rect)
         {
             IReadOnlyList<FCEvent> events = faction.Events;
             const float pad = 8f;
