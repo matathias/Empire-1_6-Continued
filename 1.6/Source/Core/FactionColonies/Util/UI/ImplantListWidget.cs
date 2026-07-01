@@ -42,7 +42,7 @@ namespace FactionColonies
                 Rect addBtnRect = new Rect(rect.xMax - addW, btnY, addW, headerHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                if (Widgets.ButtonText(addBtnRect, "fcAddImplant".Translate()))
+                if (UIUtil.ClampedButtonText(addBtnRect, "fcAddImplant".Translate()))
                 {
                     Func<MilUnitFC> getDisplay = opts.getDisplayUnit ?? (() => displayUnit);
                     Find.WindowStack.Add(new FCWindow_ImplantPicker(getDisplay, opts.getEditTarget));
@@ -80,7 +80,7 @@ namespace FactionColonies
                     removeRect = new Rect(row.xMax - removeButtonSize - 2f, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
                     Text.Font = GameFont.Small;
                     Text.Anchor = TextAnchor.MiddleCenter;
-                    if (Widgets.ButtonText(removeRect, "X"))
+                    if (UIUtil.ClampedButtonText(removeRect, "X"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
                         if (target != null) target.RemoveImplant(index);
@@ -92,7 +92,7 @@ namespace FactionColonies
                 Rect costRect = new Rect(costRight - 60f, row.y, 60f, rowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(costRect, "$" + MilUnitFC.ImplantCost(item).ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + MilUnitFC.ImplantCost(item).ToString("F0"));
 
                 // Label: implant + body part
                 string hediffLabel;
@@ -107,7 +107,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);
-                Widgets.Label(labelRect, shownLabel);
+                UIUtil.ClampedLabel(labelRect, shownLabel);
                 if (shownLabel != label) TooltipHandler.TipRegion(labelRect, label);
             }
 

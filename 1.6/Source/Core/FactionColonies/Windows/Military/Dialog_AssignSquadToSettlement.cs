@@ -58,7 +58,7 @@ namespace FactionColonies
 
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(8f, 0, inRect.width - 16f, TitleH),
+            UIUtil.ClampedLabel(new Rect(8f, 0, inRect.width - 16f, TitleH),
                 "FCAssignSquadPickerTitle".Translate(target?.Name ?? "?"));
 
             UIUtil.DrawColoredHorizontalLine(0, TitleH, inRect.width, Color.gray);
@@ -71,19 +71,19 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
 
-            Widgets.Label(new Rect(innerX, y, innerW, lineH),
+            UIUtil.ClampedLabel(new Rect(innerX, y, innerW, lineH),
                 "FCAssignSquadPickerMaxDeploy".Translate(maxDeployCost));
             y += lineH;
 
             string slotLine = currentSlotSquad is object
                 ? (string)"FCAssignSquadPickerCurrentSlot".Translate(currentSlotSquad.DisplayName)
                 : (string)"FCAssignSquadPickerSlotEmpty".Translate();
-            Widgets.Label(new Rect(innerX, y, innerW, lineH), slotLine);
+            UIUtil.ClampedLabel(new Rect(innerX, y, innerW, lineH), slotLine);
             y += lineH;
 
             int stationed = target?.StationedSquads?.Count ?? 0;
             int cap = target?.SquadCap ?? 0;
-            Widgets.Label(new Rect(innerX, y, innerW, lineH),
+            UIUtil.ClampedLabel(new Rect(innerX, y, innerW, lineH),
                 "FCAssignSquadPickerStationed".Translate(stationed, cap));
             y += lineH;
 

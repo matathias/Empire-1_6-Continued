@@ -61,15 +61,15 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Small;
 
-            Widgets.Label(label_Title, "FCSendSilverToColony".Translate());
-            Widgets.Label(label_Upper, "FCSendingXSilver".Translate(selectedSilver));
+            UIUtil.ClampedLabel(label_Title, "FCSendSilverToColony".Translate());
+            UIUtil.ClampedLabel(label_Upper, "FCSendingXSilver".Translate(selectedSilver));
 
 
             selectedSilver = (int)Widgets.HorizontalSlider(slider, selectedSilver, 0, silverCount, roundTo: 1);
 
-            Widgets.Label(label_Lower, stringEffect.Translate(ReturnValue(selectedSilver)));
+            UIUtil.ClampedLabel(label_Lower, stringEffect.Translate(ReturnValue(selectedSilver)));
 
-            if (Widgets.ButtonText(button_Confirm, "FCConfirm".Translate()))
+            if (UIUtil.ClampedButtonText(button_Confirm, "FCConfirm".Translate()))
             {
                 // Atomic: only apply the effect if the silver was actually paid (guards against the
                 // balance dropping after the window's snapshot bounded the slider).

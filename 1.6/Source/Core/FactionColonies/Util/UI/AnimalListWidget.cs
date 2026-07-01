@@ -48,7 +48,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             if (total > cap) GUI.color = ColorLibrary.RedReadable;
-            Widgets.Label(new Rect(header.x + 4f, header.y, addBtnRect.x - header.x - 8f, header.height),
+            UIUtil.ClampedLabel(new Rect(header.x + 4f, header.y, addBtnRect.x - header.x - 8f, header.height),
                 "fcAnimalCount".Translate(total, cap));
             GUI.color = Color.white;
 
@@ -56,7 +56,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                if (Widgets.ButtonText(addBtnRect, "fcAddAnimal".Translate()))
+                if (UIUtil.ClampedButtonText(addBtnRect, "fcAddAnimal".Translate()))
                 {
                     Func<MilUnitFC> getDisplay = opts.getDisplayUnit ?? (() => displayUnit);
                     Find.WindowStack.Add(new FCWindow_AnimalPicker(getDisplay, opts.getEditTarget));
@@ -92,7 +92,7 @@ namespace FactionColonies
                     Rect removeRect = new Rect(cursorRight - removeButtonSize, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
                     Text.Font = GameFont.Small;
                     Text.Anchor = TextAnchor.MiddleCenter;
-                    if (Widgets.ButtonText(removeRect, "X"))
+                    if (UIUtil.ClampedButtonText(removeRect, "X"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
                         if (target != null) target.RemoveAnimal(index);
@@ -108,13 +108,13 @@ namespace FactionColonies
                     Rect minusRect = new Rect(countRect.x - stepperButtonW, plusRect.y, stepperButtonW, stepperButtonW);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleCenter;
-                    if (Widgets.ButtonText(minusRect, "-"))
+                    if (UIUtil.ClampedButtonText(minusRect, "-"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
                         if (target != null) target.DecrementAnimal(index);
                     }
-                    Widgets.Label(countRect, "x" + Mathf.Max(1, item.count));
-                    if (Widgets.ButtonText(plusRect, "+"))
+                    UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
+                    if (UIUtil.ClampedButtonText(plusRect, "+"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
                         if (target != null) target.AddAnimal(item.kind);   // hard-blocks on cap
@@ -126,7 +126,7 @@ namespace FactionColonies
                     Rect countRect = new Rect(cursorRight - 30f, row.y, 30f, rowHeight);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleRight;
-                    Widgets.Label(countRect, "x" + Mathf.Max(1, item.count));
+                    UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
                     cursorRight = countRect.x - 6f;
                 }
 
@@ -135,7 +135,7 @@ namespace FactionColonies
                 Rect costRect = new Rect(cursorRight - 55f, row.y, 55f, rowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(costRect, "$" + cost.ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + cost.ToString("F0"));
 
                 // Label
                 string label = item.kind.LabelCap;
@@ -143,7 +143,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);
-                Widgets.Label(labelRect, shownLabel);
+                UIUtil.ClampedLabel(labelRect, shownLabel);
                 if (shownLabel != label) TooltipHandler.TipRegion(labelRect, label);
 
                 y += rowHeight;
@@ -156,7 +156,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(listOutRect, "fcNoAnimalsAssigned".Translate());
+                UIUtil.ClampedLabel(listOutRect, "fcNoAnimalsAssigned".Translate());
             }
 
             Text.Font = fontBefore;

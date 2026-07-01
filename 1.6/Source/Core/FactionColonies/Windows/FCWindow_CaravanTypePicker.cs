@@ -70,13 +70,13 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect header = new Rect(inRect.x, inRect.y, inRect.width, 35f);
-            Widgets.Label(header, "FCCaravanTypes".Translate());
+            UIUtil.ClampedLabel(header, "FCCaravanTypes".Translate());
             Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
             // Sub-header
             Text.Font = GameFont.Tiny;
             Rect subHeader = new Rect(inRect.x, header.yMax, inRect.width, 20f);
-            Widgets.Label(subHeader, "FCCaravanTypesDesc".Translate(FindFC.EmpireName));
+            UIUtil.ClampedLabel(subHeader, "FCCaravanTypesDesc".Translate(FindFC.EmpireName));
 
             float bottomY = inRect.yMax - CloseButSize.y - margin;
 
@@ -99,7 +99,7 @@ namespace FactionColonies
             // Enable All / Disable All buttons
             Rect enableButton = new Rect(inRect.x, bottomY - bigRowHeight, inRect.width / 2f, bigRowHeight);
             Rect disableButton = new Rect(enableButton.xMax, enableButton.y, enableButton.width, enableButton.height);
-            if (Widgets.ButtonText(enableButton, "FCAnimalEnableAll".Translate()))
+            if (UIUtil.ClampedButtonText(enableButton, "FCAnimalEnableAll".Translate()))
             {
                 foreach (CaravanTypeEntry entry in entries)
                 {
@@ -107,7 +107,7 @@ namespace FactionColonies
                         entry.enabled = true;
                 }
             }
-            if (Widgets.ButtonText(disableButton, "FCAnimalDisableAll".Translate()))
+            if (UIUtil.ClampedButtonText(disableButton, "FCAnimalDisableAll".Translate()))
             {
                 foreach (CaravanTypeEntry entry in entries)
                     entry.enabled = false;
@@ -167,11 +167,11 @@ namespace FactionColonies
 
                 if (entry.locked)
                 {
-                    Widgets.Label(labelRect, entry.label.Colorize(Color.gray));
+                    UIUtil.ClampedLabel(labelRect, entry.label.Colorize(Color.gray));
                 }
                 else
                 {
-                    Widgets.Label(labelRect, entry.label);
+                    UIUtil.ClampedLabel(labelRect, entry.label);
                 }
 
                 // Tooltip

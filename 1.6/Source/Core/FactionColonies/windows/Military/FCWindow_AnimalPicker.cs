@@ -56,7 +56,7 @@ namespace FactionColonies
             // Title
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, 35f), "fcPickAnimal".Translate());
+            UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f), "fcPickAnimal".Translate());
 
             // Count header: "N / cap"
             Text.Font = GameFont.Small;
@@ -65,7 +65,7 @@ namespace FactionColonies
             int cap = FCSettings.maxAnimalSubpawns;
             Rect countRect = new Rect(0, 38f, inRect.width, HeaderHeight);
             if (total >= cap) GUI.color = ColorLibrary.RedReadable;
-            Widgets.Label(countRect, "fcAnimalCount".Translate(total, cap));
+            UIUtil.ClampedLabel(countRect, "fcAnimalCount".Translate(total, cap));
             GUI.color = Color.white;
 
             // Search bar
@@ -109,12 +109,12 @@ namespace FactionColonies
 
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Text.Font = GameFont.Small;
-                Widgets.Label(labelRect, animal.LabelCap);
+                UIUtil.ClampedLabel(labelRect, animal.LabelCap);
 
                 Text.Anchor = TextAnchor.MiddleRight;
                 Text.Font = GameFont.Tiny;
                 double cost = Math.Floor(animal.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
-                Widgets.Label(costRect, "$" + cost.ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + cost.ToString("F0"));
 
                 if (Widgets.ButtonInvisible(row))
                 {
@@ -129,7 +129,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(scrollOutRect, "fcNoAnimalsAvailable".Translate());
+                UIUtil.ClampedLabel(scrollOutRect, "fcNoAnimalsAvailable".Translate());
             }
 
             Text.Font = fontBefore;

@@ -145,7 +145,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Rect labelRect = new Rect(iconRect.xMax + 4f, row.y, row.xMax - iconRect.xMax - 6f, RowHeight);
-                Widgets.Label(labelRect, unit.name);
+                UIUtil.ClampedLabel(labelRect, unit.name);
 
                 if (Widgets.ButtonInvisible(row))
                 {
@@ -168,7 +168,7 @@ namespace FactionColonies
             Rect deleteBtn = new Rect(rect.x, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
             Rect exportBtn = new Rect(rect.x + buttonW + margin, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
 
-            if (Widgets.ButtonText(createBtn, "FCCreateNewUnit".Translate()))
+            if (UIUtil.ClampedButtonText(createBtn, "FCCreateNewUnit".Translate()))
             {
                 MilUnitFC newUnit = MilTemplateFactory.CreateUnit(false);
                 newUnit.name = $"New Unit {mfc.units.Count + 1}";
@@ -177,7 +177,7 @@ namespace FactionColonies
                 mfc.units.Add(newUnit);
             }
 
-            if (Widgets.ButtonText(importBtn, "FCImportUnit".Translate()))
+            if (UIUtil.ClampedButtonText(importBtn, "FCImportUnit".Translate()))
             {
                 Find.WindowStack.Add(new Dialog_ManageUnitExportsFC(
                     FactionColoniesMilitary.SavedUnits.ToList()));
@@ -185,7 +185,7 @@ namespace FactionColonies
 
             if (selectedUnit != null)
             {
-                if (Widgets.ButtonText(deleteBtn, "FCDeleteUnitButton".Translate()))
+                if (UIUtil.ClampedButtonText(deleteBtn, "FCDeleteUnitButton".Translate()))
                 {
                     MilUnitFC unitToDelete = selectedUnit;
                     Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
@@ -204,7 +204,7 @@ namespace FactionColonies
                         }));
                 }
 
-                if (Widgets.ButtonText(exportBtn, "FCExportUnitButton".Translate()))
+                if (UIUtil.ClampedButtonText(exportBtn, "FCExportUnitButton".Translate()))
                 {
                     FactionColoniesMilitary.SaveUnit(selectedUnit.ToSavedUnit());
                     Messages.Message("FCExportUnit".Translate(), MessageTypeDefOf.TaskCompletion);
@@ -230,7 +230,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect nameRect = new Rect(rect.x + margin, rect.y, 400f, 30f);
-            Widgets.Label(nameRect, selectedUnit.name);
+            UIUtil.ClampedLabel(nameRect, selectedUnit.name);
 
             // Pencil icon to trigger rename
             float nameTextWidth = Text.CalcSize(selectedUnit.name).x;
@@ -248,17 +248,17 @@ namespace FactionColonies
             if (ModsConfig.BiotechActive)
             {
                 string xenoName = selectedUnit.GetXenotypeLabel();
-                Widgets.Label(infoRect, "Race".Translate() + ": " + raceName + "   ·   " + "Xenotype".Translate() + ": " + xenoName);
+                UIUtil.ClampedLabel(infoRect, "Race".Translate() + ": " + raceName + "   ·   " + "Xenotype".Translate() + ": " + xenoName);
             }
             else
             {
-                Widgets.Label(infoRect, "Race".Translate() + ": " + raceName);
+                UIUtil.ClampedLabel(infoRect, "Race".Translate() + ": " + raceName);
             }
 
             // Equipment cost
             float totalCost = (float)selectedUnit.getTotalCost;
             Rect costRect = new Rect(rect.x, infoRect.yMax + margin, rect.width, 20f);
-            Widgets.Label(costRect, "FCTotalEquipmentCostLabel".Translate() + totalCost.ToString("F0"));
+            UIUtil.ClampedLabel(costRect, "FCTotalEquipmentCostLabel".Translate() + totalCost.ToString("F0"));
 
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -279,25 +279,25 @@ namespace FactionColonies
 
             float raceButtonWidth = ModsConfig.BiotechActive ? btnW : (2 * btnW) + gap;
 
-            if (Widgets.ButtonText(new Rect(rect.x, rect.y, raceButtonWidth, btnH), "FCChangeUnitRaceButton".Translate(), true, true))
+            if (UIUtil.ClampedButtonText(new Rect(rect.x, rect.y, raceButtonWidth, btnH), "FCChangeUnitRaceButton".Translate(), true, true))
             {
                 Find.WindowStack.Add(new FCWindow_RacePicker(selectedUnit, faction));
             }
 
             if (ModsConfig.BiotechActive &&
-                Widgets.ButtonText(new Rect(rect.x + btnW + gap, rect.y, btnW, btnH), "FCChangeUnitXenoButton".Translate(), true, true))
+                UIUtil.ClampedButtonText(new Rect(rect.x + btnW + gap, rect.y, btnW, btnH), "FCChangeUnitXenoButton".Translate(), true, true))
             {
                 Find.WindowStack.Add(new FCWindow_XenoPicker(selectedUnit));
             }
 
             float y2 = rect.y + btnH + gap;
 
-            if (Widgets.ButtonText(new Rect(rect.x, y2, btnW, btnH), "FCRollANewUnitButton".Translate(), true, true))
+            if (UIUtil.ClampedButtonText(new Rect(rect.x, y2, btnW, btnH), "FCRollANewUnitButton".Translate(), true, true))
             {
                 selectedUnit.RerollPreviewPawn();
             }
 
-            if (Widgets.ButtonText(new Rect(rect.x + btnW + gap, y2, btnW, btnH), "FCResetUnitToDefaultButton".Translate(), true, true))
+            if (UIUtil.ClampedButtonText(new Rect(rect.x + btnW + gap, y2, btnW, btnH), "FCResetUnitToDefaultButton".Translate(), true, true))
             {
                 selectedUnit.ClearAllEquipment();
             }
@@ -341,10 +341,10 @@ namespace FactionColonies
 
             if (showMount)
             {
-                Widgets.Label(new Rect(MountSlot.x, MountSlot.y - 15f, MountSlot.width, 18f), "fcLabelMount".Translate());
+                UIUtil.ClampedLabel(new Rect(MountSlot.x, MountSlot.y - 15f, MountSlot.width, 18f), "fcLabelMount".Translate());
                 Widgets.DrawMenuSection(MountSlot);
             }
-            Widgets.Label(new Rect(EquipmentWeapon.x, EquipmentWeapon.y - 15f, EquipmentWeapon.width, 18f), "fcLabelWeapon".Translate());
+            UIUtil.ClampedLabel(new Rect(EquipmentWeapon.x, EquipmentWeapon.y - 15f, EquipmentWeapon.width, 18f), "fcLabelWeapon".Translate());
             Widgets.DrawMenuSection(EquipmentWeapon);
 
             Text.Font = fontBefore;
@@ -408,10 +408,10 @@ namespace FactionColonies
             Rect genderBtnRect = new Rect(slotsStartX-10f, genderLabelRect.yMax, slotsWidth+20f, 28f);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.UpperCenter;
-            Widgets.Label(genderLabelRect, "fcUnitGender".Translate());
+            UIUtil.ClampedLabel(genderLabelRect, "fcUnitGender".Translate());
             Text.Anchor = anchorBefore;
             Text.Font = GameFont.Small;
-            if (Widgets.ButtonText(genderBtnRect, GenderLabel(selectedUnit.forcedGender)))
+            if (UIUtil.ClampedButtonText(genderBtnRect, GenderLabel(selectedUnit.forcedGender)))
             {
                 MilUnitFC captured = selectedUnit;
                 List<FloatMenuOption> opts = new List<FloatMenuOption>

@@ -91,7 +91,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
             Rect titleRect = new Rect(0, curY, inRect.width, 30f);
-            Widgets.Label(titleRect, "FCCreateColonyTileModifiersTitle".Translate());
+            UIUtil.ClampedLabel(titleRect, "FCCreateColonyTileModifiersTitle".Translate());
             curY += 30f + Padding;
 
             Text.Anchor = TextAnchor.UpperLeft;

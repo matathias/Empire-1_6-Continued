@@ -77,7 +77,7 @@ namespace FactionColonies
         {
             if (result is null)
             {
-                Widgets.Label(inRect, "FCBattleProgressNoBattle".Translate());
+                UIUtil.ClampedLabel(inRect, "FCBattleProgressNoBattle".Translate());
                 return;
             }
 
@@ -91,11 +91,11 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperCenter;
             string targetName = !string.IsNullOrEmpty(br.defenderLabel) ? br.defenderLabel : "?";
-            Widgets.Label(new Rect(headerRect.x, headerRect.y, headerRect.width, 28f),
+            UIUtil.ClampedLabel(new Rect(headerRect.x, headerRect.y, headerRect.width, 28f),
                 "FCBattleProgressWindowTitle".Translate(targetName));
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperCenter;
-            Widgets.Label(new Rect(headerRect.x, headerRect.y + 30f, headerRect.width, 22f),
+            UIUtil.ClampedLabel(new Rect(headerRect.x, headerRect.y + 30f, headerRect.width, 22f),
                 SubPhaseLabel(br));
             Text.Anchor = TextAnchor.UpperLeft;
 
@@ -185,7 +185,7 @@ namespace FactionColonies
             int seconds = Mathf.CeilToInt(ticksRemaining / 60f);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(labelRect, "FCBattleNextRoundIn".Translate(seconds));
+            UIUtil.ClampedLabel(labelRect, "FCBattleNextRoundIn".Translate(seconds));
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
         }
@@ -266,14 +266,14 @@ namespace FactionColonies
             Text.Anchor = textAnchor;
             string factionName = faction?.Name ?? fallbackFactionName;
             if (!string.IsNullOrEmpty(factionName))
-                Widgets.Label(nameRect, factionName);
+                UIUtil.ClampedLabel(nameRect, factionName);
             UIUtil.DrawColoredLabel(labelRect, label ?? "?", new Color(0.7f, 0.7f, 0.7f));
 
             /* Efficiency line */
             float effY = blockY + blockH + 4f;
             Rect effRect = new Rect(inner.x, effY, inner.width, 20f);
             Text.Anchor = textAnchor;
-            Widgets.Label(effRect, "FCBattleEfficiencyLine".Translate(efficiency.ToString("0.00")));
+            UIUtil.ClampedLabel(effRect, "FCBattleEfficiencyLine".Translate(efficiency.ToString("0.00")));
 
             /* Force bar with overlay */
             float barY = effY + 24f;
@@ -289,7 +289,7 @@ namespace FactionColonies
             string forces = "FCBattleForceLine".Translate(remaining.ToString("0.#"),
                 initial.ToString("0.#"));
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(bar, forces);
+            UIUtil.ClampedLabel(bar, forces);
 
             Text.Anchor = TextAnchor.UpperLeft;
         }
@@ -459,18 +459,18 @@ namespace FactionColonies
             GUI.color = new Color(0.85f, 0.85f, 0.85f);
             Text.Anchor = TextAnchor.MiddleCenter;
 
-            Widgets.Label(leftRoundRect, roundLabel);
-            Widgets.Label(rightRoundRect, roundLabel);
+            UIUtil.ClampedLabel(leftRoundRect, roundLabel);
+            UIUtil.ClampedLabel(rightRoundRect, roundLabel);
 
-            Widgets.Label(atkGroupTopRect, atkLabel);
-            Widgets.Label(atkForceRect, forceLabel);
-            Widgets.Label(atkRawRect, rawLabel);
-            Widgets.Label(atkFinalRect, finalLabel);
+            UIUtil.ClampedLabel(atkGroupTopRect, atkLabel);
+            UIUtil.ClampedLabel(atkForceRect, forceLabel);
+            UIUtil.ClampedLabel(atkRawRect, rawLabel);
+            UIUtil.ClampedLabel(atkFinalRect, finalLabel);
 
-            Widgets.Label(defGroupTopRect, defLabel);
-            Widgets.Label(defFinalRect, finalLabel);
-            Widgets.Label(defRawRect, rawLabel);
-            Widgets.Label(defForceRect, forceLabel);
+            UIUtil.ClampedLabel(defGroupTopRect, defLabel);
+            UIUtil.ClampedLabel(defFinalRect, finalLabel);
+            UIUtil.ClampedLabel(defRawRect, rawLabel);
+            UIUtil.ClampedLabel(defForceRect, forceLabel);
 
             GUI.color = Color.white;
             Text.Anchor = TextAnchor.UpperLeft;
@@ -525,16 +525,16 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
 
             // Round (both sides — same number, mirrored for visual symmetry).
-            Widgets.Label(leftRoundCell, r.roundNumber.ToString());
-            Widgets.Label(rightRoundCell, r.roundNumber.ToString());
+            UIUtil.ClampedLabel(leftRoundCell, r.roundNumber.ToString());
+            UIUtil.ClampedLabel(rightRoundCell, r.roundNumber.ToString());
 
             // Raw rolls (de-emphasized in dim grey).
             DrawRawRollCell(atkRawCell, r.attackerRawRoll);
             DrawRawRollCell(defRawCell, r.defenderRawRoll);
 
             // Final values + center-pointing chevron in the winning Final cell.
-            Widgets.Label(atkFinalCell, r.attackerScore.ToString("0.00"));
-            Widgets.Label(defFinalCell, r.defenderScore.ToString("0.00"));
+            UIUtil.ClampedLabel(atkFinalCell, r.attackerScore.ToString("0.00"));
+            UIUtil.ClampedLabel(defFinalCell, r.defenderScore.ToString("0.00"));
             DrawWinnerChevron(atkFinalCell, defFinalCell, r.attackerWonRound,
                 ResolveWinnerBlockColor(r.attackerWonRound));
 
@@ -553,7 +553,7 @@ namespace FactionColonies
             UIUtil.DrawProgressBarColors(bar, fill, bg, barFill);
 
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(rect, remaining.ToString("0.#"));
+            UIUtil.ClampedLabel(rect, remaining.ToString("0.#"));
         }
 
         private static void DrawRawRollCell(Rect rect, int rawRoll)

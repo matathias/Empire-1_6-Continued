@@ -167,7 +167,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 GUI.color = Color.white;
-                Widgets.Label(new Rect(groupRect.x + Margin, groupRect.y, groupRect.width - Margin * 2 - IconSize, groupRect.height), mg.modName);
+                UIUtil.ClampedLabel(new Rect(groupRect.x + Margin, groupRect.y, groupRect.width - Margin * 2 - IconSize, groupRect.height), mg.modName);
 
                 Rect arrowRect = new Rect(groupRect.xMax - IconSize - 2f, groupRect.y + (groupHeight - IconSize) * 0.5f, IconSize, IconSize);
                 Widgets.DrawTextureFitted(arrowRect, modExpanded ? TexButton.Collapse : TexButton.Reveal, 1f);
@@ -330,7 +330,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
-            Widgets.Label(new Rect(titleTextX, curY, contentWidth - titleTextX, 30f), selectedEntry.LabelCap);
+            UIUtil.ClampedLabel(new Rect(titleTextX, curY, contentWidth - titleTextX, 30f), selectedEntry.LabelCap);
             ResetText();
 
             Text.Font = GameFont.Tiny;
@@ -430,7 +430,7 @@ namespace FactionColonies
                 float navX = (width - navWidth) * 0.5f;
 
                 Rect leftBtn = new Rect(navX, curY, ImageNavButtonSize, ImageNavButtonSize);
-                if (currentImageIndex > 0 && Widgets.ButtonText(leftBtn, "<"))
+                if (currentImageIndex > 0 && UIUtil.ClampedButtonText(leftBtn, "<"))
                 {
                     currentImageIndex--;
                     SoundDefOf.Click.PlayOneShotOnCamera();
@@ -438,11 +438,11 @@ namespace FactionColonies
 
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(new Rect(leftBtn.xMax, curY, 60f, ImageNavButtonSize), (currentImageIndex + 1) + " / " + images.Count);
+                UIUtil.ClampedLabel(new Rect(leftBtn.xMax, curY, 60f, ImageNavButtonSize), (currentImageIndex + 1) + " / " + images.Count);
                 ResetText();
 
                 Rect rightBtn = new Rect(leftBtn.xMax + 60f, curY, ImageNavButtonSize, ImageNavButtonSize);
-                if (currentImageIndex < images.Count - 1 && Widgets.ButtonText(rightBtn, ">"))
+                if (currentImageIndex < images.Count - 1 && UIUtil.ClampedButtonText(rightBtn, ">"))
                 {
                     currentImageIndex++;
                     SoundDefOf.Click.PlayOneShotOnCamera();

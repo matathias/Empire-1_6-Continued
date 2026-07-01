@@ -318,7 +318,7 @@ namespace FactionColonies
             // === Description ===
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
-            UIUtil.DrawColoredLabel(new Rect(inRect.x + Padding, curY, textWidth, cachedDescHeight), desc, new Color(0.85f, 0.85f, 0.85f));
+            UIUtil.DrawColoredLabel(new Rect(inRect.x + Padding, curY, textWidth, cachedDescHeight), desc, new Color(0.85f, 0.85f, 0.85f), clamp: false);
             curY += cachedDescHeight;
 
             // === Affected settlements (clickable buttons) ===
@@ -436,7 +436,7 @@ namespace FactionColonies
                 }
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.UpperLeft;
-                UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedOptionLabelHeights[i]), displayLabel.Format(), available ? Color.white : new Color(0.5f, 0.5f, 0.5f));
+                UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedOptionLabelHeights[i]), displayLabel.Format(), available ? Color.white : new Color(0.5f, 0.5f, 0.5f), clamp: false);
                 innerY += cachedOptionLabelHeights[i] + 6f;
 
                 // Metadata row: success hint (left) + cost (right)
@@ -516,7 +516,7 @@ namespace FactionColonies
                     string costStr = effectiveCost.ToString();
                     float costTextW = Text.CalcSize(costStr).x;
                     Rect costTextRect = new Rect(metaRect.xMax - costTextW, metaRect.y, costTextW, metaRect.height);
-                    Widgets.Label(costTextRect, costStr);
+                    UIUtil.ClampedLabel(costTextRect, costStr);
 
                     Rect iconRect = new Rect(
                         costTextRect.x - SilverIconSize - 2f,
@@ -554,7 +554,7 @@ namespace FactionColonies
                     innerY += MetadataRowHeight + EffectPreviewSpacing;
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.UpperLeft;
-                    UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedEffectPreviewHeights[i]), cachedEffectPreviews[i], available ? new Color(0.7f, 0.7f, 0.7f) : new Color(0.4f, 0.4f, 0.4f));
+                    UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedEffectPreviewHeights[i]), cachedEffectPreviews[i], available ? new Color(0.7f, 0.7f, 0.7f) : new Color(0.4f, 0.4f, 0.4f), clamp: false);
                 }
 
                 // Hover effect

@@ -74,7 +74,7 @@ namespace FactionColonies
         {
             if (squad is null)
             {
-                Widgets.Label(inRect, "FCSquadInspectionNoSquad".Translate());
+                UIUtil.ClampedLabel(inRect, "FCSquadInspectionNoSquad".Translate());
                 return;
             }
 
@@ -145,7 +145,7 @@ namespace FactionColonies
             string label = "FCSquadInspectionTitle".Translate(squad.DisplayName);
             float labelW = Text.CalcSize(label).x;
             float labelX = rect.x + 12f;
-            Widgets.Label(new Rect(labelX, rect.y, labelW + 4f, rect.height), label);
+            UIUtil.ClampedLabel(new Rect(labelX, rect.y, labelW + 4f, rect.height), label);
 
             /* Pencil rename icon to the right of the squad name */
             float iconY = rect.y + (rect.height - IconButtonSize) / 2f;
@@ -211,7 +211,7 @@ namespace FactionColonies
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(inner.x, inner.yMax, inner.width, valueH), value);
+            UIUtil.ClampedLabel(new Rect(inner.x, inner.yMax, inner.width, valueH), value);
         }
 
         private void DrawContextBand(Rect rect)
@@ -251,7 +251,7 @@ namespace FactionColonies
                 ? squad.settlement.Name
                 : (string)"FCSquadInspectionContextSettlementUnassigned".Translate();
             if (hasSettlement)
-                Widgets.Label(new Rect(rect.x, y, rect.width, valueH), settlementName);
+                UIUtil.ClampedLabel(new Rect(rect.x, y, rect.width, valueH), settlementName);
             else
                 UIUtil.DrawColoredLabel(new Rect(rect.x, y, rect.width, valueH), settlementName, DimValueColor);
             y += valueH;
@@ -306,7 +306,7 @@ namespace FactionColonies
                 ? (squad.outfit.name ?? "(?)")
                 : (string)"FCSquadInspectionContextTemplateNone".Translate();
             if (hasTemplate)
-                Widgets.Label(new Rect(rect.x, y, rect.width, valueH), templateName);
+                UIUtil.ClampedLabel(new Rect(rect.x, y, rect.width, valueH), templateName);
             else
                 UIUtil.DrawColoredLabel(new Rect(rect.x, y, rect.width, valueH), templateName, DimValueColor);
             y += valueH;
@@ -595,7 +595,7 @@ namespace FactionColonies
             float nameW = Text.CalcSize(headerText).x;
             float availW = rect.xMax - headerX - iconAreaW;
             Rect headerRect = new Rect(headerX, y, Mathf.Min(nameW + 2f, availW), headerH);
-            Widgets.Label(headerRect, headerText);
+            UIUtil.ClampedLabel(headerRect, headerText);
 
             /* Sub-pawn roster/condition badge (e.g. "1 animal (downed) · 5 mechs (1 downed, 1 missing)")
                to the right of the name. Colored by the worst sub-pawn severity. */
@@ -651,7 +651,7 @@ namespace FactionColonies
             if (merc?.ownedLoadout != null) loadoutName = "* " + loadoutName;
             string loadoutText = "FCSquadInspectionLoadoutLabel".Translate(loadoutName);
             Rect loadoutRect = new Rect(rect.x, y, rect.width, lineH);
-            Widgets.Label(loadoutRect, loadoutText);
+            UIUtil.ClampedLabel(loadoutRect, loadoutText);
             if (merc?.ownedLoadout != null)
             {
                 TooltipHandler.TipRegion(loadoutRect, "FCSquadInspectionDivergedTip".Translate());
@@ -877,7 +877,7 @@ namespace FactionColonies
             string name = hasLivePawn
                 ? sub.pawn.LabelShortCap
                 : (string)(sub?.subPawnKind?.LabelCap ?? "FCSquadInspectionEmptyPawn".Translate());
-            Widgets.Label(new Rect(tx, row.y, tw, 20f), name);
+            UIUtil.ClampedLabel(new Rect(tx, row.y, tw, 20f), name);
 
             Text.Font = GameFont.Tiny;
             UIUtil.DrawColoredLabel(new Rect(tx, row.y + 18f, tw, 18f),
@@ -1099,7 +1099,7 @@ namespace FactionColonies
 
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(new Rect(rect.x, y, rect.width, headerH), section.SectionLabel);
+                UIUtil.ClampedLabel(new Rect(rect.x, y, rect.width, headerH), section.SectionLabel);
                 y += headerH;
 
                 Rect contentRect = new Rect(rect.x, y, rect.width, sh);

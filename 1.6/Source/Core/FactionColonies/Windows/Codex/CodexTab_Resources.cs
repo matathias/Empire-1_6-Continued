@@ -187,7 +187,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
-            Widgets.Label(new Rect(titleTextX, curY, contentWidth - titleTextX, 30f), selectedResource.LabelCap);
+            UIUtil.ClampedLabel(new Rect(titleTextX, curY, contentWidth - titleTextX, 30f), selectedResource.LabelCap);
             ResetText();
             curY += 30f;
 
@@ -345,7 +345,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             GUI.color = Color.white;
-            Widgets.Label(new Rect(x, curY, width, StatRowHeight), text);
+            UIUtil.ClampedLabel(new Rect(x, curY, width, StatRowHeight), text);
             ResetText();
             return curY + StatRowHeight;
         }
@@ -614,7 +614,7 @@ namespace FactionColonies
                     label += $" {"FCCodexResourceRequiresResearch".Translate(allResearch)}".Colorize(Color.gray);
                 }
 
-                Widgets.Label(new Rect(rowX, curY, width - rowX - margin, StatRowHeight), label);
+                UIUtil.ClampedLabel(new Rect(rowX, curY, width - rowX - margin, StatRowHeight), label);
                 ResetText();
 
                 curY += StatRowHeight;

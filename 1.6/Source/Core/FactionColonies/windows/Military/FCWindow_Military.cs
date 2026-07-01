@@ -35,7 +35,7 @@ namespace FactionColonies
 
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(5f, 5f, inRect.width - 10f, 35f), title);
+            UIUtil.ClampedLabel(new Rect(5f, 5f, inRect.width - 10f, 35f), title);
 
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -94,11 +94,11 @@ namespace FactionColonies
             float x2 = inRect.width - gap - btnW;
             float x1 = x2 - gap - btnW;
 
-            if (Widgets.ButtonText(new Rect(x1, btnY, btnW, btnH), label1))
+            if (UIUtil.ClampedButtonText(new Rect(x1, btnY, btnW, btnH), label1))
             {
                 NavigateTo(CreateWindow(target1), title1);
             }
-            if (Widgets.ButtonText(new Rect(x2, btnY, btnW, btnH), label2))
+            if (UIUtil.ClampedButtonText(new Rect(x2, btnY, btnW, btnH), label2))
             {
                 NavigateTo(CreateWindow(target2), title2);
             }

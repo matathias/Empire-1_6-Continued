@@ -248,7 +248,7 @@ namespace FactionColonies
                     GUI.DrawTexture(iconRect, filterIcon);
                     Rect labelRect = new Rect(iconRect.xMax + 2f, buttonRect.y, buttonRect.width - iconSize - 6f, buttonRect.height);
                     string truncatedLabel = filterLabel.Truncate(labelRect.width, filterTruncateCache);
-                    Widgets.Label(labelRect, truncatedLabel);
+                    UIUtil.ClampedLabel(labelRect, truncatedLabel);
                     if (truncatedLabel != filterLabel)
                     {
                         TooltipHandler.TipRegion(buttonRect, filterLabel);
@@ -257,7 +257,7 @@ namespace FactionColonies
                 else
                 {
                     string truncatedLabel = filterLabel.Truncate(buttonRect.width, filterTruncateCache);
-                    Widgets.Label(buttonRect, truncatedLabel);
+                    UIUtil.ClampedLabel(buttonRect, truncatedLabel);
                     if (truncatedLabel != filterLabel)
                     {
                         TooltipHandler.TipRegion(buttonRect, filterLabel);
@@ -334,7 +334,7 @@ namespace FactionColonies
             Widgets.DrawHighlight(headerRect);
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(headerRect, "Empire_BuildingWindow_Header".Translate(settlement.Name));
+            UIUtil.ClampedLabel(headerRect, "Empire_BuildingWindow_Header".Translate(settlement.Name));
 
             float bodyTop = headerRect.yMax + margin;
             float bodyHeight = inRect.height - headerHeight - margin;
@@ -470,9 +470,9 @@ namespace FactionColonies
             Widgets.DrawHighlight(nameRect);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(nameText, building.LabelCap);
+            UIUtil.ClampedLabel(nameText, building.LabelCap);
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(nameText, "FCCost".Translate() + ": " + (settlement.BuildingsComp?.GetBuildingCost(building) ?? (int)building.cost));
+            UIUtil.ClampedLabel(nameText, "FCCost".Translate() + ": " + (settlement.BuildingsComp?.GetBuildingCost(building) ?? (int)building.cost));
 
             // Icon below the name row
             float contentY = nameRect.yMax + smallMargin;
@@ -570,13 +570,13 @@ namespace FactionColonies
                 if (isRequired)
                 {
                     GUI.color = new Color(1f, 1f, 1f, 0.4f);
-                    Widgets.ButtonText(demolishRect, "FCDemolish".Translate());
+                    UIUtil.ClampedButtonText(demolishRect, "FCDemolish".Translate());
                     GUI.color = Color.white;
                     List<BuildingFCDef> dependents = settlement.BuildingsComp.GetBuildingsDependingOn(buildingDef);
                     string depNames = string.Join(", ", dependents.Select(d => d.LabelCap.ToString()));
                     TooltipHandler.TipRegion(demolishRect, "Empire_BuildingWindow_CannotDemolishRequired".Translate(depNames));
                 }
-                else if (Widgets.ButtonText(demolishRect, "FCDemolish".Translate()))
+                else if (UIUtil.ClampedButtonText(demolishRect, "FCDemolish".Translate()))
                 {
                     int demolishCost = (int)Math.Round(buildingDef.cost * 0.5);
                     Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
@@ -649,7 +649,7 @@ namespace FactionColonies
             Rect nameRect = new Rect(nameX, iconY, nameWidth, 30f);
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(nameRect, buildingDef.LabelCap);
+            UIUtil.ClampedLabel(nameRect, buildingDef.LabelCap);
 
             // Description (compact)
             Rect descRect = new Rect(nameX, nameRect.yMax + smallMargin, nameWidth, rect.yMax - nameRect.yMax - smallMargin - inner);
@@ -688,7 +688,7 @@ namespace FactionColonies
             Widgets.DrawHighlight(nameRect);
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(nameText, selectedBuilding.LabelCap);
+            UIUtil.ClampedLabel(nameText, selectedBuilding.LabelCap);
             curY = nameRect.yMax + margin;
 
             // C2: Icon + stats
@@ -703,11 +703,11 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleLeft;
 
             Rect costRect = new Rect(statsX, curY, statsW, 22f);
-            Widgets.Label(costRect, "FCCost".Translate() + ": " + (settlement.BuildingsComp?.GetBuildingCost(selectedBuilding) ?? (int)selectedBuilding.cost));
+            UIUtil.ClampedLabel(costRect, "FCCost".Translate() + ": " + (settlement.BuildingsComp?.GetBuildingCost(selectedBuilding) ?? (int)selectedBuilding.cost));
 
             int buildTime = settlement.BuildingsComp?.GetBuildingConstructionTime(selectedBuilding) ?? 0;
             Rect timeRect = new Rect(statsX, costRect.yMax + smallMargin, statsW, 22f);
-            Widgets.Label(timeRect, "FCBuildTime".Translate(buildTime.ToTimeString()));
+            UIUtil.ClampedLabel(timeRect, "FCBuildTime".Translate(buildTime.ToTimeString()));
 
             float statsBottom = timeRect.yMax;
 
@@ -715,13 +715,13 @@ namespace FactionColonies
             if (upkeep > 0)
             {
                 Rect upkeepRect = new Rect(statsX, timeRect.yMax + smallMargin, statsW, 22f);
-                Widgets.Label(upkeepRect, "FCBuildingUpkeep".Translate(upkeep.ToString()));
+                UIUtil.ClampedLabel(upkeepRect, "FCBuildingUpkeep".Translate(upkeep.ToString()));
                 statsBottom = upkeepRect.yMax;
             }
             else if (upkeep < 0)
             {
                 Rect upkeepRect = new Rect(statsX, timeRect.yMax + smallMargin, statsW, 22f);
-                Widgets.Label(upkeepRect, "FCBuildingIncome".Translate(Math.Abs(upkeep).ToString()));
+                UIUtil.ClampedLabel(upkeepRect, "FCBuildingIncome".Translate(Math.Abs(upkeep).ToString()));
                 statsBottom = upkeepRect.yMax;
             }
 
@@ -1030,7 +1030,7 @@ namespace FactionColonies
 
                 Rect textRect = new Rect(iconRect.xMax + smallMargin, curY, width - (contentX - x) - 20f - smallMargin, 22f);
                 string label = resource.label + ": " + currentStr + " → " + projectedStr + " (";
-                Widgets.Label(textRect, label);
+                UIUtil.ClampedLabel(textRect, label);
 
                 // Draw delta with color
                 float labelWidth = Text.CalcSize(label).x;
@@ -1038,7 +1038,7 @@ namespace FactionColonies
                 UIUtil.DrawColoredLabel(deltaRect, deltaStr, deltaColor);
 
                 Rect closeParenRect = new Rect(deltaRect.xMax, curY, 20f, 22f);
-                Widgets.Label(closeParenRect, ")");
+                UIUtil.ClampedLabel(closeParenRect, ")");
 
                 curY = rowRect.yMax + smallMargin;
             }
@@ -1262,7 +1262,7 @@ namespace FactionColonies
 
             if (isSameBuilding)
             {
-                if (Widgets.ButtonText(buttonRect, "FCDestroy".Translate()))
+                if (UIUtil.ClampedButtonText(buttonRect, "FCDestroy".Translate()))
                 {
                     ExecuteDestroy();
                 }
@@ -1270,7 +1270,7 @@ namespace FactionColonies
             else if (isLocked)
             {
                 GUI.color = new Color(1f, 1f, 1f, 0.4f);
-                Widgets.ButtonText(buttonRect, "Empire_BuildingWindow_LockedButton".Translate());
+                UIUtil.ClampedButtonText(buttonRect, "Empire_BuildingWindow_LockedButton".Translate());
                 GUI.color = Color.white;
                 string researchName = GetResearchRequirementForTechLevel(selectedBuilding.techLevel);
                 TooltipHandler.TipRegion(buttonRect,
@@ -1283,10 +1283,10 @@ namespace FactionColonies
                 if (!canBuild)
                 {
                     GUI.color = new Color(1f, 1f, 1f, 0.4f);
-                    Widgets.ButtonText(buttonRect, "FCBuild".Translate());
+                    UIUtil.ClampedButtonText(buttonRect, "FCBuild".Translate());
                     GUI.color = Color.white;
                 }
-                else if (Widgets.ButtonText(buttonRect, "FCBuild".Translate()))
+                else if (UIUtil.ClampedButtonText(buttonRect, "FCBuild".Translate()))
                 {
                     ExecuteBuild();
                 }

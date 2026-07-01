@@ -100,7 +100,7 @@ namespace FactionColonies
             // Title
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, 35f), titleKey.Translate());
+            UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f), titleKey.Translate());
 
             float contentTop = 40f;
             float summaryHeight = 25f;
@@ -121,7 +121,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(stuffPanelRect, "fcNoMaterialNeeded".Translate());
+                UIUtil.ClampedLabel(stuffPanelRect, "fcNoMaterialNeeded".Translate());
             }
 
             // Selection summary
@@ -146,10 +146,10 @@ namespace FactionColonies
             Rect titleBox = new Rect(panelRect.x, panelRect.y, panelRect.width, SearchBarHeight);
             Widgets.DrawHighlight(titleBox);
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(titleBox.x + margin, titleBox.y, 60f, titleBox.height), "FCItem".Translate());
+            UIUtil.ClampedLabel(new Rect(titleBox.x + margin, titleBox.y, 60f, titleBox.height), "FCItem".Translate());
             float sortBtnW = 120f;
             Rect sortBtn = new Rect(titleBox.xMax - margin - 75f - margin - sortBtnW, titleBox.y + 2, sortBtnW, titleBox.height - 4);
-            if (Widgets.ButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[itemSortIndex].Translate())))
+            if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[itemSortIndex].Translate())))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 for (int s = 0; s < sortLabelKeys.Length; s++)
@@ -191,7 +191,7 @@ namespace FactionColonies
             float scrollMargin = viewHeight > scrollOutRect.height ? ScrollUtil.ScrollbarWidth : 0f;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(titleBox.xMax - margin - 65f - scrollMargin, titleBox.y, 60f, titleBox.height), "FCTitheBasePrice".Translate());
+            UIUtil.ClampedLabel(new Rect(titleBox.xMax - margin - 65f - scrollMargin, titleBox.y, 60f, titleBox.height), "FCTitheBasePrice".Translate());
             Text.Font = GameFont.Small;
             Rect scrollViewRect = ScrollUtil.BeginScrollView(scrollOutRect, ref itemScrollPos, viewHeight);
 
@@ -226,10 +226,10 @@ namespace FactionColonies
 
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(labelRect, item.LabelCap);
+                UIUtil.ClampedLabel(labelRect, item.LabelCap);
 
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(costRect, "$" + item.BaseMarketValue.ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + item.BaseMarketValue.ToString("F0"));
 
                 // Click to select
                 if (Widgets.ButtonInvisible(row))
@@ -262,10 +262,10 @@ namespace FactionColonies
             Rect titleBox = new Rect(panelRect.x, panelRect.y, panelRect.width, SearchBarHeight);
             Widgets.DrawHighlight(titleBox);
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(titleBox.x + margin, titleBox.y, 60f, titleBox.height), "FCStuff".Translate());
+            UIUtil.ClampedLabel(new Rect(titleBox.x + margin, titleBox.y, 60f, titleBox.height), "FCStuff".Translate());
             float sortBtnW = 120f;
             Rect sortBtn = new Rect(titleBox.xMax - margin - 75f - margin - sortBtnW, titleBox.y + 2, sortBtnW, titleBox.height - 4);
-            if (Widgets.ButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[stuffSortIndex].Translate())))
+            if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[stuffSortIndex].Translate())))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 for (int s = 0; s < sortLabelKeys.Length; s++)
@@ -307,7 +307,7 @@ namespace FactionColonies
             float scrollMargin = viewHeight > scrollOutRect.height ? ScrollUtil.ScrollbarWidth : 0f;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(titleBox.xMax - margin - 65f - scrollMargin, titleBox.y, 60f, titleBox.height), "FCTitheMaterialPrice".Translate());
+            UIUtil.ClampedLabel(new Rect(titleBox.xMax - margin - 65f - scrollMargin, titleBox.y, 60f, titleBox.height), "FCTitheMaterialPrice".Translate());
             Text.Font = GameFont.Small;
             Rect scrollViewRect = ScrollUtil.BeginScrollView(scrollOutRect, ref stuffScrollPos, viewHeight);
 
@@ -334,11 +334,11 @@ namespace FactionColonies
 
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(labelRect, stuff.LabelCap);
+                UIUtil.ClampedLabel(labelRect, stuff.LabelCap);
 
                 Text.Anchor = TextAnchor.MiddleRight;
                 float totalValue = CraftUtil.ThingValue(selectedItem, stuff, SelectedQuality);
-                Widgets.Label(costRect, "$" + totalValue.ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + totalValue.ToString("F0"));
 
                 // Click to select
                 if (Widgets.ButtonInvisible(row))
@@ -373,11 +373,11 @@ namespace FactionColonies
                 float x = rect.xMax - countBlockW;
                 Rect lblRect = new Rect(x, rect.y, 50f, rect.height);
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(lblRect, "fcInventoryCount".Translate());
+                UIUtil.ClampedLabel(lblRect, "fcInventoryCount".Translate());
                 x += 52f;
 
                 Rect minusRect = new Rect(x, rect.y + 1f, 24f, rect.height - 2f);
-                if (Widgets.ButtonText(minusRect, "-"))
+                if (UIUtil.ClampedButtonText(minusRect, "-"))
                 {
                     selectedCount = Mathf.Max(1, selectedCount - 1);
                     countBuffer = selectedCount.ToString();
@@ -389,7 +389,7 @@ namespace FactionColonies
                 x += 42f;
 
                 Rect plusRect = new Rect(x, rect.y + 1f, 24f, rect.height - 2f);
-                if (Widgets.ButtonText(plusRect, "+"))
+                if (UIUtil.ClampedButtonText(plusRect, "+"))
                 {
                     selectedCount++;
                     countBuffer = selectedCount.ToString();
@@ -402,7 +402,7 @@ namespace FactionColonies
             {
                 const float qualityBlockW = 130f;
                 Rect qualityRect = new Rect(labelRect.x, labelRect.y + 1f, qualityBlockW, labelRect.height - 2f);
-                if (Widgets.ButtonText(qualityRect, TextUtil.GetQualityLabelCap(SelectedQuality)))
+                if (UIUtil.ClampedButtonText(qualityRect, TextUtil.GetQualityLabelCap(SelectedQuality)))
                 {
                     List<FloatMenuOption> options = new List<FloatMenuOption>();
                     foreach (QualityCategory cat in Enum.GetValues(typeof(QualityCategory)))
@@ -419,7 +419,7 @@ namespace FactionColonies
 
             float cost = perUnit * (showCount ? Mathf.Max(1, selectedCount) : 1);
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(labelRect, "fcPickerSummary".Translate(itemName, cost.ToString("F0")));
+            UIUtil.ClampedLabel(labelRect, "fcPickerSummary".Translate(itemName, cost.ToString("F0")));
         }
 
         private void DrawButtons(Rect bar)
@@ -430,7 +430,7 @@ namespace FactionColonies
             if (onUnequip != null)
             {
                 Rect unequipRect = new Rect(bar.x, bar.y, buttonWidth, bar.height);
-                if (Widgets.ButtonText(unequipRect, "FCUnitActionUnequipThing".Translate()))
+                if (UIUtil.ClampedButtonText(unequipRect, "FCUnitActionUnequipThing".Translate()))
                 {
                     onUnequip();
                     Close();
@@ -439,14 +439,14 @@ namespace FactionColonies
 
             // Cancel (right)
             Rect cancelRect = new Rect(bar.xMax - buttonWidth, bar.y, buttonWidth, bar.height);
-            if (Widgets.ButtonText(cancelRect, "CancelButton".Translate()))
+            if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
             {
                 Close();
             }
 
             // Confirm (left of cancel)
             Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, bar.y, buttonWidth, bar.height);
-            if (Widgets.ButtonText(confirmRect, "FCConfirm".Translate()))
+            if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate()))
             {
                 if (selectedItem == null)
                 {

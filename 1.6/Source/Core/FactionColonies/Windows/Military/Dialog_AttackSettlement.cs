@@ -137,7 +137,7 @@ namespace FactionColonies
             string titleText = headerOverride.NullOrEmpty()
                 ? (string)"FCSquadPickerTitle".Translate()
                 : headerOverride;
-            Widgets.Label(new Rect(8f, 0, inRect.width - 16f, TitleH), titleText);
+            UIUtil.ClampedLabel(new Rect(8f, 0, inRect.width - 16f, TitleH), titleText);
 
             // Divider under title
             UIUtil.DrawColoredHorizontalLine(0, TitleH, inRect.width, Color.gray);
@@ -156,7 +156,7 @@ namespace FactionColonies
                 if (defenderForceMin is object && defenderForceMax is object)
                 {
                     float defRowH = 22f;
-                    Widgets.Label(new Rect(8f, y, inRect.width - 16f, defRowH), DefenderLineText());
+                    UIUtil.ClampedLabel(new Rect(8f, y, inRect.width - 16f, defRowH), DefenderLineText());
                     y += defRowH;
                 }
                 return y;
@@ -196,7 +196,7 @@ namespace FactionColonies
             // Target header row
             Rect targetHeader = new Rect(col.x + margin, y, col.width - (margin * 2), SubHeaderH);
             Rect targetHeaderLabel = new Rect(targetHeader.x + smallMargin, targetHeader.y, targetHeader.width - (smallMargin * 2), targetHeader.height);
-            Widgets.Label(targetHeaderLabel, "FCSquadPickerTarget".Translate());
+            UIUtil.ClampedLabel(targetHeaderLabel, "FCSquadPickerTarget".Translate());
             TexLoad.DrawHorizontalPeakGradientLine(targetHeader.x, targetHeader.yMax, targetHeader.width, Color.gray);
             y += targetHeader.height + margin;
 
@@ -234,7 +234,7 @@ namespace FactionColonies
             {
                 float defRowH = 22f;
                 y += 4f;
-                Widgets.Label(new Rect(col.x + 8f, y, col.width - 16f, defRowH), DefenderLineText());
+                UIUtil.ClampedLabel(new Rect(col.x + 8f, y, col.width - 16f, defRowH), DefenderLineText());
                 y += defRowH;
             }
 
@@ -256,7 +256,7 @@ namespace FactionColonies
             // Operation header row
             Rect opHeader = new Rect(col.x + margin, y, col.width - (margin * 2), SubHeaderH);
             Rect opHeaderLabel = new Rect(opHeader.x + smallMargin, opHeader.y, opHeader.width - (smallMargin * 2), opHeader.height);
-            Widgets.Label(opHeaderLabel, "FCSquadPickerOperation".Translate());
+            UIUtil.ClampedLabel(opHeaderLabel, "FCSquadPickerOperation".Translate());
             TexLoad.DrawHorizontalPeakGradientLine(opHeader.x, opHeader.yMax, opHeader.width, Color.gray);
             y += opHeader.height + margin;
 
@@ -264,7 +264,7 @@ namespace FactionColonies
             float buttonMargin = margin * 3;
             Rect opButton = new Rect(col.x + buttonMargin, y, col.width - (buttonMargin * 2), SubHeaderH - 4f);
             string btnLabel = currentJob is null ? "?" : currentJob.LabelCap.ToString();
-            if (Widgets.ButtonText(opButton, btnLabel))
+            if (UIUtil.ClampedButtonText(opButton, btnLabel))
             {
                 List<FloatMenuOption> opts = new List<FloatMenuOption>();
                 foreach (MilitaryJobDef job in validJobs)

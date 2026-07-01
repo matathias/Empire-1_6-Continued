@@ -64,11 +64,11 @@ namespace FactionColonies
             // Name label (far left).
             Rect labelRect = new Rect(row.x, row.y, row.width * LabelPct, row.height);
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(labelRect, label);
+            UIUtil.ClampedLabel(labelRect, label);
 
             // Unit area on the far right — always reserved so the boxes line up.
             Rect unitRect = new Rect(row.xMax - UnitWidth, row.y, UnitWidth, row.height);
-            if (!unit.NullOrEmpty()) Widgets.Label(unitRect, unit);
+            if (!unit.NullOrEmpty()) UIUtil.ClampedLabel(unitRect, unit);
 
             // Editable box, left of the reserved unit area.
             fieldRect = new Rect(unitRect.x - Gap - FieldWidth, row.y + (RowHeight - FieldHeight) / 2f, FieldWidth, FieldHeight);
@@ -76,7 +76,7 @@ namespace FactionColonies
             // Value readout, right-aligned so it hugs the slider's left edge.
             Rect valueRect = new Rect(labelRect.xMax + Gap, row.y, ValueWidth, row.height);
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(valueRect, valueText);
+            UIUtil.ClampedLabel(valueRect, valueText);
             Text.Anchor = prevAnchor;
 
             // Slider fills the gap between the value readout and the box.

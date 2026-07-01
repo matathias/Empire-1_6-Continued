@@ -61,7 +61,7 @@ namespace FactionColonies
 
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, 35f), "fcPickImplant".Translate());
+            UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f), "fcPickImplant".Translate());
 
             RebuildIfStale();
 
@@ -101,12 +101,12 @@ namespace FactionColonies
                 Rect costRect = new Rect(row.xMax - margin - 65f, row.y, 60f, RowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(costRect, "$" + optCost.ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + optCost.ToString("F0"));
 
                 Rect labelRect = new Rect(infoRect.xMax + margin, row.y, costRect.x - infoRect.xMax - 2 * margin, RowHeight);
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(labelRect, opt.label);
+                UIUtil.ClampedLabel(labelRect, opt.label);
 
                 if (Widgets.ButtonInvisible(row))
                 {
@@ -129,7 +129,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
             Rect closeRect = new Rect(inRect.width - 120f, inRect.height - 35f, 120f, 30f);
-            if (Widgets.ButtonText(closeRect, "FCDialogPawnLoadoutClose".Translate()))
+            if (UIUtil.ClampedButtonText(closeRect, "FCDialogPawnLoadoutClose".Translate()))
                 Close();
 
             Text.Font = fontBefore;

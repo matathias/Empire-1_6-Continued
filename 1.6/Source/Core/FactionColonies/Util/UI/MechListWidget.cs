@@ -45,7 +45,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(rect, "fcMechsNoBiotech".Translate());
+                UIUtil.ClampedLabel(rect, "fcMechsNoBiotech".Translate());
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
                 return;
@@ -70,7 +70,7 @@ namespace FactionColonies
             }
             else
             {
-                Widgets.Label(toggleRect, "fcMakeMechanitor".Translate() + ": " + (isMech ? "Yes" : "No"));
+                UIUtil.ClampedLabel(toggleRect, "fcMakeMechanitor".Translate() + ": " + (isMech ? "Yes" : "No"));
             }
 
             // When not a mechanitor, show a hint and stop.
@@ -79,7 +79,7 @@ namespace FactionColonies
                 Rect hintRect = new Rect(rect.x, toggleRect.yMax + 4f, rect.width, rect.height - headerHeight - 6f);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.UpperLeft;
-                Widgets.Label(hintRect.ContractedBy(4f), "fcMechsHint".Translate());
+                UIUtil.ClampedLabel(hintRect.ContractedBy(4f), "fcMechsHint".Translate());
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
                 return;
@@ -92,7 +92,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             if (used > total + 0.0001f) GUI.color = ColorLibrary.RedReadable;
-            Widgets.Label(bwRect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
+            UIUtil.ClampedLabel(bwRect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
             GUI.color = Color.white;
 
             // --- Grouped mech list ---
@@ -142,14 +142,14 @@ namespace FactionColonies
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Rect gLabelRect = new Rect(gHeader.x + 4f, gHeader.y, wmRect.x - gHeader.x - 8f, headerHeight);
-                Widgets.Label(gLabelRect, "fcMechGroup".Translate(g + 1));
+                UIUtil.ClampedLabel(gLabelRect, "fcMechGroup".Translate(g + 1));
 
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 if (editable)
                 {
                     int capturedGroup = g;
-                    if (Widgets.ButtonText(wmRect, "fcMechWorkMode".Translate() + ": " + gMode.LabelCap))
+                    if (UIUtil.ClampedButtonText(wmRect, "fcMechWorkMode".Translate() + ": " + gMode.LabelCap))
                     {
                         List<FloatMenuOption> modeOpts = new List<FloatMenuOption>();
                         foreach (MechWorkModeDef mode in DefDatabase<MechWorkModeDef>.AllDefsListForReading)
@@ -164,7 +164,7 @@ namespace FactionColonies
                         if (modeOpts.Count > 0) Find.WindowStack.Add(new FloatMenu(modeOpts));
                     }
 
-                    if (Widgets.ButtonText(addBtnRect, "fcAddMech".Translate()))
+                    if (UIUtil.ClampedButtonText(addBtnRect, "fcAddMech".Translate()))
                     {
                         Func<MilUnitFC> getDisplay = opts.getDisplayUnit ?? (() => displayUnit);
                         Find.WindowStack.Add(new FCWindow_MechPicker(getDisplay, opts.getEditTarget, capturedGroup));
@@ -172,7 +172,7 @@ namespace FactionColonies
                 }
                 else
                 {
-                    Widgets.Label(new Rect(wmRect.x, wmRect.y, addBtnRect.xMax - wmRect.x, wmRect.height),
+                    UIUtil.ClampedLabel(new Rect(wmRect.x, wmRect.y, addBtnRect.xMax - wmRect.x, wmRect.height),
                         "fcMechWorkMode".Translate() + ": " + gMode.LabelCap);
                 }
                 y += headerHeight;
@@ -199,7 +199,7 @@ namespace FactionColonies
                         Rect removeRect = new Rect(cursorRight - removeButtonSize, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
                         Text.Font = GameFont.Small;
                         Text.Anchor = TextAnchor.MiddleCenter;
-                        if (Widgets.ButtonText(removeRect, "X"))
+                        if (UIUtil.ClampedButtonText(removeRect, "X"))
                         {
                             MilUnitFC target = opts.getEditTarget?.Invoke();
                             if (target != null) target.RemoveMech(index);
@@ -215,13 +215,13 @@ namespace FactionColonies
                         Rect minusRect = new Rect(countRect.x - stepperButtonW, plusRect.y, stepperButtonW, stepperButtonW);
                         Text.Font = GameFont.Tiny;
                         Text.Anchor = TextAnchor.MiddleCenter;
-                        if (Widgets.ButtonText(minusRect, "-"))
+                        if (UIUtil.ClampedButtonText(minusRect, "-"))
                         {
                             MilUnitFC target = opts.getEditTarget?.Invoke();
                             if (target != null) target.DecrementMech(index);
                         }
-                        Widgets.Label(countRect, "x" + Mathf.Max(1, item.count));
-                        if (Widgets.ButtonText(plusRect, "+"))
+                        UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
+                        if (UIUtil.ClampedButtonText(plusRect, "+"))
                         {
                             MilUnitFC target = opts.getEditTarget?.Invoke();
                             if (target != null) target.AddMech(item.kind, item.group);   // hard-blocks on bandwidth
@@ -233,7 +233,7 @@ namespace FactionColonies
                         Rect countRect = new Rect(cursorRight - 30f, row.y, 30f, rowHeight);
                         Text.Font = GameFont.Tiny;
                         Text.Anchor = TextAnchor.MiddleRight;
-                        Widgets.Label(countRect, "x" + Mathf.Max(1, item.count));
+                        UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
                         cursorRight = countRect.x - 6f;
                     }
 
@@ -244,7 +244,7 @@ namespace FactionColonies
                         Rect grpRect = new Rect(cursorRight - grpW, row.y + 2f, grpW, rowHeight - 4f);
                         Text.Font = GameFont.Tiny;
                         Text.Anchor = TextAnchor.MiddleCenter;
-                        if (Widgets.ButtonText(grpRect, "G" + (g + 1)))
+                        if (UIUtil.ClampedButtonText(grpRect, "G" + (g + 1)))
                         {
                             List<FloatMenuOption> grpOpts = new List<FloatMenuOption>();
                             for (int dest = 0; dest < groupCount; dest++)
@@ -266,7 +266,7 @@ namespace FactionColonies
                     Rect bwCostRect = new Rect(cursorRight - 45f, row.y, 45f, rowHeight);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleRight;
-                    Widgets.Label(bwCostRect, "BW " + bandwidth.ToString("0.#"));
+                    UIUtil.ClampedLabel(bwCostRect, "BW " + bandwidth.ToString("0.#"));
 
                     // Label
                     string label = item.kind.LabelCap;
@@ -274,7 +274,7 @@ namespace FactionColonies
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleLeft;
                     string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);
-                    Widgets.Label(labelRect, shownLabel);
+                    UIUtil.ClampedLabel(labelRect, shownLabel);
                     if (shownLabel != label) TooltipHandler.TipRegion(labelRect, label);
 
                     y += rowHeight;

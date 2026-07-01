@@ -61,7 +61,7 @@ namespace FactionColonies
             //Settlement Tax Collection Header
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(2, 0, 300, 60), header);
+            UIUtil.ClampedLabel(new Rect(2, 0, 300, 60), header);
 
             //settlement buttons
 

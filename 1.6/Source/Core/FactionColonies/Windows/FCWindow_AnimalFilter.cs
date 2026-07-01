@@ -82,13 +82,13 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect header = new Rect(inRect.x, inRect.y, inRect.width, 35f);
-            Widgets.Label(header, "FCAnimalSelection".Translate());
+            UIUtil.ClampedLabel(header, "FCAnimalSelection".Translate());
             Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
             // Sub-header: faction name
             Text.Font = GameFont.Small;
             Rect subHeader = new Rect(inRect.x, header.yMax, inRect.width, 26f);
-            Widgets.Label(subHeader, FindFC.EmpireFaction.Name);
+            UIUtil.ClampedLabel(subHeader, FindFC.EmpireFaction.Name);
 
             // Search bar
             Text.Font = GameFont.Small;
@@ -186,15 +186,15 @@ namespace FactionColonies
             Rect enableButton = new Rect(inRect.x, bottomY - bigRowHeight, btnWidth, bigRowHeight);
             Rect disableButton = new Rect(enableButton.xMax, enableButton.y, btnWidth, bigRowHeight);
             Rect defaultsButton = new Rect(disableButton.xMax, enableButton.y, btnWidth, bigRowHeight);
-            if (Widgets.ButtonText(enableButton, "FCAnimalEnableAll".Translate()))
+            if (UIUtil.ClampedButtonText(enableButton, "FCAnimalEnableAll".Translate()))
             {
                 filter.AllowAll();
             }
-            if (Widgets.ButtonText(disableButton, "FCAnimalDisableAll".Translate()))
+            if (UIUtil.ClampedButtonText(disableButton, "FCAnimalDisableAll".Translate()))
             {
                 filter.DisallowAll();
             }
-            if (Widgets.ButtonText(defaultsButton, "FCAnimalDefaults".Translate()))
+            if (UIUtil.ClampedButtonText(defaultsButton, "FCAnimalDefaults".Translate()))
             {
                 filter.SetDefaults();
             }
@@ -263,7 +263,7 @@ namespace FactionColonies
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleCenter;
                     if (packGrayed) GUI.color = new Color(0.7f, 0.7f, 0.7f);
-                    Widgets.Label(tagRect, packLabel);
+                    UIUtil.ClampedLabel(tagRect, packLabel);
                     GUI.color = Color.white;
 
                     TooltipHandler.TipRegion(tagRect, BuildPackBiomeTooltip(supportedBiomes, packGrayed ? deliveryBiome : null));
@@ -278,7 +278,7 @@ namespace FactionColonies
                     Widgets.DrawBoxSolid(tagRect, new Color(0.55f, 0.2f, 0.2f, 0.6f));
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleCenter;
-                    Widgets.Label(tagRect, "FCAnimalTagCombat".Translate());
+                    UIUtil.ClampedLabel(tagRect, "FCAnimalTagCombat".Translate());
                     tagX -= 3f;
                 }
 
@@ -287,7 +287,7 @@ namespace FactionColonies
                 Rect labelRect = new Rect(infoRect.xMax + margin, row.y, labelEnd - infoRect.xMax - margin, RowHeight);
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(labelRect, animal.LabelCap);
+                UIUtil.ClampedLabel(labelRect, animal.LabelCap);
 
                 // Tooltip with combat disqualification reasons
                 string tooltip = animal.race.description ?? "";
@@ -306,7 +306,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(innerRect, "fcNoAnimalsAvailable".Translate());
+                UIUtil.ClampedLabel(innerRect, "fcNoAnimalsAvailable".Translate());
             }
 
             ScrollUtil.EndScrollView();

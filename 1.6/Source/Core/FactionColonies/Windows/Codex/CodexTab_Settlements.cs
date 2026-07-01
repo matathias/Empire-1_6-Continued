@@ -266,7 +266,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
-            Widgets.Label(new Rect(0f, curY, contentWidth, 30f), selectedDef.LabelCap);
+            UIUtil.ClampedLabel(new Rect(0f, curY, contentWidth, 30f), selectedDef.LabelCap);
             ResetText();
             curY += 30f;
 
@@ -468,7 +468,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             GUI.color = Color.white;
-            Widgets.Label(new Rect(x, curY, width, StatRowHeight), text);
+            UIUtil.ClampedLabel(new Rect(x, curY, width, StatRowHeight), text);
             ResetText();
             return curY + StatRowHeight;
         }

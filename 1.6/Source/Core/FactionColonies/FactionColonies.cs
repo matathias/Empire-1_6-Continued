@@ -1473,7 +1473,7 @@ namespace FactionColonies
             Widgets.DrawBoxSolid(descRect, new Color(0.15f, 0.15f, 0.15f, 0.5f));
             Widgets.DrawBox(descRect);
             Text.Font = GameFont.Small;
-            Widgets.Label(descRect.ContractedBy(8f), "FCSettingRoadBuilderDesc".Translate());
+            UIUtil.ClampedLabel(descRect.ContractedBy(8f), "FCSettingRoadBuilderDesc".Translate());
 
             ls.Gap(12f);
 
@@ -1567,7 +1567,7 @@ namespace FactionColonies
             ls.Gap(4f);
             Rect row = ls.GetRect(28f);
             Rect btn = new Rect(row.x, row.y, row.width, row.height);
-            if (Widgets.ButtonText(btn, key)) resetAction();
+            if (UIUtil.ClampedButtonText(btn, key)) resetAction();
         }
     }
 

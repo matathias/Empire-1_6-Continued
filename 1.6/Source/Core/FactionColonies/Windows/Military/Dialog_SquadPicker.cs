@@ -134,7 +134,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             Rect squadHeader = new Rect(0, subHeaderY, inRect.width, SquadHeaderH);
             Widgets.DrawHighlight(squadHeader);
-            Widgets.Label(squadHeader, "FCSquadPickerSelectSquad".Translate());
+            UIUtil.ClampedLabel(squadHeader, "FCSquadPickerSelectSquad".Translate());
 
             // Filter / sort row
             float toolbarY = subHeaderY + SquadHeaderH + 2f;
@@ -147,7 +147,7 @@ namespace FactionColonies
             bool prevAvailableOnly = availableOnly;
             Widgets.CheckboxLabeled(checkbox, "FCSquadPickerAvailableOnly".Translate(), ref availableOnly);
             if (prevAvailableOnly != availableOnly) rowsDirty = true;
-            if (Widgets.ButtonText(sortButton, "FCSquadPickerSort".Translate(SortLabel(sort))))
+            if (UIUtil.ClampedButtonText(sortButton, "FCSquadPickerSort".Translate(SortLabel(sort))))
             {
                 List<FloatMenuOption> opts = new List<FloatMenuOption>();
                 if (ShowWinChance)
@@ -169,13 +169,13 @@ namespace FactionColonies
 
             // Buttons
             float btnY = inRect.height - buttonsHeight + 2f;
-            if (Widgets.ButtonText(new Rect(inRect.width - 320f, btnY, 150f, 32f), "Cancel".Translate()))
+            if (UIUtil.ClampedButtonText(new Rect(inRect.width - 320f, btnY, 150f, 32f), "Cancel".Translate()))
             {
                 Close();
             }
             bool canConfirm = CanConfirm();
             if (!canConfirm) GUI.color = Color.gray;
-            if (Widgets.ButtonText(new Rect(inRect.width - 160f, btnY, 150f, 32f), "Confirm".Translate(), true, true, canConfirm))
+            if (UIUtil.ClampedButtonText(new Rect(inRect.width - 160f, btnY, 150f, 32f), "Confirm".Translate(), true, true, canConfirm))
             {
                 Confirm();
             }

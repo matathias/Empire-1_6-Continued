@@ -39,7 +39,7 @@ namespace FactionColonies
             // Title
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, 35f), "FCAddUnit".Translate());
+            UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f), "FCAddUnit".Translate());
 
             // Search bar
             Text.Font = GameFont.Small;
@@ -85,10 +85,10 @@ namespace FactionColonies
 
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(labelRect, unit.name);
+                UIUtil.ClampedLabel(labelRect, unit.name);
 
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(costRect, "$" + unit.getTotalCost);
+                UIUtil.ClampedLabel(costRect, "$" + unit.getTotalCost);
 
                 if (Widgets.ButtonInvisible(row))
                 {
@@ -100,7 +100,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(scrollOutRect, "FCSelectAUnitButton".Translate());
+                UIUtil.ClampedLabel(scrollOutRect, "FCSelectAUnitButton".Translate());
             }
 
             ScrollUtil.EndScrollView();
@@ -111,14 +111,14 @@ namespace FactionColonies
 
             // Cancel (right)
             Rect cancelRect = new Rect(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
-            if (Widgets.ButtonText(cancelRect, "CancelButton".Translate()))
+            if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
             {
                 Close();
             }
 
             // Confirm (left of cancel)
             Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
-            if (Widgets.ButtonText(confirmRect, "FCConfirm".Translate(), active: selectedUnit != null))
+            if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: selectedUnit != null))
             {
                 if (selectedUnit != null)
                 {

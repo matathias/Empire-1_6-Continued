@@ -84,7 +84,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
             Rect descRect = new Rect(rect.x + Margin, rect.y + Margin, rect.width - Margin * 2, 22f);
-            Widgets.Label(descRect, "FCEdictsDesc".Translate());
+            UIUtil.ClampedLabel(descRect, "FCEdictsDesc".Translate());
 
             float topY = descRect.yMax + Margin;
             float bottomBarY = rect.yMax - BottomBarHeight - margin;
@@ -123,7 +123,7 @@ namespace FactionColonies
             Widgets.DrawBoxSolid(headerRect, headerColor);
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(headerRect, GetCategoryLabel(category));
+            UIUtil.ClampedLabel(headerRect, GetCategoryLabel(category));
 
             float contentY = headerRect.yMax + CategoryPadding;
 
@@ -147,7 +147,7 @@ namespace FactionColonies
             if (activeEdict != null)
             {
                 string statusText = "FCEdictActive".Translate() + ": " + activeEdict.def.LabelCap;
-                Widgets.Label(statusRect, statusText);
+                UIUtil.ClampedLabel(statusRect, statusText);
 
                 // Activating indicator
                 if (!activeEdict.IsFullyActive)
@@ -182,7 +182,7 @@ namespace FactionColonies
 
                 // Revoke button
                 Rect revokeRect = new Rect(rect.x + CategoryPadding, contentY, rect.width - CategoryPadding * 2, 24f);
-                if (Widgets.ButtonText(revokeRect, "FCEdictRevoke".Translate()))
+                if (UIUtil.ClampedButtonText(revokeRect, "FCEdictRevoke".Translate()))
                 {
                     FCPolicy edictToRevoke = activeEdict;
                     FCPolicyCategory cat = category;
@@ -197,7 +197,7 @@ namespace FactionColonies
             }
             else
             {
-                Widgets.Label(statusRect, "FCEdictActive".Translate() + ": " + "FCEdictNone".Translate());
+                UIUtil.ClampedLabel(statusRect, "FCEdictActive".Translate() + ": " + "FCEdictNone".Translate());
                 contentY = statusRect.yMax + CategoryPadding;
             }
 
@@ -290,7 +290,7 @@ namespace FactionColonies
             if (!available)
                 GUI.color = Color.gray;
 
-            Widgets.Label(labelRect, def.LabelCap);
+            UIUtil.ClampedLabel(labelRect, def.LabelCap);
 
             // Description — fills remaining space between label and upkeep
             float descHeight = rect.height - LabelHeight - UpkeepHeight - RowPadding;
@@ -359,7 +359,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect upkeepLabelRect = new Rect(rect.x + Margin, rect.y, rect.width - Margin * 2, rect.height);
-            Widgets.Label(upkeepLabelRect, "FCEdictTotalUpkeep".Translate(totalUpkeep));
+            UIUtil.ClampedLabel(upkeepLabelRect, "FCEdictTotalUpkeep".Translate(totalUpkeep));
             Text.Anchor = TextAnchor.UpperLeft;
         }
     }

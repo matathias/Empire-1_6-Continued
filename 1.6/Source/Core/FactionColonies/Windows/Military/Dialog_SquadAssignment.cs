@@ -55,7 +55,7 @@ namespace FactionColonies
             DrawList(listRect, squadDeploy);
 
             float btnY = inRect.height - btnH;
-            if (Widgets.ButtonText(new Rect(inRect.width - 160f, btnY, 150f, 32f), "Close".Translate()))
+            if (UIUtil.ClampedButtonText(new Rect(inRect.width - 160f, btnY, 150f, 32f), "Close".Translate()))
                 Close();
         }
 
@@ -120,7 +120,7 @@ namespace FactionColonies
             Rect unassignRect = new Rect(0, row * RowHeight, viewRect.width, RowHeight);
             if (row % 2 == 0) Widgets.DrawHighlight(unassignRect);
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(unassignRect.x + 8f, unassignRect.y, unassignRect.width - 100f, RowHeight),
+            UIUtil.ClampedLabel(new Rect(unassignRect.x + 8f, unassignRect.y, unassignRect.width - 100f, RowHeight),
                 "FCDialogSquadAssignmentUnassign".Translate());
             Text.Anchor = TextAnchor.UpperLeft;
             if (Widgets.ButtonInvisible(unassignRect))
@@ -154,12 +154,12 @@ namespace FactionColonies
                 GameFont fontBefore = Text.Font;
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(budgetRect,
+                UIUtil.ClampedLabel(budgetRect,
                     "FCDialogSquadAssignmentBudgetLabel".Translate(r.maxDeploy));
                 Text.Font = fontBefore;
 
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(countRect, r.stationed + " / " + r.cap);
+                UIUtil.ClampedLabel(countRect, r.stationed + " / " + r.cap);
 
                 Text.Anchor = TextAnchor.UpperLeft;
                 GUI.color = colorBefore;

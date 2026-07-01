@@ -207,11 +207,11 @@ namespace FactionColonies
             string upgradeLbl = (string)"FCSquadColUpgrade".Translate() + ": "
                 + (upgrade > 0 ? "$" + upgrade : (hasUpgradeWork ? "$0" : "-"));
 
-            Widgets.Label(new Rect(dx, detailY, colTemplate, CardDetailH), templateLbl); dx += colTemplate;
-            Widgets.Label(new Rect(dx, detailY, colBillet, CardDetailH), billetLbl); dx += colBillet;
-            Widgets.Label(new Rect(dx, detailY, colPower, CardDetailH), powerLbl); dx += colPower;
-            Widgets.Label(new Rect(dx, detailY, colCost, CardDetailH), costLbl); dx += colCost;
-            Widgets.Label(new Rect(dx, detailY, colUpgrade, CardDetailH), upgradeLbl);
+            UIUtil.ClampedLabel(new Rect(dx, detailY, colTemplate, CardDetailH), templateLbl); dx += colTemplate;
+            UIUtil.ClampedLabel(new Rect(dx, detailY, colBillet, CardDetailH), billetLbl); dx += colBillet;
+            UIUtil.ClampedLabel(new Rect(dx, detailY, colPower, CardDetailH), powerLbl); dx += colPower;
+            UIUtil.ClampedLabel(new Rect(dx, detailY, colCost, CardDetailH), costLbl); dx += colCost;
+            UIUtil.ClampedLabel(new Rect(dx, detailY, colUpgrade, CardDetailH), upgradeLbl);
 
             // Action buttons (right-aligned)
             MercenarySquadFC capturedSquad = squad;

@@ -134,7 +134,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Rect labelRect = new Rect(row.x + 4f, row.y, row.width - 6f, RowHeight);
-                Widgets.Label(labelRect, support.name);
+                UIUtil.ClampedLabel(labelRect, support.name);
 
                 if (Widgets.ButtonInvisible(row))
                 {
@@ -157,7 +157,7 @@ namespace FactionColonies
             Rect deleteBtn = new Rect(rect.x, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
             Rect exportBtn = new Rect(rect.x + buttonW + margin, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
 
-            if (Widgets.ButtonText(createBtn, "FCCreateNewFireSupport".Translate()))
+            if (UIUtil.ClampedButtonText(createBtn, "FCCreateNewFireSupport".Translate()))
             {
                 MilitaryFireSupport newSupport = new MilitaryFireSupport();
                 newSupport.name = "New Fire Support " + (mfc.fireSupportDefs.Count + 1);
@@ -168,7 +168,7 @@ namespace FactionColonies
                 mfc.fireSupportDefs.Add(newSupport);
             }
 
-            if (Widgets.ButtonText(importBtn, "FCImportFireSupport".Translate()))
+            if (UIUtil.ClampedButtonText(importBtn, "FCImportFireSupport".Translate()))
             {
                 Find.WindowStack.Add(new Dialog_ManageFireSupportExportsFC(
                     FactionColoniesMilitary.SavedFireSupports.ToList()));
@@ -176,7 +176,7 @@ namespace FactionColonies
 
             if (selectedSupport is object)
             {
-                if (Widgets.ButtonText(deleteBtn, "FCDeleteFireSupportButton".Translate()))
+                if (UIUtil.ClampedButtonText(deleteBtn, "FCDeleteFireSupportButton".Translate()))
                 {
                     MilitaryFireSupport supportToDelete = selectedSupport;
                     Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
@@ -193,7 +193,7 @@ namespace FactionColonies
                         }));
                 }
 
-                if (Widgets.ButtonText(exportBtn, "FCExportFireSupportButton".Translate()))
+                if (UIUtil.ClampedButtonText(exportBtn, "FCExportFireSupportButton".Translate()))
                 {
                     FactionColoniesMilitary.SaveFireSupport(new SavedFireSupportFC(selectedSupport));
                     Messages.Message("FCExportFireSupport".Translate(), MessageTypeDefOf.TaskCompletion);
@@ -219,7 +219,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect nameRect = new Rect(rect.x + margin, rect.y, 400f, 30f);
-            Widgets.Label(nameRect, selectedSupport.name);
+            UIUtil.ClampedLabel(nameRect, selectedSupport.name);
 
             // Pencil icon
             float nameTextWidth = Text.CalcSize(selectedSupport.name).x;
@@ -240,28 +240,28 @@ namespace FactionColonies
             Rect costRect = new Rect(rect.x, infoY, halfWidth, 20f);
             if (settlementPointReference != null)
             {
-                Widgets.Label(costRect, "FCFireSupportCostRefLabel".Translate(
+                UIUtil.ClampedLabel(costRect, "FCFireSupportCostRefLabel".Translate(
                     selectedSupport.ReturnTotalCost(),
                     MilitaryFC.CalculateFireSupportBudget(settlementPointReference.settlementMilitaryLevel)));
             }
             else
             {
-                Widgets.Label(costRect, "FCFireSupportCostLabel".Translate(selectedSupport.ReturnTotalCost()));
+                UIUtil.ClampedLabel(costRect, "FCFireSupportCostLabel".Translate(selectedSupport.ReturnTotalCost()));
             }
 
             Rect countRect = new Rect(rect.x + halfWidth, infoY, halfWidth, 22f);
-            Widgets.Label(countRect, "FCFireSupportProjectileCount".Translate(selectedSupport.projectiles.Count));
+            UIUtil.ClampedLabel(countRect, "FCFireSupportProjectileCount".Translate(selectedSupport.projectiles.Count));
 
             // Info line 2: Duration
             float line2Y = infoY + 18f + 2f;
             Rect durationRect = new Rect(rect.x, line2Y, rect.width, 18f);
-            Widgets.Label(durationRect, "FCFireSupportDuration".Translate(
+            UIUtil.ClampedLabel(durationRect, "FCFireSupportDuration".Translate(
                 Math.Round(selectedSupport.projectiles.Count * 0.25, 2)));
 
             // Info line 3: Accuracy label
             float line3Y = line2Y + 18f + 2f;
             Rect accuracyLabelRect = new Rect(rect.x, line3Y, rect.width, 22f);
-            Widgets.Label(accuracyLabelRect, "FCFireSupportAccuracyLabel".Translate(
+            UIUtil.ClampedLabel(accuracyLabelRect, "FCFireSupportAccuracyLabel".Translate(
                 selectedSupport.accuracy,
                 selectedSupport.ReturnAccuracyCostPercentage()));
 
@@ -350,7 +350,7 @@ namespace FactionColonies
             float perCost = (float)Math.Round(def.BaseMarketValue * 1.5, 2);
             float totalCost = perCost * group.count;
             Rect costRect = new Rect(x, row.y, 120f, ProjectileRowHeight);
-            Widgets.Label(costRect, "$" + perCost + " ea. / $" + totalCost);
+            UIUtil.ClampedLabel(costRect, "$" + perCost + " ea. / $" + totalCost);
             x = costRect.xMax + 4f;
 
             int count = group.count;
@@ -361,7 +361,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
             Rect minusRect = new Rect(x, btnY, btnSize, btnSize);
-            if (Widgets.ButtonText(minusRect, "-"))
+            if (UIUtil.ClampedButtonText(minusRect, "-"))
             {
                 //selectedSupport.projectiles.Remove(def);
                 count = Math.Max(0, count - 1);
@@ -377,7 +377,7 @@ namespace FactionColonies
 
             // [+] button
             Rect plusRect = new Rect(x, btnY, btnSize, btnSize);
-            if (Widgets.ButtonText(plusRect, "+"))
+            if (UIUtil.ClampedButtonText(plusRect, "+"))
             {
                 //selectedSupport.projectiles.Add(def);
                 count++;
@@ -421,7 +421,7 @@ namespace FactionColonies
 
             // Add Projectile button
             Rect addBtn = new Rect(rect.x, rect.y, btnW, ButtonHeight);
-            if (Widgets.ButtonText(addBtn, "FCAddNewProjectile".Translate()))
+            if (UIUtil.ClampedButtonText(addBtn, "FCAddNewProjectile".Translate()))
             {
                 Find.WindowStack.Add(new FCWindow_ProjectilePicker(
                     selectedSupport.ReturnFireSupportOptions(),
@@ -434,10 +434,9 @@ namespace FactionColonies
 
             // Set Point Ref button
             Rect pointRefBtn = new Rect(addBtn.xMax + margin, rect.y, btnW, ButtonHeight);
-            if (Widgets.ButtonText(pointRefBtn, "FCSetPointRef".Translate()))
+            if (UIUtil.ClampedButtonText(pointRefBtn, "FCSetPointRef".Translate()))
             {
-                List<FloatMenuOption> settlementList = FindFC
-.FactionComp
+                List<FloatMenuOption> settlementList = FindFC.FactionComp
                     .settlements.Select(settlement => new FloatMenuOption(
                         settlement.Name + "FCMilitaryLevelLabel".Translate() +
                         settlement.settlementMilitaryLevel,
@@ -458,7 +457,7 @@ namespace FactionColonies
 
             // Reset button
             Rect resetBtn = new Rect(pointRefBtn.xMax + margin, rect.y, btnW, ButtonHeight);
-            if (Widgets.ButtonText(resetBtn, "FCResetToDefault".Translate()))
+            if (UIUtil.ClampedButtonText(resetBtn, "FCResetToDefault".Translate()))
             {
                 selectedSupport.projectiles = new List<ThingDef>();
             }

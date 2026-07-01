@@ -58,7 +58,7 @@ namespace FactionColonies
             // Title
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, TitleHeight), titleKey.Translate());
+            UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, TitleHeight), titleKey.Translate());
 
             // Scroll view
             float listTop = TitleHeight + SettlementCardDrawer.margin;
@@ -166,7 +166,7 @@ namespace FactionColonies
                 UIUtil.DrawColoredLabel(
                     new Rect(xOffset, reasonY, contentWidth, reasonHeight),
                     lockedReason,
-                    new Color(0.8f, 0.2f, 0.2f));
+                    new Color(0.8f, 0.2f, 0.2f), clamp: false);
             }
 
             // Click handling

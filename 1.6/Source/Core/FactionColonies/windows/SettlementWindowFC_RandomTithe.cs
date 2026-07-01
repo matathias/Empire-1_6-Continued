@@ -54,12 +54,12 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 35f);
-            Widgets.Label(header, "FCRandomTitheSelectionHeader".Translate());
+            UIUtil.ClampedLabel(header, "FCRandomTitheSelectionHeader".Translate());
             Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
             Text.Font = GameFont.Small;
             Rect subHeader = new Rect(boundingBox.x, header.yMax, boundingBox.width, 30f);
-            Widgets.Label(subHeader, settlement.Name);
+            UIUtil.ClampedLabel(subHeader, settlement.Name);
 
             Rect iconBox = new Rect(boundingBox.x, subHeader.yMax, 30f, 30f);
             Rect labelHighlight = new Rect(iconBox.xMax + margin, iconBox.y, boundingBox.width - margin - iconBox.width, 30f);
@@ -70,7 +70,7 @@ namespace FactionColonies
             Widgets.Label(iconBox, new GUIContent(resource.def.Icon));
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(labelHighlight);
-            Widgets.Label(labelText, resource.def.LabelCap);
+            UIUtil.ClampedLabel(labelText, resource.def.LabelCap);
             Rect iconAccent = new Rect(iconBox.x, iconBox.y, iconBox.width, 3f);
             Rect labelAccent = new Rect(labelHighlight.x, labelHighlight.y, labelHighlight.width, 3f);
             Widgets.DrawBoxSolid(iconAccent, resource.def.color);
@@ -79,11 +79,11 @@ namespace FactionColonies
             /* Enable All / Disable All buttons */
             Rect enableAllBox = new Rect(boundingBox.x, iconBox.yMax + margin, boundingBox.width / 2f, 30f);
             Rect disableAllBox = new Rect(enableAllBox.xMax, enableAllBox.y, boundingBox.width / 2f, 30f);
-            if (Widgets.ButtonText(enableAllBox, "FCTitheEnableAll".Translate()))
+            if (UIUtil.ClampedButtonText(enableAllBox, "FCTitheEnableAll".Translate()))
             {
                 resource.SetAllRandomTitheFilter();
             }
-            if (Widgets.ButtonText(disableAllBox, "FCTitheDisableAll".Translate()))
+            if (UIUtil.ClampedButtonText(disableAllBox, "FCTitheDisableAll".Translate()))
             {
                 resource.ClearRandomTitheFilter();
             }
@@ -98,13 +98,13 @@ namespace FactionColonies
             Rect countRow = new Rect(boundingBox.x, curY, boundingBox.width, 22f);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(countRow.x + smallMargin, countRow.y, 120f, countRow.height),
+            UIUtil.ClampedLabel(new Rect(countRow.x + smallMargin, countRow.y, 120f, countRow.height),
                 "FCTitheEnabledCount".Translate(enabledCount, totalCount));
 
             Text.Font = GameFont.Small;
             float filterBtnW = 110f;
             Rect filterBtn = new Rect(countRow.xMax - filterBtnW - margin, countRow.y, filterBtnW, countRow.height);
-            if (Widgets.ButtonText(filterBtn, "FCTitheShowFilter".Translate(statusFilterKeys[statusFilter].Translate())))
+            if (UIUtil.ClampedButtonText(filterBtn, "FCTitheShowFilter".Translate(statusFilterKeys[statusFilter].Translate())))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 for (int f = 0; f < statusFilterKeys.Length; f++)
@@ -125,10 +125,10 @@ namespace FactionColonies
             Widgets.DrawHighlight(headerRow);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(headerRow.x + margin, headerRow.y, 60f, headerRow.height), "FCItem".Translate());
+            UIUtil.ClampedLabel(new Rect(headerRow.x + margin, headerRow.y, 60f, headerRow.height), "FCItem".Translate());
             float sortBtnW = 120f;
             Rect sortBtn = new Rect(headerRow.xMax - margin - 65f - margin - 65f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
-            if (Widgets.ButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[sortIndex].Translate())))
+            if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[sortIndex].Translate())))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 for (int s = 0; s < sortLabelKeys.Length; s++)
@@ -144,9 +144,9 @@ namespace FactionColonies
             }
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(headerRow.xMax - margin - 65f - margin - 75f, headerRow.y, 60f, headerRow.height), "FCTitheBasePrice".Translate());
+            UIUtil.ClampedLabel(new Rect(headerRow.xMax - margin - 65f - margin - 75f, headerRow.y, 60f, headerRow.height), "FCTitheBasePrice".Translate());
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(new Rect(headerRow.xMax - margin - 75f, headerRow.y, 65f, headerRow.height), "FCIsTithe".Translate());
+            UIUtil.ClampedLabel(new Rect(headerRow.xMax - margin - 75f, headerRow.y, 65f, headerRow.height), "FCIsTithe".Translate());
             Text.Font = GameFont.Small;
             curY = headerRow.yMax;
 
@@ -158,7 +158,7 @@ namespace FactionColonies
                 Color prevColor = GUI.color;
                 GUI.color = Color.gray;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(new Rect(searchRect.x + 5f, searchRect.y, searchRect.width - 10f, searchRect.height),
+                UIUtil.ClampedLabel(new Rect(searchRect.x + 5f, searchRect.y, searchRect.width - 10f, searchRect.height),
                     "FCSearchItems".Translate());
                 GUI.color = prevColor;
             }
@@ -204,15 +204,15 @@ namespace FactionColonies
                 bool allowed = resource.GetRandomTitheFilterAllow(iThing);
                 Color buttonColor = allowed ? Color.green : Color.red;
                 GUI.color = buttonColor;
-                if (Widgets.ButtonText(enableBox, IsAllowedTranslation(allowed)))
+                if (UIUtil.ClampedButtonText(enableBox, IsAllowedTranslation(allowed)))
                 {
                     resource.SetRandomTitheFilterAllow(iThing, !allowed);
                 }
                 GUI.color = Color.white;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(label, iThing.LabelCap);
+                UIUtil.ClampedLabel(label, iThing.LabelCap);
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(valueLabel, $"${Math.Round(iThing.BaseMarketValue)}");
+                UIUtil.ClampedLabel(valueLabel, $"${Math.Round(iThing.BaseMarketValue)}");
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Widgets.InfoCardButton(info, iThing);
             }
