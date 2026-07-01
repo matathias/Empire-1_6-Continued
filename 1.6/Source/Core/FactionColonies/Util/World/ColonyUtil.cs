@@ -238,6 +238,10 @@ namespace FactionColonies.util
             {
                 faction.InvalidateFactionStatCache();
             }
+
+            // Drop this settlement's situations and their stat-modifier sources (idempotent — a
+            // self-destroying terminal situation may already be gone).
+            faction.situationManager?.OnSettlementRemoved(settlement);
         }
         public static Faction CreatePlayerColonyFaction()
         {

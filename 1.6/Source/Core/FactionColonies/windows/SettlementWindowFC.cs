@@ -1143,6 +1143,13 @@ namespace FactionColonies
                     }
                     break;
                 case SettlementButtonType.Delete:
+                    // An active situation may block player deletion (e.g. a settlement that has
+                    // negotiated autonomy). Programmatic removal (secession/conquest) is unaffected.
+                    if (FindFC.FactionComp?.situationManager?.IsSettlementRemovalBlocked(settlement, out string blockReason) == true)
+                    {
+                        Messages.Message(blockReason, MessageTypeDefOf.RejectInput);
+                        break;
+                    }
                     Find.WindowStack.Add(new Dialog_Confirm("FCDeleteSettlementConfirm".Translate(settlement.Name), RemoveSettlement));
                     break;
                 case SettlementButtonType.SpecialActions:

@@ -44,4 +44,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_3</defName>
+		<label>New Feature: Situations</label>
+		<description>Adds Situations, shamelessly stolen from - er, inspired by - Stellaris. Situations feature a meter that can tick up or down over time, as well as the opportunity for the player to pick one of several &apos;approaches&apos; to influence how the Situation resolves.\n\nThis initial implementation is a rough first pass. It needs further UI work, and to also be more featureful in general (not to mention it needs actual Situations to be used with).</description>
+		<releaseDate>2026-06-30</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>First implementation of Situations</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

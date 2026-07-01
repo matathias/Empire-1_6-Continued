@@ -46,6 +46,9 @@ namespace FactionColonies
         // ===== EVENT FILTER STATE =====
         private static readonly HashSet<FCEventCategoryDef> hiddenEventCategories = new HashSet<FCEventCategoryDef>();
 
+        // ===== EVENTS/SITUATIONS SUBTAB STATE (0 = Events, 1 = Situations) =====
+        private int eventsSubtab = 0;
+
         // ===== SETTLEMENT SORT =====
         private int currentSettlementSortIndex = 0;
 
@@ -55,6 +58,7 @@ namespace FactionColonies
 
         // ===== PRISONERS STATE =====
         private Vector2 prisonersScroll;
+        private Vector2 situationsScroll;
         private HashSet<int> collapsedPrisonerSections = new HashSet<int>();
 
         // ===== SORTED LIST CACHES =====
@@ -1217,7 +1221,80 @@ namespace FactionColonies
             Text.Font = fontBefore;
         }
 
+        private void DrawSituationsContent(Rect rect)
+        {
+            List<FCSituation> sits = new List<FCSituation>(faction.situationManager.Situations);
+            const float pad = 8f;
+            float innerX = rect.x + pad;
+            float innerW = rect.width - pad * 2f;
+
+            GameFont fontBefore = Text.Font;
+            TextAnchor anchorBefore = Text.Anchor;
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleLeft;
+            UIUtil.DrawColoredLabel(new Rect(innerX, rect.y + pad, innerW, 24f),
+                "FCActiveSituationsCount".Translate(sits.Count), Color.gray);
+            Text.Font = fontBefore;
+            Text.Anchor = anchorBefore;
+
+            if (sits.Count == 0)
+            {
+                Text.Font = GameFont.Medium;
+                Text.Anchor = TextAnchor.MiddleCenter;
+                UIUtil.DrawColoredLabel(new Rect(rect.x, rect.y + rect.height * 0.35f, rect.width, 40f),
+                    "FCNoActiveSituations".Translate(), Color.gray);
+                Text.Font = fontBefore;
+                Text.Anchor = anchorBefore;
+                return;
+            }
+
+            float listY = rect.y + pad + 24f + 6f;
+            float viewH = rect.yMax - listY - pad;
+            Rect viewRect = new Rect(innerX, listY, innerW, viewH);
+            const float gap = 4f;
+            float contentH = 0f;
+            foreach (FCSituation sit in sits) contentH += SituationsUI.RowHeight(sit, includeActions: false) + gap;
+
+            Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref situationsScroll, contentH);
+            float y = 0f;
+            for (int i = 0; i < sits.Count; i++)
+            {
+                float h = SituationsUI.RowHeight(sits[i], includeActions: false);
+                Rect rowRect = new Rect(0f, y, scrollRect.width, h);
+                if (i % 2 == 0) Widgets.DrawHighlight(rowRect);
+                SituationsUI.DrawRow(rowRect, sits[i], faction, showTarget: true, includeActions: false);
+                y += h + gap;
+            }
+            ScrollUtil.EndScrollView();
+        }
+
         private void DrawEventsTab(Rect rect)
+        {
+            // With no active situations the tab renders plainly, exactly as before. Once a situation
+            // is active, split into Events/Situations subtabs (mirrors the military tab's subtab row).
+            bool hasSituations = faction.situationManager is object
+                && faction.situationManager.Situations.Count > 0;
+            if (!hasSituations)
+            {
+                eventsSubtab = 0;
+                DrawEventsContent(rect);
+                return;
+            }
+
+            Text.Font = GameFont.Small;
+            List<string> subtabs = new List<string>
+            {
+                "FCEvents".Translate(),
+                "FCSituations".Translate(),
+            };
+            Rect contentRect;
+            eventsSubtab = UIUtil.DrawTabRow(rect, subtabs, eventsSubtab, out contentRect, tabHeight: 24f);
+
+            if (eventsSubtab == 0) DrawEventsContent(contentRect);
+            else DrawSituationsContent(contentRect);
+        }
+
+        private void DrawEventsContent(Rect rect)
         {
             IReadOnlyList<FCEvent> events = faction.Events;
             const float pad = 8f;

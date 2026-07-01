@@ -57,6 +57,8 @@ namespace FactionColonies
         private static Dictionary<FCEventDef, FCEventDef> _cachedChainCooldownRootByMember = null;
         private static HashSet<BiomeResourceDef> _cachedBiomeResourceDefSet = null;
         private static Dictionary<TechLevel, List<BuildingFCDef>> _cachedBuildingDefsByTechLevel = null;
+        private static List<FCSituationDef> _cachedFactionConditionedSituationDefs = null;
+        private static List<FCSituationDef> _cachedSettlementConditionedSituationDefs = null;
 
         public static List<PawnKindDef> AllPawnKindDefs
         {
@@ -92,6 +94,39 @@ namespace FactionColonies
             }
             FieldCache.Add((typ, field), fieldInfo);
             return fieldInfo;
+        }
+
+        /// <summary>FCSituationDefs that are faction-scoped and carry a faction condition extension —
+        /// the spawn pass iterates these instead of the whole database.</summary>
+        public static List<FCSituationDef> FactionConditionedSituationDefs
+        {
+            get
+            {
+                if (_cachedFactionConditionedSituationDefs is null)
+                {
+                    _cachedFactionConditionedSituationDefs = new List<FCSituationDef>();
+                    foreach (FCSituationDef def in DefDatabase<FCSituationDef>.AllDefsListForReading)
+                        if (def.scope == FCSituationScope.Faction && def.FactionCondition != null)
+                            _cachedFactionConditionedSituationDefs.Add(def);
+                }
+                return _cachedFactionConditionedSituationDefs;
+            }
+        }
+
+        /// <summary>FCSituationDefs that are settlement-scoped and carry a settlement condition extension.</summary>
+        public static List<FCSituationDef> SettlementConditionedSituationDefs
+        {
+            get
+            {
+                if (_cachedSettlementConditionedSituationDefs is null)
+                {
+                    _cachedSettlementConditionedSituationDefs = new List<FCSituationDef>();
+                    foreach (FCSituationDef def in DefDatabase<FCSituationDef>.AllDefsListForReading)
+                        if (def.scope == FCSituationScope.Settlement && def.SettlementCondition != null)
+                            _cachedSettlementConditionedSituationDefs.Add(def);
+                }
+                return _cachedSettlementConditionedSituationDefs;
+            }
         }
 
         public static List<XenotypeDef> XenotypeDefs => _cachedXenotypeList ?? (_cachedXenotypeList = DefDatabase<XenotypeDef>.AllDefsListForReading);
@@ -954,6 +989,8 @@ namespace FactionColonies
             _cachedChainCooldownRootByMember = null;
             _cachedBiomeResourceDefSet = null;
             _cachedBuildingDefsByTechLevel = null;
+            _cachedFactionConditionedSituationDefs = null;
+            _cachedSettlementConditionedSituationDefs = null;
 
             InvalidateCustomXenotypeCache();
         }

@@ -996,6 +996,10 @@ namespace FactionColonies
             {
                 foreach (FCEvent evt in factionComp.Events)
                     EventStatModifierApplier.ApplyForSettlement(evt, this);
+                // Same mechanism for situations: faction-scoped situations are pulled in by every
+                // settlement, settlement-scoped only by their target.
+                foreach (FCSituation sit in factionComp.situationManager.Situations)
+                    SituationStatModifierApplier.ApplyForSettlement(sit, this);
             }
             else
             {

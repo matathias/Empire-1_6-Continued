@@ -170,4 +170,40 @@ namespace FactionColonies.util
         Resolving,
         Completed
     }
+
+    /// <summary>
+    /// Whether a <see cref="FactionColonies.FCSituationDef"/> lives on the whole faction or on a
+    /// single settlement. Faction-scoped situations apply their stat-modifiers to every settlement;
+    /// settlement-scoped situations carry a <c>targetSettlement</c> and apply to it alone.
+    /// </summary>
+    public enum FCSituationScope
+    {
+        Faction,
+        Settlement
+    }
+
+    /// <summary>
+    /// What happens when a situation's progress bar reaches one of its endpoints (top = maxProgress,
+    /// bottom = 0). Each end is configured independently.
+    /// Terminal: fire that end's resolution event, then remove the situation.
+    /// Clamp: hold at the boundary (open-ended management).
+    /// Loop: wrap to the other end, fire the loop event, increment loopCount (recurring timer).
+    /// </summary>
+    public enum FCSituationEndpointBehavior
+    {
+        Terminal,
+        Clamp,
+        Loop
+    }
+
+    /// <summary>
+    /// Direction a situation's bar was moving when it changed stage. Passed to
+    /// <see cref="FactionColonies.FCSituationHandlerExtension.OnStageChanged"/> so handlers can react
+    /// differently to an escalating vs. a de-escalating crossing.
+    /// </summary>
+    public enum FCSituationStageDirection
+    {
+        Ascending,
+        Descending
+    }
 }

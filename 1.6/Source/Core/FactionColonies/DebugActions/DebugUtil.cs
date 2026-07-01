@@ -228,6 +228,124 @@ namespace FactionColonies
             Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
         }
 
+        [DebugAction("Empire", "Start situation", allowedGameStates = AllowedGameStates.Playing)]
+        private static void StartSituation()
+        {
+            FactionFC faction = FindFC.FactionComp;
+            if (faction is null)
+            {
+                LogUtil.MessageForce("Debug - Start situation: no faction.");
+                return;
+            }
+
+            List<DebugMenuOption> list = new List<DebugMenuOption>();
+            foreach (FCSituationDef sitDef in DefDatabase<FCSituationDef>.AllDefsListForReading)
+            {
+                FCSituationDef localDef = sitDef;
+                string menuLabel = $"{localDef.label ?? localDef.defName} ({localDef.scope})";
+                list.Add(new DebugMenuOption(menuLabel, DebugMenuOptionMode.Action, delegate
+                {
+                    // Settlement-scoped defs need a target; open a second menu to pick one. Faction-scoped
+                    // start immediately. Debug bypasses spawn eligibility (calls StartSituation directly).
+                    if (localDef.scope == FCSituationScope.Settlement)
+                    {
+                        List<DebugMenuOption> targets = new List<DebugMenuOption>();
+                        foreach (WorldSettlementFC settlement in FindFC.Settlements)
+                        {
+                            WorldSettlementFC localSettlement = settlement;
+                            targets.Add(new DebugMenuOption(localSettlement.Name, DebugMenuOptionMode.Action, delegate
+                            {
+                                FCSituation sit = faction.situationManager.StartSituation(localDef, localSettlement);
+                                LogUtil.MessageForce(sit is object
+                                    ? $"Debug - Started situation '{localDef.defName}' on {localSettlement.Name}."
+                                    : $"Debug - Failed to start situation '{localDef.defName}' on {localSettlement.Name}.");
+                            }));
+                        }
+                        Find.WindowStack.Add(new Dialog_DebugOptionListLister(targets));
+                    }
+                    else
+                    {
+                        FCSituation sit = faction.situationManager.StartSituation(localDef, null);
+                        LogUtil.MessageForce(sit is object
+                            ? $"Debug - Started faction situation '{localDef.defName}'."
+                            : $"Debug - Failed to start situation '{localDef.defName}'.");
+                    }
+                }));
+            }
+
+            Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+        }
+
+        [DebugAction("Empire", "Remove all situations", allowedGameStates = AllowedGameStates.Playing)]
+        private static void RemoveAllSituations()
+        {
+            FactionFC faction = FindFC.FactionComp;
+            if (faction is null)
+            {
+                LogUtil.MessageForce("Debug - Remove all situations: no faction.");
+                return;
+            }
+
+            int removed = 0;
+            foreach (FCSituation sit in new List<FCSituation>(faction.situationManager.Situations))
+            {
+                if (faction.situationManager.Remove(sit)) removed++;
+            }
+            LogUtil.MessageForce($"Debug - Removed {removed} situation(s).");
+        }
+
+        [DebugAction("Empire", "Adjust situation progress", allowedGameStates = AllowedGameStates.Playing)]
+        private static void AdjustSituationProgress()
+        {
+            FactionFC faction = FindFC.FactionComp;
+            if (faction is null)
+            {
+                LogUtil.MessageForce("Debug - Adjust situation progress: no faction.");
+                return;
+            }
+
+            FCSituationManager manager = faction.situationManager;
+            List<FCSituation> sits = new List<FCSituation>(manager.Situations);
+            if (sits.Count == 0)
+            {
+                Messages.Message("No active situations.", MessageTypeDefOf.RejectInput);
+                return;
+            }
+
+            List<DebugMenuOption> list = new List<DebugMenuOption>();
+            foreach (FCSituation sit in sits)
+            {
+                FCSituation localSit = sit;
+                string target = localSit.targetSettlement is object ? localSit.targetSettlement.Name : "faction-wide";
+                string menuLabel = $"{localSit.def.label ?? localSit.def.defName} [{target}] @ {localSit.progress:0}/{localSit.def.maxProgress:0}";
+                list.Add(new DebugMenuOption(menuLabel, DebugMenuOptionMode.Action, delegate
+                {
+                    List<DebugMenuOption> deltas = new List<DebugMenuOption>();
+                    AddSituationDeltaOption(deltas, manager, localSit, "+10", 10f);
+                    AddSituationDeltaOption(deltas, manager, localSit, "+25", 25f);
+                    AddSituationDeltaOption(deltas, manager, localSit, "-10", -10f);
+                    AddSituationDeltaOption(deltas, manager, localSit, "-25", -25f);
+                    AddSituationDeltaOption(deltas, manager, localSit, "to top", localSit.def.maxProgress - localSit.progress);
+                    AddSituationDeltaOption(deltas, manager, localSit, "to bottom", -localSit.progress);
+                    Find.WindowStack.Add(new Dialog_DebugOptionListLister(deltas));
+                }));
+            }
+
+            Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+        }
+
+        private static void AddSituationDeltaOption(List<DebugMenuOption> options, FCSituationManager manager,
+            FCSituation sit, string label, float delta)
+        {
+            options.Add(new DebugMenuOption(label, DebugMenuOptionMode.Action, delegate
+            {
+                if (!manager.Situations.Contains(sit)) return; // may have been removed by a Terminal endpoint
+                manager.AddProgress(sit, delta);
+                string stage = sit.currentStage is object ? sit.currentStage.label : "none";
+                LogUtil.MessageForce($"Debug - {sit.def.defName} progress -> {sit.progress:0} (stage: {stage}).");
+            }));
+        }
+
         [DebugAction("Empire", "Proc MilitaryTimeDue", allowedGameStates = AllowedGameStates.Playing)]
         private static void ProcMilitaryTimeDue()
         {
