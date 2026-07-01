@@ -3,8 +3,8 @@
   
   <FactionColonies.ResourceTypeDef>
 	<defName>RTD_Food</defName>
-	<label>food</label>
-	<description>A resource category for meals and plant foods.</description>
+	<label>farming</label>
+	<description>A resource category for farmed crops: food, textiles, and other non-food plant harvests.</description>
 	<iconPath>GUI/ProductionFood</iconPath>
 	<color>(0.45, 0.75, 0.35)</color>
 	<uiPriority>100</uiPriority>
@@ -28,6 +28,10 @@
 		<li>MeatRaw</li>
 		<li>AnimalProductRaw</li>
 	</thingCategoryBlockList>
+	<thingBlockList>
+		<!-- Hemogen packs are in the vanilla Foods category but belong to the medicine resource -->
+		<li MayRequire="Ludeon.RimWorld.Biotech">HemogenPack</li>
+	</thingBlockList>
 	<associatedSkills>
 		<li>Plants</li>
 		<li>Cooking</li>
@@ -115,6 +119,13 @@
 				</li>
 			</multipliers>
 		</li>
+		<!-- Adds the harvested output of any sowable non-tree crop, except outputs in the blocked categories (owned by the medicine resource). Kept last so translation index mappings for the extensions above stay stable. -->
+		<li Class="FactionColonies.ResourceFilterExtension_Crops">
+			<blockedCategories>
+				<li>Medicine</li>
+				<li>Drugs</li>
+			</blockedCategories>
+		</li>
 	</modExtensions>
   </FactionColonies.ResourceTypeDef>
 
@@ -169,15 +180,7 @@
 	<productionAdditiveStat>RTD_Apparel_ProductionAdditive</productionAdditiveStat>
 	<productionMultiplierStat>RTD_Apparel_ProductionMultiplier</productionMultiplierStat>
 	<thingAllowList>
-		<li>
-			<thingDef>Cloth</thingDef>
-		</li>
-		<li>
-			<thingDef>DevilstrandCloth</thingDef>
-			<researchProjectDefs>
-				<li>Devilstrand</li>
-			</researchProjectDefs>
-		</li>
+		<!-- Cloth and devilstrand are crop harvests, produced by the farming resource. Synthread/hyperweave are crafted spacer fabrics and stay here. -->
 		<li>
 			<thingDef>Synthread</thingDef>
 			<minTechLevel>Ultra</minTechLevel>
@@ -420,6 +423,9 @@
 			<researchProjectDefs>
 				<li>MedicineProduction</li>
 			</researchProjectDefs>
+		</li>
+		<li MayRequire="Ludeon.RimWorld.Biotech">
+			<thingDef>HemogenPack</thingDef>
 		</li>
 		<li MayRequire="Ludeon.RimWorld.Biotech">
 			<thingDef>DeathrestCapacitySerum</thingDef>
