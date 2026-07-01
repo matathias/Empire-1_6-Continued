@@ -173,7 +173,7 @@ namespace FactionColonies
 
         public static double CalculateSquadBudget(int militaryLevel)
         {
-            return 1000 + (500.0 * militaryLevel) + (600.0 * militaryLevel * militaryLevel);
+            return SquadPowerRegistry.CostFromLevel(militaryLevel);
         }
 
         /* Shared predicate for the assignment validator, the IsUnderfunded computed

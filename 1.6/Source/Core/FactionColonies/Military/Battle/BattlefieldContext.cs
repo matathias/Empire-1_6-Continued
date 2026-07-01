@@ -936,6 +936,17 @@ namespace FactionColonies
                 bool hasSquad = squad != null
                     && squad.outfit != null
                     && squad.mercenaries.Any();
+
+                // No stationed squad: field a militia from the player's own unit designs instead of
+                // wholly-random pawns. The ephemeral squad flows through the same squadAvailable path
+                // below (CheckInitialization generates and equips its designed pawns). Returns null —
+                // and we keep the random-raid fallback — only when the player has designed no units.
+                if (!hasSquad)
+                {
+                    MercenarySquadFC militia = TryBuildDesignMilitia(settlement, force);
+                    if (militia != null) { squad = militia; hasSquad = true; }
+                }
+
                 bool squadDeployed = hasSquad && squad.Deployment.IsPhysicallyDeployed();
                 bool squadAvailable = hasSquad && !squadDeployed;
 
@@ -1073,6 +1084,48 @@ namespace FactionColonies
             // op.defender.initialPawnCount vs op.defender.pawns.Count at battle end.
             op.defender.pawns.AddRange(spawnedFriendlies);
             op.defender.initialPawnCount += spawnedFriendlies.Count;
+        }
+
+        /// <summary>Builds a transient militia squad from the player's individual unit designs to
+        /// defend a settlement that has no stationed squad. Draws designed units at random (with
+        /// replacement) from those that fit within the budget implied by the defending
+        /// <paramref name="force"/>'s military level, until their combined loadout cost meets that
+        /// budget, hard-capped at <see cref="MilSquadFC.MaxSquadSize"/>. The returned squad is never
+        /// registered in <see cref="MilitaryFC.mercenarySquads"/> — its pawns are disposable and are
+        /// torn down with the battle map, like the random-raid defenders it replaces. Returns null
+        /// when the player has designed no unit that fits the budget, so the caller falls back to
+        /// random generation rather than forcing an unaffordable design through.</summary>
+        private MercenarySquadFC TryBuildDesignMilitia(WorldSettlementFC settlement, MilitaryForce force)
+        {
+            MilitaryFC mil = FindFC.Military;
+            if (mil?.units is null) return null;
+
+            double budget = SquadPowerRegistry.CostFromLevel(force?.militaryLevel ?? 1.0);
+
+            // Only designs the settlement can actually afford are eligible
+            List<MilUnitFC> pool = mil.units
+                .Where(u => u is object && !u.isBlank && u.getTotalCost <= budget)
+                .ToList();
+            if (pool.Count == 0) return null;
+
+            int cap = MilSquadFC.MaxSquadSize;
+
+            // Draw affordable designs (with replacement) until the loadout budget is met, capped at MaxSquadSize
+            MilSquadFC outfit = new MilSquadFC(false);   // not registered in Military.squads; transient
+            double spent = 0;
+            int count = 0;
+            while (count < cap && (count == 0 || spent < budget))
+            {
+                MilUnitFC pick = pool.RandomElement();
+                outfit.AddUnit(pick);
+                spent += Math.Max(1.0, pick.getTotalCost);
+                count++;
+            }
+
+            MercenarySquadFC militia = new MercenarySquadFC();
+            militia.settlement = settlement;   // faction colors + per-pawn settlement back-ref
+            militia.outfit = outfit;           // pawns generated lazily via CheckInitialization()
+            return militia;
         }
 
         private void RecruitMapInhabitants(MilitaryOperation op)
