@@ -26,6 +26,16 @@ namespace FactionColonies
 
         private static readonly Color healthBarBg = new Color(0.15f, 0.15f, 0.15f);
 
+        // Captive-type badge colors: amber for slaves, cool gray for prisoners.
+        private static readonly Color slaveBadgeColor = new Color(0.90f, 0.62f, 0.20f);
+        private static readonly Color prisonerBadgeColor = new Color(0.70f, 0.72f, 0.78f);
+
+        private static string CaptiveTypeLabel(FCPrisoner p)
+            => (p.isSlave ? "FCCaptiveTypeSlave" : "FCCaptiveTypePrisoner").Translate();
+
+        private static Color CaptiveTypeColor(FCPrisoner p)
+            => p.isSlave ? slaveBadgeColor : prisonerBadgeColor;
+
         public static int CullNullPrisoners(FactionFC faction)
         {
             if (faction?.settlements is null) return 0;
@@ -37,13 +47,13 @@ namespace FactionColonies
             return total;
         }
 
-        public static bool HasPrisonersOfColony(Caravan caravan)
+        public static bool HasCapturedPawns(Caravan caravan)
         {
             if (caravan?.PawnsListForReading is null) return false;
             List<Pawn> pawns = caravan.PawnsListForReading;
             for (int i = 0; i < pawns.Count; i++)
             {
-                if (pawns[i].IsPrisonerOfColony) return true;
+                if (pawns[i].IsPrisonerOfColony || pawns[i].IsSlaveOfColony) return true;
             }
             return false;
         }
@@ -180,10 +190,18 @@ namespace FactionColonies
             float row2Y = row1Y + row1H + rowGap;
             float row3Y = row2Y + row2H + rowGap;
 
-            /* ROW 1: name + title + info button (center), value (right) */
+            /* ROW 1: name + title + captive-type badge + info button (center), value (right) */
             Rect infoRect = new Rect(centerX + centerW - infoBtnSz, row1Y + (row1H - infoBtnSz) / 2f, infoBtnSz, infoBtnSz);
 
-            float nameW = centerW - infoBtnSz - 4f;
+            // Captive-type badge (Slave / Prisoner), anchored just left of the info button.
+            string badgeText = CaptiveTypeLabel(prisoner);
+            Text.Font = GameFont.Tiny;
+            float badgeW = Text.CalcSize(badgeText).x + 6f;
+            Rect badgeRect = new Rect(infoRect.x - badgeW - 4f, row1Y, badgeW, row1H);
+            Text.Anchor = TextAnchor.MiddleRight;
+            UIUtil.DrawColoredLabel(badgeRect, badgeText, CaptiveTypeColor(prisoner));
+
+            float nameW = badgeRect.x - centerX - 4f;
             Rect nameRect = new Rect(centerX, row1Y, nameW, row1H);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -356,15 +374,22 @@ namespace FactionColonies
             UIUtil.ClampedLabel(prefixRect, subtitlePrefix);
             GUI.color = origColor;
 
-            // Left of center: info button + name+title
+            // Left of center: info button + captive-type badge + name+title
             Rect infoRect = new Rect(centerX, topY + (topRowH - infoBtnSz) / 2f, infoBtnSz, infoBtnSz);
             if (prisoner.prisoner is object)
             {
                 UIUtil.InfoCardThing(infoRect, prisoner.prisoner);
             }
 
-            float nameX = centerX + infoBtnSz + 4f;
-            float nameW = subtitleLeft - nameX - 4f;
+            string badgeTextC = CaptiveTypeLabel(prisoner);
+            Text.Font = GameFont.Tiny;
+            float badgeWC = Text.CalcSize(badgeTextC).x + 6f;
+            Rect badgeRectC = new Rect(centerX + infoBtnSz + 4f, topY, badgeWC, topRowH);
+            Text.Anchor = TextAnchor.MiddleLeft;
+            UIUtil.DrawColoredLabel(badgeRectC, badgeTextC, CaptiveTypeColor(prisoner));
+
+            float nameX = badgeRectC.xMax + 4f;
+            float nameW = Mathf.Max(0f, subtitleLeft - nameX - 4f);
             Rect nameRect = new Rect(nameX, topY, nameW, topRowH);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;

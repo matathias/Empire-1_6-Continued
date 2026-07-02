@@ -17,6 +17,11 @@ namespace FactionColonies
         public int loadID;
         public FCWorkLoad workload;
 
+        // True when this captive was enslaved (GuestStatus.Slave) rather than imprisoned.
+        // Behaviour is identical either way; this only drives the UI label and the guest
+        // status the pawn is restored to when returned to the player.
+        public bool isSlave;
+
         // Save-time flag: true when the pawn has another deep owner (Map.mapPawns,
         // WorldPawns.pawnsAlive). Used to fall back to Scribe_References and avoid
         // the "Id already used" duplicate-registration cascade on load.
@@ -27,10 +32,11 @@ namespace FactionColonies
         {
         }
 
-        public FCPrisoner(Pawn pawn, WorldSettlementFC settlement)
+        public FCPrisoner(Pawn pawn, WorldSettlementFC settlement, bool isSlave = false)
         {
             prisoner = pawn;
             this.settlement = settlement;
+            this.isSlave = isSlave;
             unrest = 0;
             health = (float)Math.Round(prisoner.health.summaryHealth.SummaryHealthPercent * 100);
             isReturning = false;
@@ -44,7 +50,7 @@ namespace FactionColonies
                 loadID = Rand.Int;
                 LogUtil.Error($"FCPrisoner: FactionComp is null during construction. Using fallback loadID {loadID}.");
             }
-            pawn.guest.SetGuestStatus(FindFC.EmpireFaction, GuestStatus.Prisoner);
+            pawn.guest.SetGuestStatus(FindFC.EmpireFaction, isSlave ? GuestStatus.Slave : GuestStatus.Prisoner);
         }
 
 
@@ -75,6 +81,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref isReturning, "isReturning");
             Scribe_Values.Look(ref loadID, "loadID");
             Scribe_Values.Look(ref workload, "workload");
+            Scribe_Values.Look(ref isSlave, "isSlave", false);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

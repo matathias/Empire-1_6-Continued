@@ -47,10 +47,10 @@
 	<!-- Pawn Events -->
 	<FCDeathOfFactionPawn>Your incompetence has led to the death of a pawn from your settlements! Unrest has grown in your subject settlements.</FCDeathOfFactionPawn>
 	<FCCaptureOfFactionPawn>Capturing one of your settlement's pawns has caused great unrest in your subject settlements!</FCCaptureOfFactionPawn>
-	<FCPrisonerHasDiedLetter>Prisoner Has Died</FCPrisonerHasDiedLetter>
+	<FCPrisonerHasDiedLetter>Captive Has Died</FCPrisonerHasDiedLetter>
 	<FCPrisonerHasDied>{0} at {1} has died from overworking</FCPrisonerHasDied>
-	<FCPrisonersHaveDiedLetter>Prisoners Have Died</FCPrisonersHaveDiedLetter>
-	<FCPrisonersHaveDiedBody>{0} prisoners at {1} have died from overworking:</FCPrisonersHaveDiedBody>
+	<FCPrisonersHaveDiedLetter>Captives Have Died</FCPrisonersHaveDiedLetter>
+	<FCPrisonersHaveDiedBody>{0} captives at {1} have died from overworking:</FCPrisonersHaveDiedBody>
 	<FCPrisonerDeathGoodwillHeader>Goodwill changes:</FCPrisonerDeathGoodwillHeader>
 
 	<!-- Mercenary Events -->

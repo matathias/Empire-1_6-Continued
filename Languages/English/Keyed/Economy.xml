@@ -194,7 +194,7 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCAssignedOvermaxWorkersBreakdownTooltip>Modifiers affecting overmax worker capacity:</FCAssignedOvermaxWorkersBreakdownTooltip>
 	<FCAssignedWorkersTooltip>Modifiers affecting worker capacity:</FCAssignedWorkersTooltip>
 	<FCExtraWorkersSoftcapTooltipSub>Per settlement level:</FCExtraWorkersSoftcapTooltipSub>
-	<FCWorkersFromPrisoners>Prisoners</FCWorkersFromPrisoners>
+	<FCWorkersFromPrisoners>Captives</FCWorkersFromPrisoners>
 	<FCNoActiveModifiers>No active modifiers.</FCNoActiveModifiers>
 	<FCCostPerWorker>Cost Per Worker</FCCostPerWorker>
 

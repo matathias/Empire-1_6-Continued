@@ -207,11 +207,14 @@ namespace FactionColonies
             // already has it (e.g., redressed by PawnGenerator, passed via LeaveMap,
             // dropped from a caravan), pull it out so save doesn't double-scribe.
             // The conditional Scribe in FCPrisoner.ExposeData defends on-map cases.
+            // Detect the pawn's captive type before construction — the FCPrisoner ctor
+            // overwrites guest status, so IsSlaveOfColony must be read first.
+            bool wasSlave = pawn.IsSlaveOfColony;
             if (Find.WorldPawns is object && Find.WorldPawns.Contains(pawn))
             {
                 Find.WorldPawns.RemovePawn(pawn);
             }
-            FCPrisoner created = new FCPrisoner(pawn, settlement);
+            FCPrisoner created = new FCPrisoner(pawn, settlement, wasSlave);
             created.workload = GetEffectiveDefaultWorkload();
             prisonerList.Add(created);
             settlement.DirtyStatsCache();
@@ -256,9 +259,10 @@ namespace FactionColonies
             for (int i = 0; i < pawns.Count; i++)
             {
                 Pawn captured = pawns[i];
-                if (!captured.IsPrisonerOfColony) continue;
+                if (!captured.IsPrisonerOfColony && !captured.IsSlaveOfColony) continue;
+                string typeLabel = (captured.IsSlaveOfColony ? "FCCaptiveTypeSlave" : "FCCaptiveTypePrisoner").Translate();
                 list.Add(new FloatMenuOption(
-                    "FCTransferPrisonerOption".Translate(captured.Name.ToStringShort),
+                    "FCTransferPrisonerOption".Translate(captured.Name.ToStringShort) + " (" + typeLabel + ")",
                     delegate { TransferFromCaravan(captured, caravan); }));
             }
 
@@ -296,7 +300,7 @@ namespace FactionColonies
 
             if (p.prisoner.guest is null)
                 p.prisoner.guest = new Pawn_GuestTracker(p.prisoner);
-            p.prisoner.guest.SetGuestStatus(Find.FactionManager.OfPlayer, GuestStatus.Prisoner);
+            p.prisoner.guest.SetGuestStatus(Find.FactionManager.OfPlayer, p.isSlave ? GuestStatus.Slave : GuestStatus.Prisoner);
 
             DeliveryEvent.CreateDeliveryEvent(new FCEvent
             {
@@ -400,7 +404,7 @@ namespace FactionColonies
         public override FloatMenuAcceptanceReport CanReceive
             => FindFC.FactionComp?.IsActionAllowed(FCActionType.SendPrisoner) ?? false;
 
-        public override bool AcceptsPawn(Pawn pawn) => pawn is object && pawn.IsPrisonerOfColony;
+        public override bool AcceptsPawn(Pawn pawn) => pawn is object && (pawn.IsPrisonerOfColony || pawn.IsSlaveOfColony);
 
         public override string ArrivalMenuLabel => "FCAddPrisonersToSettlement".Translate(parent.Label);
 
@@ -424,7 +428,7 @@ namespace FactionColonies
             if (caravan is null || caravan.Tile != parent.Tile) yield break;
             if (FindFC.FactionComp is null) yield break;
             if (!FindFC.FactionComp.IsActionAllowed(FCActionType.SendPrisoner)) yield break;
-            if (!PrisonerUtil.HasPrisonersOfColony(caravan)) yield break;
+            if (!PrisonerUtil.HasCapturedPawns(caravan)) yield break;
 
             yield return BuildTransferGizmo(caravan);
         }
@@ -442,7 +446,7 @@ namespace FactionColonies
 
             Caravan caravan = Find.WorldObjects.PlayerControlledCaravanAt(parent.Tile);
             if (caravan is null) yield break;
-            if (!PrisonerUtil.HasPrisonersOfColony(caravan)) yield break;
+            if (!PrisonerUtil.HasCapturedPawns(caravan)) yield break;
 
             yield return BuildTransferGizmo(caravan);
         }
