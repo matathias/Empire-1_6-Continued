@@ -8,6 +8,13 @@
 	<FCSettingDaysBetweenTax>Days between tax time</FCSettingDaysBetweenTax>
 	<FCSettingProductionTitheMod>Production Tithe Modifier</FCSettingProductionTitheMod>
 	<FCSettingWorkerCost>Cost Per Worker</FCSettingWorkerCost>
+	<FCSettingWorkerProductionBaseBonus>Worker production base bonus</FCSettingWorkerProductionBaseBonus>
+	<FCSettingWorkerProductionBaseBonusTip>A flat bonus (or penalty) added to every settlement's per-worker resource production base.</FCSettingWorkerProductionBaseBonusTip>
+	<FCSettingWorkerProductionMultBonus>Worker production multiplier bonus</FCSettingWorkerProductionMultBonus>
+	<FCSettingWorkerProductionMultBonusTip>A multiplier applied to every settlement's per-worker resource production multiplier.</FCSettingWorkerProductionMultBonusTip>
+	<!-- Production breakdown tooltip lines (settlement window) -->
+	<FCDifficultyWorkerProductionBaseBonus>Difficulty: worker production base bonus</FCDifficultyWorkerProductionBaseBonus>
+	<FCDifficultyWorkerProductionMultBonus>Difficulty: worker production multiplier bonus</FCDifficultyWorkerProductionMultBonus>
 	<FCSettingMaxSettlementLevel>Max Settlement Level</FCSettingMaxSettlementLevel>
 	<FCSettingTimersHeader>Timers</FCSettingTimersHeader>
 	<FCSettingSettlementUpgradeTime>Settlement upgrade time multiplier</FCSettingSettlementUpgradeTime>

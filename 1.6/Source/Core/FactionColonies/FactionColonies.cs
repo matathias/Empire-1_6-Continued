@@ -25,37 +25,51 @@ namespace FactionColonies
         public const int DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL = 2;
         public const int DEFAULT_PRODUCTION_TITHE_MOD_PEACEFUL = 25;          // was 50, interval 2
         public const int DEFAULT_WORKER_COST_PEACEFUL = 38;                   // was 75, interval 2 (75/2)
+        public const float DEFAULT_WORKER_PROD_BASE_BONUS_PEACEFUL = 1.0f;
+        public const float DEFAULT_WORKER_PROD_MULT_BONUS_PEACEFUL = 1.5f;
         //Community Builder
         public const int DEFAULT_SILVER_PER_RESOURCE_COMMUNITYBUILDER = 30;   // was 150, interval 5
         public const int DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER = 5;
         public const int DEFAULT_PRODUCTION_TITHE_MOD_COMMUNITYBUILDER = 5;   // was 25, interval 5
         public const int DEFAULT_WORKER_COST_COMMUNITYBUILDER = 20;           // was 100, interval 5
+        public const float DEFAULT_WORKER_PROD_BASE_BONUS_COMMUNITYBUILDER = 0.5f;
+        public const float DEFAULT_WORKER_PROD_MULT_BONUS_COMMUNITYBUILDER = 1.2f;
         //Adventure Story
         public const int DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY = 20;     // was 100, interval 5
         public const int DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY = 5;
         public const int DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY = 5;     // was 25, interval 5
         public const int DEFAULT_WORKER_COST_ADVENTURESTORY = 20;             // was 100, interval 5
+        public const float DEFAULT_WORKER_PROD_BASE_BONUS_ADVENTURESTORY = 0.0f;
+        public const float DEFAULT_WORKER_PROD_MULT_BONUS_ADVENTURESTORY = 1.0f;
         //Strive to Survive
         public const int DEFAULT_SILVER_PER_RESOURCE_STRIVETOSURVIVE = 10;    // was 100, interval 10
         public const int DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE = 10;
         public const int DEFAULT_PRODUCTION_TITHE_MOD_STRIVETOSURVIVE = 2;    // was 20, interval 10
         public const int DEFAULT_WORKER_COST_STRIVETOSURVIVE = 13;            // was 125, interval 10 (125/10)
+        public const float DEFAULT_WORKER_PROD_BASE_BONUS_STRIVETOSURVIVE = 0.0f;
+        public const float DEFAULT_WORKER_PROD_MULT_BONUS_STRIVETOSURVIVE = 0.9f;
         //Blood and Dust
         public const int DEFAULT_SILVER_PER_RESOURCE_BLOODANDDUST = 5;        // was 80, interval 15
         public const int DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST = 15;
         public const int DEFAULT_PRODUCTION_TITHE_MOD_BLOODANDDUST = 1;       // was 15, interval 15
         public const int DEFAULT_WORKER_COST_BLOODANDDUST = 8;                // was 125, interval 15 (125/15)
+        public const float DEFAULT_WORKER_PROD_BASE_BONUS_BLOODANDDUST = -0.3f;
+        public const float DEFAULT_WORKER_PROD_MULT_BONUS_BLOODANDDUST = 0.8f;
         //Losing is Fun
         public const int DEFAULT_SILVER_PER_RESOURCE_LOSINGISFUN = 2;         // was 70, interval 30
         public const int DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN = 30;
         public const int DEFAULT_PRODUCTION_TITHE_MOD_LOSINGISFUN = 1;        // was 10, interval 30 -> clamp to 1
         public const int DEFAULT_WORKER_COST_LOSINGISFUN = 5;                 // was 150, interval 30
+        public const float DEFAULT_WORKER_PROD_BASE_BONUS_LOSINGISFUN = -0.5f;
+        public const float DEFAULT_WORKER_PROD_MULT_BONUS_LOSINGISFUN = 0.6f;
         // Global defaults
         // The default difficulty setting is Adventure Story, so set the global defaults accordingly
         public const int DEFAULT_SILVER_PER_RESOURCE = DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY;
         public const int DEFAULT_TAX_INTERVAL_DAYS = DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY;
         public const int DEFAULT_PRODUCTION_TITHE_MOD = DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY;
         public const int DEFAULT_WORKER_COST = DEFAULT_WORKER_COST_ADVENTURESTORY;
+        public const float DEFAULT_WORKER_PROD_BASE_BONUS = DEFAULT_WORKER_PROD_BASE_BONUS_ADVENTURESTORY; // 0.0f
+        public const float DEFAULT_WORKER_PROD_MULT_BONUS = DEFAULT_WORKER_PROD_MULT_BONUS_ADVENTURESTORY; // 1.0f
         /* Legacy/external BuildingFCDef upkeep is authored at the old per-cycle scale; divide by the
          * default interval to approximate a per-day value. See postRework on BuildingFCDef. */
         public const int LEGACY_UPKEEP_DIVISOR = DEFAULT_TAX_INTERVAL_DAYS; // 5
@@ -137,6 +151,11 @@ namespace FactionColonies
 
         public static int productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD;
         public static int workerCost = DEFAULT_WORKER_COST;
+        /* Per-difficulty adjustments to per-worker resource production: an additive bonus to the
+         * production base and a multiplier on the production mult. Applied worker-count-independently
+         * (before the engine's x assignedWorkers), so the per-worker breakdown stays comparable. */
+        public static float workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS;
+        public static float workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS;
         /* Final per-difficulty multiplier on building upkeep, tuning the per-difficulty building burden
          * independently of the interval-scaling. Ratio (sign-preserving). Defaults to 1.0 everywhere. */
         public static float buildingUpkeepDifficultyMult = 1.0f;
@@ -408,6 +427,8 @@ namespace FactionColonies
             }
             Scribe_Values.Look(ref productionTitheMod, "productionTitheMod", DEFAULT_PRODUCTION_TITHE_MOD);
             Scribe_Values.Look(ref workerCost, "workerCost", DEFAULT_WORKER_COST);
+            Scribe_Values.Look(ref workerProductionBaseBonus, "workerProductionBaseBonus", DEFAULT_WORKER_PROD_BASE_BONUS);
+            Scribe_Values.Look(ref workerProductionMultBonus, "workerProductionMultBonus", DEFAULT_WORKER_PROD_MULT_BONUS);
             Scribe_Values.Look(ref buildingUpkeepDifficultyMult, "buildingUpkeepDifficultyMult", 1.0f);
             Scribe_Values.Look(ref settlementMaxLevel, "settlementMaxLevel", DEFAULT_SETTLEMENT_MAX_LEVEL);
             Scribe_Values.Look(ref settlementUpgradeTimeMultiplier, "settlementUpgradeTimeMultiplier", DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER);
@@ -633,6 +654,8 @@ namespace FactionColonies
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_PEACEFUL;
                     workerCost = DEFAULT_WORKER_COST_PEACEFUL;
+                    workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_PEACEFUL;
+                    workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_PEACEFUL;
                     buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.CommunityBuilder:
@@ -640,6 +663,8 @@ namespace FactionColonies
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_COMMUNITYBUILDER;
                     workerCost = DEFAULT_WORKER_COST_COMMUNITYBUILDER;
+                    workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_COMMUNITYBUILDER;
+                    workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_COMMUNITYBUILDER;
                     buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.AdventureStory:
@@ -647,6 +672,8 @@ namespace FactionColonies
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY;
                     workerCost = DEFAULT_WORKER_COST_ADVENTURESTORY;
+                    workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_ADVENTURESTORY;
+                    workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_ADVENTURESTORY;
                     buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.StriveToSurvive:
@@ -654,6 +681,8 @@ namespace FactionColonies
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_STRIVETOSURVIVE;
                     workerCost = DEFAULT_WORKER_COST_STRIVETOSURVIVE;
+                    workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_STRIVETOSURVIVE;
+                    workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_STRIVETOSURVIVE;
                     buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.BloodAndDust:
@@ -661,6 +690,8 @@ namespace FactionColonies
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_BLOODANDDUST;
                     workerCost = DEFAULT_WORKER_COST_BLOODANDDUST;
+                    workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_BLOODANDDUST;
+                    workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_BLOODANDDUST;
                     buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.LosingIsFun:
@@ -668,6 +699,8 @@ namespace FactionColonies
                     timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN;
                     productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_LOSINGISFUN;
                     workerCost = DEFAULT_WORKER_COST_LOSINGISFUN;
+                    workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_LOSINGISFUN;
+                    workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_LOSINGISFUN;
                     buildingUpkeepDifficultyMult = 1.0f;
                     break;
                 case EmpireDifficultyLevel.Custom:
@@ -972,6 +1005,12 @@ namespace FactionColonies
             ls.Label("FCModVersion".Translate(GetModVersion()));
             ls.Gap(10f);
 
+            // Worker-production bonuses feed the cached production base/mult, so a mid-game change here
+            // must invalidate resource caches (unlike the live-read economy settings). Track the values
+            // across the difficulty section and invalidate below only if they actually changed.
+            float prevWorkerProdBaseBonus = workerProductionBaseBonus;
+            float prevWorkerProdMultBonus = workerProductionMultBonus;
+
             // Empire Difficulty Selection
             ls.Label("FCSettingEmpireDifficulty".Translate());
             ls.Gap(5f);
@@ -1030,6 +1069,12 @@ namespace FactionColonies
                 ls.IntEntry(ref productionTitheMod, ref productionTitheMod_buffer);
                 ls.Label("FCSettingWorkerCost".Translate());
                 ls.IntEntry(ref workerCost, ref workerCost_buffer);
+                workerProductionBaseBonus = ls.SliderTextField("FCSettingWorkerProductionBaseBonus",
+                    "FCSettingWorkerProductionBaseBonus".Translate(), workerProductionBaseBonus, -1f, 5f, decimals: 1,
+                    tooltip: "FCSettingWorkerProductionBaseBonusTip".Translate());
+                workerProductionMultBonus = ls.SliderTextField("FCSettingWorkerProductionMultBonus",
+                    "FCSettingWorkerProductionMultBonus".Translate(), workerProductionMultBonus, 0.1f, 5f, decimals: 2, unit: "x",
+                    tooltip: "FCSettingWorkerProductionMultBonusTip".Translate());
             }
             else
             {
@@ -1038,6 +1083,13 @@ namespace FactionColonies
                 ls.Label($"FCSettingDaysBetweenTax".Translate() + ": " + timeBetweenTaxes_days);
                 ls.Label($"FCSettingProductionTitheMod".Translate() + ": " + productionTitheMod);
                 ls.Label($"FCSettingWorkerCost".Translate() + ": " + workerCost);
+                ls.Label("FCSettingWorkerProductionBaseBonus".Translate() + ": " + workerProductionBaseBonus.ToString("0.0"));
+                ls.Label("FCSettingWorkerProductionMultBonus".Translate() + ": " + workerProductionMultBonus.ToString("0.00") + "x");
+            }
+
+            if (prevWorkerProdBaseBonus != workerProductionBaseBonus || prevWorkerProdMultBonus != workerProductionMultBonus)
+            {
+                FindFC.FactionComp?.InvalidateFactionStatCache();
             }
 
             ls.Label("FCSettingMaxSettlementLevel".Translate());

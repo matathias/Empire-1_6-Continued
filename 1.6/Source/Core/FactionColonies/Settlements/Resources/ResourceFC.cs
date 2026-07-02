@@ -339,7 +339,8 @@ namespace FactionColonies
                         compBase += provider.GetResourceAdditiveModifier(this);
                 }
             }
-            double workerBase = (settlement != null) ? settlement.GetStatValue(FCStatDefOf.workerProductionBase) : 0;
+            double workerBase = (settlement != null)
+                ? settlement.GetStatValue(FCStatDefOf.workerProductionBase) + FCSettings.workerProductionBaseBonus : 0;
             return dictBase + statBase + compBase + workerBase;
         }
         /// <summary>
@@ -365,7 +366,8 @@ namespace FactionColonies
                 }
             }
             double prosperityMult = (settlement != null) ? (settlement.prosperity / 100.0) : 1.0;
-            double workerMult = (settlement != null) ? settlement.GetStatValue(FCStatDefOf.workerProductionMultiplier) : 1;
+            double workerMult = (settlement != null)
+                ? settlement.GetStatValue(FCStatDefOf.workerProductionMultiplier) * FCSettings.workerProductionMultBonus : 1;
             return dictMult * statMult * compMult * taxBonus * prosperityMult * workerMult;
         }
         public double GetTitheModifierPerWorker()
@@ -670,6 +672,11 @@ namespace FactionColonies
                 {
                     desc += settlement.GetStatDesc(FCStatDefOf.workerProductionBase);
                 }
+                if (FCSettings.workerProductionBaseBonus != 0f)
+                {
+                    desc += TextUtil.AdditiveBonusLine(FCSettings.workerProductionBaseBonus,
+                        "FCDifficultyWorkerProductionBaseBonus".Translate()) + "\n";
+                }
                 cachedProdBaseDesc = desc.Trim();
                 dirtyProductionBaseDescCache = false;
             }
@@ -732,6 +739,11 @@ namespace FactionColonies
                 if (settlement != null)
                 {
                     desc += settlement.GetStatDesc(FCStatDefOf.workerProductionMultiplier);
+                }
+                if (FCSettings.workerProductionMultBonus != 1f)
+                {
+                    desc += TextUtil.MultiplierBonusLine(FCSettings.workerProductionMultBonus,
+                        "FCDifficultyWorkerProductionMultBonus".Translate()) + "\n";
                 }
                 desc += TextUtil.ColorizeMultiplierBonus(settlement?.GetSettlementTaxBonus() ?? 1) + " - " + "FCTaxBase".Translate();
 

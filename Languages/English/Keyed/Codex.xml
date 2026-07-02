@@ -80,9 +80,9 @@
 
 	<!-- Difficulty Settings Provider -->
 	<FCCodexDiffCurrent>Current difficulty: {0}</FCCodexDiffCurrent>
-	<FCCodexDiffHeader>Difficulty → Silver/Res (per day) | Tax Days | Tithe Mod (per day) | Worker Cost (per day)</FCCodexDiffHeader>
+	<FCCodexDiffHeader>Difficulty → Silver/Res (per day) | Tax Days | Tithe Mod (per day) | Worker Cost (per day) | Prod Base Bonus | Prod Mult Bonus</FCCodexDiffHeader>
 	<FCCodexDiffUpkeepMult>Building upkeep multiplier: {0}×</FCCodexDiffUpkeepMult>
-	<FCCodexDiffRow>{0}: {1} | {2}d | {3} | {4}</FCCodexDiffRow>
+	<FCCodexDiffRow>{0}: {1} | {2}d | {3} | {4} | {5} | {6}×</FCCodexDiffRow>
 	<FCCodexDiffCustomLabel>Your custom values:</FCCodexDiffCustomLabel>
 	<FCCodexDiffCustomRow>  {0}: {1}</FCCodexDiffCustomRow>
 
