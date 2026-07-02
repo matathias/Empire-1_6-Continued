@@ -1171,7 +1171,12 @@ namespace FactionColonies
 
             MercenarySquadFC militia = new MercenarySquadFC();
             militia.settlement = settlement;   // faction colors + per-pawn settlement back-ref
-            militia.outfit = outfit;           // pawns generated lazily via CheckInitialization()
+            militia.outfit = outfit;
+            // Generate + equip the pawns now. CheckInitialization (called later in the reused squad
+            // path) only fires when mercenaries is null, but a fresh squad field-inits it to an empty
+            // non-null list — so without this explicit call no pawns are ever created and zero
+            // defenders spawn. Real squads hit InitiateSquad via MilitaryFC.HireSquad at hire time.
+            militia.InitiateSquad();
             return militia;
         }
 
