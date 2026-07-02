@@ -199,13 +199,13 @@ namespace FactionColonies
             float badgeW = Text.CalcSize(badgeText).x + 6f;
             Rect badgeRect = new Rect(infoRect.x - badgeW - 4f, row1Y, badgeW, row1H);
             Text.Anchor = TextAnchor.MiddleRight;
-            UIUtil.DrawColoredLabel(badgeRect, badgeText, CaptiveTypeColor(prisoner));
+            UIUtil.DrawColoredLabel(badgeRect, badgeText, CaptiveTypeColor(prisoner), clamp: false);
 
-            float nameW = badgeRect.x - centerX - 4f;
+            float nameW = Mathf.Max(0f, badgeRect.x - centerX - 4f);
             Rect nameRect = new Rect(centerX, row1Y, nameW, row1H);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            UIUtil.ClampedLabel(nameRect, BuildNameWithTitle(prisoner.prisoner));
+            Widgets.Label(nameRect, BuildNameWithTitle(prisoner.prisoner));
 
             if (prisoner.prisoner is object)
             {
@@ -386,14 +386,14 @@ namespace FactionColonies
             float badgeWC = Text.CalcSize(badgeTextC).x + 6f;
             Rect badgeRectC = new Rect(centerX + infoBtnSz + 4f, topY, badgeWC, topRowH);
             Text.Anchor = TextAnchor.MiddleLeft;
-            UIUtil.DrawColoredLabel(badgeRectC, badgeTextC, CaptiveTypeColor(prisoner));
+            UIUtil.DrawColoredLabel(badgeRectC, badgeTextC, CaptiveTypeColor(prisoner), clamp: false);
 
             float nameX = badgeRectC.xMax + 4f;
             float nameW = Mathf.Max(0f, subtitleLeft - nameX - 4f);
             Rect nameRect = new Rect(nameX, topY, nameW, topRowH);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            UIUtil.ClampedLabel(nameRect, BuildNameWithTitle(prisoner.prisoner));
+            Widgets.Label(nameRect, BuildNameWithTitle(prisoner.prisoner));
 
             /* BOTTOM ROW */
             // Buttons render in Tiny font, with row-alt highlight tracking
