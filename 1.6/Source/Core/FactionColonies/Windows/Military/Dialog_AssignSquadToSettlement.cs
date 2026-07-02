@@ -1,3 +1,4 @@
+using FactionColonies.util;
 using RimWorld;
 using System.Collections.Generic;
 using UnityEngine;
@@ -191,6 +192,18 @@ namespace FactionColonies
                     statusColor = AccentUtil.MilActiveMission;
                 }
 
+                // Assign gates differ from IsAvailable: only busy and destination-budget block, and
+                // the budget is measured against the destination (maxDeployCost), not the squad's own
+                // settlement. Build the reason from those two conditions directly.
+                string unavailableReason = null;
+                if (!available)
+                {
+                    List<string> reasons = new List<string>();
+                    if (squad.IsBusy) reasons.Add(SquadStatusUtil.BusyReason(squad));
+                    if (overBudget) reasons.Add(SquadStatusUtil.OverBudgetReason(squad.DeploymentCost(), maxDeployCost, target?.Name));
+                    unavailableReason = SquadStatusUtil.FormatUnavailTooltip(reasons);
+                }
+
                 rows.Add(new RowData
                 {
                     squad = squad,
@@ -204,7 +217,8 @@ namespace FactionColonies
                     statusColor = statusColor,
                     available = available,
                     deploymentCost = squad.DeploymentCost(),
-                    injuredCount = injuredCount
+                    injuredCount = injuredCount,
+                    unavailableReason = unavailableReason
                 });
             }
 
