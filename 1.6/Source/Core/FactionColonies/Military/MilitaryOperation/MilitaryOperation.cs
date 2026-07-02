@@ -403,6 +403,22 @@ namespace FactionColonies
 
             LifecycleRegistry.InvokeOnBattleResolved(this, victory, battleResult);
 
+            // Auto-replace fallen mercs for the participating squads (opt-in; no-op when off).
+            // This is the path for auto-resolved (no-map) battles. Squads still physically on a
+            // manual-battle map are skipped inside TryAutoReplaceSquad and instead handled when that
+            // map tears down (WorldSettlementFC.Notify_MyMapAboutToBeRemoved); the tax-tick sweep is
+            // the final backstop.
+            if (mfc is object)
+            {
+                int autoReplaceSpent = 0;
+                if (aggressor?.squad is object) autoReplaceSpent += mfc.TryAutoReplaceSquad(aggressor.squad);
+                if (defender?.squad is object && defender.squad != aggressor?.squad)
+                    autoReplaceSpent += mfc.TryAutoReplaceSquad(defender.squad);
+                if (autoReplaceSpent > 0)
+                    Messages.Message("FCSquadAutoReplacedBattle".Translate(autoReplaceSpent),
+                        MessageTypeDefOf.PositiveEvent);
+            }
+
             if (externalDefenderSource is object)
             {
                 IAutoDefender def = AutoDefenderRegistry.FindByWorldObject(externalDefenderSource);

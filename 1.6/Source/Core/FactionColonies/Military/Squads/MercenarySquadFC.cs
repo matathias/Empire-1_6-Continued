@@ -465,14 +465,17 @@ namespace FactionColonies
 
         /// <summary>Pays <see cref="SquadCostExtensions.FillEmptySlotsCost"/> silver and generates fresh
         /// pawns into every empty slot, equipping each from its resolved loadout. Slots with no
-        /// loadout are skipped. Returns false (no payment) if the player can't afford the total.</summary>
-        public bool FillEmptySlots()
+        /// loadout are skipped. Returns false (no payment) if the player can't afford the total.
+        /// Pass <paramref name="silent"/> true to suppress the "insufficient silver" reject message
+        /// (used by the automated auto-replace path, which retries every tax tick).</summary>
+        public bool FillEmptySlots(bool silent = false)
         {
             int total = this.FillEmptySlotsCost();
             if (total > 0 && !PaymentUtil.TryPaySilver(total, PaymentUtil.Reason_SquadFillSlot, settlement))
             {
-                Messages.Message("FCSquadFillSlotsInsufficient".Translate(total),
-                    MessageTypeDefOf.RejectInput, false);
+                if (!silent)
+                    Messages.Message("FCSquadFillSlotsInsufficient".Translate(total),
+                        MessageTypeDefOf.RejectInput, false);
                 return false;
             }
 

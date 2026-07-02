@@ -85,6 +85,9 @@ namespace FactionColonies
             if (autoResolve)
                 AutoresolveBills();
 
+            /* Auto-replace fallen squad mercs from empire silver (opt-in; no-op when off). */
+            faction.military?.TryAutoReplaceAllSquads();
+
             /* Rebuild caravan trader kinds to reflect current worker assignments. */
             faction.RebuildCaravanTraderKinds();
         }
