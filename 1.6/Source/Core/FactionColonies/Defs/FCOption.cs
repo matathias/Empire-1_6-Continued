@@ -130,6 +130,11 @@ namespace FactionColonies
             this.closeOnClickedOutside = false;
             this.preventSave = true;
 
+            /* Let multiple event option windows coexist. WindowStack.Add removes any already-open
+             * window of the same type when onlyOneOfTypeAllowed is true (the base default), which
+             * would silently destroy a prior event's options window before the player could choose. */
+            this.onlyOneOfTypeAllowed = false;
+
             this.header = evt.label;
 
             /* Hide meme-gated options entirely when the Ideology DLC is off (the only behavioral
@@ -280,12 +285,25 @@ namespace FactionColonies
         {
             base.PreOpen();
             openedAtRealTime = Time.realtimeSinceStartup;
-            windowRect = new Rect(
-                (UI.screenWidth - WindowWidth) / 2f,
-                (UI.screenHeight - cachedWindowHeight) / 2f,
-                WindowWidth,
-                cachedWindowHeight
-            );
+
+            /* Cascade this window down-right of any option windows already open so simultaneous
+             * events don't stack on the exact same centered rect (which would look like an
+             * overwrite). At PreOpen the new window isn't in the stack yet, so counting existing
+             * option windows excludes self. Wrap the step so a burst can't march off-screen. */
+            int alreadyOpen = 0;
+            foreach (Window w in Find.WindowStack.Windows)
+            {
+                if (w is FCOptionWindow && w != this) alreadyOpen++;
+            }
+            const float cascadeStep = 34f;
+            const int cascadeWrap = 6;
+            float offset = (alreadyOpen % cascadeWrap) * cascadeStep;
+
+            float x = (UI.screenWidth - WindowWidth) / 2f + offset;
+            float y = (UI.screenHeight - cachedWindowHeight) / 2f + offset;
+            x = Mathf.Clamp(x, 0f, UI.screenWidth - WindowWidth);
+            y = Mathf.Clamp(y, 0f, UI.screenHeight - cachedWindowHeight);
+            windowRect = new Rect(x, y, WindowWidth, cachedWindowHeight);
         }
 
         public override void PostOpen()
