@@ -60,6 +60,12 @@ namespace FactionColonies
          * IsSettlementLoot(). */
         public HashSet<Thing> settlementLoot = new HashSet<Thing>();
 
+        /* Non-combatant settlement inhabitants recruited onto this battle map (see
+         * RecruitMapInhabitants). Used only to draw their on-map name labels as a dimmed
+         * version of the defenders' label color, so the player can tell the fighting squad
+         * from civilian filler at a glance. */
+        public HashSet<Pawn> civilianPawns = new HashSet<Pawn>();
+
         public bool battleMapInitialized;
         public bool endingBattle;
         public bool shuttleLandingPending;
@@ -111,6 +117,7 @@ namespace FactionColonies
 
             Scribe_Collections.Look(ref draftedNPCs, "draftedNPCs", LookMode.Reference);
             Scribe_Collections.Look(ref settlementLoot, "settlementLoot", LookMode.Reference);
+            Scribe_Collections.Look(ref civilianPawns, "civilianPawns", LookMode.Reference);
             Scribe_Values.Look(ref battleMapInitialized, "battleMapInitialized", false);
             Scribe_Values.Look(ref endingBattle, "endingBattle", false);
             Scribe_Values.Look(ref shuttleLandingPending, "shuttleLandingPending", false);
@@ -120,6 +127,7 @@ namespace FactionColonies
                 if (activeOps is null) activeOps = new List<MilitaryOperation>();
                 if (draftedNPCs is null) draftedNPCs = new List<Pawn>();
                 if (settlementLoot is null) settlementLoot = new HashSet<Thing>();
+                if (civilianPawns is null) civilianPawns = new HashSet<Pawn>();
             }
         }
 
@@ -1231,6 +1239,7 @@ namespace FactionColonies
                     existingLord.Notify_PawnLost(inhabitant, PawnLostCondition.LeftVoluntarily);
 
                 defenseLord.AddPawn(inhabitant);
+                civilianPawns.Add(inhabitant);
                 if (op?.defender?.pawns is object)
                 {
                     op.defender.pawns.Add(inhabitant);
