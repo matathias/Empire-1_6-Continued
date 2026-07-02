@@ -1177,6 +1177,12 @@ namespace FactionColonies
                         pawn.Destroy();
                 }
             }
+
+            // Squad mercs are now despawned (off-map), so auto-replace any fallen members from a
+            // manual battle right at map tear-down — including maps that lingered past the battle's
+            // CompleteBattle because the player still had mobile pawns present. Opt-in; no-op when off.
+            FindFC.Military?.TryAutoReplaceAllSquads();
+
             base.Notify_MyMapAboutToBeRemoved();
         }
 

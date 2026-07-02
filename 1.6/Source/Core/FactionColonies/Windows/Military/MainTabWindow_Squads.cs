@@ -76,6 +76,19 @@ namespace FactionColonies
                 Find.WindowStack.Add(new Dialog_HireSquadsPool());
             }
 
+            // Auto-replace-fallen toggle — label + checkbox sitting left of the Hire Squads button.
+            if (mfc is object)
+            {
+                const float toggleW = 150f;
+                Rect toggleRect = new Rect(hireBtnRect.x - toggleW - 8f, rect.y + Pad, toggleW, hireBtnH);
+                Text.Anchor = TextAnchor.MiddleLeft;
+                Widgets.Label(new Rect(toggleRect.x, toggleRect.y, toggleW - 26f, toggleRect.height),
+                    "FCSquadAutoReplace".Translate());
+                Widgets.Checkbox(toggleRect.xMax - 22f, toggleRect.y, ref mfc.autoReplaceDeadPawns, 22f);
+                TooltipHandler.TipRegion(toggleRect, "FCSquadAutoReplaceTip".Translate());
+                Text.Anchor = TextAnchor.UpperLeft;
+            }
+
             Rect tableRect = new Rect(rect.x, rect.y + SummaryH + 4f,
                 rect.width, rect.height - SummaryH - 4f);
 

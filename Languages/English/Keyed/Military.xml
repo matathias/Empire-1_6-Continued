@@ -375,6 +375,12 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<!-- Squad Fill Empty Slots -->
 	<FCSquadFillSlotsInsufficient>Not enough silver (${0} required) to fill empty slots.</FCSquadFillSlotsInsufficient>
 
+	<!-- Squad Auto-Replace -->
+	<FCSquadAutoReplace>Auto-replace fallen</FCSquadAutoReplace>
+	<FCSquadAutoReplaceTip>When enabled, fallen squad members are automatically rehired after battles and on each tax collection. Squads you can't currently afford are skipped and retried next tax cycle.</FCSquadAutoReplaceTip>
+	<FCSquadAutoReplaced>Auto-replaced fallen mercenaries in {0} squad(s) for ${1} silver.</FCSquadAutoReplaced>
+	<FCSquadAutoReplacedBattle>Auto-replaced fallen mercenaries for ${0} silver.</FCSquadAutoReplacedBattle>
+
 	<!-- Military tab: 1+N row layout -->
 	<FCMilitaryTableNoMilitary>No military</FCMilitaryTableNoMilitary>
 	<FCMilitaryTableSquadsCounter>Squads: {0} / {1}</FCMilitaryTableSquadsCounter>

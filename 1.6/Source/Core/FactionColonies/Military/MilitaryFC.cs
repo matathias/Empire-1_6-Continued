@@ -18,6 +18,10 @@ namespace FactionColonies
         public MilUnitFC blankUnit;
         public List<Mercenary> deadPawns = new List<Mercenary>();
 
+        /* Opt-in: when true, dead squad members are auto-refilled from empire silver after battles
+         * and on each tax tick (see TryAutoReplaceSquad). Toggled from the squad-pool header. */
+        public bool autoReplaceDeadPawns;
+
         private HashSet<Pawn> mercenaryPawnSet = new HashSet<Pawn>();
 
         /* ID Counters */
@@ -699,6 +703,35 @@ namespace FactionColonies
             return settlement?.PrimaryStationedSquad != null;
         }
 
+        /// <summary>If auto-replace is on and the squad isn't physically on a map, refill its
+        /// dead/empty slots from empire silver. Skips (silently) squads the player can't afford,
+        /// and skips physically-deployed squads to avoid a roster/map mismatch. Returns silver
+        /// spent (0 if nothing was replaced).</summary>
+        public int TryAutoReplaceSquad(MercenarySquadFC squad)
+        {
+            if (!autoReplaceDeadPawns || squad is null) return 0;
+            if (squad.Deployment?.IsPhysicallyDeployed() == true) return 0;
+            int cost = squad.FillEmptySlotsCost();
+            if (cost <= 0) return 0;                                 // nothing dead/empty to refill
+            return squad.FillEmptySlots(silent: true) ? cost : 0;    // false => couldn't afford
+        }
+
+        /// <summary>Tax-tick sweep: auto-replace dead pawns across every pooled squad, then emit a
+        /// single consolidated message if anything was replaced.</summary>
+        public void TryAutoReplaceAllSquads()
+        {
+            if (!autoReplaceDeadPawns || mercenarySquads is null) return;
+            int totalSpent = 0, affected = 0;
+            foreach (MercenarySquadFC squad in mercenarySquads)
+            {
+                int spent = TryAutoReplaceSquad(squad);
+                if (spent > 0) { totalSpent += spent; affected++; }
+            }
+            if (affected > 0)
+                Messages.Message("FCSquadAutoReplaced".Translate(affected, totalSpent),
+                    MessageTypeDefOf.PositiveEvent);
+        }
+
         public void ExposeData()
         {
             Scribe_Collections.Look(ref units, "units", LookMode.Deep);
@@ -715,6 +748,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref nextMercenaryId, "nextMercenaryId", 1);
             Scribe_Values.Look(ref nextMercenarySquadId, "nextMercenarySquadId", 1);
             Scribe_Values.Look(ref nextMilitaryFireSupportId, "nextMilitaryFireSupportId", 1);
+            Scribe_Values.Look(ref autoReplaceDeadPawns, "autoReplaceDeadPawns", false);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

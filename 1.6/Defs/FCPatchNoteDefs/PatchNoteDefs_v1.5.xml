@@ -742,4 +742,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_47</defName>
+		<label>Minor Squads Update</label>
+		<description>A couple quality-of-life updates for squad management.</description>
+		<releaseDate>2026-07-02</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>In each of the squad picker windows, for unavailable squads, add a tooltip explaining why the squad is unavailable</li>
+		<li>Add a toggle to enable the automatic re-hiring of mercs for squads that suffer deaths</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
