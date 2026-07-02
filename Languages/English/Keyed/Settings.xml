@@ -20,6 +20,8 @@
 	<FCSettingSettlementUpgradeTime>Settlement upgrade time multiplier</FCSettingSettlementUpgradeTime>
 	<FCSettingBuildingConstructTime>Building construction time multiplier</FCSettingBuildingConstructTime>
 	<FCSettingTimerTip>Scales how long this timer takes.</FCSettingTimerTip>
+	<FCSettingEnableSettlementCapture>Capture Defeated Settlements</FCSettingEnableSettlementCapture>
+	<FCSettingEnableSettlementCaptureTip>When enabled (default), defeating a hostile settlement with your own colonists lets you choose to capture it as one of your Empire's settlements instead of only razing it. The captured tile becomes an Empire settlement once your colonists leave the base.</FCSettingEnableSettlementCaptureTip>
 	<FCSettingDisableHostileMilActions>Disable Hostile Military Actions</FCSettingDisableHostileMilActions>
 	<FCSettingAntiExploit>Anti-Exploit (mercenary gear)</FCSettingAntiExploit>
 	<FCSettingAntiExploitTip>When enabled (default), mercenary weapons and apparel are biocoded to their wielder, and humanlike mercenaries receive a death acidifier implant that dissolves their worn gear when they die, so you can't farm free gear from your own squads.</FCSettingAntiExploitTip>

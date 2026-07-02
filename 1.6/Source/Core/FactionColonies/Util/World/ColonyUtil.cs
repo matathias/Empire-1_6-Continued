@@ -103,6 +103,44 @@ namespace FactionColonies.util
             return settlement;
         }
 
+        /// <summary>
+        /// Creates a player-owned Empire settlement on a just-conquered enemy tile and configures it
+        /// the way a capture yields: named after the conquered base, level-boosted by the enemy's tech,
+        /// and seeded with low starting morale/prosperity. Shared by the abstract capture-raid handler
+        /// (<see cref="MilitaryJobHandler_Capture"/>) and the player-colony capture path so both produce
+        /// an identical settlement. Callers are responsible for having already removed the old settlement
+        /// world object at the tile.
+        /// </summary>
+        public static WorldSettlementFC SetupCapturedSettlement(PlanetTile tile, string name, TechLevel enemyTech)
+        {
+            WorldSettlementFC settlement = CreatePlayerColonySettlement(tile, DefaultSettlementDefForTile(tile));
+            settlement.Name = name;
+
+            int upgradeTimes;
+            switch (enemyTech)
+            {
+                case TechLevel.Archotech:
+                case TechLevel.Ultra:
+                case TechLevel.Spacer:
+                    upgradeTimes = 2;
+                    break;
+                case TechLevel.Industrial:
+                    upgradeTimes = 1;
+                    break;
+                default:
+                    upgradeTimes = 0;
+                    break;
+            }
+            settlement.UpgradeSettlement(upgradeTimes);
+
+            settlement.loyalty = 15;
+            settlement.happiness = 25;
+            settlement.unrest = 20;
+            settlement.prosperity = 70;
+
+            return settlement;
+        }
+
         public static void RemovePlayerSettlement(WorldSettlementFC settlement)
         {
             settlement.settlementDef.GetSettlementTypeExtension()?.PreDestruction(settlement);

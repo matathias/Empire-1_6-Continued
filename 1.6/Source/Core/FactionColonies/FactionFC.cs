@@ -199,6 +199,10 @@ namespace FactionColonies
         public EmpireThreatAdaptation threatAdaptation = new EmpireThreatAdaptation();
         public FCRoadBuilder roadBuilder = new FCRoadBuilder();
 
+        /* Enemy settlements the player conquered and chose to capture, awaiting deferred
+         * conversion into Empire settlements once they leave the looted base map. */
+        public List<PendingSettlementCapture> pendingCaptures = new List<PendingSettlementCapture>();
+
         /* Caravans */
         public List<PlanetTile> settlementCaravansList = new List<PlanetTile>(); //list of locations caravans already sent to
         /// <summary>
@@ -387,6 +391,11 @@ namespace FactionColonies
             //Threat adaptation
             Scribe_Deep.Look(ref threatAdaptation, "threatAdaptation");
             if (threatAdaptation == null) threatAdaptation = new EmpireThreatAdaptation();
+
+            //Pending player-colony settlement captures (deferred conversion)
+            Scribe_Collections.Look(ref pendingCaptures, "pendingCaptures", LookMode.Deep);
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && pendingCaptures is null)
+                pendingCaptures = new List<PendingSettlementCapture>();
 
             //Settlement Leveling
             Scribe_Values.Look(ref factionLevel, "factionLevel");

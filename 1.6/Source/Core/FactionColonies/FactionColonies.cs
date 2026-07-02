@@ -87,6 +87,7 @@ namespace FactionColonies
         public const float DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER = 1.0f;
         public const float DEFAULT_BUILDING_CONSTRUCT_TIME_MULTIPLIER = 1.0f;
         /* Defaults for Events & Military settings */
+        public const bool DEFAULT_ENABLE_SETTLEMENT_CAPTURE = true;
         public const bool DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS = false;
         public const bool DEFAULT_DISABLE_RANDOM_EVENTS = false;
         public const bool DEFAULT_DISABLE_EVENTS_WITH_OPTIONS = false;
@@ -171,6 +172,7 @@ namespace FactionColonies
         public static bool showSettleConfirm = DEFAULT_SHOW_SETTLE_CONFIRM;
         public static bool medievalTechOnly = DEFAULT_MEDIEVAL_TECH_ONLY;
         public static bool mirrorPlayerTechLevel = DEFAULT_MIRROR_PLAYER_TECH_LEVEL;
+        public static bool enableSettlementCapture = DEFAULT_ENABLE_SETTLEMENT_CAPTURE;
         public static bool disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
         public static bool antiExploit = DEFAULT_ANTI_EXPLOIT;
         public static bool restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
@@ -436,6 +438,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref showSettleConfirm, "showSettleConfirm", DEFAULT_SHOW_SETTLE_CONFIRM);
             Scribe_Values.Look(ref medievalTechOnly, "medievalTechOnly", DEFAULT_MEDIEVAL_TECH_ONLY);
             Scribe_Values.Look(ref mirrorPlayerTechLevel, "mirrorPlayerTechLevel", DEFAULT_MIRROR_PLAYER_TECH_LEVEL);
+            Scribe_Values.Look(ref enableSettlementCapture, "enableSettlementCapture", DEFAULT_ENABLE_SETTLEMENT_CAPTURE);
             Scribe_Values.Look(ref disableHostileMilitaryActions, "disableHostileMilitaryActions", DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS);
             Scribe_Values.Look(ref antiExploit, "antiExploit", DEFAULT_ANTI_EXPLOIT);
             Scribe_Values.Look(ref restrictDefenseMapLoot, "restrictDefenseMapLoot", DEFAULT_RESTRICT_DEFENSE_MAP_LOOT);
@@ -748,6 +751,7 @@ namespace FactionColonies
 
         public static void ResetMilitaryActionToDefaults()
         {
+            enableSettlementCapture = DEFAULT_ENABLE_SETTLEMENT_CAPTURE;
             disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
             antiExploit = DEFAULT_ANTI_EXPLOIT;
             restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
@@ -1302,6 +1306,7 @@ namespace FactionColonies
             ls.Begin(listRect);
             Listing_StandardExtensions.ResetRowStripe();
 
+            ls.CheckboxLabeled("FCSettingEnableSettlementCapture".Translate(), ref enableSettlementCapture, "FCSettingEnableSettlementCaptureTip".Translate());
             ls.CheckboxLabeled("FCSettingDisableHostileMilActions".Translate(), ref disableHostileMilitaryActions);
             ls.CheckboxLabeled("FCSettingAntiExploit".Translate(), ref antiExploit, "FCSettingAntiExploitTip".Translate());
             ls.CheckboxLabeled("FCSettingRestrictDefenseMapLoot".Translate(), ref restrictDefenseMapLoot, "FCSettingRestrictDefenseMapLootTip".Translate());
