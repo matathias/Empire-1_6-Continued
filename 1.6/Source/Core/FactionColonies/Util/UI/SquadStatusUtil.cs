@@ -1,5 +1,6 @@
 using RimWorld;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -81,6 +82,75 @@ namespace FactionColonies.util
             label = "FCSquadStatusReady".Translate();
             color = AccentUtil.MilReady;
             isReady = true;
+        }
+
+        /// <summary>
+        /// Appends every reason the squad currently fails <see cref="MercenarySquadFC.IsAvailable"/>
+        /// (all applicable, not first-wins) as translated, player-facing lines. Mirrors <see cref="Resolve"/>'s
+        /// gate order. Callers append context-specific blocks (morale lockout, destination budget) themselves.
+        /// </summary>
+        public static void AppendIntrinsicUnavailReasons(MercenarySquadFC squad, List<string> reasons)
+        {
+            if (squad is null || reasons is null) return;
+
+            if (!squad.IsAssigned)
+            {
+                // The remaining gates are settlement-relative and moot without a billet.
+                reasons.Add("FCSquadUnavailUnassigned".Translate());
+                return;
+            }
+
+            int now = Find.TickManager.TicksGame;
+            MilitaryOperation op = squad.Operation;
+            if (op is object && op.kind != MilitaryJobDefOf.Cooldown
+                && op.phase != MilitaryOperationPhase.CooldownPending)
+            {
+                reasons.Add(BusyReason(squad));
+            }
+            if (squad.nextAvailableTick > now)
+            {
+                reasons.Add("FCSquadUnavailTraveling".Translate((squad.nextAvailableTick - now).ToTimeString()));
+            }
+            if (squad.IsUnderfunded && squad.settlement is object
+                && MilitaryFC.SquadExceedsSettlementBudget(squad, squad.settlement, out int squadDeploy, out int maxDeploy))
+            {
+                reasons.Add(OverBudgetReason(squadDeploy, maxDeploy, squad.settlement.Name));
+            }
+        }
+
+        /// <summary>
+        /// Single-line "occupied by op X" reason. Op label + remaining time mirror the
+        /// busy-op status badge (see <see cref="Resolve"/>).
+        /// </summary>
+        public static string BusyReason(MercenarySquadFC squad)
+        {
+            MilitaryOperation op = squad?.Operation;
+            if (op is null) return "FCSquadUnavailBusy".Translate("?", 0.ToTimeString());
+            int ticksLeft = Math.Max(0, op.nextPhaseTick - Find.TickManager.TicksGame);
+            string opLabel = op.kind?.statusLabelKey != null
+                ? (string)op.kind.statusLabelKey.Translate()
+                : (op.kind?.label ?? "?");
+            return "FCSquadUnavailBusy".Translate(opLabel, ticksLeft.ToTimeString());
+        }
+
+        /// <summary>
+        /// Single-line "deploy cost exceeds budget" reason. Used both for the intrinsic
+        /// (own-settlement) underfunded gate and the assign picker's destination-budget gate.
+        /// </summary>
+        public static string OverBudgetReason(int deployCost, int maxCost, string settlementName)
+        {
+            return "FCSquadUnavailUnderfunded".Translate(deployCost, settlementName ?? "?", maxCost);
+        }
+
+        /// <summary>
+        /// Wraps reason lines into a titled tooltip; returns null when there are none so
+        /// callers can gate the <c>TipRegion</c> registration on a non-empty result.
+        /// </summary>
+        public static string FormatUnavailTooltip(List<string> reasons)
+        {
+            if (reasons is null || reasons.Count == 0) return null;
+            string title = "FCSquadUnavailTitle".Translate();
+            return title + "\n- " + string.Join("\n- ", reasons.ToArray());
         }
     }
 }

@@ -62,6 +62,9 @@ namespace FactionColonies
             public bool available;
             public int deploymentCost;
             public int injuredCount;
+            // Titled, newline-bulleted explanation of why an unavailable squad can't be used, built
+            // per-picker in RebuildRows (availability semantics differ). Null/empty when available.
+            public string unavailableReason;
         }
 
         protected MercenarySquadFC selected;
@@ -383,6 +386,16 @@ namespace FactionColonies
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
             UIUtil.DrawColoredLabel(new Rect(rightColX, headerY, rightColW, CardHeaderH), row.status, row.statusColor);
+
+            /* Unavailable-reason tooltip. Two regions cover the whole card *except* the Inspect
+             * button (which keeps its own tip): the left content area, plus the status-badge rect —
+             * the badge is exactly where a player looks when it reads "Ready" yet the card is greyed
+             * (e.g. an over-budget squad, which the badge doesn't flag). */
+            if (!row.available && !row.unavailableReason.NullOrEmpty())
+            {
+                TooltipHandler.TipRegion(new Rect(cardRect.x, cardRect.y, rightColX - cardRect.x, cardRect.height), row.unavailableReason);
+                TooltipHandler.TipRegion(new Rect(rightColX, headerY, rightColW, CardHeaderH), row.unavailableReason);
+            }
 
             // Inspect button — bottom of right column, same width as the status badge above.
             // Drawn *before* the whole-card invisible button so its click is consumed first.

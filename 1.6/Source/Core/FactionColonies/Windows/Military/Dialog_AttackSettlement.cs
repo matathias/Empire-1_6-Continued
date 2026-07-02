@@ -1,3 +1,4 @@
+using FactionColonies.util;
 using RimWorld;
 using RimWorld.Planet;
 using System;
@@ -441,6 +442,15 @@ namespace FactionColonies
                     statusColor = AccentUtil.MilUnderAttack;
                 }
 
+                string unavailableReason = null;
+                if (!available)
+                {
+                    List<string> reasons = new List<string>();
+                    SquadStatusUtil.AppendIntrinsicUnavailReasons(squad, reasons);
+                    if (moraleLocked && squad.settlement.TryGetSquadDeploymentBlock(out string mr)) reasons.Add(mr);
+                    unavailableReason = SquadStatusUtil.FormatUnavailTooltip(reasons);
+                }
+
                 rows.Add(new RowData
                 {
                     squad = squad,
@@ -454,7 +464,8 @@ namespace FactionColonies
                     statusColor = statusColor,
                     available = available,
                     deploymentCost = squad.DeploymentCost(),
-                    injuredCount = injuredCount
+                    injuredCount = injuredCount,
+                    unavailableReason = unavailableReason
                 });
             }
 

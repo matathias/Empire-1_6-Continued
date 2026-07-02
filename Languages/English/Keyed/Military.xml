@@ -317,6 +317,12 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCSquadStatusInjured>{0} Injured</FCSquadStatusInjured>
 	<FCSquadStatusMoraleLocked>Settlement morale too low</FCSquadStatusMoraleLocked>
 
+	<FCSquadUnavailTitle>This squad cannot be deployed:</FCSquadUnavailTitle>
+	<FCSquadUnavailUnassigned>It is not assigned to a settlement.</FCSquadUnavailUnassigned>
+	<FCSquadUnavailBusy>It is occupied: {0} ({1} remaining).</FCSquadUnavailBusy>
+	<FCSquadUnavailTraveling>It is returning from its last operation ({0} remaining).</FCSquadUnavailTraveling>
+	<FCSquadUnavailUnderfunded>Its deployment cost (${0}) exceeds {1}'s deployment budget (${2}).</FCSquadUnavailUnderfunded>
+
 	<FCSquadActReassign>Reassign</FCSquadActReassign>
 	<FCSquadActUpgrade>Upgrade</FCSquadActUpgrade>
 	<FCSquadActDismiss>Dismiss</FCSquadActDismiss>

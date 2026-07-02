@@ -1,3 +1,4 @@
+using FactionColonies.util;
 using RimWorld;
 using RimWorld.Planet;
 using System;
@@ -250,6 +251,16 @@ namespace FactionColonies
                     statusColor = AccentUtil.MilActiveMission;
                 }
 
+                // Defense availability is the intrinsic IsAvailable gate only (morale doesn't block
+                // defense), so the intrinsic reasons cover every case here.
+                string unavailableReason = null;
+                if (!available)
+                {
+                    List<string> reasons = new List<string>();
+                    SquadStatusUtil.AppendIntrinsicUnavailReasons(squad, reasons);
+                    unavailableReason = SquadStatusUtil.FormatUnavailTooltip(reasons);
+                }
+
                 rows.Add(new RowData
                 {
                     squad = squad,
@@ -263,7 +274,8 @@ namespace FactionColonies
                     statusColor = statusColor,
                     available = available,
                     deploymentCost = squad.DeploymentCost(),
-                    injuredCount = injuredCount
+                    injuredCount = injuredCount,
+                    unavailableReason = unavailableReason
                 });
             }
 
