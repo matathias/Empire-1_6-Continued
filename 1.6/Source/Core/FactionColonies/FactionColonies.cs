@@ -53,15 +53,15 @@ namespace FactionColonies
         public const int DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST = 15;
         public const int DEFAULT_PRODUCTION_TITHE_MOD_BLOODANDDUST = 1;       // was 15, interval 15
         public const int DEFAULT_WORKER_COST_BLOODANDDUST = 8;                // was 125, interval 15 (125/15)
-        public const float DEFAULT_WORKER_PROD_BASE_BONUS_BLOODANDDUST = -0.3f;
-        public const float DEFAULT_WORKER_PROD_MULT_BONUS_BLOODANDDUST = 0.8f;
+        public const float DEFAULT_WORKER_PROD_BASE_BONUS_BLOODANDDUST = 0.0f;
+        public const float DEFAULT_WORKER_PROD_MULT_BONUS_BLOODANDDUST = 0.75f;
         //Losing is Fun
         public const int DEFAULT_SILVER_PER_RESOURCE_LOSINGISFUN = 2;         // was 70, interval 30
         public const int DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN = 30;
         public const int DEFAULT_PRODUCTION_TITHE_MOD_LOSINGISFUN = 1;        // was 10, interval 30 -> clamp to 1
         public const int DEFAULT_WORKER_COST_LOSINGISFUN = 5;                 // was 150, interval 30
-        public const float DEFAULT_WORKER_PROD_BASE_BONUS_LOSINGISFUN = -0.5f;
-        public const float DEFAULT_WORKER_PROD_MULT_BONUS_LOSINGISFUN = 0.6f;
+        public const float DEFAULT_WORKER_PROD_BASE_BONUS_LOSINGISFUN = 0.0f;
+        public const float DEFAULT_WORKER_PROD_MULT_BONUS_LOSINGISFUN = 0.5f;
         // Global defaults
         // The default difficulty setting is Adventure Story, so set the global defaults accordingly
         public const int DEFAULT_SILVER_PER_RESOURCE = DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY;
