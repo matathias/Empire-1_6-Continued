@@ -18,6 +18,10 @@
 		<li>
 			<thingDef>Kibble</thingDef>
 		</li>
+		<!-- Beer is a drug by category but is a brewed agricultural product; it belongs to farming, not medicine -->
+		<li>
+			<thingDef>Beer</thingDef>
+		</li>
 	</thingAllowList>
 	<thingCategoryAllowList>
 		<li>
@@ -470,6 +474,10 @@
 			<minTechLevel>Ultra</minTechLevel>
 		</li>
 	</thingCategoryAllowList>
+	<thingBlockList>
+		<!-- Beer is in the Drugs category but is a brewed agricultural product; it belongs to the farming resource -->
+		<li>Beer</li>
+	</thingBlockList>
 	<associatedSkills>
 		<li>Medicine</li>
 	</associatedSkills>
