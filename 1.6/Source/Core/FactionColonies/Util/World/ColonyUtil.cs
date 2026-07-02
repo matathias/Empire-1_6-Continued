@@ -62,7 +62,7 @@ namespace FactionColonies.util
             return (int)(baseCost * CombinedFoundingStat(FCStatDefOf.settlementCostMultiplier, biome, faction));
         }
 
-        public static WorldSettlementFC CreatePlayerColonySettlement(PlanetTile tile, WorldSettlementDef settlementType)
+        public static WorldSettlementFC CreatePlayerColonySettlement(PlanetTile tile, WorldSettlementDef settlementType, string name = null)
         {
             if (settlementType == null)
             {
@@ -84,6 +84,10 @@ namespace FactionColonies.util
 
             WorldSettlementFC settlement = (WorldSettlementFC)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldSettlementDef>.GetNamed(settlementType.defName));
             settlement.PostPostMake(tile);
+
+            // Apply the caller-supplied name (e.g. a captured base's name) before the PostCreation
+            // hook, lifecycle listeners, and the "settlement formed" letter read it.
+            if (!name.NullOrEmpty()) settlement.Name = name;
 
             settlement.SetFaction(faction);
             Find.WorldObjects.Add(settlement);
@@ -113,8 +117,7 @@ namespace FactionColonies.util
         /// </summary>
         public static WorldSettlementFC SetupCapturedSettlement(PlanetTile tile, string name, TechLevel enemyTech)
         {
-            WorldSettlementFC settlement = CreatePlayerColonySettlement(tile, DefaultSettlementDefForTile(tile));
-            settlement.Name = name;
+            WorldSettlementFC settlement = CreatePlayerColonySettlement(tile, DefaultSettlementDefForTile(tile), name);
 
             int upgradeTimes;
             switch (enemyTech)
