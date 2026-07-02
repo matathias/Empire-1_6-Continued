@@ -404,6 +404,18 @@
 				</li>
 			</multipliers>
 		</li>
+		<li Class="FactionColonies.ResourceFilterExtension_NaturalSource">
+			<!-- Gate stone products to the tile's natural rock types; obsidian only in lava biomes. -->
+			<checkRockTypes>true</checkRockTypes>
+			<biomeAllowList>
+				<li MayRequire="Ludeon.RimWorld.Odyssey">
+					<thing>Obsidian</thing>
+					<biomes>
+						<li>LavaField</li>
+					</biomes>
+				</li>
+			</biomeAllowList>
+		</li>
 	</modExtensions>
   </FactionColonies.ResourceTypeDef>
 
