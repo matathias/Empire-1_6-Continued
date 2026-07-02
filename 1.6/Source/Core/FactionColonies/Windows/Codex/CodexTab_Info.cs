@@ -167,7 +167,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 GUI.color = Color.white;
-                UIUtil.ClampedLabel(new Rect(groupRect.x + Margin, groupRect.y, groupRect.width - Margin * 2 - IconSize, groupRect.height), mg.modName);
+                Widgets.Label(new Rect(groupRect.x + Margin, groupRect.y, groupRect.width - Margin * 2 - IconSize, groupRect.height), mg.modName);
 
                 Rect arrowRect = new Rect(groupRect.xMax - IconSize - 2f, groupRect.y + (groupHeight - IconSize) * 0.5f, IconSize, IconSize);
                 Widgets.DrawTextureFitted(arrowRect, modExpanded ? TexButton.Collapse : TexButton.Reveal, 1f);
@@ -505,7 +505,7 @@ namespace FactionColonies
                 float nameHeight = HeaderHeightFor(selectedEntry.category.ModName, contentWidth, 20f, 0f);
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                UIUtil.DrawColoredLabel(new Rect(0f, curY, contentWidth, nameHeight), selectedEntry.category.ModName, Color.gray);
+                UIUtil.DrawColoredLabel(new Rect(0f, curY, contentWidth, nameHeight), selectedEntry.category.ModName, Color.gray, false);
                 ResetText();
                 curY += nameHeight + 4f;
 
