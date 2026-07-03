@@ -1539,7 +1539,7 @@ namespace FactionColonies
             Widgets.DrawBoxSolid(descRect, new Color(0.15f, 0.15f, 0.15f, 0.5f));
             Widgets.DrawBox(descRect);
             Text.Font = GameFont.Small;
-            UIUtil.ClampedLabel(descRect.ContractedBy(8f), "FCSettingRoadBuilderDesc".Translate());
+            Widgets.Label(descRect.ContractedBy(8f), "FCSettingRoadBuilderDesc".Translate());
 
             ls.Gap(12f);
 
