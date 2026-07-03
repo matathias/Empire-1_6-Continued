@@ -15,22 +15,19 @@ namespace FactionColonies
     /// </summary>
     public class CodexTab_Settlements : ICodexTab
     {
-        /* Layout constants */
+        /* Layout constants (shared values live in CodexUIUtil) */
         private const float EntryRowHeight = 28f;
         private const float GroupHeaderHeight = 28f;
-        private const float AccentBarWidth = 3f;
-        private const float Margin = 8f;
-        private const float SectionHeaderHeight = 22f;
-        private const float StatRowHeight = 22f;
         private const float ResourceRowHeight = 24f;
-        private const float SmallMargin = 4f;
-        private const float BannerHeight = 70f;
+        private const float AccentBarWidth = CodexUIUtil.AccentBarWidth;
+        private const float Margin = CodexUIUtil.Margin;
+        private const float SmallMargin = CodexUIUtil.SmallMargin;
+        private const float SectionHeaderHeight = CodexUIUtil.SectionHeaderHeight;
+        private const float StatRowHeight = CodexUIUtil.StatRowHeight;
+        private const float BannerHeight = CodexUIUtil.BannerHeight;
 
-        private static readonly Color DefaultAccent = new Color(0.83f, 0.68f, 0.21f);
-        private static readonly Color SectionBgColor = new Color(0.15f, 0.15f, 0.15f, 0.4f);
-        private static readonly Color GroupBgColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
-        private static readonly Color GroupAccentColor = new Color(0.7f, 0.7f, 0.7f);
-        private static readonly Color HighlightColor = new Color(0.4f, 0.6f, 0.9f);
+        private static readonly Color DefaultAccent = CodexUIUtil.DefaultAccent;
+        private static readonly Color HighlightColor = CodexUIUtil.HighlightColor;
 
         /* Data */
         private readonly CodexWindow parentWindow;
@@ -51,9 +48,6 @@ namespace FactionColonies
         private Vector2 leftScroll;
         private Vector2 centerScroll;
         private Vector2 rightScroll;
-
-        /* Truncation cache */
-        private readonly Dictionary<string, string> truncateCache = new Dictionary<string, string>();
 
         public string TabLabel => "FCCodexTabSettlements".Translate();
         public bool HasRightPane => true;
@@ -158,22 +152,7 @@ namespace FactionColonies
 
                 // Group header
                 Rect groupRect = new Rect(0f, curY, viewRect.width, GroupHeaderHeight);
-                Widgets.DrawBoxSolid(groupRect, GroupBgColor);
-                TexLoad.DrawHorizontalGradient(groupRect, ColorUtil.TransformA(GroupAccentColor, 0.2f));
-                Widgets.DrawBoxSolid(new Rect(0f, curY, AccentBarWidth, GroupHeaderHeight), GroupAccentColor);
-
-                Text.Font = GameFont.Small;
-                Text.Anchor = TextAnchor.MiddleLeft;
-                UIUtil.DrawColoredLabel(
-                    new Rect(AccentBarWidth + Margin, curY, viewRect.width - AccentBarWidth - Margin * 2 - 20f, GroupHeaderHeight),
-                    group.label,
-                    ColorUtil.TransformRGB(GroupAccentColor, 1.3f));
-
-                Rect arrowRect = new Rect(groupRect.xMax - 20f - 2f, curY + (GroupHeaderHeight - 20f) * 0.5f, 20f, 20f);
-                Widgets.DrawTextureFitted(arrowRect, isExpanded ? TexButton.Collapse : TexButton.Reveal, 1f);
-                ResetText();
-
-                if (Widgets.ButtonInvisible(groupRect))
+                if (CodexUIUtil.DrawGroupHeader(groupRect, group.label, CodexUIUtil.GroupAccentColor, isExpanded, CodexUIUtil.GroupBgColor, 20f))
                 {
                     if (isExpanded) expandedGroups.Remove(group.key);
                     else expandedGroups.Add(group.key);
@@ -190,29 +169,8 @@ namespace FactionColonies
                     bool isSelected = selectedDef == def;
                     Color accent = GetAccent(def);
 
-                    if (isSelected)
-                        Widgets.DrawBoxSolid(entryRect, ColorUtil.TransformA(accent, 0.35f));
-                    else if (Mouse.IsOver(entryRect))
-                        Widgets.DrawBoxSolid(entryRect, ColorUtil.TransformA(accent, 0.15f));
-
-                    Color barColor = isSelected ? accent : ColorUtil.TransformA(accent, 0.4f);
-                    Widgets.DrawBoxSolid(new Rect(entryRect.x, entryRect.y, 2f, entryRect.height), barColor);
-
-                    float textX = entryRect.x + Margin;
-                    float labelWidth = entryRect.xMax - textX - SmallMargin;
-                    Text.Font = GameFont.Small;
-                    Text.Anchor = TextAnchor.MiddleLeft;
-                    string fullLabel = def.LabelCap;
-                    string truncated = fullLabel.Truncate(labelWidth, truncateCache);
-                    UIUtil.DrawColoredLabel(
-                        new Rect(textX, entryRect.y, labelWidth, entryRect.height),
-                        truncated,
-                        isSelected ? Color.white : ColorUtil.Gray9);
-                    if (truncated != fullLabel)
-                        TooltipHandler.TipRegion(entryRect, fullLabel);
-                    ResetText();
-
-                    if (Widgets.ButtonInvisible(entryRect))
+                    if (CodexUIUtil.DrawEntryRow(entryRect, def.LabelCap, accent, isSelected,
+                        2f, Margin, Margin, null, isSelected ? Color.white : ColorUtil.Gray9))
                     {
                         selectedDef = def;
                         centerScroll = Vector2.zero;
@@ -225,7 +183,7 @@ namespace FactionColonies
             }
 
             ScrollUtil.EndScrollView();
-            ResetText();
+            CodexUIUtil.ResetText();
         }
 
         private float CalculateLeftPaneHeight()
@@ -251,7 +209,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Medium;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 UIUtil.DrawColoredLabel(rect, "FCCodexSelectSettlement".Translate(), Color.gray);
-                ResetText();
+                CodexUIUtil.ResetText();
                 return;
             }
 
@@ -267,7 +225,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
             UIUtil.ClampedLabel(new Rect(0f, curY, contentWidth, 30f), selectedDef.LabelCap);
-            ResetText();
+            CodexUIUtil.ResetText();
             curY += 30f;
 
             // Accent gradient line
@@ -281,26 +239,26 @@ namespace FactionColonies
                 Rect descRect = new Rect(0f, curY, contentWidth, 100f);
                 Widgets.LabelCacheHeight(ref descRect, selectedDef.FormattedDesc);
                 curY += descRect.height + Margin;
-                ResetText();
+                CodexUIUtil.ResetText();
             }
 
             /* Key Stats */
-            curY = DrawSection(curY, contentWidth, "FCCodexSettlementStats".Translate(), accent, DrawKeyStats);
+            curY = CodexUIUtil.DrawSection(curY, contentWidth, "FCCodexSettlementStats".Translate(), accent, DrawKeyStats);
 
             /* Stat Modifiers */
             TaggedString statDesc = FCStatModifier.GetDescription(selectedDef.statModifiers);
             if (!statDesc.RawText.NullOrEmpty())
-                curY = DrawSection(curY, contentWidth, "FCCodexSettlementStatModifiers".Translate(), accent, (y, w) => DrawStatModifiers(y, w, statDesc));
+                curY = CodexUIUtil.DrawSection(curY, contentWidth, "FCCodexSettlementStatModifiers".Translate(), accent, (y, w) => DrawStatModifiers(y, w, statDesc));
 
             /* Tech Requirements */
             if (selectedDef.techLevel != TechLevel.Undefined || selectedDef.researchProjects.Count > 0)
-                curY = DrawSection(curY, contentWidth, "FCCodexSettlementTechReqs".Translate(), accent, DrawTechRequirements);
+                curY = CodexUIUtil.DrawSection(curY, contentWidth, "FCCodexSettlementTechReqs".Translate(), accent, DrawTechRequirements);
 
             /* Biome Restrictions */
-            curY = DrawSection(curY, contentWidth, "FCCodexSettlementBiomes".Translate(), accent, DrawBiomeRestrictions);
+            curY = CodexUIUtil.DrawSection(curY, contentWidth, "FCCodexSettlementBiomes".Translate(), accent, DrawBiomeRestrictions);
 
             ScrollUtil.EndScrollView();
-            ResetText();
+            CodexUIUtil.ResetText();
         }
 
         /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -317,79 +275,35 @@ namespace FactionColonies
             /* Banner */
             if (selectedDef is object)
             {
-                Texture2D banner = UIUtil.GetModBanner(selectedDef.modContentPack);
-                if (banner is object)
-                {
-                    Rect bannerRect = new Rect(0f, curY, contentWidth, BannerHeight);
-                    GUI.DrawTexture(bannerRect, banner, ScaleMode.ScaleToFit);
-                    curY += BannerHeight + SmallMargin;
-                }
-
-                // Mod name
-                string modName = selectedDef.modContentPack?.ModMetaData?.Name ?? "";
-                if (!modName.NullOrEmpty())
-                {
-                    Text.Font = GameFont.Small;
-                    Text.Anchor = TextAnchor.MiddleCenter;
-                    UIUtil.DrawColoredLabel(new Rect(0f, curY, contentWidth, 20f), modName, Color.gray);
-                    ResetText();
-                    curY += 24f;
-                }
-
-                UIUtil.DrawColoredHorizontalLine(Margin, curY, contentWidth - Margin * 2, Color.gray);
-                curY += Margin;
+                curY = CodexUIUtil.DrawRightPaneBannerHeader(curY, contentWidth,
+                    UIUtil.GetModBanner(selectedDef.modContentPack),
+                    selectedDef.modContentPack?.ModMetaData?.Name ?? "");
             }
 
             /* Available Resources */
             if (selectedDef is object && selectedDef.resources.Count > 0)
             {
                 Color accent = GetAccent(selectedDef);
-                curY = DrawSection(curY, contentWidth, "FCCodexSettlementResources".Translate(), accent, DrawResources);
+                curY = CodexUIUtil.DrawSection(curY, contentWidth, "FCCodexSettlementResources".Translate(), accent, DrawResources);
             }
 
             ScrollUtil.EndScrollView();
-            ResetText();
+            CodexUIUtil.ResetText();
         }
 
         /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-         *  SECTION DRAWING HELPERS
+         *  SECTION CONTENT DRAWERS
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
-        private delegate float SectionDrawer(float curY, float width);
-
-        private float DrawSection(float startY, float width, string header, Color accent, SectionDrawer drawer)
-        {
-            float curY = startY;
-
-            Rect headerRect = new Rect(0f, curY, width, SectionHeaderHeight);
-            Widgets.DrawBoxSolid(headerRect, SectionBgColor);
-            TexLoad.DrawHorizontalGradient(headerRect, accent * new Color(1f, 1f, 1f, 0.15f));
-            Widgets.DrawBoxSolid(new Rect(0f, curY, AccentBarWidth, SectionHeaderHeight), accent);
-
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            UIUtil.DrawColoredLabel(
-                new Rect(AccentBarWidth + Margin, curY, width - AccentBarWidth - Margin, SectionHeaderHeight),
-                header,
-                ColorUtil.TransformRGB(accent, 1.3f));
-            ResetText();
-            curY += SectionHeaderHeight + SmallMargin;
-
-            curY = drawer(curY, width);
-            curY += Margin;
-
-            return curY;
-        }
-
         private float DrawKeyStats(float curY, float width)
         {
             float x = AccentBarWidth + Margin;
             float textW = width - x - Margin;
 
-            curY = DrawStatLine(curY, x, textW, "FCCodexSettlementWorkers".Translate(
+            curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementWorkers".Translate(
                 selectedDef.workersMaxBase.ToString(), selectedDef.workersMaxMult.ToString()));
 
             if (selectedDef.maxSettlementLevel < 99)
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementMaxLevel".Translate(selectedDef.maxSettlementLevel.ToString()));
+                curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementMaxLevel".Translate(selectedDef.maxSettlementLevel.ToString()));
 
             // Building slots + workers progression table (3 columns, 75% width, centered)
             List<int> slotsLevels = new List<int>();
@@ -413,19 +327,19 @@ namespace FactionColonies
             curY += SmallMargin;
 
             if (selectedDef.planetLayers.Count > 0)
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementPlanetLayer".Translate(selectedDef.PlanetLayersLabel.CapitalizeFirst()));
+                curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementPlanetLayer".Translate(selectedDef.PlanetLayersLabel.CapitalizeFirst()));
 
             string yesStr = "FCCodexYes".Translate();
             string noStr = "FCCodexNo".Translate();
 
-            curY = DrawStatLine(curY, x, textW, "FCCodexSettlementManualBattle".Translate(
+            curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementManualBattle".Translate(
                 selectedDef.supportsManualBattle ? yesStr : noStr));
 
-            curY = DrawStatLine(curY, x, textW, "FCCodexSettlementCanBeRaided".Translate(
+            curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementCanBeRaided".Translate(
                 selectedDef.canBeRaided ? yesStr : noStr));
 
             if (selectedDef.raidTargetingWeight != 1.0f)
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementRaidWeight".Translate(
+                curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementRaidWeight".Translate(
                     selectedDef.raidTargetingWeight.ToString("F1")));
 
             return curY;
@@ -463,16 +377,6 @@ namespace FactionColonies
         }
 
 
-        private float DrawStatLine(float curY, float x, float width, string text)
-        {
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            GUI.color = Color.white;
-            UIUtil.ClampedLabel(new Rect(x, curY, width, StatRowHeight), text);
-            ResetText();
-            return curY + StatRowHeight;
-        }
-
         private float DrawResources(float curY, float width)
         {
             float x = AccentBarWidth + Margin;
@@ -500,7 +404,7 @@ namespace FactionColonies
                     new Rect(iconRect.xMax + SmallMargin, curY, rowRect.xMax - iconRect.xMax - SmallMargin, ResourceRowHeight),
                     label,
                     isHover ? HighlightColor : Color.white);
-                ResetText();
+                CodexUIUtil.ResetText();
 
                 if (isHover)
                     Widgets.DrawHighlight(rowRect);
@@ -526,7 +430,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.UpperLeft;
             float h = Text.CalcHeight(desc, textW);
             Widgets.Label(new Rect(x, curY, textW, h), desc);
-            ResetText();
+            CodexUIUtil.ResetText();
 
             return curY + h;
         }
@@ -537,10 +441,10 @@ namespace FactionColonies
             float textW = width - x - Margin;
 
             if (selectedDef.techLevel != TechLevel.Undefined)
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementTechLevel".Translate(selectedDef.techLevel.ToStringHuman()));
+                curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementTechLevel".Translate(selectedDef.techLevel.ToStringHuman()));
 
             foreach (ResearchProjectDef rp in selectedDef.researchProjects)
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementResearch".Translate(rp.LabelCap));
+                curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementResearch".Translate(rp.LabelCap));
 
             return curY;
         }
@@ -552,17 +456,17 @@ namespace FactionColonies
 
             if (selectedDef.blockedBiomes.Count > 0)
             {
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementBlockedBiomes".Translate(""));
+                curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementBlockedBiomes".Translate(""));
                 curY = DrawBiomeLinks(curY, x, textW, selectedDef.blockedBiomes);
             }
             else if (selectedDef.allowedBiomes.Count > 0)
             {
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementAllowedBiomes".Translate(""));
+                curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementAllowedBiomes".Translate(""));
                 curY = DrawBiomeLinks(curY, x, textW, selectedDef.allowedBiomes);
             }
             else
             {
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementAllBiomes".Translate(selectedDef.PlanetLayersLabel));
+                curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementAllBiomes".Translate(selectedDef.PlanetLayersLabel));
             }
 
             return curY;
@@ -586,7 +490,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 UIUtil.DrawColoredLabel(rowRect, b.LabelCap, isHover ? HighlightColor : Color.white);
-                ResetText();
+                CodexUIUtil.ResetText();
 
                 if (isLink)
                 {
@@ -676,7 +580,7 @@ namespace FactionColonies
                     total += BannerHeight + SmallMargin;
                 string modName = selectedDef.modContentPack?.ModMetaData?.Name ?? "";
                 if (!modName.NullOrEmpty())
-                    total += 24f;
+                    total += CodexUIUtil.HeaderHeightFor(modName, width, 20f, 0f) + SmallMargin;
                 total += Margin; // divider
 
                 // Resources
@@ -685,13 +589,6 @@ namespace FactionColonies
             }
 
             return total + 50f;
-        }
-
-        private void ResetText()
-        {
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.UpperLeft;
-            GUI.color = Color.white;
         }
     }
 }
