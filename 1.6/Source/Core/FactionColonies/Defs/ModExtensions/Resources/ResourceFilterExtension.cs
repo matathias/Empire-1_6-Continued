@@ -19,6 +19,17 @@ namespace FactionColonies
         {
         }
         /// <summary>
+        /// Codex variant of <see cref="SetFilter"/>: allow every item this extension can contribute,
+        /// ignoring research/tech gates, and record any per-item tech/research requirements into
+        /// <paramref name="restrictions"/> so the codex can display them.
+        /// <para>Defaults to <see cref="SetFilter"/> at max tech level with no restriction info, which
+        /// is correct for extensions that don't gate their items.</para>
+        /// </summary>
+        public virtual void SetFilterForCodex(ThingFilter filter, Dictionary<ThingDef, TitheRestrictionInfo> restrictions)
+        {
+            SetFilter(filter, TechLevel.Archotech, null);
+        }
+        /// <summary>
         /// Retrieves the ThingSetMaker associated with this resource.
         /// <para>Resources use ThingSetMaker_MarketValue by default. This function only needs to be specified if you want to use a different ThingSetMaker.</para>
         /// </summary>

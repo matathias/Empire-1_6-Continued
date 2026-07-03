@@ -612,13 +612,14 @@ namespace FactionColonies
                 restrictions.Remove(thingBlock);
             }
 
-            // Run filter extensions at max tech level so dynamically-allowed items (e.g. crop
-            // outputs, animal races) appear in the codex reference list regardless of research state.
+            // Run filter extensions so dynamically-allowed items (e.g. crop outputs, animal races)
+            // appear in the codex reference list regardless of research state, and so extensions can
+            // record per-item research/tech requirements for display.
             if (modExtensions != null)
             {
                 foreach (ResourceFilterExtension ext in modExtensions.OfType<ResourceFilterExtension>())
                 {
-                    ext.SetFilter(filter, TechLevel.Archotech, null);
+                    ext.SetFilterForCodex(filter, restrictions);
                 }
             }
         }
