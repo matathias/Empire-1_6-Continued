@@ -1012,7 +1012,10 @@ namespace FactionColonies
 
             Widgets.DrawHighlight(statGainBox);
             double rounded = Math.Round(gainValue, 1);
-            TaggedString statGain = TextUtil.ColorizeAdditiveBonus(rounded, invertColor);
+            // Keep this a plain string: ColorizeAdditiveBonus returns a <color>-tagged string, and routing it
+            // through a TaggedString here would strip the color (implicit TaggedString->string calls StripTags)
+            // when passed to ClampedLabel below, rendering the badge white.
+            string statGain = TextUtil.ColorizeAdditiveBonus(rounded, invertColor);
 
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Small;

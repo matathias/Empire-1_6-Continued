@@ -191,9 +191,10 @@ namespace FactionColonies
         /// </summary>
         private static string ClampWithTip(Rect rect, string label)
         {
-            // ClampTextWithEllipsis returns the input unchanged when it already fits, so an inequality
-            // here is a reliable "was it truncated?" test.
-            string display = Text.ClampTextWithEllipsis(rect, label);
+            // ClampWithEllipsis returns the input unchanged when it already fits, so an inequality
+            // here is a reliable "was it truncated?" test. It is tag-aware, so colorized labels keep
+            // their color instead of leaking a broken <color> tag when truncated.
+            string display = TextUtil.ClampWithEllipsis(rect, label);
             if (display != label) TooltipHandler.TipRegion(rect, label);
             return display;
         }
@@ -222,7 +223,7 @@ namespace FactionColonies
                 Widgets.Label(rect, full);
                 return;
             }
-            Widgets.Label(rect, Text.ClampTextWithEllipsis(rect, settlement.ShortName));
+            Widgets.Label(rect, TextUtil.ClampWithEllipsis(rect, settlement.ShortName));
             TooltipHandler.TipRegion(rect, full);
         }
 
@@ -251,7 +252,7 @@ namespace FactionColonies
             }
             else
             {
-                display = Text.ClampTextWithEllipsis(rect, settlement.ShortName);
+                display = TextUtil.ClampWithEllipsis(rect, settlement.ShortName);
                 TooltipHandler.TipRegion(rect, full);
             }
             return Widgets.ButtonText(rect, display, drawBackground, doMouseoverSound, active, overrideTextAnchor);
