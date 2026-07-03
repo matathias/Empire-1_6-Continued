@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+<!-- Generic titles (used by surface settlements and as fallback for any type) -->
+
+<FCTitle_RTD_Food_1>Comuna agrícola</FCTitle_RTD_Food_1>
+<FCTitle_RTD_Food_2>Población agraria</FCTitle_RTD_Food_2>
+<FCTitle_RTD_Food_3>Granero regional</FCTitle_RTD_Food_3>
+
+<FCTitle_RTD_Weapons_1>Aldea de herrería</FCTitle_RTD_Weapons_1>
+<FCTitle_RTD_Weapons_2>Gremio de herreros</FCTitle_RTD_Weapons_2>
+<FCTitle_RTD_Weapons_3>Forja de guerra</FCTitle_RTD_Weapons_3>
+
+<FCTitle_RTD_Apparel_1>Taller de explotación</FCTitle_RTD_Apparel_1>
+<FCTitle_RTD_Apparel_2>Fábrica de ropa</FCTitle_RTD_Apparel_2>
+<FCTitle_RTD_Apparel_3>Fundición textil</FCTitle_RTD_Apparel_3>
+
+<FCTitle_RTD_Animals_1>Granja de animales</FCTitle_RTD_Animals_1>
+<FCTitle_RTD_Animals_2>Plantación ganadera</FCTitle_RTD_Animals_2>
+<FCTitle_RTD_Animals_3>Plantación ganadera regional</FCTitle_RTD_Animals_3>
+
+<FCTitle_RTD_Logging_1>Aserradero</FCTitle_RTD_Logging_1>
+<FCTitle_RTD_Logging_2>Población maderera</FCTitle_RTD_Logging_2>
+<FCTitle_RTD_Logging_3>Centros de deforestación</FCTitle_RTD_Logging_3>
+
+<FCTitle_RTD_Mining_1>Puesto minero</FCTitle_RTD_Mining_1>
+<FCTitle_RTD_Mining_2>Colonia minera</FCTitle_RTD_Mining_2>
+<FCTitle_RTD_Mining_3>Mina a cielo abierto</FCTitle_RTD_Mining_3>
+
+<FCTitle_RTD_Research_1>Puesto de investigación</FCTitle_RTD_Research_1>
+<FCTitle_RTD_Research_2>Centro de investigación</FCTitle_RTD_Research_2>
+<FCTitle_RTD_Research_3>Universidad</FCTitle_RTD_Research_3>
+
+<FCTitle_RTD_Power_1>Pequeña central eléctrica</FCTitle_RTD_Power_1>
+<FCTitle_RTD_Power_2>Centro energético</FCTitle_RTD_Power_2>
+<FCTitle_RTD_Power_3>Central eléctrica pesada</FCTitle_RTD_Power_3>
+
+<FCTitle_RTD_Medicine_1>Clínica local</FCTitle_RTD_Medicine_1>
+<FCTitle_RTD_Medicine_2>Centro médico</FCTitle_RTD_Medicine_2>
+<FCTitle_RTD_Medicine_3>Proveedor médico regional</FCTitle_RTD_Medicine_3>
+
+<FCTitle_RTD_Chemfuel_1>Depósito de combustible</FCTitle_RTD_Chemfuel_1>
+<FCTitle_RTD_Chemfuel_2>Refinería de combustible</FCTitle_RTD_Chemfuel_2>
+<FCTitle_RTD_Chemfuel_3>Complejo industrial de combustible</FCTitle_RTD_Chemfuel_3>
+
+<FCTitle_RTD_Gravtech_1>Laboratorio gravtech</FCTitle_RTD_Gravtech_1>
+<FCTitle_RTD_Gravtech_2>Instalación gravtech</FCTitle_RTD_Gravtech_2>
+<FCTitle_RTD_Gravtech_3>Instituto gravtech</FCTitle_RTD_Gravtech_3>
+
+<!-- Orbital-specific titles (override generic when settlement has titleKey="Orbital") -->
+
+<FCTitle_Orbital_RTD_Food_1>Bahía de hidroponía orbital</FCTitle_Orbital_RTD_Food_1>
+<FCTitle_Orbital_RTD_Food_2>Módulo de agricultura espacial</FCTitle_Orbital_RTD_Food_2>
+<FCTitle_Orbital_RTD_Food_3>Agrocomplejo orbital</FCTitle_Orbital_RTD_Food_3>
+
+<FCTitle_Orbital_RTD_Weapons_1>Armería orbital</FCTitle_Orbital_RTD_Weapons_1>
+<FCTitle_Orbital_RTD_Weapons_2>Fundición de armas en gravedad cero</FCTitle_Orbital_RTD_Weapons_2>
+<FCTitle_Orbital_RTD_Weapons_3>Arsenal orbital</FCTitle_Orbital_RTD_Weapons_3>
+
+<FCTitle_Orbital_RTD_Apparel_1>Módulo textil orbital</FCTitle_Orbital_RTD_Apparel_1>
+<FCTitle_Orbital_RTD_Apparel_2>Bahía de fabricación en gravedad cero</FCTitle_Orbital_RTD_Apparel_2>
+<FCTitle_Orbital_RTD_Apparel_3>Taller de prendas orbital</FCTitle_Orbital_RTD_Apparel_3>
+
+<FCTitle_Orbital_RTD_Animals_1>Vivario orbital</FCTitle_Orbital_RTD_Animals_1>
+<FCTitle_Orbital_RTD_Animals_2>Módulo de cría espacial</FCTitle_Orbital_RTD_Animals_2>
+<FCTitle_Orbital_RTD_Animals_3>Biocúpula orbital</FCTitle_Orbital_RTD_Animals_3>
+
+<FCTitle_Orbital_RTD_Logging_1>Arboreto orbital</FCTitle_Orbital_RTD_Logging_1>
+<FCTitle_Orbital_RTD_Logging_2>Bahía de síntesis de madera</FCTitle_Orbital_RTD_Logging_2>
+<FCTitle_Orbital_RTD_Logging_3>Complejo de biocrecimiento orbital</FCTitle_Orbital_RTD_Logging_3>
+
+<FCTitle_Orbital_RTD_Mining_1>Yacimiento de perforación de asteroides</FCTitle_Orbital_RTD_Mining_1>
+<FCTitle_Orbital_RTD_Mining_2>Plataforma minera orbital</FCTitle_Orbital_RTD_Mining_2>
+<FCTitle_Orbital_RTD_Mining_3>Núcleo de extracción del espacio profundo</FCTitle_Orbital_RTD_Mining_3>
+
+<FCTitle_Orbital_RTD_Research_1>Cápsula de investigación orbital</FCTitle_Orbital_RTD_Research_1>
+<FCTitle_Orbital_RTD_Research_2>Módulo de ciencias espaciales</FCTitle_Orbital_RTD_Research_2>
+<FCTitle_Orbital_RTD_Research_3>Instituto de investigación orbital</FCTitle_Orbital_RTD_Research_3>
+
+<FCTitle_Orbital_RTD_Power_1>Conjunto de captación solar</FCTitle_Orbital_RTD_Power_1>
+<FCTitle_Orbital_RTD_Power_2>Red energética orbital</FCTitle_Orbital_RTD_Power_2>
+<FCTitle_Orbital_RTD_Power_3>Nexo energético del espacio profundo</FCTitle_Orbital_RTD_Power_3>
+
+<FCTitle_Orbital_RTD_Medicine_1>Enfermería orbital</FCTitle_Orbital_RTD_Medicine_1>
+<FCTitle_Orbital_RTD_Medicine_2>Estación médica en gravedad cero</FCTitle_Orbital_RTD_Medicine_2>
+<FCTitle_Orbital_RTD_Medicine_3>Complejo hospitalario orbital</FCTitle_Orbital_RTD_Medicine_3>
+
+<FCTitle_Orbital_RTD_Chemfuel_1>Sifón de combustible orbital</FCTitle_Orbital_RTD_Chemfuel_1>
+<FCTitle_Orbital_RTD_Chemfuel_2>Refinería orbital</FCTitle_Orbital_RTD_Chemfuel_2>
+<FCTitle_Orbital_RTD_Chemfuel_3>Complejo de combustible del espacio profundo</FCTitle_Orbital_RTD_Chemfuel_3>
+
+<FCTitle_Orbital_RTD_Gravtech_1>Cápsula de investigación en gravedad cero</FCTitle_Orbital_RTD_Gravtech_1>
+<FCTitle_Orbital_RTD_Gravtech_2>Estación gravtech orbital</FCTitle_Orbital_RTD_Gravtech_2>
+<FCTitle_Orbital_RTD_Gravtech_3>Nexo gravtech</FCTitle_Orbital_RTD_Gravtech_3>
+
+</LanguageData>

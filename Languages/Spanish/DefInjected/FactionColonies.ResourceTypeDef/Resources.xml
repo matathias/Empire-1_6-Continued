@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<RTD_Food.label>comida</RTD_Food.label>
+	<RTD_Food.description>Una categoría de recursos para comidas y alimentos vegetales.</RTD_Food.description>
+	<RTD_Weapons.label>armas</RTD_Weapons.label>
+	<RTD_Weapons.description>Una categoría de recursos para armas.</RTD_Weapons.description>
+	<RTD_Apparel.label>ropa</RTD_Apparel.label>
+	<RTD_Apparel.description>Una categoría de recursos para ropa.</RTD_Apparel.description>
+	<RTD_Animals.label>animales</RTD_Animals.label>
+	<RTD_Animals.description>Una categoría de recursos para ganado y productos animales.</RTD_Animals.description>
+	<RTD_Logging.label>tala</RTD_Logging.label>
+	<RTD_Logging.description>Una categoría de recursos para la tala.</RTD_Logging.description>
+	<RTD_Mining.label>minería</RTD_Mining.label>
+	<RTD_Mining.description>Una categoría de recursos para materiales de minería.</RTD_Mining.description>
+	<RTD_Medicine.label>medicina</RTD_Medicine.label>
+	<RTD_Medicine.description>Una categoría de recursos para medicina.</RTD_Medicine.description>
+	<RTD_Research.label>investigación</RTD_Research.label>
+	<RTD_Research.description>Una categoría de recursos para investigación.</RTD_Research.description>
+	<RTD_Power.label>energía</RTD_Power.label>
+	<RTD_Power.description>Una categoría de recursos para energía.</RTD_Power.description>
+	<RTD_Chemfuel.label>biocombustible</RTD_Chemfuel.label>
+	<RTD_Chemfuel.description>Una categoría de recursos para biocombustible.</RTD_Chemfuel.description>
+	<RTD_Gravtech.label>gravtech</RTD_Gravtech.label>
+	<RTD_Gravtech.description>Una categoría de recursos para recursos gravtech.</RTD_Gravtech.description>
+
+</LanguageData>

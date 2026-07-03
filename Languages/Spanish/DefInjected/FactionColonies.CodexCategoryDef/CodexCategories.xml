@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<CodexCat_GettingStarted.label>Primeros pasos</CodexCat_GettingStarted.label>
+	<CodexCat_GettingStarted.description>Temas de iniciación: fundar tu facción, tu primer asentamiento y los fundamentos de dirigir un imperio.</CodexCat_GettingStarted.description>
+	<CodexCat_Economy.label>Economía</CodexCat_Economy.label>
+	<CodexCat_Economy.description>Mecánicas económicas: producción de recursos, impuestos, trabajadores, prosperidad y ajustes de dificultad.</CodexCat_Economy.description>
+	<CodexCat_Military.label>Militar</CodexCat_Military.label>
+	<CodexCat_Military.description>Mecánicas militares: nivel de amenaza, simulación de batalla, reutilizaciones, selección de objetivos y frecuencia de ataque.</CodexCat_Military.description>
+	<CodexCat_Settlements.label>Asentamientos</CodexCat_Settlements.label>
+	<CodexCat_Settlements.description>Mecánicas de asentamiento: estadísticas sociales, costes de mejora, ranuras de edificio y tipos de asentamiento.</CodexCat_Settlements.description>
+
+</LanguageData>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<RERD_Food.label>comida</RERD_Food.label>
+	<RERD_Weapons.label>armas</RERD_Weapons.label>
+	<RERD_Apparel.label>ropa</RERD_Apparel.label>
+	<RERD_Armor.label>armadura</RERD_Armor.label>
+	<RERD_Animals.label>animales</RERD_Animals.label>
+	<RERD_Logging.label>tala</RERD_Logging.label>
+	<RERD_Mining.label>minería</RERD_Mining.label>
+	<RERD_Silver.label>plata</RERD_Silver.label>
+	<RERD_Drugs.label>drogas</RERD_Drugs.label>
+
+</LanguageData>

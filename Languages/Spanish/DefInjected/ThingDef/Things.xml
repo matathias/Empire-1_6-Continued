@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<EmpirePowerGenerator.label>generador de energía de la facción</EmpirePowerGenerator.label>
+	<EmpirePowerGenerator.description>¡Envía a tu colonia la energía creada por tus asentamientos!</EmpirePowerGenerator.description>
+	<CapitalSpot.label>sede de la capital</CapitalSpot.label>
+	<CapitalSpot.description>Designa la sede de la capital de tu Imperio. Esta ubicación sirve como punto de referencia central para los cálculos de viaje, el direccionamiento de eventos y las funciones administrativas. Puede moverse con tu imperio de gravnaves.</CapitalSpot.description>
+	<TaxSpot.label>punto de impuestos</TaxSpot.label>
+	<TaxSpot.description>Designa un lugar para recibir impuestos y diezmos. Puede establecerse como la ubicación activa de entrega de impuestos para todo tu imperio.</TaxSpot.description>
+
+</LanguageData>

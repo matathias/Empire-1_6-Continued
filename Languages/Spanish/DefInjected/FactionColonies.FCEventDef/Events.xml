@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<deliveryArrival.label>Entrega</deliveryArrival.label>
+	<randomEventExample.label>¡Está ocurriendo un evento de ejemplo!</randomEventExample.label>
+	<randomEventExample2.label>¡Está ocurriendo un evento de ejemplo!</randomEventExample2.label>
+	<settleNewColony.label>Fundar asentamiento</settleNewColony.label>
+	<taxColony.label>Impuestos del asentamiento en camino</taxColony.label>
+	<constructBuilding.label>Construyendo edificio</constructBuilding.label>
+	<enactSettlementPolicy.label>Promulgando una política</enactSettlementPolicy.label>
+	<enactFactionPolicy.label>Promulgando una política</enactFactionPolicy.label>
+	<upgradeSettlement.label>Mejorando un asentamiento</upgradeSettlement.label>
+	<raidEnemySettlement.label>Saquear asentamiento enemigo</raidEnemySettlement.label>
+	<enslaveEnemySettlement.label>Esclavizar asentamiento enemigo</enslaveEnemySettlement.label>
+	<captureEnemySettlement.label>Capturar asentamiento enemigo</captureEnemySettlement.label>
+	<cooldownMilitary.label>Reorganización militar</cooldownMilitary.label>
+	<settlementBeingAttacked.label>El asentamiento está bajo ataque</settlementBeingAttacked.label>
+	<autoResolveBattleRound.label>Batalla en curso</autoResolveBattleRound.label>
+	<armorerInspiration_0.label>Inspiración del armero</armorerInspiration_0.label>
+	<armorerInspiration-fin_disappointing.label>Inspiración del armero (decepcionante)</armorerInspiration-fin_disappointing.label>
+	<armorerInspiration-fin_masterwork.label>Inspiración del armero (obra maestra)</armorerInspiration-fin_masterwork.label>
+	<armorerInspiration-fin_good.label>Inspiración del armero (buena)</armorerInspiration-fin_good.label>
+	<armorerInspiration-fin_respectable.label>Inspiración del armero (aceptable)</armorerInspiration-fin_respectable.label>
+	<armorerInspiration-working_good.label>Inspiración del armero (en proceso)</armorerInspiration-working_good.label>
+	<armorerInspiration-working_masterpiece.label>Inspiración del armero (en proceso)</armorerInspiration-working_masterpiece.label>
+	<armorerInspiration-working_disappointing.label>Inspiración del armero (en proceso)</armorerInspiration-working_disappointing.label>
+	<armorerInspiration-working_materials.label>Inspiración del armero (materiales del taller)</armorerInspiration-working_materials.label>
+	<blacksmithInspiration_0.label>Inspiración del herrero</blacksmithInspiration_0.label>
+	<blacksmithInspiration-working_good.label>Inspiración del herrero (en proceso)</blacksmithInspiration-working_good.label>
+	<blacksmithInspiration-fin_good.label>Inspiración del herrero (buena)</blacksmithInspiration-fin_good.label>
+	<blacksmithInspiration-working_disappointing.label>Inspiración del herrero (en proceso)</blacksmithInspiration-working_disappointing.label>
+	<blacksmithInspiration-working_masterwork.label>Inspiración del herrero (en proceso)</blacksmithInspiration-working_masterwork.label>
+	<blacksmithInspiration-fin_masterwork.label>Inspiración del herrero (obra maestra)</blacksmithInspiration-fin_masterwork.label>
+	<blacksmithInspiration-working_materials.label>Inspiración del herrero (materiales del taller)</blacksmithInspiration-working_materials.label>
+	<blacksmithInspiration-fin_respectable.label>Inspiración del herrero (aceptable)</blacksmithInspiration-fin_respectable.label>
+	<blacksmithInspiration-fin_disappointing.label>Inspiración del herrero (decepcionante)</blacksmithInspiration-fin_disappointing.label>
+	<deathInTheFamily_0.label>Muerte en la familia</deathInTheFamily_0.label>
+	<deathInTheFamily_1-3s.label>Muerte en la familia (justicia hecha)</deathInTheFamily_1-3s.label>
+	<deathInTheFamily_1-3f.label>Muerte en la familia (investigación fallida)</deathInTheFamily_1-3f.label>
+	<deathInTheFamily-1a.label>Muerte en la familia</deathInTheFamily-1a.label>
+	<deathInTheFamily-1b_memorial.label>Muerte en la familia (homenaje)</deathInTheFamily-1b_memorial.label>
+	<deathInTheFamily-1c_investigation_good.label>Muerte en la familia (investigación)</deathInTheFamily-1c_investigation_good.label>
+	<deathInTheFamily-1d_investigation_bad.label>Muerte en la familia (investigación)</deathInTheFamily-1d_investigation_bad.label>
+	<denseWildlife_0.label>Fauna abundante</denseWildlife_0.label>
+	<denseWildlife_1-1.label>Fauna abundante</denseWildlife_1-1.label>
+	<denseWildlife_1-2.label>Fauna abundante (gran cacería)</denseWildlife_1-2.label>
+	<denseWildlife_1-3.label>Fauna abundante (domesticación)</denseWildlife_1-3.label>
+	<denseWildlife_1-2_2.label>Fauna abundante (resultado de la gran cacería)</denseWildlife_1-2_2.label>
+	<denseWildlife_1-sanctuary.label>Fauna abundante (santuario)</denseWildlife_1-sanctuary.label>
+	<drugTrade_0.label>Tráfico de drogas</drugTrade_0.label>
+	<drugTrade_3-1.label>Tráfico de drogas</drugTrade_3-1.label>
+	<drugTrade_4-1.label>Tráfico de drogas</drugTrade_4-1.label>
+	<drugTrade-investigation_50.label>Tráfico de drogas (investigación)</drugTrade-investigation_50.label>
+	<drugTrade-investigation_75.label>Tráfico de drogas (investigación)</drugTrade-investigation_75.label>
+	<drugTrade-fin_hooked.label>Tráfico de drogas</drugTrade-fin_hooked.label>
+	<drugTrade-investigation_failure.label>Tráfico de drogas (investigación fallida)</drugTrade-investigation_failure.label>
+	<drugTrade-investiation_continued.label>Tráfico de drogas (investigación continuada)</drugTrade-investiation_continued.label>
+	<drugTrade-investigation_success.label>Tráfico de drogas (investigación exitosa)</drugTrade-investigation_success.label>
+	<emptyMines_0.label>Minas agotadas</emptyMines_0.label>
+	<emptyMines-wait.label>Minas agotadas</emptyMines-wait.label>
+	<emptyMines-searching_fail.label>Minas agotadas (prospectores buscando)</emptyMines-searching_fail.label>
+	<emptyMines-search_fail.label>Minas agotadas (los prospectores fracasan)</emptyMines-search_fail.label>
+	<emptyMines-searching_success.label>Minas agotadas (prospectores buscando)</emptyMines-searching_success.label>
+	<emptyMines-search_success.label>Minas agotadas (los prospectores tienen éxito)</emptyMines-search_success.label>
+	<emptyMines-construction.label>Minas agotadas (redirección de construcción)</emptyMines-construction.label>
+	<expandedForestry_0.label>Silvicultura ampliada</expandedForestry_0.label>
+	<expandedForestry_1-1.label>Silvicultura ampliada</expandedForestry_1-1.label>
+	<expandedForestry_1-2.label>Silvicultura ampliada (vendida)</expandedForestry_1-2.label>
+	<expandedForestry_1-3.label>Silvicultura ampliada (reserva de construcción)</expandedForestry_1-3.label>
+	<foodShortage_0.label>Escasez generalizada de comida</foodShortage_0.label>
+	<foodShortage_1-1.label>Escasez de comida</foodShortage_1-1.label>
+	<foodShortage_1-2.label>Escasez de comida (importaciones)</foodShortage_1-2.label>
+	<foodShortage_1-3.label>Escasez de comida (racionamiento)</foodShortage_1-3.label>
+	<foodShortage_1-4.label>Escasez de comida (esclavos muertos de hambre)</foodShortage_1-4.label>
+	<foodShortage_1-cannibal.label>Escasez de comida (provisión macabra)</foodShortage_1-cannibal.label>
+	<foodSurplus_0.label>Excedente de comida</foodSurplus_0.label>
+	<foodSurplus_1-1.label>Excedente de comida</foodSurplus_1-1.label>
+	<foodSurplus_1-2.label>Excedente de comida (vendido)</foodSurplus_1-2.label>
+	<foodSurplus_1-3.label>Excedente de comida (festín)</foodSurplus_1-3.label>
+	<forestFire_0.label>Incendio forestal masivo</forestFire_0.label>
+	<forestFire_1-1.label>Incendio forestal</forestFire_1-1.label>
+	<forestFire_1-2s.label>Incendio forestal (contenido)</forestFire_1-2s.label>
+	<forestFire_1-2f.label>Incendio forestal (contención fallida)</forestFire_1-2f.label>
+	<forestFire_1-3.label>Incendio forestal (quema controlada)</forestFire_1-3.label>
+	<independencePetitions_0.label>Peticiones de independencia</independencePetitions_0.label>
+	<independencePetitions_1-1.label>Peticiones de independencia</independencePetitions_1-1.label>
+	<independencePetitions_1-2.label>Peticiones de independencia (quejas atendidas)</independencePetitions_1-2.label>
+	<independencePetitions_1-3.label>Peticiones de independencia (reprimidas)</independencePetitions_1-3.label>
+	<localMilitiasForm_0.label>Se forman milicias locales</localMilitiasForm_0.label>
+	<localMilitiasForm_1-1.label>Se forman milicias locales</localMilitiasForm_1-1.label>
+	<localMilitiasForm_1-2.label>Se forman milicias locales (acuarteladas)</localMilitiasForm_1-2.label>
+	<localMilitiasForm_1-3.label>Se forman milicias locales (disueltas)</localMilitiasForm_1-3.label>
+	<loyaltyParade_0.label>Desfile de lealtad</loyaltyParade_0.label>
+	<loyaltyParade_1-1.label>Desfile de lealtad</loyaltyParade_1-1.label>
+	<loyaltyParade_1-2.label>Desfile de lealtad (concentración)</loyaltyParade_1-2.label>
+	<loyaltyParade_1-3.label>Desfile de lealtad (reclutamiento)</loyaltyParade_1-3.label>
+	<missedSupplyDelivery_0.label>Entrega de suministros fallida</missedSupplyDelivery_0.label>
+	<missedSupplyDelivery_1-1.label>Entrega de suministros fallida</missedSupplyDelivery_1-1.label>
+	<missedSupplyDelivery_1-2.label>Entrega de suministros fallida (abastecimiento local)</missedSupplyDelivery_1-2.label>
+	<missedSupplyDelivery_1-3.label>Entrega de suministros fallida (improvisada)</missedSupplyDelivery_1-3.label>
+	<moonlitRitual_0.label>Un ritual a la luz de la luna</moonlitRitual_0.label>
+	<moonlitRitual_1-1.label>Un ritual a la luz de la luna</moonlitRitual_1-1.label>
+	<moonlitRitual_2-1.label>Un ritual a la luz de la luna</moonlitRitual_2-1.label>
+	<moonlitRitual_2-2.label>Un ritual a la luz de la luna</moonlitRitual_2-2.label>
+	<moonlitRitual_3-1.label>Un ritual a la luz de la luna</moonlitRitual_3-1.label>
+	<moonlitRitual_4-1.label>Un ritual a la luz de la luna</moonlitRitual_4-1.label>
+	<moonlitRitual_3-2.label>Un ritual a la luz de la luna</moonlitRitual_3-2.label>
+	<moonlitRitual_4-2.label>Un ritual a la luz de la luna</moonlitRitual_4-2.label>
+	<moonlitRitual_3-3.label>Un ritual a la luz de la luna</moonlitRitual_3-3.label>
+	<moonlitRitual_3-4.label>Un ritual a la luz de la luna</moonlitRitual_3-4.label>
+	<settlingDown.label>Echando raíces</settlingDown.label>
+	<sparseWildlife_0.label>Fauna escasa</sparseWildlife_0.label>
+	<sparseWildlife_1-1.label>Fauna escasa</sparseWildlife_1-1.label>
+	<sparseWildlife_1-2.label>Fauna escasa (cacerías prolongadas)</sparseWildlife_1-2.label>
+	<sparseWildlife_1-3.label>Fauna escasa (giro agrícola)</sparseWildlife_1-3.label>
+	<strangeDiscovery_0.label>Descubrimiento extraño</strangeDiscovery_0.label>
+	<strangeDiscovery-military_good.label>Descubrimiento extraño</strangeDiscovery-military_good.label>
+	<strangeDiscovery-nomil_good.label>Descubrimiento extraño</strangeDiscovery-nomil_good.label>
+	<strangeDiscovery-military_bad.label>Descubrimiento extraño</strangeDiscovery-military_bad.label>
+	<strangeDiscovery-nomil_bad.label>Descubrimiento extraño</strangeDiscovery-nomil_bad.label>
+	<strangeDiscovery-military_good-fin.label>Descubrimiento extraño</strangeDiscovery-military_good-fin.label>
+	<strangeDiscovery-nomil_good-fin.label>Descubrimiento extraño</strangeDiscovery-nomil_good-fin.label>
+	<strangeDiscovery-military_bad-fin.label>Descubrimiento extraño</strangeDiscovery-military_bad-fin.label>
+	<strangeDiscovery-nomil_bad-fin.label>Descubrimiento extraño</strangeDiscovery-nomil_bad-fin.label>
+	<struckRichOreVein_0.label>Veta de mineral rica encontrada</struckRichOreVein_0.label>
+	<struckRichOreVein_1-1.label>Veta de mineral rica</struckRichOreVein_1-1.label>
+	<struckRichOreVein_1-2.label>Veta de mineral rica (extracción urgente)</struckRichOreVein_1-2.label>
+	<struckRichOreVein_1-3.label>Veta de mineral rica (derechos vendidos)</struckRichOreVein_1-3.label>
+	<unexpectedCraftsmanship_0.label>Artesanía inesperada</unexpectedCraftsmanship_0.label>
+	<unexpectedCraftsmanship_1-1.label>Artesanía inesperada</unexpectedCraftsmanship_1-1.label>
+	<unexpectedCraftsmanship_1-2.label>Artesanía inesperada (enfoque en armas)</unexpectedCraftsmanship_1-2.label>
+	<unexpectedCraftsmanship_1-3.label>Artesanía inesperada (enfoque en ropa)</unexpectedCraftsmanship_1-3.label>
+	<unexpectedCraftsmanship_1-2_2.label>Artesanía inesperada (arma)</unexpectedCraftsmanship_1-2_2.label>
+	<unexpectedCraftsmanship_1-3_2.label>Artesanía inesperada (enfoque en ropa)</unexpectedCraftsmanship_1-3_2.label>
+	<wanderlust.label>Ansia de viajar</wanderlust.label>
+	<woundedAnimal_0.label>Animal herido</woundedAnimal_0.label>
+	<woundedAnimal_1-1.label>Animal herido</woundedAnimal_1-1.label>
+	<woundedAnimal_1-2.label>Animal herido</woundedAnimal_1-2.label>
+	<woundedAnimal_1-3s.label>Animal herido</woundedAnimal_1-3s.label>
+	<woundedAnimal_1-3f.label>Animal herido</woundedAnimal_1-3f.label>
+
+	<deliveryArrival.desc>Una nave de transporte que lleva objetos o personajes viaja hacia tu mapa</deliveryArrival.desc>
+	<randomEventExample.desc>Tu asentamiento está siendo atacado por bla bla bla.</randomEventExample.desc>
+	<randomEventExample2.desc>Tu asentamiento está siendo atacado por bla bla bla.</randomEventExample2.desc>
+	<settleNewColony.desc>Una caravana está formando un nuevo asentamiento.</settleNewColony.desc>
+	<taxColony.desc>Una caravana está entregando impuestos.</taxColony.desc>
+	<constructBuilding.desc>Se está construyendo un edificio.</constructBuilding.desc>
+	<enactSettlementPolicy.desc>Se está promulgando una política para todo el asentamiento.</enactSettlementPolicy.desc>
+	<enactFactionPolicy.desc>Se está promulgando una política para toda la facción.</enactFactionPolicy.desc>
+	<upgradeSettlement.desc>Se está mejorando un asentamiento.</upgradeSettlement.desc>
+	<raidEnemySettlement.desc>-Reemplazar descripción-</raidEnemySettlement.desc>
+	<enslaveEnemySettlement.desc>-Reemplazar descripción-</enslaveEnemySettlement.desc>
+	<captureEnemySettlement.desc>-Reemplazar descripción-</captureEnemySettlement.desc>
+	<cooldownMilitary.desc>-Reemplazar descripción-</cooldownMilitary.desc>
+	<settlementBeingAttacked.desc>-Reemplazar descripción-</settlementBeingAttacked.desc>
+	<autoResolveBattleRound.desc>Una batalla se resuelve una ronda por hora. Haz clic para ver cómo se desarrolla la batalla.</autoResolveBattleRound.desc>
+	<armorerInspiration_0.desc>¡Un armero de un asentamiento cercano ha recibido una gran inspiración y busca mecenas para lo que afirma que será una obra de calidad sin parangón! Planea entregársela a su mecenas como muestra de su lealtad.</armorerInspiration_0.desc>
+	<armorerInspiration-fin_disappointing.desc>La ambición del armero superó su habilidad. El resultado es funcional, pero lejos de la obra maestra prometida.</armorerInspiration-fin_disappointing.desc>
+	<armorerInspiration-fin_masterwork.desc>Tras unos días de trabajo, ¡la inspiración del armero ha producido una verdadera obra maestra! El resultado supera todas las expectativas.</armorerInspiration-fin_masterwork.desc>
+	<armorerInspiration-fin_good.desc>Tras unos días de trabajo, el armero completa su pieza encargada. Aunque "calidad sin parangón" pueda haber sido una exageración, la armadura resultante es no obstante bastante aceptable.</armorerInspiration-fin_good.desc>
+	<armorerInspiration-fin_respectable.desc>Tras varios días de trabajo, el armero completa su pieza encargada. Aunque no es una obra maestra, el producto final es no obstante bastante respetable.</armorerInspiration-fin_respectable.desc>
+	<armorerInspiration-working_good.desc>El armero está trabajando en tu encargo...</armorerInspiration-working_good.desc>
+	<armorerInspiration-working_masterpiece.desc>El armero está trabajando en tu encargo...</armorerInspiration-working_masterpiece.desc>
+	<armorerInspiration-working_disappointing.desc>El armero está trabajando en tu encargo...</armorerInspiration-working_disappointing.desc>
+	<armorerInspiration-working_materials.desc>El armero trabaja con materiales desviados de las líneas de producción de tu asentamiento. El desvío ralentiza la producción de ropa, pero el trabajo del armero avanza bien.</armorerInspiration-working_materials.desc>
+	<blacksmithInspiration_0.desc>¡Una herrera de un asentamiento cercano ha recibido una gran inspiración y busca mecenas para lo que afirma que será una obra de calidad sin parangón! Planea entregársela a su mecenas como muestra de su lealtad.</blacksmithInspiration_0.desc>
+	<blacksmithInspiration-working_good.desc>La herrera está trabajando en tu encargo...</blacksmithInspiration-working_good.desc>
+	<blacksmithInspiration-fin_good.desc>Tras unos días de trabajo, la herrera completa su pieza encargada. Aunque "calidad sin parangón" pueda haber sido una exageración, el arma resultante es no obstante bastante aceptable.</blacksmithInspiration-fin_good.desc>
+	<blacksmithInspiration-working_disappointing.desc>La herrera está trabajando en tu encargo...</blacksmithInspiration-working_disappointing.desc>
+	<blacksmithInspiration-working_masterwork.desc>La herrera está trabajando en tu encargo...</blacksmithInspiration-working_masterwork.desc>
+	<blacksmithInspiration-fin_masterwork.desc>¡La inspiración de la herrera ha producido una verdadera obra maestra! El resultado supera todas las expectativas.</blacksmithInspiration-fin_masterwork.desc>
+	<blacksmithInspiration-working_materials.desc>La herrera trabaja con materiales desviados de las líneas de producción de tu asentamiento. El desvío ralentiza la producción de armas, pero el trabajo de la herrera avanza bien.</blacksmithInspiration-working_materials.desc>
+	<blacksmithInspiration-fin_respectable.desc>Tras varios días de trabajo, la herrera completa su pieza encargada. Aunque no es una obra maestra, el producto final es no obstante bastante respetable.</blacksmithInspiration-fin_respectable.desc>
+	<blacksmithInspiration-fin_disappointing.desc>La ambición de la herrera superó su habilidad. El resultado es funcional, pero lejos de la obra maestra prometida.</blacksmithInspiration-fin_disappointing.desc>
+	<deathInTheFamily_0.desc>Una figura de gran importancia y conexión con tu capital en un asentamiento ha sido asesinada. Algunas personas en las calles difunden que fuiste tú quien causó su muerte. ¿Cómo responderás?</deathInTheFamily_0.desc>
+	<deathInTheFamily_1-3s.desc>La investigación descubre al asesino y lo lleva ante la justicia. Los resultados concluyentes te absuelven de culpa a ojos del pueblo, permitiéndoles centrarse debidamente en llorar a la figura caída, un proceso facilitado por la catarsis de encontrar al asesino.</deathInTheFamily_1-3s.desc>
+	<deathInTheFamily_1-3f.desc>La investigación no encuentra nada y solo alimenta los rumores de que estabas detrás del asesinato. El pueblo se inquieta.</deathInTheFamily_1-3f.desc>
+	<deathInTheFamily-1a.desc>Los asentamientos guardan luto en privado. El dolor pesa mucho sobre la gente.\n\nNegarse a reconocer los rumores, sin embargo, permite que se enconen. En medio del dolor, la gente sigue especulando sobre tu implicación...</deathInTheFamily-1a.desc>
+	<deathInTheFamily-1b_memorial.desc>Se celebra un homenaje público en honor al legado de la figura caída. El gesto ayuda a aliviar el dolor y calma las inquietudes sobre tu implicación en su muerte.</deathInTheFamily-1b_memorial.desc>
+	<deathInTheFamily-1c_investigation_good.desc>El anuncio de la investigación disipa la mayoría de los rumores sobre tu implicación, pero muchos aún prefieren reservar su juicio hasta que concluya la investigación.\n\nMientras tanto, tus asentamientos siguen de luto.</deathInTheFamily-1c_investigation_good.desc>
+	<deathInTheFamily-1d_investigation_bad.desc>El anuncio de la investigación disipa la mayoría de los rumores sobre tu implicación, pero muchos aún prefieren reservar su juicio hasta que concluya la investigación.\n\nMientras tanto, tus asentamientos siguen de luto.</deathInTheFamily-1d_investigation_bad.desc>
+	<denseWildlife_0.desc>Hay una gran cantidad de animales vagando por la región. ¿Cómo deberían aprovecharlo tus asentamientos?</denseWildlife_0.desc>
+	<denseWildlife_1-1.desc>Las manadas prosperan e impulsan la producción animal.</denseWildlife_1-1.desc>
+	<denseWildlife_1-2.desc>Se organiza una gran cacería. Cazadores de todo {FACTION} se unen, ansiosos por perfeccionar sus habilidades con esta oportunidad.</denseWildlife_1-2.desc>
+	<denseWildlife_1-3.desc>Algunos de los animales son capturados y domesticados para obtener beneficios a largo plazo.</denseWildlife_1-3.desc>
+	<denseWildlife_1-2_2.desc>La gran cacería concluye; tus cazadores tuvieron bastante éxito y trajeron valiosos productos animales.</denseWildlife_1-2_2.desc>
+	<denseWildlife_1-sanctuary.desc>En lugar de cazar o encerrar a los animales, tus asentamientos reservan la tierra como un santuario donde las criaturas viven sin ser molestadas. La gente siente un orgullo callado por compartir su mundo en lugar de gobernarlo, y las manadas que rondan cerca de los asentamientos aún proveen a quienes las cuidan con delicadeza.</denseWildlife_1-sanctuary.desc>
+	<drugTrade_0.desc>Uno de tus asentamientos informa de un aumento masivo del consumo de drogas ilegales. La dirigencia sospecha que un productor se ha instalado cerca. Piden tu palabra sobre el asunto.</drugTrade_0.desc>
+	<drugTrade_3-1.desc>La línea de drogas se ha incorporado a la producción oficial del asentamiento. Se te entregará un diezmo aleatorio de drogas cada 5 días.</drugTrade_3-1.desc>
+	<drugTrade_4-1.desc>Has recibido un nuevo diezmo de drogas. ¿Continuar la producción o cerrar la instalación?</drugTrade_4-1.desc>
+	<drugTrade-investigation_50.desc>Investigando el tráfico de drogas...</drugTrade-investigation_50.desc>
+	<drugTrade-investigation_75.desc>Investigando el tráfico de drogas...</drugTrade-investigation_75.desc>
+	<drugTrade-fin_hooked.desc>Puede que tu asentamiento esté enganchado a las drogas, pero parecen contentos con su realidad. Dudas que vayas a oír quejas pronto.</drugTrade-fin_hooked.desc>
+	<drugTrade-investigation_failure.desc>Las autoridades que enviaste a encontrar el origen de la producción de drogas no han encontrado nada. Los lugareños están descontentos con el alboroto. Los investigadores tendrán que mantenerse al margen un tiempo.</drugTrade-investigation_failure.desc>
+	<drugTrade-investiation_continued.desc>Los lugareños se han calmado, y tus investigadores creen que pueden volver al trabajo de encontrar el origen de las drogas. A la luz de la inesperada dificultad, sin embargo, solicitan un presupuesto mayor para ayudar con la investigación.</drugTrade-investiation_continued.desc>
+	<drugTrade-investigation_success.desc>¡Las autoridades han vuelto con buenas noticias! Han encontrado la producción de drogas. Los muy astutos casi se escapan, ¡pero nadie puede igualar la fuerza de {FACTION}!\n\nNo obstante, señalan que podría sacarse alguna moneda tomando el control de la producción en su lugar...</drugTrade-investigation_success.desc>
+	<emptyMines_0.desc>La(s) región(es) afectada(s) se han quedado sin vetas que explotar. ¿Qué se debería hacer?</emptyMines_0.desc>
+	<emptyMines-wait.desc>Los mineros esperan a que se encuentren nuevas vetas.</emptyMines-wait.desc>
+	<emptyMines-searching_fail.desc>Tus prospectores contratados parten en busca de nuevas vetas de mineral.</emptyMines-searching_fail.desc>
+	<emptyMines-search_fail.desc>Los prospectores no encontraron nada. Las minas siguen vacías.</emptyMines-search_fail.desc>
+	<emptyMines-searching_success.desc>Tus prospectores contratados parten en busca de nuevas vetas de mineral.</emptyMines-searching_success.desc>
+	<emptyMines-search_success.desc>Los prospectores localizaron con éxito nuevas vetas de mineral, y tus mineros regresan encantados al trabajo. Se te envía una pequeña muestra del nuevo mineral para tu propio uso.</emptyMines-search_success.desc>
+	<emptyMines-construction.desc>Los mineros ociosos se ponen a trabajar en proyectos de construcción del asentamiento.</emptyMines-construction.desc>
+	<expandedForestry_0.desc>Algunos de tus asentamientos han ampliado su producción forestal esta semana. ¿Cómo se debería usar la madera extra?</expandedForestry_0.desc>
+	<expandedForestry_1-1.desc>Las operaciones madereras ampliadas continúan.</expandedForestry_1-1.desc>
+	<expandedForestry_1-2.desc>La madera extra se vende a los comerciantes que pasan, con un buen beneficio.</expandedForestry_1-2.desc>
+	<expandedForestry_1-3.desc>La madera se acumula para proyectos de construcción, y la construcción se acelera.</expandedForestry_1-3.desc>
+	<foodShortage_0.desc>Hay una escasez generalizada de comida en las regiones afectadas. Tus asentamientos necesitan orientación sobre cómo manejar esta crisis.</foodShortage_0.desc>
+	<foodShortage_1-1.desc>Tus asentamientos soportan la escasez de comida.</foodShortage_1-1.desc>
+	<foodShortage_1-2.desc>Han llegado importaciones de emergencia, reduciendo el impacto de la escasez de comida.</foodShortage_1-2.desc>
+	<foodShortage_1-3.desc>El racionamiento estricto está en vigor. Los ciudadanos admiran el sacrificio compartido.</foodShortage_1-3.desc>
+	<foodShortage_1-4.desc>Los esclavos cargan con el peso de la escasez. Tus ciudadanos comen con normalidad, pero los esclavos pasan hambre por toda la tierra.</foodShortage_1-4.desc>
+	<foodShortage_1-cannibal.desc>Los caídos por inanición se incorporan en silencio al suministro de comida. Nadie pasa hambre —la producción nunca flaquea—, pero verse forzados a alimentarse de los suyos es inquietante. Comer carne humana es una cosa; matar a un amigo para comérselo es algo muy distinto.</foodShortage_1-cannibal.desc>
+	<foodSurplus_0.desc>Cosechas afortunadas han llevado a un excedente de comida en algunos asentamientos. ¿Qué se debería hacer con el sobrante?</foodSurplus_0.desc>
+	<foodSurplus_1-1.desc>El excedente se almacena para mantener la producción.</foodSurplus_1-1.desc>
+	<foodSurplus_1-2.desc>La cosecha sobrante se vende a los comerciantes que pasan.</foodSurplus_1-2.desc>
+	<foodSurplus_1-3.desc>¡Se celebra un gran festín para festejar la abundancia! Los ciudadanos están felices y leales.</foodSurplus_1-3.desc>
+	<forestFire_0.desc>La(s) región(es) afectada(s) tienen incendios forestales descontrolados. ¿Cómo deberían responder tus asentamientos?</forestFire_0.desc>
+	<forestFire_1-1.desc>El fuego arde sin control por los bosques.</forestFire_1-1.desc>
+	<forestFire_1-2s.desc>¡Las cuadrillas de bomberos lograron contener las llamas! El daño es limitado.</forestFire_1-2s.desc>
+	<forestFire_1-2f.desc>A pesar de sus mejores esfuerzos, las cuadrillas de bomberos no pudieron contener las llamas. El fuego sigue arrasando.</forestFire_1-2f.desc>
+	<forestFire_1-3.desc>La quema controlada despeja el bosque dañado, abriendo tierra para el cultivo.</forestFire_1-3.desc>
+	<independencePetitions_0.desc>Debido al descontento generalizado en {FACTION}, un número creciente de asentamientos empieza a barajar ideas de secesión e independencia.\n\n¿Cómo abordarás la disidencia?</independencePetitions_0.desc>
+	<independencePetitions_1-1.desc>Las peticiones continúan sin oposición. El movimiento crece a medida que más asentamientos consideran la independencia.</independencePetitions_1-1.desc>
+	<independencePetitions_1-2.desc>Se distribuye ayuda a los asentamientos descontentos. El gesto ayuda, pero las tensiones subyacentes permanecen.</independencePetitions_1-2.desc>
+	<independencePetitions_1-3.desc>El movimiento independentista es aplastado por la fuerza. Los disidentes son silenciados, pero la respuesta de mano dura engendra más resentimiento.</independencePetitions_1-3.desc>
+	<localMilitiasForm_0.desc>Debido a la baja lealtad, los ciudadanos empiezan a formar milicias locales y se niegan a entregar su parte de los impuestos. ¿Cómo manejarás la situación?</localMilitiasForm_0.desc>
+	<localMilitiasForm_1-1.desc>Las milicias continúan sus actividades sin control. La recaudación de impuestos se resiente al negarse los ciudadanos a pagar su parte.</localMilitiasForm_1-1.desc>
+	<localMilitiasForm_1-2.desc>Las milicias se integran en las guarniciones de los asentamientos. La recaudación de impuestos sigue resintiéndose, pero los asentamientos están mejor defendidos. Los ciudadanos resienten el reclutamiento forzoso.</localMilitiasForm_1-2.desc>
+	<localMilitiasForm_1-3.desc>Las milicias se disuelven por la fuerza. La recaudación de impuestos se reanuda, pero la respuesta de mano dura daña la lealtad y engendra descontento.</localMilitiasForm_1-3.desc>
+	<loyaltyParade_0.desc>¡Algunos de los asentamientos de {FACTION} celebran un desfile en tu honor! ¿Cómo responderás a su muestra de lealtad?</loyaltyParade_0.desc>
+	<loyaltyParade_1-1.desc>El desfile continúa sin contratiempos. Los ciudadanos se sienten orgullosos y leales.</loyaltyParade_1-1.desc>
+	<loyaltyParade_1-2.desc>¡Tu aparición personal en el desfile electriza a la multitud! La gente se inspira con la presencia de su líder.</loyaltyParade_1-2.desc>
+	<loyaltyParade_1-3.desc>La entusiasta concentración se aprovecha para reclutar nuevos trabajadores para los asentamientos de {FACTION}.</loyaltyParade_1-3.desc>
+	<missedSupplyDelivery_0.desc>Los artesanos de la(s) región(es) afectada(s) sufren por la falta de suministros. ¿Cómo deberían adaptarse?</missedSupplyDelivery_0.desc>
+	<missedSupplyDelivery_1-1.desc>Los artesanos esperan a la próxima entrega.</missedSupplyDelivery_1-1.desc>
+	<missedSupplyDelivery_1-2.desc>Las conexiones comerciales ayudan a conseguir suministros de repuesto localmente.</missedSupplyDelivery_1-2.desc>
+	<missedSupplyDelivery_1-3.desc>Los artesanos improvisan con materiales locales, concentrando sus escasos suministros en la ropa.</missedSupplyDelivery_1-3.desc>
+	<moonlitRitual_0.desc>Uno de tus asentamientos informa de que ven figuras extrañas adentrarse en el bosque de noche. Se las describe vistiendo extraños atuendos.</moonlitRitual_0.desc>
+	<moonlitRitual_1-1.desc>Se ha enviado a alguien a investigar...</moonlitRitual_1-1.desc>
+	<moonlitRitual_2-1.desc>Investigando más a fondo...</moonlitRitual_2-1.desc>
+	<moonlitRitual_2-2.desc>Has decidido dejarlos en paz.</moonlitRitual_2-2.desc>
+	<moonlitRitual_3-1.desc>Has ordenado que la investigación continúe...</moonlitRitual_3-1.desc>
+	<moonlitRitual_4-1.desc>Al no dar parte, se llevó a cabo una búsqueda del investigador. Fue hallado muerto. Su cuerpo estaba despojado, su cavidad torácica abierta y su piel tallada con símbolos rúnicos. El grupo, fueran quienes fueran, no volvió a ser visto. El pavor cae sobre todos nosotros.\n\nCasualmente, las cosechas de esta semana parecen haberse echado a perder...</moonlitRitual_4-1.desc>
+	<moonlitRitual_3-2.desc>Has ordenado que la investigación continúe...</moonlitRitual_3-2.desc>
+	<moonlitRitual_4-2.desc>El investigador dio parte de madrugada con un aspecto bastante desaliñado. Sin embargo, su historia dice otra cosa. Esta vez lo esperaban y le ofrecieron una invitación para unirse. Según lo explica, estaban realizando un ritual de fertilidad a su diosa con la esperanza de una buena cosecha. En cualquier caso, ¡parece que se lo pasó bien!</moonlitRitual_4-2.desc>
+	<moonlitRitual_3-3.desc>Las cosechas de esta semana parecen antinaturalmente más abundantes de lo habitual...</moonlitRitual_3-3.desc>
+	<moonlitRitual_3-4.desc>Las cosechas de esta semana parecen antinaturalmente menos abundantes de lo habitual...</moonlitRitual_3-4.desc>
+	<settlingDown.desc>Los ciudadanos de {FACTION} se muestran actualmente reacios a expandirse.</settlingDown.desc>
+	<sparseWildlife_0.desc>La fauna de la(s) región(es) afectada(s) ha desaparecido casi por completo. ¿Cómo deberían adaptarse tus asentamientos?</sparseWildlife_0.desc>
+	<sparseWildlife_1-1.desc>Tus asentamientos se las arreglan sin la fauna.</sparseWildlife_1-1.desc>
+	<sparseWildlife_1-2.desc>Las partidas de caza se alejan más para compensar.</sparseWildlife_1-2.desc>
+	<sparseWildlife_1-3.desc>Los colonos desplazan su atención de la caza a la agricultura.</sparseWildlife_1-3.desc>
+	<strangeDiscovery_0.desc>En lo profundo de las minas, se ha sentido una presencia extraña y los mineros han dejado de trabajar para investigarla.</strangeDiscovery_0.desc>
+	<strangeDiscovery-military_good.desc>Tus mineros empiezan a investigar bajo escolta militar...</strangeDiscovery-military_good.desc>
+	<strangeDiscovery-nomil_good.desc>Tus mineros se adentran más en lo desconocido...</strangeDiscovery-nomil_good.desc>
+	<strangeDiscovery-military_bad.desc>Tus mineros empiezan a investigar bajo escolta militar...</strangeDiscovery-military_bad.desc>
+	<strangeDiscovery-nomil_bad.desc>Tus mineros empiezan a investigar...</strangeDiscovery-nomil_bad.desc>
+	<strangeDiscovery-military_good-fin.desc>Tras investigar, ¡los mineros encontraron varias vetas de mineral todas juntas! Alguien debió de querer que encontráramos esto.\n\nRecibirás un pequeño grupo de minerales que los mineros extrajeron.</strangeDiscovery-military_good-fin.desc>
+	<strangeDiscovery-nomil_good-fin.desc>¡Los mineros dieron con una veta excepcionalmente rica cerca de la perturbación! Alguien debió de querer que encontráramos esto.\n\nRecibirás un cargamento de minerales que los mineros extrajeron.</strangeDiscovery-nomil_good-fin.desc>
+	<strangeDiscovery-military_bad-fin.desc>Cuando tus mineros investigaron, ¡un gran insectoide atacó! Por suerte, la fuerza de seguridad enviada con los mineros repelió a la criatura sin bajas. Se ha enviado un informe del suceso para su investigación.</strangeDiscovery-military_bad-fin.desc>
+	<strangeDiscovery-nomil_bad-fin.desc>Cuando tus mineros investigaron, ¡un gran insectoide atacó! Varios de los mineros murieron antes de que la criatura fuera abatida. Debido a esto, varios trabajadores han decidido quedarse en casa tras el traumático suceso.</strangeDiscovery-nomil_bad-fin.desc>
+	<struckRichOreVein_0.desc>¡Algunos de tus asentamientos han logrado dar con vetas de mineral rico en sus minas! ¿Cómo deberían proceder?</struckRichOreVein_0.desc>
+	<struckRichOreVein_1-1.desc>Los mineros extraen mineral a un ritmo constante.</struckRichOreVein_1-1.desc>
+	<struckRichOreVein_1-2.desc>Se presiona a los mineros para extraer todo el mineral posible, pero el exceso de trabajo se cobra su precio.</struckRichOreVein_1-2.desc>
+	<struckRichOreVein_1-3.desc>Los derechos de minería se venden a intereses externos para obtener un beneficio inmediato.</struckRichOreVein_1-3.desc>
+	<unexpectedCraftsmanship_0.desc>¡Los artesanos de tus asentamientos han estado trabajando inusualmente bien! ¿Cómo deberían dirigirse sus talentos?</unexpectedCraftsmanship_0.desc>
+	<unexpectedCraftsmanship_1-1.desc>Los artesanos continúan su excelente trabajo en todas las disciplinas. Su amplia excelencia eleva la moral.</unexpectedCraftsmanship_1-1.desc>
+	<unexpectedCraftsmanship_1-2.desc>Los artesanos concentran sus talentos en la fabricación de armas.</unexpectedCraftsmanship_1-2.desc>
+	<unexpectedCraftsmanship_1-3.desc>Los artesanos concentran sus talentos en la sastrería y la fabricación de armaduras.</unexpectedCraftsmanship_1-3.desc>
+	<unexpectedCraftsmanship_1-2_2.desc>Tras una semana de trabajo, la concentración de los artesanos ha producido un arma excelente.</unexpectedCraftsmanship_1-2_2.desc>
+	<unexpectedCraftsmanship_1-3_2.desc>Tras una semana de trabajo, la concentración de los artesanos ha producido una excelente pieza de armadura.</unexpectedCraftsmanship_1-3_2.desc>
+	<wanderlust.desc>Los ciudadanos de {FACTION} están deseando echarse al camino y colonizar nuevas tierras.</wanderlust.desc>
+	<woundedAnimal_0.desc>Un granjero de uno de tus asentamientos ha traído un animal herido a tu capital. Afirma que entró en su pueblo y se negaba a marcharse. El animal tiene aspecto enfermizo y nervioso. Parece que podría atacar en cualquier momento...</woundedAnimal_0.desc>
+	<woundedAnimal_1-1.desc>El animal permanece tranquilo. Tus colonos lo guían adentro sin problema.</woundedAnimal_1-1.desc>
+	<woundedAnimal_1-2.desc>Mientras guían al animal adentro, empieza a forcejear contra los colonos que lo llevan. Rápidamente se vuelve cada vez más agresivo y todos los intentos de calmarlo empiezan a fracasar. Varios colonos resultan gravemente heridos o mueren. Por desgracia, esto afectará a la producción durante un tiempo.</woundedAnimal_1-2.desc>
+	<woundedAnimal_1-3s.desc>El cuidador adiestrado se acerca al animal con cuidado y pericia. Se calma y se deja guiar adentro a salvo.</woundedAnimal_1-3s.desc>
+	<woundedAnimal_1-3f.desc>A pesar de los mejores esfuerzos del cuidador, el animal arremete. El cuidador logra contener la situación, pero sufre heridas en el proceso.</woundedAnimal_1-3f.desc>
+
+</LanguageData>

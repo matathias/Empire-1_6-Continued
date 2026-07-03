@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<bunkerDown.label>Atrincherarse</bunkerDown.label>
+	<aggressiveCounterattack.label>Contraataque agresivo</aggressiveCounterattack.label>
+	<scorchedEarth.label>Tierra quemada</scorchedEarth.label>
+	<totalMobilization.label>Movilización total</totalMobilization.label>
+	<militaristic.label>Militarista</militaristic.label>
+	<pacifist.label>Pacifista</pacifist.label>
+	<authoritarian.label>Autoritario</authoritarian.label>
+	<egalitarian.label>Igualitario</egalitarian.label>
+	<isolationist.label>Aislacionista</isolationist.label>
+	<expansionist.label>Expansionista</expansionist.label>
+	<technocratic.label>Tecnocrático</technocratic.label>
+	<feudal.label>Feudal</feudal.label>
+	<slaver.label>Esclavista</slaver.label>
+	<heavyConscription.label>Reclutamiento forzoso</heavyConscription.label>
+	<volunteerService.label>Servicio voluntario</volunteerService.label>
+	<aFactionDisarmed.label>Una facción desarmada</aFactionDisarmed.label>
+	<slaveArmy.label>Ejército de esclavos</slaveArmy.label>
+	<Empty.label>Ranura de política vacía</Empty.label>
+	<Enacting.label>Política en redacción...</Enacting.label>
+	<onePeopleUnited.label>Un pueblo unido</onePeopleUnited.label>
+	<diversityWeEmbrace.label>Abrazamos la diversidad</diversityWeEmbrace.label>
+	<royalHeritage.label>Herencia real</royalHeritage.label>
+	<companyUnion.label>Sindicato de empresa</companyUnion.label>
+	<tradersFederation.label>Federación de comerciantes</tradersFederation.label>
+	<scienceFoundation.label>Fundación científica</scienceFoundation.label>
+	<minimizeTaxation.label>Minimizar impuestos</minimizeTaxation.label>
+	<heavyTaxation.label>Impuestos elevados</heavyTaxation.label>
+	<goodsEconomy.label>Economía de bienes</goodsEconomy.label>
+	<silverStandard.label>Patrón plata</silverStandard.label>
+	<empty.label>Sin rasgo</empty.label>
+	<resilient.label>Resiliente</resilient.label>
+	<raiders.label>Saqueadores</raiders.label>
+	<defenseInDepth.label>Defensa en profundidad</defenseInDepth.label>
+	<industrious.label>Laborioso</industrious.label>
+	<roadBuilders.label>Constructores de carreteras</roadBuilders.label>
+	<mercantile.label>Mercantil</mercantile.label>
+	<innovative.label>Innovador</innovative.label>
+	<lucky.label>Afortunado</lucky.label>
+
+	<bunkerDown.desc>Los asentamientos priorizan fortificar la infraestructura. Los defensores luchan con cautela para proteger los edificios.</bunkerDown.desc>
+	<aggressiveCounterattack.desc>Los asentamientos lo dan todo por repeler a los atacantes. Mayor probabilidad de victoria, pero la infraestructura sufre en el caos.</aggressiveCounterattack.desc>
+	<scorchedEarth.desc>Tus fuerzas luchan con total desprecio por los daños colaterales. Incluso las victorias dejan el asentamiento marcado.</scorchedEarth.desc>
+	<totalMobilization.desc>Todo cuerpo capaz está en las murallas. Poder de combate masivo, pero la moral sufre y la derrota es catastrófica.</totalMobilization.desc>
+	<militaristic.desc>Una sociedad militarista, que busca la gloria en la sangre y la muerte por su causa.</militaristic.desc>
+	<pacifist.desc>Una sociedad pacifista que busca evitar el conflicto siempre que es posible.</pacifist.desc>
+	<authoritarian.desc>Una sociedad autoritaria que busca mantener el control sobre sus miembros por todos los medios necesarios.</authoritarian.desc>
+	<egalitarian.desc>Una sociedad igualitaria es aquella que busca la igualdad entre todos.</egalitarian.desc>
+	<isolationist.desc>Una sociedad aislacionista es aquella que busca permanecer recluida de la política y las interacciones del mundo.</isolationist.desc>
+	<expansionist.desc>Una sociedad expansionista es aquella que busca extender su gloria por todo el reino.</expansionist.desc>
+	<technocratic.desc>Una sociedad tecnocrática es aquella que busca el avance del conocimiento y la mejora continua.</technocratic.desc>
+	<feudal.desc>Una sociedad feudal es aquella que sostiene un contrato feudal, vinculando a la sociedad a un señor a cambio de protección.</feudal.desc>
+	<slaver.desc>Una sociedad centrada en la esclavitud.</slaver.desc>
+	<heavyConscription.desc>Una gran parte de la población es reclutada en las fuerzas militares del asentamiento.</heavyConscription.desc>
+	<volunteerService.desc>La fuerza militar de tus asentamientos es solo de voluntarios.</volunteerService.desc>
+	<aFactionDisarmed.desc>Hay muy pocas fuerzas militares entrenadas en la facción, si es que las hay.</aFactionDisarmed.desc>
+	<slaveArmy.desc>La mayoría de las fuerzas militares de tus asentamientos está compuesta por esclavos o personas en servidumbre forzada.</slaveArmy.desc>
+	<Empty.desc>Haz clic aquí para promulgar esta política.</Empty.desc>
+	<Enacting.desc>Se está redactando una política.</Enacting.desc>
+	<onePeopleUnited.desc>Una sociedad unida por una causa común posee la más fuerte de las voluntades para los deberes más duros.</onePeopleUnited.desc>
+	<diversityWeEmbrace.desc>Una sociedad diversa no tiene grietas sin rellenar que puedan derrumbarla.</diversityWeEmbrace.desc>
+	<royalHeritage.desc>Una sociedad bajo el mando de una familia real está unificada en sus tradiciones.</royalHeritage.desc>
+	<companyUnion.desc>Una corporación que se ha lanzado a crear su propio imperio comercial autosuficiente.</companyUnion.desc>
+	<tradersFederation.desc>Una sociedad en la que quienes tienen el poder son quienes tienen la riqueza para gastar.</tradersFederation.desc>
+	<scienceFoundation.desc>Una sociedad que valora el conocimiento y la exploración de lo desconocido.</scienceFoundation.desc>
+	<minimizeTaxation.desc>Cobra menos impuestos a tus asentamientos. Esto los hará más felices y reducirá el descontento.</minimizeTaxation.desc>
+	<heavyTaxation.desc>Aumenta la cantidad de impuestos sobre tus asentamientos a costa de la felicidad y el descontento.</heavyTaxation.desc>
+	<goodsEconomy.desc>Los asentamientos priorizan enviar bienes físicos en lugar de plata. Los presupuestos de diezmo aumentan significativamente, pero los ingresos de plata disminuyen.</goodsEconomy.desc>
+	<silverStandard.desc>Los asentamientos venden los bienes localmente y remiten moneda en su lugar. Los ingresos de plata aumentan, pero los presupuestos de diezmo se reducen.</silverStandard.desc>
+
+</LanguageData>

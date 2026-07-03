@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Mod Settings -->
+	<FCSettingsModName>Empire Refactored</FCSettingsModName>
+
+	<FCSettingSilverPerResource>Cantidad de plata obtenida por recurso</FCSettingSilverPerResource>
+	<FCSettingDaysBetweenTax>Días entre cobros de impuestos</FCSettingDaysBetweenTax>
+	<FCSettingProductionTitheMod>Modificador del diezmo de producción</FCSettingProductionTitheMod>
+	<FCSettingWorkerCost>Coste por trabajador</FCSettingWorkerCost>
+	<FCSettingMaxSettlementLevel>Nivel máximo de asentamiento</FCSettingMaxSettlementLevel>
+	<FCSettingTimersHeader>Temporizadores</FCSettingTimersHeader>
+	<FCSettingSettlementUpgradeTime>Multiplicador del tiempo de mejora de asentamiento</FCSettingSettlementUpgradeTime>
+	<FCSettingBuildingConstructTime>Multiplicador del tiempo de construcción de edificios</FCSettingBuildingConstructTime>
+	<FCSettingTimerTip>Escala cuánto tarda este temporizador.</FCSettingTimerTip>
+	<FCSettingDisableHostileMilActions>Desactivar acciones militares hostiles</FCSettingDisableHostileMilActions>
+	<FCSettingAntiExploit>Anti-exploit (equipo de mercenarios)</FCSettingAntiExploit>
+	<FCSettingAntiExploitTip>Cuando está activado (por defecto), las armas y la ropa de los mercenarios se biocodifican a su portador, y los mercenarios humanoides reciben un implante acidificador de muerte que disuelve el equipo que llevan puesto al morir, de modo que no puedas conseguir equipo gratis de tus propios escuadrones.</FCSettingAntiExploitTip>
+	<FCSettingRestrictDefenseMapLoot>Restringir botín del mapa de defensa</FCSettingRestrictDefenseMapLoot>
+	<FCSettingRestrictDefenseMapLootTip>Cuando está activado (por defecto), los objetos propios de un asentamiento quedan prohibidos y bloqueados en los mapas de defensa manual, de modo que no puedas llevarte sus objetos libremente. Conservas tus propios personajes y su equipo, recuperas a tus refuerzos caídos y puedes tomar el botín soltado por los atacantes muertos.</FCSettingRestrictDefenseMapLootTip>
+	<FCSettingDisableRandomEvents>Desactivar eventos aleatorios</FCSettingDisableRandomEvents>
+	<FCSettingConfigureEvents>Activa o desactiva eventos individuales más abajo. Los eventos desactivados no se dispararán en ninguna partida.</FCSettingConfigureEvents>
+	<FCSettingsTabGeneral>General</FCSettingsTabGeneral>
+	<FCSettingsTabEvents>Eventos</FCSettingsTabEvents>
+	<FCSettingsTabMilitary>Militar</FCSettingsTabMilitary>
+	<FCSettingsTabRoadBuilder>Constructor de carreteras</FCSettingsTabRoadBuilder>
+	<FCSettingsTabCompat>Compatibilidad</FCSettingsTabCompat>
+	<FCSettingsTabAdvanced>Avanzado</FCSettingsTabAdvanced>
+	<FCSettingAdvancedWarn>Ajuste avanzado de las tasas de deriva de los asentamientos. Los valores por defecto se corresponden con el equilibrio previsto del mod.</FCSettingAdvancedWarn>
+	<FCSettingUnrestBaseGain>Descontento ganado por día (base)</FCSettingUnrestBaseGain>
+	<FCSettingUnrestBaseLost>Descontento perdido por día (base)</FCSettingUnrestBaseLost>
+	<FCSettingLoyaltyBaseGain>Lealtad ganada por día (base)</FCSettingLoyaltyBaseGain>
+	<FCSettingLoyaltyBaseLost>Lealtad perdida por día (base)</FCSettingLoyaltyBaseLost>
+	<FCSettingHappinessBaseGain>Felicidad ganada por día (base)</FCSettingHappinessBaseGain>
+	<FCSettingHappinessBaseLost>Felicidad perdida por día (base)</FCSettingHappinessBaseLost>
+	<FCSettingProsperityDriftRate>Suelo de deriva de prosperidad (puntos/día)</FCSettingProsperityDriftRate>
+	<FCSettingProsperityDriftStep>Paso de deriva de prosperidad (distancia por +1/día)</FCSettingProsperityDriftStep>
+	<FCSettingProductionResearchBase>Base de producción de investigación</FCSettingProductionResearchBase>
+	<FCSettingRoadBuilderDesc>El Constructor de carreteras conecta automáticamente tus asentamientos del Imperio con carreteras usando un algoritmo de Árbol de Expansión Mínima, que se recalcula (con caché) en los siguientes eventos:
+ - cada vez que se funde o se pierde un asentamiento
+ - cuando investigas un nuevo nivel de carreteras
+
+Esto requiere calcular los costes de pathfinding entre muchos pares de asentamientos, lo que puede ser costoso con muchos asentamientos, o con asentamientos muy dispersos.
+
+Por defecto, este cálculo se ejecuta en un hilo en segundo plano para evitar que el juego se congele. Si tienes problemas con los hilos, puedes desactivarlo y, opcionalmente, repartir el cálculo a lo largo de varios ticks.
+
+Repartir el cálculo reducirá el impacto en el rendimiento, pero no se construirá ninguna carretera hasta que el AEM esté completamente construido. Así que cuanto más limites el algoritmo, más tardarán en empezar a construirse tus carreteras.</FCSettingRoadBuilderDesc>
+	<FCSettingEnableAllEvents>Activar todos los eventos</FCSettingEnableAllEvents>
+	<FCSettingDisableEventsWithOptions>Desactivar eventos con opciones</FCSettingDisableEventsWithOptions>
+	<FCSettingBlockEventsDuringChain>Bloquear nuevos eventos durante una cadena activa</FCSettingBlockEventsDuringChain>
+	<FCSettingBlockEventsDuringChainDesc>Mientras una cadena de eventos de varios pasos siga resolviéndose, no dispares un nuevo evento aleatorio aunque el tiempo entre eventos lo permita. Anula el ajuste de frecuencia.</FCSettingBlockEventsDuringChainDesc>
+	<FCSettingEventOptionDelay>Protección contra clics erróneos en opciones de evento</FCSettingEventOptionDelay>
+	<FCSettingEventSilverCostMultiplier>Multiplicador del coste en plata de las opciones de evento</FCSettingEventSilverCostMultiplier>
+	<FCSettingBattleMode>Modo de batalla: </FCSettingBattleMode>
+	<FCBattleModeAuto>Resolución automática</FCBattleModeAuto>
+	<FCBattleModeAutoDesc>Todas las batallas se resuelven automáticamente.</FCBattleModeAutoDesc>
+	<FCBattleModeManual>Manual</FCBattleModeManual>
+	<FCBattleModeManualDesc>Todas las batallas generan un mapa para combate manual.</FCBattleModeManualDesc>
+	<FCBattleModeHybrid>Híbrido</FCBattleModeHybrid>
+	<FCBattleModeHybridDesc>Las batallas se resuelven automáticamente a menos que envíes una caravana a defender.</FCBattleModeHybridDesc>
+	<FCSettingMinMaxMilitaryAction>Días mín./máx. hasta una acción militar (p. ej. asentamientos siendo atacados)</FCSettingMinMaxMilitaryAction>
+	<FCSettingMaxThreatScaling>Escalado máximo de amenaza</FCSettingMaxThreatScaling>
+	<FCSettingDefenderAdvantage>Ventaja del defensor</FCSettingDefenderAdvantage>
+	<FCSettingMaxConcurrentBattleMaps>Máx. de mapas de batalla simultáneos</FCSettingMaxConcurrentBattleMaps>
+	<FCSettingMaxConcurrentBattleMapsTip>Número máximo de mapas de batalla de defensa manual que pueden estar abiertos simultáneamente en todos los asentamientos. Ponlo a 0 para ilimitado. Las batallas adicionales que superen este límite se resolverán automáticamente.</FCSettingMaxConcurrentBattleMapsTip>
+	<FCUnlimited>Ilimitado</FCUnlimited>
+	<FCSettingDefenseMapBaseSize>Tamaño base del mapa de defensa</FCSettingDefenseMapBaseSize>
+	<FCSettingDefenseMapBaseSizeTip>Longitud de borde base (en celdas) de los mapas de batalla de asentamientos defendidos manualmente. Tamaño final = base + (nivel del asentamiento * paso por nivel), acotado entre el mínimo y el máximo de abajo.</FCSettingDefenseMapBaseSizeTip>
+	<FCSettingDefenseMapPerLevelStep>Tamaño del mapa de defensa por nivel</FCSettingDefenseMapPerLevelStep>
+	<FCSettingDefenseMapPerLevelStepTip>Cuántas celdas crece el mapa de defensa por cada nivel de asentamiento por encima del tamaño base.</FCSettingDefenseMapPerLevelStepTip>
+	<FCSettingDefenseMapMinSize>Tamaño mínimo del mapa de defensa</FCSettingDefenseMapMinSize>
+	<FCSettingDefenseMapMinSizeTip>Suelo absoluto (en celdas) para la longitud de borde del mapa de defensa, independientemente de los ajustes de base/paso.</FCSettingDefenseMapMinSizeTip>
+	<FCSettingDefenseMapMaxSize>Tamaño máximo del mapa de defensa</FCSettingDefenseMapMaxSize>
+	<FCSettingDefenseMapMaxSizeTip>Tope absoluto (en celdas) para la longitud de borde del mapa de defensa.</FCSettingDefenseMapMaxSizeTip>
+	<FCSettingEfficiencyDamping>Influencia de la eficiencia en combate (0 = solo PV, 1 = efecto completo en la tirada)</FCSettingEfficiencyDamping>
+	<FCSettingEfficiencyDampingTooltip>Controla cuánto afecta la estadística de eficiencia militar a los resultados de las batallas de resolución automática.
+
+En 0, la eficiencia militar afecta solo al nivel efectivo de ambas fuerzas.
+
+En 1, la eficiencia militar afecta por completo a cada ronda del combate automático. Las fuerzas militares de menor nivel pero mayor eficiencia pueden a menudo vencer a fuerzas de mayor nivel pero menor eficiencia.
+
+Los valores intermedios amortiguan el efecto de la eficiencia militar en el combate automático.</FCSettingEfficiencyDampingTooltip>
+	<FCSettingMercHealRate>Multiplicador de la tasa de curación de mercenarios</FCSettingMercHealRate>
+	<FCSettingMercHealRateTip>Multiplicador sobre la tasa de curación de los mercenarios fuera del mapa. En 1.0 (por defecto), un mercenario del Imperio se cura a aproximadamente la misma tasa diaria que un personaje vanilla en una cama básica atendido con medicina industrial por un médico sin habilidad. Los valores más altos curan más rápido; los más bajos, más lento.</FCSettingMercHealRateTip>
+	<FCSettingMechRepairRate>Tasa de reparación de mecanoides</FCSettingMechRepairRate>
+	<FCSettingMechRepairRateTip>Puntos de vida reparados por tick de curación horario para los mecanoides vinculados fuera del mapa. Los mecanoides usan una vía de reparación distinta de la de mercenarios y animales. En 0, los mecanoides no se reparan automáticamente y deben reemplazarse pagando una vez que están suficientemente dañados.</FCSettingMechRepairRateTip>
+	<FCSettingPsylinkCostMult>Multiplicador del coste de psienlace de unidad</FCSettingPsylinkCostMult>
+	<FCSettingPsylinkCostMultTip>Multiplicador sobre el coste en plata añadido al diseño de una unidad por nivel de psienlace. En 1.0 (por defecto), cada nivel cuesta aproximadamente el valor de un neuroformador de psienlace.</FCSettingPsylinkCostMultTip>
+	<FCSettingMechCostMult>Multiplicador del coste de mecanoides de unidad</FCSettingMechCostMult>
+	<FCSettingMechCostMultTip>Multiplicador sobre el coste en plata añadido al diseño de una unidad de mecanitor por cada mecanoide asignado. En 1.0 (por defecto), cada mecanoide cuesta aproximadamente su valor de mercado.</FCSettingMechCostMultTip>
+	<FCSettingMechlinkCost>Coste de mecanoenlace de unidad</FCSettingMechlinkCost>
+	<FCSettingMechlinkCostTip>Coste fijo en plata añadido al diseño de una unidad por convertirla en mecanitor (el propio mecanoenlace), además de los costes por mecanoide. Por defecto 1000 ~ el valor de un mecanoenlace.</FCSettingMechlinkCostTip>
+	<FCSettingPsycastCostMult>Multiplicador general de coste</FCSettingPsycastCostMult>
+	<FCSettingPsycastCostMultTip>Multiplicador aplicado a todos los costes por punto relacionados con la psilanzación. Ponlo a 0 para que todo sea gratis.</FCSettingPsycastCostMultTip>
+
+	<!-- Compatibility tab -->
+	<FCSettingsCompatNone>No hay parches de compatibilidad compatibles activos.</FCSettingsCompatNone>
+	<FCSettingsCompatVPE>Vanilla Psycasts Expanded</FCSettingsCompatVPE>
+	<FCSettingsCompatVPEDesc>Con VPE activo, los niveles de psienlace en sí son gratuitos. En su lugar, cada punto gastado en el editor de psilanzamientos (psilanzamientos, focos de meditación, mejoras de estadística) se añade al coste de una unidad. Ajusta esos costes por punto aquí.</FCSettingsCompatVPEDesc>
+	<FCSettingVPEBasePsycastCost>Coste base de psilanzamiento</FCSettingVPEBasePsycastCost>
+	<FCSettingVPEBasePsycastCostTip>Coste fijo en plata de cada psilanzamiento elegido, antes de añadir la cantidad por nivel de abajo.</FCSettingVPEBasePsycastCostTip>
+	<FCSettingVPEPerLevelCost>Coste de psilanzamiento por nivel</FCSettingVPEPerLevelCost>
+	<FCSettingVPEPerLevelCostTip>Coste adicional en plata por cada rango (nivel) de psilanzamiento. Un psilanzamiento de rango 3 cuesta la base más tres veces esta cantidad.</FCSettingVPEPerLevelCostTip>
+	<FCSettingVPEFocusCost>Coste de foco de meditación</FCSettingVPEFocusCost>
+	<FCSettingVPEFocusCostTip>Coste en plata de cada tipo de foco de meditación desbloqueado.</FCSettingVPEFocusCostTip>
+	<FCSettingVPEStatPointCost>Coste de punto de estadística</FCSettingVPEStatPointCost>
+	<FCSettingVPEStatPointCostTip>Coste en plata de cada punto de estadística de psilanzador gastado.</FCSettingVPEStatPointCostTip>
+	<FCEmpireMercHealRateStatExplanation>Mercenario del Imperio recuperándose a tasa base</FCEmpireMercHealRateStatExplanation>
+
+	<!-- Auto-resolve casualties + Crushing Defeat -->
+	<FCSettingAutoResolveCasualtiesHeader>Bajas en resolución automática</FCSettingAutoResolveCasualtiesHeader>
+	<FCSettingApplyAutoResolveInjuries>Aplicar heridas y muertes de las batallas resueltas automáticamente</FCSettingApplyAutoResolveInjuries>
+	<FCSettingApplyAutoResolveInjuriesTip>Cuando está activado, las pérdidas abstractas de fuerza de una batalla resuelta automáticamente se convierten en heridas reales (y potencialmente muertes) en los mercenarios participantes. Cuando está desactivado, la resolución automática nunca afecta a los personajes del escuadrón.</FCSettingApplyAutoResolveInjuriesTip>
+	<FCSettingAutoResolveDeathThreshold>Umbral de muerte en resolución automática</FCSettingAutoResolveDeathThreshold>
+	<FCSettingAutoResolveDeathThresholdTip>Si la tasa de bajas del escuadrón está por debajo de este umbral, ningún miembro del escuadrón morirá. En 75% (por defecto), solo los escuadrones que pierdan el 75% o más de su fuerza sufrirán muertes.</FCSettingAutoResolveDeathThresholdTip>
+	<FCSettingAutoResolveMaxDeathFraction>Fracción máxima de muertes en resolución automática</FCSettingAutoResolveMaxDeathFraction>
+	<FCSettingAutoResolveMaxDeathFractionTip>La fracción máxima de bajas que se convierten en muertes. En 50% (por defecto), aproximadamente el 50% de los personajes heridos del escuadrón morirán.</FCSettingAutoResolveMaxDeathFractionTip>
+	<FCSettingCrushingDefeatPenaltyMultiplier>Multiplicador de penalización por derrota aplastante</FCSettingCrushingDefeatPenaltyMultiplier>
+	<FCSettingCrushingDefeatPenaltyMultiplierTip>Multiplica las penalizaciones del lado del asentamiento (prosperidad, felicidad, lealtad, probabilidad de destrucción de edificios) cuando un asentamiento sufre una Derrota Aplastante: una defensa en la que tus fuerzas no lograron infligir una sola baja.</FCSettingCrushingDefeatPenaltyMultiplierTip>
+	<FCSettingOverwhelmingVictoryRewardMultiplier>Multiplicador de recompensa por victoria aplastante</FCSettingOverwhelmingVictoryRewardMultiplier>
+	<FCSettingOverwhelmingVictoryRewardMultiplierTip>Multiplica la bonificación de felicidad/lealtad otorgada al asentamiento de origen del escuadrón ganador tras una Victoria Aplastante: una batalla ganada sin sufrir una sola baja. Ponlo a 0 para desactivar la recompensa (la carta de ambientación sigue apareciendo).</FCSettingOverwhelmingVictoryRewardMultiplierTip>
+	<FCSettingRespectLethalDamageThreshold>Respetar el umbral de daño letal</FCSettingRespectLethalDamageThreshold>
+	<FCSettingRespectLethalDamageThresholdTip>Cuando está activado (por defecto), las heridas de la resolución automática se limitan para que la gravedad acumulada de las heridas se mantenga por debajo del umbral de daño letal de RimWorld y la vía de heridas no pueda matar accidentalmente a un personaje. Desactívalo cuando uses mods que eliminen o relajen esta comprobación.</FCSettingRespectLethalDamageThresholdTip>
+
+	<!-- Squad-first economy sliders -->
+	<FCSettingSquadsHeader>Escuadrones</FCSettingSquadsHeader>
+	<FCSettingMaxSquadSize>Tamaño máximo de escuadrón</FCSettingMaxSquadSize>
+	<FCSettingMaxSquadSizeTip>Tope absoluto de mercenarios por escuadrón. Las plantillas existentes conservan su número de ranuras actual cuando se cambia esto; solo las plantillas recién creadas y las nuevas contrataciones usan el nuevo valor. Las bonificaciones por asentamiento (de edificios/políticas) siguen acumulándose encima.</FCSettingMaxSquadSizeTip>
+	<FCSettingMaxAnimalSubpawns>Máx. de animales acompañantes</FCSettingMaxAnimalSubpawns>
+	<FCSettingMaxAnimalSubpawnsTip>Número máximo de animales acompañantes que puede llevar un único diseño de mercenario. Añadir por encima de esto queda bloqueado; reducirlo nunca elimina animales de los diseños existentes.</FCSettingMaxAnimalSubpawnsTip>
+	<FCSettingMaxAnimalSubpawnsGiddyUpTip>Número máximo de animales acompañantes que puede llevar un único diseño de mercenario. Añadir por encima de esto queda bloqueado; reducirlo nunca elimina animales de los diseños existentes. Con Giddy Up 2, la montura separada de un mercenario no cuenta para este límite.</FCSettingMaxAnimalSubpawnsGiddyUpTip>
+	<FCSettingSquadHireCostMultiplier>Multiplicador del coste de contratación de escuadrón</FCSettingSquadHireCostMultiplier>
+	<FCSettingSquadHireCostMultiplierTip>Multiplicador aplicado al coste total del equipo de una plantilla cuando el jugador contrata un escuadrón nuevo. 1.0 = precio de etiqueta; 0.0 = gratis; los valores más altos encarecen la contratación.</FCSettingSquadHireCostMultiplierTip>
+	<FCSettingSquadUpgradeCostMultiplier>Multiplicador del coste de mejora de escuadrón</FCSettingSquadUpgradeCostMultiplier>
+	<FCSettingSquadUpgradeCostMultiplierTip>Multiplicador aplicado a la diferencia de coste entre el equipamiento actual de un escuadrón contratado y su plantilla de origen cuando el jugador mejora el escuadrón para igualarla.</FCSettingSquadUpgradeCostMultiplierTip>
+	<FCSettingSquadDeploymentCostPercentage>Coste de despliegue de escuadrón</FCSettingSquadDeploymentCostPercentage>
+	<FCSettingSquadDeploymentCostPercentageTip>Porcentaje del valor actual del equipo de un escuadrón facturado en plata cada vez que se despliega (se envía a un mapa del jugador o a una operación ofensiva). Las operaciones defensivas son gratuitas.
+
+El coste se convierte en una factura contra el asentamiento de origen del escuadrón, con vencimiento al expirar el ajuste de duración.
+
+0% desactiva el coste.</FCSettingSquadDeploymentCostPercentageTip>
+	<FCSettingDeploymentBillLifespan>Duración de la factura de despliegue</FCSettingDeploymentBillLifespan>
+	<FCSettingDeploymentBillLifespanTip>Número de días que una factura de coste de despliegue sigue siendo pagable antes de que venza y el asentamiento reciba la penalización por factura atrasada o impagada. Independiente del ciclo de impuestos.</FCSettingDeploymentBillLifespanTip>
+	<FCSettingSquadRestockCostPercentage>Coste de reabastecimiento de escuadrón</FCSettingSquadRestockCostPercentage>
+	<FCSettingSquadRestockCostPercentageTip>Porcentaje del valor de mercado del inventario transportado (munición, medicina, drogas) que un mercenario superviviente consumió realmente en una batalla manual y que se factura en plata para reponerlo. Los objetos se rellenan automáticamente según el equipamiento del escuadrón en cualquier caso.
+
+Solo las batallas manuales consumen inventario; las batallas resueltas automáticamente no generan cargo de reabastecimiento. El coste se convierte en una factura contra el asentamiento de origen del escuadrón, con vencimiento al expirar la duración de la factura de despliegue.
+
+0% desactiva el coste.</FCSettingSquadRestockCostPercentageTip>
+	<FCSettingGeneValueHeader>Valoración de genes</FCSettingGeneValueHeader>
+	<FCSettingGeneValueHelpText>Pesos que controlan cuánto inflan los genes de un xenotipo el coste de una plantilla de mercenario. El factor de coste final es 1 + (suma de las contribuciones ponderadas por gen).</FCSettingGeneValueHelpText>
+	<FCSettingGeneValueWeightMvf>Factor de valor de mercado</FCSettingGeneValueWeightMvf>
+	<FCSettingGeneValueWeightMvfTip>Peso sobre la desviación del marketValueFactor de un gen: los valores &gt; 1 (p. ej. Inmortal, Escupefuego) aumentan el precio; los valores &lt; 1 lo reducen.</FCSettingGeneValueWeightMvfTip>
+	<FCSettingGeneValueWeightMet>Coste metabólico</FCSettingGeneValueWeightMet>
+	<FCSettingGeneValueWeightMetTip>Peso por punto de metabolismo negativo en un gen.</FCSettingGeneValueWeightMetTip>
+	<FCSettingGeneValueWeightArc>Architas</FCSettingGeneValueWeightArc>
+	<FCSettingGeneValueWeightArcTip>Peso por archita requerida por un gen.</FCSettingGeneValueWeightArcTip>
+	<FCSettingGeneValueWeightEffects>Efectos de estadística y capacidad</FCSettingGeneValueWeightEffects>
+	<FCSettingGeneValueWeightEffectsTip>Peso sobre los factores de estadística ponderados por categoría, las desviaciones de estadística, los modificadores de capacidad y las aptitudes de habilidad de un gen. Las estadísticas de categoría de combate cuentan más; las estadísticas sociales y las categorías desconocidas no cuentan nada.</FCSettingGeneValueWeightEffectsTip>
+	<FCSettingGeneValueWeightPain>Modificador de dolor</FCSettingGeneValueWeightPain>
+	<FCSettingGeneValueWeightPainTip>Peso sobre el cambio del factor de dolor de un gen. La reducción de dolor sube el precio, y viceversa.</FCSettingGeneValueWeightPainTip>
+	<FCSettingGeneValueWeightDmgResist>Resistencia al daño</FCSettingGeneValueWeightDmgResist>
+	<FCSettingGeneValueWeightDmgResistTip>Peso sobre los factores de tipo de daño de un gen. La resistencia sube el precio, y viceversa.</FCSettingGeneValueWeightDmgResistTip>
+	<FCSettingGeneValueFactorUnlimited>Factor de gen sin tope</FCSettingGeneValueFactorUnlimited>
+	<FCSettingGeneValueFactorUnlimitedTip>Cuando está activado (por defecto), el factor de coste del xenotipo no tiene límite superior. Desactívalo para acotar el factor final en un máximo configurable.</FCSettingGeneValueFactorUnlimitedTip>
+	<FCSettingGeneValueMaxFactor>Factor máximo de gen</FCSettingGeneValueMaxFactor>
+	<FCSettingGeneValueMaxFactorTip>Techo absoluto del factor de coste del xenotipo cuando la opción sin tope está desactivada. El multiplicador de coste aplicado al coste base de xenotipo de una plantilla de unidad nunca superará este valor.</FCSettingGeneValueMaxFactorTip>
+	<FCSettingMinMaxRandomEvent>Días mín./máx. hasta un evento aleatorio</FCSettingMinMaxRandomEvent>
+	<FCSettingShowSettleConfirm>Mostrar confirmación al fundar asentamientos</FCSettingShowSettleConfirm>
+	<FCSettingUseThreadedRoadComputation>Usar cálculo de carreteras con hilos</FCSettingUseThreadedRoadComputation>
+	<FCSettingUseThreadedRoadComputationDesc>Calcula las rutas de carreteras en un hilo en segundo plano para mejor rendimiento. Desactiva esto si tienes problemas con la construcción de carreteras.</FCSettingUseThreadedRoadComputationDesc>
+	<FCSettingEdgesPerRoadTick>Aristas por tick de carretera</FCSettingEdgesPerRoadTick>
+	<FCSettingEdgesPerRoadTickTip>Cuántas aristas del grafo de carreteras procesar por tick al calcular en el hilo principal. Ponlo a 0 para ilimitado (lo más rápido, pero puede causar tirones).</FCSettingEdgesPerRoadTickTip>
+	<FCSettingFlushRoadCache>Vaciar caché de rutas de carretera</FCSettingFlushRoadCache>
+	<FCSettingEnableDebugLogging>Activar registro detallado</FCSettingEnableDebugLogging>
+
+	<FCSettingResetButton>Restablecer todos los ajustes</FCSettingResetButton>
+	<FCSettingResetSection>Restablecer sección a valores por defecto</FCSettingResetSection>
+	<FCSettingResetSectionTag>Restablecer la sección {0} a valores por defecto</FCSettingResetSectionTag>
+	<FCOpenPatchNotes>Abrir ventana de notas del parche</FCOpenPatchNotes>
+
+	<FCMedievalTechOnly>Solo tecnología medieval</FCMedievalTechOnly>
+	<FCMirrorPlayerTechLevel>Reflejar el nivel tecnológico de la facción del jugador</FCMirrorPlayerTechLevel>
+	<FCMirrorPlayerTechLevelDesc>Cuando está activado, el nivel tecnológico de la facción del Imperio se fija al nivel tecnológico de la facción del jugador. Los proyectos de investigación ya no avanzan el nivel tecnológico del Imperio.</FCMirrorPlayerTechLevelDesc>
+
+	<!-- Difficulty Settings -->
+	<FCSettingEmpireDifficulty>Dificultad del Imperio</FCSettingEmpireDifficulty>
+	<FCDifficultyPeaceful>Pacífica</FCDifficultyPeaceful>
+	<FCDifficultyCommunityBuilder>Constructor de comunidades</FCDifficultyCommunityBuilder>
+	<FCDifficultyAdventureStory>(Por defecto) Historia de aventuras</FCDifficultyAdventureStory>
+	<FCDifficultyStriveToSurvive>Luchar por sobrevivir</FCDifficultyStriveToSurvive>
+	<FCDifficultyBloodAndDust>Sangre y polvo</FCDifficultyBloodAndDust>
+	<FCDifficultyLosingIsFun>Perder es divertido</FCDifficultyLosingIsFun>
+	<FCDifficultyCustom>Personalizada</FCDifficultyCustom>
+	<FCDifficultyPeacefulDesc>Para jugadores que quieren una experiencia relajada de gestión de imperio con generosas ganancias de recursos y cobro de impuestos frecuente.</FCDifficultyPeacefulDesc>
+	<FCDifficultyCommunityBuilderDesc>Dificultad fácil con buenas ganancias de recursos y frecuencia de impuestos moderada.</FCDifficultyCommunityBuilderDesc>
+	<FCDifficultyAdventureStoryDesc>Dificultad equilibrada para la mayoría de los jugadores. Ganancias de recursos moderadas con intervalos de impuestos razonables.</FCDifficultyAdventureStoryDesc>
+	<FCDifficultyStriveToSurviveDesc>Dificultad desafiante con recursos reducidos e intervalos de impuestos más largos.</FCDifficultyStriveToSurviveDesc>
+	<FCDifficultyBloodAndDustDesc>Dificultad difícil con recursos limitados y cobro de impuestos poco frecuente.</FCDifficultyBloodAndDustDesc>
+	<FCDifficultyLosingIsFunDesc>Dificultad brutal para masoquistas. Recursos mínimos e intervalos de impuestos muy largos.</FCDifficultyLosingIsFunDesc>
+	<FCDifficultyCustomDesc>Personaliza todos los ajustes del imperio manualmente.</FCDifficultyCustomDesc>
+
+	<FCModVersion>Versión del mod Empire: {0}</FCModVersion>
+
+	<!-- Warnings -->
+	<FCResetCapitalLocationWarning>Por favor, restablece la ubicación de tu capital. Si sigues viendo esto tras restablecerla, por favor, repórtalo.</FCResetCapitalLocationWarning>
+	<FCTaxMapNotSetWarning>No se ha fijado tu mapa de impuestos. Por favor, fíjalo usando el menú de facción.</FCTaxMapNotSetWarning>
+	<FCAutoResolveDisabledWarning>El modo de batalla Manual o Híbrido está activo. Si encuentras errores de generación de mapas, vuelve a Resolución automática.</FCAutoResolveDisabledWarning>
+	<FCManualDefenseWarningLabel>Defensa manual de asentamientos</FCManualDefenseWarningLabel>
+	<FCManualDefenseWarningDesc>Los modos de batalla Manual e Híbrido generan mapas para la defensa de asentamientos. Si tienes problemas, cambia al modo de Resolución automática en los ajustes.</FCManualDefenseWarningDesc>
+	<FCTaxDeliveryNotSetWarning>No se ha fijado ninguna ubicación de entrega de impuestos. Fija un mapa de entrega de impuestos o activa la entrega de impuestos en un punto de impuestos.</FCTaxDeliveryNotSetWarning>
+	<FCCapitalNotSetWarning>No hay ninguna capital del imperio establecida. Usa 'Fijar capital' en el menú del Imperio o construye y activa una Sede de la capital.</FCCapitalNotSetWarning>
+
+</LanguageData>

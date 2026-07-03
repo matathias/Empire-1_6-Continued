@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<EC_Settlement.label>Asentamiento</EC_Settlement.label>
+	<EC_Construction.label>Construcción</EC_Construction.label>
+	<EC_Economy.label>Economía</EC_Economy.label>
+	<EC_Policy.label>Política</EC_Policy.label>
+	<EC_Military.label>Militar</EC_Military.label>
+	<EC_Social.label>Social</EC_Social.label>
+	<EC_Other.label>Otros</EC_Other.label>
+
+</LanguageData>

@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Attack/Raid/Capture Actions -->
+	<FCAttackSettlement>Atacar asentamiento</FCAttackSettlement>
+	<FCCaptureSettlement>Capturar asentamiento</FCCaptureSettlement>
+	<FCEnslavePopulation>Esclavizar población</FCEnslavePopulation>
+	<FCRaidSettlement>Saquear asentamiento</FCRaidSettlement>
+	<FCCaptureFloatMenuOption>Intentar capturar usando el ejército de {0} (nivel {1}).</FCCaptureFloatMenuOption>
+	<FCRaidFloatMenuOption>Intentar saquear usando el ejército de {0} (nivel {1}).</FCRaidFloatMenuOption>
+	<FCEnslaveFloatMenuOption>Intentar esclavizar usando el ejército de {0} (nivel {1}).</FCEnslaveFloatMenuOption>
+
+	<!-- Attack Notifications -->
+	<FCSettlementAboutToBeAttacked>{0} está a punto de ser atacado por la facción {1}.</FCSettlementAboutToBeAttacked>
+	<FCBattleForecast>Pronóstico de batalla:\nPoder enemigo: {0} (eficiencia: x{1})\nPoder defensivo: {2} (eficiencia: x{3})\nProbabilidad estimada de victoria: {4}%</FCBattleForecast>
+	<FCSettlementInDanger>Asentamiento en peligro</FCSettlementInDanger>
+	<FCSettlementMilitaryForcesRaiding>Las fuerzas militares de {0} están saqueando {1}</FCSettlementMilitaryForcesRaiding>
+	<FCSettlementMilitaryForcesEnslave>Las fuerzas militares de {0} están intentando esclavizar a la población de {1}</FCSettlementMilitaryForcesEnslave>
+	<FCSettlementMilitaryForcesCapturing>Las fuerzas militares de {0} están intentando capturar {1}</FCSettlementMilitaryForcesCapturing>
+	<FCSettlementUnderAttack>Ese asentamiento está bajo ataque</FCSettlementUnderAttack>
+	<FCSettlementNotBeingAttacked>El asentamiento no está bajo ataque</FCSettlementNotBeingAttacked>
+	<FCTargetAlreadyBeingAttacked>El objetivo ya está siendo atacado</FCTargetAlreadyBeingAttacked>
+
+	<!-- Military Sent Notifications -->
+	<FCMilitarySent>Ejército enviado</FCMilitarySent>
+	<FCMilitaryAction>Acción militar</FCMilitaryAction>
+	<FCMilitarySentToDefend>Las fuerzas militares de {0} han sido enviadas a defender {1}</FCMilitarySentToDefend>
+	<FCMilitaryAlreadyAssigned>La fuerza militar ya está asignada.</FCMilitaryAlreadyAssigned>
+	<FCForeignMilitarySwitch>Las fuerzas militares de {0} han sido enviadas a defender {1}. Tienen una fuerza efectiva de {2}</FCForeignMilitarySwitch>
+	<FCMilitarySentCapture>Las fuerzas militares de {0} han sido enviadas a capturar {1}</FCMilitarySentCapture>
+	<FCMilitarySentRaid>Las fuerzas militares de {0} han sido enviadas a saquear {1}</FCMilitarySentRaid>
+	<FCMilitarySentEnslave>Las fuerzas militares de {0} han sido enviadas a esclavizar a la población de {1}</FCMilitarySentEnslave>
+	<FCMilitaryForcesReorganizing>Las fuerzas militares de {0} se están reorganizando tras su última misión.</FCMilitaryForcesReorganizing>
+	<FCSquadTraveling>El escuadrón {0} está regresando a {1} tras su última misión.</FCSquadTraveling>
+	<FCSquadCooldown>El escuadrón {0} se está reorganizando en {1} tras su última misión.</FCSquadCooldown>
+	<FCTravelingSquadLabel>Escuadrón en tránsito</FCTravelingSquadLabel>
+	<FCMilitaryCooldown>Las fuerzas militares de {0} están listas para volver a usarse</FCMilitaryCooldown>
+	<FCNoFactionForMilitary>¡No puedes crear un ejército sin una facción!</FCNoFactionForMilitary>
+
+	<!-- Raid/Capture Results -->
+	<FCRaidLoot>Botín del saqueo</FCRaidLoot>
+	<FCRaidEnemySettlementSuccess>El saqueo de {0} se ha completado con éxito</FCRaidEnemySettlementSuccess>
+	<FCRaidFailure>Saqueo fallido</FCRaidFailure>
+	<FCRaidEnemySettlementFailure>El saqueo de {0} ha terminado en fracaso</FCRaidEnemySettlementFailure>
+	<FCCaptureEnemySettlementSuccess>Las fuerzas militares de {0} han capturado con éxito {1}. Debido al nivel tecnológico de la facción anterior, el nivel inicial del nuevo asentamiento es {2}.</FCCaptureEnemySettlementSuccess>
+	<FCCaptureEnemySettlementFailure>Las fuerzas militares de {0} no han logrado capturar {1}</FCCaptureEnemySettlementFailure>
+	<FCCaptureBlockedFallbackToRaid>Las fuerzas militares de {0} arrollaron a los defensores de {1}, pero no pudieron neutralizar el asentamiento de forma permanente. El escuadrón saqueó los suministros que pudo y está regresando a casa.</FCCaptureBlockedFallbackToRaid>
+	<FCOverwhelmingVictory>Victoria aplastante</FCOverwhelmingVictory>
+	<FCOverwhelmingVictoryDesc>Tu fuerza militar derrotó al enemigo sin sufrir una sola baja.</FCOverwhelmingVictoryDesc>
+	<FCOverwhelmingVictoryRewardLine>La noticia de la victoria llegó a {0}, otorgando +{1} de felicidad y +{2} de lealtad.</FCOverwhelmingVictoryRewardLine>
+	<FCCrushingDefeat>Derrota aplastante</FCCrushingDefeat>
+	<FCCrushingDefeatDesc>Tu fuerza militar ha sido derrotada sin infligir una sola baja. El escuadrón ha sufrido pérdidas devastadoras y necesitará un tiempo considerable para recuperarse.</FCCrushingDefeatDesc>
+
+	<!-- Defense -->
+	<FCDefenseSuccessful>Defensa exitosa</FCDefenseSuccessful>
+	<FCDefenseSuccessfulFull>¡La defensa de {0} fue un éxito!</FCDefenseSuccessfulFull>
+	<FCDefenseFailure>Defensa fallida</FCDefenseFailure>
+	<FCDefenseFailureFull>La defensa de nuestro asentamiento, {0}, ha sido aplastada.</FCDefenseFailureFull>
+	<FCDefenseBattleOverLeaveMap>La batalla ha terminado. Reúne a tus fuerzas y abandona el asentamiento cuando estés listo.</FCDefenseBattleOverLeaveMap>
+	<!-- Condensed multi-attack defense letter -->
+	<FCDefenseMultiAttackHeader>{0} resistió {1} ataques distintos en esta batalla:</FCDefenseMultiAttackHeader>
+	<FCDefenseAttackRepelledEntry>  - {0}: ataque repelido.</FCDefenseAttackRepelledEntry>
+	<FCDefenseAttackPenaltiesEntry>{0} - penalizaciones sufridas:</FCDefenseAttackPenaltiesEntry>
+	<FCReformCaravanBattleStillActive>La batalla no termina hasta que todos los hostiles hayan muerto o abandonado el mapa.</FCReformCaravanBattleStillActive>
+	<FCManualBattleStarted>Batalla por {0}</FCManualBattleStarted>
+	<FCManualBattleStartedDesc>¡{0} está bajo ataque de {1}! Toma el mando de las defensas del asentamiento.</FCManualBattleStartedDesc>
+	<FCAutoBattleCommenced>Batalla iniciada en {0}</FCAutoBattleCommenced>
+	<FCAutoBattleCommencedDesc>Los defensores de {0} han entrado en combate con fuerzas de {1}. El asentamiento permanece comprometido militarmente hasta que la batalla se resuelva.</FCAutoBattleCommencedDesc>
+
+	<!-- Per-round auto-resolve battle (BattleProgressWindow + archived report viewer) -->
+	<FCBattleProgressWindowTitle>Batalla por {0}</FCBattleProgressWindowTitle>
+	<FCBattleProgressNoBattle>No hay ninguna batalla en curso.</FCBattleProgressNoBattle>
+	<FCBattlePhasePreparing>Preparándose para la batalla</FCBattlePhasePreparing>
+	<FCBattlePhaseEngaged>En combate</FCBattlePhaseEngaged>
+	<FCBattlePhaseRolling>Ronda {0} resuelta</FCBattlePhaseRolling>
+	<FCBattlePhaseResolved>Batalla concluida</FCBattlePhaseResolved>
+	<FCBattleSideAttacker>Atacante</FCBattleSideAttacker>
+	<FCBattleSideDefender>Defensor</FCBattleSideDefender>
+	<FCBattleForceLine>Fuerza: {0} / {1}</FCBattleForceLine>
+	<FCBattleEfficiencyLine>Eficiencia: x{0}</FCBattleEfficiencyLine>
+	<FCBattleColRound>Ronda</FCBattleColRound>
+	<FCBattleColAttacker>Atacante</FCBattleColAttacker>
+	<FCBattleColDefender>Defensor</FCBattleColDefender>
+	<FCBattleColRollRaw>Bruto</FCBattleColRollRaw>
+	<FCBattleColRollFinal>Final</FCBattleColRollFinal>
+	<FCBattleColForce>Fuerza</FCBattleColForce>
+	<FCBattleNextRoundIn>Próxima ronda en {0}s</FCBattleNextRoundIn>
+	<FCBattleProgressGizmoLabel>Batalla en curso</FCBattleProgressGizmoLabel>
+	<FCBattleProgressGizmoDesc>Abre la ventana de progreso de batalla en directo para este asentamiento.</FCBattleProgressGizmoDesc>
+
+	<!-- Battle report archive (post-battle letter button + military Battle Reports tab) -->
+	<FCBattleReportButton>Ver informe de batalla</FCBattleReportButton>
+	<FCBattleReportButtonNumbered>Ver informe de batalla (ataque {0})</FCBattleReportButtonNumbered>
+	<FCBattleReportNoRoundDetail>Batalla manual; no se registró detalle por rondas.</FCBattleReportNoRoundDetail>
+	<FCBattleReportEvicted>Ese informe de batalla ha sido eliminado del archivo.</FCBattleReportEvicted>
+	<FCMilitaryTabBattleReports>Informes de batalla</FCMilitaryTabBattleReports>
+	<FCBattleArchiveCount>{0} informes</FCBattleArchiveCount>
+	<FCBattleArchiveColKind>Tipo</FCBattleArchiveColKind>
+	<FCBattleArchiveColTarget>Facción contraria</FCBattleArchiveColTarget>
+	<FCBattleArchiveColOurForce>Nuestra fuerza</FCBattleArchiveColOurForce>
+	<FCBattleArchiveColDate>Fecha</FCBattleArchiveColDate>
+	<FCBattleArchiveColOutcome>Resultado</FCBattleArchiveColOutcome>
+	<FCBattleArchiveForceSuffix> (Fuerza: {0})</FCBattleArchiveForceSuffix>
+	<FCBattleArchiveEmpty>Aún no se ha registrado ninguna batalla.</FCBattleArchiveEmpty>
+	<FCBattleArchiveOutcomeVictory>Victoria</FCBattleArchiveOutcomeVictory>
+	<FCBattleArchiveOutcomeOverwhelmingVictory>Victoria aplastante</FCBattleArchiveOutcomeOverwhelmingVictory>
+	<FCBattleArchiveOutcomeDefeat>Derrota</FCBattleArchiveOutcomeDefeat>
+	<FCBattleArchiveOutcomeCrushingDefeat>Derrota aplastante</FCBattleArchiveOutcomeCrushingDefeat>
+	<FCBattleArchiveSettingsHeader>Archivo de batallas</FCBattleArchiveSettingsHeader>
+	<FCBattleArchiveMaxEntriesLabel>Máximo de informes de batalla archivados</FCBattleArchiveMaxEntriesLabel>
+	<FCBattleArchiveMaxEntriesTip>Cuántos de los informes de batalla más recientes conservar. Los informes más antiguos se descartan al alcanzar el límite. Las cartas que hagan referencia a un informe descartado mostrarán un mensaje de "ya no disponible" al hacer clic.</FCBattleArchiveMaxEntriesTip>
+	<FCBattleArchiveUnlimited>Informes de batalla ilimitados</FCBattleArchiveUnlimited>
+	<FCBattleArchiveUnlimitedTip>Conserva todos los informes de batalla en lugar de limitar el archivo. Los informes antiguos nunca se descartan. Puede aumentar el tamaño de tu partida guardada en una partida larga.</FCBattleArchiveUnlimitedTip>
+	<FCNewWaveArrived>Nueva oleada en {0}</FCNewWaveArrived>
+	<FCNewWaveArrivedDesc>¡Una nueva oleada de atacantes de {1} ha llegado a {0}! Puede que vengan refuerzos de camino.</FCNewWaveArrivedDesc>
+	<FCDefendColony>Defender</FCDefendColony>
+	<FCDefendColonyDesc>Defiende tu asentamiento manualmente</FCDefendColonyDesc>
+	<FCDefendSettlement>Fijar fuerza defensora</FCDefendSettlement>
+	<FCSettlementDefendingInformation>Defendiendo el asentamiento: {0} - Poder {1} - Victoria: {2}%</FCSettlementDefendingInformation>
+	<FCResetToHomeSettlement>Restablecer a la defensa del asentamiento de origen - Poder {0} - Victoria: {1}%</FCResetToHomeSettlement>
+	<FCChangeDefendingForce>Cambiar fuerza defensora</FCChangeDefendingForce>
+	<FCMilitaryAlreadyDefendingSettlement>Esa fuerza militar ya está defendiendo el objetivo</FCMilitaryAlreadyDefendingSettlement>
+	<FCDefendingMilitaryReset>La fuerza militar defensora se ha restablecido como fuerza de defensa del asentamiento</FCDefendingMilitaryReset>
+	<FCExternalDefenderAssigned>{0} está defendiendo ahora este asentamiento.</FCExternalDefenderAssigned>
+	<FCExternalDefenderAutoAssigned>{0} ha sido asignado automáticamente para defender.</FCExternalDefenderAutoAssigned>
+	<FCToggleAutoDefend>Defender automáticamente los asentamientos atacados: {0}</FCToggleAutoDefend>
+	<FCAutoDefendWarning>¡Ten en cuenta que esta opción no es lo mismo que la opción de resolución automática de batallas del menú de ajustes!</FCAutoDefendWarning>
+	<FCAutoBattleEnabledNoManualFight>El modo de resolución automática está activado. Cambia a Manual o Híbrido en los ajustes para librar las batallas manualmente.</FCAutoBattleEnabledNoManualFight>
+	<FCHybridBattleEnabledNoManualFight>El modo de batalla híbrido está activado. Envía una caravana para defender este asentamiento manualmente.</FCHybridBattleEnabledNoManualFight>
+	<FCSettlementTypeNoManualBattle>Este tipo de asentamiento no admite batallas manuales. Todas las batallas aquí se resuelven automáticamente.</FCSettlementTypeNoManualBattle>
+	<FCSettlementAttackHybridHint>Envía una caravana a este asentamiento antes del ataque para luchar manualmente.</FCSettlementAttackHybridHint>
+
+	<!-- Raid Damage -->
+	<FCDefenseFailurePenaltiesHeader>Penalizaciones sufridas:</FCDefenseFailurePenaltiesHeader>
+	<FCDefenseFailureProsperityLoss>Prosperidad: -{0}</FCDefenseFailureProsperityLoss>
+	<FCDefenseFailureHappinessLoss>Felicidad: -{0}</FCDefenseFailureHappinessLoss>
+	<FCDefenseFailureLoyaltyLoss>Lealtad: -{0}</FCDefenseFailureLoyaltyLoss>
+	<FCDefenseFailureBuildingsProtected>Tus políticas protegieron los edificios de la destrucción.</FCDefenseFailureBuildingsProtected>
+	<FCBuildingDestroyedInRaid>{0} ha sido destruido en el saqueo.</FCBuildingDestroyedInRaid>
+	<FCSettlementDeleveledRaid>El nivel del asentamiento ha disminuido en uno.</FCSettlementDeleveledRaid>
+	<FCScorchedEarthCollateralTitle>Daños colaterales</FCScorchedEarthCollateralTitle>
+	<FCScorchedEarthCollateralHeader>La defensa de {0} fue un éxito, pero la doctrina de Tierra Quemada causó daños colaterales:</FCScorchedEarthCollateralHeader>
+	<FCInjuredCaravanMembersReturning>{0} miembro(s) herido(s) de la caravana están siendo transportados a casa. Llegada estimada: {1} días.</FCInjuredCaravanMembersReturning>
+
+	<!-- Battle Ending -->
+	<FCEndingAttack>Finalizando ataque...</FCEndingAttack>
+	<FCErrorEndingAttack>Error al finalizar el ataque</FCErrorEndingAttack>
+	<FCErrorEndingAttackDescription>Hubo un problema al finalizar el ataque. Lo más probable es que el mapa no se eliminara correctamente.
+
+Por favor, informa de esto si no recuperas a los colonos que enviaste a defender, o si tu ejército no sale nunca del periodo de reorganización.</FCErrorEndingAttackDescription>
+
+	<!-- Deployment -->
+	<FCSquadDeployLockedHappiness>{0} está demasiado descontento para desplegar escuadrones o lanzar saqueos (la felicidad está por debajo del {1}%). Mejora primero su felicidad.</FCSquadDeployLockedHappiness>
+	<FCSquadDeployLockedLoyalty>{0} es demasiado desleal para desplegar escuadrones o lanzar saqueos (la lealtad está por debajo del {1}%). Mejora primero su lealtad.</FCSquadDeployLockedLoyalty>
+	<FCSquadDeployLockedUnrest>{0} está demasiado revuelto para desplegar escuadrones o lanzar saqueos (el descontento está por encima del {1}%). Reduce primero su descontento.</FCSquadDeployLockedUnrest>
+	<FCNotEnoughSilverToDeploySquad>¡No tienes suficiente plata para volver a desplegar ese escuadrón!</FCNotEnoughSilverToDeploySquad>
+	<FCXDaysToRedeploy>Quedan {0} días hasta que se renueve la capacidad de volver a desplegar escuadrones</FCXDaysToRedeploy>
+	<FCDropPodDeploymentOption>Cápsula de descenso</FCDropPodDeploymentOption>
+	<FCWalkIntoMapDeploymentOption>Entrar a pie al mapa</FCWalkIntoMapDeploymentOption>
+	<FCDropPodDeploymentOptionUnavailableReasonMedieval> desactivado porque "Solo tecnología medieval" está activado</FCDropPodDeploymentOptionUnavailableReasonMedieval>
+	<FCDropPodDeploymentOptionUnavailableReasonTech> no disponible sin la investigación de {0}</FCDropPodDeploymentOptionUnavailableReasonTech>
+	<FCErrorDropPodResearchCouldNotBeFound>¡No se pudo encontrar la investigación de cápsulas de descenso! ¿Estás usando una lista de mods que la elimina?</FCErrorDropPodResearchCouldNotBeFound>
+	<FCMilitaryTriedDeployingToSettlementFC>¡No puedes desplegar tu ejército en otro asentamiento!</FCMilitaryTriedDeployingToSettlementFC>
+	<FCSelectMilitaryMovePosition>Selecciona posición de movimiento</FCSelectMilitaryMovePosition>
+	<FCSelectDeploymentPosition>Selecciona posición de despliegue</FCSelectDeploymentPosition>
+	<FCSelectedPosOutOfBounds>¡La posición que has seleccionado está fuera de los límites de este mapa!</FCSelectedPosOutOfBounds>
+	<FCSelectedPosTooCloseToEdge>¡La posición que has seleccionado está demasiado cerca del borde del mapa!</FCSelectedPosTooCloseToEdge>
+	<FCDeploymentSuccessLabel>Ejército desplegado</FCDeploymentSuccessLabel>
+	<FCDeploymentSuccessDesc>El escuadrón {0} de {1} ha sido desplegado en {2}.\n\nEl despliegue costó {3} de plata. Se ha emitido una factura por este importe que debe pagarse en {4} días.</FCDeploymentSuccessDesc>
+	<FCDeploymentSuccessDescNoBill>El escuadrón {0} de {1} ha sido desplegado en {2}.</FCDeploymentSuccessDescNoBill>
+	<FCMilitaryPawnsLeavingTimeOut>¡Un escuadrón se marcha porque se le acabó el tiempo disponible!</FCMilitaryPawnsLeavingTimeOut>
+	<FCDeployCost>Coste de despliegue: ${0}</FCDeployCost>
+
+	<!-- Battle Commands -->
+	<FCCommandAttack>Atacar</FCCommandAttack>
+	<FCAttackSuccess>{0} están cargando ahora contra el enemigo.</FCAttackSuccess>
+	<FCCommandMove>Mover</FCCommandMove>
+	<FCMoveSuccess>{0} se mueven a la posición y esperan.</FCMoveSuccess>
+	<FCCommandLeave>Retirarse</FCCommandLeave>
+	<FCLeaveSuccess>{0} están abandonando el mapa. {1} muertos.</FCLeaveSuccess>
+
+	<!-- Fire Support -->
+	<FCFireSupportSelectPosition>Selecciona posición de artillería</FCFireSupportSelectPosition>
+	<FCFireSupportNameWillBeFiredOnPosition>¡{0} disparará en breve sobre la posición marcada!</FCFireSupportNameWillBeFiredOnPosition>
+	<FCFireSupportNoSilver>¡No tienes suficiente plata para pagar el ataque!</FCFireSupportNoSilver>
+
+	<!-- Deployment -->
+	<FCDeploySecondarySquad>Desplegar escuadrón secundario - ${0} de plata</FCDeploySecondarySquad>
+	<FCNotEnoughSilverFireSupport>¡Te falta la cantidad de plata necesaria para usar esa opción de apoyo de fuego!</FCNotEnoughSilverFireSupport>
+	<FCFireSupportCooldown>Esa opción de apoyo de fuego está en reutilización durante otros {0}</FCFireSupportCooldown>
+	<FCRequiresArtilleryOutpost>El asentamiento requiere construir un puesto de artillería para usar esa opción de apoyo de fuego</FCRequiresArtilleryOutpost>
+	<FCRequiresHigherMilLevel>¡El asentamiento requiere un nivel militar más alto para usar ese apoyo de fuego!</FCRequiresHigherMilLevel>
+	<FCNoFireSupportsMade>No hay apoyos de fuego creados actualmente. Crea uno</FCNoFireSupportsMade>
+	<FCAssaultBeginning>¡El asalto está comenzando!</FCAssaultBeginning>
+
+	<!-- Military Table -->
+	<FCMilitary>Ejército</FCMilitary>
+	<FCMilitaryLevel>Nivel mil.</FCMilitaryLevel>
+	<FCMilitaryTableMilitaryBudget>Presupuesto militar</FCMilitaryTableMilitaryBudget>
+	<FCMilitaryTableBaseLevel>Nivel base</FCMilitaryTableBaseLevel>
+	<FCMilitaryTableLevelCap>Límite de nivel</FCMilitaryTableLevelCap>
+	<FCMilitaryTableAvailable>¿Ejército disponible?</FCMilitaryTableAvailable>
+	<FCMilitaryTableUnderAttack>Bajo ataque</FCMilitaryTableUnderAttack>
+	<FCMilitaryTableFireSupport>Apoyo de fuego</FCMilitaryTableFireSupport>
+	<FCNoValidMilitaries>No hay ejércitos válidos que usar.</FCNoValidMilitaries>
+	<FCAvailable>Disponible</FCAvailable>
+	<FCCurrentDefender>Defensor actual</FCCurrentDefender>
+	<FCShortMilitary>Mil.</FCShortMilitary>
+	<FCPower>Poder</FCPower>
+	<FCUnsupportedMilJobError>El trabajo elegido para esta FloatMenuOption no tiene ninguna clave de traducción registrada en AddButtonsToNonEmpireObjects.MilJobOptionStringsDic</FCUnsupportedMilJobError>
+	<FCDebugRemoveAllCommand>[Depuración] Eliminar todo</FCDebugRemoveAllCommand>
+
+	<!-- Military Card UI -->
+	<FCMilSquadPrefix>Escuadrón</FCMilSquadPrefix>
+	<FCMilFireSupportCooldownShort>Apoyo de fuego</FCMilFireSupportCooldownShort>
+	<FCMilitarySettlementCount>{0} asentamientos</FCMilitarySettlementCount>
+	<FCNoMilitarySettlements>No hay asentamientos con componentes militares</FCNoMilitarySettlements>
+	<FCMilStatusUnderAttack>BAJO ATAQUE</FCMilStatusUnderAttack>
+	<FCMilStatusDeployed>Desplegado</FCMilStatusDeployed>
+	<FCMilStatusRaiding>Saqueando</FCMilStatusRaiding>
+	<FCMilStatusEnslaving>Esclavizando</FCMilStatusEnslaving>
+	<FCMilStatusCapturing>Capturando</FCMilStatusCapturing>
+	<FCMilStatusDefending>Defendiendo</FCMilStatusDefending>
+	<FCMilStatusDefendingTarget>Defendiendo {0}</FCMilStatusDefendingTarget>
+	<FCMilStatusTraveling>Regresando a casa</FCMilStatusTraveling>
+	<FCMilStatusBusy>Ocupado</FCMilStatusBusy>
+	<FCMilStatusReady>Listo</FCMilStatusReady>
+	<FCMilStatusNoSquad>Sin escuadrón</FCMilStatusNoSquad>
+	<FCMilAutoDefend>Defensa automática</FCMilAutoDefend>
+	<FCMilBtnSetSquadTip>Asigna un escuadrón militar a este asentamiento</FCMilBtnSetSquadTip>
+	<FCMilBtnDeployTip>Despliega el escuadrón asignado a una ubicación del mapa</FCMilBtnDeployTip>
+	<FCMilBtnDeployTipWithCost>Despliega el escuadrón asignado a una ubicación del mapa. Generará una factura de {0} de plata, con vencimiento en {1} días.</FCMilBtnDeployTipWithCost>
+	<FCMilBtnResetTip>Restablecer y regenerar los miembros del escuadrón</FCMilBtnResetTip>
+	<FCMilBtnFireSupportTip>Solicitar apoyo de fuego de artillería</FCMilBtnFireSupportTip>
+	<FCMilBtnAutoDefendTip>Envía automáticamente las fuerzas de este asentamiento a defender otros asentamientos bajo ataque</FCMilBtnAutoDefendTip>
+	<FCMilAutoDefendDisabled>El nivel militar de este asentamiento es demasiado bajo para la defensa automática. Mejora el asentamiento para aumentar su nivel militar.</FCMilAutoDefendDisabled>
+	<FCMilBadge>Def {0}  &#x2022;  Coste máx. de despliegue: ${1}</FCMilBadge>
+	<FCMilPowerTipSquad>Poder de {0}</FCMilPowerTipSquad>
+	<FCMilPowerTipSquadShort>Fuente de poder: escuadrón estacionado</FCMilPowerTipSquadShort>
+	<FCMilPowerSource>Fuente de poder: {0}</FCMilPowerSource>
+	<FCMilPowerSourceNoSquad>Fuente de poder: sin escuadrón</FCMilPowerSourceNoSquad>
+	<FCMilPowerSourceNoneAvailable>Fuente de poder: ningún escuadrón disponible</FCMilPowerSourceNoneAvailable>
+	<FCMilPowerTipAllBusy>Ninguno de los escuadrones estacionados en este asentamiento está disponible. Hasta que uno lo esté, este asentamiento defenderá a media potencia.</FCMilPowerTipAllBusy>
+	<FCMilPowerTipGhost>Defendiendo a media potencia por no tener un escuadrón asignado.</FCMilPowerTipGhost>
+	<FCMilPowerTipNoMilitary>Este tipo de asentamiento no tiene capacidad militar.</FCMilPowerTipNoMilitary>
+	<FCMilPowerTipUnderAttack>Este asentamiento está bajo ataque.</FCMilPowerTipUnderAttack>
+
+	<!-- Defender squad picker (Dialog_DefendSettlement) -->
+	<FCDefenderPickerTitle>Elige defensor para {0}</FCDefenderPickerTitle>
+	<FCDefenderPickerIncoming>Atacante entrante: nivel {0}, eficiencia x{1}, fuerza ~{2}</FCDefenderPickerIncoming>
+	<FCDefenderPickerCurrentDefender>Defendiendo actualmente: {0} (fuerza {1})</FCDefenderPickerCurrentDefender>
+	<FCDefenderPickerCurrentExternal>Defendiendo actualmente: {0} (externo, fuerza {1})</FCDefenderPickerCurrentExternal>
+	<FCDefenderPickerExternal>Defensores externos</FCDefenderPickerExternal>
+	<FCDefenderPickerTiles>casillas</FCDefenderPickerTiles>
+
+	<!-- Squad-first refactor (hire / assign / cap / dialogs) -->
+	<FCMilitaryTabBySettlement>Asentamientos</FCMilitaryTabBySettlement>
+	<FCMilitaryTabBySquad>Escuadrones</FCMilitaryTabBySquad>
+	<FCSquadsHeaderCount>Escuadrones: {0} / {1}</FCSquadsHeaderCount>
+
+	<FCSquadHired>El escuadrón "{0}" ha sido contratado por ${1} de plata.</FCSquadHired>
+	<FCSquadHireInsufficientSilver>No tienes suficiente plata ({0} necesarios) para contratar ese escuadrón.</FCSquadHireInsufficientSilver>
+	<FCSquadDismissed>El escuadrón "{0}" ha sido despedido.</FCSquadDismissed>
+	<FCSquadAssigned>Escuadrón "{0}" asignado a {1}.</FCSquadAssigned>
+	<FCCannotReassignBusySquad>"{0}" está ocupado y no puede reasignarse ahora mismo.</FCCannotReassignBusySquad>
+	<FCCannotUnassignBusySquad>"{0}" está ocupado y no se puede desasignar ahora mismo.</FCCannotUnassignBusySquad>
+	<FCCannotDismissBusySquad>"{0}" está ocupado y no puede ser despedido ahora mismo.</FCCannotDismissBusySquad>
+	<FCSquadCannotUpgradeBusy>El escuadrón está ocupado y no puede mejorarse ahora mismo.</FCSquadCannotUpgradeBusy>
+	<FCSquadCannotModifyBusyTip>El escuadrón no puede modificarse mientras está ocupado.</FCSquadCannotModifyBusyTip>
+	<FCSquadUpgradeInsufficientSilver>No tienes suficiente plata ({0} necesarios) para mejorar ese escuadrón.</FCSquadUpgradeInsufficientSilver>
+	<FCSquadUpgradeFirePersonalizedConfirm>Mejorar este escuadrón a su plantilla echará a uno o más personajes con un equipamiento personalizado, ya que su raza o xenotipo ya no coincide con ninguna ranura de la plantilla. Sus equipamientos personalizados se perderán. ¿Continuar?</FCSquadUpgradeFirePersonalizedConfirm>
+	<FCSquadCapReached>{0} ya está en su capacidad de escuadrones ({1}/{2}).</FCSquadCapReached>
+	<FCSquadSizeExceeded>Este escuadrón tiene más mercenarios ({1}) que el tamaño máximo de escuadrón permitido por {0} ({2}).</FCSquadSizeExceeded>
+	<FCSquadValueExceeded>El presupuesto de {0} no puede cubrir este escuadrón. El coste de despliegue de ${1} supera el coste máximo de despliegue de ${2}.</FCSquadValueExceeded>
+	<FCSquadUnderfunded>{0} está infrafinanciado en {1}: el coste de despliegue de ${2} supera el coste máximo de despliegue de ${3}. No puede desplegarse hasta que lo degrades, despidas mercenarios caros o mejores {1}.</FCSquadUnderfunded>
+	<FCMilSlotUnderfundedTip>Este escuadrón está infrafinanciado para {0}. El coste de despliegue de ${1} supera el coste máximo de despliegue del asentamiento de ${2}. No puede participar en operaciones militares hasta que el coste encaje.</FCMilSlotUnderfundedTip>
+	<FCUnnamedSquad>Escuadrón sin nombre</FCUnnamedSquad>
+
+	<FCRenameSquad>Renombrar escuadrón</FCRenameSquad>
+	<FCHireSquadButton>Contratar (${0})</FCHireSquadButton>
+	<FCHireSquadButtonTip>Contrata este escuadrón como una unidad mercenaria nueva. Coste: {0} de plata.</FCHireSquadButtonTip>
+
+	<FCDialogHireSquadAffordableOnly>Solo asequibles</FCDialogHireSquadAffordableOnly>
+	<FCDialogHireSquadSilver>Plata: ${0}</FCDialogHireSquadSilver>
+
+	<FCDialogSquadAssignmentHeader>Reasignar "{0}"</FCDialogSquadAssignmentHeader>
+	<FCDialogSquadAssignmentCostHeader>Coste de despliegue: ${0}</FCDialogSquadAssignmentCostHeader>
+	<FCDialogSquadAssignmentUnassign>Desasignar (devolver a la reserva)</FCDialogSquadAssignmentUnassign>
+
+	<FCSquadPickerTitle>Atacar asentamiento</FCSquadPickerTitle>
+	<FCSquadPickerTarget>Objetivo</FCSquadPickerTarget>
+	<FCSquadPickerEstimatedDefender>Nivel militar estimado: {0} (eficiencia de combate x{1})</FCSquadPickerEstimatedDefender>
+	<FCSquadPickerAvailableOnly>Solo disponibles</FCSquadPickerAvailableOnly>
+	<FCSquadPickerSort>Ordenar: {0}</FCSquadPickerSort>
+	<FCSquadPickerOperation>Operación</FCSquadPickerOperation>
+	<FCSquadPickerRewards>Recompensas</FCSquadPickerRewards>
+	<FCSquadPickerSelectSquad>Seleccionar escuadrón</FCSquadPickerSelectSquad>
+
+	<FCSquadColName>Escuadrón</FCSquadColName>
+	<FCSquadColTemplate>Plantilla</FCSquadColTemplate>
+	<FCSquadColBillet>Asentamiento</FCSquadColBillet>
+	<FCSquadColTravel>Viaje</FCSquadColTravel>
+	<FCSquadColWinChance>Prob. victoria</FCSquadColWinChance>
+	<FCSquadColPower>Poder</FCSquadColPower>
+	<FCSquadColEfficiency>Efic.</FCSquadColEfficiency>
+	<FCSquadColCost>Coste</FCSquadColCost>
+	<FCSquadColDeploymentCost>Coste despliegue</FCSquadColDeploymentCost>
+	<FCSquadColUpgrade>Mejorar</FCSquadColUpgrade>
+	<FCSquadColActions>Acciones</FCSquadColActions>
+
+	<FCSquadStatusReady>Listo</FCSquadStatusReady>
+	<FCSquadStatusUnassigned>Sin asignar</FCSquadStatusUnassigned>
+	<FCSquadStatusTraveling>Viajando {0}</FCSquadStatusTraveling>
+	<FCSquadStatusHealing>Curándose {0}</FCSquadStatusHealing>
+	<FCSquadStatusEmptySlots>Ranuras vacías: {0}</FCSquadStatusEmptySlots>
+	<FCSquadStatusBusyOp>Ocupado: {0} ({1})</FCSquadStatusBusyOp>
+	<FCSquadStatusInjured>{0} heridos</FCSquadStatusInjured>
+	<FCSquadStatusMoraleLocked>Moral del asentamiento demasiado baja</FCSquadStatusMoraleLocked>
+
+	<FCSquadActReassign>Reasignar</FCSquadActReassign>
+	<FCSquadActUpgrade>Mejorar</FCSquadActUpgrade>
+	<FCSquadActDismiss>Despedir</FCSquadActDismiss>
+	<FCSquadActDismissConfirm>¿Despedir "{0}"?</FCSquadActDismissConfirm>
+
+	<FCHireSquadsHeader>Reserva de escuadrones</FCHireSquadsHeader>
+	<FCHireSquadsEmpty>No hay escuadrones contratados.</FCHireSquadsEmpty>
+	<FCHireSquadsCount>{0} escuadrones</FCHireSquadsCount>
+	<FCSetSquadCurrent>(actual)</FCSetSquadCurrent>
+
+	<FCHireSquadsPoolButton>Contratar escuadrones</FCHireSquadsPoolButton>
+	<FCHireSquadsPoolHeader>Contratar escuadrones</FCHireSquadsPoolHeader>
+	<FCHireSquadsPoolHeaderAssign>Contratar y asignar a {0}</FCHireSquadsPoolHeaderAssign>
+	<FCHireSquadsPoolUnits>Unidades: {0}</FCHireSquadsPoolUnits>
+	<FCHireSquadsPoolEmpty>No hay plantillas de escuadrón diseñadas. Diseña un escuadrón primero.</FCHireSquadsPoolEmpty>
+	<FCHireSquadsPoolNoneAffordable>No hay plantillas de escuadrón asequibles.</FCHireSquadsPoolNoneAffordable>
+	<FCHireSquadsPoolEdit>Editar</FCHireSquadsPoolEdit>
+	<FCHireSquadsPoolEditTip>Abre esta plantilla en el diseñador de escuadrones.</FCHireSquadsPoolEditTip>
+	<FCHireSquadsPoolOverDeploy>El coste de despliegue de ${0} supera el coste máximo de despliegue de escuadrón de {1}, de ${2}.</FCHireSquadsPoolOverDeploy>
+	<FCHireSquadsPoolSettlementFull>{0} está en su límite de escuadrones.</FCHireSquadsPoolSettlementFull>
+
+	<FCSettlementMilHeader>Escuadrones: {0} / {1}  &#x2022;  Tamaño máx. de escuadrón: {2}</FCSettlementMilHeader>
+	<FCSettlementMilSquadEntry>{0} (defensa automática: {1})</FCSettlementMilSquadEntry>
+	<FCSettlementMilHireAndAssign>Contratar escuadrón y asignar aquí</FCSettlementMilHireAndAssign>
+
+	<FCAssignSquadPickerTitle>Asignar escuadrón a {0}</FCAssignSquadPickerTitle>
+	<FCAssignSquadPickerMaxDeploy>Coste máx. de despliegue de escuadrón: ${0}</FCAssignSquadPickerMaxDeploy>
+	<FCAssignSquadPickerCurrentSlot>Ocupante actual de la ranura: {0}</FCAssignSquadPickerCurrentSlot>
+	<FCAssignSquadPickerSlotEmpty>La ranura está vacía</FCAssignSquadPickerSlotEmpty>
+	<FCAssignSquadPickerStationed>Estacionados: {0} / {1}</FCAssignSquadPickerStationed>
+	<FCSquadPickerUnassignSlot>Desasignar — vaciar esta ranura</FCSquadPickerUnassignSlot>
+	<FCSquadSwapBusyReject>No se puede intercambiar: {0} está ocupado.</FCSquadSwapBusyReject>
+	<FCDialogSquadAssignmentDisplaceLabel>Desplazar {0}</FCDialogSquadAssignmentDisplaceLabel>
+	<FCDialogSquadAssignmentAllBusyTip>Todos los escuadrones de este asentamiento están ocupados.</FCDialogSquadAssignmentAllBusyTip>
+	<FCDialogSquadAssignmentCostExceededTip>El coste de despliegue del escuadrón de ${0} supera el máximo de este asentamiento de ${1}.</FCDialogSquadAssignmentCostExceededTip>
+	<FCDialogSquadAssignmentBudgetLabel>Presupuesto máx. de despliegue: ${0}</FCDialogSquadAssignmentBudgetLabel>
+
+	<FCSquadMenuToggleAutoDefend>Defensa automática: {0}</FCSquadMenuToggleAutoDefend>
+	<FCSquadMenuReassign>Reasignar...</FCSquadMenuReassign>
+	<FCSquadMenuUpgrade>Mejorar (${0} de plata)</FCSquadMenuUpgrade>
+	<FCSquadMenuDismiss>Despedir</FCSquadMenuDismiss>
+	<FCSquadMenuInspect>Inspeccionar...</FCSquadMenuInspect>
+
+	<FCOn>Sí</FCOn>
+	<FCOff>No</FCOff>
+
+	<FCTraitDesc_squadCapPerSettlement>Aumenta el número de escuadrones que cada asentamiento puede albergar. El límite base es 1.</FCTraitDesc_squadCapPerSettlement>
+	<FCTraitDesc_maxSquadSize>Modifica el número máximo de mercenarios que puede tener un escuadrón asignado aquí. El tamaño base es 30.</FCTraitDesc_maxSquadSize>
+
+	<!-- Squad Fill Empty Slots -->
+	<FCSquadFillSlotsInsufficient>No hay suficiente plata (${0} necesarios) para rellenar las ranuras vacías.</FCSquadFillSlotsInsufficient>
+
+	<!-- Military tab: 1+N row layout -->
+	<FCMilitaryTableNoMilitary>Sin ejército</FCMilitaryTableNoMilitary>
+	<FCMilitaryTableSquadsCounter>Escuadrones: {0} / {1}</FCMilitaryTableSquadsCounter>
+	<FCMilitaryTableSlotPrefix>Ranura {0}:</FCMilitaryTableSlotPrefix>
+	<FCMilitaryTableSlotEmpty>(vacía)</FCMilitaryTableSlotEmpty>
+	<FCMilitaryTableChangeSquad>Cambiar</FCMilitaryTableChangeSquad>
+	<FCMilitaryTableInspect>Inspeccionar</FCMilitaryTableInspect>
+	<FCMilBtnInspectTip>Inspecciona los mercenarios de este escuadrón</FCMilBtnInspectTip>
+
+	<!-- Squad Inspection window -->
+	<FCSquadInspectionTitle>Escuadrón: {0}</FCSquadInspectionTitle>
+	<FCSquadInspectionNoSquad>(ningún escuadrón seleccionado)</FCSquadInspectionNoSquad>
+	<FCSquadInspectionRenameSquadTip>Renombrar escuadrón</FCSquadInspectionRenameSquadTip>
+	<FCSquadInspectionRenamePawnTip>Renombrar personaje</FCSquadInspectionRenamePawnTip>
+	<FCSquadInspectionTemplate>Plantilla: {0}</FCSquadInspectionTemplate>
+	<FCSquadInspectionTemplateNone>Plantilla: (ninguna)</FCSquadInspectionTemplateNone>
+	<FCSquadInspectionPickTemplate>Elegir plantilla</FCSquadInspectionPickTemplate>
+	<FCSquadInspectionSettlement>Asentamiento: {0}</FCSquadInspectionSettlement>
+	<FCSquadInspectionClearTemplate>Quitar plantilla</FCSquadInspectionClearTemplate>
+	<FCSquadInspectionFillEmptySlots>Rellenar {0} ranura(s) vacía(s) (${1})</FCSquadInspectionFillEmptySlots>
+	<FCSquadInspectionFillEmptyNone>No hay ranuras vacías</FCSquadInspectionFillEmptyNone>
+	<FCSquadInspectionUpgradeAll>Mejorar todo (${0})</FCSquadInspectionUpgradeAll>
+	<FCSquadInspectionUpgradeAllUpToDate>Mejorar todo (actualizado)</FCSquadInspectionUpgradeAllUpToDate>
+	<FCSquadInspectionUpgradeAllNoTemplate>Mejorar todo (sin plantilla)</FCSquadInspectionUpgradeAllNoTemplate>
+	<FCSquadInspectionUpgradeAllTooltip>Mejorar mercenarios existentes: +${0}\nContratar nuevos: +${1}\nNeto: ${2}</FCSquadInspectionUpgradeAllTooltip>
+	<FCSquadInspectionEmptyPawn>(vacía)</FCSquadInspectionEmptyPawn>
+	<FCSquadInspectionSlotLabel>Ranura {0}</FCSquadInspectionSlotLabel>
+	<FCSquadInspectionLoadoutLabel>Equipamiento: {0}</FCSquadInspectionLoadoutLabel>
+	<FCSquadInspectionStatusLabel>Estado: {0}</FCSquadInspectionStatusLabel>
+	<FCSquadInspectionDivergedTip>Este personaje tiene un equipamiento personal que difiere de la plantilla de la unidad. Restablécelo en el editor para restaurar la herencia.</FCSquadInspectionDivergedTip>
+	<FCSquadInspectionStatusOk>Correcto</FCSquadInspectionStatusOk>
+	<FCSquadInspectionStatusInjured>Herido ({0})</FCSquadInspectionStatusInjured>
+	<FCSquadInspectionStatusDowned>Incapacitado</FCSquadInspectionStatusDowned>
+	<FCSquadInspectionStatusEmpty>VACÍA</FCSquadInspectionStatusEmpty>
+	<FCSquadInspectionStatusDead>Muerto</FCSquadInspectionStatusDead>
+	<FCSubPawnStatusMissing>Ausente</FCSubPawnStatusMissing>
+	<FCSubPawnReplace>Reemplazar (${0})</FCSubPawnReplace>
+	<FCSubPawnReplaceOwnerMissingTip>El mercenario propietario debe estar presente antes de poder reemplazar a este acompañante. Rellena primero la ranura del mercenario.</FCSubPawnReplaceOwnerMissingTip>
+	<FCSubPawnBadgeAnimal>{0} animal</FCSubPawnBadgeAnimal>
+	<FCSubPawnBadgeAnimals>{0} animales</FCSubPawnBadgeAnimals>
+	<FCSubPawnBadgeMech>{0} mecanoide</FCSubPawnBadgeMech>
+	<FCSubPawnBadgeMechs>{0} mecanoides</FCSubPawnBadgeMechs>
+	<FCSubPawnBadgeMount>{0} montura</FCSubPawnBadgeMount>
+	<FCSubPawnBadgeMounts>{0} monturas</FCSubPawnBadgeMounts>
+	<FCSubPawnSummaryDowned>{0} incapacitados</FCSubPawnSummaryDowned>
+	<FCSubPawnSummaryMissing>{0} ausentes</FCSubPawnSummaryMissing>
+	<FCSubPawnSummaryInjured>{0} heridos</FCSubPawnSummaryInjured>
+	<FCSubPawnWordDowned>incapacitado</FCSubPawnWordDowned>
+	<FCSubPawnWordMissing>ausente</FCSubPawnWordMissing>
+	<FCSubPawnWordInjured>herido</FCSubPawnWordInjured>
+	<FCSquadInspectionEditLoadout>Editar equipamiento</FCSquadInspectionEditLoadout>
+	<FCSquadInspectionPerSlotUpgrade>Mejorar ${0}</FCSquadInspectionPerSlotUpgrade>
+	<FCSquadInspectionPerSlotFill>Rellenar (${0})</FCSquadInspectionPerSlotFill>
+	<FCSquadInspectionPerSlotRemove>Quitar</FCSquadInspectionPerSlotRemove>
+	<FCSquadInspectionPerSlotRemoveTip>Quita esta ranura vacía del escuadrón.</FCSquadInspectionPerSlotRemoveTip>
+	<FCSquadInspectionPersonalLoadoutDefaultName>Equipamiento personalizado</FCSquadInspectionPersonalLoadoutDefaultName>
+	<FCSquadInspectionContextSettlementCaption>Asentamiento de origen</FCSquadInspectionContextSettlementCaption>
+	<FCSquadInspectionContextTemplateCaption>Plantilla</FCSquadInspectionContextTemplateCaption>
+	<FCSquadInspectionContextSettlementUnassigned>Sin asignar</FCSquadInspectionContextSettlementUnassigned>
+	<FCSquadInspectionContextTemplateNone>(ninguna)</FCSquadInspectionContextTemplateNone>
+	<FCSquadActDismissSquad>Despedir escuadrón</FCSquadActDismissSquad>
+	<FCMercDismiss>Despedir</FCMercDismiss>
+	<FCMercDismissTip>Despide a este mercenario y vacía la ranura para que pueda rellenarse.</FCMercDismissTip>
+	<FCMercDismissConfirm>¿Despedir a {0}?</FCMercDismissConfirm>
+	<FCMercDismissed>Mercenario despedido.</FCMercDismissed>
+	<FCCannotDismissBusyMerc>No se puede despedir a {0}: el escuadrón está ocupado</FCCannotDismissBusyMerc>
+
+	<FCSquadInspectionPowerLine>Poder: {0} ({1}/{2} ranuras)</FCSquadInspectionPowerLine>
+	<FCSquadInspectionStatsValueCaption>Valor actual</FCSquadInspectionStatsValueCaption>
+	<FCSquadInspectionStatsValueLine>${0}</FCSquadInspectionStatsValueLine>
+	<FCSquadInspectionStatsDeployCaption>Coste de despliegue</FCSquadInspectionStatsDeployCaption>
+	<FCSquadInspectionStatsDeployLine>${0}</FCSquadInspectionStatsDeployLine>
+	<FCSquadInspectionStatsPowerCaption>Poder</FCSquadInspectionStatsPowerCaption>
+	<FCSquadInspectionStatsPowerLine>{0}</FCSquadInspectionStatsPowerLine>
+	<FCSquadInspectionStatsSlotsCaption>Ranuras</FCSquadInspectionStatsSlotsCaption>
+	<FCSquadInspectionStatsSlotsLine>{0} / {1}</FCSquadInspectionStatsSlotsLine>
+	<FCSquadInspectionAddUnit>Añadir unidad</FCSquadInspectionAddUnit>
+	<FCSquadInspectionAddUnitOption>{0} (${1})</FCSquadInspectionAddUnitOption>
+	<FCSquadInspectionAddUnitTip>Contrata una nueva unidad de tus planos de unidad guardados. Elimina la asociación de plantilla del escuadrón.</FCSquadInspectionAddUnitTip>
+	<FCSquadInspectionAddUnitBusy>No se puede añadir una unidad mientras el escuadrón está ocupado.</FCSquadInspectionAddUnitBusy>
+	<FCSquadInspectionAddUnitNoBlueprints>No hay planos de unidad guardados. Diseña uno primero en la ventana de Plantillas de unidad.</FCSquadInspectionAddUnitNoBlueprints>
+	<FCSquadInspectionAddUnitFull>El escuadrón no tiene ranuras vacías. Despide una unidad primero.</FCSquadInspectionAddUnitFull>
+
+	<!-- Per-pawn loadout dialog -->
+	<FCDialogPawnLoadoutTitle>Editar personaje: {0}</FCDialogPawnLoadoutTitle>
+	<FCDialogPawnLoadoutTitleEmpty>Editar ranura vacía</FCDialogPawnLoadoutTitleEmpty>
+	<FCDialogPawnLoadoutInheritedSubtitle>Hereda de la plantilla de unidad: {0}</FCDialogPawnLoadoutInheritedSubtitle>
+	<FCDialogPawnLoadoutDivergedSubtitle>Equipamiento personal (asociación de plantilla rota)</FCDialogPawnLoadoutDivergedSubtitle>
+	<FCDialogPawnLoadoutPickFromPool>Elegir de la plantilla de unidad...</FCDialogPawnLoadoutPickFromPool>
+	<FCDialogPawnLoadoutResetToPool>Restablecer a la plantilla de unidad</FCDialogPawnLoadoutResetToPool>
+	<FCDialogPawnLoadoutApply>Guardar</FCDialogPawnLoadoutApply>
+	<FCDialogPawnLoadoutClose>Cerrar</FCDialogPawnLoadoutClose>
+
+	<FCNoUnitAvailable>No hay unidades disponibles</FCNoUnitAvailable>
+
+</LanguageData>

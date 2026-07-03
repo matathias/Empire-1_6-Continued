@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<OrbitalConstruction.label>Asentamientos orbitales básicos</OrbitalConstruction.label>
+	<OrbitalConstruction.description>Aprende los fundamentos de la construcción de estructuras habitables en el vacío del espacio. Desbloquea las capacidades básicas de construcción de estaciones espaciales.</OrbitalConstruction.description>
+	<AdvancedOrbitalEngineering.label>Asentamientos orbitales avanzados</AdvancedOrbitalEngineering.label>
+	<AdvancedOrbitalEngineering.description>Domina técnicas avanzadas para construir instalaciones orbitales más grandes y eficientes. Reduce los costes de construcción de plataformas orbitales en un 25%.</AdvancedOrbitalEngineering.description>
+	<OrbitalLogistics.label>Logística orbital</OrbitalLogistics.label>
+	<OrbitalLogistics.description>Desarrolla sistemas eficientes para mover recursos entre plataformas orbitales y superficies planetarias. Reduce el tiempo de entrega de impuestos en un 50% y desbloquea edificios especiales de estación espacial.</OrbitalLogistics.description>
+	<GlitterworldOrbitalSettlements.label>Asentamientos orbitales de mundo reluciente</GlitterworldOrbitalSettlements.label>
+	<GlitterworldOrbitalSettlements.description>Una visión de la vida orbital inspirada en la ingeniería de los mundos relucientes.</GlitterworldOrbitalSettlements.description>
+	<FCRoadBuildingDirt.label>Construcción de caminos de tierra de asentamiento</FCRoadBuildingDirt.label>
+	<FCRoadBuildingDirt.description>Permite a tus asentamientos del Imperio construir caminos de tierra automáticamente con el tiempo. Los caminos construirán un segmento cada 3 días si la opción de construcción de carreteras está activada.</FCRoadBuildingDirt.description>
+	<FCRoadBuildingStone.label>Construcción de caminos de piedra de asentamiento</FCRoadBuildingStone.label>
+	<FCRoadBuildingStone.description>Permite a tus asentamientos del Imperio construir caminos de piedra automáticamente con el tiempo. Los caminos construirán un segmento cada 3 días si la opción de construcción de carreteras está activada.</FCRoadBuildingStone.description>
+	<FCRoadBuildingRoad.label>Construcción de carreteras de asfalto de asentamiento</FCRoadBuildingRoad.label>
+	<FCRoadBuildingRoad.description>Permite a tus asentamientos del Imperio construir carreteras de asfalto automáticamente con el tiempo. Los caminos construirán un segmento cada 3 días si la opción de construcción de carreteras está activada.</FCRoadBuildingRoad.description>
+	<FCRoadBuildingHighway.label>Construcción de autopistas de asfalto de asentamiento</FCRoadBuildingHighway.label>
+	<FCRoadBuildingHighway.description>Permite a tus asentamientos del Imperio construir autopistas de asfalto automáticamente con el tiempo. Los caminos construirán un segmento cada 3 días si la opción de construcción de carreteras está activada.</FCRoadBuildingHighway.description>
+
+</LanguageData>

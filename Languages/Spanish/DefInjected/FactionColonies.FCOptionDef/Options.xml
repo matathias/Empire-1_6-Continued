@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<randomExampleEvent_exampleOption.label>Haz esto en respuesta al evento.</randomExampleEvent_exampleOption.label>
+	<randomExampleEvent_exampleOption2.label>texto</randomExampleEvent_exampleOption2.label>
+	<armorerInspiration_0_1.label>No puedo destinar fondos a semejante empresa.</armorerInspiration_0_1.label>
+	<armorerInspiration_0_2.label>Una modesta bolsa de plata para un encargo modesto.</armorerInspiration_0_2.label>
+	<armorerInspiration_0_3.label>¡Financia la obra maestra! Que no se repare en gastos.</armorerInspiration_0_3.label>
+	<armorerInspiration_0_4.label>Proporcionaré materiales de taller de las reservas de nuestro asentamiento.</armorerInspiration_0_4.label>
+	<blacksmithInspiration_0_1.label>No puedo destinar fondos a semejante empresa.</blacksmithInspiration_0_1.label>
+	<blacksmithInspiration_0_2.label>Una modesta bolsa de plata para un encargo modesto.</blacksmithInspiration_0_2.label>
+	<blacksmithInspiration_0_3.label>¡Financia la obra maestra! Que no se repare en gastos.</blacksmithInspiration_0_3.label>
+	<blacksmithInspiration_0_4.label>Proporcionaré materiales de taller de las reservas de nuestro asentamiento.</blacksmithInspiration_0_4.label>
+	<deathInTheFamily_0_1.label>Guardaremos luto en privado. El tiempo curará esta herida.</deathInTheFamily_0_1.label>
+	<deathInTheFamily_0_2.label>Celebrar un homenaje público para honrar su legado.</deathInTheFamily_0_2.label>
+	<deathInTheFamily_0_3.label>Investigar el asesinato: alguien responderá por esto.</deathInTheFamily_0_3.label>
+	<denseWildlife_0_1.label>Dejar que las manadas prosperen e impulsen nuestra producción animal.</denseWildlife_0_1.label>
+	<denseWildlife_0_2.label>Organizar una gran cacería y traer el botín.</denseWildlife_0_2.label>
+	<denseWildlife_0_3.label>Capturar y domesticar lo que podamos para obtener beneficios a largo plazo.</denseWildlife_0_3.label>
+	<denseWildlife_0_sanctuary.label>Establecer un santuario. Estas criaturas también son seres, y comparten este mundo con nosotros.</denseWildlife_0_sanctuary.label>
+	<drugTrade_0_1.label>¡Encuentra el origen de este tráfico de drogas!</drugTrade_0_1.label>
+	<drugTrade_0_2.label>¿Las drogas mantienen contentos a mis súbditos? ¿Sí? Entonces déjalo estar.</drugTrade_0_2.label>
+	<drugTrade_4-1_1.label>¡Continúa la producción!</drugTrade_4-1_1.label>
+	<drugTrade_4-1_2.label>Cancela la producción.</drugTrade_4-1_2.label>
+	<drugTrade-investigation_cont-1.label>Arréglate con lo que tienes.</drugTrade-investigation_cont-1.label>
+	<drugTrade-investigation_cont-2.label>Tendrás tu presupuesto extra.</drugTrade-investigation_cont-2.label>
+	<drugTrade_2-1_1.label>¡He dicho que desmanteléis la instalación! No necesitamos semejante placer degenerado.</drugTrade_2-1_1.label>
+	<drugTrade-investiation_continued.label>Podríamos... incorporarlo a nuestras líneas de producción oficiales.</drugTrade-investiation_continued.label>
+	<emptyMines_0_1.label>Los mineros tendrán que esperar a que se encuentren nuevas vetas.</emptyMines_0_1.label>
+	<emptyMines_0_2.label>Contratar prospectores para buscar yacimientos sin explotar.</emptyMines_0_2.label>
+	<emptyMines_0_3.label>Redirigir a los mineros ociosos a la construcción del asentamiento.</emptyMines_0_3.label>
+	<expandedForestry_0_1.label>Mantener en marcha las operaciones madereras ampliadas.</expandedForestry_0_1.label>
+	<expandedForestry_0_2.label>Vender la madera sobrante a los comerciantes que pasen.</expandedForestry_0_2.label>
+	<expandedForestry_0_3.label>Acumular la madera para la construcción del asentamiento.</expandedForestry_0_3.label>
+	<foodShortage_0_1.label>Poco podemos hacer. Soportaremos la escasez.</foodShortage_0_1.label>
+	<foodShortage_0_2.label>Comprar importaciones de comida de emergencia para suavizar el golpe.</foodShortage_0_2.label>
+	<foodShortage_0_3.label>Imponer un racionamiento estricto: el sacrificio compartido genera lealtad.</foodShortage_0_3.label>
+	<foodShortage_0_4.label>Dejar que los esclavos pasen hambre. Los trabajadores comerán.</foodShortage_0_4.label>
+	<foodShortage_0_cannibal.label>Tiempos oscuros requieren sustento oscuro. Que los muertos alimenten a los vivos.</foodShortage_0_cannibal.label>
+	<foodSurplus_0_1.label>Almacenar el excedente para mantener la producción.</foodSurplus_0_1.label>
+	<foodSurplus_0_2.label>Vender la cosecha sobrante a los comerciantes.</foodSurplus_0_2.label>
+	<foodSurplus_0_3.label>Celebrar un gran festín para festejar la abundancia.</foodSurplus_0_3.label>
+	<forestFire_0_1.label>Dejar que el fuego se extinga solo.</forestFire_0_1.label>
+	<forestFire_0_2.label>Organizar cuadrillas de bomberos para contener las llamas.</forestFire_0_2.label>
+	<forestFire_0_3.label>Realizar una quema controlada: la tierra despejada puede cultivarse.</forestFire_0_3.label>
+	<independencePetitions_0_1.label>Dejar que presenten peticiones. Somos una nación justa.</independencePetitions_0_1.label>
+	<independencePetitions_0_2.label>Atender sus quejas: distribuir ayuda entre los descontentos.</independencePetitions_0_2.label>
+	<independencePetitions_0_3.label>Reprimir el movimiento por la fuerza.</independencePetitions_0_3.label>
+	<localMilitiasForm_0_1.label>Dejar que jueguen a ser soldados. Se cansarán.</localMilitiasForm_0_1.label>
+	<localMilitiasForm_0_2.label>Integrar las milicias en las guarniciones de nuestros asentamientos.</localMilitiasForm_0_2.label>
+	<localMilitiasForm_0_3.label>Disolverlas por la fuerza.</localMilitiasForm_0_3.label>
+	<loyaltyParade_0_1.label>¡Que continúen las celebraciones!</loyaltyParade_0_1.label>
+	<loyaltyParade_0_2.label>Unirse al desfile y enardecer al pueblo.</loyaltyParade_0_2.label>
+	<loyaltyParade_0_3.label>Aprovechar la concentración para reclutar nuevos trabajadores.</loyaltyParade_0_3.label>
+	<missedSupplyDelivery_0_1.label>Esperaremos a la próxima entrega.</missedSupplyDelivery_0_1.label>
+	<missedSupplyDelivery_0_2.label>Conseguir suministros de repuesto de los comerciantes locales.</missedSupplyDelivery_0_2.label>
+	<missedSupplyDelivery_0_3.label>Que los artesanos improvisen con materiales locales.</missedSupplyDelivery_0_3.label>
+	<moonlitRitual_0_1.label>No me importa lo que haga la gente en el bosque. Déjalos en paz.</moonlitRitual_0_1.label>
+	<moonlitRitual_0_2.label>Enviar a alguien a seguirlos. Quiero saber qué está pasando.</moonlitRitual_0_2.label>
+	<moonlitRitual_1-1_1.label>Qué repugnante. ¡Acaba con ello!</moonlitRitual_1-1_1.label>
+	<moonlitRitual_1-1_2.label>¿Un revolcón en el bosque? ¿A quién le importa?</moonlitRitual_1-1_2.label>
+	<moonlitRitual_1-1_3.label>Investigar más a fondo.</moonlitRitual_1-1_3.label>
+	<moonlitRitual_2-1_1.label>Sea lo que sea, creo que es hora de dejarlo estar.</moonlitRitual_2-1_1.label>
+	<moonlitRitual_2-1_2.label>Vuelve otra vez. Necesito saber si esto es algún tipo de culto.</moonlitRitual_2-1_2.label>
+	<sparseWildlife_0_1.label>Nos las arreglaremos sin la fauna.</sparseWildlife_0_1.label>
+	<sparseWildlife_0_2.label>Enviar partidas de caza más lejos.</sparseWildlife_0_2.label>
+	<sparseWildlife_0_3.label>Centrarse en cultivar la tierra en su lugar.</sparseWildlife_0_3.label>
+	<strangeDiscovery_0_1.label>¿Qué hacéis? ¡Seguid cavando!</strangeDiscovery_0_1.label>
+	<strangeDiscovery_0_2.label>Enviar al ejército a escoltar a los mineros.</strangeDiscovery_0_2.label>
+	<strangeDiscovery_0_3.label>¡Evitadlo! Continuad la excavación en otro lugar.</strangeDiscovery_0_3.label>
+	<struckRichOreVein_0_1.label>Explotar la veta a un ritmo constante y sostenible.</struckRichOreVein_0_1.label>
+	<struckRichOreVein_0_2.label>Acelerar la extracción: presionar a fondo a los mineros.</struckRichOreVein_0_2.label>
+	<struckRichOreVein_0_3.label>Vender los derechos de minería a intereses externos.</struckRichOreVein_0_3.label>
+	<unexpectedCraftsmanship_0_1.label>Animarlos a mantener el buen trabajo en todos los ámbitos.</unexpectedCraftsmanship_0_1.label>
+	<unexpectedCraftsmanship_0_2.label>Dirigir a los artesanos para que se centren en la fabricación de armas.</unexpectedCraftsmanship_0_2.label>
+	<unexpectedCraftsmanship_0_3.label>Dirigir a los artesanos para que se centren en la sastrería y la armadura.</unexpectedCraftsmanship_0_3.label>
+	<woundedAnimal_0_1.label>¡Sacad esa COSA de mi corte!</woundedAnimal_0_1.label>
+	<woundedAnimal_0_2.label>Nos ocuparemos de ello. Seguro que no puede hacernos daño.</woundedAnimal_0_2.label>
+	<woundedAnimal_0_3.label>Mandar llamar a un cuidador adiestrado para que se acerque con cuidado.</woundedAnimal_0_3.label>
+
+</LanguageData>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Generic Labels -->
+	<FCName>Nombre</FCName>
+	<FCNone>Ninguno</FCNone>
+	<FCNo>No</FCNo>
+	<FCYes>Sí</FCYes>
+	<FCSet>Fijar</FCSet>
+	<FCDeploy>Desplegar</FCDeploy>
+	<FCReset>Restablecer</FCReset>
+	<FCBase>Base</FCBase>
+	<FCModifier>Modificador</FCModifier>
+	<FCFinal>Final</FCFinal>
+	<FCCreateColonyTileModifiersTitle>Modificadores de casilla</FCCreateColonyTileModifiersTitle>
+	<FCEffect>Efecto</FCEffect>
+	<FCInfo>Información</FCInfo>
+	<FCTotal>Total</FCTotal>
+	<FCMult>Mult</FCMult>
+	<FCDate>Fecha</FCDate>
+	<FCSelected>Seleccionado</FCSelected>
+	<FCSelect>Seleccionar</FCSelect>
+	<FCIsAllowed>Activado</FCIsAllowed>
+	<FCIsNotAllowed>Desactivado</FCIsNotAllowed>
+	<FCPerWorker>Por trabajador</FCPerWorker>
+	<FCNumRatio>{0}/{1}</FCNumRatio>
+	<FCASettlement> un asentamiento </FCASettlement>
+	<FCAddedInFuture>Esto se ampliará en el futuro</FCAddedInFuture>
+	<FCItem>Objeto</FCItem>
+
+	<!-- Tab Labels -->
+	<FCColonies>Asentamientos</FCColonies>
+	<FCBills>Facturas</FCBills>
+	<FCEvents>Eventos</FCEvents>
+	<FCSettlement>Asentamiento</FCSettlement>
+	<FCSettlements>Asentamientos</FCSettlements>
+	<FCOverview>Resumen</FCOverview>
+	<FCPrisoners>Prisioneros</FCPrisoners>
+	<FCTravelTime>Tiempo de viaje</FCTravelTime>
+	<FCConstructionTime>Tiempo de construcción</FCConstructionTime>
+
+	<!-- Buttons -->
+	<FCButtonNotAvailable>Este botón aún no está disponible</FCButtonNotAvailable>
+	<FCConfirmChanges>Confirmar cambios</FCConfirmChanges>
+	<FCConfirm>Confirmar</FCConfirm>
+	<FCConfirmDecision>Confirmar decisión</FCConfirmDecision>
+	<FCConfirmSettle>¿Fundar un {0} por {1} de plata?</FCConfirmSettle>
+	<FCConfirmDontShowAgain>No volver a mostrar esto</FCConfirmDontShowAgain>
+	<FCView>Ver</FCView>
+	<FCGoTo>Ir a</FCGoTo>
+	<FCReport>Informe</FCReport>
+	<FCReports>Informes</FCReports>
+	<FCActions>Acciones</FCActions>
+	<FCViewInfo>Ver información</FCViewInfo>
+	<FCSetMap>Fijar mapa</FCSetMap>
+	<FCActionAvailable>Acción disponible</FCActionAvailable>
+
+	<!-- Generic Actions -->
+	<FCAutoResolve>Auto-resolver</FCAutoResolve>
+	<FCAutoResolving>Auto-resolviendo: {0}</FCAutoResolving>
+	<FCBillsAutoResolving>¡Las facturas ahora se auto-resuelven!</FCBillsAutoResolving>
+	<FCBillsNotAutoResolving>Las facturas ya no se auto-resuelven.</FCBillsNotAutoResolving>
+	<FCAllowLatePayments>Permitir pagos atrasados</FCAllowLatePayments>
+	<FCBillsLatePaymentsAllowed>Las facturas que venzan se pagarán automáticamente, incurriendo en penalizaciones por pago atrasado.</FCBillsLatePaymentsAllowed>
+	<FCBillsLatePaymentsDisallowed>Las facturas que venzan no se pagarán, incurriendo en penalizaciones por factura impagada.</FCBillsLatePaymentsDisallowed>
+	<FCDesc>Desc</FCDesc>
+	<FCCreateNewFaction>Crear nueva facción</FCCreateNewFaction>
+	<FCResetToDefault>Restablecer valores por defecto</FCResetToDefault>
+	<FCSetPointRef>Fijar punto de ref.</FCSetPointRef>
+	<FCNoValidSettlements>No hay asentamientos válidos</FCNoValidSettlements>
+	<FCNoSpecialActions>No hay acciones especiales disponibles</FCNoSpecialActions>
+	<FCBuildingLocked>Ese edificio está bloqueado</FCBuildingLocked>
+	<FCBuildingLockedLevel>Se desbloquea en el nivel {0} del asentamiento.</FCBuildingLockedLevel>
+	<FCBuildingLockedMax>Se ha alcanzado el máximo de espacios de edificio para este tipo de asentamiento.</FCBuildingLockedMax>
+	<FCCapital>Capital</FCCapital>
+
+	<!-- Float Menu -->
+	<FCFloatMenuSearchable>Escribe para buscar:</FCFloatMenuSearchable>
+	<FCSMFForceOpen>Forzar apertura</FCSMFForceOpen>
+
+	<!-- Errors -->
+	<FCActionNotAllowed>Acción no permitida</FCActionNotAllowed>
+	<FCConfirmDelete>¿Seguro que quieres eliminar "{0}"?</FCConfirmDelete>
+	<FCNameIsInvalid>Ese nombre no es válido</FCNameIsInvalid>
+	<FCGenericError>Si puedes leer esto, algo ha ido mal.</FCGenericError>
+	<FCNotEnoughSilverOption>No tienes suficiente plata en el mapa para pagar esa opción</FCNotEnoughSilverOption>
+	<FCOptionRequiresPolicy>Requiere: {0}</FCOptionRequiresPolicy>
+	<FCOptionRequiresPolicyAny>Requiere una de: {0}</FCOptionRequiresPolicyAny>
+	<FCOptionRequiresMeme>Requiere ideologema: {0}</FCOptionRequiresMeme>
+	<FCOptionRequiresMemeAny>Requiere uno de estos ideologemas: {0}</FCOptionRequiresMemeAny>
+
+</LanguageData>

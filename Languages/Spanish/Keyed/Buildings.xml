@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Building Construction -->
+	<FCConstructBuilding>Construir edificio</FCConstructBuilding>
+	<FCConstruct>Construir</FCConstruct>
+	<FCBuild>Construir</FCBuild>
+	<FCBuilt>Construido</FCBuilt>
+	<FCWillBeConstructedIn>se construirá en</FCWillBeConstructedIn>
+	<FCHasBeenConstructedAt>ha sido construido en</FCHasBeenConstructedAt>
+	<Empire_BuildingWindow_ConstructionDesc>Actualmente en construcción: {0}</Empire_BuildingWindow_ConstructionDesc>
+	<FCBuildTime>Tiempo de construcción: {0}</FCBuildTime>
+
+	<!-- Building Restrictions -->
+	<FCBuildingSurfaceOnly>Este edificio solo puede construirse en asentamientos de superficie</FCBuildingSurfaceOnly>
+	<FCBuildingOrbitalOnly>Este edificio solo puede construirse en plataformas orbitales</FCBuildingOrbitalOnly>
+	<FCBuildingInvalidSettlement>{0} no puede construirse en un {1}</FCBuildingInvalidSettlement>
+	<FCBuildingInvalidTileMutator>{0} no puede construirse en el terreno de esta casilla</FCBuildingInvalidTileMutator>
+	<FCBuildingAlreadyType>Ya hay un edificio de ese tipo</FCBuildingAlreadyType>
+	<FCBuildingBeingBuiltAlreadyType>Ya se está construyendo un edificio de ese tipo</FCBuildingBeingBuiltAlreadyType>
+	<FCBuildingAlreadyConstructed>Ya se está construyendo un edificio ahí</FCBuildingAlreadyConstructed>
+
+	<!-- Building Demolition -->
+	<FCDestroy>Destruir</FCDestroy>
+	<FCDemolish>Demoler</FCDemolish>
+	<FCDemolishConfirmation>¿Seguro que quieres demoler {0}? Esto costará {1} de plata.</FCDemolishConfirmation>
+	<FCBuildingDemolished>{0} ha sido demolido</FCBuildingDemolished>
+	<FCChangeBuildingButton>Cambiar edificio</FCChangeBuildingButton>
+
+	<!-- Building Filters -->
+	<FCBuildingFilterAll>Todos</FCBuildingFilterAll>
+	<FCBuildingFilterHappiness>Felicidad</FCBuildingFilterHappiness>
+	<FCBuildingFilterBasetax>Impuesto base</FCBuildingFilterBasetax>
+	<FCBuildingFilterWorkers>Trabajadores</FCBuildingFilterWorkers>
+	<FCBuildingFilterMilitary>Militar</FCBuildingFilterMilitary>
+
+	<!-- Capital Seat -->
+	<FCCapitalEstablished>¡Capital de {1} establecida en {0}! Esta ubicación se usará como centro de tu {2}.</FCCapitalEstablished>
+	<FCCapitalSeatDisabled>Sede de la capital desactivada. {0} usará la ubicación de capital de reserva si está disponible.</FCCapitalSeatDisabled>
+	<FCCapitalLost>¡Se ha perdido la capital de {0}! Deberías establecer una nueva sede de capital.</FCCapitalLost>
+	<FCCapitalSpotGizmoLabel>Fijar capital de {0}</FCCapitalSpotGizmoLabel>
+	<FCCapitalSpotGizmoDescActive>Esta es actualmente la sede de la capital de {0}. Clic para desactivar.</FCCapitalSpotGizmoDescActive>
+	<FCCapitalSpotGizmoDescInactive>Clic para hacer de esta la sede de la capital de {0}. Esta ubicación se usará para los cálculos de tiempo de viaje y para el direccionamiento de eventos.</FCCapitalSpotGizmoDescInactive>
+	<FCCapitalSpotInspectActive>Capital activa de {0}</FCCapitalSpotInspectActive>
+	<FCCapitalSpotInspectInactive>Sede de la capital (inactiva)</FCCapitalSpotInspectInactive>
+
+	<!-- Tax Spot -->
+	<FCTaxSpotGizmoLabel>Fijar punto de entrega de impuestos</FCTaxSpotGizmoLabel>
+	<FCTaxSpotGizmoDescActive>Este punto de impuestos es actualmente la ubicación activa de entrega de impuestos. Clic para desactivar.</FCTaxSpotGizmoDescActive>
+	<FCTaxSpotGizmoDescInactive>Clic para hacer de este punto de impuestos la ubicación activa de entrega de impuestos para {0}.</FCTaxSpotGizmoDescInactive>
+	<FCTaxSpotEnabledMessage>¡Punto de entrega de impuestos fijado! Todos los impuestos y bienes se entregarán ahora en esta ubicación.</FCTaxSpotEnabledMessage>
+	<FCTaxSpotDisabledMessage>Punto de entrega de impuestos desactivado. Los impuestos usarán el mapa de impuestos de reserva si está fijado.</FCTaxSpotDisabledMessage>
+	<FCTaxSpotInspectActive>Punto de entrega de impuestos activo</FCTaxSpotInspectActive>
+	<FCTaxSpotInspectInactive>Punto de impuestos (entrega desactivada)</FCTaxSpotInspectInactive>
+
+	<!-- Building Window -->
+	<Empire_BuildingWindow_Header>Edificios — {0}</Empire_BuildingWindow_Header>
+	<Empire_BuildingWindow_EmptySlot>Ranura de edificio vacía</Empire_BuildingWindow_EmptySlot>
+	<Empire_BuildingWindow_CurrentBuilding>Edificio actual</Empire_BuildingWindow_CurrentBuilding>
+	<Empire_BuildingWindow_SelectBuilding>Selecciona un edificio para ver sus detalles</Empire_BuildingWindow_SelectBuilding>
+	<Empire_BuildingWindow_Modifiers>Modificadores</Empire_BuildingWindow_Modifiers>
+	<Empire_BuildingWindow_SettlementImpact>Impacto en el asentamiento</Empire_BuildingWindow_SettlementImpact>
+	<Empire_BuildingWindow_Upgrades>Mejoras posibles</Empire_BuildingWindow_Upgrades>
+	<Empire_BuildingWindow_RequiredBy>Requerido por</Empire_BuildingWindow_RequiredBy>
+	<Empire_BuildingWindow_Requires>Requiere: {0}</Empire_BuildingWindow_Requires>
+	<Empire_BuildingWindow_CannotDemolishRequired>No se puede demoler: requerido por {0}</Empire_BuildingWindow_CannotDemolishRequired>
+	<Empire_BuildingWindow_SlotUpgrades>Mejoras</Empire_BuildingWindow_SlotUpgrades>
+	<FCBuildingUpgrades>Mejoras de edificio</FCBuildingUpgrades>
+	<FCBuildings>Edificios</FCBuildings>
+	<FCFacilities>Instalaciones</FCFacilities>
+	<FCSearchBuildings>Buscar edificios...</FCSearchBuildings>
+
+	<!-- Locked Buildings -->
+	<Empire_BuildingWindow_ShowLocked>Mostrar edificios bloqueados</Empire_BuildingWindow_ShowLocked>
+	<Empire_BuildingWindow_TechLocked>Bloqueado — Requiere tecnología {0} (investigación: {1})</Empire_BuildingWindow_TechLocked>
+	<Empire_BuildingWindow_LockedButton>Bloqueado</Empire_BuildingWindow_LockedButton>
+	<Empire_BuildingWindow_TechLockedTooltip>Este edificio requiere investigar {0} para desbloquearse.</Empire_BuildingWindow_TechLockedTooltip>
+
+</LanguageData>

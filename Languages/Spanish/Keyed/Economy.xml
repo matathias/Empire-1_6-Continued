@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Bills -->
+	<FCNotEnoughSilverForBill>No tenías suficiente plata para pagar una factura pendiente de {0}.</FCNotEnoughSilverForBill>
+	<FCConfiscatedTithes>A cambio, han confiscado tus diezmos.</FCConfiscatedTithes>
+	<FCOutstandingBills>Facturas pendientes</FCOutstandingBills>
+	<FCDueDate>Fecha de vencimiento</FCDueDate>
+	<FCAmount>Cantidad</FCAmount>
+	<FCHasTithe>Tiene diezmo</FCHasTithe>
+	<FCPayReceiveSilver>Pagar/recibir plata</FCPayReceiveSilver>
+	<FCResolveBill>Resolver factura</FCResolveBill>
+	<FCNotEnoughSilverOnMapToPayBill>No tienes suficiente plata en el mapa actual para pagar la factura</FCNotEnoughSilverOnMapToPayBill>
+	<FCNumberTaxesHasBeenSolved>¡Se han auto-resuelto {0} facturas!</FCNumberTaxesHasBeenSolved>
+	<FCBillResolved>Factura resuelta.</FCBillResolved>
+	<FCDueFC>Vence</FCDueFC>
+	<FCNoPendingBills>No hay facturas pendientes.</FCNoPendingBills>
+	<FCPendingBillsCount>{0} facturas pendientes</FCPendingBillsCount>
+	<FCTitheItemCount>{0} objetos de diezmo</FCTitheItemCount>
+	<FCNoTithes>Sin diezmos</FCNoTithes>
+	<FCOverdue>Vencida</FCOverdue>
+	<FCUnpaidTitheEffect>¡El descontento ha aumentado en 10 y la felicidad ha disminuido en el asentamiento! </FCUnpaidTitheEffect>
+	<FCLateBillAutoPaidLabel>Facturas vencidas pagadas automáticamente</FCLateBillAutoPaidLabel>
+	<FCLateBillAutoPaidDesc>Se han pagado automáticamente {0} factura(s) vencida(s) de tus reservas de plata.\n\nAsentamientos afectados:\n{1}\n\nTu negligencia en el pago ha causado una pequeña cantidad de infelicidad y descontento en los asentamientos afectados.</FCLateBillAutoPaidDesc>
+	<FCBillKindTax>Impuesto</FCBillKindTax>
+	<FCBillKindSquadDeployment>Despliegue de escuadrón</FCBillKindSquadDeployment>
+	<FCBillKindSquadRestock>Reabastecimiento de escuadrón</FCBillKindSquadRestock>
+	<FCRestockBillLetterLabel>Escuadrón reabastecido</FCRestockBillLetterLabel>
+	<FCRestockBillNotification>{0} se ha reabastecido tras el combate. Se han facturado {1} de plata a {2} por los suministros repuestos y las reparaciones del equipo.</FCRestockBillNotification>
+
+	<!-- Taxes -->
+	<FCSettlementTax>Impuesto del asentamiento</FCSettlementTax>
+	<FCWeekOf>semana del</FCWeekOf>
+	<FCTaxesBilled>Se han facturado los impuestos</FCTaxesBilled>
+	<FCTaxesBilledShort>Impuestos facturados</FCTaxesBilledShort>
+	<FCTaxesBilledDesc>Se han facturado los impuestos de tus asentamientos.</FCTaxesBilledDesc>
+	<FCNoSettlementsToTax>No hay asentamientos a los que cobrar impuestos</FCNoSettlementsToTax>
+	<FCTaxesFrom>Impuestos de</FCTaxesFrom>
+	<FCHaveBeenDelivered>han sido entregados</FCHaveBeenDelivered>
+	<FCTaxesHaveArrived>¡Han llegado los impuestos!</FCTaxesHaveArrived>
+	<FCTaxesFromSettlementAreBeingDelivered>¡Los impuestos de {0} están de camino a tu punto de recaudación!</FCTaxesFromSettlementAreBeingDelivered>
+	<FCTaxPercentage>% de diezmo</FCTaxPercentage>
+	<FCTaxDeliveryMap>Mapa de entrega de impuestos</FCTaxDeliveryMap>
+
+	<FCInnovativeMessage>La innovación de {0} te ha proporcionado {1} puntos de investigación.</FCInnovativeMessage>
+
+	<!-- Tax Reports -->
+	<FCTaxReports>Informes de impuestos</FCTaxReports>
+	<FCFactionTaxReports>Informes de impuestos de la facción</FCFactionTaxReports>
+	<FCSettlementTaxCollection>Recaudación de impuestos de los asentamientos</FCSettlementTaxCollection>
+	<FCEstimatedProfit>Benef. est.</FCEstimatedProfit>
+	<FCEstimatedValue>Valor est.</FCEstimatedValue>
+	<FCTimeTillTax>Tiempo hasta el impuesto</FCTimeTillTax>
+	<FCTotalFactionProduction>La producción total del recurso en toda la facción</FCTotalFactionProduction>
+
+	<!-- Tax Break -->
+	<FCGiveTaxBreak>Conceder rebaja fiscal</FCGiveTaxBreak>
+	<FCConfirmTaxBreak>¿Reducir el impuesto base un 30% durante 10 días pero recibir +2 adicional a la felicidad y la prosperidad cada día?</FCConfirmTaxBreak>
+	<FCAlreadyGivingTaxBreak>Ya le estás concediendo a ese asentamiento una rebaja fiscal durante los próximos {0} días.</FCAlreadyGivingTaxBreak>
+	<FCGivingTaxBreak>{0} tendrá una rebaja fiscal durante los próximos 10 días. ¡La gente está satisfecha!
+</FCGivingTaxBreak>
+	<FCIndustriousPop>¡Los impuestos de tu asentamiento {0} han generado un {1} por ciento extra en impuestos!</FCIndustriousPop>
+	<FCIdustriousTaxBoost>Impuestos por laboriosidad</FCIdustriousTaxBoost>
+
+	<!-- Tax Notification Mode -->
+	<FCTaxNotificationModeButton>Notificaciones de llegada de impuestos: </FCTaxNotificationModeButton>
+	<FCTaxNotifyAll>Todas (carta + mensaje)</FCTaxNotifyAll>
+	<FCTaxNotifyLetterOnly>Solo carta (notificación azul)</FCTaxNotifyLetterOnly>
+	<FCTaxNotifyMessageOnly>Solo mensaje (texto en la parte superior)</FCTaxNotifyMessageOnly>
+	<FCTaxNotifyNone>Ninguna (ocultar todo)</FCTaxNotifyNone>
+
+	<!-- Delivery Modes -->
+	<FCSelectTaxDeliveryModeButton>Modo de entrega forzada de impuestos: </FCSelectTaxDeliveryModeButton>
+	<FCTaxDeliveryModeDefaultDesc>Ninguno. La entrega depende de la tecnología y de los edificios del asentamiento</FCTaxDeliveryModeDefaultDesc>
+	<FCTaxDeliveryModeTaxSpotDesc>Punto de impuestos. La entrega aparece en el punto de impuestos</FCTaxDeliveryModeTaxSpotDesc>
+	<FCTaxDeliveryModeCaravanDesc>Caravana. La entrega siempre la trae una caravana</FCTaxDeliveryModeCaravanDesc>
+	<FCTaxDeliveryModeDropPodDesc>Cápsula. La entrega siempre llega en cápsulas de descenso</FCTaxDeliveryModeDropPodDesc>
+	<FCTaxDeliveryModeShuttleDesc>Lanzadera. La entrega siempre llega en lanzadera</FCTaxDeliveryModeShuttleDesc>
+	<FCTaxDeliveryModeShuttleUnavailableDesc>Lanzadera. No disponible porque Royalty no está presente</FCTaxDeliveryModeShuttleUnavailableDesc>
+
+	<!-- Delivery Events -->
+	<FCDeliveryPawnsHiding>¡Los repartidores están soltando sus objetos y escondiéndose en tu punto de entrega de impuestos! ¡Solo entrarán en combate si el enemigo está cerca!</FCDeliveryPawnsHiding>
+	<FCDeliveryPawnsLeavingMap>Los repartidores están abandonando el mapa.</FCDeliveryPawnsLeavingMap>
+	<FCDeliveryPawnsLeavingMapNoPath>Los repartidores están abandonando el mapa porque no pudieron acceder al punto de entrega de impuestos.</FCDeliveryPawnsLeavingMapNoPath>
+	<FCDeliveryPawnsLeavingMapWithDowned>Los repartidores están recogiendo a los miembros caídos y abandonando el mapa.</FCDeliveryPawnsLeavingMapWithDowned>
+	<FCSettlementDeliveringLoot>Tu asentamiento te está entregando el siguiente botín: </FCSettlementDeliveringLoot>
+	<FCDeliveryHeldUpArriving>¡Ha llegado una entrega que se vio obligada a esperar!</FCDeliveryHeldUpArriving>
+
+	<!-- Tithes -->
+	<FCPauseTithes>Pausar diezmos</FCPauseTithes>
+	<FCUnPauseTithes>Reanudar diezmos</FCUnPauseTithes>
+	<FCTithesPaused>Diezmos en pausa</FCTithesPaused>
+	<FCPauseTithesDesc>Cuando está activado, no se recogerán objetos de diezmo de este recurso a la hora de los impuestos. En su lugar, su valor de producción se convertirá en ingresos de plata. Tu configuración de diezmos se conserva y se reanudará al quitar la pausa.</FCPauseTithesDesc>
+	<FCTitheList>Lista de diezmos</FCTitheList>
+	<FCStackCount>Tamaño de pila</FCStackCount>
+	<FCTotalValue>Valor total</FCTotalValue>
+	<FCIsTithe>Es diezmo</FCIsTithe>
+	<FCTithe>Diezmo</FCTithe>
+	<FCTithing>Diezmando</FCTithing>
+	<FCTitheModifier>Modificador de diezmo</FCTitheModifier>
+	<FCTitheValueMultiplierTooltip>{0} multiplicador de valor de diezmo de {1} = {2}</FCTitheValueMultiplierTooltip>
+	<FCTitheSelection>Selección de objetos</FCTitheSelection>
+	<FCTitheEnableAll>Activar todo</FCTitheEnableAll>
+	<FCTitheDisableAll>Desactivar todo</FCTitheDisableAll>
+	<FCTitheSingleOption>{0} - Coste - {1} | Permitido: {2}</FCTitheSingleOption>
+
+	<!-- Random Tithe Item Selection Window -->
+	<FCTitheEnabledCount>{0} / {1} activados</FCTitheEnabledCount>
+	<FCTitheShowAll>Todos</FCTitheShowAll>
+	<FCTitheShowEnabled>Activados</FCTitheShowEnabled>
+	<FCTitheShowDisabled>Desactivados</FCTitheShowDisabled>
+	<FCTitheShowFilter>Mostrar: {0}</FCTitheShowFilter>
+
+	<!-- Random Tithes -->
+	<FCRandomTithesEnabled>Diezmo aleatorio</FCRandomTithesEnabled>
+	<FCRandomTitheSelectionHeader>Selección de objetos de diezmo aleatorio</FCRandomTitheSelectionHeader>
+	<FCRandomTitheBudget>Presupuesto de diezmo aleatorio</FCRandomTitheBudget>
+	<FCAutoMaxRandomTithe>Máx.</FCAutoMaxRandomTithe>
+	<FCAutoMaxRandomTitheDesc>Cuando está activado, el presupuesto de diezmo aleatorio rellena automáticamente los ingresos restantes tras los diezmos manuales. Añadir diezmos manuales reducirá el presupuesto aleatorio en consecuencia.</FCAutoMaxRandomTitheDesc>
+	<FCTitheOverBudget>Si el presupuesto de diezmo usado es mayor que el presupuesto de diezmo disponible, entonces, a la hora de los impuestos, todas las opciones de diezmo seleccionadas se recortarán hasta que el presupuesto usado se ajuste al disponible.</FCTitheOverBudget>
+	<FCRandomTithesDesc>A la hora de los impuestos, recibirás una selección aleatoria de objetos, con un valor total igual o inferior al presupuesto de diezmo aleatorio. Puedes añadir o quitar objetos de la lista para controlar qué se selecciona y qué no.
+
+Si el objeto de menor valor de la lista tiene un valor superior a tu presupuesto de diezmo aleatorio, o si no hay objetos entre los que elegir, el presupuesto se traslada al siguiente periodo de impuestos.</FCRandomTithesDesc>
+	<FCRandomTitheAccrued>Presupuesto acumulado: ${0}</FCRandomTitheAccrued>
+	<FCRandomTitheAccruedDesc>La cantidad de presupuesto de diezmo aleatorio sobrante que se ha acumulado. Esto se añadirá a tu presupuesto de diezmo aleatorio para determinar el presupuesto total de diezmos aleatorios a la hora de los impuestos.</FCRandomTitheAccruedDesc>
+	<FCDisburseAccruedRandomTithe>Desembolsar presupuesto acumulado</FCDisburseAccruedRandomTithe>
+	<FCDisburseAccruedRandomTitheDesc>Si está marcado, el presupuesto acumulado se desembolsará como plata en bruto a la hora de los impuestos. No contará para el presupuesto de diezmo aleatorio.</FCDisburseAccruedRandomTitheDesc>
+	<FCNoTitheLetterLabel>Sin diezmo: {0}</FCNoTitheLetterLabel>
+	<FCNoTitheLetterDesc>{0} tiene un presupuesto de diezmo aleatorio para el recurso {1}, pero no se activó ningún objeto. El presupuesto de diezmo aleatorio se guardará para su uso futuro.
+
+Presupuesto total acumulado: {2}</FCNoTitheLetterDesc>
+	<FCNoTitheLetterDesc2>{0} tiene un presupuesto de diezmo aleatorio para el recurso {1}, pero no tenía suficiente presupuesto para seleccionar ninguno de los objetos activados. El presupuesto de diezmo aleatorio se guardará para su uso futuro.
+
+Presupuesto total acumulado: {2}</FCNoTitheLetterDesc2>
+	<FCExternalTitheBudget>Inyección de diezmo</FCExternalTitheBudget>
+	<FCTotalTitheBudget>Presupuesto total de diezmo</FCTotalTitheBudget>
+	<FCAvailableTitheBudget>Presupuesto disponible</FCAvailableTitheBudget>
+	<FCUsedTitheBudget>Presupuesto usado</FCUsedTitheBudget>
+	<FCTitheXDesc>Quitar este objeto de la lista de diezmos.</FCTitheXDesc>
+	<FCTitheListRejection>{0} ya existe en la lista de selección de objetos.</FCTitheListRejection>
+	<FCTitheListRejectionQuality>{0} con calidad {1} ya existe en la lista de selección de objetos.</FCTitheListRejectionQuality>
+	<FCTitheListRejectionStuff>{0} con material {1} ya existe en la lista de selección de objetos.</FCTitheListRejectionStuff>
+	<FCTitheListRejectionStuffQuality>{0} con calidad {1} y material {2} ya existe en la lista de selección de objetos</FCTitheListRejectionStuffQuality>
+	<FCTitheBudgetNoWorkers>Añade trabajadores a este recurso para generar presupuesto de diezmo.</FCTitheBudgetNoWorkers>
+	<FCTitheBudgetInsufficient>El presupuesto máximo de diezmo no es suficientemente alto.</FCTitheBudgetInsufficient>
+
+	<!-- Add Tithe Item Window -->
+	<FCAddTitheItemHeader>Añadir objeto de diezmo</FCAddTitheItemHeader>
+	<FCItemSelection>Selección de objetos</FCItemSelection>
+	<FCAddItem>Añadir objeto</FCAddItem>
+	<FCStuff>Material</FCStuff>
+	<FCSelectStuff>Seleccionar material...</FCSelectStuff>
+	<FCMustSelectStuff>Debes seleccionar un tipo de material</FCMustSelectStuff>
+	<FCItemAlreadyInTitheList>Este objeto ya está en la lista de diezmos</FCItemAlreadyInTitheList>
+	<FCClearSelection>Limpiar selección</FCClearSelection>
+	<FCTitheBudgetRemaining>Presupuesto restante: {0} / {1} total</FCTitheBudgetRemaining>
+	<FCTitheItems>Objetos</FCTitheItems>
+	<FCTitheStuff>Materiales</FCTitheStuff>
+	<FCTitheBasePrice>$ base</FCTitheBasePrice>
+	<FCTitheMaterialPrice>Coste est.</FCTitheMaterialPrice>
+	<FCSearchItems>Buscar objetos...</FCSearchItems>
+	<FCSearchMaterials>Buscar materiales...</FCSearchMaterials>
+	<FCTitheSortNameAZ>Nombre A-Z</FCTitheSortNameAZ>
+	<FCTitheSortNameZA>Nombre Z-A</FCTitheSortNameZA>
+	<FCTitheSortPriceLow>Precio: bajo</FCTitheSortPriceLow>
+	<FCTitheSortPriceHigh>Precio: alto</FCTitheSortPriceHigh>
+
+	<!-- Production -->
+	<FCBaseProductionStats>Estadísticas de producción base</FCBaseProductionStats>
+	<FCProduction>Producción</FCProduction>
+	<FCProductionEfficiency>Eficiencia de producción</FCProductionEfficiency>
+	<FCSettlementProductionOf>La producción total del recurso en el asentamiento</FCSettlementProductionOf>
+	<FCTotalProduction>Producción total</FCTotalProduction>
+	<FCPerWorkerProduction>Producción por trabajador</FCPerWorkerProduction>
+	<FCTotalProd>Producción total</FCTotalProd>
+	<FCTotalProdTooltip>Tasa actual: {0}\nMedia del periodo: {1} ({2} de {3} días muestreados)</FCTotalProdTooltip>
+	<FCResourcePools>Reservas de recursos</FCResourcePools>
+
+	<!-- Resource Types -->
+	<FCFood>Comida</FCFood>
+	<FCWeapons>Armas</FCWeapons>
+	<FCAnimals>Animales</FCAnimals>
+	<FCLogging>Tala</FCLogging>
+	<FCMining>Minería</FCMining>
+
+	<!-- Workers -->
+	<FCWorkers>Trabajadores</FCWorkers>
+	<FCFreeWorkers>Trabajadores libres</FCFreeWorkers>
+	<FCAssignedWorkers>Trabajadores asignados</FCAssignedWorkers>
+	<FCAssignedWorkersValue>{0}/{1}</FCAssignedWorkersValue>
+	<FCAssignedOvermaxWorkers>Trabajadores asignados por encima del máximo</FCAssignedOvermaxWorkers>
+	<FCAssignedOvermaxWorkersValue>{0}/{1}</FCAssignedOvermaxWorkersValue>
+	<FCAssignedOvermaxWorkersTooltip>Cada trabajador adicional por encima del máximo aumenta en 5 el coste de todos los trabajadores.</FCAssignedOvermaxWorkersTooltip>
+	<FCAssignedOvermaxWorkersBreakdownTooltip>Modificadores que afectan a la capacidad de trabajadores por encima del máximo:</FCAssignedOvermaxWorkersBreakdownTooltip>
+	<FCAssignedWorkersTooltip>Modificadores que afectan a la capacidad de trabajadores:</FCAssignedWorkersTooltip>
+	<FCExtraWorkersSoftcapTooltipSub>Por nivel de asentamiento:</FCExtraWorkersSoftcapTooltipSub>
+	<FCWorkersFromPrisoners>Prisioneros</FCWorkersFromPrisoners>
+	<FCNoActiveModifiers>No hay modificadores activos.</FCNoActiveModifiers>
+	<FCCostPerWorker>Coste por trabajador</FCCostPerWorker>
+
+	<!-- Income -->
+	<FCCost>Coste</FCCost>
+	<FCSilver>Plata</FCSilver>
+	<FCCashSymbol>$</FCCashSymbol>
+	<FCInitialCost>Coste inicial</FCInitialCost>
+	<FCAvailableSilver>Plata disponible</FCAvailableSilver>
+	<FCNotEnoughSilverToSettle>No tienes suficiente plata en el mapa actual para fundar un nuevo asentamiento</FCNotEnoughSilverToSettle>
+	<FCNotEnoughSilverConstructBuilding>No tienes suficiente plata en el mapa actual para construir ese edificio
+	</FCNotEnoughSilverConstructBuilding>
+	<FCNotEnoughSilverDemolish>No tienes suficiente plata en el mapa actual para pagar la demolición</FCNotEnoughSilverDemolish>
+	<FCNotEnoughMoneyToEnact>No tienes suficiente plata en el mapa actual para promulgar esa política</FCNotEnoughMoneyToEnact>
+	<FCProfit>Beneficio</FCProfit>
+	<FCTaxBase>Base imponible</FCTaxBase>
+	<FCIncome>Ingresos</FCIncome>
+	<FCUpkeep>Mantenimiento</FCUpkeep>
+	<FCRaw>Bruto</FCRaw>
+	<FCRawIncomeDesc>Los ingresos totales que produce un recurso, antes de cualquier deducción.</FCRawIncomeDesc>
+	<FCNet>Neto</FCNet>
+	<FCNetIncomeDesc>Los ingresos totales que produce un recurso, después de contabilizar las desviaciones a reservas y los diezmos.</FCNetIncomeDesc>
+	<FCNetIncomeBreakdownGross>Ingresos brutos: {0}</FCNetIncomeBreakdownGross>
+	<FCNetIncomeBreakdownStockpile>Desviaciones a reservas: -{0}</FCNetIncomeBreakdownStockpile>
+	<FCNetIncomeBreakdownTithes>Diezmos: -{0}</FCNetIncomeBreakdownTithes>
+	<FCNetIncomeBreakdownTitheInjection>Compensación por inyección de diezmo: +{0}</FCNetIncomeBreakdownTitheInjection>
+	<FCNetIncomeBreakdownNet>Ingresos netos: {0}</FCNetIncomeBreakdownNet>
+	<FCNetIncomeBreakdownAvg>Media neta del periodo: {0} ({1} de {2} días muestreados)</FCNetIncomeBreakdownAvg>
+	<FCNonIncomeResourcesHeader>Recursos sin ingresos</FCNonIncomeResourcesHeader>
+	<FCNonIncomeResourcesDesc>Estos recursos no generan ingresos de plata. Su ingreso bruto se añade a una reserva dedicada en lugar de convertirse en plata o diezmos. Consulta el Códice para más información.</FCNonIncomeResourcesDesc>
+	<FCItemcost>{0}{1}</FCItemcost>
+
+	<!-- Period-average display (headline = expected payout, subtitle = current rate) -->
+	<FCDailyRate>Tasa actual</FCDailyRate>
+	<FCSettlementEstimatedProfit>Beneficio estimado</FCSettlementEstimatedProfit>
+	<FCSettlementEstimatedIncome>Ingresos estimados</FCSettlementEstimatedIncome>
+	<FCPeriodAverageTooltipHas>Los ingresos y el mantenimiento se registran cada día. A la hora de los impuestos, la plata pagada es la media de esos registros diarios.</FCPeriodAverageTooltipHas>
+	<FCPeriodAverageTooltipNone>Aún no se ha tomado ningún registro en este ciclo de impuestos. El valor principal muestra la tasa diaria actual.\n\nUna vez pasado un día, el valor principal cambiará al valor promediado del periodo, que es lo que realmente se paga a la hora de los impuestos.</FCPeriodAverageTooltipNone>
+	<FCPeriodAverageTooltipFaction>Esta es la suma del pago esperado de cada asentamiento, menos el mantenimiento de los edictos. Cada asentamiento registra sus ingresos y mantenimiento a diario, siendo la plata pagada a la hora de los impuestos la media de esos registros.</FCPeriodAverageTooltipFaction>
+
+	<!-- Power Output -->
+	<FCSetAsEmpirePowerOutput>Fijar como salida de energía de {0}</FCSetAsEmpirePowerOutput>
+	<FCSetAsOutput>Fijar salida de energía</FCSetAsOutput>
+	<FCSetAsOutputSuccess>¡El transformador se ha fijado como la salida de energía para tus asentamientos!</FCSetAsOutputSuccess>
+
+	<!-- Settlement Fee Reduction -->
+	<FCActionSettlementFeeReduction>El coste de tu próximo asentamiento se reducirá a la mitad gracias al rasgo expansionista de tu facción</FCActionSettlementFeeReduction>
+
+	<!-- Goods Received -->
+	<FCGoodsReceived>Bienes recibidos</FCGoodsReceived>
+	<FCGoodsReceivedFollowing>Has recibido los siguientes bienes del evento {0}:</FCGoodsReceivedFollowing>
+
+</LanguageData>

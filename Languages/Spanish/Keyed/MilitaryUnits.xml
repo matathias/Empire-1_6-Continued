@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Squad Management -->
+	<FCMilitaryTableSquad>Escuadrón asignado</FCMilitaryTableSquad>
+	<FCMilitaryTableSetSquad>Fijar escuadrón</FCMilitaryTableSetSquad>
+	<FCMilitaryTableDeploySquad>Desplegar escuadrón</FCMilitaryTableDeploySquad>
+	<FCMilitaryTableResetSquad>Restablecer escuadrón</FCMilitaryTableResetSquad>
+	<FCMilitaryTableButtonCreateSquad>Plantillas de escuadrón</FCMilitaryTableButtonCreateSquad>
+	<FCMilitaryTableButtonCreateUnit>Plantillas de unidad</FCMilitaryTableButtonCreateUnit>
+	<FCMilitaryTableButtonCreateFireSupport>Gestionar apoyo de fuego</FCMilitaryTableButtonCreateFireSupport>
+	<FCMilTableConfirm>¿Estás seguro? Clic para confirmar</FCMilTableConfirm>
+	<FCNoSquadAvailable>No hay escuadrones disponibles</FCNoSquadAvailable>
+	<FCResetSquadPawns>Se han regenerado los personajes del escuadrón</FCResetSquadPawns>
+	<FCResetSquadRejected>No hay personajes que restablecer. Asigna primero un escuadrón.</FCResetSquadRejected>
+	<FCSelectDeployedSquad>Seleccionar escuadrón desplegado</FCSelectDeployedSquad>
+	<FCSelectedDeployedSquad>{1} de {0}</FCSelectedDeployedSquad>
+	<FCNoSquadsAvailable>No hay escuadrones disponibles</FCNoSquadsAvailable>
+
+	<!-- Unit Customization -->
+	<FCExportUnit>Unidad exportada</FCExportUnit>
+	<FCExportSquad>Escuadrón exportado</FCExportSquad>
+	<FCImportUnit>Importar unidad</FCImportUnit>
+	<FCClearUnitSlot>Vaciar ranura de unidad</FCClearUnitSlot>
+	<FCDegraded>Degradado</FCDegraded>
+
+	<!-- Outfit Slots -->
+	<fcLabelHead>Cabeza</fcLabelHead>
+	<fcLabelShirt>Camisa</fcLabelShirt>
+	<fcLabelChest>Torso</fcLabelChest>
+	<fcLabelOver>Sobre</fcLabelOver>
+	<fcLabelBelt>Cinturón</fcLabelBelt>
+	<fcLabelPants>Pantalones</fcLabelPants>
+	<fcLabelWeapon>Arma</fcLabelWeapon>
+	<fcLabelAnimal>Animal</fcLabelAnimal>
+	<fcUnitGender>Género</fcUnitGender>
+	<fcGenderAny>Cualquiera</fcGenderAny>
+	<fcGenderMale>Masculino</fcGenderMale>
+	<fcGenderFemale>Femenino</fcGenderFemale>
+
+	<!-- Unit Buttons -->
+	<FCRenameUnit>Renombrar unidad</FCRenameUnit>
+	<FCConfirmDeleteUnit>¿Seguro que quieres eliminar "{0}"?</FCConfirmDeleteUnit>
+	<FCResetUnitToDefaultButton>Restablecer por defecto</FCResetUnitToDefaultButton>
+	<FCDeleteUnitButton>Eliminar unidad</FCDeleteUnitButton>
+	<FCSelectAUnitButton>Selecciona una unidad</FCSelectAUnitButton>
+	<FCRollANewUnitButton>Generar nuevo personaje</FCRollANewUnitButton>
+	<FCChangeUnitRaceButton>Cambiar raza</FCChangeUnitRaceButton>
+	<FCChangeUnitXenoButton>Cambiar xenotipo</FCChangeUnitXenoButton>
+	<FCExportUnitButton>Exportar unidad</FCExportUnitButton>
+
+	<!-- Unit Equipment -->
+	<fcChooseApparelColor>Elige el color de la ropa</fcChooseApparelColor>
+	<fcSetAllColors>Fijar todos los colores</fcSetAllColors>
+	<fcClearColors>Limpiar colores</fcClearColors>
+	<fcEquippedApparel>Ropa equipada</fcEquippedApparel>
+	<fcAddApparel>+ Añadir</fcAddApparel>
+	<fcReplacesApparel>Reemplaza</fcReplacesApparel>
+	<FCTotalEquipmentCostLabel>Coste total del equipo: </FCTotalEquipmentCostLabel>
+	<FCUnitActionUnequipThing>Desequipar</FCUnitActionUnequipThing>
+	<fcPickWeapon>Seleccionar arma</fcPickWeapon>
+	<fcPickApparel>Seleccionar ropa</fcPickApparel>
+	<fcPickAnimal>Seleccionar animal</fcPickAnimal>
+	<fcNoMaterialNeeded>No es necesario seleccionar material</fcNoMaterialNeeded>
+	<fcPickerSummary>Seleccionado: {0} - Coste: {1}</fcPickerSummary>
+	<fcPickerSelectItem>Selecciona primero un objeto</fcPickerSelectItem>
+	<fcPickerSelectStuff>Selecciona un material para este objeto</fcPickerSelectStuff>
+
+	<!-- Loadout Tabs -->
+	<fcTabApparel>Ropa</fcTabApparel>
+	<fcTabInventory>Inventario</fcTabInventory>
+	<fcTabImplants>Implantes</fcTabImplants>
+	<fcTabPsycasts>Psilanzamientos</fcTabPsycasts>
+	<fcTabMechs>Mecanoides</fcTabMechs>
+
+	<!-- Inventory -->
+	<fcAddInventoryItem>+ Añadir objeto</fcAddInventoryItem>
+	<fcPickInventoryItem>Seleccionar objeto de inventario</fcPickInventoryItem>
+	<fcInventoryCount>Cantidad:</fcInventoryCount>
+	<fcInventoryMass>{0} / {1} kg</fcInventoryMass>
+	<fcInventoryOverweight>Eso superaría el límite de peso de carga de la unidad.</fcInventoryOverweight>
+	<fcInventoryWeaponSuffix>(arma)</fcInventoryWeaponSuffix>
+
+	<!-- Implants -->
+	<fcAddImplant>+ Añadir implante</fcAddImplant>
+	<fcPickImplant>Seleccionar implante</fcPickImplant>
+	<fcInstallSelfImplant>Instalar {0}</fcInstallSelfImplant>
+
+	<!-- Psycasts -->
+	<fcEditPsycasts>Editar psilanzamientos</fcEditPsycasts>
+	<fcPsylinkLevel>Nivel de psienlace</fcPsylinkLevel>
+	<fcPsycastsNoSystem>No hay ningún sistema de psilanzamientos disponible. Instala Royalty o Vanilla Psycasts Expanded para asignar psilanzamientos.</fcPsycastsNoSystem>
+	<fcPsycastsNeedPsylink>Sube el nivel de psienlace de la unidad por encima de 0 para elegir psilanzamientos.</fcPsycastsNeedPsylink>
+	<fcPsycastsRandomNote>Los psilanzamientos se otorgan aleatoriamente en este nivel de psienlace cuando se recluta la unidad.</fcPsycastsRandomNote>
+	<fcVPEEditorTitle>Psilanzamientos</fcVPEEditorTitle>
+	<fcVPEEditorHint>Gasta puntos en vías y psilanzamientos, focos de meditación o estadísticas de psilanzador. Tus selecciones se guardan en el diseño de la unidad y se aplican a cada mercenario creado a partir de ella.</fcVPEEditorHint>
+	<fcVPEEditorUnavailable>No se pudo preparar un psilanzador de vista previa para esta unidad.</fcVPEEditorUnavailable>
+	<fcVPEStatPointsSpent>Puntos de estadística gastados: {0}</fcVPEStatPointsSpent>
+	<fcVPEPointsAvailable>Puntos disponibles: {0} / {1}</fcVPEPointsAvailable>
+	<fcPsycastPointsSummary>Puntos: {0} / {1}</fcPsycastPointsSummary>
+	<fcClearPsycasts>Limpiar</fcClearPsycasts>
+	<fcApplyPsycasts>Aplicar</fcApplyPsycasts>
+	<fcCancelPsycasts>Cancelar</fcCancelPsycasts>
+
+	<!-- Mechs / Mechanitor (Biotech) -->
+	<fcMakeMechanitor>Convertir esta unidad en mecanitor</fcMakeMechanitor>
+	<fcMechsHint>Activa "Convertir esta unidad en mecanitor" para darle un mecanoenlace y asignarle mecanoides controlables. Los mecanoides se despliegan junto a la unidad en la batalla.</fcMechsHint>
+	<fcMechsNoBiotech>Los mecanitores requieren el DLC Biotech.</fcMechsNoBiotech>
+	<fcMechBandwidth>Ancho de banda: {0} / {1}</fcMechBandwidth>
+	<fcMechBandwidthExceeded>Eso superaría el ancho de banda del mecanitor.</fcMechBandwidthExceeded>
+	<fcMechWorkMode>Modo de trabajo</fcMechWorkMode>
+	<fcMechGroup>Grupo {0}</fcMechGroup>
+	<fcAddMech>+ Añadir mecanoide</fcAddMech>
+	<fcPickMech>Seleccionar mecanoide</fcPickMech>
+	<fcNoMechsAvailable>No hay mecanoides investigados disponibles</fcNoMechsAvailable>
+	<fcMechNotResearched>Aún no has investigado cómo construir {0}.</fcMechNotResearched>
+
+	<!-- Companion animals (Animals tab) + Mount (Giddy Up 2) -->
+	<fcTabAnimals>Animales</fcTabAnimals>
+	<fcAddAnimal>+ Añadir animal</fcAddAnimal>
+	<fcAnimalCount>Animales: {0} / {1}</fcAnimalCount>
+	<fcAnimalCapReached>Esta unidad ya tiene el máximo de {0} animales acompañantes.</fcAnimalCapReached>
+	<fcNoAnimalsAssigned>No hay animales acompañantes asignados</fcNoAnimalsAssigned>
+	<fcLabelMount>Montura</fcLabelMount>
+	<fcPickMount>Seleccionar montura</fcPickMount>
+	<fcNoMountsAvailable>No hay animales montables disponibles</fcNoMountsAvailable>
+
+	<!-- Unit Race/PawnKind Errors -->
+	<FCChangeUnitRaceNoRaces>No hay razas disponibles</FCChangeUnitRaceNoRaces>
+	<fcNoAnimalsAvailable>No hay animales disponibles</fcNoAnimalsAvailable>
+	<FCChangeUnitXenoNoXenos>No hay xenotipos disponibles</FCChangeUnitXenoNoXenos>
+	<FCNoPawnKindDefOfTypeOfRaceWarning>No se encontró ningún{0}PawnKindDef para los niveles tecnológicos: {1} con la raza {2}. Empire generará {2}{3}usando el nivel tecnológico: {4}.</FCNoPawnKindDefOfTypeOfRaceWarning>
+	<FCNoPawnKindDefOfTypeOfRaceError>No se encontró ningún{0}PawnKindDef para ningún nivel tecnológico con la raza {1}. ¡No podrán generarse!</FCNoPawnKindDefOfTypeOfRaceError>
+	<FCMissingPawnKindDefsCriticalError>¡A las razas que seleccionaste les faltan PawnKindDefs críticos! Tu facción puede generar humanos para cubrir el hueco.</FCMissingPawnKindDefsCriticalError>
+
+	<!-- Squad Design -->
+	<FCCreateNewSquad>Crear nuevo escuadrón</FCCreateNewSquad>
+	<FCImportSquad>Importar escuadrón</FCImportSquad>
+	<FCRenameSquad>Renombrar escuadrón</FCRenameSquad>
+	<FCConfirmDeleteSquad>¿Seguro que quieres eliminar "{0}"?</FCConfirmDeleteSquad>
+	<FCSquadFull>El escuadrón está lleno (30/30 unidades)</FCSquadFull>
+	<FCAddUnit>Añadir unidad</FCAddUnit>
+	<FCSquadUnitCount>Unidades: {0} / 30</FCSquadUnitCount>
+	<FCExportSquadButton>Exportar escuadrón</FCExportSquadButton>
+	<FCDeleteSquadButton>Eliminar escuadrón</FCDeleteSquadButton>
+	<FCTotalSquadEquipmentCost>Coste total del equipo del escuadrón: {0} / {1} (coste máx.)</FCTotalSquadEquipmentCost>
+	<FCTotalSquadEquipmentCostNoRef>Coste total del equipo del escuadrón: {0} / Sin referencia</FCTotalSquadEquipmentCostNoRef>
+	<FCSquadDesignDeployCost>Coste de despliegue: ${0}</FCSquadDesignDeployCost>
+	<FCDeleteSquad>Eliminar escuadrón</FCDeleteSquad>
+	<FCSelectASquad>Selecciona un escuadrón</FCSelectASquad>
+	<FCMilitaryLevelLabel> - Nivel militar: </FCMilitaryLevelLabel>
+	<FCNoSquadEquipped>¡No puedes desplegar un escuadrón sin personal equipado!</FCNoSquadEquipped>
+	<FCNoSquadLoadoutAssigned>¡No hay ningún equipamiento de escuadrón asignado a ese asentamiento!</FCNoSquadLoadoutAssigned>
+	<FCNoSquadAssigned>¡No hay ningún escuadrón militar asignado a ese asentamiento!</FCNoSquadAssigned>
+	<FCSquadExceedsMaxCost>Ese escuadrón supera el coste máximo asignado del asentamiento</FCSquadExceedsMaxCost>
+	<fcResetSquadPawns>Restablecer personajes</fcResetSquadPawns>
+	<fcResetSquadPawnsConfirm>Esto destruirá todos los mercenarios existentes en "{0}" y generará otros completamente nuevos. Sus identidades, apariencia y cualquier experiencia de combate se perderán.\n\nEsto está pensado para arreglar personajes corruptos. ¿Estás seguro?</fcResetSquadPawnsConfirm>
+	<fcResetSquadPawnsTip>Regenera todos los mercenarios de este escuadrón. Destruye los personajes existentes y crea otros nuevos con identidades distintas. Solo disponible para escuadrones asignados a un asentamiento.</fcResetSquadPawnsTip>
+	<FCCreateNewUnit>Crear nueva unidad</FCCreateNewUnit>
+
+	<!-- Fire Support Design -->
+	<FCCreateNewFireSupport>Nuevo apoyo de fuego</FCCreateNewFireSupport>
+	<FCDeleteSupport>Eliminar apoyo</FCDeleteSupport>
+	<FCAddNewProjectile>Añadir nuevo proyectil</FCAddNewProjectile>
+	<FCRenameFireSupport>Renombrar apoyo de fuego</FCRenameFireSupport>
+	<FCConfirmDeleteFireSupport>¿Seguro que quieres eliminar "{0}"?</FCConfirmDeleteFireSupport>
+	<FCDeleteFireSupportButton>Eliminar</FCDeleteFireSupportButton>
+	<FCFireSupportCostLabel>Coste: {0}</FCFireSupportCostLabel>
+	<FCFireSupportCostRefLabel>Coste: {0} / {1} (máx.)</FCFireSupportCostRefLabel>
+	<FCFireSupportProjectileCount>Proyectiles: {0}</FCFireSupportProjectileCount>
+	<FCFireSupportDuration>Duración: {0}s</FCFireSupportDuration>
+	<FCFireSupportAccuracyLabel>Precisión (radio en casillas): {0}  ·  Modificador de coste: +{1}%</FCFireSupportAccuracyLabel>
+	<FCSelectAFireSupport>Selecciona un apoyo de fuego</FCSelectAFireSupport>
+	<FCImportFireSupport>Importar</FCImportFireSupport>
+	<FCExportFireSupportButton>Exportar</FCExportFireSupportButton>
+	<FCExportFireSupport>Apoyo de fuego exportado</FCExportFireSupport>
+	<FCNoProjectilesFound>No se encontraron proyectiles disponibles</FCNoProjectilesFound>
+	<FCFireSupportOptions>Opciones</FCFireSupportOptions>
+	<FCInsertProjectileAbove>Insertar proyectil sobre la ranura</FCInsertProjectileAbove>
+	<FCDuplicate>Duplicar</FCDuplicate>
+
+	<!-- Navigation Buttons -->
+	<FCNavUnits>Unidades</FCNavUnits>
+	<FCNavSquads>Escuadrones</FCNavSquads>
+	<FCNavFireSupport>Apoyo de fuego</FCNavFireSupport>
+	<FCEditUnitTooltip>Edita el equipo de esta unidad</FCEditUnitTooltip>
+
+	<!-- Unit Types -->
+	<FCPawns>Personajes</FCPawns>
+	<FCTrader>Comerciante</FCTrader>
+	<FCFighter>Combatiente</FCFighter>
+	<FCNonMercenary>No mercenario</FCNonMercenary>
+
+	<!-- Import/Export -->
+	<FCImport>Importar</FCImport>
+	<FCImported>{0} importado</FCImported>
+	<FCDeleted>{0} eliminado</FCDeleted>
+
+	<!-- Prisoners -->
+	<FCPrisonersMenu>Prisioneros</FCPrisonersMenu>
+	<FCWorkload>carga de trabajo</FCWorkload>
+	<FCHeavy>pesada</FCHeavy>
+	<FCMedium>media</FCMedium>
+	<FCLight>ligera</FCLight>
+	<FCDebugLight>depuración ligera</FCDebugLight>
+	<FCDebugHeavy>depuración pesada</FCDebugHeavy>
+	<FCHeavyExplanation>Añade +2 al límite blando de trabajadores (máx. de trabajadores antes de escalar costes). Reduce la salud en 4 por día.</FCHeavyExplanation>
+	<FCMediumExplanation>Añade +1 al límite blando de trabajadores (máx. de trabajadores antes de escalar costes). Reduce la salud en 2 por día.</FCMediumExplanation>
+	<FCLightExplanation>Añade +1 al límite duro de trabajadores (trabajadores por encima del máximo). Restaura la salud en 1 por día.</FCLightExplanation>
+	<FCDebugLightExplanation>SOLO DEPURACIÓN. +1 al límite blando, +1 al límite duro de trabajadores. Reduce la salud en 50 por día.</FCDebugLightExplanation>
+	<FCDebugHeavyExplanation>SOLO DEPURACIÓN. +2 al límite blando, +2 al límite duro de trabajadores. Reduce la salud en 100 por día.</FCDebugHeavyExplanation>
+	<FCSetDefaultWorkload>Carga de trabajo por defecto</FCSetDefaultWorkload>
+	<FCSetDefaultWorkloadShort>Por defecto</FCSetDefaultWorkloadShort>
+	<FCBulkSetWorkload>Fijar cargas de trabajo en lote</FCBulkSetWorkload>
+	<FCBulkSetWorkloadShort>Fijar en lote</FCBulkSetWorkloadShort>
+	<FCUseFactionDefault>Usar valor por defecto de la facción</FCUseFactionDefault>
+	<FCFromFaction>Facción</FCFromFaction>
+	<FCPrisonerHealthChangePerDay>{0}/día</FCPrisonerHealthChangePerDay>
+	<FCPrisonerDownedNoWork>Incapacitado: sin trabajo</FCPrisonerDownedNoWork>
+	<FCAge>edad</FCAge>
+	<FCOf>de</FCOf>
+	<FCSellPawn>Vender personaje</FCSellPawn>
+	<FCReturnToPlayer>Devolver al jugador</FCReturnToPlayer>
+	<FCSellPawnInfo>El valor se añadirá a la próxima factura del asentamiento</FCSellPawnInfo>
+	<FCPrisonerCaptureInfo>Prisionero: {0} ha sido esclavizado y entregado a {1}</FCPrisonerCaptureInfo>
+	<FCAPrisonerIsBeingDeliveredToYou>Se te está entregando un prisionero</FCAPrisonerIsBeingDeliveredToYou>
+	<FCNoPrisoners>No hay prisioneros en este asentamiento.</FCNoPrisoners>
+	<FCNoPrisonersInCaravan>No hay prisioneros en esta caravana.</FCNoPrisonersInCaravan>
+	<FCNoPrisonersFaction>No hay prisioneros.</FCNoPrisonersFaction>
+	<FCPrisonerWindowTitle>Prisioneros — {0}</FCPrisonerWindowTitle>
+	<FCTransferPrisonerToSettlement>Transferir prisionero al asentamiento</FCTransferPrisonerToSettlement>
+	<FCTransferPrisonerOption>Transferir {0}</FCTransferPrisonerOption>
+	<FCTransferPrisonerGizmoDesc>Selecciona un prisionero de esta caravana para entregarlo al asentamiento.</FCTransferPrisonerGizmoDesc>
+	<FCAddPrisonersToSettlement>Añadir prisioneros a {0}</FCAddPrisonersToSettlement>
+	<FCPawnsAddedToSettlement>{0} prisionero(s) añadido(s) a {1}</FCPawnsAddedToSettlement>
+	<FCPawnArrivalDefault>{0} personaje(s) añadido(s) a {1}</FCPawnArrivalDefault>
+
+	<!-- Mercenary -->
+	<FCRequestMercenary>Solicitar mercenario</FCRequestMercenary>
+	<FCActionMercenaryRefreshed>La acción Solicitar mercenario está disponible para su uso</FCActionMercenaryRefreshed>
+	<FCActionMercenaryOnCooldown>No puedes usar esa acción durante otros {0}</FCActionMercenaryOnCooldown>
+
+</LanguageData>

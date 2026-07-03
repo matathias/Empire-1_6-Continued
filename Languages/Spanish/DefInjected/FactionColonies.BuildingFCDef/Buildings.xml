@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<Empty.label>ranura de edificio vacía</Empty.label>
+	<Construction.label>en construcción</Construction.label>
+	<researchLabs.label>laboratorios de investigación</researchLabs.label>
+	<indoorHydroponics.label>hidroponía cubierta</indoorHydroponics.label>
+	<firearmsFactory.label>fábrica de armas de fuego</firearmsFactory.label>
+	<rimazonWarehouse.label>almacén Rimazon</rimazonWarehouse.label>
+	<inhouseMercCompany.label>compañía mercenaria propia</inhouseMercCompany.label>
+	<adultEntertainmentCentre.label>centro de entretenimiento para adultos</adultEntertainmentCentre.label>
+	<forcedWorkCamps.label>campos de trabajos forzados</forcedWorkCamps.label>
+	<artilleryOutpost.label>puesto de artillería</artilleryOutpost.label>
+	<JunkFoodFactory.label>fábrica de comida basura</JunkFoodFactory.label>
+	<TextileFactory.label>fábrica textil</TextileFactory.label>
+	<LocalZoo.label>zoológico local</LocalZoo.label>
+	<TreeFarm.label>plantación de árboles</TreeFarm.label>
+	<IMED.label>depósito de equipo minero industrial</IMED.label>
+	<soilFixer.label>oficina de recuperación de suelos</soilFixer.label>
+	<lavaPlant.label>central geotérmica</lavaPlant.label>
+	<lavaLab.label>laboratorio de vulcanología</lavaLab.label>
+	<batteryPowerStation.label>estación de baterías</batteryPowerStation.label>
+	<solarPlant.label>planta solar</solarPlant.label>
+	<cleanEnergyLab.label>laboratorio de energía limpia</cleanEnergyLab.label>
+	<animalTestingFacility.label>instalación de experimentación animal</animalTestingFacility.label>
+	<apartmentHousing.label>bloque de apartamentos</apartmentHousing.label>
+	<slavePlantation.label>plantación de esclavos</slavePlantation.label>
+	<adventurersGuild.label>gremio de aventureros</adventurersGuild.label>
+	<publicMarket.label>mercado público</publicMarket.label>
+	<jailhouse.label>cárcel</jailhouse.label>
+	<wildernessGuild.label>gremio de la naturaleza salvaje</wildernessGuild.label>
+	<apparelSweatshop.label>taller textil de explotación</apparelSweatshop.label>
+	<loggingCamp.label>campamento maderero</loggingCamp.label>
+	<RedlightDistrict.label>barrio rojo</RedlightDistrict.label>
+	<Smithy.label>herrería</Smithy.label>
+	<UndergroundMine.label>mina subterránea</UndergroundMine.label>
+	<Mills.label>molinos</Mills.label>
+	<ServantHousing.label>alojamiento de sirvientes</ServantHousing.label>
+	<plagueCamp.label>campamento de la peste</plagueCamp.label>
+	<cerealFarmland.label>tierras de cultivo de cereales</cerealFarmland.label>
+	<grainMill.label>molino de grano</grainMill.label>
+	<granary.label>granero</granary.label>
+	<fletcher.label>flechero</fletcher.label>
+	<stoneMason.label>cantero</stoneMason.label>
+	<furrier.label>peletero</furrier.label>
+	<huntersHut.label>cabaña del cazador</huntersHut.label>
+	<brewer.label>cervecero</brewer.label>
+	<carpenter.label>carpintero</carpenter.label>
+	<apothecary.label>botica</apothecary.label>
+	<alchemist.label>alquimista</alchemist.label>
+	<ancientAcademy.label>academia antigua</ancientAcademy.label>
+	<slaveMarket.label>mercado de esclavos</slaveMarket.label>
+	<bailiff.label>alguacil</bailiff.label>
+	<militia.label>milicia</militia.label>
+	<salvageGuild.label>gremio de chatarreros</salvageGuild.label>
+	<mushfarmer.label>granjas fúngicas</mushfarmer.label>
+	<woodgatherer.label>recolector de madera</woodgatherer.label>
+	<woodcutter.label>leñador</woodcutter.label>
+	<orbitalFuelDepot.label>depósito de combustible orbital</orbitalFuelDepot.label>
+	<asteroidMiningPlatform.label>plataforma minera de asteroides</asteroidMiningPlatform.label>
+	<solarCollectionArray.label>conjunto de captación solar</solarCollectionArray.label>
+	<orbitalHydroponicsBay.label>bahía de hidroponía orbital</orbitalHydroponicsBay.label>
+	<orbitalTreeFarm.label>plantación de árboles orbital</orbitalTreeFarm.label>
+	<fabricationModules.label>módulos de fabricación</fabricationModules.label>
+	<orbitalLaboratory.label>laboratorio orbital</orbitalLaboratory.label>
+	<workforceQuarters.label>alojamiento de la mano de obra</workforceQuarters.label>
+	<habitatRings.label>anillos de hábitat</habitatRings.label>
+	<orbitalDefenseArray.label>conjunto de defensa orbital</orbitalDefenseArray.label>
+	<pointDefenseBattery.label>batería de defensa puntual</pointDefenseBattery.label>
+	<orbitalCommsArray.label>conjunto de comunicaciones orbital</orbitalCommsArray.label>
+	<orbitalLuxurySuites.label>suites de lujo orbitales</orbitalLuxurySuites.label>
+	<orbitalTradeHub.label>núcleo comercial orbital</orbitalTradeHub.label>
+	<spaceDistillery.label>destilería espacial</spaceDistillery.label>
+	<orbitalShipyard.label>astillero orbital</orbitalShipyard.label>
+	<orbitalSurfaceOps.label>operaciones de superficie orbitales</orbitalSurfaceOps.label>
+	<orbitalAcademy.label>academia orbital</orbitalAcademy.label>
+	<navalAcademy.label>academia naval</navalAcademy.label>
+	<shuttlePort.label>puerto de lanzaderas</shuttlePort.label>
+	<intergalacticMarket.label>mercado intergaláctico</intergalacticMarket.label>
+	<glitterworldResearchFacility.label>instalación de investigación de mundo reluciente</glitterworldResearchFacility.label>
+	<automatedDefenseSystems.label>sistemas de defensa automatizados</automatedDefenseSystems.label>
+	<FoodReconstruction.label>reconstrucción de alimentos</FoodReconstruction.label>
+	<MechSalvage.label>taller de chatarra mecanoide</MechSalvage.label>
+	<ClothingPrinters.label>impresoras de ropa</ClothingPrinters.label>
+	<SyntheticWoodFactory.label>fábrica de madera sintética</SyntheticWoodFactory.label>
+	<AsteroidMagnet.label>imán de asteroides</AsteroidMagnet.label>
+	<WorkerBots.label>robots trabajadores</WorkerBots.label>
+	<SubliminalMessageCenter.label>centro de mensajes subliminales</SubliminalMessageCenter.label>
+	<CloningLab.label>laboratorio de clonación</CloningLab.label>
+	<perpetualMotionGenerator.label>generador de movimiento perpetuo</perpetualMotionGenerator.label>
+	<bionicsManufacturingPlant.label>planta de fabricación de biónicos</bionicsManufacturingPlant.label>
+	<LightConverter.label>conversor de luz arcotecnológico</LightConverter.label>
+	<AnimalBeacon.label>baliza animal arcotecnológica</AnimalBeacon.label>
+	<TrappedAI.label>IA arcotecnológica atrapada</TrappedAI.label>
+	<UnionOffices.label>oficinas del sindicato</UnionOffices.label>
+	<OrbitalSpaceLaser.label>láser espacial orbital</OrbitalSpaceLaser.label>
+	<TransdimensionalMarket.label>mercado transdimensional</TransdimensionalMarket.label>
+	<archotechGenerator.label>generador arcotecnológico</archotechGenerator.label>
+	<barracks.label>cuartel</barracks.label>
+	<tradingPost.label>puesto comercial</tradingPost.label>
+	<migrantHousing.label>alojamiento de migrantes</migrantHousing.label>
+	<quarry.label>cantera</quarry.label>
+	<trainingYard.label>patio de entrenamiento</trainingYard.label>
+	<FurHunterCamp.label>campamento de cazadores de pieles</FurHunterCamp.label>
+	<FlintStorage.label>almacén de pedernal</FlintStorage.label>
+	<SlavePit.label>foso de esclavos</SlavePit.label>
+	<Farmland.label>tierras de cultivo</Farmland.label>
+	<AmmunitionMines.label>minas de munición</AmmunitionMines.label>
+	<TanningWorkshop.label>taller de curtido</TanningWorkshop.label>
+	<DrugDen.label>antro de drogas psicodélicas</DrugDen.label>
+	<HamsterWheel.label>rueda de hámster gigante</HamsterWheel.label>
+	<deforestationCamp.label>campamento de deforestación</deforestationCamp.label>
+	<herbalMedicineFarm.label>granja de medicina herbal</herbalMedicineFarm.label>
+
+	<Empty.desc>Haz clic aquí para construir un edificio</Empty.desc>
+	<Construction.desc>Aquí se está construyendo un edificio...</Construction.desc>
+	<researchLabs.desc>Los científicos pasan los días investigando aquí.</researchLabs.desc>
+	<indoorHydroponics.desc>La comida se produce en interior, protegiéndola de las inclemencias del mundo.</indoorHydroponics.desc>
+	<firearmsFactory.desc>Una fábrica que produce armas de fuego en masa.</firearmsFactory.desc>
+	<rimazonWarehouse.desc>Un almacén repleto de bienes marcados para su envío.</rimazonWarehouse.desc>
+	<inhouseMercCompany.desc>Cuartel para una compañía mercenaria propia. Proporcionarán seguridad al asentamiento.</inhouseMercCompany.desc>
+	<adultEntertainmentCentre.desc>Un lugar para que la gente local gaste unas monedas y se divierta.</adultEntertainmentCentre.desc>
+	<forcedWorkCamps.desc>¡Pon a esos prisioneros a trabajar y aumenta tu producción!</forcedWorkCamps.desc>
+	<artilleryOutpost.desc>Cuando se construye este edificio, se puede solicitar un ataque de artillería por un coste en el menú militar.</artilleryOutpost.desc>
+	<JunkFoodFactory.desc>Es rápida, barata y poco saludable. Los lugareños se quejarán de la falta de calidad, pero estarán demasiado enfermos para hacer algo al respecto.</JunkFoodFactory.desc>
+	<TextileFactory.desc>¡Hacer ropa es mucho más fácil cuando las máquinas hacen casi todo el trabajo!</TextileFactory.desc>
+	<LocalZoo.desc>¡Un lugar para que la gente contemple distintos animales mientras pasan por el asentamiento, por diversión y beneficio!</LocalZoo.desc>
+	<TreeFarm.desc>¡Deja de talar bosques y cultiva los tuyos propios!</TreeFarm.desc>
+	<IMED.desc>Construye un lugar para almacenar y mantener máquinas grandes y feas que mastican la roca como si fuera cartón.</IMED.desc>
+	<soilFixer.desc>Restaura la fertilidad del suelo dañado y agotado de las Tierras cicatrizadas.</soilFixer.desc>
+	<lavaPlant.desc>Aprovecha la energía geotérmica de fácil acceso de las zonas volcánicamente activas para generar energía.</lavaPlant.desc>
+	<lavaLab.desc>Una instalación de investigación dedicada a estudiar la vulcanología y sus posibles aplicaciones prácticas.</lavaLab.desc>
+	<batteryPowerStation.desc>Una estación eléctrica para almacenar el exceso de producción de energía.</batteryPowerStation.desc>
+	<solarPlant.desc>Una central solar para producir energía extra.</solarPlant.desc>
+	<cleanEnergyLab.desc>Un laboratorio dedicado a investigar y producir formas de energía limpia más eficientes.</cleanEnergyLab.desc>
+	<animalTestingFacility.desc>Un laboratorio dedicado a probar productos en animales. Poco ético, pero útil.</animalTestingFacility.desc>
+	<apartmentHousing.desc>Un gran bloque de apartamentos para alojar a los trabajadores locales.</apartmentHousing.desc>
+	<slavePlantation.desc>Aquí los esclavos trabajan los campos.</slavePlantation.desc>
+	<adventurersGuild.desc>Un lugar para que los aventureros viajeros se reúnan y pasen la noche.</adventurersGuild.desc>
+	<publicMarket.desc>Un mercado público para intercambiar bienes.</publicMarket.desc>
+	<jailhouse.desc>Un lugar para encerrar a la escoria criminal.</jailhouse.desc>
+	<wildernessGuild.desc>Un gremio dedicado a domar la naturaleza salvaje.</wildernessGuild.desc>
+	<apparelSweatshop.desc>¡Un lugar para hacer trabajar a esclavos y colonos por igual!</apparelSweatshop.desc>
+	<loggingCamp.desc>Un campamento dedicado a la industria maderera. ¡Incluye un aserradero y todo!</loggingCamp.desc>
+	<RedlightDistrict.desc>Un lugar para que comerciantes y gente común pasen la noche con personas de dudosa reputación.</RedlightDistrict.desc>
+	<Smithy.desc>Una forja robusta y un yunque aún más robusto. Perfecto para dar forma al metal y convertirlo en armas y herramientas.</Smithy.desc>
+	<UndergroundMine.desc>Excava en la superficie del planeta en busca de esos materiales realmente valiosos. ¡No olvides construir soportes!</UndergroundMine.desc>
+	<Mills.desc>¡Molinos! De viento o de agua, son útiles para muchas cosas.</Mills.desc>
+	<ServantHousing.desc>Los sirvientes son un placer y más lugares para alojarlos significa que puedes contratar más.</ServantHousing.desc>
+	<plagueCamp.desc>Un campamento de contención para los enfermos y los moribundos.</plagueCamp.desc>
+	<cerealFarmland.desc>Tierra para cultivar cereales que alimenten a más de una sola aldea.</cerealFarmland.desc>
+	<grainMill.desc>Un molino para procesar cereales con grandes piedras de moler.</grainMill.desc>
+	<granary.desc>Un lugar seguro para almacenar cereales lejos de esas molestas ratas.</granary.desc>
+	<fletcher.desc>Un fabricante de flechas: ¡la mejor munición del neolítico!</fletcher.desc>
+	<stoneMason.desc>Artesano de la piedra de día, gobernante del mundo de noche.</stoneMason.desc>
+	<furrier.desc>Fabrica bienes a partir de pieles. Ignora el olor raro.</furrier.desc>
+	<huntersHut.desc>Caza en los bosques cercanos en busca de comida. ¡Las especies en peligro están deliciosas!</huntersHut.desc>
+	<brewer.desc>Destila los mejores etanoles y subproductos del etanol. Por favor, bebe con responsabilidad.</brewer.desc>
+	<carpenter.desc>Fabrica muebles maravillosos para evitar los más atroces crímenes de guerra.</carpenter.desc>
+	<apothecary.desc>¡Elabora elixires para curar todos los males! (Los resultados pueden variar.)</apothecary.desc>
+	<alchemist.desc>¿Convertir acero en oro? ¡Encontraremos la manera!</alchemist.desc>
+	<ancientAcademy.desc>¡Desvela secretos del universo que pueden o no ser ciertos, pero no ambas cosas!</ancientAcademy.desc>
+	<slaveMarket.desc>¿Necesitas mano de obra gratuita?</slaveMarket.desc>
+	<bailiff.desc>No acepta excusas por los pagos atrasados del alquiler.</bailiff.desc>
+	<militia.desc>Listos para luchar por sus familias, aunque no muy eficazmente.</militia.desc>
+	<salvageGuild.desc>Un gremio de cuadrillas de chatarreros entrenadas que registra las ruinas de asentamientos destruidos y abandonados, recuperando armas y ropa, y potencialmente también notas de investigación.</salvageGuild.desc>
+	<mushfarmer.desc>Tierras de cultivo adaptadas al ecosistema local cultivando hongos para comida y medicina.</mushfarmer.desc>
+	<woodgatherer.desc>Un recolector especializado en recoger madera suelta en forma de ramas caídas y madera flotante.</woodgatherer.desc>
+	<woodcutter.desc>Un leñador local que usa herramientas de piedra para talar árboles y procesar madera.</woodcutter.desc>
+	<orbitalFuelDepot.desc>Almacena y procesa combustible para naves espaciales. Esencial para mantener las operaciones orbitales y apoyar los viajes espaciales.</orbitalFuelDepot.desc>
+	<asteroidMiningPlatform.desc>Drones mineros automatizados extraen recursos de asteroides cercanos y restos espaciales. Mucho más eficiente que la minería planetaria.</asteroidMiningPlatform.desc>
+	<solarCollectionArray.desc>Enormes conjuntos de paneles solares sin interferencia atmosférica recogen energía directamente de la estrella. Alimenta la estación y proporciona energía excedente.</solarCollectionArray.desc>
+	<orbitalHydroponicsBay.desc>Cámaras de cultivo sin suelo que producen comida con luz artificial. Esencial para la autosuficiencia de la estación.</orbitalHydroponicsBay.desc>
+	<orbitalTreeFarm.desc>Arboretos presurizados que cultivan madera de ciclo rápido en atmósferas enriquecidas con CO2.</orbitalTreeFarm.desc>
+	<fabricationModules.desc>Bahías de fabricación en gravedad cero que producen armas y ropa con un desperdicio mínimo.</fabricationModules.desc>
+	<orbitalLaboratory.desc>Los laboratorios en microgravedad permiten experimentos imposibles en superficie, avanzando la medicina y la investigación.</orbitalLaboratory.desc>
+	<workforceQuarters.desc>Dormitorios funcionales con ventanales a las estrellas. Aloja a trabajadores adicionales de la estación.</workforceQuarters.desc>
+	<habitatRings.desc>Anillos de gravedad centrífuga que alojan a los trabajadores en cómodas condiciones de gravedad simulada.</habitatRings.desc>
+	<orbitalDefenseArray.desc>Plataforma de armas pesadas que proporciona una potencia de fuego defensiva abrumadora contra las amenazas orbitales.</orbitalDefenseArray.desc>
+	<pointDefenseBattery.desc>Torretas interceptoras de corto alcance que protegen la estación de proyectiles entrantes y grupos de abordaje.</pointDefenseBattery.desc>
+	<orbitalCommsArray.desc>Repetidor de comunicaciones de largo alcance que mejora la coordinación diplomática y suprime la disidencia mediante propaganda.</orbitalCommsArray.desc>
+	<orbitalLuxurySuites.desc>Aposentos de primera con camas de gravedad artificial y finas comodidades importadas de mundos relucientes.</orbitalLuxurySuites.desc>
+	<orbitalTradeHub.desc>Un nexo comercial que coordina rutas comerciales interestelares y maximiza los márgenes de beneficio.</orbitalTradeHub.desc>
+	<spaceDistillery.desc>La fermentación en microgravedad produce compuestos únicos de biocombustible y bienes comerciales exóticos.</spaceDistillery.desc>
+	<orbitalShipyard.desc>Dique seco a gran escala para construir y reparar naves espaciales. Acelera toda la construcción de la estación.</orbitalShipyard.desc>
+	<orbitalSurfaceOps.desc>Coordina la extracción de recursos en superficie desde la órbita, gestionando manadas de ganado y operaciones mineras de forma remota.</orbitalSurfaceOps.desc>
+	<orbitalAcademy.desc>Una institución de investigación de primer nivel que amplía las fronteras de la ciencia en microgravedad.</orbitalAcademy.desc>
+	<navalAcademy.desc>Entrena a oficiales de élite para el mando de flotas. Mejora significativamente la preparación militar y reduce las reutilizaciones de despliegue.</navalAcademy.desc>
+	<shuttlePort.desc>Un aeropuerto a pequeña escala, este edificio proporciona la infraestructura para enviar bienes rápidamente por todo el planeta. Este edificio te permite enviar tres lanzaderas cada ciclo de impuestos.</shuttlePort.desc>
+	<intergalacticMarket.desc>Desde aquí, las naves vuelan y depositan sus bienes y reponen su carga antes de regresar a casa.</intergalacticMarket.desc>
+	<glitterworldResearchFacility.desc>Desde este edificio, investigadores equipados con las herramientas de más alta gama buscan las respuestas del universo.</glitterworldResearchFacility.desc>
+	<automatedDefenseSystems.desc>Androides patrullan las calles, manteniendo a los colonos a salvo de daños externos e internos.</automatedDefenseSystems.desc>
+	<FoodReconstruction.desc>A nadie le gusta la pasta de nutrientes, pero con un poco de saborizante y retoques cosméticos, ¡puede parecer y saber a lo que tú quieras!</FoodReconstruction.desc>
+	<MechSalvage.desc>Con las herramientas adecuadas, puedes hacer más que despedazar mecanoides muertos: puedes recuperar su tecnología para usarla contra ellos.</MechSalvage.desc>
+	<ClothingPrinters.desc>¡Elimina por completo el elemento humano! ¡Echa materias primas y observa cómo cada prenda se imprime como una sola pieza sin costuras!</ClothingPrinters.desc>
+	<SyntheticWoodFactory.desc>¡Es nueva! ¡Es de la era espacial! Es tan buena como la de verdad y desde luego no es vinilo, lo juramos.</SyntheticWoodFactory.desc>
+	<AsteroidMagnet.desc>A la gente puede no gustarle, pero es difícil negar la cantidad de recursos que se reúnen cuando simplemente sacas del cielo los metales que quieres.</AsteroidMagnet.desc>
+	<WorkerBots.desc>Pon robots a hacer las tareas más mundanas del asentamiento para que la gente pueda trabajar en otra parte.</WorkerBots.desc>
+	<SubliminalMessageCenter.desc>Entreteje mensajes subliminales en las emisiones locales del asentamiento.</SubliminalMessageCenter.desc>
+	<CloningLab.desc>¿Por qué criar o capturar animales cuando puedes cultivarlos en cubas?</CloningLab.desc>
+	<perpetualMotionGenerator.desc>Una imposibilidad contra las leyes de la física: un generador que produce energía extra usando el concepto del movimiento perpetuo.</perpetualMotionGenerator.desc>
+	<bionicsManufacturingPlant.desc>Una fábrica dedicada al desarrollo de nuevos biónicos.</bionicsManufacturingPlant.desc>
+	<LightConverter.desc>Una gran máquina arcotecnológica de propulsión vanométrica que puede convertir la luz en casi cualquier cosa que no esté viva. Necesita una presencia militar constante para ahuyentar a los saqueadores.</LightConverter.desc>
+	<AnimalBeacon.desc>Una torre arcotecnológica que emite una señal que atrae a los animales lejanos y calma a los cercanos.</AnimalBeacon.desc>
+	<TrappedAI.desc>Una IA de nivel arcotecnológico atrapada en una red cerrada. Es perfectamente segura a menos que alguien la deje salir.</TrappedAI.desc>
+	<UnionOffices.desc>Un edificio central desde el que operan los sindicatos locales. Es asombroso lo mucho más feliz y dispuesta a trabajar que está la gente cuando la tratas bien.</UnionOffices.desc>
+	<OrbitalSpaceLaser.desc>Es algo así como una bomba nuclear, pero reutilizable y de energía solar.</OrbitalSpaceLaser.desc>
+	<TransdimensionalMarket.desc>Una cosa es comerciar por toda la galaxia. Otra es construir un monolito de obsidiana en llamas para comerciar con los residentes de una dimensión infernal.</TransdimensionalMarket.desc>
+	<archotechGenerator.desc>Un generador arcano que ni siquiera los encargados de su mantenimiento pueden aspirar a comprender, pero que han adquirido.</archotechGenerator.desc>
+	<barracks.desc>Un edificio para alojar a las tropas locales.</barracks.desc>
+	<tradingPost.desc>Un pequeño puesto que los comerciantes errantes frecuentan.</tradingPost.desc>
+	<migrantHousing.desc>Alojamiento local para que los migrantes de paso se queden.</migrantHousing.desc>
+	<quarry.desc>Tierra removida que se usa para extraer mineral valioso.</quarry.desc>
+	<trainingYard.desc>Un lugar para que tus soldados entrenen.</trainingYard.desc>
+	<FurHunterCamp.desc>Un campamento para tu cazador de pieles.</FurHunterCamp.desc>
+	<FlintStorage.desc>Un almacén para pedernal.</FlintStorage.desc>
+	<SlavePit.desc>Un foso donde los esclavos duermen.</SlavePit.desc>
+	<Farmland.desc>Una sección de tierra dedicada a cultivar plantas comestibles.</Farmland.desc>
+	<AmmunitionMines.desc>Desde pedernal para flechas hasta los materiales para balas y pólvora, estas minas ocupan espacio que podría usarse para extraer otros recursos.</AmmunitionMines.desc>
+	<TanningWorkshop.desc>Un taller diseñado para convertir las pieles de animales en cuero.</TanningWorkshop.desc>
+	<DrugDen.desc>Es asombroso los descubrimientos que hace la gente cuando está absurdamente colocada. ¡A veces esos descubrimientos hasta son útiles!</DrugDen.desc>
+	<HamsterWheel.desc>No es mucho, ¡pero es mejor que nada!</HamsterWheel.desc>
+	<deforestationCamp.desc>Un campamento desde el que se despoja a los bosques locales de todos sus recursos y de la vida que albergan.</deforestationCamp.desc>
+	<herbalMedicineFarm.desc>Una pequeña granja para cultivar medicina herbal.</herbalMedicineFarm.desc>
+
+</LanguageData>

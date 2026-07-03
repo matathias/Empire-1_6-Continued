@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Codex Window Chrome -->
+	<FCCodexTitle>Códice del Imperio</FCCodexTitle>
+	<FCCodexTabInfo>Info</FCCodexTabInfo>
+	<FCCodexSelectEntry>Selecciona una entrada de la izquierda para ver los detalles.</FCCodexSelectEntry>
+	<FCCodexLiveData>Valores actuales de la partida</FCCodexLiveData>
+	<FCCodexSeeAlso>Véase también:</FCCodexSeeAlso>
+	<FCCodexEnabled>Activado</FCCodexEnabled>
+	<FCCodexDisabled>Desactivado</FCCodexDisabled>
+
+	<!-- Raid Strength Provider -->
+	<FCCodexRaidNoSettlements>No hay asentamientos: aún no hay saqueos.</FCCodexRaidNoSettlements>
+	<FCCodexRaidAvgMilLevel>Nivel militar medio: {0}</FCCodexRaidAvgMilLevel>
+	<FCCodexRaidTargetBand>Rango de atacante favorecido: nivel {0}–{1}</FCCodexRaidTargetBand>
+	<FCCodexRaidNotStarted>Los saqueos aún no han comenzado (empiezan en ~{0} días).</FCCodexRaidNotStarted>
+	<FCCodexRaidEarlyCapActive>Límite de inicio de partida: saqueos limitados a ~nivel {0} ({1} días restantes).</FCCodexRaidEarlyCapActive>
+	<FCCodexRaidEarlyCapInactive>Límite de inicio de partida: ya no está activo. Los saqueos llegan con toda la fuerza de la facción.</FCCodexRaidEarlyCapInactive>
+
+	<!-- Threat Level Provider (legacy ETL keys; retained for the dormant threat-scaling system) -->
+	<FCCodexETLNoSettlements>No hay asentamientos — el ETL se establece por defecto en 1.0×.</FCCodexETLNoSettlements>
+	<FCCodexETLCurrent>ETL actual: {0}×</FCCodexETLCurrent>
+	<FCCodexETLBreakdown>Componentes:</FCCodexETLBreakdown>
+	<FCCodexETLAvgLevel>Nivel medio: {0}</FCCodexETLAvgLevel>
+	<FCCodexETLMaxLevel>Nivel máximo: {0}</FCCodexETLMaxLevel>
+	<FCCodexETLContrib>+{0}</FCCodexETLContrib>
+	<FCCodexETLIncome>Ingresos: {0} de plata</FCCodexETLIncome>
+	<FCCodexETLCount>Asentamientos: {0}</FCCodexETLCount>
+	<FCCodexETLHandicapCap>Límite de hándicap: {0}×</FCCodexETLHandicapCap>
+	<FCCodexETLMaxSetting>Ajuste máximo: {0}×</FCCodexETLMaxSetting>
+
+	<!-- Battle Simulation Provider -->
+	<FCCodexBattleParams>Parámetros de batalla actuales</FCCodexBattleParams>
+	<FCCodexBattleDefAdv>Ventaja del defensor: {0}× ({1}% de bonificación de fuerza)</FCCodexBattleDefAdv>
+	<FCCodexBattleDamping>Amortiguación de eficiencia: {0}</FCCodexBattleDamping>
+	<FCCodexBattleDampExample>Ejemplo: eficiencia bruta {0}× → amortiguada a {1}×</FCCodexBattleDampExample>
+	<FCCodexBattleEffHeader>Eficiencia bruta por nivel tecnológico (antes de la amortiguación):</FCCodexBattleEffHeader>
+	<FCCodexBattleEffRow>{0}: {1}×</FCCodexBattleEffRow>
+
+	<!-- Resource Production Provider -->
+	<FCCodexResNoSettlements>No hay asentamientos para mostrar datos de producción.</FCCodexResNoSettlements>
+	<FCCodexResNoWorkers>Aún no hay trabajadores asignados a ningún recurso.</FCCodexResNoWorkers>
+	<FCCodexResExample>Ejemplo: {0} — {1}</FCCodexResExample>
+	<FCCodexResStage1>Fase 1 (aditivos): {0} de base</FCCodexResStage1>
+	<FCCodexResStage2>Fase 2 (multiplicadores): ×{0} (incluye prosperidad {1}%)</FCCodexResStage2>
+	<FCCodexResStage3>Fase 3 (trabajadores): {0} trabajadores → {1} de producción total</FCCodexResStage3>
+	<FCCodexResSilver>Conversión a plata: {0} de plata/unidad → {1} de valor en plata</FCCodexResSilver>
+
+	<!-- Prosperity Provider -->
+	<FCCodexProsNoSettlements>No hay asentamientos para mostrar datos de prosperidad.</FCCodexProsNoSettlements>
+	<FCCodexProsHeader>Desglose por asentamiento</FCCodexProsHeader>
+	<FCCodexProsCurrent>Prosperidad: {0}</FCCodexProsCurrent>
+	<FCCodexProsTargetVal>Objetivo: {0}</FCCodexProsTargetVal>
+	<FCCodexProsHappiness>Felicidad: {0}</FCCodexProsHappiness>
+	<FCCodexProsLoyalty>Lealtad: {0}</FCCodexProsLoyalty>
+	<FCCodexProsStability>Estabilidad: {0}</FCCodexProsStability>
+	<FCCodexProsDrift>Deriva: {0}/día</FCCodexProsDrift>
+	<FCCodexProsProdMult>Producción: ×{0}</FCCodexProsProdMult>
+
+	<!-- Worker Overwork Provider -->
+	<FCCodexWorkerParams>Parámetros de trabajadores actuales</FCCodexWorkerParams>
+	<FCCodexWorkerBaseCost>Coste base por trabajador: {0} de plata</FCCodexWorkerBaseCost>
+	<FCCodexWorkerFormula>Fórmula: coste × (1 + exceso/20)</FCCodexWorkerFormula>
+	<FCCodexWorkerFormulaDesc>Cada trabajador por encima del límite blando añade un 5% de coste</FCCodexWorkerFormulaDesc>
+	<FCCodexWorkerExample>Ejemplo: {0} trabajadores por encima del límite → +{1}% de coste → {2} de plata por trabajador</FCCodexWorkerExample>
+
+	<!-- Military Cooldown Provider -->
+	<FCCodexCooldownParams>Parámetros de reutilización actuales</FCCodexCooldownParams>
+	<FCCodexCooldownTravelDefense>Operaciones de defensa: sin reutilización al defender el asentamiento de origen del propio escuadrón; 24 horas al ser enviado a defender un asentamiento distinto.</FCCodexCooldownTravelDefense>
+	<FCCodexCooldownTravelOffense>Operaciones de ofensiva: tiempo de viaje calculado para que el escuadrón regrese desde la casilla objetivo a su asentamiento de origen.</FCCodexCooldownTravelOffense>
+	<FCCodexCooldownEffectivenessNote>Los personajes heridos reducen la eficacia de combate del escuadrón hasta que se curan; la ventana de inspección del escuadrón muestra el tiempo de curación estimado. Los mercenarios muertos dejan su ranura vacía hasta que el jugador la rellene.</FCCodexCooldownEffectivenessNote>
+
+	<!-- Attack Frequency Provider -->
+	<FCCodexFreqParams>Parámetros de frecuencia de ataque actuales</FCCodexFreqParams>
+	<FCCodexFreqRange>Rango de intervalo base: {0}–{1} días</FCCodexFreqRange>
+	<FCCodexFreqCount>Tu número de asentamientos: {0}</FCCodexFreqCount>
+	<FCCodexFreqCurve>Curva de frecuencia (asentamientos → multiplicador):</FCCodexFreqCurve>
+	<FCCodexFreqPoint>{0} asentamientos → {1}×</FCCodexFreqPoint>
+
+	<!-- Difficulty Settings Provider -->
+	<FCCodexDiffCurrent>Dificultad actual: {0}</FCCodexDiffCurrent>
+	<FCCodexDiffHeader>Dificultad → Plata/Rec | Días de impuesto | Mod. diezmo | Coste trabajador</FCCodexDiffHeader>
+	<FCCodexDiffRow>{0}: {1} | {2}d | {3} | {4}</FCCodexDiffRow>
+	<FCCodexDiffCustomLabel>Tus valores personalizados:</FCCodexDiffCustomLabel>
+	<FCCodexDiffCustomRow>  {0}: {1}</FCCodexDiffCustomRow>
+
+	<!-- Social Stats Provider -->
+	<FCCodexSocialNoSettlements>Aún no hay asentamientos. Funda uno para ver aquí sus estadísticas sociales.</FCCodexSocialNoSettlements>
+	<FCCodexSocialHeader>Estadísticas sociales por asentamiento</FCCodexSocialHeader>
+	<FCCodexSocialHappiness>Felicidad: {0}</FCCodexSocialHappiness>
+	<FCCodexSocialLoyalty>Lealtad: {0}</FCCodexSocialLoyalty>
+	<FCCodexSocialUnrest>Descontento: {0}</FCCodexSocialUnrest>
+	<FCCodexSocialProsperity>Prosperidad: {0}</FCCodexSocialProsperity>
+	<FCCodexSocialDeployLocked>(despliegues ofensivos bloqueados: moral demasiado baja)</FCCodexSocialDeployLocked>
+
+	<!-- Tech Progression Provider -->
+	<FCCodexTechCurrent>Nivel tecnológico actual del Imperio: {0}</FCCodexTechCurrent>
+	<FCCodexTechMirrorOn>El nivel tecnológico está fijado al nivel tecnológico de tu propia facción (el ajuste de reflejo está activado).</FCCodexTechMirrorOn>
+	<FCCodexTechNext>Investigar esto desbloquea el siguiente rango: {0}</FCCodexTechNext>
+
+	<!-- Anti-Exploit Provider -->
+	<FCCodexExploitThresholds>Los despliegues ofensivos se bloquean cuando la felicidad de un asentamiento cae por debajo de {0}, la lealtad por debajo de {1} o el descontento sube por encima de {2}.</FCCodexExploitThresholds>
+	<FCCodexExploitNoSettlements>Aún no hay asentamientos.</FCCodexExploitNoSettlements>
+	<FCCodexExploitHeader>Bloqueos de despliegue actuales:</FCCodexExploitHeader>
+	<FCCodexExploitNoneLocked>Ninguno. Todos los asentamientos pueden desplegar actualmente.</FCCodexExploitNoneLocked>
+
+	<!-- Policies/Traits/Edicts Provider -->
+	<FCCodexPolicyPolicies>Políticas activas:</FCCodexPolicyPolicies>
+	<FCCodexPolicyTraits>Rasgos de la facción:</FCCodexPolicyTraits>
+	<FCCodexPolicyEdicts>Edictos activos:</FCCodexPolicyEdicts>
+	<FCCodexPolicyNone>(ninguno)</FCCodexPolicyNone>
+
+	<!-- Settlement Types Tab -->
+	<FCCodexTabSettlements>Asentamientos</FCCodexTabSettlements>
+	<FCCodexSelectSettlement>Selecciona un tipo de asentamiento de la izquierda para ver los detalles.</FCCodexSelectSettlement>
+	<FCCodexSettlementStats>Estadísticas clave</FCCodexSettlementStats>
+	<FCCodexSettlementWorkers>Trabajadores: {0} de base, +{1} por nivel</FCCodexSettlementWorkers>
+	<FCCodexSettlementMaxLevel>Nivel máximo: {0}</FCCodexSettlementMaxLevel>
+	<FCCodexSettlementBuildingSlots>Ranuras de edificio</FCCodexSettlementBuildingSlots>
+	<FCCodexSettlementBuildingSlotsLevel>Nivel</FCCodexSettlementBuildingSlotsLevel>
+	<FCCodexSettlementBuildingSlotsCount>Ranuras de edificio</FCCodexSettlementBuildingSlotsCount>
+	<FCCodexSettlementBuildingSlotsWorkers>Trabajadores</FCCodexSettlementBuildingSlotsWorkers>
+	<FCCodexSettlementPlanetLayer>Capa planetaria: {0}</FCCodexSettlementPlanetLayer>
+	<FCCodexSettlementManualBattle>Batalla manual: {0}</FCCodexSettlementManualBattle>
+	<FCCodexSettlementCanBeRaided>Puede ser saqueado: {0}</FCCodexSettlementCanBeRaided>
+	<FCCodexSettlementRaidWeight>Peso de selección como objetivo de saqueo: {0}</FCCodexSettlementRaidWeight>
+	<FCCodexSettlementResources>Recursos disponibles</FCCodexSettlementResources>
+	<FCCodexSettlementStatModifiers>Modificadores de estadística</FCCodexSettlementStatModifiers>
+	<FCCodexSettlementTechReqs>Requisitos tecnológicos</FCCodexSettlementTechReqs>
+	<FCCodexSettlementTechLevel>Nivel tecnológico: {0}</FCCodexSettlementTechLevel>
+	<FCCodexSettlementResearch>Investigación: {0}</FCCodexSettlementResearch>
+	<FCCodexSettlementBiomes>Restricciones de bioma</FCCodexSettlementBiomes>
+	<FCCodexLayerSurface>superficie</FCCodexLayerSurface>
+	<FCCodexSettlementAllBiomes>Todos los biomas de {0}</FCCodexSettlementAllBiomes>
+	<FCCodexSettlementBlockedBiomes>Bloqueados: {0}</FCCodexSettlementBlockedBiomes>
+	<FCCodexSettlementAllowedBiomes>Solo permitidos: {0}</FCCodexSettlementAllowedBiomes>
+	<FCCodexYes>Sí</FCCodexYes>
+	<FCCodexNo>No</FCCodexNo>
+
+	<!-- Resources Tab -->
+	<FCCodexTabResources>Recursos</FCCodexTabResources>
+	<FCCodexSelectResource>Selecciona un recurso de la izquierda para ver los detalles.</FCCodexSelectResource>
+	<FCCodexResourceKeyInfo>Información clave</FCCodexResourceKeyInfo>
+	<FCCodexResourcePoolResource>Recurso de reserva</FCCodexResourcePoolResource>
+	<FCCodexResourceTitheable>Diezmable: {0}</FCCodexResourceTitheable>
+	<FCCodexResourceDefaultResource>Recurso por defecto: {0}</FCCodexResourceDefaultResource>
+	<FCCodexResourceMinTechLevel>Nivel tecnológico mín.: {0}</FCCodexResourceMinTechLevel>
+	<FCCodexResourceMaxTechLevel>Nivel tecnológico máx.: {0}</FCCodexResourceMaxTechLevel>
+	<FCCodexResourceDefenseWeight>Peso de defensa: {0}</FCCodexResourceDefenseWeight>
+	<FCCodexResourceBiomeProduction>Producción por bioma</FCCodexResourceBiomeProduction>
+	<FCCodexResourceBiomeName>Bioma</FCCodexResourceBiomeName>
+	<FCCodexResourceBiomeAdditive>Aditivo</FCCodexResourceBiomeAdditive>
+	<FCCodexResourceBiomeMultiplier>Multiplicador</FCCodexResourceBiomeMultiplier>
+	<FCCodexResourceBiomeTotal>Total</FCCodexResourceBiomeTotal>
+	<FCCodexResourceTitheItems>Objetos de diezmo ({0})</FCCodexResourceTitheItems>
+	<FCCodexResourceSearchTithe>Buscar objetos de diezmo...</FCCodexResourceSearchTithe>
+	<FCCodexResourceCompatibleSettlements>Asentamientos compatibles</FCCodexResourceCompatibleSettlements>
+	<FCCodexResourceRequiresResearch>Requiere: {0}</FCCodexResourceRequiresResearch>
+
+	<!-- Biomes Tab -->
+	<FCCodexTabBiomes>Biomas</FCCodexTabBiomes>
+	<FCCodexSelectBiome>Selecciona un bioma de la izquierda para ver los detalles.</FCCodexSelectBiome>
+	<FCCodexBiomeKeyInfo>Información clave</FCCodexBiomeKeyInfo>
+	<FCCodexBiomeSettleable>Habitable: {0}</FCCodexBiomeSettleable>
+	<FCCodexBiomeResourceProduction>Producción de recursos</FCCodexBiomeResourceProduction>
+	<FCCodexBiomeResourceColumn>Recurso</FCCodexBiomeResourceColumn>
+	<FCCodexBiomeStatModifiers>Modificadores de estadística</FCCodexBiomeStatModifiers>
+	<FCCodexBiomeSettlementTypes>Tipos de asentamiento fundables</FCCodexBiomeSettlementTypes>
+	<FCCodexBiomeNoSettlements>No se puede fundar ningún asentamiento en este bioma.</FCCodexBiomeNoSettlements>
+
+	<!-- Buildings Tab -->
+	<FCCodexTabBuildings>Edificios</FCCodexTabBuildings>
+	<FCCodexSelectBuilding>Selecciona un edificio de la izquierda para ver los detalles.</FCCodexSelectBuilding>
+	<FCCodexSearchBuildings>Buscar edificios...</FCCodexSearchBuildings>
+	<FCCodexBuildingStats>Estadísticas</FCCodexBuildingStats>
+	<FCCodexBuildingCost>Coste: {0} de plata</FCCodexBuildingCost>
+	<FCCodexBuildingDuration>Tiempo de construcción: {0}</FCCodexBuildingDuration>
+	<FCCodexBuildingUpkeep>Mantenimiento: {0} de plata</FCCodexBuildingUpkeep>
+	<FCCodexBuildingIncome>Ingresos: {0} de plata</FCCodexBuildingIncome>
+	<FCCodexBuildingTechLevel>Nivel tecnológico: {0}</FCCodexBuildingTechLevel>
+	<FCCodexBuildingModifiers>Modificadores</FCCodexBuildingModifiers>
+	<FCCodexBuildingRequired>Edificios requeridos</FCCodexBuildingRequired>
+	<FCCodexBuildingUpgrades>Árbol de mejoras</FCCodexBuildingUpgrades>
+	<FCCodexBuildingRequiredBy>Requerido por</FCCodexBuildingRequiredBy>
+	<FCCodexBuildingTechGeneral>General</FCCodexBuildingTechGeneral>
+	<FCCodexBuildingCompatibleSettlements>Asentamientos compatibles</FCCodexBuildingCompatibleSettlements>
+	<FCCodexBuildingBiomeRestrictions>Restricciones de terreno</FCCodexBuildingBiomeRestrictions>
+	<FCCodexBuildingApplicableBiomes>Biomas:</FCCodexBuildingApplicableBiomes>
+	<FCCodexBuildingHilliness>Orografía: de {0} a {1}</FCCodexBuildingHilliness>
+	<FCCodexBuildingMaxHilliness>Orografía máx.: {0}</FCCodexBuildingMaxHilliness>
+	<FCCodexBuildingMinHilliness>Orografía mín.: {0}</FCCodexBuildingMinHilliness>
+	<FCCodexBuildingAllBiomes>Todos los biomas</FCCodexBuildingAllBiomes>
+	<FCCodexBuildingAnyTerrain>Cualquier terreno</FCCodexBuildingAnyTerrain>
+
+	<!-- Enhanced Tooltips -->
+	<FCCodexTipProsFormula>Multiplicador de producción = prosperidad / 100. Al 50%, produces la mitad.</FCCodexTipProsFormula>
+	<FCCodexTipProsRange>Rango entre asentamientos: {0}% - {1}%</FCCodexTipProsRange>
+	<FCCodexTipSocialDrift>{0} aumenta naturalmente en 1/día, salvo que haya un modificador negativo. Las políticas, los edificios y los eventos pueden aumentar o reducir esta tasa. Esta estadística alimenta el objetivo de prosperidad.</FCCodexTipSocialDrift>
+	<FCCodexTipUnrestDrift>El descontento disminuye naturalmente en 1/día, salvo que haya un modificador de penalización. Las políticas, los edificios y los eventos pueden aumentar o reducir esta tasa. Un descontento más bajo eleva el objetivo de prosperidad.</FCCodexTipUnrestDrift>
+	<FCCodexTipProfitBreakdown>Ingresos: {0} de plata\nMantenimiento: {1} de plata\nBeneficio: {2} de plata\n\nLos ingresos son el valor total en plata de toda la producción del asentamiento. El mantenimiento incluye los costes de los trabajadores, el mantenimiento de los edificios y los gastos militares.</FCCodexTipProfitBreakdown>
+	<FCCodexTipTaxTimer>Cobro de impuestos cada {0} días (configurable en los ajustes).\n</FCCodexTipTaxTimer>
+	<FCCodexTipTaxAveraging>Los ingresos por impuestos usan la MEDIA de los registros diarios de producción a lo largo del periodo de impuestos, no un único registro en el momento del cobro. Construir o perder cosas a mitad de periodo afecta proporcionalmente a la media.</FCCodexTipTaxAveraging>
+
+	<!-- Non-Income Resources -->
+	<FCCodexNonIncomeHeader>Reservas actuales del imperio:</FCCodexNonIncomeHeader>
+	<FCCodexNonIncomeResearchPool>Reserva de investigación: {0} puntos</FCCodexNonIncomeResearchPool>
+	<FCCodexNonIncomePowerOutput>Salida de energía: {0} W</FCCodexNonIncomePowerOutput>
+	<FCCodexNonIncomeNoPools>Tus asentamientos aún no han contribuido a ninguna reserva de recursos. Aparecerán aquí tras tu primer cobro de impuestos.</FCCodexNonIncomeNoPools>
+
+</LanguageData>

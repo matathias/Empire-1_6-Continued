@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<FC_CombatEfficiency_Buff.label>bien entrenado</FC_CombatEfficiency_Buff.label>
+	<FC_CombatEfficiency_Buff.description>Este combatiente se beneficia de un entrenamiento y una coordinación superiores proporcionados por la infraestructura militar de su asentamiento.\n        \n----------\n        \nLas bonificaciones aplicadas por esta dolencia se escalan según la eficiencia militar del asentamiento defensor/de origen (para los personajes del Imperio del jugador) o según la eficiencia militar de su facción (para los personajes NPC enemigos).</FC_CombatEfficiency_Buff.description>
+	<FC_CombatEfficiency_Debuff.label>mal entrenado</FC_CombatEfficiency_Debuff.label>
+	<FC_CombatEfficiency_Debuff.description>Este combatiente sufre un entrenamiento inadecuado y una mala coordinación debido a la débil infraestructura militar de su asentamiento.\n\n----------\n\nLas penalizaciones aplicadas por esta dolencia se escalan según la eficiencia militar del asentamiento defensor/de origen (para los personajes del Imperio del jugador) o según la eficiencia militar de su facción (para los personajes NPC enemigos).</FC_CombatEfficiency_Debuff.description>
+
+</LanguageData>

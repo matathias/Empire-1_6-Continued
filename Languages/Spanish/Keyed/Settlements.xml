@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Settlement Creation -->
+	<FCSettleANewColony>Fundar un nuevo asentamiento</FCSettleANewColony>
+	<FCCreateNewColony>Fundar nuevo asentamiento</FCCreateNewColony>
+	<FCSelectTile>Selecciona una casilla para fundar el asentamiento</FCSelectTile>
+	<FCSelectedInvalidTile>¡No puedes construir un asentamiento aquí!</FCSelectedInvalidTile>
+	<FCSettle>Asentarse</FCSettle>
+	<FCCaravanOnWay>Ya hay una caravana en camino</FCCaravanOnWay>
+	<FCCaravanSentToLocation>¡Se ha enviado una caravana a la ubicación! Llegarán en</FCCaravanSentToLocation>
+	<FCConstructionToLocation>¡Se han enviado equipos de construcción a la ubicación! Su trabajo se completará en</FCConstructionToLocation>
+	<FCColonyConstruction>Construcción de {0}</FCColonyConstruction>
+	<FCImpassableMountains>No puedes fundar un {0} sobre montañas infranqueables.</FCImpassableMountains>
+	<FCNotAllowedBiome>No puedes fundar un {0} en este bioma.</FCNotAllowedBiome>
+	<FCInvalidPlanetLayer>Capa planetaria no válida.</FCInvalidPlanetLayer>
+	<FCOrbitalTileOccupied>Esta casilla orbital está ocupada.</FCOrbitalTileOccupied>
+	<FCSettlementFormed>Asentamiento formado</FCSettlementFormed>
+	<FCTheSettlement>El asentamiento</FCTheSettlement>
+	<FCHasBeenFormed> ha sido formado</FCHasBeenFormed>
+	<FCPickSettlementType>Elige el tipo de asentamiento</FCPickSettlementType>
+	<FCRequiresResearch>Requiere investigación: {0}</FCRequiresResearch>
+	<FCRequiresTechLevel>Requiere nivel tecnológico: {0}</FCRequiresTechLevel>
+	<FCSettlementResources>Recursos:</FCSettlementResources>
+	<FCSettleEventDesc>Una caravana viaja para establecer un nuevo {0} en {1}. Llegada estimada: {2}.</FCSettleEventDesc>
+	<FCSettleEventCompletedDesc>{0} ha sido establecido como un nuevo {1} en {2}.</FCSettleEventCompletedDesc>
+	<FCPlayerColony>Imperio del jugador</FCPlayerColony>
+	<FCSetCapital>Fijar capital</FCSetCapital>
+	<FCSetAsFactionCapital>{0} ha sido designada como capital de la facción</FCSetAsFactionCapital>
+
+	<!-- Settlement Upgrading -->
+	<FCAlreadyUpgradeSettlement>¡Este asentamiento ya se está mejorando!</FCAlreadyUpgradeSettlement>
+	<FCStartUpgradeSettlement>El asentamiento se está mejorando ahora...</FCStartUpgradeSettlement>
+	<FCUpgradeSettlement>Mejorar asentamiento</FCUpgradeSettlement>
+	<FCUpgrade>Mejorar</FCUpgrade>
+	<FCSettlementUpgradeInProgress>Mejorando...</FCSettlementUpgradeInProgress>
+	<FCCanBeUpgraded>puede mejorarse por</FCCanBeUpgraded>
+	<FCUpgradeColonyDesc>Mejorar este asentamiento aumentará en 3 el número máximo de trabajadores antes de que su coste empiece a subir. El nivel militar de este asentamiento también aumentará en 1.</FCUpgradeColonyDesc>
+	<FCHasBeenUpgraded>ha sido mejorado al nivel</FCHasBeenUpgraded>
+	<FCUpgradeEventDesc>{0} se está mejorando del nivel {1} al nivel {2}.\n\n{3}</FCUpgradeEventDesc>
+	<FCUpgradeEventCompletedDesc>¡{0} ha sido mejorado al nivel {1}!\n\n{2}</FCUpgradeEventCompletedDesc>
+	<FCAlreadyMaxLevel>ya está al nivel máximo</FCAlreadyMaxLevel>
+	<FCNotEnoughSilverUpgrade>El mapa actual no tiene suficiente plata para pagar la mejora del asentamiento.</FCNotEnoughSilverUpgrade>
+	<FCCannotBeUpgradedPastMax>Este asentamiento no puede mejorarse más allá del nivel máximo</FCCannotBeUpgradedPastMax>
+	<FCUpgradeBadgeInProgress>Mejorando: queda {0}</FCUpgradeBadgeInProgress>
+	<FCUpgradeBadgeAvailable>Clic para mejorar (coste: {0} de plata)</FCUpgradeBadgeAvailable>
+
+	<!-- Settlement Window -->
+	<FCGoToLocation>Ir a la ubicación</FCGoToLocation>
+	<FCSettlementLocation>Ubicado en la tierra {0} de un {1}</FCSettlementLocation>
+	<FCOpenSettlementWindowDefaultLabel>Ver información del asentamiento</FCOpenSettlementWindowDefaultLabel>
+	<FCOpenSettlementWindowDefaultDesc>Abre la ventana del asentamiento</FCOpenSettlementWindowDefaultDesc>
+	<FCBuildRoads>Construir carreteras</FCBuildRoads>
+	<FCRoadSegmentsBuilt>Los asentamientos de {0} han construido nuevos tramos de {1} que conectan tus territorios.</FCRoadSegmentsBuilt>
+
+	<!-- Settlement Stats -->
+	<FCSettlementMilitaryLevel>Nivel militar del asentamiento</FCSettlementMilitaryLevel>
+	<FCSettlementHappiness>Felicidad del asentamiento</FCSettlementHappiness>
+	<FCSettlementLoyalty>Lealtad del asentamiento</FCSettlementLoyalty>
+	<FCSettlementUnrest>Descontento del asentamiento</FCSettlementUnrest>
+	<FCSettlementProsperity>Prosperidad del asentamiento</FCSettlementProsperity>
+	<FCHappiness>felicidad</FCHappiness>
+	<FCLoyality>lealtad</FCLoyality>
+	<FCUnrest>descontento</FCUnrest>
+	<FCProsperity>prosperidad</FCProsperity>
+	<FCBaseRecovery>Recuperación base</FCBaseRecovery>
+	<FCProsperityTarget>Objetivo: {0}%</FCProsperityTarget>
+	<FCProsperityDrift>Deriva hacia el objetivo</FCProsperityDrift>
+	<FCProsperityTargetBreakdown>Felicidad ({0}) + Lealtad ({1}) + Estabilidad ({2}) / 3</FCProsperityTargetBreakdown>
+	<FCBaseGain>Ganancia base</FCBaseGain>
+	<FCBaseLoss>Pérdida base</FCBaseLoss>
+	<FCSettlementStatGain>Ganando {0} de {1} al día</FCSettlementStatGain>
+	<FCSettlementStatLoss>Perdiendo {0} de {1} al día</FCSettlementStatLoss>
+	<FCDecayingPenaltyDaysLeft>quedan {0} días</FCDecayingPenaltyDaysLeft>
+	<FCPenaltyPawnDeath>{0} ciudadano asesinado</FCPenaltyPawnDeath>
+	<FCPenaltyCaravanDeath>{0} caravana atacada</FCPenaltyCaravanDeath>
+	<FCPenaltyCaravanWipe>{0} caravana masacrada</FCPenaltyCaravanWipe>
+	<FCPenaltyCaravanWipeMessage>La gente de {0} está furiosa porque una de sus caravanas comerciales fue aniquilada bajo tu protección.</FCPenaltyCaravanWipeMessage>
+
+	<!-- Settlement Stat Descriptions -->
+	<FCSettlementMilitaryLevelDesc>El nivel militar afecta directamente a la capacidad del asentamiento para defenderse y albergar escuadrones.</FCSettlementMilitaryLevelDesc>
+	<FCSettlementMilLevelExplain>El nivel militar ofensivo o defensivo de un asentamiento es el número que se usa realmente en las batallas, derivado del escuadrón o —si no hay escuadrón— de la mitad del límite de nivel.
+
+El límite de nivel determina el escuadrón más fuerte que este asentamiento puede desplegar.
+
+Todas las bonificaciones de nivel militar elevan el límite, no el nivel efectivo.</FCSettlementMilLevelExplain>
+	<FCSettlementMilBaseLevel>Nivel base</FCSettlementMilBaseLevel>
+	<FCSettlementMilOffensiveLine>Nivel ofensivo: {0}  (×{1} de eficiencia)</FCSettlementMilOffensiveLine>
+	<FCSettlementMilDefensiveLine>Nivel defensivo: {0}  (×{1} de ventaja defensiva)</FCSettlementMilDefensiveLine>
+	<FCSettlementMilLevelCap>Límite de nivel</FCSettlementMilLevelCap>
+	<FCSettlementMilCapSettlementLevel>Nivel del asentamiento</FCSettlementMilCapSettlementLevel>
+	<FCSettlementHappinessDesc>La medida de la felicidad general del asentamiento.
+
+Una felicidad alta significa que cualquier conflicto interno dentro del asentamiento se inclinará en gran medida a tu favor.
+	</FCSettlementHappinessDesc>
+	<FCSettlementLoyaltyDesc>La medida de la lealtad general del asentamiento.
+
+La lealtad de un asentamiento determina hasta qué punto está dispuesto a escucharte. Una lealtad alta reducirá la probabilidad de deserción.
+	</FCSettlementLoyaltyDesc>
+	<FCSettlementUnrestDesc>La medida del descontento general del asentamiento.
+
+Cuanto más crece el descontento, más probable es que surjan eventos internos peligrosos en tu asentamiento. Si lo dejas crecer demasiado, podría estallar una revuelta en todo el asentamiento.
+	</FCSettlementUnrestDesc>
+	<FCSettlementProsperityDesc>La medida de la prosperidad general del asentamiento.
+
+La prosperidad de un asentamiento se correlaciona directamente con la producción de recursos (p. ej., 50% de prosperidad = 50% de producción). La prosperidad deriva hacia un objetivo determinado por la felicidad, la lealtad y el descontento del asentamiento.
+	</FCSettlementProsperityDesc>
+
+	<!-- Settlement Table -->
+	<FCSettlementManager>Gestor de asentamientos</FCSettlementManager>
+	<FCSettlementTableName>Nombre</FCSettlementTableName>
+	<FCSettlementTableLevel>Nivel</FCSettlementTableLevel>
+	<FCSettlementTableMilLevel>Nivel militar</FCSettlementTableMilLevel>
+	<FCSettlementTableProfit>Beneficio</FCSettlementTableProfit>
+	<FCSettlementTableWorkers>Trabajadores libres</FCSettlementTableWorkers>
+	<FCSettlementTableHappiness>Felicidad</FCSettlementTableHappiness>
+	<FCSettlementTableLoyalty>Lealtad</FCSettlementTableLoyalty>
+	<FCSettlementTableUnrest>Descontento</FCSettlementTableUnrest>
+	<FCSettlementTableProsperity>Prosperidad</FCSettlementTableProsperity>
+	<FCSettlementTableFounding>Fecha de fundación</FCSettlementTableFounding>
+	<FCNoSettlements>No hay asentamientos.</FCNoSettlements>
+	<FCSettlementCount>{0} asentamientos</FCSettlementCount>
+	<FCSortBy>Ordenar: {0}</FCSortBy>
+	<FCColonyLevel>Nivel del asentamiento</FCColonyLevel>
+	<FCHamlet>asentamiento</FCHamlet>
+
+	<!-- Settlement Delete -->
+	<FCDeleteSettlement>Eliminar asentamiento</FCDeleteSettlement>
+	<FCDeleteSettlementConfirm>¿Eliminar el asentamiento {0}?</FCDeleteSettlementConfirm>
+	<FCAreYouSureRemove>¿Estás seguro?</FCAreYouSureRemove>
+	<FCSettlementRemoved>El asentamiento {0} ha sido eliminado.</FCSettlementRemoved>
+
+	<!-- Settlement Customization -->
+	<FCCustomizeSettlement>Personalizar asentamiento</FCCustomizeSettlement>
+	<FCSettlementFullName>Nombre completo:</FCSettlementFullName>
+	<FCSettlementShortName>Nombre corto:</FCSettlementShortName>
+	<FCUnsupportedSettlementFaction>La facción de este asentamiento no tiene nombre o algo ha salido terriblemente mal.</FCUnsupportedSettlementFaction>
+
+	<!-- Settlement Special Actions -->
+	<FCSpecialActions>Acciones especiales</FCSpecialActions>
+	<FCBuyLoyalty>Comprar lealtad</FCBuyLoyalty>
+	<FCSendSilverToColony>Enviar plata al asentamiento</FCSendSilverToColony>
+	<FCSendingXSilver>Enviando {0} de plata</FCSendingXSilver>
+	<FCSettlementGainsXLoyalty>El asentamiento ganará {0} de lealtad</FCSettlementGainsXLoyalty>
+
+	<!-- Construction Status -->
+	<FCNumUnderConstruction>Construcciones activas: {0}</FCNumUnderConstruction>
+	<FCActiveConstruction>Construcción activa</FCActiveConstruction>
+	<FCCloseConstructionBox>Cerrar lista de construcciones</FCCloseConstructionBox>
+	<FCOpenConstructionBox>Abrir lista de construcciones</FCOpenConstructionBox>
+	<FCSettlementupgrading>Mejora de asentamiento</FCSettlementupgrading>
+	<FCCompletiontimer>Finaliza en: {0}</FCCompletiontimer>
+
+	<!-- Biome Descriptions -->
+	<FCDescSeaIce>Interminables capas de hielo, rotas únicamente por una fauna escasa y dispersa. No crece comida salvo en habitaciones calefactadas. Solo la vida más tenaz sobrevive aquí.</FCDescSeaIce>
+	<FCDescIceSheet>Una escarcha desoladora e interminable cubre la tierra, interrumpida solo por afloramientos de roca y ruinas. La única fuente de comida es la resistente fauna que llama hogar a este lugar.</FCDescIceSheet>
+	<FCDescTundra>Estas tierras del interior albergan una variedad de flora y fauna rústica que se gana la vida sobre el paisaje cubierto de musgo. Cuando llega el verano, la tierra florece, aunque solo brevemente.</FCDescTundra>
+	<FCDescColdBog>La áspera belleza de esta tierra solo es igualada por su inhospitalidad. Los marjales salpican el paisaje, al igual que frecuentes manadas de herbívoros migratorios y los depredadores que los cazan.</FCDescColdBog>
+	<FCDescBorealForest>Aunque suele ser menos frío que el interior de una tundra, el duro clima invernal de un bosque boreal solo es igualado por sus cálidos veranos, cuando la vegetación florece brevemente y la comida se vuelve abundante.</FCDescBorealForest>
+	<FCDescTropicalRainforest>Los árboles ahogan el cielo, dejando que poca luz llegue al suelo. Aun así, bajo el dosel existe un deslumbrante, pero mortal, surtido de flora y fauna. La belleza de este bioma solo es igualada por los peligros que encierra.</FCDescTropicalRainforest>
+	<FCDescTemperateForest>Bosques y arroyos abundantes dividen la tierra. Los animales vagan por los espesos bosques y tanto la comida como el refugio son abundantes.</FCDescTemperateForest>
+	<FCDescTemperateSwamp>La tierra está cubierta de ciénagas y marjales, y lo que no, está cubierto por una variedad de vegetación. El espacio disponible para construir es escaso aquí.</FCDescTemperateSwamp>
+	<FCDescTropicalSwamp>La tierra está estrangulada por una densa vegetación mientras los árboles se alzan hacia el cielo, dejando que poca luz llegue al traicionero suelo. La enfermedad es rampante y frecuente.</FCDescTropicalSwamp>
+	<FCDescAridShrubland>Aunque no es un verdadero desierto, el suelo cultivable es escaso debido al calor implacable. La mayor parte de la tierra es abierta, con recónditas arboledas que rompen el horizonte por lo demás vacío.</FCDescAridShrubland>
+	<FCDescDesert>El suelo cultivable es una rareza, ya que la mayor parte de la tierra aquí está cubierta de arena, parte de ella demasiado traicionera para construir. Aun así, la vida se aferra a la existencia aquí, y las arenas albergan un vibrante surtido de vida.</FCDescDesert>
+	<FCDescExtremeDesert>El sol ha cocido esta tierra hasta convertirla en un páramo. Apenas hay suelo que pueda sostener vegetación adecuada, y el que hay es de mala calidad.</FCDescExtremeDesert>
+	<FCDescUnknown>Poco se sabe de forma generalizada sobre la tierra circundante, pero el asentamiento logra sobrevivir y prosperar en sus condiciones actuales.</FCDescUnknown>
+	<FCDescOrbitalSpace>El vasto vacío del espacio se extiende en todas direcciones, roto solo por el lejano titilar de las estrellas y el ocasional asteroide que pasa. Los paneles solares relucen bajo la luz eterna del sol, mientras los sistemas de soporte vital zumban en silencio en el entorno artificial. La estación flota en el vacío, un faro de civilización en la naturaleza salvaje del cosmos.</FCDescOrbitalSpace>
+
+	<!-- Town Level Descriptions -->
+	<FCTownLevel1>El asentamiento en sí no es más que un pequeño grupo de edificios agrupados en torno a una estructura central.</FCTownLevel1>
+	<FCTownLevel2>El asentamiento está dominado por unas pocas estructuras grandes, pero sigue siendo bastante pequeño. Numerosos sacos terreros y barricadas rodean el exterior.</FCTownLevel2>
+	<FCTownLevel3>El asentamiento tiene un buen número de estructuras —principalmente orientadas a la producción— así como almacenes dedicados, y trabajadores atareados corretean entre ellas. Un muro modesto protege el asentamiento.</FCTownLevel3>
+	<FCTownLevel4>El asentamiento es razonablemente grande y está bien organizado, con varios edificios industriales agrupados para maximizar la eficiencia. Un grueso muro y defensas internas protegen el asentamiento de los ataques.</FCTownLevel4>
+	<FCTownLevel5>Edificios claramente señalizados marcan el corazón industrial de este bullicioso faro de civilización, así como diversas otras instalaciones. Múltiples muros rodean el asentamiento, con abundantes defensas interiores en puntos de estrangulamiento cuidadosamente planificados.</FCTownLevel5>
+
+	<!-- Orbital Town Level Descriptions -->
+	<FCTownLevel_Orbital_1>La estación es poco más que un módulo de hábitat presurizado con un puñado de puertos de atraque, su casco aún reluciente por la reciente construcción.</FCTownLevel_Orbital_1>
+	<FCTownLevel_Orbital_2>Un grupo de módulos interconectados forma el núcleo de la estación, con esclusas de aire básicas y bahías de carga al servicio de una tripulación pequeña pero creciente.</FCTownLevel_Orbital_2>
+	<FCTownLevel_Orbital_3>La estación se ha expandido hasta convertirse en una respetable plataforma orbital, con módulos de producción dedicados, alojamientos rotatorios para la tripulación y una serie de colectores solares que se extienden hacia el exterior.</FCTownLevel_Orbital_3>
+	<FCTownLevel_Orbital_4>Una considerable instalación orbital eriza de conjuntos de sensores y agujas de atraque. Múltiples cubiertas presurizadas albergan instalaciones especializadas, y torretas de defensa puntual barren el vacío circundante.</FCTownLevel_Orbital_4>
+	<FCTownLevel_Orbital_5>La estación domina el espacio orbital local; un extenso complejo de anillos y largueros interconectados, zumbando de actividad industrial. Un blindaje en capas y plataformas de armas garantizan que nada se acerque sin oposición.</FCTownLevel_Orbital_5>
+
+	<!-- Orbital Settlement Locations -->
+	<FCOrbitalLocation1>Orbitando en el espacio profundo</FCOrbitalLocation1>
+	<FCOrbitalLocation2>Estacionado en órbita baja</FCOrbitalLocation2>
+	<FCOrbitalLocation3>Flotando en el vacío del espacio</FCOrbitalLocation3>
+	<FCOrbitalLocation4>Anclado en órbita</FCOrbitalLocation4>
+	<FCOrbitalLocation5>Situado en órbita baja</FCOrbitalLocation5>
+	<FCOrbitalLocation6>Suspendido sobre la superficie</FCOrbitalLocation6>
+	<FCOrbitalLocation7>Desplegado en el espacio orbital</FCOrbitalLocation7>
+
+	<!-- Orbital Settlement Name Keywords -->
+	<FCOrbitalKeyword1>Estación espacial</FCOrbitalKeyword1>
+	<FCOrbitalKeyword2>Estación</FCOrbitalKeyword2>
+	<FCOrbitalKeyword3>Satélite</FCOrbitalKeyword3>
+	<FCOrbitalKeyword4>Base solar</FCOrbitalKeyword4>
+	<FCOrbitalKeyword5>Núcleo orbital</FCOrbitalKeyword5>
+	<FCOrbitalKeyword6>Plataforma espacial</FCOrbitalKeyword6>
+	<FCOrbitalKeyword7>Estación cósmica</FCOrbitalKeyword7>
+	<FCOrbitalKeyword8>Base estelar</FCOrbitalKeyword8>
+	<FCOrbitalKeyword9>Estación del vacío</FCOrbitalKeyword9>
+	<FCOrbitalKeyword10>Plataforma astral</FCOrbitalKeyword10>
+
+	<!-- Building Environment Restrictions -->
+	<FCBuildingInvalidEnvironment>¡Ese edificio no puede construirse en el bioma de este asentamiento!</FCBuildingInvalidEnvironment>
+	<FCBuildingRemovedByTypeTransition>{0} ha sido eliminado debido a la transición de tipo del asentamiento en {1}.</FCBuildingRemovedByTypeTransition>
+	<FCFactionBaseAdjacent>No puedes asentarte junto a una base de facción existente.</FCFactionBaseAdjacent>
+	<FCTileWrongPlanetLayer>Esta casilla está en la capa planetaria incorrecta para este tipo de asentamiento.</FCTileWrongPlanetLayer>
+
+</LanguageData>

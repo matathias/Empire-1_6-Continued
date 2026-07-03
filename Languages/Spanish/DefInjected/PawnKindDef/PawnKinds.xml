@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<PColony_Fighter.label>soldado del imperio</PColony_Fighter.label>
+	<PColony_Elite.label>élite del imperio</PColony_Elite.label>
+	<PColony_Leader.label>líder del imperio</PColony_Leader.label>
+	<PColony_Trader.label>comerciante del imperio</PColony_Trader.label>
+	<PColony_Guard.label>guardia del imperio</PColony_Guard.label>
+	<PColony_Villager.label>ciudadano del imperio</PColony_Villager.label>
+
+</LanguageData>

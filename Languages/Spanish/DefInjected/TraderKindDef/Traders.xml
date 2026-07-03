@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<FC_Caravan_Empire_Food.label>comerciante de comida</FC_Caravan_Empire_Food.label>
+	<FC_Caravan_Empire_Weapons.label>traficante de armas</FC_Caravan_Empire_Weapons.label>
+	<FC_Caravan_Empire_Apparel.label>vendedor de ropa</FC_Caravan_Empire_Apparel.label>
+	<FC_Caravan_Empire_Animals.label>comerciante de animales</FC_Caravan_Empire_Animals.label>
+	<FC_Caravan_Empire_Logging.label>comerciante de madera</FC_Caravan_Empire_Logging.label>
+	<FC_Caravan_Empire_Mining.label>comerciante de mineral</FC_Caravan_Empire_Mining.label>
+	<FC_Caravan_Empire_Medicine.label>proveedor médico</FC_Caravan_Empire_Medicine.label>
+	<FC_Caravan_Empire_Chemfuel.label>comerciante de combustible</FC_Caravan_Empire_Chemfuel.label>
+	<FC_Caravan_Empire_Gravtech.label>comerciante de gravtech</FC_Caravan_Empire_Gravtech.label>
+	<FCResearchTrader.label>comerciante de investigación</FCResearchTrader.label>
+
+</LanguageData>

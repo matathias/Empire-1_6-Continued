@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Xenotype/Race Selection -->
+	<FCXenotypeSelection>Selección de xenotipo</FCXenotypeSelection>
+	<FCRaceSelection>Selección de raza</FCRaceSelection>
+	<FCXenotypeRaceSelection>Selección de xenotipo y raza</FCXenotypeRaceSelection>
+	<FCAllowedRaces>Razas permitidas</FCAllowedRaces>
+	<FCCannotHaveLessThanOneRace>No puedes tener menos de una raza en tu facción</FCCannotHaveLessThanOneRace>
+	<FCAllowedXenotypes>Xenotipos permitidos</FCAllowedXenotypes>
+	<FCCannotHaveLessThanOneXenotype>No puedes tener menos de un xenotipo en tu facción</FCCannotHaveLessThanOneXenotype>
+	<FCSecurityGuardsIncluded>Se proporcionarán guardias de seguridad para los xenotipos no violentos</FCSecurityGuardsIncluded>
+
+	<!-- Weight Errors -->
+	<FCXenotypeWeightError>¡Todos los xenotipos tienen peso 0!</FCXenotypeWeightError>
+	<FCXenotypeWeightErrorDesc>Si cierras esta ventana mientras todos los xenotipos tienen peso 0, todos se restablecerán a peso 1.</FCXenotypeWeightErrorDesc>
+	<FCRaceWeightError>¡Todas las razas tienen peso 0!</FCRaceWeightError>
+	<FCRaceWeightErrorDesc>Si cierras esta ventana mientras todas las razas tienen peso 0, todas se restablecerán a peso 1.</FCRaceWeightErrorDesc>
+
+	<!-- Enable/Disable Options -->
+	<FCXenoRaceEnableAll>Activar todos</FCXenoRaceEnableAll>
+	<FCXenoDisableNonBaseliner>Desactivar no basales</FCXenoDisableNonBaseliner>
+	<FCRaceDisableNonHuman>Desactivar no humanos</FCRaceDisableNonHuman>
+
+	<!-- Faction Tooltip -->
+	<FCEmpireMemberRaceChances>Probabilidades de raza de los miembros</FCEmpireMemberRaceChances>
+
+	<!-- Warnings -->
+	<FCDisabledHumanWarning>La raza humana está desactivada, pero aún puede aparecer como reserva si tus razas seleccionadas no tienen opciones de tipo de personaje válidas.</FCDisabledHumanWarning>
+	<FCXenoNonViolentIndicatorDesc>El xenotipo se considera no violento.</FCXenoNonViolentIndicatorDesc>
+	<FCOnlyNonViolentXenoWarning>Solo hay xenotipos no violentos seleccionados. Seguirás viendo basales si se requiere violencia.</FCOnlyNonViolentXenoWarning>
+
+	<!-- Animal Filter -->
+	<FCAllowedAnimals>Animales permitidos</FCAllowedAnimals>
+	<FCAnimalSelection>Selección de animales</FCAnimalSelection>
+	<FCAnimalEnableAll>Activar todos</FCAnimalEnableAll>
+	<FCAnimalDisableAll>Desactivar todos</FCAnimalDisableAll>
+	<FCAnimalDefaults>Valores por defecto</FCAnimalDefaults>
+	<FCAnimalFilterNoneError>¡No se permite ningún animal! Los valores por defecto se restaurarán al cerrar.</FCAnimalFilterNoneError>
+	<FCAnimalFilterNoCombatWarning>No se permite ningún animal apto para el combate. Las caravanas de entrega no tendrán animales de guardia.</FCAnimalFilterNoCombatWarning>
+	<FCAnimalFilterNoPackError>¡No se permite ningún animal de carga! Todos los animales de carga se reactivarán al cerrar.</FCAnimalFilterNoPackError>
+	<FCAnimalTagCombat>Combate</FCAnimalTagCombat>
+	<FCAnimalTagPack>Carga</FCAnimalTagPack>
+	<FCAnimalNotCombatHeader>No es un animal de combate:</FCAnimalNotCombatHeader>
+	<FCAnimalNotCombatTrainability>Adiestrabilidad demasiado baja (necesita Intermedia o superior)</FCAnimalNotCombatTrainability>
+	<FCAnimalNotCombatPowerLow>Poder de combate demasiado bajo ({0}, necesita 50 o más)</FCAnimalNotCombatPowerLow>
+	<FCAnimalFilterShowAll>Todos</FCAnimalFilterShowAll>
+	<FCAnimalFilterShowCombat>Combate</FCAnimalFilterShowCombat>
+	<FCAnimalFilterShowPack>Carga</FCAnimalFilterShowPack>
+
+	<!-- Animal Filter: pack-animal biome coverage -->
+	<FCAnimalTagPackTooltipHeader>Utilizable como animal de carga de caravana en:</FCAnimalTagPackTooltipHeader>
+	<FCAnimalTagPackUnsupportedNote>No utilizable en tu ubicación de entrega actual ({0}).</FCAnimalTagPackUnsupportedNote>
+	<FCAnimalBiomeNone>(ninguno)</FCAnimalBiomeNone>
+	<FCAnimalFilterBiomeUncoveredWarning>Ninguno de tus animales de carga permitidos puede viajar a tu bioma de entrega ({0}). No recibirás caravanas comerciales allí.</FCAnimalFilterBiomeUncoveredWarning>
+	<FCAnimalBiomeLetterLabel>No hay animales de carga compatibles</FCAnimalBiomeLetterLabel>
+	<FCAnimalBiomeLetterDescTaxSpot>Tu nuevo punto de impuestos está en {0}, adonde no puede viajar ninguno de tus animales de carga permitidos. No recibirás caravanas comerciales allí hasta que actives un animal de carga compatible en el menú de Selección de animales.</FCAnimalBiomeLetterDescTaxSpot>
+	<FCAnimalBiomeLetterDescCapital>Tu nueva capital está en {0}, adonde no puede viajar ninguno de tus animales de carga permitidos. No recibirás caravanas comerciales allí hasta que actives un animal de carga compatible en el menú de Selección de animales.</FCAnimalBiomeLetterDescCapital>
+
+</LanguageData>

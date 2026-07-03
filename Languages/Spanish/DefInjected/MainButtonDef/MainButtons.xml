@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<EmpireExtensionsButton.label>Empire+</EmpireExtensionsButton.label>
+	<EmpireExtensionsButton.description>Pestañas de extensión añadidas por submods de Empire</EmpireExtensionsButton.description>
+	<PColonyMainButton.label>Asentamientos</PColonyMainButton.label>
+	<PColonyMainButton.description>Funda y gestiona tus asentamientos NPC</PColonyMainButton.description>
+
+</LanguageData>

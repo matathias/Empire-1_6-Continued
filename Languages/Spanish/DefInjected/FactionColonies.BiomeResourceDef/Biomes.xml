@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<defaultBiome.label>bioma por defecto</defaultBiome.label>
+	<BorealForest.label>bosque boreal</BorealForest.label>
+	<Tundra.label>tundra</Tundra.label>
+	<ColdBog.label>ciénaga fría</ColdBog.label>
+	<IceSheet.label>capa de hielo</IceSheet.label>
+	<SeaIce.label>hielo marino</SeaIce.label>
+	<TemperateForest.label>bosque templado</TemperateForest.label>
+	<TemperateSwamp.label>pantano templado</TemperateSwamp.label>
+	<TropicalRainforest.label>selva tropical</TropicalRainforest.label>
+	<TropicalSwamp.label>pantano tropical</TropicalSwamp.label>
+	<AridShrubland.label>matorral árido</AridShrubland.label>
+	<Desert.label>desierto</Desert.label>
+	<ExtremeDesert.label>desierto extremo</ExtremeDesert.label>
+	<OrbitalSpace.label>espacio orbital</OrbitalSpace.label>
+	<AB_FeraliskInfestedJungle.label>jungla infestada de feralisks</AB_FeraliskInfestedJungle.label>
+	<AB_MycoticJungle.label>jungla micótica</AB_MycoticJungle.label>
+	<AB_OcularForest.label>bosque ocular</AB_OcularForest.label>
+	<AB_GelatinousSuperorganism.label>superorganismo gelatinoso</AB_GelatinousSuperorganism.label>
+	<AB_GallatrossGraveyard.label>cementerio de gallatross</AB_GallatrossGraveyard.label>
+	<AB_MechanoidIntrusion.label>intrusión mecanoide</AB_MechanoidIntrusion.label>
+	<AB_PropaneLakes.label>lagos de propano</AB_PropaneLakes.label>
+	<AB_TarPits.label>pozos de alquitrán</AB_TarPits.label>
+	<AB_RockyCrags.label>peñascos abandonados</AB_RockyCrags.label>
+	<AB_IdyllicMeadows.label>praderas idílicas</AB_IdyllicMeadows.label>
+	<AB_MiasmicMangrove.label>manglar miasmático</AB_MiasmicMangrove.label>
+	<AB_PyroclasticConflagration.label>conflagración piroclástica</AB_PyroclasticConflagration.label>
+	<RG_AspenForest.label>bosque de álamos</RG_AspenForest.label>
+	<Bunnies_Carrotopia.label>zanahortopía</Bunnies_Carrotopia.label>
+	<BMT_CrystalCaverns.label>cavernas cristalinas</BMT_CrystalCaverns.label>
+	<BMT_EarthenDepths.label>profundidades terrosas</BMT_EarthenDepths.label>
+	<BMT_FungalForest.label>bosque fúngico</BMT_FungalForest.label>
+	<Duskwood.label>bosque del ocaso</Duskwood.label>
+	<HSBambooForest.label>bosque de bambú</HSBambooForest.label>
+	<TemperateGuldenForest.label>bosque gulden templado</TemperateGuldenForest.label>
+	<Impassable.label>infranqueable</Impassable.label>
+	<Lake.label>lago</Lake.label>
+	<Ocean.label>océano</Ocean.label>
+	<pphhyy_LightlessEmpyrean_Biome.label>empíreo sin luz</pphhyy_LightlessEmpyrean_Biome.label>
+	<DankPyon_AncientForest.label>bosque ancestral</DankPyon_AncientForest.label>
+	<DankPyon_DarkForest.label>bosque oscuro</DankPyon_DarkForest.label>
+	<ZBiome_GlacialShield.label>escudo glacial</ZBiome_GlacialShield.label>
+	<ZBiome_Badlands.label>tierras baldías</ZBiome_Badlands.label>
+	<ZBiome_CloudForest.label>bosque nuboso</ZBiome_CloudForest.label>
+	<ZBiome_CoastalDunes.label>dunas costeras</ZBiome_CoastalDunes.label>
+	<ZBiome_DesertOasis.label>oasis del desierto</ZBiome_DesertOasis.label>
+	<ZBiome_AlpineMeadow.label>pradera alpina</ZBiome_AlpineMeadow.label>
+	<ZBiome_Grasslands.label>sabana tormentosa</ZBiome_Grasslands.label>
+	<ZBiome_Iceberg_NoBeach.label>témpanos de hielo</ZBiome_Iceberg_NoBeach.label>
+	<ZBiome_Marsh.label>marisma</ZBiome_Marsh.label>
+	<ZBiome_Sandbar_NoBeach.label>banco de arena</ZBiome_Sandbar_NoBeach.label>
+	<GlacialPlain.label>llanura glacial</GlacialPlain.label>
+	<Glowforest.label>bosque luminoso</Glowforest.label>
+	<Grasslands.label>pradera</Grasslands.label>
+	<LavaField.label>campo de lava</LavaField.label>
+	<Scarlands.label>tierras cicatrizadas</Scarlands.label>
+	<RH_TET_ChaosWastes.label>páramos del caos</RH_TET_ChaosWastes.label>
+	<RH_TET_Beastmen_OldGrowthForest.label>bosque primario</RH_TET_Beastmen_OldGrowthForest.label>
+	<SCMBiome_cy.label>otro mundo SCM</SCMBiome_cy.label>
+
+</LanguageData>

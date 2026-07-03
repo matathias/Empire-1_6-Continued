@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<!-- Faction Customization -->
+	<fcPrimaryColor>Primario</fcPrimaryColor>
+	<fcSecondaryColor>Secundario</fcSecondaryColor>
+	<fcChoosePrimaryColor>Elige el color primario</fcChoosePrimaryColor>
+	<fcChooseSecondaryColor>Elige el color secundario</fcChooseSecondaryColor>
+	<fcPrimaryColorDesc>Se aplica a la armadura y las capas exteriores (p. ej. chalecos de flac, armaduras de placas, guardapolvos). Cuando no se fija un secundario, se aplica a toda la ropa.</fcPrimaryColorDesc>
+	<fcSecondaryColorDesc>Se aplica a la ropa base (p. ej. camisas, pantalones), tocados, cinturones y accesorios.</fcSecondaryColorDesc>
+	<fcSetPrimaryFirst>Fija primero el color primario</fcSetPrimaryFirst>
+	<fcColorsRandomInfo>Los personajes se generarán con colores aleatorios cuando no se fijen colores de facción.</fcColorsRandomInfo>
+	<fcColorNotSet>Sin fijar</fcColorNotSet>
+	<fcColors>Colores</fcColors>
+	<fcConfigure>Configurar</fcConfigure>
+	<fcClickToSelect>Clic para seleccionar</fcClickToSelect>
+	<fcInsignia>Insignia</fcInsignia>
+	<fcColorPickerActiveIdeos>Ideologías activas</fcColorPickerActiveIdeos>
+	<fcColorPickerPresets>Colores predefinidos</fcColorPickerPresets>
+	<fcColorPickerSaved>Colores guardados</fcColorPickerSaved>
+	<fcColorPickerSaveCurrent>Guardar actual</fcColorPickerSaveCurrent>
+	<fcColorPickerRightClickRemove>Clic derecho para quitar</fcColorPickerRightClickRemove>
+	<FCCustomizeFaction>Personalizar facción</FCCustomizeFaction>
+	<FCFactionName>Nombre de la facción</FCFactionName>
+	<FCFactionTitle>Título de la facción</FCFactionTitle>
+	<FCFactionTitleDesc>El tipo de tu Estado: Imperio, Reino, República, Comuna, etc.</FCFactionTitleDesc>
+	<FCFactionIcon>Icono de la facción</FCFactionIcon>
+	<FCInvalidFaction>¡Esa facción no puede dirigir un imperio por sí sola!</FCInvalidFaction>
+	<FCPlayerFaction>Facción del jugador</FCPlayerFaction>
+	<FCBastion>Bastión</FCBastion>
+	<FCEmpire>Imperio</FCEmpire>
+	<FCFoundedOn>Fundado el {0}</FCFoundedOn>
+
+	<!-- Faction Stats -->
+	<FCFactionHappiness>Felicidad de la facción</FCFactionHappiness>
+	<FCFactionLoyalty>Lealtad de la facción</FCFactionLoyalty>
+	<FCFactionUnrest>Descontento de la facción</FCFactionUnrest>
+	<FCFactionProsperity>Prosperidad de la facción</FCFactionProsperity>
+	<FCFactionHappinessDesc>La medida de la felicidad general de la facción. Una felicidad alta significa que cualquier conflicto interno dentro del asentamiento se inclinará en gran medida a tu favor.</FCFactionHappinessDesc>
+	<FCFactionLoyaltyDesc>La medida de la lealtad general de la facción. La lealtad de un asentamiento determina hasta qué punto está dispuesto a escucharte. Una lealtad alta reducirá la probabilidad de deserción.</FCFactionLoyaltyDesc>
+	<FCFactionUnrestDesc>La medida del descontento general de la facción. Cuanto más crece el descontento, más probable es que surjan eventos internos peligrosos en tu facción. Si lo dejas crecer demasiado, podría estallar una revuelta en toda la facción.</FCFactionUnrestDesc>
+	<FCFactionProsperityDesc>La medida de la prosperidad general de la facción. La prosperidad de una población se correlaciona directamente con la producción de recursos. 50% de prosperidad = 50% de producción. Si la prosperidad sufre daños, se acumulará lentamente con el tiempo.</FCFactionProsperityDesc>
+
+	<!-- Faction Levels -->
+	<FCLevel>Nivel de facción: {0}</FCLevel>
+	<FCFactionLevelUp>Subida de nivel de facción</FCFactionLevelUp>
+	<FCFactionLevelUpDesc>¡Tu facción {0} ha subido al nivel {1}!</FCFactionLevelUpDesc>
+	<FCReachedMaxLevel>ha alcanzado el nivel máximo</FCReachedMaxLevel>
+
+	<!-- Policies -->
+	<FCPolicies-Traits>Políticas/Rasgos</FCPolicies-Traits>
+	<FCFactionPoliciesAndTraits>Políticas y rasgos de la facción</FCFactionPoliciesAndTraits>
+	<FCTaxLaw>Ley fiscal</FCTaxLaw>
+	<FCSocialPolicy>Política social</FCSocialPolicy>
+	<FCMilitaryPolicy>Política militar</FCMilitaryPolicy>
+	<FCPolicySelection>Selección de políticas</FCPolicySelection>
+	<FCSelectPolicies>Seleccionar políticas</FCSelectPolicies>
+	<FCClearPolicies>Borrar políticas ({0} de plata)</FCClearPolicies>
+	<FCClearPoliciesTooltip>Elimina tus políticas centrales actuales y elige otras nuevas. El coste escala con el tamaño y la prosperidad de {0}.</FCClearPoliciesTooltip>
+	<FCClearPoliciesConfirm>¿Gastar {0} de plata para borrar tus políticas centrales actuales y elegir otras nuevas?</FCClearPoliciesConfirm>
+	<FCClearPoliciesInsufficientSilver>Plata insuficiente para borrar las políticas (necesitas {0}).</FCClearPoliciesInsufficientSilver>
+	<FCPolicyAlreadyEnacted>Esa política ya ha sido promulgada</FCPolicyAlreadyEnacted>
+	<FCAlreadyPolicyTypeBeingEnacted>Ya se está promulgando una política de ese tipo</FCAlreadyPolicyTypeBeingEnacted>
+	<FCAlreadyPolicyInSlot>Ya se está promulgando una política en esa ranura</FCAlreadyPolicyInSlot>
+	<FCEnact>Promulgar</FCEnact>
+	<FCEnacted>Promulgada</FCEnacted>
+	<FCRepeal>Derogar</FCRepeal>
+	<FCWillBeEnactedIn>se promulgará en</FCWillBeEnactedIn>
+	<FCEnactPolicy>Promulgar política</FCEnactPolicy>
+	<FCHasBeenEnactedAt>ha sido promulgada en</FCHasBeenEnactedAt>
+	<FCEnactedInYourFaction>ha sido promulgada en tu facción</FCEnactedInYourFaction>
+
+	<!-- Traits -->
+	<FCFactionTraits>Rasgos de la facción</FCFactionTraits>
+	<FCAddTrait>Añadir rasgo</FCAddTrait>
+	<FCTraitSelection>Selección de rasgos</FCTraitSelection>
+	<FCSelectTraits>Seleccionar rasgos</FCSelectTraits>
+	<FCTraitSlots>Ranuras de rasgo</FCTraitSlots>
+	<FCAvailableTraits>Rasgos disponibles</FCAvailableTraits>
+	<FCTraitSelectedPreview>{0}</FCTraitSelectedPreview>
+	<FCNoOpenTraitSlots>¡Todas las ranuras de rasgo disponibles están llenas!</FCNoOpenTraitSlots>
+	<FCAllTraitSlotsFilled>Se han asignado todas las ranuras de rasgo.</FCAllTraitSlotsFilled>
+	<FCSelectTraitsPrompt>Selecciona {0} rasgo(s) más de la lista de arriba.</FCSelectTraitsPrompt>
+	<FCTraitSelectionReady>Pulsa Confirmar para asignar los rasgos seleccionados. Una vez confirmado, cambiar tus políticas costará plata.</FCTraitSelectionReady>
+	<FCHoverTraitForDetails>Pasa el cursor sobre un rasgo para ver sus detalles.</FCHoverTraitForDetails>
+	<FCSelectedPolicies>Seleccionadas ({0}/{1})</FCSelectedPolicies>
+	<FCAvailablePolicies>Políticas disponibles</FCAvailablePolicies>
+	<FCConflictsWith>Entra en conflicto con: {0}</FCConflictsWith>
+	<FCTraits>Rasgos</FCTraits>
+	<FCSelectTraits0>¡Selecciona {0} políticas para añadir! Una vez confirmado, cambiar tus políticas costará plata.</FCSelectTraits0>
+	<FCSelectTraits2>Una vez confirmado, cambiar tus políticas costará plata.</FCSelectTraits2>
+	<FCConflictingTraits>¡No puedes tener rasgos de facción en conflicto!</FCConflictingTraits>
+	<FCUnselectTrait>¡Tienes que deseleccionar uno de tus rasgos actuales para seleccionar otro!</FCUnselectTrait>
+	<FCTraitsChosen>Para cambiar tus políticas, paga plata para borrarlas (botón superior derecho).</FCTraitsChosen>
+	<FCSelectANewTrait>Selecciona un nuevo rasgo</FCSelectANewTrait>
+	<FCTraitLockedUntilLevel>Bloqueado hasta el nivel {0}</FCTraitLockedUntilLevel>
+	<FCConfirmTrait>¿Seguro que deseas seleccionar {0}? No podrás revertir esta decisión</FCConfirmTrait>
+	<FCSelectYourTraits>Los rasgos iniciales de tu facción no están seleccionados. ¡Ve a la pestaña de personalización de la facción para seleccionarlos!</FCSelectYourTraits>
+
+	<!-- Edicts -->
+	<FCEdicts>Edictos</FCEdicts>
+	<FCEdict>Edicto</FCEdict>
+	<FCEdictsDesc>Activa o desactiva edictos para toda la facción. Solo puede haber un edicto activo por categoría a la vez. Los edictos activos tienen un coste continuo de plata.</FCEdictsDesc>
+	<FCEdictUpkeep>Mantenimiento: {0} de plata/ciclo</FCEdictUpkeep>
+	<FCEdictUpkeepUnpaid>No puedes costear el mantenimiento de los edictos. Se han revocado todos los edictos.</FCEdictUpkeepUnpaid>
+	<FCEdictEnacted>Edicto promulgado: {0}</FCEdictEnacted>
+	<FCEdictRevoked>Edicto revocado: {0}</FCEdictRevoked>
+	<FCEdictNone>Ninguno</FCEdictNone>
+	<FCEdictActivating>Promulgando... ({0} días restantes)</FCEdictActivating>
+	<FCEdictTotalUpkeep>Mantenimiento total de edictos: {0} de plata/ciclo</FCEdictTotalUpkeep>
+	<FCEdictCategoryLocked>Esta categoría de edicto aún no está desbloqueada.</FCEdictCategoryLocked>
+	<FCEdictLevelRequired>Requiere nivel de facción {0}.</FCEdictLevelRequired>
+	<FCEdictCategorySocial>Social</FCEdictCategorySocial>
+	<FCEdictCategoryTax>Fiscal</FCEdictCategoryTax>
+	<FCEdictCategoryMilitary>Militar</FCEdictCategoryMilitary>
+	<FCEdictCategoryDoctrine>Doctrina</FCEdictCategoryDoctrine>
+	<FCEdictActive>Activo</FCEdictActive>
+	<FCEdictRevoke>Revocar</FCEdictRevoke>
+	<FCEdictLockedUntilLevel>Bloqueado hasta el nivel de facción {0}</FCEdictLockedUntilLevel>
+	<FCEdictSwapConfirmation>¿Reemplazar {0} por {1}? El nuevo edicto tardará {2} días en activarse por completo.</FCEdictSwapConfirmation>
+	<FCEdictRevokeConfirmation>¿Revocar el edicto {0}?</FCEdictRevokeConfirmation>
+	<FCEdictIncompatible>{0} es incompatible con tu política activa: {1}</FCEdictIncompatible>
+	<FCEdictRequiresPolicy>{0} requiere: {1}</FCEdictRequiresPolicy>
+	<FCEdictRequiresPolicyAny>{0} requiere una de: {1}</FCEdictRequiresPolicyAny>
+	<FCEdictRevokedDependency>{0} fue revocado automáticamente porque se eliminó su prerrequisito {1}.</FCEdictRevokedDependency>
+	<FCPolicyRequires>Requiere: {0}</FCPolicyRequires>
+
+	<!-- Research -->
+	<FCResearching>Investigando</FCResearching>
+	<FCResearchExpended>Se han usado {0} puntos de investigación para investigar {1}. Te quedan {2} puntos.</FCResearchExpended>
+	<FCResearchPointsExpended>Investigación gastada</FCResearchPointsExpended>
+	<FCNoResearchExpended>Hoy no se ha usado investigación. Te quedan {0} puntos.</FCNoResearchExpended>
+	<FCPointsAddedToResearchPool>¡Se han añadido {0} puntos a la reserva de investigación!</FCPointsAddedToResearchPool>
+	<FCResearchGeneratedWaste>Los puntos de investigación generados por tu facción se han desperdiciado porque no tienes ninguna investigación seleccionada
+	</FCResearchGeneratedWaste>
+	<FCActivateResearch>Activar investigación</FCActivateResearch>
+	<FCSendResearchItems>Enviar objetos de investigación</FCSendResearchItems>
+	<FCFactionResearch>Investigación de la facción</FCFactionResearch>
+	<FCResearchLevel>Comprobar nivel tecnológico</FCResearchLevel>
+	<FCCurrentResearchLevel>Tu nivel tecnológico actual es {0}. Para alcanzar el siguiente nivel tecnológico debes investigar {1}</FCCurrentResearchLevel>
+	<FCShipBasics>Nociones de naves</FCShipBasics>
+	<FCFabrication>Fabricación</FCFabrication>
+	<FCElectricity>Electricidad</FCElectricity>
+	<FCSmithing>Herrería</FCSmithing>
+
+	<!-- Relations -->
+	<FCRelationImproved>¡Relación mejorada!</FCRelationImproved>
+	<FCRelationImprovedText>¡Tus comunicaciones con {0} han llevado a una mejora de las relaciones de {1}!</FCRelationImprovedText>
+	<FCRelationNotImproved>Relaciones fallidas</FCRelationNotImproved>
+	<FCFailedToImproveRelationship>Tus comunicaciones con {0} no han logrado mejorar las relaciones.</FCFailedToImproveRelationship>
+	<FCXDaysToSendDiplomat>Quedan {0} días hasta que se renueve la capacidad de mejorar relaciones</FCXDaysToSendDiplomat>
+	<FCIncreaseRelations>Intentar mejorar las relaciones</FCIncreaseRelations>
+	<FCCannotImproveRelationsWithType>No puedes mejorar las relaciones con facciones de ese tipo</FCCannotImproveRelationsWithType>
+
+	<!-- Capital -->
+	<FCCouldNotFindMapOfCapital>No se pudo encontrar el mapa de la capital</FCCouldNotFindMapOfCapital>
+	<FCCapitalAlreadyEstablished>La capital de {1} ya está establecida en {0}. Desactiva primero la sede de la capital allí si quieres moverla.</FCCapitalAlreadyEstablished>
+	<FCUnableToSetCapitalHere>No se puede fijar la capital de la facción en este mapa. Ve al mapa de tu capital y usa el botón Fijar capital o construye una Sede de la capital.</FCUnableToSetCapitalHere>
+	<FCCapitalRelocatedLabel>Capital de {0} reubicada</FCCapitalRelocatedLabel>
+	<FCCapitalRelocatedDesc>La sede de la capital de {0} se ha actualizado a tu nueva ubicación.</FCCapitalRelocatedDesc>
+
+	<FCCaravanTypes>Tipos de caravana</FCCaravanTypes>
+	<FCCaravanTypesDesc>Selecciona qué tipos de caravanas comerciales enviará {0}.</FCCaravanTypesDesc>
+	<FCCaravanNoneError>Debe haber al menos un tipo de caravana activado.</FCCaravanNoneError>
+	<FCCaravanResourceTooltip>Caravana especializada en bienes de {0}, extraídos de la producción de toda la facción {1}.</FCCaravanResourceTooltip>
+	<FCCaravanResourceTechLocked>Las caravanas de {0} no están disponibles en tu nivel tecnológico actual.</FCCaravanResourceTechLocked>
+	<FCCaravanExotic>Bienes exóticos</FCCaravanExotic>
+	<FCCaravanExoticTooltip>Bienes comerciales raros y de gran valor: artefactos, implantes y materiales exóticos.</FCCaravanExoticTooltip>
+	<FCCaravanExoticLocked>Requiere nivel de facción 4 o la política Mercantil.</FCCaravanExoticLocked>
+	<FCCaravanSlaver>Tratante de esclavos</FCCaravanSlaver>
+	<FCCaravanSlaverTooltip>Comercia con esclavos y bienes ilícitos.</FCCaravanSlaverTooltip>
+	<FCCaravanSlaverBlocked>Bloqueado por la política Pacifista o Igualitaria.</FCCaravanSlaverBlocked>
+
+</LanguageData>

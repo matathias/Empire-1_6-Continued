@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<Undefined.label>indefinido</Undefined.label>
+	<Cooldown.label>reutilización</Cooldown.label>
+	<Deploy.label>desplegar</Deploy.label>
+	<RaidEnemySettlement.label>saquear asentamiento enemigo</RaidEnemySettlement.label>
+	<RaidEnemySettlement.description>Asalta el asentamiento, saquea lo que puedas llevar y regresa a casa. El asentamiento queda intacto.</RaidEnemySettlement.description>
+	<EnslaveEnemySettlement.label>esclavizar asentamiento enemigo</EnslaveEnemySettlement.label>
+	<EnslaveEnemySettlement.description>Asalta el asentamiento y toma lo que puedas, con la mira puesta en la gente en lugar de en sus bienes.</EnslaveEnemySettlement.description>
+	<CaptureEnemySettlement.label>capturar asentamiento enemigo</CaptureEnemySettlement.label>
+	<CaptureEnemySettlement.description>Conquista el asentamiento y anéxalo como uno propio.</CaptureEnemySettlement.description>
+	<DefendFriendlySettlement.label>defender asentamiento amigo</DefendFriendlySettlement.label>
+	<DefendOwnSettlement.label>defender asentamiento</DefendOwnSettlement.label>
+
+</LanguageData>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<FCRTDproductionAdditive>{0} de producción de {1}</FCRTDproductionAdditive>
+	<FCRTDproductionMultiplier>{0} de producción de {1}</FCRTDproductionMultiplier>
+
+	<FCTraitDesc_ResourceBonusLabel>Bonificaciones de recursos</FCTraitDesc_ResourceBonusLabel>
+
+	<FCTraitDesc_MilitaryLevel>{0} de nivel militar</FCTraitDesc_MilitaryLevel>
+	<FCTraitDesc_MilitaryCombatEfficiency>{0} de eficiencia de combate militar</FCTraitDesc_MilitaryCombatEfficiency>
+	<FCTraitDesc_taxBasePercentage>{0} de porcentaje de impuesto base</FCTraitDesc_taxBasePercentage>
+	<FCTraitDesc_taxBaseRandomModifier>{0} de modificador de diezmo</FCTraitDesc_taxBaseRandomModifier>
+	<FCTraitDesc_prosperityGainedBase>{0} de prosperidad base ganada</FCTraitDesc_prosperityGainedBase>
+	<FCTraitDesc_prosperityLostBase>{0} de prosperidad base perdida</FCTraitDesc_prosperityLostBase>
+	<FCTraitDesc_workerProductionBase>{0} de producción base de trabajadores</FCTraitDesc_workerProductionBase>
+	<FCTraitDesc_workerProductionMultiplier>{0} de producción de trabajadores</FCTraitDesc_workerProductionMultiplier>
+	<FCTraitDesc_workerBaseCost>{0} de coste de trabajadores</FCTraitDesc_workerBaseCost>
+	<FCTraitDesc_workerBaseMax>{0} de límite de trabajadores</FCTraitDesc_workerBaseMax>
+	<FCTraitDesc_workerBaseOverMax>{0} de límite de trabajadores extra</FCTraitDesc_workerBaseOverMax>
+
+	<FCTraitDesc_happinessLostBase>{0} de felicidad base perdida</FCTraitDesc_happinessLostBase>
+	<FCTraitDesc_happinessGainedBase>{0} de felicidad base ganada</FCTraitDesc_happinessGainedBase>
+	<FCTraitDesc_happinessLostMultiplier>{0} de felicidad perdida</FCTraitDesc_happinessLostMultiplier>
+	<FCTraitDesc_happinessGainedMultiplier>{0} de felicidad ganada</FCTraitDesc_happinessGainedMultiplier>
+
+	<FCTraitDesc_loyaltyLostBase>{0} de lealtad base perdida</FCTraitDesc_loyaltyLostBase>
+	<FCTraitDesc_loyaltyGainedBase>{0} de lealtad base ganada</FCTraitDesc_loyaltyGainedBase>
+	<FCTraitDesc_loyaltyLostMultiplier>{0} de lealtad perdida</FCTraitDesc_loyaltyLostMultiplier>
+	<FCTraitDesc_loyaltyGainedMultiplier>{0} de lealtad ganada</FCTraitDesc_loyaltyGainedMultiplier>
+
+	<FCTraitDesc_unrestLostBase>{0} de descontento base perdido</FCTraitDesc_unrestLostBase>
+	<FCTraitDesc_unrestGainedBase>{0} de descontento base ganado</FCTraitDesc_unrestGainedBase>
+	<FCTraitDesc_unrestLostMultiplier>{0} de descontento perdido</FCTraitDesc_unrestLostMultiplier>
+	<FCTraitDesc_unrestGainedMultiplier>{0} de descontento ganado</FCTraitDesc_unrestGainedMultiplier>
+
+	<FCTraitDesc_createSettlementBaseCost>{0} de coste base de asentamiento</FCTraitDesc_createSettlementBaseCost>
+	<FCTraitDesc_createSettlementMultiplier>{0} de coste de asentamiento</FCTraitDesc_createSettlementMultiplier>
+	<FCTraitDesc_buildTimeMultiplier>{0} de tiempo de construcción</FCTraitDesc_buildTimeMultiplier>
+	<FCTraitDesc_buildingCostBase>{0} de coste base de edificios</FCTraitDesc_buildingCostBase>
+	<FCTraitDesc_buildingCostMultiplier>{0} de coste de edificios</FCTraitDesc_buildingCostMultiplier>
+	<FCTraitDesc_buildingCostBase_Military>{0} de coste base de edificios militares</FCTraitDesc_buildingCostBase_Military>
+	<FCTraitDesc_buildingCostBase_Civilian>{0} de coste base de edificios civiles</FCTraitDesc_buildingCostBase_Civilian>
+	<FCTraitDesc_buildingCostMultiplier_Military>{0} de coste de edificios militares</FCTraitDesc_buildingCostMultiplier_Military>
+	<FCTraitDesc_buildingCostMultiplier_Civilian>{0} de coste de edificios civiles</FCTraitDesc_buildingCostMultiplier_Civilian>
+	<FCTraitDesc_buildingUpkeepBase>{0} de mantenimiento base de edificios</FCTraitDesc_buildingUpkeepBase>
+	<FCTraitDesc_buildingUpkeepBase_Military>{0} de mantenimiento base de edificios militares</FCTraitDesc_buildingUpkeepBase_Military>
+	<FCTraitDesc_buildingUpkeepBase_Civilian>{0} de mantenimiento base de edificios civiles</FCTraitDesc_buildingUpkeepBase_Civilian>
+	<FCTraitDesc_buildingUpkeepMultiplier>{0} de mantenimiento de edificios</FCTraitDesc_buildingUpkeepMultiplier>
+	<FCTraitDesc_buildingUpkeepMultiplier_Military>{0} de mantenimiento de edificios militares</FCTraitDesc_buildingUpkeepMultiplier_Military>
+	<FCTraitDesc_buildingUpkeepMultiplier_Civilian>{0} de mantenimiento de edificios civiles</FCTraitDesc_buildingUpkeepMultiplier_Civilian>
+	<FCTraitDesc_settlementUpgradeCostBase>{0} de coste base de mejora de asentamiento</FCTraitDesc_settlementUpgradeCostBase>
+	<FCTraitDesc_settlementUpgradeCostMultiplier>{0} de coste de mejora de asentamiento</FCTraitDesc_settlementUpgradeCostMultiplier>
+	<FCTraitDesc_settlementExpansionCostPerSettlement>{0} de coste de expansión por asentamiento</FCTraitDesc_settlementExpansionCostPerSettlement>
+	<FCTraitDesc_buildingSlotsPerLevelBonus>{0} de ranuras de edificio por nivel</FCTraitDesc_buildingSlotsPerLevelBonus>
+	<FCTraitDesc_workerOverworkPenaltyMultiplier>{0} de penalización por exceso de trabajo</FCTraitDesc_workerOverworkPenaltyMultiplier>
+	<FCTraitDesc_battleLossProsperityBase>{0} de penalización de prosperidad por derrota</FCTraitDesc_battleLossProsperityBase>
+	<FCTraitDesc_battleLossHappinessBase>{0} de penalización de felicidad por derrota</FCTraitDesc_battleLossHappinessBase>
+	<FCTraitDesc_battleLossLoyaltyBase>{0} de penalización de lealtad por derrota</FCTraitDesc_battleLossLoyaltyBase>
+	<FCTraitDesc_victoryHappinessBonus>{0} de bonificación de felicidad por victoria</FCTraitDesc_victoryHappinessBonus>
+	<FCTraitDesc_victoryLoyaltyBonus>{0} de bonificación de lealtad por victoria</FCTraitDesc_victoryLoyaltyBonus>
+	<FCTraitDesc_fireSupportCostMultiplier>{0} de coste de apoyo de fuego</FCTraitDesc_fireSupportCostMultiplier>
+	<FCTraitDesc_policyActionCooldownMultiplier>{0} de reutilización de acciones de política</FCTraitDesc_policyActionCooldownMultiplier>
+	<FCTraitDesc_casualtyWoundSeverityMultiplier>{0} de gravedad de heridas de las bajas</FCTraitDesc_casualtyWoundSeverityMultiplier>
+	<FCTraitDesc_threatAdaptationGrowthMultiplier>{0} de crecimiento de adaptación a la amenaza</FCTraitDesc_threatAdaptationGrowthMultiplier>
+
+	<FCTraitDesc_militaryLevelBonusDefending>{0} de nivel militar (defendiendo)</FCTraitDesc_militaryLevelBonusDefending>
+	<FCTraitDesc_militaryEfficiencyBonusAttacking>{0} de eficiencia de combate (atacando)</FCTraitDesc_militaryEfficiencyBonusAttacking>
+	<FCTraitDesc_mercenaryDeathHappinessPenalty>{0} de penalización de felicidad por muerte de mercenario</FCTraitDesc_mercenaryDeathHappinessPenalty>
+	<FCTraitDesc_mercHealRateMultiplier>{0} de tasa de curación de mercenarios</FCTraitDesc_mercHealRateMultiplier>
+	<FCTraitDesc_mercenaryDeathChanceMultiplier>{0} de probabilidad de muerte de mercenarios (resolución automática)</FCTraitDesc_mercenaryDeathChanceMultiplier>
+	<FCTraitDesc_mercenaryCasualtyRateMultiplier>{0} de tasa de bajas de mercenarios (resolución automática)</FCTraitDesc_mercenaryCasualtyRateMultiplier>
+	<FCTraitDesc_raidCooldownOffset>{0}h de reutilización de saqueo</FCTraitDesc_raidCooldownOffset>
+	<FCTraitDesc_battleProsperityLossMultiplier>{0} de pérdida de prosperidad en batalla</FCTraitDesc_battleProsperityLossMultiplier>
+	<FCTraitDesc_battleLoyaltyLossMultiplier>{0} de pérdida de lealtad en batalla</FCTraitDesc_battleLoyaltyLossMultiplier>
+	<FCTraitDesc_battleHappinessLossMultiplier>{0} de pérdida de felicidad en batalla</FCTraitDesc_battleHappinessLossMultiplier>
+	<FCTraitDesc_BuildingDestructionChance>{0} de riesgo de destrucción de edificios</FCTraitDesc_BuildingDestructionChance>
+	<FCTraitDesc_militaryEfficiencyBonusDefending>{0} de eficiencia de combate (defendiendo)</FCTraitDesc_militaryEfficiencyBonusDefending>
+	<FCTraitDesc_taxBonusFlat>{0} de bonificación fija de impuestos</FCTraitDesc_taxBonusFlat>
+	<FCTraitDesc_titheValueMultiplier>{0} de valor del diezmo</FCTraitDesc_titheValueMultiplier>
+	<FCTraitDesc_lootMultiplier>{0} de valor del botín</FCTraitDesc_lootMultiplier>
+	<FCTraitDesc_settlementCostMultiplier>{0} de coste de asentamiento</FCTraitDesc_settlementCostMultiplier>
+	<FCTraitDesc_researchContributionMultiplier>{0} de contribución a la investigación</FCTraitDesc_researchContributionMultiplier>
+	<FCTraitDesc_extraWorkersSoftcap>{0} de límite blando de trabajadores extra</FCTraitDesc_extraWorkersSoftcap>
+	<FCTraitDesc_overMaxWorkersAdjustment>{0} de penalización de trabajadores por encima del máximo</FCTraitDesc_overMaxWorkersAdjustment>
+
+	<FCBuildingUpkeep>Mantenimiento: ${0}</FCBuildingUpkeep>
+	<FCBuildingIncome>Ingresos: ${0}</FCBuildingIncome>
+</LanguageData>

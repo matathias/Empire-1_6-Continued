@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<militaryBaseLevel.label>nivel militar base</militaryBaseLevel.label>
+	<militaryCombatEfficiency.label>eficiencia de combate militar</militaryCombatEfficiency.label>
+	<militaryLevelBonusDefending.label>bonificación de nivel militar (defendiendo)</militaryLevelBonusDefending.label>
+	<militaryLevelBonusAttacking.label>bonificación de nivel militar (atacando)</militaryLevelBonusAttacking.label>
+	<militaryEfficiencyBonusAttacking.label>bonificación de eficiencia militar (atacando)</militaryEfficiencyBonusAttacking.label>
+	<militaryEfficiencyBonusDefending.label>bonificación de eficiencia militar (defendiendo)</militaryEfficiencyBonusDefending.label>
+	<militaryCooldownOffset.label>ajuste de reutilización militar</militaryCooldownOffset.label>
+	<raidCooldownOffset.label>ajuste de reutilización de saqueo</raidCooldownOffset.label>
+	<mercenaryDeathHappinessPenalty.label>penalización de felicidad por muerte de mercenario</mercenaryDeathHappinessPenalty.label>
+	<mercHealRateMultiplier.label>tasa de curación de mercenarios</mercHealRateMultiplier.label>
+	<mercenaryDeathChanceMultiplier.label>multiplicador de probabilidad de muerte de mercenarios</mercenaryDeathChanceMultiplier.label>
+	<mercenaryCasualtyRateMultiplier.label>multiplicador de tasa de bajas de mercenarios</mercenaryCasualtyRateMultiplier.label>
+	<squadCapPerSettlement.label>bonificación de capacidad de escuadrones</squadCapPerSettlement.label>
+	<maxSquadSize.label>bonificación de tamaño máximo de escuadrón</maxSquadSize.label>
+	<battleProsperityLossMultiplier.label>multiplicador de pérdida de prosperidad en batalla</battleProsperityLossMultiplier.label>
+	<battleHappinessLossMultiplier.label>multiplicador de pérdida de felicidad en batalla</battleHappinessLossMultiplier.label>
+	<battleLoyaltyLossMultiplier.label>multiplicador de pérdida de lealtad en batalla</battleLoyaltyLossMultiplier.label>
+	<buildingDestructionChance.label>probabilidad de destrucción de edificios</buildingDestructionChance.label>
+	<threatScalingBase.label>base de escalado de amenaza</threatScalingBase.label>
+	<threatScalingMultiplier.label>multiplicador de escalado de amenaza</threatScalingMultiplier.label>
+	<taxBasePercentage.label>porcentaje de impuesto base</taxBasePercentage.label>
+	<taxBaseRandomModifier.label>modificador aleatorio de impuesto base</taxBaseRandomModifier.label>
+	<taxBonusFlat.label>bonificación fija de impuestos</taxBonusFlat.label>
+	<titheValueMultiplier.label>multiplicador de valor del diezmo</titheValueMultiplier.label>
+	<lootMultiplier.label>multiplicador de botín</lootMultiplier.label>
+	<settlementCostMultiplier.label>multiplicador de coste de asentamiento</settlementCostMultiplier.label>
+	<buildTimeMultiplier.label>multiplicador de tiempo de construcción</buildTimeMultiplier.label>
+	<createSettlementBaseCost.label>coste base de creación de asentamiento</createSettlementBaseCost.label>
+	<createSettlementMultiplier.label>multiplicador de coste de creación de asentamiento</createSettlementMultiplier.label>
+	<buildingCostBase.label>coste base de edificios</buildingCostBase.label>
+	<buildingCostMultiplier.label>multiplicador de coste de edificios</buildingCostMultiplier.label>
+	<buildingCostBase_Military.label>coste base de edificios militares</buildingCostBase_Military.label>
+	<buildingCostBase_Civilian.label>coste base de edificios civiles</buildingCostBase_Civilian.label>
+	<buildingCostMultiplier_Military.label>multiplicador de coste de edificios militares</buildingCostMultiplier_Military.label>
+	<buildingCostMultiplier_Civilian.label>multiplicador de coste de edificios civiles</buildingCostMultiplier_Civilian.label>
+	<buildingUpkeepBase.label>mantenimiento base de edificios</buildingUpkeepBase.label>
+	<buildingUpkeepBase_Military.label>mantenimiento base de edificios militares</buildingUpkeepBase_Military.label>
+	<buildingUpkeepBase_Civilian.label>mantenimiento base de edificios civiles</buildingUpkeepBase_Civilian.label>
+	<buildingUpkeepMultiplier.label>multiplicador de mantenimiento de edificios</buildingUpkeepMultiplier.label>
+	<buildingUpkeepMultiplier_Military.label>multiplicador de mantenimiento de edificios militares</buildingUpkeepMultiplier_Military.label>
+	<buildingUpkeepMultiplier_Civilian.label>multiplicador de mantenimiento de edificios civiles</buildingUpkeepMultiplier_Civilian.label>
+	<researchContributionMultiplier.label>multiplicador de contribución a la investigación</researchContributionMultiplier.label>
+	<workerBaseCost.label>coste base de trabajadores</workerBaseCost.label>
+	<workerBaseMax.label>máximo base de trabajadores</workerBaseMax.label>
+	<workerBaseOverMax.label>máximo base de trabajadores extra</workerBaseOverMax.label>
+	<extraWorkersSoftcap.label>límite blando de trabajadores extra</extraWorkersSoftcap.label>
+	<overMaxWorkersAdjustment.label>ajuste de trabajadores por encima del máximo</overMaxWorkersAdjustment.label>
+	<workerProductionBase.label>producción base de trabajadores</workerProductionBase.label>
+	<workerProductionMultiplier.label>multiplicador de producción de trabajadores</workerProductionMultiplier.label>
+	<prosperityGainedBase.label>prosperidad base ganada</prosperityGainedBase.label>
+	<prosperityLostBase.label>prosperidad base perdida</prosperityLostBase.label>
+	<happinessLostBase.label>felicidad base perdida</happinessLostBase.label>
+	<happinessGainedBase.label>felicidad base ganada</happinessGainedBase.label>
+	<happinessLostMultiplier.label>multiplicador de felicidad perdida</happinessLostMultiplier.label>
+	<happinessGainedMultiplier.label>multiplicador de felicidad ganada</happinessGainedMultiplier.label>
+	<loyaltyLostBase.label>lealtad base perdida</loyaltyLostBase.label>
+	<loyaltyGainedBase.label>lealtad base ganada</loyaltyGainedBase.label>
+	<loyaltyLostMultiplier.label>multiplicador de lealtad perdida</loyaltyLostMultiplier.label>
+	<loyaltyGainedMultiplier.label>multiplicador de lealtad ganada</loyaltyGainedMultiplier.label>
+	<unrestLostBase.label>descontento base perdido</unrestLostBase.label>
+	<unrestGainedBase.label>descontento base ganado</unrestGainedBase.label>
+	<unrestLostMultiplier.label>multiplicador de descontento perdido</unrestLostMultiplier.label>
+	<unrestGainedMultiplier.label>multiplicador de descontento ganado</unrestGainedMultiplier.label>
+	<settlementUpgradeCostBase.label>coste base de mejora de asentamiento</settlementUpgradeCostBase.label>
+	<settlementUpgradeCostMultiplier.label>multiplicador de coste de mejora de asentamiento</settlementUpgradeCostMultiplier.label>
+	<settlementExpansionCostPerSettlement.label>coste de expansión por asentamiento</settlementExpansionCostPerSettlement.label>
+	<buildingSlotsPerLevelBonus.label>bonificación de ranuras de edificio por nivel</buildingSlotsPerLevelBonus.label>
+	<workerOverworkPenaltyMultiplier.label>multiplicador de penalización por exceso de trabajo</workerOverworkPenaltyMultiplier.label>
+	<battleLossProsperityBase.label>penalización base de prosperidad por derrota</battleLossProsperityBase.label>
+	<battleLossHappinessBase.label>penalización base de felicidad por derrota</battleLossHappinessBase.label>
+	<battleLossLoyaltyBase.label>penalización base de lealtad por derrota</battleLossLoyaltyBase.label>
+	<victoryHappinessBonus.label>bonificación de felicidad por victoria</victoryHappinessBonus.label>
+	<victoryLoyaltyBonus.label>bonificación de lealtad por victoria</victoryLoyaltyBonus.label>
+	<fireSupportCostMultiplier.label>multiplicador de coste de apoyo de fuego</fireSupportCostMultiplier.label>
+	<policyActionCooldownMultiplier.label>multiplicador de reutilización de acciones de política</policyActionCooldownMultiplier.label>
+	<casualtyWoundSeverityMultiplier.label>multiplicador de gravedad de heridas de las bajas</casualtyWoundSeverityMultiplier.label>
+	<threatAdaptationGrowthMultiplier.label>multiplicador de crecimiento de adaptación a la amenaza</threatAdaptationGrowthMultiplier.label>
+
+</LanguageData>
