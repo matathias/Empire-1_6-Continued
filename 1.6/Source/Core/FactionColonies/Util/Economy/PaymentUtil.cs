@@ -23,6 +23,7 @@ namespace FactionColonies
         public const string Reason_SquadHire = "squad_hire";
         public const string Reason_SquadUpgrade = "squad_upgrade";
         public const string Reason_SquadFillSlot = "squad_fill_slot";
+        public const string Reason_HireLaborers = "hire_laborers";
 
         /* returnBillTypes + AutoresolveBills moved to TaxLedger as private/instance methods. */
 

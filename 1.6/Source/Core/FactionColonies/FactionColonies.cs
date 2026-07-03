@@ -86,6 +86,15 @@ namespace FactionColonies
         /* Timer-duration multipliers */
         public const float DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER = 1.0f;
         public const float DEFAULT_BUILDING_CONSTRUCT_TIME_MULTIPLIER = 1.0f;
+        /* Hire-Laborers action tuning */
+        public const int DEFAULT_LABORER_DURATION_DAYS = 4;
+        public const int DEFAULT_LABORER_COOLDOWN_DAYS = 7;
+        public const int DEFAULT_LABORER_BASE_COUNT = 2;
+        public const int DEFAULT_LABORER_PER_SETTLEMENT = 1;
+        public const int DEFAULT_LABORER_MAX_COUNT = 8;
+        public const int DEFAULT_LABORER_COST_PER_DAY = 60;
+        public const int DEFAULT_LABORER_SKILL_BONUS_PER_LEVEL = 1;
+        public const int DEFAULT_LABORER_SKILL_BONUS_CAP = 8;
         /* Defaults for Events & Military settings */
         public const bool DEFAULT_ENABLE_SETTLEMENT_CAPTURE = true;
         public const bool DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS = false;
@@ -161,6 +170,16 @@ namespace FactionColonies
         /* Final per-difficulty multiplier on building upkeep, tuning the per-difficulty building burden
          * independently of the interval-scaling. Ratio (sign-preserving). Defaults to 1.0 everywhere. */
         public static float buildingUpkeepDifficultyMult = 1.0f;
+
+        /* Hire-Laborers action tuning (all player-configurable). */
+        public static int laborerDurationDays = DEFAULT_LABORER_DURATION_DAYS;
+        public static int laborerCooldownDays = DEFAULT_LABORER_COOLDOWN_DAYS;
+        public static int laborerBaseCount = DEFAULT_LABORER_BASE_COUNT;
+        public static int laborerPerSettlement = DEFAULT_LABORER_PER_SETTLEMENT;
+        public static int laborerMaxCount = DEFAULT_LABORER_MAX_COUNT;
+        public static int laborerCostPerDay = DEFAULT_LABORER_COST_PER_DAY;
+        public static int laborerSkillBonusPerLevel = DEFAULT_LABORER_SKILL_BONUS_PER_LEVEL;
+        public static int laborerSkillBonusCap = DEFAULT_LABORER_SKILL_BONUS_CAP;
 
         public static EmpireDifficultyLevel difficultyLevel = DEFAULT_DIFFICULTY_LEVEL;
 
@@ -437,6 +456,14 @@ namespace FactionColonies
             Scribe_Values.Look(ref settlementMaxLevel, "settlementMaxLevel", DEFAULT_SETTLEMENT_MAX_LEVEL);
             Scribe_Values.Look(ref settlementUpgradeTimeMultiplier, "settlementUpgradeTimeMultiplier", DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER);
             Scribe_Values.Look(ref buildingConstructTimeMultiplier, "buildingConstructTimeMultiplier", DEFAULT_BUILDING_CONSTRUCT_TIME_MULTIPLIER);
+            Scribe_Values.Look(ref laborerDurationDays, "laborerDurationDays", DEFAULT_LABORER_DURATION_DAYS);
+            Scribe_Values.Look(ref laborerCooldownDays, "laborerCooldownDays", DEFAULT_LABORER_COOLDOWN_DAYS);
+            Scribe_Values.Look(ref laborerBaseCount, "laborerBaseCount", DEFAULT_LABORER_BASE_COUNT);
+            Scribe_Values.Look(ref laborerPerSettlement, "laborerPerSettlement", DEFAULT_LABORER_PER_SETTLEMENT);
+            Scribe_Values.Look(ref laborerMaxCount, "laborerMaxCount", DEFAULT_LABORER_MAX_COUNT);
+            Scribe_Values.Look(ref laborerCostPerDay, "laborerCostPerDay", DEFAULT_LABORER_COST_PER_DAY);
+            Scribe_Values.Look(ref laborerSkillBonusPerLevel, "laborerSkillBonusPerLevel", DEFAULT_LABORER_SKILL_BONUS_PER_LEVEL);
+            Scribe_Values.Look(ref laborerSkillBonusCap, "laborerSkillBonusCap", DEFAULT_LABORER_SKILL_BONUS_CAP);
             Scribe_Values.Look(ref showSettleConfirm, "showSettleConfirm", DEFAULT_SHOW_SETTLE_CONFIRM);
             Scribe_Values.Look(ref medievalTechOnly, "medievalTechOnly", DEFAULT_MEDIEVAL_TECH_ONLY);
             Scribe_Values.Look(ref mirrorPlayerTechLevel, "mirrorPlayerTechLevel", DEFAULT_MIRROR_PLAYER_TECH_LEVEL);
@@ -861,7 +888,20 @@ namespace FactionColonies
             ResetRoadBuilderToDefaults();
             ResetCompatToDefaults();
             ResetAdvancedToDefaults();
+            ResetLaborersToDefaults();
             LogUtil.Message($"Settings reset: timeBetweenTaxes_days={timeBetweenTaxes_days}");
+        }
+
+        public static void ResetLaborersToDefaults()
+        {
+            laborerDurationDays = DEFAULT_LABORER_DURATION_DAYS;
+            laborerCooldownDays = DEFAULT_LABORER_COOLDOWN_DAYS;
+            laborerBaseCount = DEFAULT_LABORER_BASE_COUNT;
+            laborerPerSettlement = DEFAULT_LABORER_PER_SETTLEMENT;
+            laborerMaxCount = DEFAULT_LABORER_MAX_COUNT;
+            laborerCostPerDay = DEFAULT_LABORER_COST_PER_DAY;
+            laborerSkillBonusPerLevel = DEFAULT_LABORER_SKILL_BONUS_PER_LEVEL;
+            laborerSkillBonusCap = DEFAULT_LABORER_SKILL_BONUS_CAP;
         }
 
         public static int DaysBetweenTaxesByDifficulty(EmpireDifficultyLevel difficulty)
@@ -889,6 +929,7 @@ namespace FactionColonies
             return DaysBetweenTaxesByDifficulty(difficulty) * GenDate.TicksPerDay;
         }
 
+        string laborerCostPerDay_buffer;
         string silverPerResource_buffer;
         string timeBetweenTaxes_buffer;
         string productionTitheMod_buffer;
@@ -1122,6 +1163,42 @@ namespace FactionColonies
                 "FCSettingSettlementUpgradeTime".Translate(), settlementUpgradeTimeMultiplier, 0f, 10f, decimals: 1, unit: "x");
             buildingConstructTimeMultiplier = ls.SliderTextField("FCSettingBuildingConstructTime",
                 "FCSettingBuildingConstructTime".Translate(), buildingConstructTimeMultiplier, 0f, 10f, decimals: 1, unit: "x");
+
+            ls.Gap(12f);
+            ls.GapLine();
+            Text.Font = GameFont.Medium;
+            ls.Label("FCSettingLaborersHeader".Translate());
+            Text.Font = GameFont.Small;
+
+            laborerDurationDays = ls.SliderTextField("FCSettingLaborerDurationDays",
+                "FCSettingLaborerDurationDays".Translate(), laborerDurationDays, 1, 10, unit: "d",
+                tooltip: "FCSettingLaborerDurationDaysTip".Translate());
+            laborerCooldownDays = ls.SliderTextField("FCSettingLaborerCooldownDays",
+                "FCSettingLaborerCooldownDays".Translate(), laborerCooldownDays, 1, 15, unit: "d",
+                tooltip: "FCSettingLaborerCooldownDaysTip".Translate());
+            laborerBaseCount = ls.SliderTextField("FCSettingLaborerBaseCount",
+                "FCSettingLaborerBaseCount".Translate(), laborerBaseCount, 1, 10,
+                tooltip: "FCSettingLaborerBaseCountTip".Translate());
+            laborerPerSettlement = ls.SliderTextField("FCSettingLaborerPerSettlement",
+                "FCSettingLaborerPerSettlement".Translate(), laborerPerSettlement, 1, 10,
+                tooltip: "FCSettingLaborerPerSettlementTip".Translate());
+            laborerMaxCount = ls.SliderTextField("FCSettingLaborerMaxCount",
+                "FCSettingLaborerMaxCount".Translate(), laborerMaxCount, 2, 50,
+                tooltip: "FCSettingLaborerMaxCountTip".Translate());
+            laborerSkillBonusPerLevel = ls.SliderTextField("FCSettingLaborerSkillBonusPerLevel",
+                "FCSettingLaborerSkillBonusPerLevel".Translate(), laborerSkillBonusPerLevel, 0, 5,
+                tooltip: "FCSettingLaborerSkillBonusPerLevelTip".Translate());
+            laborerSkillBonusCap = ls.SliderTextField("FCSettingLaborerSkillBonusCap",
+                "FCSettingLaborerSkillBonusCap".Translate(), laborerSkillBonusCap, 0, 20,
+                tooltip: "FCSettingLaborerSkillBonusCapTip".Translate());
+
+            // Per-laborer/day cost: a plain numeric entry (range is too wide for a useful slider).
+            ls.Label("FCSettingLaborerCostPerDay".Translate());
+            ls.IntEntry(ref laborerCostPerDay, ref laborerCostPerDay_buffer);
+            if (laborerCostPerDay < 1) { laborerCostPerDay = 1; laborerCostPerDay_buffer = "1"; }
+            if (laborerCostPerDay > 1000) { laborerCostPerDay = 1000; laborerCostPerDay_buffer = "1000"; }
+
+            DrawSectionResetButton(ls, ResetLaborersToDefaults, "FCSettingResetSectionTag".Translate("FCSettingLaborersHeader".Translate()));
 
             ls.GapLine();
 

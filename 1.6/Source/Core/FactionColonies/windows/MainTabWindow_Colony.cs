@@ -480,7 +480,11 @@ namespace FactionColonies
                         actionButtons.Add(btn);
             });
 
-            int numButtons = 1 + actionButtons.Count;
+            // The Hire-Laborers action is locked behind Royalty (a deliberate design choice tying it to
+            // the royal-permit flavor), so it only occupies a button slot when Royalty is active.
+            bool showLaborers = ModsConfig.RoyaltyActive;
+            // +1 for the Hire-Laborers button (when shown), +1 for "Create New Colony" (double width).
+            int numButtons = (showLaborers ? 2 : 1) + actionButtons.Count;
             // The "Create New Colony" button is more important than all the rest, so we'll make it as wide as two of the other buttons. Keep that in mind for the following math
             float calcButtonWidth = (panel.width - (margin * (numButtons - 1))) / (numButtons + 1);
             float y = panel.y;
@@ -496,6 +500,28 @@ namespace FactionColonies
                 if (UIUtil.ClampedButtonText(btnRect, label))
                     onClick();
                 x += btnRect.width + margin;
+            }
+
+            // Core faction laborers interaction (not policy-driven). While a batch is deployed this is a
+            // "Dismiss Laborers" button (send them home early); otherwise it is "Hire Laborers", greyed
+            // with a tooltip reason (cooldown / no map / not enough silver) when momentarily unavailable.
+            if (showLaborers)
+            {
+                Rect laborerRect = new Rect(x, y, calcButtonWidth, height);
+                if (LaborerHireUtil.TryGetActiveLaborerQuest(out _))
+                {
+                    if (UIUtil.ClampedButtonText(laborerRect, "FCDismissLaborers".Translate()))
+                        LaborerHireUtil.DismissLaborers();
+                }
+                else
+                {
+                    bool canHire = LaborerHireUtil.CanHire(out string hireReason);
+                    if (!canHire && !hireReason.NullOrEmpty())
+                        TooltipHandler.TipRegion(laborerRect, hireReason);
+                    if (UIUtil.ClampedButtonText(laborerRect, "FCHireLaborers".Translate(LaborerHireUtil.CurrentCost()), active: canHire))
+                        LaborerHireUtil.HireLaborers();
+                }
+                x += laborerRect.width + margin;
             }
 
             Rect newColonyButton = new Rect(x, y, calcButtonWidth * 2, height);

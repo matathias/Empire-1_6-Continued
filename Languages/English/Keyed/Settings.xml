@@ -222,4 +222,22 @@ Only manual battles consume inventory; auto-resolved battles incur no restock ch
 	<FCTaxDeliveryNotSetWarning>No tax delivery location set. Either set a tax delivery map or enable tax delivery on a tax spot.</FCTaxDeliveryNotSetWarning>
 	<FCCapitalNotSetWarning>No empire capital established. Either use 'Set Capital' in the Empire menu or build and activate a Capital Seat.</FCCapitalNotSetWarning>
 
+	<!-- Hire Laborers settings (Royalty) -->
+	<FCSettingLaborersHeader>Hire Laborers</FCSettingLaborersHeader>
+	<FCSettingLaborerDurationDays>Contract length</FCSettingLaborerDurationDays>
+	<FCSettingLaborerDurationDaysTip>How many days hired laborers stay before returning home.</FCSettingLaborerDurationDaysTip>
+	<FCSettingLaborerCooldownDays>Cooldown</FCSettingLaborerCooldownDays>
+	<FCSettingLaborerCooldownDaysTip>Days you must wait between laborer hires.</FCSettingLaborerCooldownDaysTip>
+	<FCSettingLaborerBaseCount>Base laborers</FCSettingLaborerBaseCount>
+	<FCSettingLaborerBaseCountTip>Number of laborers sent regardless of empire size.</FCSettingLaborerBaseCountTip>
+	<FCSettingLaborerPerSettlement>Laborers per settlement</FCSettingLaborerPerSettlement>
+	<FCSettingLaborerPerSettlementTip>Extra laborers added for each settlement in your empire.</FCSettingLaborerPerSettlementTip>
+	<FCSettingLaborerMaxCount>Maximum laborers</FCSettingLaborerMaxCount>
+	<FCSettingLaborerMaxCountTip>Upper limit on how many laborers a single hire can send.</FCSettingLaborerMaxCountTip>
+	<FCSettingLaborerSkillBonusPerLevel>Skill bonus per settlement level</FCSettingLaborerSkillBonusPerLevel>
+	<FCSettingLaborerSkillBonusPerLevelTip>Skill levels added to each laborer per point of average settlement level above 1. Set to 0 to disable quality scaling.</FCSettingLaborerSkillBonusPerLevelTip>
+	<FCSettingLaborerSkillBonusCap>Skill bonus cap</FCSettingLaborerSkillBonusCap>
+	<FCSettingLaborerSkillBonusCapTip>Maximum total skill-level bonus a laborer can receive from settlement-level scaling.</FCSettingLaborerSkillBonusCapTip>
+	<FCSettingLaborerCostPerDay>Silver cost per laborer per day</FCSettingLaborerCostPerDay>
+
 </LanguageData>

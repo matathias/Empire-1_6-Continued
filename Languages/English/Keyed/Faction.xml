@@ -171,4 +171,16 @@
 	<FCCaravanSlaverTooltip>Deals in slaves and illicit goods.</FCCaravanSlaverTooltip>
 	<FCCaravanSlaverBlocked>Blocked by Pacifist or Egalitarian policy.</FCCaravanSlaverBlocked>
 
+	<!-- Hire Laborers action -->
+	<FCHireLaborers>Hire Laborers ({0})</FCHireLaborers>
+	<FCHireLaborersCooldown>Laborers cannot be spared for another {0} days.</FCHireLaborersCooldown>
+	<FCHireLaborersReady>Laborers available</FCHireLaborersReady>
+	<FCHireLaborersReadyDesc>Laborers can once again be hired to help your colony.</FCHireLaborersReadyDesc>
+	<FCHireLaborersNoSilver>You need {0} silver to hire laborers.</FCHireLaborersNoSilver>
+	<FCHireLaborersNoMap>There is no colony for the laborers to arrive at.</FCHireLaborersNoMap>
+	<FCHireLaborersNoRoyalty>Hiring laborers requires the Royalty DLC.</FCHireLaborersNoRoyalty>
+	<FCDismissLaborers>Dismiss Laborers</FCDismissLaborers>
+	<FCDismissLaborersConfirm>Send the hired laborers home now? They will leave immediately, the rest of their contract is forfeited with no refund, and you won't be able to hire laborers again for {0} days.</FCDismissLaborersConfirm>
+	<FCDismissLaborersDone>The laborers have been dismissed and are heading home.</FCDismissLaborersDone>
+
 </LanguageData>
