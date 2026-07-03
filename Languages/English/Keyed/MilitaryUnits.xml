@@ -196,10 +196,8 @@
 	<FCImported>Imported {0}</FCImported>
 	<FCDeleted>Deleted {0}</FCDeleted>
 
-	<!-- Captives (prisoners and slaves) -->
-	<FCPrisonersMenu>Captives</FCPrisonersMenu>
-	<FCCaptiveTypePrisoner>Prisoner</FCCaptiveTypePrisoner>
-	<FCCaptiveTypeSlave>Slave</FCCaptiveTypeSlave>
+	<!-- Prisoners -->
+	<FCPrisonersMenu>Prisoners</FCPrisonersMenu>
 	<FCWorkload>workload</FCWorkload>
 	<FCHeavy>heavy</FCHeavy>
 	<FCMedium>medium</FCMedium>
@@ -224,17 +222,17 @@
 	<FCSellPawn>Sell Pawn</FCSellPawn>
 	<FCReturnToPlayer>Return To Player</FCReturnToPlayer>
 	<FCSellPawnInfo>Value will be added to next bill from the settlement</FCSellPawnInfo>
-	<FCPrisonerCaptureInfo>Captive: {0} has been delivered to {1}</FCPrisonerCaptureInfo>
-	<FCAPrisonerIsBeingDeliveredToYou>A captive is being delivered to you</FCAPrisonerIsBeingDeliveredToYou>
-	<FCNoPrisoners>No captives at this settlement.</FCNoPrisoners>
-	<FCNoPrisonersInCaravan>No captives in this caravan.</FCNoPrisonersInCaravan>
-	<FCNoPrisonersFaction>No captives.</FCNoPrisonersFaction>
-	<FCPrisonerWindowTitle>Captives — {0}</FCPrisonerWindowTitle>
-	<FCTransferPrisonerToSettlement>Transfer captive to settlement</FCTransferPrisonerToSettlement>
+	<FCPrisonerCaptureInfo>Prisoner: {0} has been enslaved and delivered to {1}</FCPrisonerCaptureInfo>
+	<FCAPrisonerIsBeingDeliveredToYou>A prisoner is being delivered to you</FCAPrisonerIsBeingDeliveredToYou>
+	<FCNoPrisoners>No prisoners at this settlement.</FCNoPrisoners>
+	<FCNoPrisonersInCaravan>No prisoners in this caravan.</FCNoPrisonersInCaravan>
+	<FCNoPrisonersFaction>No prisoners.</FCNoPrisonersFaction>
+	<FCPrisonerWindowTitle>Prisoners — {0}</FCPrisonerWindowTitle>
+	<FCTransferPrisonerToSettlement>Transfer prisoner to settlement</FCTransferPrisonerToSettlement>
 	<FCTransferPrisonerOption>Transfer {0}</FCTransferPrisonerOption>
-	<FCTransferPrisonerGizmoDesc>Select a captive from this caravan to hand over to the settlement.</FCTransferPrisonerGizmoDesc>
-	<FCAddPrisonersToSettlement>Add captives to {0}</FCAddPrisonersToSettlement>
-	<FCPawnsAddedToSettlement>{0} captive(s) added to {1}</FCPawnsAddedToSettlement>
+	<FCTransferPrisonerGizmoDesc>Select a prisoner from this caravan to hand over to the settlement.</FCTransferPrisonerGizmoDesc>
+	<FCAddPrisonersToSettlement>Add prisoners to {0}</FCAddPrisonersToSettlement>
+	<FCPawnsAddedToSettlement>{0} prisoner(s) added to {1}</FCPawnsAddedToSettlement>
 	<FCPawnArrivalDefault>{0} pawn(s) added to {1}</FCPawnArrivalDefault>
 
 	<!-- Mercenary -->
