@@ -82,4 +82,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_5</defName>
+		<label>Spanish Translation Update</label>
+		<description>Adds updated Spanish translation.</description>
+		<releaseDate>2026-07-02</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Adds updated Spanish translation</li>
+		</patchNoteLines>
+		<authors>
+		<li>carmoran0</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
