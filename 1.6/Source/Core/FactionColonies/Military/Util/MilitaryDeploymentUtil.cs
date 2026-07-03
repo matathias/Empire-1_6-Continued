@@ -93,6 +93,8 @@ namespace FactionColonies
             foreach (Pawn pawn in equippedPawns)
             {
                 MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(pawn, efficiency);
+                // Load reloadable-weapon magazines from carried ammo (e.g. Yayo's Combat); no-op otherwise.
+                ReloadableWeaponUtil.LoadMagazinesFromInventory(pawn);
             }
 
             // Start the deployment from a clean order. MilitaryOrder is persistent squad state, so

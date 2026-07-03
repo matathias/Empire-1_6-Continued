@@ -757,4 +757,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_48</defName>
+		<label>Weapon Reloading</label>
+		<description>When spawning mercs, forces them to reload their guns. Primarily meant as a soft compatibility patch for Yayo&apos;s Combat.</description>
+		<releaseDate>2026-07-02</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>When gun-toting mercs are spawned, they now immediately have their weapon reloaded. Relevant mostly for Yayo&apos;s Combat</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
