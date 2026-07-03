@@ -33,10 +33,10 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Small;
 
-            Widgets.Label(label_Title, "FCConfirmDecision".Translate());
-            Widgets.Label(label_Upper, stringConfirm);
+            UIUtil.ClampedLabel(label_Title, "FCConfirmDecision".Translate());
+            UIUtil.ClampedLabel(label_Upper, stringConfirm);
 
-            if (Widgets.ButtonText(button_Confirm, "FCConfirm".Translate()))
+            if (UIUtil.ClampedButtonText(button_Confirm, "FCConfirm".Translate()))
             {
                 onConfirm?.Invoke();
                 this.Close();

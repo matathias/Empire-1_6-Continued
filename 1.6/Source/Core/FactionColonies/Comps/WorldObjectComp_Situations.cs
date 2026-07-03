@@ -50,7 +50,7 @@ namespace FactionColonies
                 GameFont f = Text.Font;
                 TextAnchor a = Text.Anchor;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(boundingBox, "FCNoSituationsHere".Translate());
+                UIUtil.ClampedLabel(boundingBox, "FCNoSituationsHere".Translate());
                 Text.Font = f;
                 Text.Anchor = a;
                 return;

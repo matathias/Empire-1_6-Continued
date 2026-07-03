@@ -110,7 +110,7 @@ namespace FactionColonies
             string title = merc.pawn != null
                 ? (string)"FCDialogPawnLoadoutTitle".Translate(merc.pawn.LabelShortCap)
                 : (string)"FCDialogPawnLoadoutTitleEmpty".Translate();
-            Widgets.Label(new Rect(headerBar.x + 5f, headerBar.y, headerBar.width - 10f, headerBar.height), title);
+            UIUtil.ClampedLabel(new Rect(headerBar.x + 5f, headerBar.y, headerBar.width - 10f, headerBar.height), title);
 
             // Subtitle: template association state (based on the working buffer)
             Text.Font = GameFont.Tiny;
@@ -118,7 +118,7 @@ namespace FactionColonies
             string sub = workingLoadout != null
                 ? (string)"FCDialogPawnLoadoutDivergedSubtitle".Translate()
                 : (string)"FCDialogPawnLoadoutInheritedSubtitle".Translate(merc.loadout?.name ?? (string)"FCNone".Translate());
-            Widgets.Label(new Rect(inRect.x, headerBar.yMax + 4f, inRect.width, 18f), sub);
+            UIUtil.ClampedLabel(new Rect(inRect.x, headerBar.yMax + 4f, inRect.width, 18f), sub);
 
             // Info: race + xenotype (read-only — pawn identity is preserved here)
             Text.Font = GameFont.Small;
@@ -134,11 +134,11 @@ namespace FactionColonies
             {
                 infoLine = "Race".Translate() + ": " + raceName;
             }
-            Widgets.Label(new Rect(inRect.x, headerBar.yMax + 26f, inRect.width, 20f), infoLine);
+            UIUtil.ClampedLabel(new Rect(inRect.x, headerBar.yMax + 26f, inRect.width, 20f), infoLine);
 
             // Total equipment cost (read-only — Upgrade pays cost diff on equip)
             float totalCost = current != null ? (float)current.getTotalCost : 0f;
-            Widgets.Label(new Rect(inRect.x, headerBar.yMax + 48f, inRect.width, 20f),
+            UIUtil.ClampedLabel(new Rect(inRect.x, headerBar.yMax + 48f, inRect.width, 20f),
                 "FCTotalEquipmentCostLabel".Translate() + totalCost.ToString("F0"));
 
             // Layout: portrait + slots on the left, apparel list on the right
@@ -161,7 +161,7 @@ namespace FactionColonies
             float rightBtnW = 90f;
 
             Rect pickRect = new Rect(bottomRect.x, bottomRect.y, pickW, bottomRect.height);
-            if (Widgets.ButtonText(pickRect, "FCDialogPawnLoadoutPickFromPool".Translate()))
+            if (UIUtil.ClampedButtonText(pickRect, "FCDialogPawnLoadoutPickFromPool".Translate()))
             {
                 OpenPickFromPoolMenu();
             }
@@ -172,7 +172,7 @@ namespace FactionColonies
             Color colorBefore = GUI.color;
             if (!canReset) GUI.color = Color.gray;
             Rect resetRect = new Rect(pickRect.xMax + gap, bottomRect.y, resetW, bottomRect.height);
-            if (Widgets.ButtonText(resetRect, "FCDialogPawnLoadoutResetToPool".Translate(), true, true, canReset))
+            if (UIUtil.ClampedButtonText(resetRect, "FCDialogPawnLoadoutResetToPool".Translate(), true, true, canReset))
             {
                 workingLoadout = null;
                 dirty = true;
@@ -183,13 +183,13 @@ namespace FactionColonies
             Rect applyRect = new Rect(closeRect.x - gap - rightBtnW, bottomRect.y, rightBtnW, bottomRect.height);
 
             if (!dirty) GUI.color = Color.gray;
-            if (Widgets.ButtonText(applyRect, "FCDialogPawnLoadoutApply".Translate(), true, true, dirty))
+            if (UIUtil.ClampedButtonText(applyRect, "FCDialogPawnLoadoutApply".Translate(), true, true, dirty))
             {
                 ApplyChanges();
             }
             GUI.color = colorBefore;
 
-            if (Widgets.ButtonText(closeRect, "FCDialogPawnLoadoutClose".Translate())) Close();
+            if (UIUtil.ClampedButtonText(closeRect, "FCDialogPawnLoadoutClose".Translate())) Close();
 
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -245,10 +245,10 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.UpperCenter;
             if (showMount)
             {
-                Widgets.Label(new Rect(mountSlot.x - 15f, mountSlot.y - 18f, mountSlot.width + 30f, 18f), "fcLabelMount".Translate());
+                UIUtil.ClampedLabel(new Rect(mountSlot.x - 15f, mountSlot.y - 18f, mountSlot.width + 30f, 18f), "fcLabelMount".Translate());
                 Widgets.DrawMenuSection(mountSlot);
             }
-            Widgets.Label(new Rect(weaponSlot.x - 15f, weaponSlot.y - 18f, weaponSlot.width + 30f, 18f), "fcLabelWeapon".Translate());
+            UIUtil.ClampedLabel(new Rect(weaponSlot.x - 15f, weaponSlot.y - 18f, weaponSlot.width + 30f, 18f), "fcLabelWeapon".Translate());
             Widgets.DrawMenuSection(weaponSlot);
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;

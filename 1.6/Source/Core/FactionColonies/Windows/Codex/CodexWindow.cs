@@ -138,7 +138,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             GUI.color = Color.white;
-            Widgets.Label(new Rect(labelX, titleRect.y, titleRect.xMax - labelX - margin, titleRect.height), "FCCodexTitle".Translate());
+            UIUtil.ClampedLabel(new Rect(labelX, titleRect.y, titleRect.xMax - labelX - margin, titleRect.height), "FCCodexTitle".Translate());
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
 

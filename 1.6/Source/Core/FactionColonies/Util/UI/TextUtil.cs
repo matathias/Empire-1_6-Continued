@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using Verse;
 
@@ -131,6 +132,83 @@ namespace FactionColonies
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Tag-aware replacement for <see cref="Verse.Text.ClampTextWithEllipsis"/>. Truncates <paramref name="text"/>
+        /// to <paramref name="rect"/>'s width (minus <paramref name="margin"/>) with a trailing "...", but cuts on
+        /// visible characters only and leaves rich-text markup intact — a colorized string keeps its color and never
+        /// leaks a half-eaten or unclosed <c>&lt;color&gt;</c> tag onto the screen. Vanilla cuts the raw string
+        /// character-by-character, which mangles tags. Any tags still open at the cut point are closed after the ellipsis.
+        /// </summary>
+        /// <param name="rect">The rect the text must fit within.</param>
+        /// <param name="text">The (possibly rich-text) string to clamp.</param>
+        /// <param name="margin">Extra width reserved on the right, subtracted from the rect width. Defaults to 0 (use the
+        /// full width); vanilla's equivalent bakes in a fixed 13px cushion.</param>
+        public static string ClampWithEllipsis(Rect rect, string text, float margin = 0f)
+        {
+            float maxWidth = rect.width - margin;
+
+            // CalcSize strips tags internally, so this measures the VISIBLE width. Short-circuit anything that fits
+            // (including colored strings) unchanged.
+            if (text.NullOrEmpty() || Text.CalcSize(text).x <= maxWidth)
+            {
+                return text;
+            }
+
+            // Find how many visible characters fit alongside the ellipsis, measuring on the stripped text.
+            string plain = text.StripTags();
+            int visibleFit = plain.Length;
+            while (visibleFit > 0 && Text.CalcSize(plain.Substring(0, visibleFit) + "...").x > maxWidth)
+            {
+                visibleFit--;
+            }
+
+            // Rebuild the raw string up to that many visible characters, copying tags through verbatim and tracking
+            // which are still open so we can close them after the ellipsis.
+            List<string> openTags = new List<string>();
+            StringBuilder sb = new StringBuilder(text.Length);
+            int visibleEmitted = 0;
+            int i = 0;
+            while (i < text.Length && visibleEmitted < visibleFit)
+            {
+                char c = text[i];
+                if (c == '<')
+                {
+                    int close = text.IndexOf('>', i);
+                    if (close < 0)
+                    {
+                        // Malformed tail with no closing '>': treat the rest as a single visible chunk and bail.
+                        break;
+                    }
+                    string tag = text.Substring(i, close - i + 1); // includes the surrounding < >
+                    sb.Append(tag);
+                    string inner = tag.Substring(1, tag.Length - 2); // strip < and >
+                    if (inner.StartsWith("/"))
+                    {
+                        if (openTags.Count > 0) openTags.RemoveAt(openTags.Count - 1);
+                    }
+                    else if (!inner.EndsWith("/")) // ignore self-closing tags
+                    {
+                        // Tag name is up to the first space or '=' (e.g. "color=#FF0000FF" -> "color").
+                        int cut = inner.IndexOfAny(new[] { ' ', '=' });
+                        openTags.Add(cut >= 0 ? inner.Substring(0, cut) : inner);
+                    }
+                    i = close + 1;
+                    continue;
+                }
+
+                sb.Append(c);
+                visibleEmitted++;
+                i++;
+            }
+
+            sb.Append("...");
+            for (int t = openTags.Count - 1; t >= 0; t--)
+            {
+                sb.Append("</").Append(openTags[t]).Append(">");
+            }
+            return sb.ToString();
         }
 
         public static string GetTownTitle(WorldSettlementFC settlement)

@@ -43,7 +43,7 @@ namespace FactionColonies
                 if (cur > cap + 0.0001f) GUI.color = Color.red;
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(massRect, "fcInventoryMass".Translate(cur.ToString("F1"), cap.ToString("F1")));
+                UIUtil.ClampedLabel(massRect, "fcInventoryMass".Translate(cur.ToString("F1"), cap.ToString("F1")));
                 GUI.color = colorBefore;
 
                 if (opts.canEdit && opts.showHeaderButtons)
@@ -52,7 +52,7 @@ namespace FactionColonies
                     Rect addBtnRect = new Rect(rect.xMax - addW, btnY, addW, headerHeight);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleCenter;
-                    if (Widgets.ButtonText(addBtnRect, "fcAddInventoryItem".Translate()))
+                    if (UIUtil.ClampedButtonText(addBtnRect, "fcAddInventoryItem".Translate()))
                         OpenInventoryPicker(displayUnit, opts);
                 }
             }
@@ -99,7 +99,7 @@ namespace FactionColonies
                     removeRect = new Rect(row.xMax - removeButtonSize - 2f, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
                     Text.Font = GameFont.Small;
                     Text.Anchor = TextAnchor.MiddleCenter;
-                    if (Widgets.ButtonText(removeRect, "X"))
+                    if (UIUtil.ClampedButtonText(removeRect, "X"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
                         if (target != null) target.RemoveInventory(index);
@@ -114,16 +114,16 @@ namespace FactionColonies
                 if (opts.canEdit)
                 {
                     Rect minus = new Rect(countArea.x, countArea.y + 4f, 20f, rowHeight - 8f);
-                    if (Widgets.ButtonText(minus, "-"))
+                    if (UIUtil.ClampedButtonText(minus, "-"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
                         if (target != null) target.SetInventoryCount(index, Mathf.Max(0, item.count - 1));
                     }
                     Rect num = new Rect(countArea.x + 22f, countArea.y, 40f, rowHeight);
                     Text.Anchor = TextAnchor.MiddleCenter;
-                    Widgets.Label(num, item.count.ToString());
+                    UIUtil.ClampedLabel(num, item.count.ToString());
                     Rect plus = new Rect(countArea.x + 64f, countArea.y + 4f, 20f, rowHeight - 8f);
-                    if (Widgets.ButtonText(plus, "+"))
+                    if (UIUtil.ClampedButtonText(plus, "+"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
                         if (target != null) target.SetInventoryCount(index, item.count + 1);
@@ -132,7 +132,7 @@ namespace FactionColonies
                 else
                 {
                     Text.Anchor = TextAnchor.MiddleRight;
-                    Widgets.Label(countArea, "x" + item.count);
+                    UIUtil.ClampedLabel(countArea, "x" + item.count);
                 }
 
                 DrawItemRowCommon(new Rect(row.x, row.y, countArea.x - row.x, row.height), item, null);
@@ -160,7 +160,7 @@ namespace FactionColonies
             Rect valueRect = new Rect(row.xMax - 100f, row.y, 96f, row.height);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(valueRect, massVal.ToString("F1") + " kg  $" + item.MarketValue.ToString("F0"));
+            UIUtil.ClampedLabel(valueRect, massVal.ToString("F1") + " kg  $" + item.MarketValue.ToString("F0"));
 
             Rect labelRect = new Rect(infoRect.xMax + 4f, row.y, valueRect.x - infoRect.xMax - 8f, row.height);
             Text.Font = GameFont.Tiny;
@@ -172,7 +172,7 @@ namespace FactionColonies
                 label = item.quality.Value.GetLabel().CapitalizeFirst() + " " + label;
             if (!string.IsNullOrEmpty(suffix)) label = label + "  " + suffix;
             string shown = Text.ClampTextWithEllipsis(labelRect, label);
-            Widgets.Label(labelRect, shown);
+            UIUtil.ClampedLabel(labelRect, shown);
             if (shown != label) TooltipHandler.TipRegion(labelRect, label);
         }
 

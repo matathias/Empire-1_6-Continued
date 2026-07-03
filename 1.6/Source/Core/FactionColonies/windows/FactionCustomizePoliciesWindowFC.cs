@@ -79,7 +79,7 @@ namespace FactionColonies
 
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.Font = GameFont.Medium;
-            Widgets.Label(labelHeader, header);
+            UIUtil.ClampedLabel(labelHeader, header);
             Widgets.DrawLineHorizontal(labelHeader.x, labelHeader.yMax + margin, fullwidth - (Margin * 2));
 
             Text.Font = GameFont.Small;
@@ -95,7 +95,7 @@ namespace FactionColonies
                 if (!canAfford) GUI.color = new Color(1f, 1f, 1f, 0.5f);
 
                 Text.Anchor = TextAnchor.MiddleCenter;
-                if (Widgets.ButtonText(clearBtn, "FCClearPolicies".Translate(clearCost)) && canAfford)
+                if (UIUtil.ClampedButtonText(clearBtn, "FCClearPolicies".Translate(clearCost)) && canAfford)
                 {
                     Find.WindowStack.Add(new FCWindow_Confirm(
                         "FCClearPoliciesConfirm".Translate(clearCost),
@@ -142,11 +142,11 @@ namespace FactionColonies
 
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(alertRect, alertText);
+            UIUtil.ClampedLabel(alertRect, alertText);
 
             // Confirm button
             Text.Font = GameFont.Small;
-            if (Widgets.ButtonText(buttonConfirm, "FCConfirmChanges".Translate()))
+            if (UIUtil.ClampedButtonText(buttonConfirm, "FCConfirmChanges".Translate()))
             {
                 if (!traitsChosen)
                 {
@@ -222,7 +222,7 @@ namespace FactionColonies
                 // Restore color briefly for the button
                 Color savedColor = GUI.color;
                 GUI.color = Color.white;
-                if (Widgets.ButtonText(removeBtn, "X"))
+                if (UIUtil.ClampedButtonText(removeBtn, "X"))
                 {
                     selectedPolicies.RemoveAt(slotIndex);
                     ResetCardScrollPositions();
@@ -235,7 +235,7 @@ namespace FactionColonies
             Rect nameRect = new Rect(nameLabelX, y, nameLabelWidth, iconSize);
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(nameRect, policy.LabelCap);
+            UIUtil.ClampedLabel(nameRect, policy.LabelCap);
             y += iconSize + smallMargin;
 
             // Conflicts warning
@@ -287,7 +287,7 @@ namespace FactionColonies
             Widgets.DrawHighlight(listHeader);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(listHeader.x + margin, listHeader.y, listHeader.width - margin, listHeader.height),
+            UIUtil.ClampedLabel(new Rect(listHeader.x + margin, listHeader.y, listHeader.width - margin, listHeader.height),
                 "FCAvailablePolicies".Translate());
 
             float listY = listHeader.yMax + smallMargin;

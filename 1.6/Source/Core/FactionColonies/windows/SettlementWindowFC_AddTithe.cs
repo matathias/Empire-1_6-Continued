@@ -80,12 +80,12 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 35f);
-            Widgets.Label(header, "FCAddTitheItemHeader".Translate());
+            UIUtil.ClampedLabel(header, "FCAddTitheItemHeader".Translate());
             Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
             Text.Font = GameFont.Small;
             Rect subHeader = new Rect(boundingBox.x, header.yMax, boundingBox.width, 30f);
-            Widgets.Label(subHeader, settlement.Name);
+            UIUtil.ClampedLabel(subHeader, settlement.Name);
 
             Rect iconBox = new Rect(boundingBox.x, subHeader.yMax, 30f, 30f);
             Rect labelHighlight = new Rect(iconBox.xMax + margin, iconBox.y, boundingBox.width - margin - iconBox.width, 30f);
@@ -96,7 +96,7 @@ namespace FactionColonies
             Widgets.Label(iconBox, new GUIContent(resource.def.Icon));
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(labelHighlight);
-            Widgets.Label(labelText, resource.def.LabelCap);
+            UIUtil.ClampedLabel(labelText, resource.def.LabelCap);
             Rect iconAccent = new Rect(iconBox.x, iconBox.y, iconBox.width, 3f);
             Rect labelAccent = new Rect(labelHighlight.x, labelHighlight.y, labelHighlight.width, 3f);
             Widgets.DrawBoxSolid(iconAccent, resource.def.color);
@@ -119,7 +119,7 @@ namespace FactionColonies
             else
                 remainingStr = $"${remaining}".Colorize(Color.green);
             Widgets.DrawHighlight(budgetRow);
-            Widgets.Label(new Rect(budgetRow.x + smallMargin, budgetRow.y, budgetRow.width - (smallMargin * 2), budgetRow.height),
+            UIUtil.ClampedLabel(new Rect(budgetRow.x + smallMargin, budgetRow.y, budgetRow.width - (smallMargin * 2), budgetRow.height),
                 "FCTitheBudgetRemaining".Translate(remainingStr, $"${totalBudget}"));
             Text.Font = GameFont.Small;
 
@@ -133,7 +133,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(rightPanel, "fcNoMaterialNeeded".Translate());
+                UIUtil.ClampedLabel(rightPanel, "fcNoMaterialNeeded".Translate());
             }
             else
             {
@@ -157,8 +157,8 @@ namespace FactionColonies
 
                     Rect qualityLabel = new Rect(selectionPanel.x + margin, panelY, 60f, rowHeight);
                     Rect qualityButton = new Rect(qualityLabel.xMax + smallMargin, panelY, 120f, rowHeight);
-                    Widgets.Label(qualityLabel, "Quality".Translate() + ":");
-                    if (Widgets.ButtonText(qualityButton, TextUtil.GetQualityLabelCap(selectedQuality)))
+                    UIUtil.ClampedLabel(qualityLabel, "Quality".Translate() + ":");
+                    if (UIUtil.ClampedButtonText(qualityButton, TextUtil.GetQualityLabelCap(selectedQuality)))
                     {
                         List<FloatMenuOption> options = new List<FloatMenuOption>();
                         foreach (QualityCategory cat in categoryList)
@@ -187,14 +187,14 @@ namespace FactionColonies
                 {
                     totalCost = "  ";
                 }
-                Widgets.Label(selectedLabel, $"{stuffStr}{(selectedThing?.LabelCap ?? "null")}{qualityStr}\n{totalCost}");
+                UIUtil.ClampedLabel(selectedLabel, $"{stuffStr}{(selectedThing?.LabelCap ?? "null")}{qualityStr}\n{totalCost}");
                 panelY += selectedLabel.height + margin;
 
                 float buttonWidth = (selectionPanel.width - (margin * 3)) / 2f;
                 Rect cancelButton = new Rect(selectionPanel.x + margin, panelY, buttonWidth, rowHeight);
                 Rect confirmButton = new Rect(cancelButton.xMax + margin, panelY, buttonWidth, rowHeight);
 
-                if (Widgets.ButtonText(cancelButton, "FCClearSelection".Translate()))
+                if (UIUtil.ClampedButtonText(cancelButton, "FCClearSelection".Translate()))
                 {
                     selectedThing = null;
                     selectedStuff = null;
@@ -220,7 +220,7 @@ namespace FactionColonies
                 {
                     GUI.color = Color.gray;
                 }
-                if (Widgets.ButtonText(confirmButton, "Confirm".Translate()))
+                if (UIUtil.ClampedButtonText(confirmButton, "Confirm".Translate()))
                 {
                     if (canConfirm)
                     {
@@ -252,10 +252,10 @@ namespace FactionColonies
             Widgets.DrawHighlight(headerRow);
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.Font = GameFont.Small;
-            Widgets.Label(new Rect(headerRow.x + margin, headerRow.y, 60f, headerRow.height), "FCTitheItems".Translate());
+            UIUtil.ClampedLabel(new Rect(headerRow.x + margin, headerRow.y, 60f, headerRow.height), "FCTitheItems".Translate());
             float sortBtnW = 120f;
             Rect sortBtn = new Rect(headerRow.xMax - margin - 65f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
-            if (Widgets.ButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[itemSortIndex].Translate())))
+            if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[itemSortIndex].Translate())))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 for (int s = 0; s < sortLabelKeys.Length; s++)
@@ -279,7 +279,7 @@ namespace FactionColonies
                 Color prevColor = GUI.color;
                 GUI.color = Color.gray;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(new Rect(searchRect.x + 5f, searchRect.y, searchRect.width - 10f, searchRect.height),
+                UIUtil.ClampedLabel(new Rect(searchRect.x + 5f, searchRect.y, searchRect.width - 10f, searchRect.height),
                     "FCSearchItems".Translate());
                 GUI.color = prevColor;
             }
@@ -298,7 +298,7 @@ namespace FactionColonies
             float listHeight = thingsList.Count * rowHeight;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(headerRow.xMax - margin - 65f - (listHeight > outerListBox.height ? scrollSpacing : 0), headerRow.y, 60f, headerRow.height), "FCTitheBasePrice".Translate());
+            UIUtil.ClampedLabel(new Rect(headerRow.xMax - margin - 65f - (listHeight > outerListBox.height ? scrollSpacing : 0), headerRow.y, 60f, headerRow.height), "FCTitheBasePrice".Translate());
             Text.Font = GameFont.Small;
             Widgets.DrawMenuSection(drawBox);
 
@@ -354,9 +354,9 @@ namespace FactionColonies
                     }
                 }
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(label, iThing.LabelCap);
+                UIUtil.ClampedLabel(label, iThing.LabelCap);
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(valueLabel, $"${Math.Round(iThing.BaseMarketValue)}");
+                UIUtil.ClampedLabel(valueLabel, $"${Math.Round(iThing.BaseMarketValue)}");
                 Text.Anchor = TextAnchor.MiddleLeft;
             }
 
@@ -371,10 +371,10 @@ namespace FactionColonies
             Widgets.DrawHighlight(headerRow);
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.Font = GameFont.Small;
-            Widgets.Label(new Rect(headerRow.x + margin, headerRow.y, 80f, headerRow.height), "FCTitheStuff".Translate());
+            UIUtil.ClampedLabel(new Rect(headerRow.x + margin, headerRow.y, 80f, headerRow.height), "FCTitheStuff".Translate());
             float sortBtnW = 120f;
             Rect sortBtn = new Rect(headerRow.xMax - margin - 75f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
-            if (Widgets.ButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[stuffSortIndex].Translate())))
+            if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[stuffSortIndex].Translate())))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 for (int s = 0; s < sortLabelKeys.Length; s++)
@@ -398,7 +398,7 @@ namespace FactionColonies
                 Color prevColor = GUI.color;
                 GUI.color = Color.gray;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(new Rect(searchRect.x + 5f, searchRect.y, searchRect.width - 10f, searchRect.height),
+                UIUtil.ClampedLabel(new Rect(searchRect.x + 5f, searchRect.y, searchRect.width - 10f, searchRect.height),
                     "FCSearchMaterials".Translate());
                 GUI.color = prevColor;
             }
@@ -417,7 +417,7 @@ namespace FactionColonies
             float listHeight = stuffList.Count * rowHeight;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(headerRow.xMax - margin - 65f - (listHeight > outerListBox.height ? scrollSpacing : 0), headerRow.y, 60f, headerRow.height), "FCTitheMaterialPrice".Translate());
+            UIUtil.ClampedLabel(new Rect(headerRow.xMax - margin - 65f - (listHeight > outerListBox.height ? scrollSpacing : 0), headerRow.y, 60f, headerRow.height), "FCTitheMaterialPrice".Translate());
             Text.Font = GameFont.Small;
             Widgets.DrawMenuSection(drawBox);
 
@@ -449,10 +449,10 @@ namespace FactionColonies
                     selectedStuff = iStuff;
                 }
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(label, iStuff.LabelCap);
+                UIUtil.ClampedLabel(label, iStuff.LabelCap);
                 Text.Anchor = TextAnchor.MiddleRight;
                 float stuffPrice = CraftUtil.ThingValue(selectedThing, iStuff, SelectedQuality);
-                Widgets.Label(valueLabel, $"${Math.Round(stuffPrice)}");
+                UIUtil.ClampedLabel(valueLabel, $"${Math.Round(stuffPrice)}");
                 Text.Anchor = TextAnchor.MiddleLeft;
             }
 

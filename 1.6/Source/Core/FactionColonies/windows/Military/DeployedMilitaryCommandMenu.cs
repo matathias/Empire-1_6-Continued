@@ -177,7 +177,7 @@ namespace FactionColonies
             Rect labelRect = new Rect(textX, rect.y, rect.xMax - textX - 4f, rect.height);
             TextAnchor prevAnchor = Text.Anchor;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(labelRect, label);
+            UIUtil.ClampedLabel(labelRect, label);
             Text.Anchor = prevAnchor;
 
             if (Widgets.ButtonInvisible(rect))
@@ -223,7 +223,7 @@ namespace FactionColonies
 
             Rect selectSquadRect = new Rect(rect.x, curY, contentWidth, buttonHeight);
             squadText = "FCSelectDeployedSquad".Translate();
-            if (Widgets.ButtonText(selectSquadRect, squadText))
+            if (UIUtil.ClampedButtonText(selectSquadRect, squadText))
             {
                 DoSelectSquadCommand();
             }
@@ -273,7 +273,7 @@ namespace FactionColonies
 
                 string squadFullName = selectedSquad.DisplayName;
                 string squadTruncated = squadFullName.Truncate(contentWidth - 10f, truncateCache);
-                Widgets.Label(squadNameRect, squadTruncated);
+                UIUtil.ClampedLabel(squadNameRect, squadTruncated);
 
                 if (squadTruncated != squadFullName)
                 {

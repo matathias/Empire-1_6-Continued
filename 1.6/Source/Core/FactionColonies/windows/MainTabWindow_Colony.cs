@@ -151,7 +151,7 @@ namespace FactionColonies
                 Text.Anchor = TextAnchor.MiddleCenter;
                 Text.Font = GameFont.Medium;
                 Rect btn = new Rect(inRect.x + inRect.width / 2f - 150f, inRect.y + inRect.height / 2f - 20f, 300f, 40f);
-                if (Widgets.ButtonText(btn, "FCCreateNewFaction".Translate()))
+                if (UIUtil.ClampedButtonText(btn, "FCCreateNewFaction".Translate()))
                 {
                     ColonyUtil.CreatePlayerColonyFaction();
                     faction = FindFC.FactionComp;
@@ -252,13 +252,13 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(labelBox);
-            Widgets.Label(labelTextBox, faction.name ?? "");
+            UIUtil.ClampedLabel(labelTextBox, faction.name ?? "");
 
             Text.Font = GameFont.Small;
-            Widgets.Label(titleBox, faction.title ?? "");
+            UIUtil.ClampedLabel(titleBox, faction.title ?? "");
 
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(foundingBox, "FCFoundedOn".Translate(faction.GetFoundingDate()));
+            UIUtil.ClampedLabel(foundingBox, "FCFoundedOn".Translate(faction.GetFoundingDate()));
 
             Widgets.DrawLineHorizontal(labelBox.x, titleBox.yMax + margin, panel.xMax - labelBox.x - margin);
 
@@ -281,14 +281,14 @@ namespace FactionColonies
             Widgets.DrawShadowAround(xpBar);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(xpBar, Math.Round(faction.factionXPCurrent) + "/" + faction.factionXPGoal);
+            UIUtil.ClampedLabel(xpBar, Math.Round(faction.factionXPCurrent) + "/" + faction.factionXPGoal);
             y += xpH + margin;
 
             // Faction level
             Text.Font = GameFont.Small;
             Rect levelBox = new Rect(panel.x, y, panel.width, 20f);
             Widgets.DrawHighlight(levelBox);
-            Widgets.Label(levelBox, "FCLevel".Translate(faction.factionLevel));
+            UIUtil.ClampedLabel(levelBox, "FCLevel".Translate(faction.factionLevel));
             y += levelBox.height + margin;
 
             // --- Stats ---
@@ -375,7 +375,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 Rect buttonRect = new Rect(panel.x, y, panel.width, policySize);
-                if (Widgets.ButtonText(buttonRect, "FCSelectPolicies".Translate()))
+                if (UIUtil.ClampedButtonText(buttonRect, "FCSelectPolicies".Translate()))
                 {
                     Find.WindowStack.Add(new FactionCustomizePoliciesWindowFC(faction));
                 }
@@ -403,16 +403,16 @@ namespace FactionColonies
 
                 if (isLocked)
                 {
-                    Widgets.Label(labelRect, "FCTraitLockedUntilLevel".Translate(slot + 1).Colorize(Color.gray));
+                    UIUtil.ClampedLabel(labelRect, "FCTraitLockedUntilLevel".Translate(slot + 1).Colorize(Color.gray));
                 }
                 else if (current.def != FCPolicyDefOf.empty)
                 {
-                    Widgets.Label(labelRect, current.def.LabelCap);
+                    UIUtil.ClampedLabel(labelRect, current.def.LabelCap);
                     TooltipHandler.TipRegion(traitRect, current.def.PolicyText());
                 }
                 else
                 {
-                    Widgets.Label(labelRect, "FCSelectANewTrait".Translate().Colorize(Color.yellow));
+                    UIUtil.ClampedLabel(labelRect, "FCSelectANewTrait".Translate().Colorize(Color.yellow));
                 }
 
                 y += traitH + smallMargin;
@@ -423,7 +423,7 @@ namespace FactionColonies
                 Rect selectButton = new Rect(panel.x, y, panel.width, traitH);
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                if (Widgets.ButtonText(selectButton, "FCSelectTraits".Translate()))
+                if (UIUtil.ClampedButtonText(selectButton, "FCSelectTraits".Translate()))
                 {
                     Find.WindowStack.Add(new FactionCustomizeTraitsWindowFC(faction));
                 }
@@ -442,7 +442,7 @@ namespace FactionColonies
             Rect roadLabel = new Rect(roadBox.x + margin, y, 120f, roadBox.height);
             Rect checkBox = new Rect(roadBox.xMax - 24f, y + 1, 24f, 24f);
             Widgets.DrawMenuSection(roadBox);
-            Widgets.Label(roadLabel, "FCBuildRoads".Translate());
+            UIUtil.ClampedLabel(roadLabel, "FCBuildRoads".Translate());
             Widgets.DrawHighlight(checkBox);
             Widgets.Checkbox(checkBox.x, checkBox.y, ref faction.roadBuilder.roadBuildingEnabled);
         }
@@ -493,13 +493,13 @@ namespace FactionColonies
             foreach (var (label, onClick) in actionButtons)
             {
                 Rect btnRect = new Rect(x, y, calcButtonWidth, height);
-                if (Widgets.ButtonText(btnRect, label))
+                if (UIUtil.ClampedButtonText(btnRect, label))
                     onClick();
                 x += btnRect.width + margin;
             }
 
             Rect newColonyButton = new Rect(x, y, calcButtonWidth * 2, height);
-            if (Widgets.ButtonText(newColonyButton, "FCCreateNewColony".Translate()))
+            if (UIUtil.ClampedButtonText(newColonyButton, "FCCreateNewColony".Translate()))
             {
                 Find.WindowStack.Add(new CreateColonyWindowFc());
                 Find.World.renderer.wantedMode = WorldRenderMode.Planet;
@@ -529,7 +529,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             Widgets.DrawHighlight(profitBox);
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(profitLabel, "FCEstimatedProfit".Translate() + ": ");
+            UIUtil.ClampedLabel(profitLabel, "FCEstimatedProfit".Translate() + ": ");
             Text.Anchor = TextAnchor.MiddleLeft;
             Color profitColor = factionDisplay >= 0 ? AccentUtil.Income : AccentUtil.Expense;
             Widgets.Label(profitNum, new GUIContent(Math.Round(factionDisplay).ToString().Colorize(profitColor), ThingDefOf.Silver.uiIcon));
@@ -540,7 +540,7 @@ namespace FactionColonies
 
             Rect taxBox = new Rect(x, y, width, 22f);
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(taxBox, "FCTimeTillTax".Translate() + ": " + Math.Max(0, faction.taxLedger.nextTaxDueTick - Find.TickManager.TicksGame).ToTimeString());
+            UIUtil.ClampedLabel(taxBox, "FCTimeTillTax".Translate() + ": " + Math.Max(0, faction.taxLedger.nextTaxDueTick - Find.TickManager.TicksGame).ToTimeString());
             TooltipHandler.TipRegion(taxBox, CodexTooltips.GetTaxTimerTooltip());
             y += taxBox.height + margin;
 
@@ -559,7 +559,7 @@ namespace FactionColonies
 
                 Rect poolHeader = new Rect(x, y, width, rowSize);
                 Widgets.DrawHighlight(poolHeader);
-                Widgets.Label(poolHeader, "FCResourcePools".Translate());
+                UIUtil.ClampedLabel(poolHeader, "FCResourcePools".Translate());
                 y += poolHeader.height + margin;
 
                 Rect poolListBox = new Rect(x, y, width, sectionHeight);
@@ -592,7 +592,7 @@ namespace FactionColonies
 
                     Text.Font = GameFont.Small;
                     Text.Anchor = TextAnchor.MiddleRight;
-                    Widgets.Label(amount, Math.Round(pool.pool).ToString());
+                    UIUtil.ClampedLabel(amount, Math.Round(pool.pool).ToString());
 
                     bool changedGui = false;
                     IEnumerable<FloatMenuOption> options = pool.GetFactionMenuFloatMenuOptions();
@@ -602,7 +602,7 @@ namespace FactionColonies
                         changedGui = true;
                     }
                     Text.Font = GameFont.Tiny;
-                    if (Widgets.ButtonText(actions, "FCActions".Translate(), active: !changedGui))
+                    if (UIUtil.ClampedButtonText(actions, "FCActions".Translate(), active: !changedGui))
                     {
                         List<FloatMenuOption> list = new List<FloatMenuOption>();
                         foreach (FloatMenuOption option in options)
@@ -631,7 +631,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             Rect prodHeaderBox = new Rect(x, y, width, 22f);
             Widgets.DrawHighlight(prodHeaderBox);
-            Widgets.Label(prodHeaderBox, "FCTotalProduction".Translate());
+            UIUtil.ClampedLabel(prodHeaderBox, "FCTotalProduction".Translate());
             y += prodHeaderBox.height + margin;
 
             float rowHeight = 22f;
@@ -670,11 +670,11 @@ namespace FactionColonies
 
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Rect labelRect = new Rect(iconRect.xMax + 4f, ry, rowWidth2 - iconRect.xMax + x - 4f - 50f, rowHeight);
-                Widgets.Label(labelRect, resource.label);
+                UIUtil.ClampedLabel(labelRect, resource.label);
 
                 Text.Anchor = TextAnchor.MiddleRight;
                 Rect amountRect = new Rect(x + rowWidth2 - 50f, ry, 48f, rowHeight);
-                Widgets.Label(amountRect, resource.amount.ToString());
+                UIUtil.ClampedLabel(amountRect, resource.amount.ToString());
 
                 TooltipHandler.TipRegion(rowRect, resource.label);
                 ri++;
@@ -738,7 +738,7 @@ namespace FactionColonies
             // Summary header — right: sort dropdown
             float sortBtnW = 180f;
             Rect sortBtnRect = new Rect(innerX + innerW - sortBtnW, tableRect.y + pad, sortBtnW, summaryH);
-            if (Widgets.ButtonText(sortBtnRect, "FCSortBy".Translate(settlementSortLabels[currentSettlementSortIndex].Translate())))
+            if (UIUtil.ClampedButtonText(sortBtnRect, "FCSortBy".Translate(settlementSortLabels[currentSettlementSortIndex].Translate())))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 for (int i = 0; i < settlementSortLabels.Length; i++)
@@ -819,7 +819,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
                 origColor = GUI.color;
-                Widgets.Label(new Rect(contentX + nameW, topY, badgeW, lineH),
+                UIUtil.ClampedLabel(new Rect(contentX + nameW, topY, badgeW, lineH),
                     "Lv " + s.settlementLevel + "  •  Mil " + s.settlementMilitaryLevel);
                 GUI.color = origColor;
                 Text.Font = fontBefore;
@@ -849,7 +849,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 float statsW = 230f;
-                Widgets.Label(new Rect(contentX, botY, contentW - statsW, lineH), bottomLeftStr);
+                UIUtil.ClampedLabel(new Rect(contentX, botY, contentW - statsW, lineH), bottomLeftStr);
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
 
@@ -1101,7 +1101,7 @@ namespace FactionColonies
 
                 // Resolve button (right side, full row height)
                 Rect resolveRect = new Rect(contentX + contentW - resolveW, ry + 4f, resolveW, rowH - 8f);
-                if (Widgets.ButtonText(resolveRect, "FCResolveBill".Translate()))
+                if (UIUtil.ClampedButtonText(resolveRect, "FCResolveBill".Translate()))
                 {
                     if (bill.AttemptResolve())
                     {
@@ -1125,7 +1125,7 @@ namespace FactionColonies
                 anchorBefore = Text.Anchor;
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(new Rect(contentX, botY, contentW - 160f, lineH), titheSummary);
+                UIUtil.ClampedLabel(new Rect(contentX, botY, contentW - 160f, lineH), titheSummary);
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
 
@@ -1490,7 +1490,7 @@ namespace FactionColonies
                 anchorBefore = Text.Anchor;
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(new Rect(barX, barY, progressW, progressH), timeStr);
+                UIUtil.ClampedLabel(new Rect(barX, barY, progressW, progressH), timeStr);
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
 
@@ -1639,7 +1639,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(labelBox);
-            Widgets.Label(labelTextBox, faction.name ?? "");
+            UIUtil.ClampedLabel(labelTextBox, faction.name ?? "");
             Text.Font = headerFontBefore;
             Text.Anchor = headerAnchorBefore;
 
@@ -1964,7 +1964,7 @@ namespace FactionColonies
                 Text.Anchor = TextAnchor.MiddleLeft;
                 double entryDefPower = Math.Round(entry.MilitaryLevel * FCSettings.defenderAdvantage);
                 string entryBadge = "Mil " + entry.MilitaryLevel + " \u2022 Def " + entryDefPower;
-                Widgets.Label(new Rect(contentX + nameW, topY, badgeW, lineH), entryBadge);
+                UIUtil.ClampedLabel(new Rect(contentX + nameW, topY, badgeW, lineH), entryBadge);
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
 
@@ -1990,7 +1990,7 @@ namespace FactionColonies
                 anchorBefore = Text.Anchor;
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(new Rect(contentX, botY, contentW - btnW - 4f, lineH), entry.WorldObject.def.label.CapitalizeFirst());
+                UIUtil.ClampedLabel(new Rect(contentX, botY, contentW - btnW - 4f, lineH), entry.WorldObject.def.label.CapitalizeFirst());
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
 
@@ -2055,7 +2055,7 @@ namespace FactionColonies
                 AccentUtil.GetSquadAccent(squad));
 
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(slotLabel, "FCMilitaryTableSlotPrefix".Translate(slotIdx + 1));
+            UIUtil.ClampedLabel(slotLabel, "FCMilitaryTableSlotPrefix".Translate(slotIdx + 1));
 
             // Squad name area. Amber + tooltip when underfunded so the player understands
             // why the deploy/op buttons are greyed. Red is reserved for under-attack state.
@@ -2100,8 +2100,8 @@ namespace FactionColonies
                 double powerLevel = SquadPowerRegistry.Resolve(squad).militaryLevel;
                 string powerLbl = (string)"FCSquadColPower".Translate() + ": " + powerLevel.ToString("0.0");
                 string costLbl = "FCDeployCost".Translate(squad.DeploymentCost());
-                Widgets.Label(powerLabel, powerLbl);
-                Widgets.Label(depCostLabel, costLbl);
+                UIUtil.ClampedLabel(powerLabel, powerLbl);
+                UIUtil.ClampedLabel(depCostLabel, costLbl);
             }
 
             // Action buttons (right-aligned)
@@ -2412,7 +2412,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(labelBox);
-            Widgets.Label(labelTextBox, faction.name ?? "");
+            UIUtil.ClampedLabel(labelTextBox, faction.name ?? "");
 
             if (hasSettlements)
             {
@@ -2451,7 +2451,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Medium;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 GUI.color = Color.gray;
-                Widgets.Label(new Rect(rect.x, tableY + tableH * 0.35f, rect.width, 40f),
+                UIUtil.ClampedLabel(new Rect(rect.x, tableY + tableH * 0.35f, rect.width, 40f),
                     "FCNoPrisonersFaction".Translate());
                 GUI.color = origColor;
                 Text.Font = fontBefore;
@@ -2528,7 +2528,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Medium;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 GUI.color = settlementAccent;
-                Widgets.Label(nameRect, s.Name);
+                UIUtil.SettlementLabel(nameRect, s);
                 GUI.color = origColor;
 
                 if (Mouse.IsOver(nameRect))
@@ -2565,7 +2565,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleRight;
                 GUI.color = Color.gray;
-                Widgets.Label(countRect, "(" + sList.Count + ") " + (collapsed ? "▶" : "▼"));
+                UIUtil.ClampedLabel(countRect, "(" + sList.Count + ") " + (collapsed ? "▶" : "▼"));
                 GUI.color = origColor;
 
                 cy += sectionHeaderH;

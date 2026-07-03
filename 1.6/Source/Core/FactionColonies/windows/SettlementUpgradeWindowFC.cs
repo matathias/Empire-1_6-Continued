@@ -87,14 +87,14 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.Font = GameFont.Medium;
 
-            Widgets.Label(new Rect(2, 0, 300, 60), header);
+            UIUtil.ClampedLabel(new Rect(2, 0, 300, 60), header);
 
             Text.Anchor = TextAnchor.UpperLeft;
             Text.Font = GameFont.Tiny;
 
             if (settlement.CanUpgrade) //if settlement is not max level
             {
-                if (Widgets.ButtonText(new Rect(xoffset + ((335 - 150) / 2f), height + 10, 150, 40), "FCUpgradeSettlement".Translate() + ": " + settlementUpgradeCost)) Messages.Message(UpgradeSettlement());
+                if (UIUtil.ClampedButtonText(new Rect(xoffset + ((335 - 150) / 2f), height + 10, 150, 40), "FCUpgradeSettlement".Translate() + ": " + settlementUpgradeCost)) Messages.Message(UpgradeSettlement());
             }
             else //if settlement is max level
             {

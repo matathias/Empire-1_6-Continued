@@ -113,7 +113,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleCenter;
             Rect newColonyHeader = new Rect(0, 0, 260, newColonyHeader_height);
-            Widgets.Label(newColonyHeader, "FCSettleANewColony".Translate());
+            UIUtil.ClampedLabel(newColonyHeader, "FCSettleANewColony".Translate());
 
             //hori line
             Widgets.DrawLineHorizontal(0, newColonyHeader_height, 300);
@@ -150,7 +150,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleCenter;
             Rect productionLabelBox = new Rect(0, upperBox.yMax + verticalMargins + additionalCostHeight, 268, productionLabel_height); //0, 270, 268, 40
-            Widgets.Label(productionLabelBox, "FCBaseProductionStats".Translate());
+            UIUtil.ClampedLabel(productionLabelBox, "FCBaseProductionStats".Translate());
 
 
             //Lower menu
@@ -260,9 +260,9 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
 
             //Production headers
-            Widgets.Label(new Rect(40, prodBox.y, 60, productionHeaders_height), "FCBase".Translate()); // 40, 190, 60, 25
-            Widgets.Label(new Rect(110, prodBox.y, 60, productionHeaders_height), "FCModifier".Translate());
-            Widgets.Label(new Rect(180, prodBox.y, 60, productionHeaders_height), "FCFinal".Translate());
+            UIUtil.ClampedLabel(new Rect(40, prodBox.y, 60, productionHeaders_height), "FCBase".Translate()); // 40, 190, 60, 25
+            UIUtil.ClampedLabel(new Rect(110, prodBox.y, 60, productionHeaders_height), "FCModifier".Translate());
+            UIUtil.ClampedLabel(new Rect(180, prodBox.y, 60, productionHeaders_height), "FCFinal".Translate());
 
             if (currentTileSelected != PlanetTile.Invalid)
             {
@@ -296,9 +296,9 @@ namespace FactionColonies
                          * So show it as producing nothing.
                          */
                         TaggedString na = "N/A".ApplyTag(TagType.Gray);
-                        Widgets.Label(baseRect, na);
-                        Widgets.Label(baseRect.CopyAndShift(xMod, 0f), na);
-                        Widgets.Label(baseRect.CopyAndShift(xMod * 2f, 0f), na);
+                        UIUtil.ClampedLabel(baseRect, na);
+                        UIUtil.ClampedLabel(baseRect.CopyAndShift(xMod, 0f), na);
+                        UIUtil.ClampedLabel(baseRect.CopyAndShift(xMod * 2f, 0f), na);
                     }
                     else
                     {
@@ -313,9 +313,9 @@ namespace FactionColonies
                         double total = baseProduction * baseMultiplier;
 
                         Rect multRect = baseRect.CopyAndShift(xMod, 0f);
-                        Widgets.Label(baseRect, Math.Round(baseProduction, 2).ToString());
-                        Widgets.Label(multRect, Math.Round(baseMultiplier, 2).ToString());
-                        Widgets.Label(baseRect.CopyAndShift(xMod * 2f, 0f), Math.Round(total, 2).ToString());
+                        UIUtil.ClampedLabel(baseRect, Math.Round(baseProduction, 2).ToString());
+                        UIUtil.ClampedLabel(multRect, Math.Round(baseMultiplier, 2).ToString());
+                        UIUtil.ClampedLabel(baseRect.CopyAndShift(xMod * 2f, 0f), Math.Round(total, 2).ToString());
 
                         // Breakdown tooltips mirroring SettlementWindowFC.cs.
                         StringBuilder addSb = new StringBuilder();
@@ -358,7 +358,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             int buttonLength = 200;
             Rect button = new Rect((InitialSize.x - 32 - buttonLength) / 2f, curHeight + verticalMargins, buttonLength, button_height);
-            if (Widgets.ButtonText(button, currentSettlementType.LabelCap))
+            if (UIUtil.ClampedButtonText(button, currentSettlementType.LabelCap))
             {
                 Find.WindowStack.Add(new FCWindow_SettlementTypePicker(delegate (WorldSettlementDef selected)
                 {
@@ -380,7 +380,7 @@ namespace FactionColonies
             Rect labelRect = new Rect(0, curHeight + verticalMargins, InitialSize.x - 32, button_height);
             // Color red when the player can't cover the current cost (matches PlayerHasEnoughSilver).
             GUI.color = available >= settlementCreationCost ? Color.white : ColorLibrary.RedReadable;
-            Widgets.Label(labelRect, "FCAvailableSilver".Translate() + ": " + available);
+            UIUtil.ClampedLabel(labelRect, "FCAvailableSilver".Translate() + ": " + available);
             GUI.color = Color.white;
             return labelRect.yMax;
         }
@@ -397,14 +397,14 @@ namespace FactionColonies
             FoundingButtonOverride ovr = FoundingScreenHooks.GetSettleButtonOverride(currentTileSelected, currentSettlementType);
             if (ovr is object)
             {
-                if (Widgets.ButtonText(button, ovr.Label))
+                if (UIUtil.ClampedButtonText(button, ovr.Label))
                 {
                     ovr.OnClick?.Invoke();
                 }
                 return button.yMax;
             }
 
-            if (Widgets.ButtonText(button, "FCSettle".Translate() + ": (" + settlementCreationCost + ")")) //add inital cost
+            if (UIUtil.ClampedButtonText(button, "FCSettle".Translate() + ": (" + settlementCreationCost + ")")) //add inital cost
             {
                 if (!CanCreateSettlementHere()) return button.yMax;
 
@@ -524,10 +524,10 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             //Draw highlight
             Widgets.DrawHighlight(new Rect(rect.x, rect.y + rect.height / 8, rect.width, rect.height * 3f / 8f));
-            Widgets.Label(new Rect(rect.x, rect.y + rect.height / 16, rect.width, rect.height / 2f), text1);
+            UIUtil.ClampedLabel(new Rect(rect.x, rect.y + rect.height / 16, rect.width, rect.height / 2f), text1);
 
             //Bottom Text
-            Widgets.Label(new Rect(rect.x, rect.y + rect.height / 2, rect.width, rect.height / 2f), text2);
+            UIUtil.ClampedLabel(new Rect(rect.x, rect.y + rect.height / 2, rect.width, rect.height / 2f), text2);
         }
 
         public override void PreClose()

@@ -58,4 +58,28 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_4</defName>
+		<label>Minor Fixes &amp; Features</label>
+		<description>A variety of minor bugfixes, changes, and features.</description>
+		<releaseDate>2026-07-02</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>When a settlement defends itself in a manual defense battle without an assigned squad, its defenders are assembled from the player&apos;s unit designs</li>
+		<li>Food resource is now Farming, and features all resources that can be harvested from plants (except for medicine and drugs, which continue to belong to the Medicine resource (except for beer))</li>
+		<li>The Mining resource now only allows rock types belonging to the settlement&apos;s tile. Obsidian is only titheable in the Lava Field biome</li>
+		<li>Add difficulty settings for global worker base production and worker production multipliers. Higher difficulties have a harsh multiplier; lower difficulties are now swimming in resources</li>
+		<li>Allow more than one event window to be open at a time</li>
+		<li>When the player defeats an NPC settlement through a normal vanilla attack, they are now given the option to capture the settlement for their empire</li>
+		<li>When generating a manual defense battle map, all turrets are stripped if the player doesn&apos;t have the tech for them. This was unnecessary for Empire itself, but *is* necessary when using other mods for base gen, such as Vanilla Base Generation Expanded</li>
+		<li>In manual defense battles, civilian pawns&apos; names are rendered in a muted color compared to the defender pawns, making them easier to tell apart</li>
+		<li>Bugfix: the &quot;Settlement Formed&quot; letter that&apos;s sent after capturing an enemy settlement would not report the correct name</li>
+		<li>Leathers that do not come directly from an animal (e.g. patchleather) are moved from the Animals resource to the Apparel resource. In theory, this should provide compatibility with Vanilla Factions Expanded: Midieval 2 as well</li>
+		<li>Add a mod setting to let the player control how frequently (or infrequently) their roads build</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

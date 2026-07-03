@@ -3,8 +3,8 @@
   
   <FactionColonies.ResourceTypeDef>
 	<defName>RTD_Food</defName>
-	<label>food</label>
-	<description>A resource category for meals and plant foods.</description>
+	<label>farming</label>
+	<description>A resource category for farmed crops: food, textiles, and other non-food plant harvests.</description>
 	<iconPath>GUI/ProductionFood</iconPath>
 	<color>(0.45, 0.75, 0.35)</color>
 	<uiPriority>100</uiPriority>
@@ -18,6 +18,10 @@
 		<li>
 			<thingDef>Kibble</thingDef>
 		</li>
+		<!-- Beer is a drug by category but is a brewed agricultural product; it belongs to farming, not medicine -->
+		<li>
+			<thingDef>Beer</thingDef>
+		</li>
 	</thingAllowList>
 	<thingCategoryAllowList>
 		<li>
@@ -28,6 +32,10 @@
 		<li>MeatRaw</li>
 		<li>AnimalProductRaw</li>
 	</thingCategoryBlockList>
+	<thingBlockList>
+		<!-- Hemogen packs are in the vanilla Foods category but belong to the medicine resource -->
+		<li MayRequire="Ludeon.RimWorld.Biotech">HemogenPack</li>
+	</thingBlockList>
 	<associatedSkills>
 		<li>Plants</li>
 		<li>Cooking</li>
@@ -115,6 +123,13 @@
 				</li>
 			</multipliers>
 		</li>
+		<!-- Adds the harvested output of any sowable non-tree crop, except outputs in the blocked categories (owned by the medicine resource). Kept last so translation index mappings for the extensions above stay stable. -->
+		<li Class="FactionColonies.ResourceFilterExtension_Crops">
+			<blockedCategories>
+				<li>Medicine</li>
+				<li>Drugs</li>
+			</blockedCategories>
+		</li>
 	</modExtensions>
   </FactionColonies.ResourceTypeDef>
 
@@ -169,15 +184,7 @@
 	<productionAdditiveStat>RTD_Apparel_ProductionAdditive</productionAdditiveStat>
 	<productionMultiplierStat>RTD_Apparel_ProductionMultiplier</productionMultiplierStat>
 	<thingAllowList>
-		<li>
-			<thingDef>Cloth</thingDef>
-		</li>
-		<li>
-			<thingDef>DevilstrandCloth</thingDef>
-			<researchProjectDefs>
-				<li>Devilstrand</li>
-			</researchProjectDefs>
-		</li>
+		<!-- Cloth and devilstrand are crop harvests, produced by the farming resource. Synthread/hyperweave are crafted spacer fabrics and stay here. Manufactured leathers/wools (e.g. patchleather) are added dynamically via ResourceFilterExtension_ManufacturedTextiles below. -->
 		<li>
 			<thingDef>Synthread</thingDef>
 			<minTechLevel>Ultra</minTechLevel>
@@ -198,6 +205,15 @@
 	<titheMinCount>1</titheMinCount>
 	<titheMaxCountBase>5</titheMaxCountBase>
 	<titheMaxCountScaler>1</titheMaxCountScaler>
+	<modExtensions>
+		<!-- Adds manufactured leathers/wools (Leathers/Wools category members not produced directly by an organism, e.g. patchleather). Animal-derived leathers/wools stay with the animal resource. -->
+		<li Class="FactionColonies.ResourceFilterExtension_ManufacturedTextiles">
+			<categories>
+				<li>Leathers</li>
+				<li>Wools</li>
+			</categories>
+		</li>
+	</modExtensions>
   </FactionColonies.ResourceTypeDef>
 
   <FactionColonies.ResourceTypeDef>
@@ -241,6 +257,11 @@
 				<li>AnimalMonster</li>
 				<li>AnimalGenetic</li>
 			</blacklistedTradeTags>
+			<!-- Restrict the Leathers/Wools categories to animal-derived products; blocks manufactured leathers (e.g. patchleather) from the animal resource. -->
+			<animalTextileCategories>
+				<li>Leathers</li>
+				<li>Wools</li>
+			</animalTextileCategories>
 		</li>
 		<li Class="FactionColonies.ResourceProductionExtension_TileField">
 			<extName>TileField</extName>
@@ -401,6 +422,18 @@
 				</li>
 			</multipliers>
 		</li>
+		<li Class="FactionColonies.ResourceFilterExtension_NaturalSource">
+			<!-- Gate stone products to the tile's natural rock types; obsidian only in lava biomes. -->
+			<checkRockTypes>true</checkRockTypes>
+			<biomeAllowList>
+				<li MayRequire="Ludeon.RimWorld.Odyssey">
+					<thing>Obsidian</thing>
+					<biomes>
+						<li>LavaField</li>
+					</biomes>
+				</li>
+			</biomeAllowList>
+		</li>
 	</modExtensions>
   </FactionColonies.ResourceTypeDef>
 
@@ -420,6 +453,9 @@
 			<researchProjectDefs>
 				<li>MedicineProduction</li>
 			</researchProjectDefs>
+		</li>
+		<li MayRequire="Ludeon.RimWorld.Biotech">
+			<thingDef>HemogenPack</thingDef>
 		</li>
 		<li MayRequire="Ludeon.RimWorld.Biotech">
 			<thingDef>DeathrestCapacitySerum</thingDef>
@@ -452,6 +488,10 @@
 			<minTechLevel>Ultra</minTechLevel>
 		</li>
 	</thingCategoryAllowList>
+	<thingBlockList>
+		<!-- Beer is in the Drugs category but is a brewed agricultural product; it belongs to the farming resource -->
+		<li>Beer</li>
+	</thingBlockList>
 	<associatedSkills>
 		<li>Medicine</li>
 	</associatedSkills>

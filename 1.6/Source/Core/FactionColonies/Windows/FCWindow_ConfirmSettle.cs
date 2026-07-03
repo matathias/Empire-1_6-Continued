@@ -56,7 +56,7 @@ namespace FactionColonies
             // Title
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(new Rect(0, curY, inRect.width, TitleHeight), "FCConfirmDecision".Translate());
+            UIUtil.ClampedLabel(new Rect(0, curY, inRect.width, TitleHeight), "FCConfirmDecision".Translate());
             curY += TitleHeight + Padding;
 
             // Settlement card
@@ -72,7 +72,7 @@ namespace FactionColonies
             // Confirm text
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(new Rect(0, curY, inRect.width, ConfirmTextHeight),
+            UIUtil.ClampedLabel(new Rect(0, curY, inRect.width, ConfirmTextHeight),
                 "FCConfirmSettle".Translate(settlementType.LabelCap, silverCost));
             curY += ConfirmTextHeight;
 
@@ -88,7 +88,7 @@ namespace FactionColonies
 
             // Confirm button
             Rect buttonRect = new Rect(inRect.width / 2f - 45f, curY, 90f, ButtonHeight);
-            if (Widgets.ButtonText(buttonRect, "FCConfirm".Translate()))
+            if (UIUtil.ClampedButtonText(buttonRect, "FCConfirm".Translate()))
             {
                 onCheckboxChanged?.Invoke(checkboxState);
                 onConfirm?.Invoke();

@@ -123,7 +123,7 @@ namespace FactionColonies
             };
             for (int i = 0; i < headers.Length; i++)
             {
-                Widgets.Label(new Rect(x, rect.y, colW[i], rect.height), headers[i]);
+                UIUtil.ClampedLabel(new Rect(x, rect.y, colW[i], rect.height), headers[i]);
                 x += colW[i];
             }
             GUI.color = Color.white;
@@ -147,7 +147,7 @@ namespace FactionColonies
             bool isDefense = report.kind == BattleOperationKind.Defense;
 
             // Kind
-            Widgets.Label(new Rect(x, rect.y, colW[0], rect.height), KindLabel(report.kind));
+            UIUtil.ClampedLabel(new Rect(x, rect.y, colW[0], rect.height), KindLabel(report.kind));
             x += colW[0];
 
             // Opposing Faction — for offensive ops, the defender is the opponent; for defense,
@@ -185,11 +185,11 @@ namespace FactionColonies
             // longitude (no per-tile locale here; world-zero is fine for an archive list).
             string dateStr = GenDate.DateFullStringAt(
                 GenDate.TickGameToAbs(report.recordedTick), Vector2.zero);
-            Widgets.Label(new Rect(x, rect.y, colW[3], rect.height), dateStr);
+            UIUtil.ClampedLabel(new Rect(x, rect.y, colW[3], rect.height), dateStr);
             x += colW[3];
 
             // Outcome — Victory if the player won, Defeat if they lost, dash if pure NPC vs NPC.
-            Widgets.Label(new Rect(x, rect.y, colW[4], rect.height), OutcomeLabel(report, playerSide));
+            UIUtil.ClampedLabel(new Rect(x, rect.y, colW[4], rect.height), OutcomeLabel(report, playerSide));
 
             if (Widgets.ButtonInvisible(rect))
             {

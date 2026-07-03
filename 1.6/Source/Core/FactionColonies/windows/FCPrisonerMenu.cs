@@ -51,7 +51,7 @@ namespace FactionColonies
             Text.WordWrap = false;
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(titleRect, "FCPrisonerWindowTitle".Translate(settlement.Name));
+            UIUtil.ClampedLabel(titleRect, "FCPrisonerWindowTitle".Translate(settlement.Name));
             Text.WordWrap = wordWrapBefore;
 
             if (prisoners.Count > 0)

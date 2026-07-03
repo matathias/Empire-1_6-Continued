@@ -40,7 +40,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(rect, "fcPsycastsNoSystem".Translate());
+                UIUtil.ClampedLabel(rect, "fcPsycastsNoSystem".Translate());
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
                 return;
@@ -54,7 +54,7 @@ namespace FactionColonies
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect psyLabelRect = new Rect(headerRect.x, headerRect.y, 120f, headerHeight);
-            Widgets.Label(psyLabelRect, "fcPsylinkLevel".Translate() + ": " + curLevel);
+            UIUtil.ClampedLabel(psyLabelRect, "fcPsylinkLevel".Translate() + ": " + curLevel);
 
             // getEditTarget is resolved lazily inside each click handler (it may allocate a buffered
             // working copy and mark the host dialog dirty), so merely viewing this tab mutates nothing.
@@ -64,12 +64,12 @@ namespace FactionColonies
                 Rect minusRect = new Rect(psyLabelRect.xMax, headerRect.y + (headerHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
                 Rect plusRect = new Rect(minusRect.xMax + 2f, minusRect.y, stepperButtonW, stepperButtonW);
                 Text.Anchor = TextAnchor.MiddleCenter;
-                if (Widgets.ButtonText(minusRect, "-") && curLevel > 0)
+                if (UIUtil.ClampedButtonText(minusRect, "-") && curLevel > 0)
                 {
                     MilUnitFC t = opts.getEditTarget?.Invoke();
                     if (t != null) t.SetPsylinkLevel(curLevel - 1);
                 }
-                if (Widgets.ButtonText(plusRect, "+") && curLevel < maxLevel)
+                if (UIUtil.ClampedButtonText(plusRect, "+") && curLevel < maxLevel)
                 {
                     MilUnitFC t = opts.getEditTarget?.Invoke();
                     if (t != null) t.SetPsylinkLevel(curLevel + 1);
@@ -83,7 +83,7 @@ namespace FactionColonies
                     bool canEditPsycasts = curLevel > 0;
                     if (canEditPsycasts)
                     {
-                        if (Widgets.ButtonText(editBtnRect, "fcEditPsycasts".Translate()))
+                        if (UIUtil.ClampedButtonText(editBtnRect, "fcEditPsycasts".Translate()))
                         {
                             MilUnitFC t = opts.getEditTarget?.Invoke();
                             if (t != null) active.OpenEditor(t, delegate { t.ChangeTick(); });
@@ -92,7 +92,7 @@ namespace FactionColonies
                     else
                     {
                         GUI.color = Color.gray;
-                        Widgets.ButtonText(editBtnRect, "fcEditPsycasts".Translate(), active: false);
+                        UIUtil.ClampedButtonText(editBtnRect, "fcEditPsycasts".Translate(), active: false);
                         GUI.color = Color.white;
                         TooltipHandler.TipRegion(editBtnRect, "fcPsycastsNeedPsylink".Translate());
                     }
@@ -119,7 +119,7 @@ namespace FactionColonies
                 Rect summaryRect = new Rect(bodyRect.x, bodyRect.y, bodyRect.width, 18f);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(summaryRect, "fcPsycastPointsSummary".Translate(spent, budget));
+                UIUtil.ClampedLabel(summaryRect, "fcPsycastPointsSummary".Translate(spent, budget));
                 bodyRect.yMin += 20f;
             }
 
@@ -131,7 +131,7 @@ namespace FactionColonies
                 bodyRect.height -= 30f;
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                if (Widgets.ButtonText(clearRect, "fcClearPsycasts".Translate()))
+                if (UIUtil.ClampedButtonText(clearRect, "fcClearPsycasts".Translate()))
                 {
                     MilUnitFC t = opts.getEditTarget?.Invoke();
                     if (t != null) t.SetPsycastsForSystem(active.Key, new List<SavedPsycast>());
@@ -162,7 +162,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
                 double cost = resolved ? entry.cost : 0;
-                Widgets.Label(costRect, "$" + cost.ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + cost.ToString("F0"));
 
                 string fallback = item.psycastDef.NullOrEmpty() ? (item.kind ?? "?") : item.psycastDef;
                 string label = resolved ? entry.label : (fallback + " (?)");
@@ -170,7 +170,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);
-                Widgets.Label(labelRect, shownLabel);
+                UIUtil.ClampedLabel(labelRect, shownLabel);
                 if (resolved && (shownLabel != label || !string.IsNullOrEmpty(entry.description)))
                     TooltipHandler.TipRegion(labelRect, label + (string.IsNullOrEmpty(entry.description) ? "" : "\n\n" + entry.description));
             }

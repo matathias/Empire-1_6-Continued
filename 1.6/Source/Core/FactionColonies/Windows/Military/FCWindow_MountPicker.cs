@@ -55,7 +55,7 @@ namespace FactionColonies
             // Title
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, 35f), "fcPickMount".Translate());
+            UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f), "fcPickMount".Translate());
 
             // Search bar
             Text.Font = GameFont.Small;
@@ -102,11 +102,11 @@ namespace FactionColonies
                 Widgets.InfoCardButton(infoRect, animal.race);
 
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(labelRect, animal.LabelCap);
+                UIUtil.ClampedLabel(labelRect, animal.LabelCap);
 
                 Text.Anchor = TextAnchor.MiddleRight;
                 double cost = Math.Floor(animal.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
-                Widgets.Label(costRect, "$" + cost.ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + cost.ToString("F0"));
 
                 if (Widgets.ButtonInvisible(row))
                 {
@@ -118,7 +118,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(scrollOutRect, "fcNoMountsAvailable".Translate());
+                UIUtil.ClampedLabel(scrollOutRect, "fcNoMountsAvailable".Translate());
             }
 
             ScrollUtil.EndScrollView();
@@ -129,7 +129,7 @@ namespace FactionColonies
 
             // Unequip (left)
             Rect unequipRect = new Rect(buttonBar.x, buttonBar.y, buttonWidth, buttonBar.height);
-            if (Widgets.ButtonText(unequipRect, "FCUnitActionUnequipThing".Translate()))
+            if (UIUtil.ClampedButtonText(unequipRect, "FCUnitActionUnequipThing".Translate()))
             {
                 if (onUnequip != null) onUnequip();
                 Close();
@@ -137,7 +137,7 @@ namespace FactionColonies
 
             // Cancel (right)
             Rect cancelRect = new Rect(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
-            if (Widgets.ButtonText(cancelRect, "CancelButton".Translate()))
+            if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
             {
                 Close();
             }
@@ -145,7 +145,7 @@ namespace FactionColonies
             // Confirm (left of cancel)
             bool canConfirm = selectedDef != null;
             Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
-            if (Widgets.ButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
+            if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
             {
                 if (canConfirm)
                 {

@@ -225,7 +225,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect nameRect = new Rect(boundingBox.x + margin, boundingBox.y + margin, boundingBox.width - (margin * 2 + 44), 30);
-            Widgets.Label(nameRect, settlement.Name);
+            UIUtil.SettlementLabel(nameRect, settlement);
             //Draw codex button
             Rect codexBtnRect = new Rect(nameRect.xMax + margin, boundingBox.y + margin, 20, 20);
             CodexTooltips.DrawCodexButton(codexBtnRect);
@@ -248,7 +248,7 @@ namespace FactionColonies
             Widgets.DrawShadowAround(levelBox);
             UIUtil.DrawColoredHighlight(levelBoundingBox, highlightColor);
             UIUtil.DrawColoredBox(levelBoundingBox, accentColor);
-            Widgets.Label(levelBox, settlement.settlementLevel.ToString());
+            UIUtil.ClampedLabel(levelBox, settlement.settlementLevel.ToString());
 
             // Draw settlement type, basic description (from def), and location text
             Text.Font = GameFont.Small;
@@ -262,15 +262,15 @@ namespace FactionColonies
             Rect locBox = new Rect(basicDescBox.xMax + margin, typeBox.yMax, (rightSideWidth * 0.6f) - margin, levelBoundingBox.height / 2);
             Rect locTextBox = new Rect(locBox.x + margin, locBox.y, locBox.width - (margin * 2), locBox.height);
             UIUtil.DrawColoredHighlight(typeBox, highlightColor);
-            Widgets.Label(typeTextBox, settlement.settlementDef.LabelCap);
+            UIUtil.ClampedLabel(typeTextBox, settlement.settlementDef.LabelCap);
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(foundTextBox, "FCFoundedOn".Translate(settlement.GetFoundingDate()));
+            UIUtil.ClampedLabel(foundTextBox, "FCFoundedOn".Translate(settlement.GetFoundingDate()));
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.Font = GameFont.Tiny;
-            Widgets.Label(basicDescTextBox, TextUtil.GetTownTitle(settlement));
+            UIUtil.ClampedLabel(basicDescTextBox, TextUtil.GetTownTitle(settlement));
             UIUtil.DrawColoredVerticalLine(basicDescBox.xMax, basicDescBox.y + margin, basicDescBox.height - (margin * 2), accentColor);
             // locationText is derived in SettlementTypeExtension.GetLocationText, which now resolves through the FCSettlementLocation format key.
-            Widgets.Label(locTextBox, settlement.locationText);
+            UIUtil.ClampedLabel(locTextBox, settlement.locationText);
         }
         private void DrawBasicOverview(Rect boundingBox)
         {
@@ -415,7 +415,7 @@ namespace FactionColonies
                 Widgets.DrawBoxSolid(contentArea, new Color(0f, 0f, 0f, 0.75f));
                 Text.Font = GameFont.Medium;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(contentArea, "FCTithesPaused".Translate());
+                UIUtil.ClampedLabel(contentArea, "FCTithesPaused".Translate());
             }
         }
         private void DrawTitheHeaderBox(Rect boundingBox, ResourceFC res)
@@ -433,7 +433,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(labelHighlight);
-            Widgets.Label(labelText, res.def.LabelCap);
+            UIUtil.ClampedLabel(labelText, res.def.LabelCap);
 
             /* Pause button */
             Text.Font = GameFont.Tiny;
@@ -478,15 +478,15 @@ namespace FactionColonies
             Rect trow3num = new Rect(trow3label.xMax, trow3label.y, (titheRow3.width - (smallMargin * 2)) * 0.25f, labelHeight);
             Widgets.DrawHighlight(titheModBox);
             Widgets.DrawHighlight(titheRow1);
-            Widgets.Label(trow1label, "FCTitheModifier".Translate());
-            Widgets.Label(trow2label, "FCPerWorker".Translate());
+            UIUtil.ClampedLabel(trow1label, "FCTitheModifier".Translate());
+            UIUtil.ClampedLabel(trow2label, "FCPerWorker".Translate());
             Widgets.DrawHighlight(titheRow3);
-            Widgets.Label(trow3label, "FCTotal".Translate());
+            UIUtil.ClampedLabel(trow3label, "FCTotal".Translate());
             Text.Anchor = TextAnchor.MiddleRight;
             double perWorkerRaw = res.GetTitheModifierPerWorker();
             double totalWorkerRaw = res.GetTotalTitheModifierForWorkers();
-            Widgets.Label(trow2num, Math.Round(perWorkerRaw * titheMult).ToString());
-            Widgets.Label(trow3num, Math.Round(totalWorkerRaw * titheMult).ToString());
+            UIUtil.ClampedLabel(trow2num, Math.Round(perWorkerRaw * titheMult).ToString());
+            UIUtil.ClampedLabel(trow3num, Math.Round(totalWorkerRaw * titheMult).ToString());
             if (showMult)
             {
                 // Keep as TaggedString: assigning to a string here would StripTags() the colorized multiplier.
@@ -503,10 +503,10 @@ namespace FactionColonies
             Rect prodLabel = new Rect(prodBox.x + smallMargin, prodBox.y + smallMargin, (prodBox.width - (margin * 2)) * 0.75f, labelHeight);
             Rect prodnum = new Rect(prodLabel.xMax, prodLabel.y, (prodBox.width - (margin * 2)) * 0.25f, labelHeight);
             Widgets.DrawHighlight(prodBox);
-            Widgets.Label(prodLabel, "FCTotalProd".Translate());
+            UIUtil.ClampedLabel(prodLabel, "FCTotalProd".Translate());
             Text.Anchor = TextAnchor.MiddleRight;
             double prodRaw = res.taxableProductionMarketValue;
-            Widgets.Label(prodnum, Math.Round(prodRaw * titheMult).ToString());
+            UIUtil.ClampedLabel(prodnum, Math.Round(prodRaw * titheMult).ToString());
             if (showMult)
             {
                 TooltipHandler.TipRegion(prodBox, "FCTitheValueMultiplierTooltip".Translate(
@@ -520,9 +520,9 @@ namespace FactionColonies
                 Rect injLabel = new Rect(injBox.x + smallMargin, injBox.y + smallMargin, (injBox.width - (margin * 2)) * 0.75f, labelHeight);
                 Rect injNum = new Rect(injLabel.xMax, injLabel.y, (injBox.width - (margin * 2)) * 0.25f, labelHeight);
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(injLabel, "FCExternalTitheBudget".Translate());
+                UIUtil.ClampedLabel(injLabel, "FCExternalTitheBudget".Translate());
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(injNum, Math.Round(extBudget).ToString());
+                UIUtil.ClampedLabel(injNum, Math.Round(extBudget).ToString());
 
                 StringBuilder injTip = new StringBuilder();
                 foreach (WorldObjectComp comp in res.settlement.AllComps)
@@ -543,9 +543,9 @@ namespace FactionColonies
             Rect budgetLabel = new Rect(budgetBox.x + smallMargin, budgetBox.y + smallMargin, (budgetBox.width - (margin * 2)) * 0.75f, labelHeight);
             Rect budgetnum = new Rect(budgetLabel.xMax, budgetLabel.y, (budgetBox.width - (margin * 2)) * 0.25f, labelHeight);
             Widgets.DrawMenuSection(budgetBox);
-            Widgets.Label(budgetLabel, "FCTotalTitheBudget".Translate());
+            UIUtil.ClampedLabel(budgetLabel, "FCTotalTitheBudget".Translate());
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(budgetnum, Math.Round(res.GetTitheIncome()).ToString());
+            UIUtil.ClampedLabel(budgetnum, Math.Round(res.GetTitheIncome()).ToString());
         }
         private Vector2 titheScrollBar = new Vector2();
         private void UpdateTitheDictBuffers(ResourceFC res)
@@ -578,10 +578,10 @@ namespace FactionColonies
             Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width * 0.8f, rowHeight);
             Rect headerText = new Rect(header.x + margin, header.y, header.width - (margin * 2), header.height);
             Widgets.DrawHighlight(header);
-            Widgets.Label(headerText, "FCTitheSelection".Translate());
+            UIUtil.ClampedLabel(headerText, "FCTitheSelection".Translate());
 
             Rect addItemButton = new Rect(header.xMax, header.y, (boundingBox.width * 0.2f) - smallMargin, header.height);
-            if (Widgets.ButtonText(addItemButton, "FCAddItem".Translate()))
+            if (UIUtil.ClampedButtonText(addItemButton, "FCAddItem".Translate()))
             {
                 Find.WindowStack.Add(new SettlementWindowFC_AddTithe(settlement, res));
             }
@@ -634,13 +634,13 @@ namespace FactionColonies
 
                 /* Up/Down arrows */
                 Text.Anchor = TextAnchor.MiddleCenter;
-                if (i > 0 && Widgets.ButtonText(upArrow, "^"))
+                if (i > 0 && UIUtil.ClampedButtonText(upArrow, "^"))
                 {
                     res.MoveTitheEntry(i, i - 1);
                     UpdateTitheDictBuffers(res);
                     break;
                 }
-                if (i < orderedTithes.Count - 1 && Widgets.ButtonText(downArrow, "v"))
+                if (i < orderedTithes.Count - 1 && UIUtil.ClampedButtonText(downArrow, "v"))
                 {
                     res.MoveTitheEntry(i, i + 1);
                     UpdateTitheDictBuffers(res);
@@ -649,7 +649,7 @@ namespace FactionColonies
 
                 Widgets.Label(icon, new GUIContent(iThing.uiIcon));
                 Widgets.InfoCardButton(info, iThing);
-                if (Widgets.ButtonText(xBox, "X"))
+                if (UIUtil.ClampedButtonText(xBox, "X"))
                 {
                     res.RemoveTitheAt(i);
                     break;
@@ -660,14 +660,14 @@ namespace FactionColonies
                 /* Below-waterline: grey out label value */
                 Color origRowColor = GUI.color;
                 if (belowWaterline) GUI.color = new Color(0.5f, 0.5f, 0.5f);
-                Widgets.Label(valueLabel, $"${Math.Round(res.TitheThingValue(thingTuple), 2)}");
+                UIUtil.ClampedLabel(valueLabel, $"${Math.Round(res.TitheThingValue(thingTuple), 2)}");
                 if (belowWaterline) GUI.color = origRowColor;
 
                 QualityCategory maxQuality = QualityCategory.Legendary;
                 if (CraftUtil.ThingHasQuality(iThing) && res.CanSetTitheQuality(out maxQuality))
                 {
                     List<QualityCategory> categoryList = res.GetValidTitheQualities(maxQuality);
-                    if (Widgets.ButtonText(qualityBox, TextUtil.GetQualityLabelCap(iQuality)))
+                    if (UIUtil.ClampedButtonText(qualityBox, TextUtil.GetQualityLabelCap(iQuality)))
                     {
                         int index = i; // capture for the deferred FloatMenu delegate (loop var would be stale)
                         List<FloatMenuOption> options = new List<FloatMenuOption>();
@@ -697,7 +697,7 @@ namespace FactionColonies
                 if (CraftUtil.ThingIsStuffable(iThing))
                 {
                     List<ThingDef> stuffList = res.GetStuffListForThingDef(iThing);
-                    if (Widgets.ButtonText(stuffBox, iStuff?.LabelCap ?? "None"))
+                    if (UIUtil.ClampedButtonText(stuffBox, iStuff?.LabelCap ?? "None"))
                     {
                         int index = i; // capture for the deferred FloatMenu delegate (loop var would be stale)
                         List<FloatMenuOption> options = new List<FloatMenuOption>();
@@ -730,7 +730,7 @@ namespace FactionColonies
                 string nulabel = Text.ClampTextWithEllipsis(label, itemLabelText);
                 Color origLabelColor = GUI.color;
                 if (belowWaterline) GUI.color = new Color(0.5f, 0.5f, 0.5f);
-                Widgets.Label(label, nulabel);
+                UIUtil.ClampedLabel(label, nulabel);
                 GUI.color = origLabelColor;
                 if (nulabel != itemLabelText)
                 {
@@ -777,7 +777,7 @@ namespace FactionColonies
             Rect accruedTextBox = new Rect(accruedBox.x + smallMargin, accruedBox.y, accruedBox.width - (smallMargin * 2), accruedBox.height);
             Rect disburseBox = new Rect(accruedBox.xMax, header.yMax, boundingBox.width - accruedBox.width, rowHeight);
             Rect disbursedTextBox = new Rect(disburseBox.x + smallMargin, disburseBox.y, disburseBox.width - (smallMargin * 2), disburseBox.height);
-            Widgets.Label(accruedTextBox, "FCRandomTitheAccrued".Translate(res.randomTitheStock));
+            UIUtil.ClampedLabel(accruedTextBox, "FCRandomTitheAccrued".Translate(res.randomTitheStock));
             bool disburse = res.disburseTitheStock;
             Widgets.CheckboxLabeled(disbursedTextBox, "FCDisburseAccruedRandomTithe".Translate(), ref disburse, disabled: res.tithesPaused);
             if (disburse != res.disburseTitheStock) res.SetDisburseTitheStock(disburse);
@@ -792,7 +792,7 @@ namespace FactionColonies
                 Rect budgetTextBox = new Rect(budgetBox.x + margin, budgetBox.y, budgetBox.width - (margin * 2), budgetBox.height);
                 if (res.autoMaxRandomTithe)
                 {
-                    Widgets.Label(budgetTextBox, "FCRandomTitheBudget".Translate() + ": " + res.randomTitheBudget);
+                    UIUtil.ClampedLabel(budgetTextBox, "FCRandomTitheBudget".Translate() + ": " + res.randomTitheBudget);
                 }
                 else
                 {
@@ -808,7 +808,7 @@ namespace FactionColonies
                 TooltipHandler.TipRegion(maxCheckBox, "FCAutoMaxRandomTitheDesc".Translate());
                 if (autoMax != res.autoMaxRandomTithe) res.SetAutoMaxRandomTithe(autoMax);
                 Rect selectBox = new Rect(boundingBox.x + budgetRowWidth, budgetBox.y, boundingBox.width * 0.4f - margin, budgetBox.height);
-                if (Widgets.ButtonText(selectBox, "FCItemSelection".Translate()))
+                if (UIUtil.ClampedButtonText(selectBox, "FCItemSelection".Translate()))
                 {
                     Find.WindowStack.Add(new SettlementWindowFC_RandomTithe(settlement, res));
                 }
@@ -839,13 +839,13 @@ namespace FactionColonies
                     }
                     Text.Anchor = TextAnchor.MiddleCenter;
                     Widgets.Label(icon, new GUIContent(iThing.uiIcon));
-                    if (Widgets.ButtonText(xBox, "X"))
+                    if (UIUtil.ClampedButtonText(xBox, "X"))
                     {
                         res.SetRandomTitheFilterAllow(iThing, false);
                     }
                     Text.Anchor = TextAnchor.MiddleLeft;
-                    Widgets.Label(label, iThing.LabelCap);
-                    Widgets.Label(valueLabel, $"${Math.Round(iThing.BaseMarketValue, 2)}");
+                    UIUtil.ClampedLabel(label, iThing.LabelCap);
+                    UIUtil.ClampedLabel(valueLabel, $"${Math.Round(iThing.BaseMarketValue, 2)}");
                     Widgets.InfoCardButton(info, iThing);
                 }
 
@@ -871,7 +871,7 @@ namespace FactionColonies
                 GUI.color = Color.yellow;
             else
                 GUI.color = Color.green;
-            Widgets.Label(readoutLabel, "FCTitheSelectedVsProjected".Translate(
+            UIUtil.ClampedLabel(readoutLabel, "FCTitheSelectedVsProjected".Translate(
                 Math.Round(selectedTotal), Math.Round(projectedBudget)));
             GUI.color = origColor;
         }
@@ -1007,16 +1007,19 @@ namespace FactionColonies
             double gainValue, string gainTooltip, bool invertColor = false)
         {
             Widgets.Label(buttonBox, new GUIContent(icon));
-            Widgets.Label(labelBox, valueText);
+            UIUtil.ClampedLabel(labelBox, valueText);
             string tooltip = tooltipTitleKey.Translate() + "\n-----\n" + tooltipDescKey.Translate();
 
             Widgets.DrawHighlight(statGainBox);
             double rounded = Math.Round(gainValue, 1);
-            TaggedString statGain = TextUtil.ColorizeAdditiveBonus(rounded, invertColor);
+            // Keep this a plain string: ColorizeAdditiveBonus returns a <color>-tagged string, and routing it
+            // through a TaggedString here would strip the color (implicit TaggedString->string calls StripTags)
+            // when passed to ClampedLabel below, rendering the badge white.
+            string statGain = TextUtil.ColorizeAdditiveBonus(rounded, invertColor);
 
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Small;
-            Widgets.Label(statGainBox, statGain);
+            UIUtil.ClampedLabel(statGainBox, statGain);
             TooltipHandler.TipRegion(statGainBox, gainTooltip);
 
             return tooltip;
@@ -1072,7 +1075,7 @@ namespace FactionColonies
                 bool enabled = button.IsEnabled(settlement);
                 if (!enabled) GUI.color = Color.gray;
 
-                if (Widgets.ButtonText(buttonRect, button.Label(settlement), active: enabled))
+                if (UIUtil.ClampedButtonText(buttonRect, button.Label(settlement), active: enabled))
                 {
                     button.OnClick(settlement);
                 }
@@ -1098,7 +1101,7 @@ namespace FactionColonies
                 enabled = false;
             }
 
-            if (Widgets.ButtonText(buttonRect, label, active: enabled))
+            if (UIUtil.ClampedButtonText(buttonRect, label, active: enabled))
             {
                 HandleBuiltInButtonClick(type);
             }
@@ -1322,7 +1325,7 @@ namespace FactionColonies
             Rect labelHighlight = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 30);
             Rect labelTextBox = new Rect(labelHighlight.x + smallMargin, labelHighlight.y + smallMargin, labelHighlight.width - (smallMargin * 2), labelHighlight.height - (smallMargin * 2));
             Widgets.DrawHighlight(labelHighlight);
-            Widgets.Label(labelTextBox, "FCFacilities".Translate());
+            UIUtil.ClampedLabel(labelTextBox, "FCFacilities".Translate());
 
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.LowerCenter;
@@ -1412,7 +1415,7 @@ namespace FactionColonies
             Rect conHeader = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 30);
             Rect conHeaderText = new Rect(conHeader.x, conHeader.y + smallMargin, conHeader.width, conHeader.height - (smallMargin * 2));
             Widgets.DrawHighlight(conHeader);
-            Widgets.Label(conHeaderText, "FCActiveConstruction".Translate());
+            UIUtil.ClampedLabel(conHeaderText, "FCActiveConstruction".Translate());
 
             Text.Font = GameFont.Small;
             if (numConstruction > 0)
@@ -1492,8 +1495,8 @@ namespace FactionColonies
                 Widgets.ButtonImage(iconBox, icon);
             }
             Widgets.DrawHighlight(labelHighlight);
-            Widgets.Label(labelBox, nulabel);
-            Widgets.Label(timeBox, time);
+            UIUtil.ClampedLabel(labelBox, nulabel);
+            UIUtil.ClampedLabel(timeBox, time);
             UIUtil.DrawProgressBar(progressRect, progress);
         }
 
@@ -1545,7 +1548,7 @@ namespace FactionColonies
         {
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 30), "FCProduction".Translate());
+            UIUtil.ClampedLabel(new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 30), "FCProduction".Translate());
         }
 
         private void DrawCostBreakdown(Rect boundingBox)
@@ -1572,7 +1575,7 @@ namespace FactionColonies
             Rect profitNum = new Rect(profitLabel.xMax + margin, profitLabel.y, labelWidth, profitBoxH);
             UIUtil.DrawColoredHighlight(profitBox, highlightColor);
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(profitLabel, "FCSettlementProjectedProfit".Translate() + ":");
+            UIUtil.ClampedLabel(profitLabel, "FCSettlementProjectedProfit".Translate() + ":");
             Text.Anchor = TextAnchor.MiddleLeft;
             double displayProfit = hasAvg ? avgProfit : liveProfit;
             Widgets.Label(profitNum, new GUIContent(Math.Round(displayProfit).ToString(), ThingDefOf.Silver.uiIcon));
@@ -1596,9 +1599,9 @@ namespace FactionColonies
             UIUtil.DrawColoredHighlight(costsBox, highlightColor);
             UIUtil.DrawColoredHighlight(taxBonusBox, highlightColor);
 
-            Widgets.Label(incomeLabel, "FCSettlementProjectedIncome".Translate());
-            Widgets.Label(costLabel, "FCUpkeep".Translate());
-            Widgets.Label(taxBonusLabel, "FCTaxBase".Translate());
+            UIUtil.ClampedLabel(incomeLabel, "FCSettlementProjectedIncome".Translate());
+            UIUtil.ClampedLabel(costLabel, "FCUpkeep".Translate());
+            UIUtil.ClampedLabel(taxBonusLabel, "FCTaxBase".Translate());
 
             DrawCardValueAndSubtitle(incomeBox, showIncomeSub,
                 Math.Round(hasAvg ? avgIncome : liveIncome, 2).ToString(), Math.Round(liveIncome).ToString(), subColor, "FCDailyIncome".Translate());
@@ -1626,17 +1629,17 @@ namespace FactionColonies
                 Rect numRect = new Rect(cardBox.x, postLabelStart, cardBox.width, postLabelHeight - subtitleH);
                 Rect subRect = new Rect(cardBox.x, numRect.yMax, cardBox.width, subtitleH);
                 Text.Anchor = TextAnchor.UpperCenter;
-                Widgets.Label(numRect, valueText);
+                UIUtil.ClampedLabel(numRect, valueText);
                 Color origColor = GUI.color;
                 GUI.color = subColor;
-                Widgets.Label(subRect, subtitleLabel + ": " + subtitleLiveValue);
+                UIUtil.ClampedLabel(subRect, subtitleLabel + ": " + subtitleLiveValue);
                 GUI.color = origColor;
             }
             else
             {
                 Rect numRect = new Rect(cardBox.x, postLabelStart, cardBox.width, postLabelHeight);
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(numRect, valueText);
+                UIUtil.ClampedLabel(numRect, valueText);
             }
         }
 
@@ -1665,16 +1668,16 @@ namespace FactionColonies
             TooltipHandler.TipRegion(overMaxBox, BuildOvermaxCapacityTooltip());
             UIUtil.DrawColoredHighlight(upkeepBox, highlightColor);
 
-            Widgets.Label(workerLabel, "FCAssignedWorkers".Translate());
-            Widgets.Label(overMaxLabel, "FCAssignedOvermaxWorkers".Translate());
-            Widgets.Label(upkeepLabel, "FCCostPerWorker".Translate());
+            UIUtil.ClampedLabel(workerLabel, "FCAssignedWorkers".Translate());
+            UIUtil.ClampedLabel(overMaxLabel, "FCAssignedOvermaxWorkers".Translate());
+            UIUtil.ClampedLabel(upkeepLabel, "FCCostPerWorker".Translate());
 
             Text.Anchor = TextAnchor.MiddleRight;
             int numWorkers = (int)Math.Min(settlement.workers, settlement.workersMax);
             int numOvermaxWorkers = (int)Math.Max(0, settlement.workers - settlement.workersMax);
-            Widgets.Label(workerNum, "FCAssignedWorkersValue".Translate(numWorkers, settlement.workersMax));
-            Widgets.Label(overMaxNum, "FCAssignedOvermaxWorkersValue".Translate(numOvermaxWorkers, settlement.workersUltraMax - settlement.workersMax));
-            Widgets.Label(upkeepNum, settlement.workerCost.ToString());
+            UIUtil.ClampedLabel(workerNum, "FCAssignedWorkersValue".Translate(numWorkers, settlement.workersMax));
+            UIUtil.ClampedLabel(overMaxNum, "FCAssignedOvermaxWorkersValue".Translate(numOvermaxWorkers, settlement.workersUltraMax - settlement.workersMax));
+            UIUtil.ClampedLabel(upkeepNum, settlement.workerCost.ToString());
         }
 
         /// <summary>
@@ -1783,31 +1786,31 @@ namespace FactionColonies
             Rect incomeNetBox = new Rect(incomeAccruedBox.xMax + margin, incomeAccruedBox.y, colWidth, headerHeight / 2f);
 
             UIUtil.DrawColoredHighlight(workersBox, highlightColor);
-            Widgets.Label(workersBox, "FCWorkers".Translate());
+            UIUtil.ClampedLabel(workersBox, "FCWorkers".Translate());
 
             UIUtil.DrawColoredHighlight(prodHeaderBox, highlightColor);
-            Widgets.Label(prodHeaderBox, "FCPerWorkerProduction".Translate());
+            UIUtil.ClampedLabel(prodHeaderBox, "FCPerWorkerProduction".Translate());
             UIUtil.DrawColoredHorizontalLine(prodHeaderBox.x, prodHeaderBox.yMax, prodHeaderBox.width, accentColor);
             UIUtil.DrawColoredHighlight(prodBaseBox, highlightColor);
-            Widgets.Label(prodBaseBox, "FCBase".Translate());
+            UIUtil.ClampedLabel(prodBaseBox, "FCBase".Translate());
             UIUtil.DrawColoredHighlight(prodMultBox, highlightColor);
-            Widgets.Label(prodMultBox, "FCMult".Translate());
+            UIUtil.ClampedLabel(prodMultBox, "FCMult".Translate());
             UIUtil.DrawColoredHighlight(prodFinalBox, highlightColor);
-            Widgets.Label(prodFinalBox, "FCFinal".Translate());
+            UIUtil.ClampedLabel(prodFinalBox, "FCFinal".Translate());
 
             UIUtil.DrawColoredHighlight(prodTotalBox, highlightColor);
-            Widgets.Label(prodTotalBox, "FCTotal".Translate());
+            UIUtil.ClampedLabel(prodTotalBox, "FCTotal".Translate());
 
             UIUtil.DrawColoredHighlight(incomeBox, highlightColor);
-            Widgets.Label(incomeBox, "FCIncome".Translate());
+            UIUtil.ClampedLabel(incomeBox, "FCIncome".Translate());
             UIUtil.DrawColoredHorizontalLine(incomeBox.x, incomeBox.yMax, incomeBox.width, accentColor);
             UIUtil.DrawColoredHighlight(incomePerDayBox, highlightColor);
-            Widgets.Label(incomePerDayBox, "FCProductionPerDay".Translate());
+            UIUtil.ClampedLabel(incomePerDayBox, "FCProductionPerDay".Translate());
             TooltipHandler.TipRegion(incomePerDayBox, "FCRawIncomeDesc".Translate());
             UIUtil.DrawColoredHighlight(incomeAccruedBox, highlightColor);
-            Widgets.Label(incomeAccruedBox, "FCTotalAccrued".Translate());
+            UIUtil.ClampedLabel(incomeAccruedBox, "FCTotalAccrued".Translate());
             UIUtil.DrawColoredHighlight(incomeNetBox, highlightColor);
-            Widgets.Label(incomeNetBox, "FCProjectedIncome".Translate());
+            UIUtil.ClampedLabel(incomeNetBox, "FCProjectedIncome".Translate());
             TooltipHandler.TipRegion(incomeNetBox, "FCProjectedIncomeDesc".Translate());
 
             DrawResources(resourceArea, colWidth, incomeResources, poolResources, contentHeight);
@@ -1909,7 +1912,7 @@ namespace FactionColonies
         {
             Rect headerBox = new Rect(0f, rectY, viewWidth, headerRowHeight);
             UIUtil.DrawColoredHighlight(headerBox, highlightColor);
-            Widgets.Label(headerBox, "FCNonIncomeResourcesHeader".Translate());
+            UIUtil.ClampedLabel(headerBox, "FCNonIncomeResourcesHeader".Translate());
             TooltipHandler.TipRegion(headerBox, "FCNonIncomeResourcesDesc".Translate());
         }
 
@@ -1937,41 +1940,41 @@ namespace FactionColonies
             Rect workersDecArrow = new Rect(colWidth + margin, arrowButtonY, colWidth / 3f, arrowButtonHeight);
             Rect workersNum = new Rect(workersDecArrow.xMax, rectY, workersDecArrow.width, rowHeight);
             Rect workersIncArrow = new Rect(workersNum.xMax, arrowButtonY, workersDecArrow.width, arrowButtonHeight);
-            Widgets.Label(workersNum, resource.assignedWorkers.ToString());
-            if (Widgets.ButtonText(workersDecArrow, "<")) IncreaseWorkers(resource, true);
-            if (Widgets.ButtonText(workersIncArrow, ">")) IncreaseWorkers(resource);
+            UIUtil.ClampedLabel(workersNum, resource.assignedWorkers.ToString());
+            if (UIUtil.ClampedButtonText(workersDecArrow, "<")) IncreaseWorkers(resource, true);
+            if (UIUtil.ClampedButtonText(workersIncArrow, ">")) IncreaseWorkers(resource);
 
             //Base Production
             Rect baseProd = new Rect(workersIncArrow.xMax + margin, rectY, colWidth, rowHeight);
-            Widgets.Label(baseProd, TextUtil.FloorStat(resource.productionBase));
+            UIUtil.ClampedLabel(baseProd, TextUtil.FloorStat(resource.productionBase));
             TooltipHandler.TipRegion(baseProd, resource.GetProductionAdditivesDesc());
 
             //Modifier
             Rect multProd = new Rect(baseProd.xMax + margin, rectY, colWidth, rowHeight);
-            Widgets.Label(multProd, TextUtil.FloorStat(resource.productionMult));
+            UIUtil.ClampedLabel(multProd, TextUtil.FloorStat(resource.productionMult));
             TooltipHandler.TipRegion(multProd, resource.GetProductionMultipliersDesc());
 
             //Final Base
             Rect finalProd = new Rect(multProd.xMax + margin, rectY, colWidth, rowHeight);
-            Widgets.Label(finalProd, (TextUtil.FloorStat(resource.production)));
+            UIUtil.ClampedLabel(finalProd, (TextUtil.FloorStat(resource.production)));
 
             //Total Production
             Rect totalProd = new Rect(finalProd.xMax + margin, rectY, colWidth, rowHeight);
-            Widgets.Label(totalProd, (TextUtil.FloorStat(resource.rawTotalProduction)));
+            UIUtil.ClampedLabel(totalProd, (TextUtil.FloorStat(resource.rawTotalProduction)));
 
             //Per Day: effective silver per day (post-stockpile diversion)
             Rect incomePerDayBox = new Rect(totalProd.xMax + margin, rectY, colWidth, rowHeight);
-            Widgets.Label(incomePerDayBox, TextUtil.FloorStat(resource.effectiveRawTotalProduction * FCSettings.silverPerResource));
+            UIUtil.ClampedLabel(incomePerDayBox, TextUtil.FloorStat(resource.effectiveRawTotalProduction * FCSettings.silverPerResource));
 
             //Total Accrued: accrued taxable silver this cycle
             Rect incomeAccruedBox = new Rect(incomePerDayBox.xMax + margin, rectY, colWidth, rowHeight);
-            Widgets.Label(incomeAccruedBox, TextUtil.FloorStat(resource.AccruedTaxableValue));
+            UIUtil.ClampedLabel(incomeAccruedBox, TextUtil.FloorStat(resource.AccruedTaxableValue));
 
             //Projected Income: accrued so far + per-day rate * days remaining (gross, post-diversion)
             double perDay = resource.effectiveRawTotalProduction * FCSettings.silverPerResource;
             double projectedIncome = resource.AccruedTaxableValue + perDay * settlement.DaysRemaining;
             Rect incomeNetBox = new Rect(incomeAccruedBox.xMax + margin, rectY, colWidth, rowHeight);
-            Widgets.Label(incomeNetBox, (TextUtil.FloorStat(projectedIncome)));
+            UIUtil.ClampedLabel(incomeNetBox, (TextUtil.FloorStat(projectedIncome)));
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("FCProjectedIncomeBreakdownAccrued".Translate(TextUtil.FloorStat(resource.AccruedTaxableValue)));

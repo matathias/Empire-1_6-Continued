@@ -74,12 +74,12 @@ namespace FactionColonies
                     displayName = $"{name} ({"FCDegraded".Translate()})";
                 }
 
-                Widgets.Label(nameRect, displayName);
+                UIUtil.ClampedLabel(nameRect, displayName);
 
                 if (degraded)
                     GUI.color = Color.white;
 
-                if (Widgets.ButtonText(importRect, "FCImport".Translate()))
+                if (UIUtil.ClampedButtonText(importRect, "FCImport".Translate()))
                 {
                     OnImport(name);
                 }

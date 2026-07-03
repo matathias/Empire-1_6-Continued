@@ -58,14 +58,14 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.Font = GameFont.Medium;
 
-            Widgets.Label(headerLabelRect, "FCCustomizeSettlement".Translate());
+            UIUtil.ClampedLabel(headerLabelRect, "FCCustomizeSettlement".Translate());
 
             Text.Font = GameFont.Small;
 
-            Widgets.Label(fullNameLabelRect, "FCSettlementFullName".Translate());
+            UIUtil.ClampedLabel(fullNameLabelRect, "FCSettlementFullName".Translate());
             name = Widgets.TextField(fullNameInputRect, name);
 
-            Widgets.Label(shortNameLabelRect, "FCSettlementShortName".Translate());
+            UIUtil.ClampedLabel(shortNameLabelRect, "FCSettlementShortName".Translate());
             shortName = Widgets.TextField(shortNameInputRect, shortName);
 
             if (Widgets.ButtonImage(resetFullNameButtonRect, TexLoad.refreshIcon)) name = settlement.Name;

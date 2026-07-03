@@ -63,7 +63,7 @@ namespace FactionColonies
             return running;
         }
 
-        /// <summary>Inverse of <c>MilitaryCustomizationUtil.CalculateSquadBudget</c>:
+        /// <summary>Inverse of <see cref="CostFromLevel"/>:
         /// <c>cost = 1000 + 500·L + 600·L²  →  L = (-500 + √(250000 + 2400·(cost-1000))) / 1200</c>.
         /// Floored at 1 (matches the minimum settlement military level) so a near-zero-
         /// cost squad still has a projection. Result is a double so downstream can
@@ -75,6 +75,15 @@ namespace FactionColonies
             if (disc < 0) return 1.0;
             double level = (-500.0 + Math.Sqrt(disc)) / 1200.0;
             return Math.Max(1.0, level);
+        }
+
+        /// <summary>The loadout budget a squad of military level <paramref name="level"/> represents
+        /// (cost = 1000 + 500·L + 600·L²), and the exact inverse of <see cref="LevelFromCost"/>.
+        /// Canonical home of the level->cost curve: <see cref="MilitaryFC.CalculateSquadBudget"/>
+        /// delegates here. Not clamped, so callers passing level 0 get the baseline 1000.</summary>
+        public static double CostFromLevel(double level)
+        {
+            return 1000.0 + 500.0 * level + 600.0 * level * level;
         }
 
         /// <summary>Derives a military level from a set of LIVE pawns by summing each pawn's vanilla

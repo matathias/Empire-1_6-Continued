@@ -172,7 +172,7 @@ namespace FactionColonies
                 }
                 else
                 {
-                    Widgets.Label(labelRect, $" {"FCFloatMenuSearchable".Translate()}");
+                    UIUtil.ClampedLabel(labelRect, $" {"FCFloatMenuSearchable".Translate()}");
                     options = filteredOptions.ToList();
                     vanishIfMouseDistant = CanBeClosed;
                 }

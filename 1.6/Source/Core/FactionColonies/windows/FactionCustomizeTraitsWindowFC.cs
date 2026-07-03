@@ -57,7 +57,7 @@ namespace FactionColonies
 
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.Font = GameFont.Medium;
-            Widgets.Label(labelHeader, header);
+            UIUtil.ClampedLabel(labelHeader, header);
             Widgets.DrawLineHorizontal(labelHeader.x, labelHeader.yMax + margin, fullwidth - (Margin * 2));
 
             Text.Font = GameFont.Small;
@@ -99,10 +99,10 @@ namespace FactionColonies
 
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(alertRect, alertText);
+            UIUtil.ClampedLabel(alertRect, alertText);
 
             Text.Font = GameFont.Small;
-            if (Widgets.ButtonText(buttonConfirm, "FCConfirmChanges".Translate()))
+            if (UIUtil.ClampedButtonText(buttonConfirm, "FCConfirmChanges".Translate()))
             {
                 if (selectedTraits.Count > 0)
                 {
@@ -134,7 +134,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(slotHeader);
-            Widgets.Label(new Rect(slotHeader.x + margin, slotHeader.y, slotHeader.width - margin, slotHeader.height),
+            UIUtil.ClampedLabel(new Rect(slotHeader.x + margin, slotHeader.y, slotHeader.width - margin, slotHeader.height),
                           "FCTraitSlots".Translate());
 
             float y = slotHeader.yMax + smallMargin;
@@ -193,7 +193,7 @@ namespace FactionColonies
             Widgets.DrawHighlight(listHeader);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(listHeader.x + margin, listHeader.y, listHeader.width - margin, listHeader.height),
+            UIUtil.ClampedLabel(new Rect(listHeader.x + margin, listHeader.y, listHeader.width - margin, listHeader.height),
                           "FCAvailableTraits".Translate());
 
             List<FCPolicyDef> available = GetAvailableTraits();
@@ -264,7 +264,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(inRect, "FCHoverTraitForDetails".Translate());
+                UIUtil.ClampedLabel(inRect, "FCHoverTraitForDetails".Translate());
                 return;
             }
 
@@ -276,7 +276,7 @@ namespace FactionColonies
             Rect nameRect = new Rect(inner.x, inner.y, inner.width, 30f);
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(nameRect, displayTrait.LabelCap);
+            UIUtil.ClampedLabel(nameRect, displayTrait.LabelCap);
 
             // Description
             Rect descRect = new Rect(inner.x, nameRect.yMax + margin, inner.width, inner.yMax - nameRect.yMax - margin);

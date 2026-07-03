@@ -109,7 +109,7 @@ namespace FactionColonies
             // 1. Header
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x, y, inRect.width, 36f), "FCCustomizeFaction".Translate());
+            UIUtil.ClampedLabel(new Rect(inRect.x, y, inRect.width, 36f), "FCCustomizeFaction".Translate());
             y += 36f + smallMargin;
             Widgets.DrawLineHorizontal(inRect.x, y, inRect.width);
             y += margin;
@@ -159,7 +159,7 @@ namespace FactionColonies
             float confirmHeight = 30f;
             Rect confirmRect = new Rect((inRect.width - confirmWidth) / 2f, inRect.yMax - confirmHeight - margin, confirmWidth, confirmHeight);
             Text.Font = GameFont.Small;
-            if (Widgets.ButtonText(confirmRect, "FCConfirmChanges".Translate()))
+            if (UIUtil.ClampedButtonText(confirmRect, "FCConfirmChanges".Translate()))
             {
                 ApplyChanges();
                 Find.WindowStack.TryRemove(this);
@@ -234,7 +234,7 @@ namespace FactionColonies
             {
                 Rect clearRect = new Rect(primarySwatchRect.x, primaryLabelRect.yMax, swatchSize, 18f);
                 GUI.color = new Color(0.72f, 0.53f, 0.04f);
-                if (Widgets.ButtonText(clearRect, "Clear", drawBackground: false))
+                if (UIUtil.ClampedButtonText(clearRect, "Clear", drawBackground: false))
                 {
                     tempHasPrimaryColor = false;
                     tempPrimaryColor = Color.white;
@@ -281,7 +281,7 @@ namespace FactionColonies
             {
                 Rect clearRect = new Rect(secondarySwatchRect.x, secondaryLabelRect.yMax, swatchSize, 18f);
                 GUI.color = new Color(0.72f, 0.53f, 0.04f);
-                if (Widgets.ButtonText(clearRect, "Clear", drawBackground: false))
+                if (UIUtil.ClampedButtonText(clearRect, "Clear", drawBackground: false))
                 {
                     tempHasSecondaryColor = false;
                     tempSecondaryColor = Color.white;
@@ -335,7 +335,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 GUI.color = Color.white;
-                Widgets.Label(badge, "\u2713");
+                UIUtil.ClampedLabel(badge, "\u2713");
             }
             else
             {
@@ -496,7 +496,7 @@ namespace FactionColonies
         {
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(card.x + cardPadding, card.y + cardPadding, card.width - cardPadding * 2, 16f), label.ToUpper());
+            UIUtil.ClampedLabel(new Rect(card.x + cardPadding, card.y + cardPadding, card.width - cardPadding * 2, 16f), label.ToUpper());
         }
     }
 }

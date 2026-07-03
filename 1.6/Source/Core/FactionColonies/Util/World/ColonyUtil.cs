@@ -62,7 +62,7 @@ namespace FactionColonies.util
             return (int)(baseCost * CombinedFoundingStat(FCStatDefOf.settlementCostMultiplier, biome, faction));
         }
 
-        public static WorldSettlementFC CreatePlayerColonySettlement(PlanetTile tile, WorldSettlementDef settlementType)
+        public static WorldSettlementFC CreatePlayerColonySettlement(PlanetTile tile, WorldSettlementDef settlementType, string name = null)
         {
             if (settlementType == null)
             {
@@ -85,6 +85,10 @@ namespace FactionColonies.util
             WorldSettlementFC settlement = (WorldSettlementFC)WorldObjectMaker.MakeWorldObject(DefDatabase<WorldSettlementDef>.GetNamed(settlementType.defName));
             settlement.PostPostMake(tile);
 
+            // Apply the caller-supplied name (e.g. a captured base's name) before the PostCreation
+            // hook, lifecycle listeners, and the "settlement formed" letter read it.
+            if (!name.NullOrEmpty()) settlement.Name = name;
+
             settlement.SetFaction(faction);
             Find.WorldObjects.Add(settlement);
 
@@ -99,6 +103,43 @@ namespace FactionColonies.util
             Find.LetterStack.ReceiveLetter("FCSettlementFormed".Translate(),
                 "FCSettleEventCompletedDesc".Translate(settlement.Name, settlementType.LabelCap, tile.Tile.PrimaryBiome.LabelCap),
                 LetterDefOf.PositiveEvent);
+
+            return settlement;
+        }
+
+        /// <summary>
+        /// Creates a player-owned Empire settlement on a just-conquered enemy tile and configures it
+        /// the way a capture yields: named after the conquered base, level-boosted by the enemy's tech,
+        /// and seeded with low starting morale/prosperity. Shared by the abstract capture-raid handler
+        /// (<see cref="MilitaryJobHandler_Capture"/>) and the player-colony capture path so both produce
+        /// an identical settlement. Callers are responsible for having already removed the old settlement
+        /// world object at the tile.
+        /// </summary>
+        public static WorldSettlementFC SetupCapturedSettlement(PlanetTile tile, string name, TechLevel enemyTech)
+        {
+            WorldSettlementFC settlement = CreatePlayerColonySettlement(tile, DefaultSettlementDefForTile(tile), name);
+
+            int upgradeTimes;
+            switch (enemyTech)
+            {
+                case TechLevel.Archotech:
+                case TechLevel.Ultra:
+                case TechLevel.Spacer:
+                    upgradeTimes = 2;
+                    break;
+                case TechLevel.Industrial:
+                    upgradeTimes = 1;
+                    break;
+                default:
+                    upgradeTimes = 0;
+                    break;
+            }
+            settlement.UpgradeSettlement(upgradeTimes);
+
+            settlement.loyalty = 15;
+            settlement.happiness = 25;
+            settlement.unrest = 20;
+            settlement.prosperity = 70;
 
             return settlement;
         }

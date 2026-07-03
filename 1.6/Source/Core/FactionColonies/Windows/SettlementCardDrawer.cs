@@ -46,7 +46,7 @@ namespace FactionColonies
             // Name
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(xOffset, curY, contentWidth, NameHeight), def.LabelCap);
+            UIUtil.ClampedLabel(new Rect(xOffset, curY, contentWidth, NameHeight), def.LabelCap);
             curY += NameHeight;
 
             // Description
@@ -70,7 +70,7 @@ namespace FactionColonies
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             float labelWidth = Text.CalcSize("FCSettlementResources".Translate()).x + margin;
-            Widgets.Label(new Rect(xCursor, rect.y, labelWidth, rect.height), "FCSettlementResources".Translate());
+            UIUtil.ClampedLabel(new Rect(xCursor, rect.y, labelWidth, rect.height), "FCSettlementResources".Translate());
             xCursor += labelWidth;
 
             foreach (ResourceAvailability ra in def.resources)
@@ -87,7 +87,7 @@ namespace FactionColonies
                 {
                     Text.Font = GameFont.Tiny;
                     float bonusWidth = Text.CalcSize(bonusText).x + 2f;
-                    Widgets.Label(new Rect(xCursor, rect.y, bonusWidth, rect.height), bonusText);
+                    UIUtil.ClampedLabel(new Rect(xCursor, rect.y, bonusWidth, rect.height), bonusText);
                     xCursor += bonusWidth;
                 }
 

@@ -8,11 +8,20 @@
 	<FCSettingDaysBetweenTax>Days between tax time</FCSettingDaysBetweenTax>
 	<FCSettingProductionTitheMod>Production Tithe Modifier</FCSettingProductionTitheMod>
 	<FCSettingWorkerCost>Cost Per Worker</FCSettingWorkerCost>
+	<FCSettingWorkerProductionBaseBonus>Worker production base bonus</FCSettingWorkerProductionBaseBonus>
+	<FCSettingWorkerProductionBaseBonusTip>A flat bonus (or penalty) added to every settlement's per-worker resource production base.</FCSettingWorkerProductionBaseBonusTip>
+	<FCSettingWorkerProductionMultBonus>Worker production multiplier bonus</FCSettingWorkerProductionMultBonus>
+	<FCSettingWorkerProductionMultBonusTip>A multiplier applied to every settlement's per-worker resource production multiplier.</FCSettingWorkerProductionMultBonusTip>
+	<!-- Production breakdown tooltip lines (settlement window) -->
+	<FCDifficultyWorkerProductionBaseBonus>Difficulty: worker production base bonus</FCDifficultyWorkerProductionBaseBonus>
+	<FCDifficultyWorkerProductionMultBonus>Difficulty: worker production multiplier bonus</FCDifficultyWorkerProductionMultBonus>
 	<FCSettingMaxSettlementLevel>Max Settlement Level</FCSettingMaxSettlementLevel>
 	<FCSettingTimersHeader>Timers</FCSettingTimersHeader>
 	<FCSettingSettlementUpgradeTime>Settlement upgrade time multiplier</FCSettingSettlementUpgradeTime>
 	<FCSettingBuildingConstructTime>Building construction time multiplier</FCSettingBuildingConstructTime>
 	<FCSettingTimerTip>Scales how long this timer takes.</FCSettingTimerTip>
+	<FCSettingEnableSettlementCapture>Capture Defeated Settlements</FCSettingEnableSettlementCapture>
+	<FCSettingEnableSettlementCaptureTip>When enabled (default), defeating a hostile settlement with your own colonists lets you choose to capture it as one of your Empire's settlements instead of only razing it. The captured tile becomes an Empire settlement once your colonists leave the base.</FCSettingEnableSettlementCaptureTip>
 	<FCSettingDisableHostileMilActions>Disable Hostile Military Actions</FCSettingDisableHostileMilActions>
 	<FCSettingAntiExploit>Anti-Exploit (mercenary gear)</FCSettingAntiExploit>
 	<FCSettingAntiExploitTip>When enabled (default), mercenary weapons and apparel are biocoded to their wielder, and humanlike mercenaries receive a death acidifier implant that dissolves their worn gear when they die, so you can't farm free gear from your own squads.</FCSettingAntiExploitTip>
@@ -171,6 +180,8 @@ Only manual battles consume inventory; auto-resolved battles incur no restock ch
 	<FCSettingUseThreadedRoadComputationDesc>Computes road paths on a background thread for better performance. Disable this if you experience issues with road building.</FCSettingUseThreadedRoadComputationDesc>
 	<FCSettingEdgesPerRoadTick>Edges per road tick</FCSettingEdgesPerRoadTick>
 	<FCSettingEdgesPerRoadTickTip>How many road graph edges to process per tick when computing on the main thread. Set to 0 for unlimited (fastest, but may cause stutter).</FCSettingEdgesPerRoadTickTip>
+	<FCSettingRoadBuildInterval>Days between road building</FCSettingRoadBuildInterval>
+	<FCSettingRoadBuildIntervalTip>How many days pass between each road-building step. Lower values build roads more often; higher values slow construction. The Road Builders policy builds roughly three times faster than this.</FCSettingRoadBuildIntervalTip>
 	<FCSettingFlushRoadCache>Flush Road Path Cache</FCSettingFlushRoadCache>
 	<FCSettingEnableDebugLogging>Enable Verbose Logging</FCSettingEnableDebugLogging>
 	

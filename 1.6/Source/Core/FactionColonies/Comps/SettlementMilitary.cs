@@ -820,7 +820,7 @@ namespace FactionColonies
         /// (via the obsolete <see cref="militarySquad"/> accessor) and forwards. Callers should
         /// pick a specific squad via <see cref="WorldSettlementFC.StationedSquads"/> or the
         /// source-picker dialog.</summary>
-        [System.Obsolete("Pass an explicit MercenarySquadFC squad. Resolves to the primary stationed squad as a fallback.")]
+        [Obsolete("Pass an explicit MercenarySquadFC squad. Resolves to the primary stationed squad as a fallback.")]
         public void SendMilitary(PlanetTile location, MilitaryJobDef job, int timeToFinish, Faction enemy)
         {
             MercenarySquadFC squad = WorldSettlement?.StationedSquads.FirstOrDefault();

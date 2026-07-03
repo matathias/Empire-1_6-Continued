@@ -130,6 +130,11 @@ namespace FactionColonies
             this.closeOnClickedOutside = false;
             this.preventSave = true;
 
+            /* Let multiple event option windows coexist. WindowStack.Add removes any already-open
+             * window of the same type when onlyOneOfTypeAllowed is true (the base default), which
+             * would silently destroy a prior event's options window before the player could choose. */
+            this.onlyOneOfTypeAllowed = false;
+
             this.header = evt.label;
 
             /* Hide meme-gated options entirely when the Ideology DLC is off (the only behavioral
@@ -280,12 +285,25 @@ namespace FactionColonies
         {
             base.PreOpen();
             openedAtRealTime = Time.realtimeSinceStartup;
-            windowRect = new Rect(
-                (UI.screenWidth - WindowWidth) / 2f,
-                (UI.screenHeight - cachedWindowHeight) / 2f,
-                WindowWidth,
-                cachedWindowHeight
-            );
+
+            /* Cascade this window down-right of any option windows already open so simultaneous
+             * events don't stack on the exact same centered rect (which would look like an
+             * overwrite). At PreOpen the new window isn't in the stack yet, so counting existing
+             * option windows excludes self. Wrap the step so a burst can't march off-screen. */
+            int alreadyOpen = 0;
+            foreach (Window w in Find.WindowStack.Windows)
+            {
+                if (w is FCOptionWindow && w != this) alreadyOpen++;
+            }
+            const float cascadeStep = 34f;
+            const int cascadeWrap = 6;
+            float offset = (alreadyOpen % cascadeWrap) * cascadeStep;
+
+            float x = (UI.screenWidth - WindowWidth) / 2f + offset;
+            float y = (UI.screenHeight - cachedWindowHeight) / 2f + offset;
+            x = Mathf.Clamp(x, 0f, UI.screenWidth - WindowWidth);
+            y = Mathf.Clamp(y, 0f, UI.screenHeight - cachedWindowHeight);
+            windowRect = new Rect(x, y, WindowWidth, cachedWindowHeight);
         }
 
         public override void PostOpen()
@@ -318,7 +336,7 @@ namespace FactionColonies
             // === Description ===
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
-            UIUtil.DrawColoredLabel(new Rect(inRect.x + Padding, curY, textWidth, cachedDescHeight), desc, new Color(0.85f, 0.85f, 0.85f));
+            UIUtil.DrawColoredLabel(new Rect(inRect.x + Padding, curY, textWidth, cachedDescHeight), desc, new Color(0.85f, 0.85f, 0.85f), clamp: false);
             curY += cachedDescHeight;
 
             // === Affected settlements (clickable buttons) ===
@@ -436,7 +454,7 @@ namespace FactionColonies
                 }
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.UpperLeft;
-                UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedOptionLabelHeights[i]), displayLabel.Format(), available ? Color.white : new Color(0.5f, 0.5f, 0.5f));
+                UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedOptionLabelHeights[i]), displayLabel.Format(), available ? Color.white : new Color(0.5f, 0.5f, 0.5f), clamp: false);
                 innerY += cachedOptionLabelHeights[i] + 6f;
 
                 // Metadata row: success hint (left) + cost (right)
@@ -516,7 +534,7 @@ namespace FactionColonies
                     string costStr = effectiveCost.ToString();
                     float costTextW = Text.CalcSize(costStr).x;
                     Rect costTextRect = new Rect(metaRect.xMax - costTextW, metaRect.y, costTextW, metaRect.height);
-                    Widgets.Label(costTextRect, costStr);
+                    UIUtil.ClampedLabel(costTextRect, costStr);
 
                     Rect iconRect = new Rect(
                         costTextRect.x - SilverIconSize - 2f,
@@ -554,7 +572,7 @@ namespace FactionColonies
                     innerY += MetadataRowHeight + EffectPreviewSpacing;
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.UpperLeft;
-                    UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedEffectPreviewHeights[i]), cachedEffectPreviews[i], available ? new Color(0.7f, 0.7f, 0.7f) : new Color(0.4f, 0.4f, 0.4f));
+                    UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedEffectPreviewHeights[i]), cachedEffectPreviews[i], available ? new Color(0.7f, 0.7f, 0.7f) : new Color(0.4f, 0.4f, 0.4f), clamp: false);
                 }
 
                 // Hover effect

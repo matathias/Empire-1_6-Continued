@@ -66,7 +66,7 @@ namespace FactionColonies
             // Title
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(inRect.x, y, inRect.width, 30f), title);
+            UIUtil.ClampedLabel(new Rect(inRect.x, y, inRect.width, 30f), title);
             y += 35f;
             Widgets.DrawLineHorizontal(inRect.x, y, inRect.width);
             y += SectionGap;
@@ -90,14 +90,14 @@ namespace FactionColonies
             float labelWidth = 55f;
             float previewY = topY;
 
-            Widgets.Label(new Rect(rightX, previewY, labelWidth, previewRowHeight), "Current:");
+            UIUtil.ClampedLabel(new Rect(rightX, previewY, labelWidth, previewRowHeight), "Current:");
             Widgets.DrawBoxSolidWithOutline(
                 new Rect(rightX + labelWidth, previewY + 1f, previewBoxWidth, previewRowHeight - 2f),
                 color, Color.gray);
 
             previewY += previewRowHeight + 2f;
 
-            Widgets.Label(new Rect(rightX, previewY, labelWidth, previewRowHeight), "Old:");
+            UIUtil.ClampedLabel(new Rect(rightX, previewY, labelWidth, previewRowHeight), "Old:");
             Widgets.DrawBoxSolidWithOutline(
                 new Rect(rightX + labelWidth, previewY + 1f, previewBoxWidth, previewRowHeight - 2f),
                 oldColor, Color.gray);
@@ -128,7 +128,7 @@ namespace FactionColonies
             float sliderY = wheelRect.yMax + 4f;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(inRect.x, sliderY, 55f, 20f), "Brightness");
+            UIUtil.ClampedLabel(new Rect(inRect.x, sliderY, 55f, 20f), "Brightness");
             Color.RGBToHSV(color, out float sliderH, out float sliderS, out float sliderV);
             float newV = Widgets.HorizontalSlider(
                 new Rect(inRect.x + 58f, sliderY, WheelSize - 58f, 20f),
@@ -157,12 +157,12 @@ namespace FactionColonies
             float btnHeight = 30f;
             float btnY = inRect.yMax - btnHeight;
 
-            if (Widgets.ButtonText(new Rect(inRect.xMax - btnWidth, btnY, btnWidth, btnHeight), "Accept".Translate()))
+            if (UIUtil.ClampedButtonText(new Rect(inRect.xMax - btnWidth, btnY, btnWidth, btnHeight), "Accept".Translate()))
             {
                 onAccept(color);
                 Close();
             }
-            if (Widgets.ButtonText(new Rect(inRect.xMax - btnWidth * 2 - 10f, btnY, btnWidth, btnHeight), "Cancel".Translate()))
+            if (UIUtil.ClampedButtonText(new Rect(inRect.xMax - btnWidth * 2 - 10f, btnY, btnWidth, btnHeight), "Cancel".Translate()))
             {
                 Close();
             }
@@ -196,7 +196,7 @@ namespace FactionColonies
 
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(x, y, width, LabelHeight), "fcColorPickerActiveIdeos".Translate());
+            UIUtil.ClampedLabel(new Rect(x, y, width, LabelHeight), "fcColorPickerActiveIdeos".Translate());
             y += LabelHeight;
 
             float startX = x;
@@ -243,7 +243,7 @@ namespace FactionColonies
         {
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(x, y, width, LabelHeight), "fcColorPickerPresets".Translate());
+            UIUtil.ClampedLabel(new Rect(x, y, width, LabelHeight), "fcColorPickerPresets".Translate());
             y += LabelHeight;
 
             Rect selectorRect = new Rect(x, y, width, 200f);
@@ -258,7 +258,7 @@ namespace FactionColonies
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             List<Color> saved = FCSettings.savedPickerColors;
-            Widgets.Label(new Rect(x, y, width, LabelHeight),
+            UIUtil.ClampedLabel(new Rect(x, y, width, LabelHeight),
                 "fcColorPickerSaved".Translate() + " (" + saved.Count + "/" + FCSettings.MaxSavedPickerColors + ")");
             y += LabelHeight;
 
@@ -315,7 +315,7 @@ namespace FactionColonies
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
             Rect saveBtn = new Rect(x, y, 90f, SwatchSize);
-            if (Widgets.ButtonText(saveBtn, "fcColorPickerSaveCurrent".Translate()))
+            if (UIUtil.ClampedButtonText(saveBtn, "fcColorPickerSaveCurrent".Translate()))
             {
                 if (saved.Count >= FCSettings.MaxSavedPickerColors)
                     saved.RemoveAt(0);

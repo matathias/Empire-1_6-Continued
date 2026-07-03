@@ -187,7 +187,7 @@ namespace FactionColonies
             Rect nameRect = new Rect(centerX, row1Y, nameW, row1H);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(nameRect, BuildNameWithTitle(prisoner.prisoner));
+            UIUtil.ClampedLabel(nameRect, BuildNameWithTitle(prisoner.prisoner));
 
             if (prisoner.prisoner is object)
             {
@@ -197,14 +197,14 @@ namespace FactionColonies
             Rect valueRect = new Rect(rightX, row1Y, rightColW, row1H);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(valueRect, "$" + (int)(prisoner.prisoner?.MarketValue ?? 0));
+            UIUtil.ClampedLabel(valueRect, "$" + (int)(prisoner.prisoner?.MarketValue ?? 0));
 
             /* ROW 2: subtitle (gender, age, faction) | Actions */
             Rect subtitleRect = new Rect(centerX, row2Y, centerW, row2H);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             GUI.color = ColoredText.SubtleGrayColor;
-            Widgets.Label(subtitleRect, BuildSubtitle(prisoner.prisoner));
+            UIUtil.ClampedLabel(subtitleRect, BuildSubtitle(prisoner.prisoner));
             GUI.color = origColor;
 
             Rect actionsRect = new Rect(rightX, row2Y, rightColW, row2H);
@@ -223,7 +223,7 @@ namespace FactionColonies
             UIUtil.DrawProgressBarColors(healthBarRect, healthFrac, healthBarBg, healthColor);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(healthBarRect, "Health".Translate().CapitalizeFirst() + ": " + (int)prisoner.health);
+            UIUtil.ClampedLabel(healthBarRect, "Health".Translate().CapitalizeFirst() + ": " + (int)prisoner.health);
 
             GetWorkloadPresentation(prisoner.workload, out string wlLabel, out string wlTrend, out Color wlTrendColor);
 
@@ -231,7 +231,7 @@ namespace FactionColonies
             Rect trendRect = new Rect(healthBarRect.xMax + 4f, healthBarRect.y, trendW, healthBarRect.height);
             Text.Anchor = TextAnchor.MiddleRight;
             GUI.color = wlTrendColor;
-            Widgets.Label(trendRect, wlTrend);
+            UIUtil.ClampedLabel(trendRect, wlTrend);
             GUI.color = origColor;
 
             Rect workloadRect = new Rect(rightX, row3Y, rightColW, row3H);
@@ -310,7 +310,7 @@ namespace FactionColonies
             Rect valueRect = new Rect(rightEdge - valueW, topY, valueW, topRowH);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(valueRect, "$" + (int)(prisoner.prisoner?.MarketValue ?? 0));
+            UIUtil.ClampedLabel(valueRect, "$" + (int)(prisoner.prisoner?.MarketValue ?? 0));
 
             /* Subtitle slot — three right-aligned segments:
              *   "Male, age 39 (116) of "   [factionIcon]   FactionName
@@ -353,7 +353,7 @@ namespace FactionColonies
             Rect prefixRect = new Rect(subtitleLeft, topY, prefixRight - subtitleLeft, topRowH);
             Text.Anchor = TextAnchor.MiddleRight;
             GUI.color = ColoredText.SubtleGrayColor;
-            Widgets.Label(prefixRect, subtitlePrefix);
+            UIUtil.ClampedLabel(prefixRect, subtitlePrefix);
             GUI.color = origColor;
 
             // Left of center: info button + name+title
@@ -368,7 +368,7 @@ namespace FactionColonies
             Rect nameRect = new Rect(nameX, topY, nameW, topRowH);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(nameRect, BuildNameWithTitle(prisoner.prisoner));
+            UIUtil.ClampedLabel(nameRect, BuildNameWithTitle(prisoner.prisoner));
 
             /* BOTTOM ROW */
             // Buttons render in Tiny font, with row-alt highlight tracking
@@ -392,7 +392,7 @@ namespace FactionColonies
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
             GUI.color = wlTrendColor;
-            Widgets.Label(trendRect, wlTrend);
+            UIUtil.ClampedLabel(trendRect, wlTrend);
             GUI.color = origColor;
 
             /* Optional "Downed: No Work" badge between health text and trend. The badge

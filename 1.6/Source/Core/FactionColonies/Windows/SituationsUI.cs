@@ -65,7 +65,7 @@ namespace FactionColonies
             DrawStageTicks(barRect, sit.def);
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Tiny;
-            Widgets.Label(barRect, $"{Mathf.RoundToInt(sit.progress)} / {Mathf.RoundToInt(sit.def.maxProgress)}");
+            UIUtil.ClampedLabel(barRect, $"{Mathf.RoundToInt(sit.progress)} / {Mathf.RoundToInt(sit.def.maxProgress)}");
 
             bool advancing = FCSituationMaker.IsAdvancing(sit, faction);
             float rate = sit.NetDailyRateGiven(advancing);
@@ -94,7 +94,7 @@ namespace FactionColonies
                     if (action == null) continue;
                     Rect aRect = new Rect(x, ay, Mathf.Min(280f, w), ActionRowHeight - 2f);
                     bool enabled = action.DisabledReason.NullOrEmpty();
-                    if (Widgets.ButtonText(aRect, action.Label, active: enabled))
+                    if (UIUtil.ClampedButtonText(aRect, action.Label, active: enabled))
                     {
                         if (action.Destructive)
                             Find.WindowStack.Add(new Dialog_Confirm("FCSituationConfirmAction".Translate(action.Label), action.Action));
@@ -127,7 +127,7 @@ namespace FactionColonies
                 ? (string)"FCSituationApproachLabel".Translate(active.LabelCap)
                 : (string)"FCSituationNoApproach".Translate();
 
-            if (Widgets.ButtonText(rect, label))
+            if (UIUtil.ClampedButtonText(rect, label))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 if (sit.def.approaches != null)

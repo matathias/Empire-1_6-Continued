@@ -92,7 +92,8 @@ namespace FactionColonies
             Text.WordWrap = false;
             Color prevColor = GUI.color;
             GUI.color = disabled ? Color.gray : (labelColor ?? Color.white);
-            Widgets.Label(new Rect(rect.x + iconSpace, rect.y, rect.width - iconSpace, rect.height), label);
+            Rect labelRect = new Rect(rect.x + iconSpace, rect.y, rect.width - iconSpace, rect.height);
+            Widgets.Label(labelRect, ClampWithTip(labelRect, label));
             GUI.color = prevColor;
             Text.Anchor = prevAnchor;
             Text.WordWrap = prevWordWrap;
@@ -160,11 +161,11 @@ namespace FactionColonies
             GUI.color = origColor;
         }
 
-        public static void DrawColoredLabel(Rect rect, string text, Color color)
+        public static void DrawColoredLabel(Rect rect, string text, Color color, bool clamp = true)
         {
             Color origColor = GUI.color;
             GUI.color = color;
-            Widgets.Label(rect, text);
+            Widgets.Label(rect, clamp ? ClampWithTip(rect, text) : text);
             GUI.color = origColor;
         }
 
@@ -184,19 +185,82 @@ namespace FactionColonies
             GUI.color = origColor;
         }
         /// <summary>
-        /// Draws a label. If the string is too long for the given rect, then it is truncated with ellipsis (...).
+        /// Clamps <paramref name="label"/> to the rect width with an ellipsis (...) if it does not fit.
+        /// When the text had to be shortened, a hover tooltip showing the full text is registered on the
+        /// rect. Returns the (possibly shortened) string to draw. Shared by the label/button helpers below.
+        /// </summary>
+        private static string ClampWithTip(Rect rect, string label)
+        {
+            // ClampWithEllipsis returns the input unchanged when it already fits, so an inequality
+            // here is a reliable "was it truncated?" test. It is tag-aware, so colorized labels keep
+            // their color instead of leaking a broken <color> tag when truncated.
+            string display = TextUtil.ClampWithEllipsis(rect, label);
+            if (display != label) TooltipHandler.TipRegion(rect, label);
+            return display;
+        }
+
+        /// <summary>
+        /// Draws a label. If the string is too long for the given rect, then it is truncated with ellipsis (...)
+        /// and a hover tooltip with the full text is shown.
         /// </summary>
         /// <param name="rect"></param>
         /// <param name="label"></param>
         public static void ClampedLabel(Rect rect, string label)
         {
-            string display = Text.ClampTextWithEllipsis(rect, label);
-            Widgets.Label(rect, display);
+            Widgets.Label(rect, ClampWithTip(rect, label));
+        }
+
+        /// <summary>
+        /// Draws a settlement's name. Draws the full <see cref="WorldSettlementFC.Name"/> when it fits; otherwise
+        /// falls back to the clamped <see cref="WorldSettlementFC.ShortName"/> with a hover tooltip showing the
+        /// full name.
+        /// </summary>
+        public static void SettlementLabel(Rect rect, WorldSettlementFC settlement)
+        {
+            string full = settlement.Name;
+            if (Text.CalcSize(full).x <= rect.width)
+            {
+                Widgets.Label(rect, full);
+                return;
+            }
+            Widgets.Label(rect, TextUtil.ClampWithEllipsis(rect, settlement.ShortName));
+            TooltipHandler.TipRegion(rect, full);
+        }
+
+        /// <summary>
+        /// Button counterpart of <see cref="ClampedLabel"/>: draws a <see cref="Widgets.ButtonText(Rect, string, bool, bool, bool, TextAnchor?)"/>
+        /// whose label is clamped with ellipsis (...) and given a full-text hover tooltip when shortened.
+        /// </summary>
+        public static bool ClampedButtonText(Rect rect, string label, bool drawBackground = true,
+            bool doMouseoverSound = true, bool active = true, TextAnchor? overrideTextAnchor = null)
+        {
+            return Widgets.ButtonText(rect, ClampWithTip(rect, label), drawBackground, doMouseoverSound, active, overrideTextAnchor);
+        }
+
+        /// <summary>
+        /// Button counterpart of <see cref="SettlementLabel"/>: full name if it fits, otherwise the clamped
+        /// short name with a full-name hover tooltip.
+        /// </summary>
+        public static bool SettlementButton(Rect rect, WorldSettlementFC settlement, bool drawBackground = true,
+            bool doMouseoverSound = true, bool active = true, TextAnchor? overrideTextAnchor = null)
+        {
+            string full = settlement.Name;
+            string display;
+            if (Text.CalcSize(full).x <= rect.width)
+            {
+                display = full;
+            }
+            else
+            {
+                display = TextUtil.ClampWithEllipsis(rect, settlement.ShortName);
+                TooltipHandler.TipRegion(rect, full);
+            }
+            return Widgets.ButtonText(rect, display, drawBackground, doMouseoverSound, active, overrideTextAnchor);
         }
         public static void LabelWithMargin(Rect rect, string label, float margin = 5f)
         {
             Rect labelRect = new Rect(rect.x + margin, rect.y, rect.width - (margin * 2), rect.height);
-            Widgets.Label(labelRect, label);
+            Widgets.Label(labelRect, ClampWithTip(labelRect, label));
         }
         public static void ClampedLabelWithMargin(Rect rect, string label, float margin = 5f)
         {
@@ -428,7 +492,10 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             GUI.color = TableHeaderTextColor;
             for (int c = 0; c < colCount; c++)
-                Widgets.Label(new Rect(rect.x + c * colW, curY, colW, TableRowHeight), headers[c]);
+            {
+                Rect headerCell = new Rect(rect.x + c * colW, curY, colW, TableRowHeight);
+                Widgets.Label(headerCell, ClampWithTip(headerCell, headers[c]));
+            }
 
             // Header bottom line
             GUI.color = TableLineColor;
@@ -454,7 +521,10 @@ namespace FactionColonies
                 Text.Anchor = TextAnchor.MiddleCenter;
                 GUI.color = Color.white;
                 for (int c = 0; c < colCount; c++)
-                    Widgets.Label(new Rect(rect.x + c * colW, curY, colW, TableRowHeight), columns[c][r]);
+                {
+                    Rect dataCell = new Rect(rect.x + c * colW, curY, colW, TableRowHeight);
+                    Widgets.Label(dataCell, ClampWithTip(dataCell, columns[c][r]));
+                }
 
                 curY += TableRowHeight;
             }

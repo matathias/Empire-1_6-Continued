@@ -74,7 +74,7 @@ namespace FactionColonies
             string title = targetSettlement is object
                 ? (string)"FCHireSquadsPoolHeaderAssign".Translate(targetSettlement.Name)
                 : (string)"FCHireSquadsPoolHeader".Translate();
-            Widgets.Label(new Rect(0f, 0f, inRect.width, TitleH), title);
+            UIUtil.ClampedLabel(new Rect(0f, 0f, inRect.width, TitleH), title);
 
             float y = TitleH + 4f;
 
@@ -90,10 +90,10 @@ namespace FactionColonies
 
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(new Rect(0f, y, inRect.width, 22f),
+                UIUtil.ClampedLabel(new Rect(0f, y, inRect.width, 22f),
                     "FCAssignSquadPickerMaxDeploy".Translate(maxDeployCost));
                 y += 24f;
-                Widgets.Label(new Rect(0f, y, inRect.width, 22f),
+                UIUtil.ClampedLabel(new Rect(0f, y, inRect.width, 22f),
                     "FCAssignSquadPickerStationed".Translate(stationed, cap));
                 y += 24f;
             }

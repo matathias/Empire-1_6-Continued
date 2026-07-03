@@ -84,34 +84,7 @@ namespace FactionColonies
             // (ApplyVictoryToTarget grants its own +5f).
             faction.AddExperienceToFactionLevel(5f);
 
-            WorldSettlementFC worldsettlement = ColonyUtil.CreatePlayerColonySettlement(
-                capturedTile,
-                ColonyUtil.DefaultSettlementDefForTile(capturedTile));
-            worldsettlement.Name = tmpName;
-
-            int upgradeTimes;
-
-            switch (tech)
-            {
-                case TechLevel.Archotech:
-                case TechLevel.Ultra:
-                case TechLevel.Spacer:
-                    upgradeTimes = 2;
-                    break;
-                case TechLevel.Industrial:
-                    upgradeTimes = 1;
-                    break;
-                default:
-                    upgradeTimes = 0;
-                    break;
-            }
-
-            worldsettlement.UpgradeSettlement(upgradeTimes);
-
-            worldsettlement.loyalty = 15;
-            worldsettlement.happiness = 25;
-            worldsettlement.unrest = 20;
-            worldsettlement.prosperity = 70;
+            WorldSettlementFC worldsettlement = ColonyUtil.SetupCapturedSettlement(capturedTile, tmpName, tech);
 
             bool defeated = !Find.WorldObjects.Settlements.Any(settlement => settlement.Faction != null
                 && settlement.Faction == tempFactionLink);

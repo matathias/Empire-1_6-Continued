@@ -26,11 +26,11 @@ namespace FactionColonies
         private const float ImageNavButtonSize = 28f;
         private const float SeeAlsoButtonHeight = 24f;
         private const float IconSize = 20f;
-        private const float BannerHeight = 70f;
         private const float TitleIconSize = 28f;
         private const float DynamicHeaderHeight = 26f;
-        private const float AccentBarWidth = 3f;
-        private const float Margin = 8f;
+        private const float BannerHeight = CodexUIUtil.BannerHeight;
+        private const float AccentBarWidth = CodexUIUtil.AccentBarWidth;
+        private const float Margin = CodexUIUtil.Margin;
 
         private static readonly Color GroupBgColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
         private static readonly Color CategoryBgColor = new Color(0.15f, 0.15f, 0.15f, 0.4f);
@@ -53,9 +53,6 @@ namespace FactionColonies
         private readonly HashSet<string> expandedMods = new HashSet<string>();
         private readonly HashSet<string> expandedCategories = new HashSet<string>();
         private bool dynamicSectionExpanded = true;
-
-        /* Truncation cache */
-        private readonly Dictionary<string, string> truncateCache = new Dictionary<string, string>();
 
         private class ModGroup
         {
@@ -160,7 +157,7 @@ namespace FactionColonies
             {
                 bool modExpanded = expandedMods.Contains(mg.modId);
 
-                float groupHeight = HeaderHeightFor(mg.modName, viewRect.width - Margin * 2 - IconSize, GroupHeaderHeight, GroupHeaderVPad);
+                float groupHeight = CodexUIUtil.HeaderHeightFor(mg.modName, viewRect.width - Margin * 2 - IconSize, GroupHeaderHeight, GroupHeaderVPad);
                 Rect groupRect = new Rect(0f, curY, viewRect.width, groupHeight);
                 Widgets.DrawBoxSolid(groupRect, GroupBgColor);
 
@@ -188,7 +185,7 @@ namespace FactionColonies
                     bool catExpanded = expandedCategories.Contains(catKey);
                     Color catColor = cg.categoryDef.color;
 
-                    float catHeight = HeaderHeightFor(cg.categoryDef.LabelCap, (viewRect.width - 10f) - Margin * 2 - IconSize - 3f, CategoryHeaderHeight, CategoryHeaderVPad);
+                    float catHeight = CodexUIUtil.HeaderHeightFor(cg.categoryDef.LabelCap, (viewRect.width - 10f) - Margin * 2 - IconSize - 3f, CategoryHeaderHeight, CategoryHeaderVPad);
                     Rect catRect = new Rect(10f, curY, viewRect.width - 10f, catHeight);
                     Widgets.DrawBoxSolid(catRect, CategoryBgColor);
                     TexLoad.DrawHorizontalGradient(catRect, ColorUtil.TransformA(catColor, 0.2f));
@@ -219,36 +216,8 @@ namespace FactionColonies
                         Rect entryRect = new Rect(20f, curY, viewRect.width - 20f, EntryRowHeight);
                         bool isSelected = selectedEntry == entry;
 
-                        if (isSelected)
-                            Widgets.DrawBoxSolid(entryRect, ColorUtil.TransformA(catColor, 0.35f));
-                        else if (Mouse.IsOver(entryRect))
-                            Widgets.DrawBoxSolid(entryRect, ColorUtil.TransformA(catColor, 0.15f));
-
-                        Color barColor = isSelected ? catColor : ColorUtil.TransformA(catColor, 0.4f);
-                        Widgets.DrawBoxSolid(new Rect(entryRect.x, entryRect.y, 2f, entryRect.height), barColor);
-
-                        float textX = entryRect.x + Margin;
-                        if (entry.Icon is object)
-                        {
-                            Rect iconRect = new Rect(entryRect.x + 4f, entryRect.y + (EntryRowHeight - 16f) * 0.5f, 16f, 16f);
-                            GUI.DrawTexture(iconRect, entry.Icon);
-                            textX = iconRect.xMax + 4f;
-                        }
-
-                        Text.Font = GameFont.Small;
-                        Text.Anchor = TextAnchor.MiddleLeft;
-                        float labelWidth = entryRect.xMax - textX - 4f;
-                        string fullLabel = entry.LabelCap;
-                        string truncated = fullLabel.Truncate(labelWidth, truncateCache);
-                        UIUtil.DrawColoredLabel(
-                            new Rect(textX, entryRect.y, labelWidth, entryRect.height),
-                            truncated,
-                            isSelected ? Color.white : ColorUtil.Gray9);
-                        if (truncated != fullLabel)
-                            TooltipHandler.TipRegion(entryRect, fullLabel);
-                        ResetText();
-
-                        if (Widgets.ButtonInvisible(entryRect))
+                        if (CodexUIUtil.DrawEntryRow(entryRect, entry.LabelCap, catColor, isSelected,
+                            2f, Margin, 4f, entry.Icon, isSelected ? Color.white : ColorUtil.Gray9))
                         {
                             SelectEntry(entry);
                             SoundDefOf.Click.PlayOneShotOnCamera();
@@ -260,7 +229,7 @@ namespace FactionColonies
             }
 
             ScrollUtil.EndScrollView();
-            ResetText();
+            CodexUIUtil.ResetText();
         }
 
         private float CalculateLeftPaneHeight(float contentWidth)
@@ -268,31 +237,16 @@ namespace FactionColonies
             float total = 0f;
             foreach (ModGroup mg in modGroups)
             {
-                total += HeaderHeightFor(mg.modName, contentWidth - Margin * 2 - IconSize, GroupHeaderHeight, GroupHeaderVPad) + 2f;
+                total += CodexUIUtil.HeaderHeightFor(mg.modName, contentWidth - Margin * 2 - IconSize, GroupHeaderHeight, GroupHeaderVPad) + 2f;
                 if (!expandedMods.Contains(mg.modId)) continue;
                 foreach (CategoryGroup cg in mg.categories)
                 {
-                    total += HeaderHeightFor(cg.categoryDef.LabelCap, (contentWidth - 10f) - Margin * 2 - IconSize - 3f, CategoryHeaderHeight, CategoryHeaderVPad) + 1f;
+                    total += CodexUIUtil.HeaderHeightFor(cg.categoryDef.LabelCap, (contentWidth - 10f) - Margin * 2 - IconSize - 3f, CategoryHeaderHeight, CategoryHeaderVPad) + 1f;
                     if (expandedCategories.Contains(CatKey(cg)))
                         total += cg.entries.Count * EntryRowHeight;
                 }
             }
             return total;
-        }
-
-        /// <summary>
-        /// Height of a tree header row, grown to fit its full (wrapped) label at the given
-        /// available label width. Never shrinks below <paramref name="minHeight"/>, so
-        /// single-line labels keep the original look. <see cref="Text.CalcHeight"/> reads
-        /// the active font, so this sets <see cref="GameFont.Small"/> before measuring.
-        /// </summary>
-        private static float HeaderHeightFor(string label, float labelWidth, float minHeight, float vPad)
-        {
-            if (label.NullOrEmpty()) return minHeight;
-            Text.Font = GameFont.Small;
-            if (labelWidth < 1f) labelWidth = 1f;
-            float textHeight = Text.CalcHeight(label, labelWidth);
-            return Mathf.Max(minHeight, textHeight + vPad);
         }
 
         /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -305,7 +259,7 @@ namespace FactionColonies
                 Text.Font = GameFont.Medium;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 UIUtil.DrawColoredLabel(rect, "FCCodexSelectEntry".Translate(), Color.gray);
-                ResetText();
+                CodexUIUtil.ResetText();
                 return;
             }
 
@@ -330,15 +284,15 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
-            Widgets.Label(new Rect(titleTextX, curY, contentWidth - titleTextX, 30f), selectedEntry.LabelCap);
-            ResetText();
+            UIUtil.ClampedLabel(new Rect(titleTextX, curY, contentWidth - titleTextX, 30f), selectedEntry.LabelCap);
+            CodexUIUtil.ResetText();
 
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.UpperLeft;
             string meta = selectedEntry.category.LabelCap + "  \u2022  " + selectedEntry.category.ModName;
             float metaY = curY + (selectedEntry.Icon is object ? 26f : 30f);
             UIUtil.DrawColoredLabel(new Rect(titleTextX, metaY, contentWidth - titleTextX, 20f), meta, Color.gray);
-            ResetText();
+            CodexUIUtil.ResetText();
             curY = metaY + 22f;
 
             /* Gradient accent line */
@@ -360,7 +314,7 @@ namespace FactionColonies
                 Rect descRect = new Rect(0f, curY, contentWidth, 100f);
                 Widgets.LabelCacheHeight(ref descRect, selectedEntry.FormattedDesc);
                 curY += descRect.height + Margin;
-                ResetText();
+                CodexUIUtil.ResetText();
             }
 
             /* See Also links */
@@ -369,7 +323,7 @@ namespace FactionColonies
                 curY += Margin;
                 Text.Font = GameFont.Small;
                 UIUtil.DrawColoredLabel(new Rect(0f, curY, contentWidth, 20f), "FCCodexSeeAlso".Translate(), Color.gray);
-                ResetText();
+                CodexUIUtil.ResetText();
                 curY += 22f;
 
                 foreach (CodexEntryDef linked in selectedEntry.seeAlso)
@@ -396,13 +350,13 @@ namespace FactionColonies
                         SoundDefOf.Click.PlayOneShotOnCamera();
                     }
 
-                    ResetText();
+                    CodexUIUtil.ResetText();
                     curY += SeeAlsoButtonHeight + 2f;
                 }
             }
 
             ScrollUtil.EndScrollView();
-            ResetText();
+            CodexUIUtil.ResetText();
         }
 
         private float DrawImageCarousel(float startY, float width, List<Texture2D> images)
@@ -430,7 +384,7 @@ namespace FactionColonies
                 float navX = (width - navWidth) * 0.5f;
 
                 Rect leftBtn = new Rect(navX, curY, ImageNavButtonSize, ImageNavButtonSize);
-                if (currentImageIndex > 0 && Widgets.ButtonText(leftBtn, "<"))
+                if (currentImageIndex > 0 && UIUtil.ClampedButtonText(leftBtn, "<"))
                 {
                     currentImageIndex--;
                     SoundDefOf.Click.PlayOneShotOnCamera();
@@ -438,11 +392,11 @@ namespace FactionColonies
 
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(new Rect(leftBtn.xMax, curY, 60f, ImageNavButtonSize), (currentImageIndex + 1) + " / " + images.Count);
-                ResetText();
+                UIUtil.ClampedLabel(new Rect(leftBtn.xMax, curY, 60f, ImageNavButtonSize), (currentImageIndex + 1) + " / " + images.Count);
+                CodexUIUtil.ResetText();
 
                 Rect rightBtn = new Rect(leftBtn.xMax + 60f, curY, ImageNavButtonSize, ImageNavButtonSize);
-                if (currentImageIndex < images.Count - 1 && Widgets.ButtonText(rightBtn, ">"))
+                if (currentImageIndex < images.Count - 1 && UIUtil.ClampedButtonText(rightBtn, ">"))
                 {
                     currentImageIndex++;
                     SoundDefOf.Click.PlayOneShotOnCamera();
@@ -493,24 +447,8 @@ namespace FactionColonies
             /* Banner */
             if (selectedEntry is object && selectedEntry.category is object)
             {
-                Texture2D banner = selectedEntry.category.BannerImage;
-                if (banner is object)
-                {
-                    Rect bannerRect = new Rect(0f, curY, contentWidth, BannerHeight);
-                    GUI.DrawTexture(bannerRect, banner, ScaleMode.ScaleToFit);
-                    curY += BannerHeight + 4f;
-                }
-
-                // Mod name (wraps to fit long names, mirroring the left pane's HeaderHeightFor sizing)
-                float nameHeight = HeaderHeightFor(selectedEntry.category.ModName, contentWidth, 20f, 0f);
-                Text.Font = GameFont.Small;
-                Text.Anchor = TextAnchor.MiddleCenter;
-                UIUtil.DrawColoredLabel(new Rect(0f, curY, contentWidth, nameHeight), selectedEntry.category.ModName, Color.gray);
-                ResetText();
-                curY += nameHeight + 4f;
-
-                UIUtil.DrawColoredHorizontalLine(Margin, curY, contentWidth - Margin * 2, Color.gray);
-                curY += Margin;
+                curY = CodexUIUtil.DrawRightPaneBannerHeader(curY, contentWidth,
+                    selectedEntry.category.BannerImage, selectedEntry.category.ModName);
             }
 
             /* Dynamic content */
@@ -548,7 +486,7 @@ namespace FactionColonies
                                 new Rect(AccentBarWidth + Margin, curY, contentWidth - AccentBarWidth - Margin, DynamicHeaderHeight),
                                 arrow + "FCCodexLiveData".Translate(),
                                 dynColor);
-                            ResetText();
+                            CodexUIUtil.ResetText();
 
                             if (Widgets.ButtonInvisible(headerRect))
                             {
@@ -565,7 +503,7 @@ namespace FactionColonies
                                 Widgets.DrawBoxSolid(new Rect(0f, curY, contentWidth, bodyHeight), DynamicContentBg);
                                 Widgets.DrawBoxSolid(new Rect(0f, curY, AccentBarWidth, bodyHeight), ColorUtil.TransformA(dynColor, 0.3f));
                                 Widgets.Label(new Rect(AccentBarWidth + Margin, curY + Margin * 0.5f, contentWidth - AccentBarWidth - Margin * 2, dynHeight), dynamic);
-                                ResetText();
+                                CodexUIUtil.ResetText();
                                 curY += bodyHeight;
                             }
 
@@ -577,7 +515,7 @@ namespace FactionColonies
             }
 
             ScrollUtil.EndScrollView();
-            ResetText();
+            CodexUIUtil.ResetText();
         }
 
         private float CalculateRightPaneHeight(float width)
@@ -588,7 +526,7 @@ namespace FactionColonies
             {
                 if (selectedEntry.category.BannerImage is object)
                     total += BannerHeight + 4f;
-                float nameHeight = HeaderHeightFor(selectedEntry.category.ModName, width, 20f, 0f);
+                float nameHeight = CodexUIUtil.HeaderHeightFor(selectedEntry.category.ModName, width, 20f, 0f);
                 total += nameHeight + 4f + Margin; // mod name (may wrap) + divider
             }
 
@@ -601,13 +539,6 @@ namespace FactionColonies
             }
 
             return total + 50f;
-        }
-
-        private void ResetText()
-        {
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.UpperLeft;
-            GUI.color = Color.white;
         }
     }
 }

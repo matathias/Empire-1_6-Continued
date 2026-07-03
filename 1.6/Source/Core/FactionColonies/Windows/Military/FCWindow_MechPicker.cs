@@ -54,7 +54,7 @@ namespace FactionColonies
             // Title — names the group the picked mech will be added to.
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, 35f),
+            UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f),
                 "fcPickMech".Translate() + " — " + "fcMechGroup".Translate(group + 1));
 
             // Bandwidth header
@@ -64,7 +64,7 @@ namespace FactionColonies
             float total = displayUnit?.TotalMechBandwidth ?? 0f;
             Rect bwRect = new Rect(0, 38f, inRect.width, HeaderHeight);
             if (used > total + 0.0001f) GUI.color = ColorLibrary.RedReadable;
-            Widgets.Label(bwRect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
+            UIUtil.ClampedLabel(bwRect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
             GUI.color = Color.white;
 
             // Search bar
@@ -107,15 +107,15 @@ namespace FactionColonies
 
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Text.Font = GameFont.Small;
-                Widgets.Label(labelRect, mech.LabelCap);
+                UIUtil.ClampedLabel(labelRect, mech.LabelCap);
 
                 float bandwidth = mech.race.GetStatValueAbstract(StatDefOf.BandwidthCost);
                 Text.Anchor = TextAnchor.MiddleRight;
                 Text.Font = GameFont.Tiny;
-                Widgets.Label(bwCostRect, "BW " + bandwidth.ToString("0.#"));
+                UIUtil.ClampedLabel(bwCostRect, "BW " + bandwidth.ToString("0.#"));
 
                 double cost = Math.Floor(mech.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier);
-                Widgets.Label(costRect, "$" + cost.ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + cost.ToString("F0"));
 
                 if (Widgets.ButtonInvisible(row))
                 {
@@ -132,7 +132,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(scrollOutRect, "fcNoMechsAvailable".Translate());
+                UIUtil.ClampedLabel(scrollOutRect, "fcNoMechsAvailable".Translate());
             }
 
             Text.Font = fontBefore;

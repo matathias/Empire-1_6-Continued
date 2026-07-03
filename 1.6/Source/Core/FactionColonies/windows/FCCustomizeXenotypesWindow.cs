@@ -99,12 +99,12 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 35f);
-            Widgets.Label(header, titleText);
+            UIUtil.ClampedLabel(header, titleText);
             Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
             Text.Font = GameFont.Small;
             Rect subHeader = new Rect(boundingBox.x, header.yMax, boundingBox.width, 30f);
-            Widgets.Label(subHeader, FindFC.EmpireFaction.Name);
+            UIUtil.ClampedLabel(subHeader, FindFC.EmpireFaction.Name);
 
             float availHeight = boundingBox.yMax - subHeader.yMax - CloseButSize.y - margin;
 
@@ -133,7 +133,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(header);
-            Widgets.Label(headerText, "FCXenotypeSelection".Translate());
+            UIUtil.ClampedLabel(headerText, "FCXenotypeSelection".Translate());
 
             float bottomY = boundingBox.yMax;
             if (filter.XenoCompleteWeight == 0)
@@ -146,7 +146,7 @@ namespace FactionColonies
                 Widgets.DrawHighlight(errorBox);
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(errorLabel, errorText);
+                UIUtil.ClampedLabel(errorLabel, errorText);
                 TooltipHandler.TipRegion(errorBox, "FCXenotypeWeightErrorDesc".Translate());
 
                 bottomY -= (errorBox.height + margin);
@@ -183,11 +183,11 @@ namespace FactionColonies
 
             Rect enableButton = new Rect(boundingBox.x, bottomY - bigRowHeight, boundingBox.width / 2, bigRowHeight);
             Rect disableButton = new Rect(enableButton.xMax, enableButton.y, enableButton.width, enableButton.height);
-            if (Widgets.ButtonText(enableButton, "FCXenoRaceEnableAll".Translate()))
+            if (UIUtil.ClampedButtonText(enableButton, "FCXenoRaceEnableAll".Translate()))
             {
                 filter.ResetToAllXenotypes();
             }
-            if (Widgets.ButtonText(disableButton, "FCXenoDisableNonBaseliner".Translate()))
+            if (UIUtil.ClampedButtonText(disableButton, "FCXenoDisableNonBaseliner".Translate()))
             {
                 filter.ResetToBaselinerXenotypeOnly();
             }
@@ -219,13 +219,13 @@ namespace FactionColonies
                     Widgets.Label(icon, new GUIContent(xenotype.Icon));
                     if (FactionCache.XenotypeIsNonViolent(xenotype))
                     {
-                        Widgets.Label(label, xenotype.LabelCap + "*");
+                        UIUtil.ClampedLabel(label, xenotype.LabelCap + "*");
                     }
                     else
                     {
-                        Widgets.Label(label, xenotype.LabelCap);
+                        UIUtil.ClampedLabel(label, xenotype.LabelCap);
                     }
-                    Widgets.Label(percentLabel, Math.Round(filter.GetXenotypeChance(xenotype) * 100, 2).ToString() + "%");
+                    UIUtil.ClampedLabel(percentLabel, Math.Round(filter.GetXenotypeChance(xenotype) * 100, 2).ToString() + "%");
                     TooltipHandler.TipRegion(label, xenotype.description);
 
                     float weight = filter.GetXenotypeWeight(xenotype);
@@ -250,13 +250,13 @@ namespace FactionColonies
 
                     if (FactionCache.CustomXenotypeIsNonViolent(xenotype))
                     {
-                        Widgets.Label(label, xenotype.name + "*");
+                        UIUtil.ClampedLabel(label, xenotype.name + "*");
                     }
                     else
                     {
-                        Widgets.Label(label, xenotype.name);
+                        UIUtil.ClampedLabel(label, xenotype.name);
                     }
-                    Widgets.Label(percentLabel, Math.Round(filter.GetCustomXenotypeChance(xenotype.name) * 100, 2).ToString() + "%");
+                    UIUtil.ClampedLabel(percentLabel, Math.Round(filter.GetCustomXenotypeChance(xenotype.name) * 100, 2).ToString() + "%");
 
                     float weight = filter.GetCustomXenotypeWeight(xenotype.name);
                     float oldWeight = weight;
@@ -281,7 +281,7 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(header);
-            Widgets.Label(headerText, "FCRaceSelection".Translate());
+            UIUtil.ClampedLabel(headerText, "FCRaceSelection".Translate());
 
             float bottomY = boundingBox.yMax;
             if (filter.RaceTotalWeight == 0)
@@ -294,7 +294,7 @@ namespace FactionColonies
                 Widgets.DrawHighlight(errorBox);
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(errorLabel, errorText);
+                UIUtil.ClampedLabel(errorLabel, errorText);
                 TooltipHandler.TipRegion(errorBox, "FCRaceWeightErrorDesc".Translate());
 
                 bottomY -= (errorBox.height + margin);
@@ -319,11 +319,11 @@ namespace FactionColonies
 
             Rect enableButton = new Rect(boundingBox.x, bottomY - bigRowHeight, boundingBox.width / 2, bigRowHeight);
             Rect disableButton = new Rect(enableButton.xMax, enableButton.y, enableButton.width, enableButton.height);
-            if (Widgets.ButtonText(enableButton, "FCXenoRaceEnableAll".Translate()))
+            if (UIUtil.ClampedButtonText(enableButton, "FCXenoRaceEnableAll".Translate()))
             {
                 filter.ResetToAllRaces();
             }
-            if (Widgets.ButtonText(disableButton, "FCRaceDisableNonHuman".Translate()))
+            if (UIUtil.ClampedButtonText(disableButton, "FCRaceDisableNonHuman".Translate()))
             {
                 filter.ResetToHumanRaceOnly();
             }
@@ -353,8 +353,8 @@ namespace FactionColonies
                 //Races don't have icons. But I'm lazy and don't want to remove the icon rect and adjust the math, even though
                 //  doing so would've been easier than writing this comment. Hmm. Oh well.
                 //Widgets.Label(icon, new GUIContent(race.uiIcon));
-                Widgets.Label(label, race.LabelCap);
-                Widgets.Label(percentLabel, Math.Round(filter.GetRaceChance(race) * 100, 2).ToString() + "%");
+                UIUtil.ClampedLabel(label, race.LabelCap);
+                UIUtil.ClampedLabel(percentLabel, Math.Round(filter.GetRaceChance(race) * 100, 2).ToString() + "%");
                 TooltipHandler.TipRegion(label, race.description);
 
                 float weight = filter.GetRaceWeight(race);
@@ -384,11 +384,11 @@ namespace FactionColonies
             Rect fieldBox = new Rect(decButton.xMax, boundingBox.y, incButton.x - decButton.xMax, boundingBox.height);
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Tiny;
-            if (Widgets.ButtonText(decButton, "<"))
+            if (UIUtil.ClampedButtonText(decButton, "<"))
             {
                 value = Math.Max(value - 1f, min);
             }
-            if (Widgets.ButtonText(incButton, ">"))
+            if (UIUtil.ClampedButtonText(incButton, ">"))
             {
                 value = Math.Min(value + 1f, max);
             }

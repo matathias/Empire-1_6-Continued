@@ -33,7 +33,7 @@ namespace FactionColonies
 
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, 35f), titleKey.Translate());
+            UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f), titleKey.Translate());
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -54,7 +54,7 @@ namespace FactionColonies
             if (enterPressed) Event.current.Use();
 
             Rect okBtn = new Rect(15f, inRect.height - 45f, inRect.width - 30f, 35f);
-            if (Widgets.ButtonText(okBtn, "OK".Translate()) || enterPressed)
+            if (UIUtil.ClampedButtonText(okBtn, "OK".Translate()) || enterPressed)
             {
                 if (curName.Length > 0)
                 {

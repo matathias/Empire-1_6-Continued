@@ -206,7 +206,7 @@ namespace FactionColonies
         {
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(titleRect, title);
+            UIUtil.ClampedLabel(titleRect, title);
 
             // Link buttons in title bar (right-aligned, before close button)
             if (groups.Count > 0 && groups[0].entries.Count > 0)
@@ -327,7 +327,7 @@ namespace FactionColonies
                         Rect titleLabelRect = new Rect(titleX, headerRect.y, dateRect.x - titleX - margin, HeaderHeight);
                         Text.Font = GameFont.Medium;
                         Text.Anchor = TextAnchor.MiddleLeft;
-                        Widgets.Label(titleLabelRect, def.ShortTitle);
+                        UIUtil.ClampedLabel(titleLabelRect, def.ShortTitle);
                         ResetTextAndColor();
 
                         // Click handling
@@ -385,7 +385,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect versionRect = new Rect(labelX, rect.y, 80f, rect.height);
-            Widgets.Label(versionRect, group.versionLabel);
+            UIUtil.ClampedLabel(versionRect, group.versionLabel);
             ResetTextAndColor();
 
             // Badge
@@ -438,7 +438,7 @@ namespace FactionColonies
             GUI.color = Color.white;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(rect, badgeLabel);
+            UIUtil.ClampedLabel(rect, badgeLabel);
             ResetTextAndColor();
         }
 

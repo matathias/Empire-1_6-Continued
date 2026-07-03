@@ -61,7 +61,7 @@ namespace FactionColonies
             // Title
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, 35f), "FCChangeUnitXenoButton".Translate());
+            UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f), "FCChangeUnitXenoButton".Translate());
 
             // Search bar
             Text.Font = GameFont.Small;
@@ -140,7 +140,7 @@ namespace FactionColonies
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Rect labelRect = new Rect(iconRect.xMax + 5f, row.y, row.width - IconSize - 10f, RowHeight);
                 string costText = opt.costFactor != 1f ? " (x" + opt.costFactor.ToString("F2") + $" {"FCCost".Translate()})" : "";
-                Widgets.Label(labelRect, opt.label + costText);
+                UIUtil.ClampedLabel(labelRect, opt.label + costText);
 
                 if (Widgets.ButtonInvisible(row))
                 {
@@ -161,7 +161,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(scrollOutRect, "FCChangeUnitXenoNoXenos".Translate());
+                UIUtil.ClampedLabel(scrollOutRect, "FCChangeUnitXenoNoXenos".Translate());
             }
 
             ScrollUtil.EndScrollView();
@@ -171,14 +171,14 @@ namespace FactionColonies
             Rect buttonBar = new Rect(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
 
             Rect cancelRect = new Rect(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
-            if (Widgets.ButtonText(cancelRect, "CancelButton".Translate()))
+            if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
             {
                 Close();
             }
 
             bool canConfirm = selectedDef != null || selectedCustomName != null;
             Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
-            if (Widgets.ButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
+            if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
             {
                 if (canConfirm)
                 {

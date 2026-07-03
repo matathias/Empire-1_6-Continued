@@ -70,7 +70,7 @@ namespace FactionColonies
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             string titleText = "FCDefenderPickerTitle".Translate(homeSettlement?.Name ?? targetObject?.LabelCap ?? "?");
-            Widgets.Label(new Rect(8f, 0, inRect.width - 16f, TitleH), titleText);
+            UIUtil.ClampedLabel(new Rect(8f, 0, inRect.width - 16f, TitleH), titleText);
 
             UIUtil.DrawColoredHorizontalLine(0, TitleH, inRect.width, Color.gray);
 
@@ -113,7 +113,7 @@ namespace FactionColonies
                     attackerForce.militaryLevel.ToString("0.#"),
                     attackerForce.militaryEfficiency.ToString("0.##"),
                     Math.Round(attackerForce.forceRemaining).ToString("0"));
-                Widgets.Label(new Rect(innerX, y, innerW, lineH), forceLine);
+                UIUtil.ClampedLabel(new Rect(innerX, y, innerW, lineH), forceLine);
                 y += lineH;
             }
 
@@ -122,7 +122,7 @@ namespace FactionColonies
             if (!defenderSummary.NullOrEmpty())
             {
                 float lineH = 22f;
-                Widgets.Label(new Rect(innerX, y, innerW, lineH), defenderSummary);
+                UIUtil.ClampedLabel(new Rect(innerX, y, innerW, lineH), defenderSummary);
                 y += lineH;
             }
 
@@ -326,7 +326,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             Rect headerRect = new Rect(0f, runningY + 4f, viewRect.width, ExternalSectionHeaderH - 4f);
             Widgets.DrawHighlight(headerRect);
-            Widgets.Label(headerRect, "FCDefenderPickerExternal".Translate());
+            UIUtil.ClampedLabel(headerRect, "FCDefenderPickerExternal".Translate());
             runningY += ExternalSectionHeaderH;
 
             for (int i = 0; i < externalRows.Count; i++)

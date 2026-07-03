@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
 
+	<!-- Player-colony capture-or-raze choice (shown when your colonists defeat an NPC settlement) -->
+	<FCCaptureOrRazeTitle>Settlement Defeated</FCCaptureOrRazeTitle>
+	<FCCaptureOrRazeDesc>Your colonists have defeated {0}. You can raze it as usual, or annex it for {1}. If you capture it, finish looting and leave — the settlement will join your Empire once your colonists depart.</FCCaptureOrRazeDesc>
+	<FCCaptureButton>Capture</FCCaptureButton>
+	<FCRazeButton>Raze</FCRazeButton>
+
 	<!-- Attack/Raid/Capture Actions -->
 	<FCAttackSettlement>Attack Settlement</FCAttackSettlement>
 	<FCCaptureSettlement>Capture Settlement</FCCaptureSettlement>

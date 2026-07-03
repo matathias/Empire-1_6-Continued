@@ -45,7 +45,7 @@ namespace FactionColonies
 
                 btnX -= btnW;
                 Rect addBtnRect = new Rect(btnX, btnY, btnW, headerHeight);
-                if (Widgets.ButtonText(addBtnRect, "fcAddApparel".Translate()))
+                if (UIUtil.ClampedButtonText(addBtnRect, "fcAddApparel".Translate()))
                 {
                     OpenApparelPicker(displayUnit, opts);
                 }
@@ -54,7 +54,7 @@ namespace FactionColonies
                 {
                     btnX -= btnW + 2f;
                     Rect setAllBtn = new Rect(btnX, btnY, btnW, headerHeight);
-                    if (Widgets.ButtonText(setAllBtn, "fcSetAllColors".Translate()))
+                    if (UIUtil.ClampedButtonText(setAllBtn, "fcSetAllColors".Translate()))
                     {
                         Color current = FindFC.FactionComp?.hasFactionColor == true
                             ? FindFC.FactionComp.factionColorPrimary : Color.white;
@@ -69,7 +69,7 @@ namespace FactionColonies
                     {
                         btnX -= btnW + 2f;
                         Rect clearBtn = new Rect(btnX, btnY, btnW, headerHeight);
-                        if (Widgets.ButtonText(clearBtn, "fcClearColors".Translate()))
+                        if (UIUtil.ClampedButtonText(clearBtn, "fcClearColors".Translate()))
                         {
                             MilUnitFC target = opts.getEditTarget?.Invoke();
                             if (target != null) target.ClearAllApparelColors();
@@ -115,7 +115,7 @@ namespace FactionColonies
                     removeRect = new Rect(row.xMax - removeButtonSize - 2f, row.y + (apparelRowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
                     Text.Font = GameFont.Small;
                     Text.Anchor = TextAnchor.MiddleCenter;
-                    if (Widgets.ButtonText(removeRect, "X"))
+                    if (UIUtil.ClampedButtonText(removeRect, "X"))
                     {
                         ThingDef capturedThing = item.thing;
                         MilUnitFC target = opts.getEditTarget?.Invoke();
@@ -144,7 +144,7 @@ namespace FactionColonies
                 Rect costRect = new Rect(swatchRect.x - costWidth - 2f, row.y, costWidth, apparelRowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(costRect, "$" + item.MarketValue.ToString("F0"));
+                UIUtil.ClampedLabel(costRect, "$" + item.MarketValue.ToString("F0"));
 
                 // Label
                 Rect labelRect = new Rect(infoRect.xMax + 4f, row.y, costRect.x - infoRect.xMax - 8f, apparelRowHeight);
@@ -155,7 +155,7 @@ namespace FactionColonies
                     : item.thing.LabelCap.ToString();
                 if (item.quality.HasValue)
                     label = item.quality.Value.GetLabel().CapitalizeFirst() + " " + label;
-                Widgets.Label(labelRect, label);
+                UIUtil.ClampedLabel(labelRect, label);
 
                 // Click row to open replace picker
                 if (opts.canEdit)
