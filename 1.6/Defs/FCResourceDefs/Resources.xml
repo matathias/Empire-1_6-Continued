@@ -184,7 +184,7 @@
 	<productionAdditiveStat>RTD_Apparel_ProductionAdditive</productionAdditiveStat>
 	<productionMultiplierStat>RTD_Apparel_ProductionMultiplier</productionMultiplierStat>
 	<thingAllowList>
-		<!-- Cloth and devilstrand are crop harvests, produced by the farming resource. Synthread/hyperweave are crafted spacer fabrics and stay here. -->
+		<!-- Cloth and devilstrand are crop harvests, produced by the farming resource. Synthread/hyperweave are crafted spacer fabrics and stay here. Manufactured leathers/wools (e.g. patchleather) are added dynamically via ResourceFilterExtension_ManufacturedTextiles below. -->
 		<li>
 			<thingDef>Synthread</thingDef>
 			<minTechLevel>Ultra</minTechLevel>
@@ -205,6 +205,15 @@
 	<titheMinCount>1</titheMinCount>
 	<titheMaxCountBase>5</titheMaxCountBase>
 	<titheMaxCountScaler>1</titheMaxCountScaler>
+	<modExtensions>
+		<!-- Adds manufactured leathers/wools (Leathers/Wools category members not produced directly by an organism, e.g. patchleather). Animal-derived leathers/wools stay with the animal resource. -->
+		<li Class="FactionColonies.ResourceFilterExtension_ManufacturedTextiles">
+			<categories>
+				<li>Leathers</li>
+				<li>Wools</li>
+			</categories>
+		</li>
+	</modExtensions>
   </FactionColonies.ResourceTypeDef>
 
   <FactionColonies.ResourceTypeDef>
@@ -248,6 +257,11 @@
 				<li>AnimalMonster</li>
 				<li>AnimalGenetic</li>
 			</blacklistedTradeTags>
+			<!-- Restrict the Leathers/Wools categories to animal-derived products; blocks manufactured leathers (e.g. patchleather) from the animal resource. -->
+			<animalTextileCategories>
+				<li>Leathers</li>
+				<li>Wools</li>
+			</animalTextileCategories>
 		</li>
 		<li Class="FactionColonies.ResourceProductionExtension_TileField">
 			<extName>TileField</extName>

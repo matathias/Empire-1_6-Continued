@@ -14,6 +14,14 @@ namespace FactionColonies
         /// <summary>Specific ThingDef defNames to exclude. For surgical exclusions of individual animals.</summary>
         public List<string> blacklistedDefNames = new List<string>();
 
+        /// <summary>
+        /// Categories (e.g. Leathers, Wools) whose members should be restricted to animal-derived products.
+        /// Any member of these categories that is not produced by an allowed animal is blocked, so
+        /// manufactured leathers/wools (e.g. patchleather, which is crafted rather than butchered/sheared)
+        /// don't leak into the animal resource via the broad category allow list. XML-configurable.
+        /// </summary>
+        public List<ThingCategoryDef> animalTextileCategories = new List<ThingCategoryDef>();
+
         /// <summary>If true, animals must have at least one trade tag to be included.</summary>
         public bool requireTradeTags = true;
 
@@ -55,6 +63,22 @@ namespace FactionColonies
             }
 
             allProducts.ExceptWith(allowedProducts);
+
+            // Block members of the animal-textile categories (Leathers/Wools) that no allowed animal
+            // produces. This removes manufactured/composite textiles like patchleather, which sit in
+            // the Leathers category but are crafted rather than butchered/sheared from an animal.
+            foreach (ThingCategoryDef category in animalTextileCategories)
+            {
+                if (category is null) continue;
+                foreach (ThingDef descendant in category.DescendantThingDefs)
+                {
+                    if (!allowedProducts.Contains(descendant))
+                    {
+                        allProducts.Add(descendant);
+                    }
+                }
+            }
+
             return allProducts;
         }
 
