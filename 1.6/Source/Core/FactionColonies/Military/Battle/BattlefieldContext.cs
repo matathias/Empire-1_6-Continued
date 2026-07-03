@@ -841,6 +841,8 @@ namespace FactionColonies
                     GenSpawn.Spawn(friendly, loc, map, new Rot4());
                     friendly.drafter = new Pawn_DraftController(friendly);
                     map.mapPawns.RegisterPawn(friendly);
+                    // Load reloadable-weapon magazines from carried ammo (e.g. Yayo's Combat); no-op otherwise.
+                    ReloadableWeaponUtil.LoadMagazinesFromInventory(friendly);
                     spawnedReinforcements.Add(friendly);
                 }
                 catch (Exception e)
@@ -1115,6 +1117,8 @@ namespace FactionColonies
                     GenSpawn.Spawn(friendly, loc, map, new Rot4());
                     friendly.drafter = new Pawn_DraftController(friendly);
                     map.mapPawns.RegisterPawn(friendly);
+                    // Load reloadable-weapon magazines from carried ammo (e.g. Yayo's Combat); no-op otherwise.
+                    ReloadableWeaponUtil.LoadMagazinesFromInventory(friendly);
                     spawnedFriendlies.Add(friendly);
                 }
                 catch (Exception e)
