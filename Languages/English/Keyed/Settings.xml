@@ -180,6 +180,8 @@ Only manual battles consume inventory; auto-resolved battles incur no restock ch
 	<FCSettingUseThreadedRoadComputationDesc>Computes road paths on a background thread for better performance. Disable this if you experience issues with road building.</FCSettingUseThreadedRoadComputationDesc>
 	<FCSettingEdgesPerRoadTick>Edges per road tick</FCSettingEdgesPerRoadTick>
 	<FCSettingEdgesPerRoadTickTip>How many road graph edges to process per tick when computing on the main thread. Set to 0 for unlimited (fastest, but may cause stutter).</FCSettingEdgesPerRoadTickTip>
+	<FCSettingRoadBuildInterval>Days between road building</FCSettingRoadBuildInterval>
+	<FCSettingRoadBuildIntervalTip>How many days pass between each road-building step. Lower values build roads more often; higher values slow construction. The Road Builders policy builds roughly three times faster than this.</FCSettingRoadBuildIntervalTip>
 	<FCSettingFlushRoadCache>Flush Road Path Cache</FCSettingFlushRoadCache>
 	<FCSettingEnableDebugLogging>Enable Verbose Logging</FCSettingEnableDebugLogging>
 	

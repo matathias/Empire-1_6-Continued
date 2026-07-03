@@ -1,6 +1,7 @@
 ﻿using FactionColonies.util;
 using RimWorld;
 using RimWorld.Planet;
+using System;
 using System.Collections.Generic;
 using Verse;
 
@@ -40,6 +41,16 @@ namespace FactionColonies
             Scribe_Deep.Look(ref roadQueue, "roadQueue", new object[] { this.roadDef, this.daysBetweenTicks });
         }
 
+        /* Resolves the days-between-road-builds interval. Normally the configured
+           mod setting; the Road Builders policy boost builds at a third of that
+           interval (integer round-to-nearest via (cfg + 1) / 3), floored at 1 day
+           so building never happens more often than the daily boundary. */
+        static int EffectiveInterval(bool boosted)
+        {
+            int cfg = FCSettings.roadBuildIntervalDays;
+            return boosted ? Math.Max(1, (cfg + 1) / 3) : cfg;
+        }
+
         public void FirstTick()
         {
             CheckForTechChanges();
@@ -52,7 +63,7 @@ namespace FactionColonies
             if (daysBetweenTicks == 0)
             {
                 LogUtil.Message("FCRoadBuilder - Resetting daysBetweenTicks");
-                int days = hasRoadBuildersBoost ? 1 : 3;
+                int days = EffectiveInterval(hasRoadBuildersBoost);
                 daysBetweenTicks = days;
                 roadQueue.daysBetweenTicks = days;
             }
@@ -83,10 +94,14 @@ namespace FactionColonies
             if (!hasRoadBuildersBoost && FindFC.FactionComp.IsActionAllowed(FCActionType.BuildRoadsToAllies))
             {
                 roadQueue.shouldUpdateSettlementsToProcess = true;
-                roadQueue.daysBetweenTicks = 1;
                 hasRoadBuildersBoost = true;
-                daysBetweenTicks = 1;
             }
+
+            // Interval is driven by the global mod setting; re-sync every tick so
+            // changes to the setting take effect immediately.
+            int interval = EffectiveInterval(hasRoadBuildersBoost);
+            daysBetweenTicks = interval;
+            roadQueue.daysBetweenTicks = interval;
 
             // If road building was disabled, then set the next tick to make a road to the correct time
             if (wasRoadBuildingDisabled)

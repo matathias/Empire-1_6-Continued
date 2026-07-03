@@ -96,6 +96,7 @@ namespace FactionColonies
         public const float DEFAULT_EVENT_SILVER_COST_MULTIPLIER = 1.0f;
         public const bool DEFAULT_USE_THREADED_ROAD_COMPUTATION = true;
         public const int DEFAULT_EDGES_PER_ROAD_TICK = 5;
+        public const int DEFAULT_ROAD_BUILD_INTERVAL_DAYS = 3;
         public const BattleMode DEFAULT_BATTLE_MODE = BattleMode.Auto;
         public const int DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION = 4;
         public const int DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION = 10;
@@ -183,6 +184,7 @@ namespace FactionColonies
         public static float eventSilverCostMultiplier = DEFAULT_EVENT_SILVER_COST_MULTIPLIER;
         public static bool useThreadedRoadComputation = DEFAULT_USE_THREADED_ROAD_COMPUTATION;
         public static int edgesPerRoadTick = DEFAULT_EDGES_PER_ROAD_TICK;
+        public static int roadBuildIntervalDays = DEFAULT_ROAD_BUILD_INTERVAL_DAYS;
         public static BattleMode battleMode = DEFAULT_BATTLE_MODE;
         public static TaxDeliveryMode forcedTaxDeliveryMode = DEFAULT_TAX_DELIVERY_MODE;
         public static TaxNotificationMode taxNotificationMode = DEFAULT_TAX_NOTIFICATION_MODE;
@@ -451,6 +453,12 @@ namespace FactionColonies
             Scribe_Values.Look(ref taxNotificationMode, "taxNotificationMode", DEFAULT_TAX_NOTIFICATION_MODE);
             Scribe_Values.Look(ref useThreadedRoadComputation, "useThreadedRoadComputation", DEFAULT_USE_THREADED_ROAD_COMPUTATION);
             Scribe_Values.Look(ref edgesPerRoadTick, "edgesPerRoadTick", DEFAULT_EDGES_PER_ROAD_TICK);
+            Scribe_Values.Look(ref roadBuildIntervalDays, "roadBuildIntervalDays", DEFAULT_ROAD_BUILD_INTERVAL_DAYS);
+            if (Scribe.mode == LoadSaveMode.LoadingVars && roadBuildIntervalDays < 1)
+            {
+                LogUtil.Warning($"Loaded suspicious roadBuildIntervalDays={roadBuildIntervalDays} from settings; resetting to DEFAULT_ROAD_BUILD_INTERVAL_DAYS ({DEFAULT_ROAD_BUILD_INTERVAL_DAYS}).");
+                roadBuildIntervalDays = DEFAULT_ROAD_BUILD_INTERVAL_DAYS;
+            }
             Scribe_Values.Look(ref battleMode, "battleMode", DEFAULT_BATTLE_MODE);
             Scribe_Values.Look(ref minDaysTillMilitaryAction, "minDaysTillMilitaryAction", DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION);
             Scribe_Values.Look(ref maxDaysTillMilitaryAction, "maxDaysTillMilitaryAction", DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION);
@@ -814,6 +822,7 @@ namespace FactionColonies
         {
             useThreadedRoadComputation = DEFAULT_USE_THREADED_ROAD_COMPUTATION;
             edgesPerRoadTick = DEFAULT_EDGES_PER_ROAD_TICK;
+            roadBuildIntervalDays = DEFAULT_ROAD_BUILD_INTERVAL_DAYS;
         }
 
         public static void ResetAdvancedToDefaults()
@@ -1541,6 +1550,10 @@ namespace FactionColonies
                     "FCSettingEdgesPerRoadTick".Translate(), edgesPerRoadTick, 0, 50,
                     tooltip: "FCSettingEdgesPerRoadTickTip".Translate());
             }
+
+            roadBuildIntervalDays = ls.SliderTextField("FCSettingRoadBuildInterval",
+                "FCSettingRoadBuildInterval".Translate(), roadBuildIntervalDays, 1, 30, unit: "d",
+                tooltip: "FCSettingRoadBuildIntervalTip".Translate());
 
             ls.Gap(12f);
             FCRoadQueue queue = FindFC.RoadBuilder?.roadQueue;
