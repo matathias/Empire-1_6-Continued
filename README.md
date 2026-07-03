@@ -2,7 +2,7 @@
 
 Now under new management!
 
-[Get Empire Refactored now on the Steam workshop!](https://steamcommunity.com/sharedfiles/filedetails/?id=3701480464)
+[Get Empire Refactored now on the Steam workshop!](https://steamcommunity.com/sharedfiles/filedetails/?id=3701480464) (Note: the Steam Workshop is on the 1.5 branch, while the development branch here on Github is the 1.6 branch. For the 1.5 branch, look for dev-v1-5)
 
 This branch of Empire is under active development. Adding features and stamping out bugs is the name of the game.
 
@@ -35,7 +35,7 @@ Any mod whose compatibility with Empire depends entirely on referencing the PCol
 ## Manual Battles!
 Yes, you heard that right. Manual battles are back!
 
-Currently, only defense battles can be run manually. I have plans to *eventually* implement manual offense battles. Have some patience.
+Currently, only defense battles can be run manually.
 
 ## Submods and Extensibility
 Along with the refactor comes far greater extensibility. Settlement and resource types are defined by XML defs now; basic resources and settlements can be created in XML alone. And if you want to get fancy, there is a handy set of extensible abstract classes to use.
@@ -61,3 +61,15 @@ Depending on what you want to add, though, consider making a submod (especially 
 This mod was initially developed by Saakra, a lone Mod Dev. He has since moved on due to IRL issues and handed over the reins of development to the community.
 
 The current active maintainer is yours truly, Matathias.
+
+Additional contributors over the mod's lifetime:
+- Epistatic - Brought Empire to Rimworld 1.6
+- Pecha - Updated the biome patches
+- Midnight - Updated building icons
+- Erok031 - Made the faction trait icons and some of the flags
+- Helixien - Made the mod banner
+- MaoDetector - Has made a lot of faction flags
+- Miriouki62 - Updated French translation
+- CreeeesP - Updated Russian translation
+- carmoran0 - Updated Spanish translation
+- PhenylPropion - Updated Japanese translation
