@@ -14,6 +14,15 @@ namespace FactionColonies
         public int tickLastUsed = -1;
         public int cooldownTicks;
 
+        /// <summary>
+        /// Tick at which the ability's *effect* ends (e.g. hired laborers depart). The cooldown clock
+        /// counts from the later of this and <see cref="tickLastUsed"/>, so the rest period begins when
+        /// the effect ends rather than when the ability was invoked. Defaults to 0 — for any real use
+        /// (tickLastUsed &gt;= 0) that leaves behavior identical to a plain use-time cooldown, keeping
+        /// abilities that never set it (mercenary/diplomat/squad cooldowns) unchanged.
+        /// </summary>
+        public int abilityEndTick = 0;
+
         /// <summary>Translation key for the "ability ready" letter. Null to skip.</summary>
         [Unsaved] public string readyLetterKey;
 
@@ -22,15 +31,32 @@ namespace FactionColonies
 
         [Unsaved] private bool wasReady = true;
 
-        public bool IsReady => DebugSettings.godMode || tickLastUsed < 0 || (tickLastUsed + cooldownTicks) <= Find.TickManager.TicksGame;
+        public bool IsReady => DebugSettings.godMode || tickLastUsed < 0
+            || (Math.Max(tickLastUsed, abilityEndTick) + cooldownTicks) <= Find.TickManager.TicksGame;
 
         public float DaysRemaining => IsReady
             ? 0f
-            : (tickLastUsed + cooldownTicks - Find.TickManager.TicksGame) / (float)GenDate.TicksPerDay;
+            : (Math.Max(tickLastUsed, abilityEndTick) + cooldownTicks - Find.TickManager.TicksGame) / (float)GenDate.TicksPerDay;
 
-        public void Use()
+        /// <summary>
+        /// Marks the ability used now. <paramref name="abilityEndTick"/> optionally sets when the
+        /// ability's effect ends (the tick the cooldown counts from); leave 0 for an immediate-effect
+        /// ability whose cooldown starts at use.
+        /// </summary>
+        public void Use(int abilityEndTick = 0)
         {
             tickLastUsed = Find.TickManager.TicksGame;
+            this.abilityEndTick = abilityEndTick;
+            wasReady = false;
+        }
+
+        /// <summary>
+        /// Moves the ability-end tick (e.g. when the effect is cut short — laborers dismissed early), so
+        /// the cooldown re-anchors to it. Clears the ready latch so the "ready" letter still fires.
+        /// </summary>
+        public void SetEndTick(int tick)
+        {
+            abilityEndTick = tick;
             wasReady = false;
         }
 
@@ -81,6 +107,7 @@ namespace FactionColonies
         {
             Scribe_Values.Look(ref tickLastUsed, "tickLastUsed", -1);
             Scribe_Values.Look(ref cooldownTicks, "cooldownTicks");
+            Scribe_Values.Look(ref abilityEndTick, "abilityEndTick", 0);
         }
     }
 }

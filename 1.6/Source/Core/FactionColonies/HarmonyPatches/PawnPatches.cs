@@ -74,6 +74,16 @@ namespace FactionColonies
                 }
             }
 
+            // Hired Empire laborer: a temporary player colonist whose quest home faction is the Empire.
+            // Route through the settlement-happiness penalty (home == null -> highest-prosperity fallback);
+            // a direct goodwill change would just be undone by the daily happiness->goodwill sync.
+            if (__instance.Faction == Faction.OfPlayer
+                && __instance.RaceProps.Humanlike
+                && __instance.HasExtraHomeFaction(FindFC.EmpireFaction))
+            {
+                EmpireDeathPenaltyUtil.HandleCivilianDefenderDeath(__instance, dinfo, null);
+            }
+
             return true;
         }
 

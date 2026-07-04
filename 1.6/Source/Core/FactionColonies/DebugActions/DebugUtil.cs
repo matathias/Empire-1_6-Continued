@@ -646,6 +646,15 @@ namespace FactionColonies
                 $"{eventsCleared} traveling event(s), reset {squadsCleared} squad cooldown(s)");
         }
 
+        [DebugAction("Empire", "Reset Hire Laborers Cooldown", allowedGameStates = AllowedGameStates.Playing)]
+        private static void ResetLaborerCooldown()
+        {
+            FactionFC faction = FindFC.FactionComp;
+            if (faction?.laborerCooldown is null) return;
+            faction.laborerCooldown.tickLastUsed = -1;
+            LogUtil.MessageForce("Debug - Reset Hire Laborers cooldown");
+        }
+
         [DebugAction("Empire", "Clear Old Bills", allowedGameStates = AllowedGameStates.Playing)]
         private static void ClearOldBills()
         {

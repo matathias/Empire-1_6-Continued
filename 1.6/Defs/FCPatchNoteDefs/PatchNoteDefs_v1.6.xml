@@ -96,4 +96,18 @@
 		<li>carmoran0</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_6</defName>
+		<label>Hired Laborers!</label>
+		<description>Adds the ability to hire laborers, mimicing the system used by the Royalty DLC&apos;s Call Laborers permit. As this mimics a Royalty feature, it is locked behind access to the Royalty DLC, per Ludeon&apos;s modding policy.</description>
+		<releaseDate>2026-07-03</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Adds the ability for the player to periodically hire laborers from the Empire faction, with several configuration options in the mod settings</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

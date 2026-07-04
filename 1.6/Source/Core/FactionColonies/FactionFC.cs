@@ -194,6 +194,9 @@ namespace FactionColonies
         public List<ResourceDisplay> factionResources = new List<ResourceDisplay>();
         public List<ResourceDisplay> FactionResources => factionResources;
 
+        /* Faction-level cooldown for the "Hire Laborers" action (Empire sends temporary laborers). */
+        public CooldownAbility laborerCooldown = new CooldownAbility();
+
         /* Military & Roads */
         public MilitaryFC military = new MilitaryFC();
         public EmpireThreatAdaptation threatAdaptation = new EmpireThreatAdaptation();
@@ -384,6 +387,10 @@ namespace FactionColonies
             //Tax/billing
             Scribe_Deep.Look(ref taxLedger, "taxLedger");
             if (taxLedger is null) taxLedger = new TaxLedger();
+
+            //Hire-laborers action cooldown
+            Scribe_Deep.Look(ref laborerCooldown, "laborerCooldown");
+            if (laborerCooldown is null) laborerCooldown = new CooldownAbility();
 
             //Road builder
             Scribe_Deep.Look(ref roadBuilder, "roadBuilder");
@@ -780,6 +787,13 @@ namespace FactionColonies
 
             roadBuilder.FirstTick();
 
+            /* Hire-laborers action: configurable base cooldown, scaled by policyActionCooldownMultiplier.
+             * Re-applied every FirstTick so setting/multiplier changes and loaded state stay consistent
+             * (SetCooldown never touches the live tickLastUsed). */
+            laborerCooldown.readyLetterKey = "FCHireLaborersReady";
+            laborerCooldown.cooldownMessageKey = "FCHireLaborersCooldown";
+            laborerCooldown.SetCooldown(FCSettings.laborerCooldownDays * GenDate.TicksPerDay);
+
             if (!(faction is null))
             {
                 _ = techLevel;
@@ -1017,6 +1031,7 @@ namespace FactionColonies
         {
             // Dispatch Tick only to behaviors that override it (no per-tick closure/no-op virtual calls).
             policyManager.TickBehaviors(this);
+            laborerCooldown.TickCheckReady();
         }
 
         #endregion
