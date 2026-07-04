@@ -6,8 +6,13 @@ using Verse;
 
 namespace FactionColonies
 {
-    public class MilitaryJobHandler_Capture : MilitaryJobHandler
+    public class MilitaryJobHandler_Capture : MilitaryJobHandler_Offensive
     {
+        // Capture's ApplyResult destroys the host Settlement and builds an Empire colony in its
+        // place, so there is no "haul spoils out" phase and lingering the live map would be
+        // destroyed underfoot. Force the immediate-teardown branch on a Capture win.
+        public override bool SkipLootLingerOnWin => true;
+
         public override void OnOpCreated(MilitaryOperation op)
         {
             WorldSettlementFC home = op.aggressor?.homeSettlement;

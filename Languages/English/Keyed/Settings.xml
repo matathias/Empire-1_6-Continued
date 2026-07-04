@@ -67,6 +67,8 @@ Spreading out the computation will reduce the impact on performance, but no road
 	<FCBattleModeManualDesc>All battles generate a map for manual combat.</FCBattleModeManualDesc>
 	<FCBattleModeHybrid>Hybrid</FCBattleModeHybrid>
 	<FCBattleModeHybridDesc>Battles auto-resolve unless you send a caravan to defend.</FCBattleModeHybridDesc>
+	<FCSettingManualOffenseBattle>Manual offensive battles</FCSettingManualOffenseBattle>
+	<FCSettingManualOffenseBattleTip>When enabled, launching a raid, capture, or enslave operation against an enemy settlement lets you fight the battle on the target's real map instead of auto-resolving it. Shares the concurrent-battle-map limit with manual defense.</FCSettingManualOffenseBattleTip>
 	<FCSettingMinMaxMilitaryAction>Min/Max Days Until Military Action (ex. Settlements being attacked)</FCSettingMinMaxMilitaryAction>
 	<FCSettingMaxThreatScaling>Maximum Threat Scaling</FCSettingMaxThreatScaling>
 	<FCSettingDefenderAdvantage>Defender Advantage</FCSettingDefenderAdvantage>

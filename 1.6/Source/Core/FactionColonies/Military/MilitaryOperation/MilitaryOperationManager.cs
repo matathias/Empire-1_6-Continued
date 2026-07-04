@@ -554,6 +554,20 @@ namespace FactionColonies
             return ctx;
         }
 
+        /// <summary>Counts every live Empire battle map (offense or defense) currently on any tile.
+        /// Both StartDefense and StartOffense honor the single maxConcurrentBattleMaps cap against
+        /// this, so offense and defense share one throttle. Counts by live <c>map</c>, so a tile
+        /// mid-map-generation (map still null) is excluded -- matching the pre-existing
+        /// "other maps already open" semantics the cap check relies on.</summary>
+        public int CountLiveBattleMaps()
+        {
+            if (battlefields is null) return 0;
+            int count = 0;
+            foreach (BattlefieldContext ctx in battlefields.Values)
+                if (ctx is object && ctx.map is object) count++;
+            return count;
+        }
+
         /// <summary>Rebuilds the per-tile / per-squad / per-settlement indices from <see cref="active"/>.
         /// Called from <c>FactionFC.FinalizeInit</c> and after migration.</summary>
         public void RebuildIndices()

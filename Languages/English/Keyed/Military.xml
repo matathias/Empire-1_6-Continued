@@ -70,6 +70,12 @@
 	<FCReformCaravanBattleStillActive>The battle isn't over until every hostile has died or left the map.</FCReformCaravanBattleStillActive>
 	<FCManualBattleStarted>Battle for {0}</FCManualBattleStarted>
 	<FCManualBattleStartedDesc>{0} is under attack by {1}! Take command of the settlement's defenses.</FCManualBattleStartedDesc>
+	<FCManualOffenseStarted>Assault begun: {0}</FCManualOffenseStarted>
+	<FCManualOffenseStartedDesc>{0} forces are assaulting {1}. Clear the enemy garrison to win. Draft your attackers to take direct control, or let them assault autonomously.</FCManualOffenseStartedDesc>
+	<FCOffenseWithdraw>Withdraw</FCOffenseWithdraw>
+	<FCOffenseWithdrawDesc>End the assault now. Surviving mobile attackers extract; injured attackers are returned home. The enemy settlement is left intact.</FCOffenseWithdrawDesc>
+	<FCOffenseWatchBattle>Go to battle</FCOffenseWatchBattle>
+	<FCOffenseWatchBattleDesc>Jump the camera to the ongoing assault map.</FCOffenseWatchBattleDesc>
 	<FCAutoBattleCommenced>Battle commenced at {0}</FCAutoBattleCommenced>
 	<FCAutoBattleCommencedDesc>The defenders of {0} have engaged forces from {1}. The settlement remains militarily committed until the battle resolves.</FCAutoBattleCommencedDesc>
 

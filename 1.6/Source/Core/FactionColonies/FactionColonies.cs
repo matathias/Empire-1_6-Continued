@@ -107,6 +107,7 @@ namespace FactionColonies
         public const int DEFAULT_EDGES_PER_ROAD_TICK = 5;
         public const int DEFAULT_ROAD_BUILD_INTERVAL_DAYS = 3;
         public const BattleMode DEFAULT_BATTLE_MODE = BattleMode.Auto;
+        public const bool DEFAULT_MANUAL_OFFENSE_BATTLE = false;
         public const int DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION = 4;
         public const int DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION = 10;
         public const int DEFAULT_MIN_DAYS_TIL_RANDOM_EVENT = 2;
@@ -205,6 +206,10 @@ namespace FactionColonies
         public static int edgesPerRoadTick = DEFAULT_EDGES_PER_ROAD_TICK;
         public static int roadBuildIntervalDays = DEFAULT_ROAD_BUILD_INTERVAL_DAYS;
         public static BattleMode battleMode = DEFAULT_BATTLE_MODE;
+        // When true, offensive ops (raid/capture/enslave) can be fought on the target enemy
+        // settlement's real map instead of auto-resolving. Default false = zero behavior change
+        // on upgrade; the player opts in. Shares maxConcurrentBattleMaps with manual defense.
+        public static bool manualOffenseBattle = DEFAULT_MANUAL_OFFENSE_BATTLE;
         public static TaxDeliveryMode forcedTaxDeliveryMode = DEFAULT_TAX_DELIVERY_MODE;
         public static TaxNotificationMode taxNotificationMode = DEFAULT_TAX_NOTIFICATION_MODE;
 
@@ -487,6 +492,7 @@ namespace FactionColonies
                 roadBuildIntervalDays = DEFAULT_ROAD_BUILD_INTERVAL_DAYS;
             }
             Scribe_Values.Look(ref battleMode, "battleMode", DEFAULT_BATTLE_MODE);
+            Scribe_Values.Look(ref manualOffenseBattle, "manualOffenseBattle", DEFAULT_MANUAL_OFFENSE_BATTLE);
             Scribe_Values.Look(ref minDaysTillMilitaryAction, "minDaysTillMilitaryAction", DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION);
             Scribe_Values.Look(ref maxDaysTillMilitaryAction, "maxDaysTillMilitaryAction", DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION);
             Scribe_Values.Look(ref minDaysTillRandomEvent, "minDaysTillRandomEvent", DEFAULT_MIN_DAYS_TIL_RANDOM_EVENT);
@@ -791,6 +797,7 @@ namespace FactionColonies
             antiExploit = DEFAULT_ANTI_EXPLOIT;
             restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
             battleMode = DEFAULT_BATTLE_MODE;
+            manualOffenseBattle = DEFAULT_MANUAL_OFFENSE_BATTLE;
             minDaysTillMilitaryAction = DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION;
             maxDaysTillMilitaryAction = DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION;
             minMaxDaysTillMilitaryAction = new IntRange(minDaysTillMilitaryAction, maxDaysTillMilitaryAction);
@@ -1397,6 +1404,7 @@ namespace FactionColonies
             ls.CheckboxLabeled("FCSettingAntiExploit".Translate(), ref antiExploit, "FCSettingAntiExploitTip".Translate());
             ls.CheckboxLabeled("FCSettingRestrictDefenseMapLoot".Translate(), ref restrictDefenseMapLoot, "FCSettingRestrictDefenseMapLootTip".Translate());
             if (ls.ButtonText("FCSettingBattleMode".Translate() + battleMode)) Find.WindowStack.Add(new FloatMenu(BattleModeOptions));
+            ls.CheckboxLabeled("FCSettingManualOffenseBattle".Translate(), ref manualOffenseBattle, "FCSettingManualOffenseBattleTip".Translate());
 
             ls.Gap(10f);
 

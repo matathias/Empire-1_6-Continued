@@ -85,6 +85,11 @@ namespace FactionColonies
     {
         public static bool Prefix(Settlement factionBase)
         {
+            // An Empire manual offensive battle owns this tile -> Empire's EndOffense / ApplyResult
+            // resolves the settlement's fate. Do not pop the raze/capture dialog on the same
+            // garrison-cleared event (a double resolution). This guard also lets the offense
+            // suppression win regardless of Harmony prefix ordering.
+            if (OffenseGuardUtil.OffenseActiveAt(factionBase)) return false;
             if (!FCSettings.enableSettlementCapture) return true;
             if (factionBase is null) return true;
 

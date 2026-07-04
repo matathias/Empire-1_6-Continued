@@ -23,7 +23,7 @@ namespace FactionColonies
     /// op arriving in that state re-engages by calling <see cref="TryReengage"/>. The context
     /// is destroyed once <see cref="activeOps"/> is empty AND the player has left.</para>
     /// </summary>
-    public class BattlefieldContext : IExposable
+    public partial class BattlefieldContext : IExposable
     {
         /// <summary>Tick interval for the orphan-flag clearing sweep in <see cref="Tick"/>.</summary>
         private const int OrphanCheckTickInterval = 2500;
@@ -67,6 +67,10 @@ namespace FactionColonies
         public HashSet<Pawn> civilianPawns = new HashSet<Pawn>();
 
         public bool battleMapInitialized;
+        // True once an offensive op has attached to this tile. Distinguishes offense contexts
+        // (no Empire ParentSettlement, ticked by the FactionFC sweep, torn down by EndOffense)
+        // from defense contexts (comp-ticked).
+        public bool isOffense;
         public bool endingBattle;
         public bool shuttleLandingPending;
         public string pendingDeliveryMessage;
@@ -119,6 +123,7 @@ namespace FactionColonies
             Scribe_Collections.Look(ref settlementLoot, "settlementLoot", LookMode.Reference);
             Scribe_Collections.Look(ref civilianPawns, "civilianPawns", LookMode.Reference);
             Scribe_Values.Look(ref battleMapInitialized, "battleMapInitialized", false);
+            Scribe_Values.Look(ref isOffense, "isOffense", false);
             Scribe_Values.Look(ref endingBattle, "endingBattle", false);
             Scribe_Values.Look(ref shuttleLandingPending, "shuttleLandingPending", false);
 
@@ -616,7 +621,7 @@ namespace FactionColonies
                 shouldAutoResolve = !battleMapInitialized && !IsPlayerCaravanOnTile();
             }
             if (!shouldAutoResolve && FCSettings.maxConcurrentBattleMaps > 0
-                && CountOtherSettlementBattleMaps() >= FCSettings.maxConcurrentBattleMaps)
+                && (FindFC.MilitaryManager?.CountLiveBattleMaps() ?? 0) >= FCSettings.maxConcurrentBattleMaps)
                 shouldAutoResolve = true;
 
             if (shouldAutoResolve)
@@ -731,26 +736,60 @@ namespace FactionColonies
         {
             if (map is null || op?.aggressor?.force is null) return;
 
+            WorldSettlementFC settlement = ParentSettlement;
+            int initial = op.aggressor.initialPawnCount;
+            List<Pawn> newAttackers = SpawnForceMatchedGroup(
+                op.aggressor.force, op.aggressor.faction, op.aggressor.pawns, ref initial,
+                (pawns, spawnCenter, arriveMode) =>
+                    new LordJob_HuntColonists(settlement, arriveMode != PawnsArrivalModeDefOf.CenterDrop));
+            op.aggressor.initialPawnCount = initial;
+
+            if (!newAttackers.Any())
+            {
+                LogUtil.Error("Got no pawns spawning attackers for op id=" + op.id);
+                if (!attackerPawns.Any())
+                    LongEventHandler.QueueLongEvent(EndAttack, "EndingAttack", false, null);
+            }
+        }
+
+        /// <summary>
+        /// Shared force-matched hostile/garrison spawner. Builds raid <see cref="IncidentParms"/>
+        /// sized from <paramref name="force"/> via the same AdjustedRaidPoints(forceRemaining * 175,
+        /// ...) formula (clamped to a 300-point minimum), generates + arrives the pawns, applies
+        /// combat-efficiency hediffs from <c>force.militaryEfficiency</c>, appends them to
+        /// <paramref name="targetPawnList"/>, bumps <paramref name="initialPawnCount"/>, and attaches
+        /// the lord the caller supplies via <paramref name="lordFactory"/>. Returns the spawned
+        /// pawns (empty on failure). Role-agnostic: <see cref="SpawnAttackersForOp"/> is one caller
+        /// (aggressor side, LordJob_HuntColonists), the offense garrison is the other (defender side,
+        /// LordJob_DefendBase).
+        /// </summary>
+        public List<Pawn> SpawnForceMatchedGroup(
+            MilitaryForce force, Faction faction, List<Pawn> targetPawnList,
+            ref int initialPawnCount,
+            Func<List<Pawn>, IntVec3, PawnsArrivalModeDef, LordJob> lordFactory)
+        {
+            List<Pawn> spawned = new List<Pawn>();
+            if (map is null || force is null || faction is null || targetPawnList is null) return spawned;
+
             IncidentParms parms = new IncidentParms
             {
                 target = map,
-                faction = op.aggressor.faction,
+                faction = faction,
                 generateFightersOnly = true,
                 raidStrategy = RaidStrategyDefOf.ImmediateAttack,
                 raidNeverFleeIndividual = true
             };
             parms.points = Math.Max(
                 IncidentWorker_Raid.AdjustedRaidPoints(
-                    (float)op.aggressor.force.forceRemaining * 175,
+                    (float)force.forceRemaining * 175,
                     PawnsArrivalModeDefOf.EdgeWalkIn, parms.raidStrategy,
                     parms.faction, PawnGroupKindDefOf.Combat,
                     parms.target),
                 300f);
             parms.raidArrivalMode = ResolveRaidArriveMode(parms);
-            // TryResolveRaidSpawnCenter can fail (e.g. EdgeWalkIn when no Empire pawn on the map
-            // can path to an edge cell). A failed resolve leaves parms.spawnCenter invalid, which
-            // degenerates Arrive() into a raw mid-map GenSpawn. Fall back to a guaranteed edge
-            // walk-in anchored on a valid edge cell.
+            // TryResolveRaidSpawnCenter can fail (e.g. EdgeWalkIn when no pawn can path to an edge
+            // cell). A failed resolve leaves parms.spawnCenter invalid, degenerating Arrive() into a
+            // raw mid-map GenSpawn. Fall back to a guaranteed edge walk-in on a valid edge cell.
             if (!parms.raidArrivalMode.Worker.TryResolveRaidSpawnCenter(parms))
             {
                 parms.raidArrivalMode = PawnsArrivalModeDefOf.EdgeWalkIn;
@@ -758,33 +797,28 @@ namespace FactionColonies
                 parms.spawnRotation = Rot4.FromAngleFlat((map.Center - parms.spawnCenter).AngleFlat);
             }
 
-            List<Pawn> newAttackers = PawnGroupMakerUtility.GeneratePawns(
+            spawned = PawnGroupMakerUtility.GeneratePawns(
                 IncidentParmsUtility.GetDefaultPawnGroupMakerParms(
                     PawnGroupKindDefOf.Combat, parms, true)).ToList();
-            if (!newAttackers.Any())
+            if (!spawned.Any())
             {
-                LogUtil.Error("Got no pawns spawning attackers for op id=" + op.id + " from parms " + parms);
-                if (!attackerPawns.Any())
-                    LongEventHandler.QueueLongEvent(EndAttack, "EndingAttack", false, null);
-                return;
+                LogUtil.Error($"SpawnForceMatchedGroup: got no pawns for faction {faction.Name} from parms {parms}");
+                return spawned;
             }
 
-            double attackerEfficiency = op.aggressor.force.militaryEfficiency;
-            foreach (Pawn attacker in newAttackers)
-            {
-                MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(attacker, attackerEfficiency);
-            }
+            double efficiency = force.militaryEfficiency;
+            foreach (Pawn p in spawned)
+                MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(p, efficiency);
 
-            parms.raidArrivalMode.Worker.Arrive(newAttackers, parms);
+            parms.raidArrivalMode.Worker.Arrive(spawned, parms);
 
-            op.aggressor.pawns.AddRange(newAttackers);
-            op.aggressor.initialPawnCount += newAttackers.Count;
+            targetPawnList.AddRange(spawned);
+            initialPawnCount += spawned.Count;
 
-            WorldSettlementFC settlement = ParentSettlement;
-            LordMaker.MakeNewLord(
-                parms.faction,
-                new LordJob_HuntColonists(settlement, parms.raidArrivalMode != PawnsArrivalModeDefOf.CenterDrop),
-                map, newAttackers);
+            LordJob lordJob = lordFactory(spawned, parms.spawnCenter, parms.raidArrivalMode);
+            if (lordJob is object)
+                LordMaker.MakeNewLord(faction, lordJob, map, spawned);
+            return spawned;
         }
 
         /// <summary>Spawns reinforcement defenders for an op if a foreign defending settlement's
@@ -1726,22 +1760,6 @@ namespace FactionColonies
         {
             return Find.WorldObjects.Caravans.Any(c =>
                 c.Tile == tile && c.Faction == Faction.OfPlayer);
-        }
-
-        private static int CountOtherSettlementBattleMaps()
-        {
-            int count = 0;
-            FactionFC faction = FindFC.FactionComp;
-            if (faction is null) return 0;
-            foreach (WorldSettlementFC settlement in faction.settlements)
-            {
-                if (settlement.Map != null)
-                {
-                    bool underAttack = FindFC.MilitaryManager?.HasDefenseAt(settlement) ?? false;
-                    if (underAttack) count++;
-                }
-            }
-            return count;
         }
     }
 }
