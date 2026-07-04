@@ -131,8 +131,12 @@ namespace FactionColonies.util
             PawnKindDef laborerKind = ResolveLaborerPawnKind();
 
             // Transport mode mirrors tax delivery (walk-in / drop-pod / shuttle), honoring the forced-mode setting.
+            // The lookup needs a real Empire settlement (its settlementDef supplies the mode).
             bool anyShuttlePort = FindFC.Settlements.Any(s => s.BuildingsComp?.HasBuilding(BuildingFCDefOf.shuttlePort) ?? false);
-            TaxDeliveryMode mode = DeliveryLogistics.TaxDeliveryModeForSettlement(anyShuttlePort, faction.capitalLocation);
+            WorldSettlementFC source = FindFC.Settlements.FirstOrDefault();
+            TaxDeliveryMode mode = source != null
+                ? DeliveryLogistics.TaxDeliveryModeForSettlement(anyShuttlePort, source.Tile)
+                : TaxDeliveryMode.Caravan;
 
             Slate slate = new Slate();
             slate.Set("map", map);

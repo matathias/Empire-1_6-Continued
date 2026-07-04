@@ -40,7 +40,7 @@
           </node>
         </li>
         <!-- Scale competence with average settlement level (no-op when the bonus is 0) -->
-        <li Class="QuestNode_BoostLaborerSkills">
+        <li Class="FactionColonies.QuestNode_BoostLaborerSkills">
           <pawns>$laborers</pawns>
           <skillBonus>$laborerSkillBonus</skillBonus>
         </li>
@@ -68,6 +68,10 @@
           <faction>$permitFaction</faction>
           <pawns>$laborers</pawns>
           <factionType>HomeFaction</factionType>
+          <inSignalsRemovePawn>
+            <li>laborers.RanWild</li>
+            <li>laborers.BecameMutant</li>
+          </inSignalsRemovePawn>
         </li>
         <!-- Any quest end (timer, hostility) walks them off the edge and back to the Empire -->
         <li Class="QuestNode_LeaveOnCleanup">
@@ -141,7 +145,7 @@
             <allowPregnant>false</allowPregnant>
           </node>
         </li>
-        <li Class="QuestNode_BoostLaborerSkills">
+        <li Class="FactionColonies.QuestNode_BoostLaborerSkills">
           <pawns>$laborers</pawns>
           <skillBonus>$laborerSkillBonus</skillBonus>
         </li>
@@ -165,6 +169,10 @@
           <faction>$permitFaction</faction>
           <pawns>$laborers</pawns>
           <factionType>HomeFaction</factionType>
+          <inSignalsRemovePawn>
+            <li>laborers.RanWild</li>
+            <li>laborers.BecameMutant</li>
+          </inSignalsRemovePawn>
         </li>
         <li Class="QuestNode_JoinPlayer">
           <pawns>$laborers</pawns>
