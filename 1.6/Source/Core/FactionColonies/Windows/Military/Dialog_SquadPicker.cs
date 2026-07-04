@@ -314,7 +314,7 @@ namespace FactionColonies
                 TexLoad.DrawHorizontalPeakGradient(gradRect, gradColor);
 
                 Text.Anchor = TextAnchor.MiddleCenter;
-                UIUtil.DrawColoredLabel(winRect, winLbl, dimWin ? ColorUtil.TransformA(winColor, 0.7f) : winColor);
+                UIUtil.DrawColoredLabel(winRect, winLbl, dimWin ? ColorUtil.TransformA(winColor, 0.7f) : winColor, false);
             }
 
             Text.Font = fontBefore;
