@@ -212,6 +212,7 @@ namespace FactionColonies
                 case BattleOperationKind.Raid:
                 case BattleOperationKind.Capture:
                 case BattleOperationKind.Enslave:
+                case BattleOperationKind.Raze:
                     return BattleViewerSide.Attacker;
                 default: return BattleViewerSide.Neither;
             }
@@ -223,6 +224,7 @@ namespace FactionColonies
             {
                 case BattleOperationKind.Raid: return "FCRaidSettlement".Translate();
                 case BattleOperationKind.Capture: return "FCCaptureSettlement".Translate();
+                case BattleOperationKind.Raze: return "FCRazeSettlement".Translate();
                 case BattleOperationKind.Enslave: return "FCEnslavePopulation".Translate();
                 case BattleOperationKind.Defense: return "FCDefendColony".Translate();
                 default: return "?";

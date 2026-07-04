@@ -31,6 +31,16 @@
 	</FactionColonies.FCEventDef>
 
 	<FactionColonies.FCEventDef>
+		<defName>razeEnemySettlement</defName>
+		<label>Raze Enemy Settlement</label>
+		<timeTillTrigger>0</timeTillTrigger>
+		<desc>-Replace Description-</desc>
+
+		<isMilitaryEvent>true</isMilitaryEvent>
+		<category>EC_Military</category>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
 		<defName>cooldownMilitary</defName>
 		<label>Military Cooldown</label>
 		<timeTillTrigger>0</timeTillTrigger>

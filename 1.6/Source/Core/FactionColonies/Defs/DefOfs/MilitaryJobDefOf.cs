@@ -11,6 +11,7 @@ namespace FactionColonies
         public static MilitaryJobDef RaidEnemySettlement;
         public static MilitaryJobDef EnslaveEnemySettlement;
         public static MilitaryJobDef CaptureEnemySettlement;
+        public static MilitaryJobDef RazeEnemySettlement;
         /// <summary>UI-presentation state for a settlement that is foreign-defending another
         /// settlement's defensive battle (lent its squad). The actual op kind is
         /// <see cref="DefendOwnSettlement"/>; this def is just the comp's <c>militaryJob</c>

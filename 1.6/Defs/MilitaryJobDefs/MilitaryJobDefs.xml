@@ -57,6 +57,18 @@
     </FactionColonies.MilitaryJobDef>
 
     <FactionColonies.MilitaryJobDef>
+        <defName>RazeEnemySettlement</defName>
+        <label>raze enemy settlement</label>
+        <description>Burn the settlement to the ground and wipe it from the map. Nothing is annexed or carried home.</description>
+        <handlerClass>FactionColonies.MilitaryJobHandler_Raze</handlerClass>
+        <statusLabelKey>FCMilStatusRazing</statusLabelKey>
+        <floatMenuLabelKey>FCRazeSettlement</floatMenuLabelKey>
+        <floatMenuDescKey>FCRazeFloatMenuOption</floatMenuDescKey>
+        <rewardsDesc>The settlement is destroyed and removed from the world. No loot is taken.</rewardsDesc>
+        <defaultEnabled>false</defaultEnabled>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
         <defName>DefendFriendlySettlement</defName>
         <label>defend friendly settlement</label>
         <statusLabelKey>FCMilStatusDefending</statusLabelKey>
