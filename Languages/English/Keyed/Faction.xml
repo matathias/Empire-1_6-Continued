@@ -172,6 +172,7 @@
 	<FCCaravanSlaverBlocked>Blocked by Pacifist or Egalitarian policy.</FCCaravanSlaverBlocked>
 
 	<!-- Hire Laborers action -->
+	<FCLaborersQuestName>Hired Laborers</FCLaborersQuestName>
 	<FCHireLaborers>Hire Laborers ({0})</FCHireLaborers>
 	<FCHireLaborersCooldown>Laborers cannot be spared for another {0} days.</FCHireLaborersCooldown>
 	<FCHireLaborersReady>Laborers available</FCHireLaborersReady>

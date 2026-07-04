@@ -162,7 +162,10 @@ namespace FactionColonies.util
 
             if (script is null) return;
 
-            QuestUtility.GenerateQuestAndMakeAvailable(script, slate);
+            Quest quest = QuestUtility.GenerateQuestAndMakeAvailable(script, slate);
+            // Give the (hidden) quest a friendly name so the laborers' "work disabled by quest" tooltip
+            // reads nicely instead of the defName (hidden quests otherwise resolve their name to defName).
+            if (quest != null) quest.name = "FCLaborersQuestName".Translate();
 
             // Anchor the cooldown to the laborers' scheduled departure (hire + contract length), so the
             // rest period only begins once they leave and re-hiring stays blocked while they're deployed.

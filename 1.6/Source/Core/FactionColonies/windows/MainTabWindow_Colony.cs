@@ -518,8 +518,13 @@ namespace FactionColonies
                     bool canHire = LaborerHireUtil.CanHire(out string hireReason);
                     if (!canHire && !hireReason.NullOrEmpty())
                         TooltipHandler.TipRegion(laborerRect, hireReason);
+                    // active:false only blocks the click; grey it too so it reads as disabled (matches the
+                    // pool "Actions" button convention above).
+                    Color prevColor = GUI.color;
+                    if (!canHire) GUI.color = Color.gray;
                     if (UIUtil.ClampedButtonText(laborerRect, "FCHireLaborers".Translate(LaborerHireUtil.CurrentCost()), active: canHire))
                         LaborerHireUtil.HireLaborers();
+                    GUI.color = prevColor;
                 }
                 x += laborerRect.width + margin;
             }
