@@ -1004,6 +1004,14 @@ namespace FactionColonies
             new FloatMenuOption("FCBattleModeHybrid".Translate() + " - " + "FCBattleModeHybridDesc".Translate(), () => battleMode = BattleMode.Hybrid)
         };
 
+        // Offense has no Hybrid state (the caravan-on-tile heuristic doesn't map to attacking), so
+        // it is a simple Auto / Manual toggle backed by the manualOffenseBattle bool.
+        private List<FloatMenuOption> OffenseBattleModeOptions => new List<FloatMenuOption>
+        {
+            new FloatMenuOption("FCBattleModeAuto".Translate() + " - " + "FCOffenseBattleModeAutoDesc".Translate(), () => manualOffenseBattle = false),
+            new FloatMenuOption("FCBattleModeManual".Translate() + " - " + "FCOffenseBattleModeManualDesc".Translate(), () => manualOffenseBattle = true)
+        };
+
         /// <summary>
         /// Creates a list of options for tax notification mode
         /// </summary>
@@ -1403,8 +1411,20 @@ namespace FactionColonies
             ls.CheckboxLabeled("FCSettingDisableHostileMilActions".Translate(), ref disableHostileMilitaryActions);
             ls.CheckboxLabeled("FCSettingAntiExploit".Translate(), ref antiExploit, "FCSettingAntiExploitTip".Translate());
             ls.CheckboxLabeled("FCSettingRestrictDefenseMapLoot".Translate(), ref restrictDefenseMapLoot, "FCSettingRestrictDefenseMapLootTip".Translate());
-            if (ls.ButtonText("FCSettingBattleMode".Translate() + battleMode)) Find.WindowStack.Add(new FloatMenu(BattleModeOptions));
-            ls.CheckboxLabeled("FCSettingManualOffenseBattle".Translate(), ref manualOffenseBattle, "FCSettingManualOffenseBattleTip".Translate());
+            // Defense battle mode (Auto / Manual / Hybrid) -- button + tooltip.
+            Rect defenseModeRect = ls.GetRect(30f);
+            Widgets.DrawHighlightIfMouseover(defenseModeRect);
+            TooltipHandler.TipRegion(defenseModeRect, "FCSettingBattleModeTip".Translate());
+            if (Widgets.ButtonText(defenseModeRect, "FCSettingBattleMode".Translate() + battleMode))
+                Find.WindowStack.Add(new FloatMenu(BattleModeOptions));
+
+            // Offense battle mode (Auto / Manual) -- button + tooltip.
+            Rect offenseModeRect = ls.GetRect(30f);
+            Widgets.DrawHighlightIfMouseover(offenseModeRect);
+            TooltipHandler.TipRegion(offenseModeRect, "FCSettingOffenseBattleModeTip".Translate());
+            string offenseModeState = (manualOffenseBattle ? "FCBattleModeManual" : "FCBattleModeAuto").Translate();
+            if (Widgets.ButtonText(offenseModeRect, "FCSettingOffenseBattleMode".Translate() + offenseModeState))
+                Find.WindowStack.Add(new FloatMenu(OffenseBattleModeOptions));
 
             ls.Gap(10f);
 
