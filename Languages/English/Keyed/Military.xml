@@ -111,6 +111,7 @@
 	<FCBattleReportButton>View battle report</FCBattleReportButton>
 	<FCBattleReportButtonNumbered>View battle report (attack {0})</FCBattleReportButtonNumbered>
 	<FCBattleReportNoRoundDetail>Manual battle; no per-round detail recorded.</FCBattleReportNoRoundDetail>
+	<FCBattleReportAwaitingRounds>Battle in progress; awaiting the first round...</FCBattleReportAwaitingRounds>
 	<FCBattleReportEvicted>That battle report has been removed from the archive.</FCBattleReportEvicted>
 	<FCMilitaryTabBattleReports>Battle Reports</FCMilitaryTabBattleReports>
 	<FCBattleArchiveCount>{0} reports</FCBattleArchiveCount>
