@@ -1773,6 +1773,13 @@ namespace FactionColonies
 
         private void EnsureResourcePools()
         {
+            // Protection against save corruption. Though if resourcePools has null fields on a load, then there are likely
+            // other, bigger problems hiding elsewhere...
+            int numNull = resourcePools.RemoveAll(p => p is null);
+            if (numNull > 0)
+            {
+                LogUtil.Warning($"[EnsureResourePools] Removed {numNull} null items from resourcePools");
+            }
             foreach (ResourceTypeDef def in FactionCache.PoolResourceTypeDefs)
             {
                 if (!resourcePools.Any(p => p.resource == def))
