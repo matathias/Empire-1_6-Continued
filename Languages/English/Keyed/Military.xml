@@ -12,9 +12,11 @@
 	<FCCaptureSettlement>Capture Settlement</FCCaptureSettlement>
 	<FCEnslavePopulation>Enslave Population</FCEnslavePopulation>
 	<FCRaidSettlement>Raid Settlement</FCRaidSettlement>
+	<FCRazeSettlement>Raze Settlement</FCRazeSettlement>
 	<FCCaptureFloatMenuOption>Try to capture using {0}'s military (Level {1}).</FCCaptureFloatMenuOption>
 	<FCRaidFloatMenuOption>Try to raid using {0}'s military (Level {1}).</FCRaidFloatMenuOption>
 	<FCEnslaveFloatMenuOption>Try to enslave using {0}'s military (Level {1}).</FCEnslaveFloatMenuOption>
+	<FCRazeFloatMenuOption>Try to raze using {0}'s military (Level {1}).</FCRazeFloatMenuOption>
 
 	<!-- Attack Notifications -->
 	<FCSettlementAboutToBeAttacked>{0} is about to be attacked by the {1} faction.</FCSettlementAboutToBeAttacked>
@@ -23,6 +25,7 @@
 	<FCSettlementMilitaryForcesRaiding>{0}'s military forces are raiding {1}</FCSettlementMilitaryForcesRaiding>
 	<FCSettlementMilitaryForcesEnslave>{0}'s military forces are attempting to enslave the population of {1}</FCSettlementMilitaryForcesEnslave>
 	<FCSettlementMilitaryForcesCapturing>{0}'s military forces are attempting to capture {1}</FCSettlementMilitaryForcesCapturing>
+	<FCSettlementMilitaryForcesRazing>{0}'s military forces are razing {1}</FCSettlementMilitaryForcesRazing>
 	<FCSettlementUnderAttack>That settlement is under attack</FCSettlementUnderAttack>
 	<FCSettlementNotBeingAttacked>Settlement is not under attack</FCSettlementNotBeingAttacked>
 	<FCTargetAlreadyBeingAttacked>The target is already being attacked</FCTargetAlreadyBeingAttacked>
@@ -36,6 +39,7 @@
 	<FCMilitarySentCapture>The military forces of {0} have been sent to capture {1}</FCMilitarySentCapture>
 	<FCMilitarySentRaid>The military forces of {0} have been sent to raid {1}</FCMilitarySentRaid>
 	<FCMilitarySentEnslave>The military forces of {0} have been sent to enslave the population of {1}</FCMilitarySentEnslave>
+	<FCMilitarySentRaze>The military forces of {0} have been sent to raze {1}</FCMilitarySentRaze>
 	<FCMilitaryForcesReorganizing>{0}'s military forces are re-organizing after their last mission.</FCMilitaryForcesReorganizing>
 	<FCSquadTraveling>Squad {0} is returning to {1} after their last mission.</FCSquadTraveling>
 	<FCSquadCooldown>Squad {0} is re-organizing at {1} after their last mission.</FCSquadCooldown>
@@ -49,8 +53,13 @@
 	<FCRaidFailure>Raid Failure</FCRaidFailure>
 	<FCRaidEnemySettlementFailure>The raid on {0} has resulted in failure</FCRaidEnemySettlementFailure>
 	<FCCaptureEnemySettlementSuccess>{0}'s military forces have successfully captured {1}. Due to the previous faction's tech level, the starting settlement level of the new settlement is {2}.</FCCaptureEnemySettlementSuccess>
+	<FCCaptureEnemySettlementSuccessManual>{0}'s forces have taken {1}. It will be annexed into your Empire once your forces leave the settlement.</FCCaptureEnemySettlementSuccessManual>
 	<FCCaptureEnemySettlementFailure>{0}'s military forces has failed to capture {1}</FCCaptureEnemySettlementFailure>
 	<FCCaptureBlockedFallbackToRaid>{0}'s military forces overwhelmed {1}'s defenders, but were unable to permanently neutralize the settlement. The squad raided what supplies they could and is returning home.</FCCaptureBlockedFallbackToRaid>
+	<FCRazeEnemySettlementSuccess>{0}'s military forces have razed {1} to the ground. Nothing remains.</FCRazeEnemySettlementSuccess>
+	<FCRazeEnemySettlementSuccessManual>{0}'s forces have overrun {1}. It will be burned to the ground once your forces leave the settlement.</FCRazeEnemySettlementSuccessManual>
+	<FCRazeEnemySettlementFailure>The assault to raze {0} has ended in failure</FCRazeEnemySettlementFailure>
+	<FCRazeBlockedFallbackToRaid>{0}'s military forces overwhelmed {1}'s defenders, but were unable to burn the settlement down. The squad raided what supplies they could and is returning home.</FCRazeBlockedFallbackToRaid>
 	<FCOverwhelmingVictory>Overwhelming Victory</FCOverwhelmingVictory>
 	<FCOverwhelmingVictoryDesc>Your military force routed the enemy without taking a single casualty.</FCOverwhelmingVictoryDesc>
 	<FCOverwhelmingVictoryRewardLine>News of the victory reached {0}, granting +{1} happiness and +{2} loyalty.</FCOverwhelmingVictoryRewardLine>
@@ -70,6 +79,15 @@
 	<FCReformCaravanBattleStillActive>The battle isn't over until every hostile has died or left the map.</FCReformCaravanBattleStillActive>
 	<FCManualBattleStarted>Battle for {0}</FCManualBattleStarted>
 	<FCManualBattleStartedDesc>{0} is under attack by {1}! Take command of the settlement's defenses.</FCManualBattleStartedDesc>
+	<FCManualOffenseStarted>Assault begun: {0}</FCManualOffenseStarted>
+	<FCManualOffenseStartedDesc>{0} forces are assaulting {1}. Clear the enemy garrison to win. Draft your attackers to take direct control, or let them assault autonomously.</FCManualOffenseStartedDesc>
+	<FCOffenseWithdraw>Withdraw</FCOffenseWithdraw>
+	<FCOffenseWithdrawDesc>End the assault now. Surviving mobile attackers extract; injured attackers are returned home. The enemy settlement is left intact.</FCOffenseWithdrawDesc>
+	<FCOffenseWatchBattle>Go to battle</FCOffenseWatchBattle>
+	<FCOffenseWatchBattleDesc>Jump the camera to the ongoing assault map.</FCOffenseWatchBattleDesc>
+	<FCJoinAttack>Join Attack</FCJoinAttack>
+	<FCJoinAttackDesc>Send this caravan to reinforce the ongoing assault. Its pawns arrive on the battle map at a map edge under your direct control.</FCJoinAttackDesc>
+	<FCJoinAttackNoBattle>There is no active assault to join at this settlement.</FCJoinAttackNoBattle>
 	<FCAutoBattleCommenced>Battle commenced at {0}</FCAutoBattleCommenced>
 	<FCAutoBattleCommencedDesc>The defenders of {0} have engaged forces from {1}. The settlement remains militarily committed until the battle resolves.</FCAutoBattleCommencedDesc>
 
@@ -98,6 +116,7 @@
 	<FCBattleReportButton>View battle report</FCBattleReportButton>
 	<FCBattleReportButtonNumbered>View battle report (attack {0})</FCBattleReportButtonNumbered>
 	<FCBattleReportNoRoundDetail>Manual battle; no per-round detail recorded.</FCBattleReportNoRoundDetail>
+	<FCBattleReportAwaitingRounds>Battle in progress; awaiting the first round...</FCBattleReportAwaitingRounds>
 	<FCBattleReportEvicted>That battle report has been removed from the archive.</FCBattleReportEvicted>
 	<FCMilitaryTabBattleReports>Battle Reports</FCMilitaryTabBattleReports>
 	<FCBattleArchiveCount>{0} reports</FCBattleArchiveCount>
@@ -226,6 +245,7 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCMilStatusRaiding>Raiding</FCMilStatusRaiding>
 	<FCMilStatusEnslaving>Enslaving</FCMilStatusEnslaving>
 	<FCMilStatusCapturing>Capturing</FCMilStatusCapturing>
+	<FCMilStatusRazing>Razing</FCMilStatusRazing>
 	<FCMilStatusDefending>Defending</FCMilStatusDefending>
 	<FCMilStatusDefendingTarget>Defending {0}</FCMilStatusDefendingTarget>
 	<FCMilStatusTraveling>Returning Home</FCMilStatusTraveling>

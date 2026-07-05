@@ -16,6 +16,7 @@ namespace FactionColonies
         public static FCEventDef raidEnemySettlement;
         public static FCEventDef enslaveEnemySettlement;
         public static FCEventDef captureEnemySettlement;
+        public static FCEventDef razeEnemySettlement;
         public static FCEventDef cooldownMilitary;
         public static FCEventDef settlementBeingAttacked;
         public static FCEventDef autoResolveBattleRound;

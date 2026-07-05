@@ -74,6 +74,10 @@ namespace FactionColonies
         public int recordedTick;
         public BattleOperationKind kind = BattleOperationKind.Other;
         public bool wasManualBattle;
+        /* True when the player voluntarily withdrew from a manual battle rather than being beaten.
+         * A retreat is a failed op, but never an overwhelming/crushing outcome, so it suppresses
+         * IsOverwhelmingVictory (and thus the crushing-defeat letter + cooldown extension + badge). */
+        public bool wasWithdrawal;
 
         public bool AttackerVictory => winner == BattleWinner.Attacker;
         public bool DefenderVictory => winner == BattleWinner.Defender;
@@ -84,6 +88,7 @@ namespace FactionColonies
          * Math.Max(1, ...) floor), so without this gate OV/CD would fire on every
          * micro-skirmish. As long as one side opens with 3+ force, OV/CD is eligible. */
         public bool IsOverwhelmingVictory =>
+            !wasWithdrawal &&
             (Math.Max(attackerInitialForce, defenderInitialForce) >= 3.0) &&
             ((winner == BattleWinner.Attacker && attackerInitialForce > 0
                 && attackerForceRemaining >= attackerInitialForce) ||
@@ -130,6 +135,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref recordedTick, "recordedTick", 0);
             Scribe_Values.Look(ref kind, "kind", BattleOperationKind.Other);
             Scribe_Values.Look(ref wasManualBattle, "wasManualBattle", false);
+            Scribe_Values.Look(ref wasWithdrawal, "wasWithdrawal", false);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit && rounds is null)
                 rounds = new List<RoundEntry>();

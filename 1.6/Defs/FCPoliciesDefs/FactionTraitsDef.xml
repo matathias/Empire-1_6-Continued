@@ -18,9 +18,13 @@
 			<li>- Once per five days, you can deploy a second squad from a single settlement by paying 40% of the squad's cost in Silver</li>
 			<li>- When creating a new settlement, it will start with a Barracks</li>
 			<li>- All military buildings cost 50 less upkeep</li>
+			<li>- Can send your military to raze another faction's settlement, destroying it and wiping it from the map</li>
 		</positiveEffects>
 		<negativeEffects>
 		</negativeEffects>
+		<enabledMilitaryJobs>
+			<li>RazeEnemySettlement</li>
+		</enabledMilitaryJobs>
 		<modExtensions>
 			<li Class="FactionColonies.FCPolicyBehaviorExt_Militaristic">
 				<behaviorClass>FactionColonies.FCPolicyBehavior_Militaristic</behaviorClass>
@@ -95,6 +99,7 @@
 		</incompatiblePolicies>
 		<positiveEffects>
 			<li>- Can send your military to raid another faction's settlement to enslave members of their faction instead of ordinary raiding</li>
+			<li>- Can send your military to raze another faction's settlement, destroying it and wiping it from the map</li>
 			<li>- You can spend silver to increase the loyalty of a settlement</li>
 		</positiveEffects>
 		<negativeEffects>
@@ -111,6 +116,7 @@
 		</statModifiers>
 		<enabledMilitaryJobs>
 			<li>EnslaveEnemySettlement</li>
+			<li>RazeEnemySettlement</li>
 		</enabledMilitaryJobs>
 	</FactionColonies.FCPolicyDef>
 
@@ -169,6 +175,7 @@
 			<li>- The time to upgrade settlements and construct buildings is reduced by 50%</li>
 			<li>- Every settlement receives an extra +3 to worker softcap per level of the settlement</li>
 			<li>- All settlements receive +10% to base tax</li>
+			<li>- Can send your military to raze another faction's settlement, destroying it and wiping it from the map</li>
 		</positiveEffects>
 		<negativeEffects>
 			<li>- The cost to create new settlements is increased by 100%</li>
@@ -183,6 +190,9 @@
 		<blockedMilitaryJobs>
 			<li>CaptureEnemySettlement</li>
 		</blockedMilitaryJobs>
+		<enabledMilitaryJobs>
+			<li>RazeEnemySettlement</li>
+		</enabledMilitaryJobs>
 	</FactionColonies.FCPolicyDef>
 
 	<FactionColonies.FCPolicyDef>

@@ -877,6 +877,10 @@ namespace FactionColonies
             {
                 // TickActions dispatches the tick to interfaces and registries, so it has to run every tick.
                 TickActions();
+                // Offense battle maps have no comp to tick them (defense maps are comp-ticked via
+                // WorldObjectComp_SettlementMilitary). Sweep them here every tick so win/loss
+                // detection matches defense's per-tick responsiveness.
+                OffenseBattlefieldTick();
             }
 
             // Rare tick
@@ -967,6 +971,14 @@ namespace FactionColonies
 
                                 EnemyPower attackerEntry = FindFC.EnemyPower?.GetOrCompute(enemy);
                                 MilitaryForce attackingForce = attackerEntry?.SampleBattleForce(enemy, handicap: true);
+                                // Extra NPC offensive levels boost the raid force (on top of the early-game grace cap).
+                                if (attackingForce is object && FCSettings.extraNPCOffensiveLevels > 0)
+                                {
+                                    attackingForce = new MilitaryForce(
+                                        attackingForce.militaryLevel + FCSettings.extraNPCOffensiveLevels,
+                                        attackingForce.militaryEfficiency,
+                                        attackingForce.homeSettlement, attackingForce.homeFaction);
+                                }
                                 if (attackingForce is null)
                                 {
                                     LogUtil.Warning($"AI attack from {enemy?.Name} aborted: no power entry resolvable.");
@@ -1032,6 +1044,27 @@ namespace FactionColonies
             // Dispatch Tick only to behaviors that override it (no per-tick closure/no-op virtual calls).
             policyManager.TickBehaviors(this);
             laborerCooldown.TickCheckReady();
+        }
+
+        /// <summary>Per-tick sweep of offensive battle maps. Defense maps stay comp-ticked
+        /// (WorldObjectComp_SettlementMilitary.CompTick); offense maps have no comp, so they are
+        /// ticked here. Iterates only isOffense contexts and early-exits instantly when none exist.
+        /// The manager is otherwise event-driven (FCEventMaker.ProcessEvents), so this is a new loop.</summary>
+        private void OffenseBattlefieldTick()
+        {
+            MilitaryOperationManager mgr = FindFC.MilitaryManager;
+            if (mgr?.battlefields is null || mgr.battlefields.Count == 0) return;
+            // Snapshot the offense contexts before ticking: OffenseTick can tear down and mutate the
+            // battlefields dict on resolution.
+            List<BattlefieldContext> contexts = null;
+            foreach (BattlefieldContext ctx in mgr.battlefields.Values)
+            {
+                if (ctx is null || !ctx.isOffense) continue;
+                if (contexts is null) contexts = new List<BattlefieldContext>();
+                contexts.Add(ctx);
+            }
+            if (contexts is null) return;
+            foreach (BattlefieldContext ctx in contexts) ctx.OffenseTick();
         }
 
         #endregion

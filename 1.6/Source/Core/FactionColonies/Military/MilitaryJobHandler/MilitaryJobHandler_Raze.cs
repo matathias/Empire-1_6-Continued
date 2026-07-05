@@ -6,7 +6,7 @@ using Verse;
 
 namespace FactionColonies
 {
-    public class MilitaryJobHandler_Capture : MilitaryJobHandler_Offensive
+    public class MilitaryJobHandler_Raze : MilitaryJobHandler_Offensive
     {
         public override void OnOpCreated(MilitaryOperation op)
         {
@@ -14,14 +14,14 @@ namespace FactionColonies
             if (home is null) return;
 
             int travelTicks = System.Math.Max(0, op.nextPhaseTick - Find.TickManager.TicksGame);
-            string desc = "FCSettlementMilitaryForcesCapturing".Translate(home.Name, op.targetObject?.Label ?? "").ToString();
+            string desc = "FCSettlementMilitaryForcesRazing".Translate(home.Name, op.targetObject?.Label ?? "").ToString();
 
-            op.ScheduleEvent(FCEventDefOf.captureEnemySettlement, home.Tile, travelTicks, desc);
+            op.ScheduleEvent(FCEventDefOf.razeEnemySettlement, home.Tile, travelTicks, desc);
 
             Settlement targetSettlement = op.targetObject as Settlement
                 ?? Find.WorldObjects.SettlementAt(op.targetTile);
             Find.LetterStack.ReceiveLetter("FCMilitaryAction".Translate(),
-                "FCMilitarySentCapture".Translate(home.Name, targetSettlement?.LabelCap ?? (TaggedString)""),
+                "FCMilitarySentRaze".Translate(home.Name, targetSettlement?.LabelCap ?? (TaggedString)""),
                 LetterDefOf.NeutralEvent);
         }
 
@@ -33,42 +33,41 @@ namespace FactionColonies
                 ?? Find.WorldObjects.SettlementAt(op.targetTile);
             if (target is null)
             {
-                LogUtil.Warning("Military capture target at tile " + op.targetTile + " no longer exists");
+                LogUtil.Warning("Military raze target at tile " + op.targetTile + " no longer exists");
                 return;
             }
 
             if (result.AttackerVictory)
             {
-                // A manual battle defers the settlement->colony swap to map teardown so the live
-                // battle map is never destroyed under the player. The abstract (auto-resolve) path
-                // has no map and swaps immediately.
+                // A manual battle defers destroying the settlement to map teardown so the live
+                // battle map is never destroyed under the player. The abstract path has no map and
+                // razes immediately.
                 if (result.wasManualBattle)
-                    DeferManualCapture(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
+                    DeferManualRaze(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
                 else
-                    ApplyCaptureSuccess(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
+                    ApplyRazeSuccess(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
             }
             else if (result.DefenderVictory)
             {
-                string body = "FCCaptureEnemySettlementFailure".Translate(op.aggressor.homeSettlement.Name, target.Name);
+                string body = "FCRazeEnemySettlementFailure".Translate(target.Name);
                 // Fold the crushing-defeat flavor into this single failure letter rather than
                 // sending a separate Crushing Defeat letter.
                 if (MilitaryLetterUtil.IsCrushingLoss(result, playerWon: false))
                     body += "\n\n" + "FCCrushingDefeatDesc".Translate();
-                int reportId = BattleArchiveUtil.ArchiveAndGetId(op, result, BattleOperationKind.Capture);
-                MilitaryLetterUtil.SendBattleReportLetter("FCCaptureSettlement".Translate(),
+                int reportId = BattleArchiveUtil.ArchiveAndGetId(op, result, BattleOperationKind.Raze);
+                MilitaryLetterUtil.SendBattleReportLetter("FCRazeSettlement".Translate(),
                     body, FCLetterDefOf.FCBattleReportLetterNegative,
                     new LookTargets(target), reportId, op);
             }
         }
 
-        /* Shared capture-victory side effects: destroy the target settlement, replace it with a
-         * player-owned WorldSettlementFC, and configure starting prosperity/loyalty. The
-         * overwhelming-victory flavor + reward is folded into the success letter. */
-        private static void ApplyCaptureSuccess(FactionFC faction, WorldSettlementFC home,
-            PlanetTile capturedTile, Settlement target, MilitaryOperation op = null, BattleResult result = null)
+        /* Shared raze-victory side effects: destroy the target settlement outright (no replacement),
+         * defeat the former owner if it was their last settlement, and grant faction XP. Scorched
+         * earth: no loot. The overwhelming-victory flavor + reward is folded into the success letter. */
+        private static void ApplyRazeSuccess(FactionFC faction, WorldSettlementFC home,
+            PlanetTile razedTile, Settlement target, MilitaryOperation op = null, BattleResult result = null)
         {
             string tmpName = target.LabelCap;
-            TechLevel tech = target.Faction.def.techLevel;
             Faction tempFactionLink = target.Faction;
             target.Destroy();
 
@@ -77,20 +76,18 @@ namespace FactionColonies
             // a prefix-return-false leaves Destroyed=false; a postfix that re-adds the object
             // leaves Destroyed=true but the same instance still resolves at the tile.
             bool destructionSucceeded = target.Destroyed
-                && Find.WorldObjects.SettlementAt(capturedTile) != target;
+                && Find.WorldObjects.SettlementAt(razedTile) != target;
             if (!destructionSucceeded)
             {
-                LogUtil.Warning($"Capture: target settlement at {capturedTile} survived Destroy(); " +
+                LogUtil.Warning($"Raze: target settlement at {razedTile} survived Destroy(); " +
                                 "likely destruction-protected. Falling back to raid rewards.");
-                ApplyCaptureFallbackToRaid(faction, home, tempFactionLink, target, op, result);
+                ApplyRazeFallbackToRaid(faction, home, tempFactionLink, target, op, result);
                 return;
             }
 
             // XP grant moved past the destruction check so the fallback path doesn't double up
             // (ApplyVictoryToTarget grants its own +5f).
             faction.AddExperienceToFactionLevel(5f);
-
-            WorldSettlementFC worldsettlement = ColonyUtil.SetupCapturedSettlement(capturedTile, tmpName, tech);
 
             bool defeated = !Find.WorldObjects.Settlements.Any(settlement => settlement.Faction != null
                 && settlement.Faction == tempFactionLink);
@@ -100,7 +97,7 @@ namespace FactionColonies
                 tempFactionLink.defeated = true;
             }
 
-            string body = "FCCaptureEnemySettlementSuccess".Translate(home.Name, worldsettlement.Name, worldsettlement.settlementLevel);
+            string body = "FCRazeEnemySettlementSuccess".Translate(home.Name, tmpName);
 
             // Fold the overwhelming-victory flavor + happiness/loyalty reward into this single
             // letter rather than sending a separate Overwhelming Victory letter.
@@ -110,55 +107,54 @@ namespace FactionColonies
                 MilitaryLetterUtil.ApplyOverwhelmingVictoryReward(home, ref body);
             }
 
-            int reportId = BattleArchiveUtil.ArchiveAndGetId(op, op?.result, BattleOperationKind.Capture);
-            MilitaryLetterUtil.SendBattleReportLetter("FCCaptureSettlement".Translate(),
+            int reportId = BattleArchiveUtil.ArchiveAndGetId(op, op?.result, BattleOperationKind.Raze);
+            // The target object is gone; anchor the letter to its former tile.
+            MilitaryLetterUtil.SendBattleReportLetter("FCRazeSettlement".Translate(),
                 body, FCLetterDefOf.FCBattleReportLetterPositive,
-                new LookTargets(worldsettlement), reportId, op);
+                new LookTargets(razedTile), reportId, op);
         }
 
-        /* Deferred capture for a MANUAL offensive battle: the squad won on the enemy base's real
-         * map. Grant XP and send the battle report now, but record the settlement->colony swap on
-         * the tile's BattlefieldContext so it runs at map teardown (once the player's forces leave),
-         * never destroying a live map under the player. SetupCapturedSettlement sends its own
-         * "settlement formed" letter when the colony is stood up. */
-        private static void DeferManualCapture(FactionFC faction, WorldSettlementFC home,
-            PlanetTile capturedTile, Settlement target, MilitaryOperation op, BattleResult result)
+        /* Deferred raze for a MANUAL offensive battle: the squad won on the enemy base's real map.
+         * Grant XP and send the battle report now, but record the settlement destruction on the
+         * tile's BattlefieldContext so it runs at map teardown (once the player's forces leave),
+         * never destroying a live map under the player. */
+        private static void DeferManualRaze(FactionFC faction, WorldSettlementFC home,
+            PlanetTile razedTile, Settlement target, MilitaryOperation op, BattleResult result)
         {
             string tmpName = target.LabelCap;
-            TechLevel tech = target.Faction.def.techLevel;
 
             faction.AddExperienceToFactionLevel(5f);
 
-            BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(capturedTile);
+            BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(razedTile);
             if (bf is object)
-                bf.RegisterPendingCapture(tmpName, tech);
+                bf.RegisterPendingRaze();
             else
-                LogUtil.Warning($"DeferManualCapture: no battlefield at {capturedTile}; deferred capture will not complete.");
+                LogUtil.Warning($"DeferManualRaze: no battlefield at {razedTile}; deferred raze will not complete.");
 
-            string body = "FCCaptureEnemySettlementSuccessManual".Translate(home.Name, tmpName);
+            string body = "FCRazeEnemySettlementSuccessManual".Translate(home.Name, tmpName);
             if (MilitaryLetterUtil.IsOverwhelmingWin(result, playerWon: true))
             {
                 body += "\n\n" + "FCOverwhelmingVictoryDesc".Translate();
                 MilitaryLetterUtil.ApplyOverwhelmingVictoryReward(home, ref body);
             }
-            int reportId = BattleArchiveUtil.ArchiveAndGetId(op, op?.result, BattleOperationKind.Capture);
-            MilitaryLetterUtil.SendBattleReportLetter("FCCaptureSettlement".Translate(),
+            int reportId = BattleArchiveUtil.ArchiveAndGetId(op, op?.result, BattleOperationKind.Raze);
+            MilitaryLetterUtil.SendBattleReportLetter("FCRazeSettlement".Translate(),
                 body, FCLetterDefOf.FCBattleReportLetterPositive,
-                new LookTargets(new GlobalTargetInfo(capturedTile)), reportId, op);
+                new LookTargets(new GlobalTargetInfo(razedTile)), reportId, op);
         }
 
-        /* Failed-capture fallback: target's Destroy() was blocked by another mod, but the squad
-         * won the battle. Send a "couldn't permanently neutralize, raided supplies instead" letter
-         * and route through Raid's victory side effects (loot + optional prisoner + delivery). */
-        private static void ApplyCaptureFallbackToRaid(FactionFC faction, WorldSettlementFC home,
+        /* Failed-raze fallback: target's Destroy() was blocked by another mod, but the squad won
+         * the battle. Send a "couldn't burn it down, plundered supplies instead" letter and route
+         * through Raid's victory side effects (loot + optional prisoner + delivery). */
+        private static void ApplyRazeFallbackToRaid(FactionFC faction, WorldSettlementFC home,
             Faction enemyFaction, Settlement target, MilitaryOperation op = null, BattleResult result = null)
         {
             // The fallback letter doesn't archive — it's a one-line "fallback" notice. The
             // raid victory below archives via Raid.ApplyVictoryToTarget's letter, which
             // is the one with the meaningful battle report context (and folds in OV flavor).
             Find.LetterStack.ReceiveLetter(
-                "FCCaptureSettlement".Translate(),
-                "FCCaptureBlockedFallbackToRaid".Translate(home.Name, target.LabelCap),
+                "FCRazeSettlement".Translate(),
+                "FCRazeBlockedFallbackToRaid".Translate(home.Name, target.LabelCap),
                 LetterDefOf.NeutralEvent, new LookTargets(target));
             MilitaryJobHandler_Raid.ApplyVictoryToTarget(faction, home, enemyFaction, target, op, result);
         }

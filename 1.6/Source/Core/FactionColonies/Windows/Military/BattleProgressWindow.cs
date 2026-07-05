@@ -347,13 +347,19 @@ namespace FactionColonies
             UIUtil.DrawColoredBox(rect, Color.gray);
             Rect inner = rect.ContractedBy(4f);
 
-            // Manual battles have no per-round data — show a placeholder instead of an
-            // empty header + empty scroll viewport.
+            // No per-round data — show a placeholder instead of an empty header + empty scroll
+            // viewport. Manual battles record no rolls at all; an auto battle can also momentarily
+            // have no rounds while it's still preparing (before the first roll). Pick the text by
+            // battle type so an in-progress auto battle isn't mislabeled "Manual battle".
             if (br.rounds is null || br.rounds.Count == 0)
             {
+                string placeholder = br.wasManualBattle
+                    ? "FCBattleReportNoRoundDetail".Translate()
+                    : "FCBattleReportAwaitingRounds".Translate();
+
                 Text.Anchor = TextAnchor.MiddleCenter;
                 Text.Font = GameFont.Small;
-                UIUtil.DrawColoredLabel(inner, "FCBattleReportNoRoundDetail".Translate(), ColorUtil.Gray7);
+                UIUtil.DrawColoredLabel(inner, placeholder, ColorUtil.Gray7);
                 Text.Anchor = TextAnchor.UpperLeft;
                 return;
             }

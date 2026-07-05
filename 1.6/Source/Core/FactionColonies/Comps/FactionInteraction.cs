@@ -37,7 +37,13 @@ namespace FactionColonies
             if (FindFC.FactionComp.IsActionAllowed(FCActionType.SendDiplomat))
                 yield return PeacefulAction(factionFC, faction);
 
-            if (FindFC.FactionComp.IsActionAllowed(FCActionType.DeployMilitary))
+            // Suppress the launch-attack gizmo while an Empire military operation is actively
+            // targeting this settlement (a squad en route or a battle in progress, manual or auto) --
+            // you can't launch a new attack on a settlement that is already an active target. Ops in
+            // cooldown are ignored: that battle is over, so a fresh attack is allowed again. During an
+            // offense the enemy settlement instead shows the "Join Attack" control (WorldObjectComp_OffenseControls).
+            bool underActiveOp = FindFC.MilitaryManager?.HasActiveOpAt(tile) ?? false;
+            if (!underActiveOp && FindFC.FactionComp.IsActionAllowed(FCActionType.DeployMilitary))
                 yield return HostileAction(factionFC, faction, tile);
         }
 

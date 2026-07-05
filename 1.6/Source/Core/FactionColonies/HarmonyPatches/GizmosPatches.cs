@@ -23,6 +23,12 @@ namespace FactionColonies
             WorldSettlementFC settlementFc = __instance.Map.Parent as WorldSettlementFC;
             if (settlementFc == null)
             {
+                // Offense: the map parent is a vanilla enemy Settlement under an active Empire assault.
+                RimWorld.Planet.Settlement enemySettlement = __instance.Map.Parent as RimWorld.Planet.Settlement;
+                if (enemySettlement is null) return;
+                BattlefieldContext offBf = FindFC.MilitaryManager?.GetBattlefield(enemySettlement.Tile);
+                if (offBf is null || !offBf.HasOffenseAt()) return;
+                TryAddOffenseDraftGizmo(__instance, offBf, ref __result);
                 return;
             }
 
@@ -149,6 +155,91 @@ namespace FactionColonies
                 }
 
                 __result = output;
+            }
+        }
+
+        /// <summary>Offense mirror of the defense draft/undraft toggle. Records drafted attackers into
+        /// the offense <see cref="BattlefieldContext.draftedNPCs"/> (restored on teardown) and, on
+        /// undraft, rejoins the <see cref="LordJob_AssaultColony"/> assault lord rather than the
+        /// defense lord. Uses a distinct groupKey so offense and defense draft gizmos never merge.</summary>
+        static void TryAddOffenseDraftGizmo(Pawn pawn, BattlefieldContext bf, ref IEnumerable<Gizmo> result)
+        {
+            Faction empire = FindFC.EmpireFaction;
+
+            // Draft toggle for an Empire attacker not yet drafted (sub-pawns follow their merc's faction).
+            if (pawn.Faction == empire && FindFC.Military?.FindSubPawnWrapper(pawn) is null)
+            {
+                Pawn p = pawn;
+                Command_Toggle draft = new Command_Toggle
+                {
+                    hotKey = KeyBindingDefOf.Command_ColonistDraft,
+                    isActive = () => false,
+                    toggleAction = () =>
+                    {
+                        if (p.Faction == Faction.OfPlayer) return;
+                        p.SetFaction(Faction.OfPlayer);
+                        if (p.drafter != null) p.drafter.Drafted = true;
+                        Mercenary drafted = FindFC.Military?.FindMercByPawn(p);
+                        if (drafted != null)
+                        {
+                            MercenaryPawnFactory.RebindMechs(drafted);
+                            RemountMerc(drafted);
+                        }
+                        if (!bf.draftedNPCs.Contains(p)) bf.draftedNPCs.Add(p);
+                    },
+                    defaultDesc = "CommandToggleDraftDesc".Translate(),
+                    icon = TexCommand.Draft,
+                    turnOnSound = SoundDefOf.DraftOn,
+                    groupKey = 81729173,
+                    defaultLabel = "CommandDraftLabel".Translate()
+                };
+                if (pawn.Downed) draft.Disable("IsIncapped".Translate(pawn.LabelShort, pawn));
+                draft.tutorTag = "Draft";
+                result = result.Append(draft);
+                return;
+            }
+
+            // Undraft toggle for a drafted Empire attacker: rejoin the assault lord.
+            if (pawn.Faction == Faction.OfPlayer && pawn.Drafted && bf.draftedNPCs.Contains(pawn))
+            {
+                Pawn found = pawn;
+                List<Gizmo> output = result.ToList();
+                foreach (Gizmo gizmo in output)
+                {
+                    Command_Toggle action = gizmo as Command_Toggle;
+                    if (action != null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
+                    {
+                        action.toggleAction = () =>
+                        {
+                            found.SetFaction(FindFC.EmpireFaction);
+                            bf.draftedNPCs.Remove(found);
+                            Mercenary merc = FindFC.Military?.FindMercByPawn(found);
+                            if (merc != null) MercenaryPawnFactory.RebindMechs(merc);
+
+                            List<Pawn> rejoin = new List<Pawn> { found };
+                            if (merc != null)
+                                foreach (Mercenary sub in merc.SubPawns())
+                                    if (sub?.pawn != null && sub.pawn.Spawned && !sub.pawn.Dead)
+                                        rejoin.Add(sub.pawn);
+
+                            Lord assaultLord = found.Map?.lordManager?.lords
+                                .FirstOrDefault(l => l != null && l.faction == FindFC.EmpireFaction
+                                                     && l.LordJob is LordJob_AssaultColony);
+                            if (assaultLord != null)
+                            {
+                                foreach (Pawn rp in rejoin)
+                                    if (!assaultLord.ownedPawns.Contains(rp))
+                                        assaultLord.AddPawn(rp);
+                                assaultLord.CurLordToil?.UpdateAllDuties();
+                                foreach (Pawn rp in rejoin)
+                                    rp.jobs?.EndCurrentJob(JobCondition.InterruptForced);
+                            }
+                            if (merc != null) RemountMerc(merc);
+                        };
+                        break;
+                    }
+                }
+                result = output;
             }
         }
 

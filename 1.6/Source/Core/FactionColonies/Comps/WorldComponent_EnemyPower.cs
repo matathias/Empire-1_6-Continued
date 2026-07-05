@@ -222,6 +222,13 @@ namespace FactionColonies
             if (entry is null) return null;
 
             MilitaryForce force = entry.SampleBattleForce(op.defender.faction);
+            // Extra NPC defensive levels: only when the player is the aggressor (player-attacks-NPC),
+            // not NPC-vs-NPC or player-defends. Rebuild via the ctor so forceRemaining is recomputed.
+            if (op.IsOffensive && FCSettings.extraNPCDefensiveLevels > 0)
+            {
+                force = new MilitaryForce(force.militaryLevel + FCSettings.extraNPCDefensiveLevels,
+                    force.militaryEfficiency, force.homeSettlement, force.homeFaction);
+            }
             BattleModifierRegistry.InvokeBattleModifiers(ctx, force, isAttacker: false);
             return force;
         }

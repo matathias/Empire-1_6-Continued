@@ -1176,33 +1176,8 @@ namespace FactionColonies
         {
             // Clean up Empire faction pawns to prevent ghost colonists in the world pawn pool.
             // By this point all player pawns have left (ShouldRemoveMapNow confirmed no blockers).
-            var map = Map;
-            Faction empireFaction = FindFC.EmpireFaction;
-            if (empireFaction is object && map is object)
-            {
-                foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned.ToList())
-                {
-                    // Squad pawns — mercenaries AND their bonded sub-pawns (mechs / companion animals) —
-                    // persist between battles. IsMercenary() now self-heals against a lagging cache, so it
-                    // reliably recognizes a freshly-bonded mech (a stale cache here is what let this method
-                    // wrongly destroy mechs at battle end). Despawn so the squad holds them off-map, not the
-                    // world pawn pool, and restore the Empire faction as a safety net so they redeploy
-                    // correctly next battle. Only genuine generated defenders get destroyed.
-                    if (pawn.IsMercenary())
-                    {
-                        if (pawn.Spawned) pawn.DeSpawn();
-                        if (pawn.Faction != empireFaction) pawn.SetFaction(empireFaction);
-                        continue;
-                    }
-
-                    // Generated (non-squad) Empire defenders are disposable — destroy them so they don't
-                    // ghost into the world pawn pool.
-                    if (pawn.Faction != empireFaction) continue;
-                    pawn.DeSpawn();
-                    if (!pawn.Destroyed)
-                        pawn.Destroy();
-                }
-            }
+            // Shared with the manual-offense teardown so both preserve the squad identically.
+            SquadMapTeardownUtil.PreserveEmpirePawns(Map);
 
             // Squad mercs are now despawned (off-map), so auto-replace any fallen members from a
             // manual battle right at map tear-down — including maps that lingered past the battle's

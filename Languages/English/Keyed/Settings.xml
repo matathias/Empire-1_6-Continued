@@ -60,16 +60,27 @@ Spreading out the computation will reduce the impact on performance, but no road
 	<FCSettingBlockEventsDuringChainDesc>While a multi-step event chain is still resolving, do not fire a new random event even if the time-between-events would allow it. Overrides the frequency setting.</FCSettingBlockEventsDuringChainDesc>
 	<FCSettingEventOptionDelay>Event option misclick protection</FCSettingEventOptionDelay>
 	<FCSettingEventSilverCostMultiplier>Event option silver cost multiplier</FCSettingEventSilverCostMultiplier>
-	<FCSettingBattleMode>Battle Mode: </FCSettingBattleMode>
+	<FCSettingBattleMode>Defense Battle Mode: </FCSettingBattleMode>
+	<FCSettingBattleModeTip>How battles are fought when an enemy attacks one of your settlements.\n\nAuto-Resolve: the outcome is decided by simulated rolls, no map.\nManual: a real map is generated and you defend it in combat.\nHybrid: auto-resolves unless you send a caravan to the settlement and start the battle by clicking the "Defend" gizmo.</FCSettingBattleModeTip>
+	<FCSettingOffenseBattleMode>Offense Battle Mode: </FCSettingOffenseBattleMode>
+	<FCSettingOffenseBattleModeTip>How your offensive operations (raid, capture, enslave) against enemy settlements are fought.\n\nAuto-Resolve: the outcome is decided by simulated rolls, no map.\nManual: the enemy settlement's map is generated and you assault it in combat, using the squad that you sent on the attack. Shares the concurrent-battle-map limit with defense.</FCSettingOffenseBattleModeTip>
 	<FCBattleModeAuto>Auto-Resolve</FCBattleModeAuto>
 	<FCBattleModeAutoDesc>All battles resolve automatically.</FCBattleModeAutoDesc>
 	<FCBattleModeManual>Manual</FCBattleModeManual>
 	<FCBattleModeManualDesc>All battles generate a map for manual combat.</FCBattleModeManualDesc>
 	<FCBattleModeHybrid>Hybrid</FCBattleModeHybrid>
 	<FCBattleModeHybridDesc>Battles auto-resolve unless you send a caravan to defend.</FCBattleModeHybridDesc>
+	<FCOffenseBattleModeAutoDesc>Offensive operations resolve automatically.</FCOffenseBattleModeAutoDesc>
+	<FCOffenseBattleModeManualDesc>Offensive operations generate the enemy settlement's map for manual combat.</FCOffenseBattleModeManualDesc>
 	<FCSettingMinMaxMilitaryAction>Min/Max Days Until Military Action (ex. Settlements being attacked)</FCSettingMinMaxMilitaryAction>
 	<FCSettingMaxThreatScaling>Maximum Threat Scaling</FCSettingMaxThreatScaling>
 	<FCSettingDefenderAdvantage>Defender Advantage</FCSettingDefenderAdvantage>
+	<FCSettingExtraNPCDefensiveLevels>Extra NPC Defensive Levels</FCSettingExtraNPCDefensiveLevels>
+	<FCSettingExtraNPCDefensiveLevelsTip>Extra military levels added to an npc settlement's defending force when you attack it. Does not affect npc raids against you.</FCSettingExtraNPCDefensiveLevelsTip>
+	<FCSettingExtraNPCOffensiveLevels>Extra NPC Offensive Levels</FCSettingExtraNPCOffensiveLevels>
+	<FCSettingExtraNPCOffensiveLevelsTip>Extra military levels for npc raids targeting your settlements. Does not affect your raids against npc settlements.</FCSettingExtraNPCOffensiveLevelsTip>
+	<FCSettingRaidPointsMultiplier>Raid Points Multiplier</FCSettingRaidPointsMultiplier>
+	<FCSettingRaidPointsMultiplierTip>Converts a force's military level into vanilla raid points when spawning attackers or defenders. Higher values mean larger, more dangerous battles. Default 175.</FCSettingRaidPointsMultiplierTip>
 	<FCSettingMaxConcurrentBattleMaps>Max Concurrent Battle Maps</FCSettingMaxConcurrentBattleMaps>
 	<FCSettingMaxConcurrentBattleMapsTip>Maximum number of manual defense battle maps that can be open simultaneously across all settlements. Set to 0 for unlimited. Additional battles beyond this limit will auto-resolve.</FCSettingMaxConcurrentBattleMapsTip>
 	<FCUnlimited>Unlimited</FCUnlimited>

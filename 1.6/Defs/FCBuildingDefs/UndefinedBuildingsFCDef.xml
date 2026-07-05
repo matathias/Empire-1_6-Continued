@@ -4,13 +4,14 @@
 		<defName>barracks</defName> <!--Name of Def -->
 		<isMilitary>true</isMilitary>
 		<label>Barracks</label> <!--Lable of Def -->
-		<desc>A buildings to house the local troops.</desc> <!-- Description of trait -->
-		<cost>250</cost>
+		<desc>A building to house the local troops, letting the settlement muster one additional squad.</desc> <!-- Description of trait -->
+		<cost>400</cost>
 		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
 		<statModifiers>
 			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+			<li><stat>squadCapPerSettlement</stat><value>1</value></li>
 		</statModifiers>
-		<upkeep>30</upkeep>
+		<upkeep>50</upkeep>
 		<postRework>true</postRework>
 		<iconPath>GUI/Buildings/Barracks</iconPath>
 	</FactionColonies.BuildingFCDef>

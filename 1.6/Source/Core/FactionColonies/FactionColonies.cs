@@ -107,6 +107,7 @@ namespace FactionColonies
         public const int DEFAULT_EDGES_PER_ROAD_TICK = 5;
         public const int DEFAULT_ROAD_BUILD_INTERVAL_DAYS = 3;
         public const BattleMode DEFAULT_BATTLE_MODE = BattleMode.Auto;
+        public const bool DEFAULT_MANUAL_OFFENSE_BATTLE = false;
         public const int DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION = 4;
         public const int DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION = 10;
         public const int DEFAULT_MIN_DAYS_TIL_RANDOM_EVENT = 2;
@@ -114,6 +115,10 @@ namespace FactionColonies
         public const float DEFAULT_MAX_THREAT_MULTIPLIER = 3.0f;
         public const float DEFAULT_DEFENDER_ADVANTAGE = 1.15f;
         public const float DEFAULT_EFFICIENCY_DAMPING = 0.5f;
+        // Extra military levels the player can add to NPC forces, and the forceRemaining->raid-points multiplier.
+        public const int DEFAULT_EXTRA_NPC_DEFENSIVE_LEVELS = 0;
+        public const int DEFAULT_EXTRA_NPC_OFFENSIVE_LEVELS = 0;
+        public const float DEFAULT_RAID_POINTS_MULTIPLIER = 175f;
         public const bool DEFAULT_ANTI_EXPLOIT = true;
         public const bool DEFAULT_RESTRICT_DEFENSE_MAP_LOOT = true;
         public const int DEFAULT_MAX_CONCURRENT_BATTLE_MAPS = 3;
@@ -205,6 +210,10 @@ namespace FactionColonies
         public static int edgesPerRoadTick = DEFAULT_EDGES_PER_ROAD_TICK;
         public static int roadBuildIntervalDays = DEFAULT_ROAD_BUILD_INTERVAL_DAYS;
         public static BattleMode battleMode = DEFAULT_BATTLE_MODE;
+        // When true, offensive ops (raid/capture/enslave) can be fought on the target enemy
+        // settlement's real map instead of auto-resolving. Default false = zero behavior change
+        // on upgrade; the player opts in. Shares maxConcurrentBattleMaps with manual defense.
+        public static bool manualOffenseBattle = DEFAULT_MANUAL_OFFENSE_BATTLE;
         public static TaxDeliveryMode forcedTaxDeliveryMode = DEFAULT_TAX_DELIVERY_MODE;
         public static TaxNotificationMode taxNotificationMode = DEFAULT_TAX_NOTIFICATION_MODE;
 
@@ -248,6 +257,13 @@ namespace FactionColonies
         public static float maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
         public static float defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
         public static float efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
+
+        // Extra levels added to NPC settlements when the player attacks them.
+        public static int extraNPCDefensiveLevels = DEFAULT_EXTRA_NPC_DEFENSIVE_LEVELS;
+        // Extra levels added to NPC raids targeting the player (biases faction selection and boosts the raid force).
+        public static int extraNPCOffensiveLevels = DEFAULT_EXTRA_NPC_OFFENSIVE_LEVELS;
+        // Multiplier converting a force's forceRemaining into vanilla raid points.
+        public static float raidPointsMultiplier = DEFAULT_RAID_POINTS_MULTIPLIER;
 
         /* Squad hiring economy. squadHireCostMultiplier scales the up-front silver paid when
          * hiring a squad from a template (1.0 = template's full equipment cost; 0.0 = free).
@@ -487,6 +503,7 @@ namespace FactionColonies
                 roadBuildIntervalDays = DEFAULT_ROAD_BUILD_INTERVAL_DAYS;
             }
             Scribe_Values.Look(ref battleMode, "battleMode", DEFAULT_BATTLE_MODE);
+            Scribe_Values.Look(ref manualOffenseBattle, "manualOffenseBattle", DEFAULT_MANUAL_OFFENSE_BATTLE);
             Scribe_Values.Look(ref minDaysTillMilitaryAction, "minDaysTillMilitaryAction", DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION);
             Scribe_Values.Look(ref maxDaysTillMilitaryAction, "maxDaysTillMilitaryAction", DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION);
             Scribe_Values.Look(ref minDaysTillRandomEvent, "minDaysTillRandomEvent", DEFAULT_MIN_DAYS_TIL_RANDOM_EVENT);
@@ -498,6 +515,9 @@ namespace FactionColonies
             Scribe_Values.Look(ref maxThreatMultiplier, "maxThreatMultiplier", DEFAULT_MAX_THREAT_MULTIPLIER);
             Scribe_Values.Look(ref defenderAdvantage, "defenderAdvantage", DEFAULT_DEFENDER_ADVANTAGE);
             Scribe_Values.Look(ref efficiencyDamping, "efficiencyDamping", DEFAULT_EFFICIENCY_DAMPING);
+            Scribe_Values.Look(ref extraNPCDefensiveLevels, "extraNPCDefensiveLevels", DEFAULT_EXTRA_NPC_DEFENSIVE_LEVELS);
+            Scribe_Values.Look(ref extraNPCOffensiveLevels, "extraNPCOffensiveLevels", DEFAULT_EXTRA_NPC_OFFENSIVE_LEVELS);
+            Scribe_Values.Look(ref raidPointsMultiplier, "raidPointsMultiplier", DEFAULT_RAID_POINTS_MULTIPLIER);
             Scribe_Values.Look(ref maxConcurrentBattleMaps, "maxConcurrentBattleMaps", DEFAULT_MAX_CONCURRENT_BATTLE_MAPS);
             Scribe_Values.Look(ref defenseMapBaseSize, "defenseMapBaseSize", DEFAULT_DEFENSE_MAP_BASE_SIZE);
             Scribe_Values.Look(ref defenseMapPerLevelStep, "defenseMapPerLevelStep", DEFAULT_DEFENSE_MAP_PER_LEVEL_STEP);
@@ -791,11 +811,15 @@ namespace FactionColonies
             antiExploit = DEFAULT_ANTI_EXPLOIT;
             restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
             battleMode = DEFAULT_BATTLE_MODE;
+            manualOffenseBattle = DEFAULT_MANUAL_OFFENSE_BATTLE;
             minDaysTillMilitaryAction = DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION;
             maxDaysTillMilitaryAction = DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION;
             minMaxDaysTillMilitaryAction = new IntRange(minDaysTillMilitaryAction, maxDaysTillMilitaryAction);
             maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
             defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
+            extraNPCDefensiveLevels = DEFAULT_EXTRA_NPC_DEFENSIVE_LEVELS;
+            extraNPCOffensiveLevels = DEFAULT_EXTRA_NPC_OFFENSIVE_LEVELS;
+            raidPointsMultiplier = DEFAULT_RAID_POINTS_MULTIPLIER;
             maxConcurrentBattleMaps = DEFAULT_MAX_CONCURRENT_BATTLE_MAPS;
             defenseMapBaseSize = DEFAULT_DEFENSE_MAP_BASE_SIZE;
             defenseMapPerLevelStep = DEFAULT_DEFENSE_MAP_PER_LEVEL_STEP;
@@ -995,6 +1019,14 @@ namespace FactionColonies
             new FloatMenuOption("FCBattleModeAuto".Translate() + " - " + "FCBattleModeAutoDesc".Translate(), () => battleMode = BattleMode.Auto),
             new FloatMenuOption("FCBattleModeManual".Translate() + " - " + "FCBattleModeManualDesc".Translate(), () => battleMode = BattleMode.Manual),
             new FloatMenuOption("FCBattleModeHybrid".Translate() + " - " + "FCBattleModeHybridDesc".Translate(), () => battleMode = BattleMode.Hybrid)
+        };
+
+        // Offense has no Hybrid state (the caravan-on-tile heuristic doesn't map to attacking), so
+        // it is a simple Auto / Manual toggle backed by the manualOffenseBattle bool.
+        private List<FloatMenuOption> OffenseBattleModeOptions => new List<FloatMenuOption>
+        {
+            new FloatMenuOption("FCBattleModeAuto".Translate() + " - " + "FCOffenseBattleModeAutoDesc".Translate(), () => manualOffenseBattle = false),
+            new FloatMenuOption("FCBattleModeManual".Translate() + " - " + "FCOffenseBattleModeManualDesc".Translate(), () => manualOffenseBattle = true)
         };
 
         /// <summary>
@@ -1396,7 +1428,20 @@ namespace FactionColonies
             ls.CheckboxLabeled("FCSettingDisableHostileMilActions".Translate(), ref disableHostileMilitaryActions);
             ls.CheckboxLabeled("FCSettingAntiExploit".Translate(), ref antiExploit, "FCSettingAntiExploitTip".Translate());
             ls.CheckboxLabeled("FCSettingRestrictDefenseMapLoot".Translate(), ref restrictDefenseMapLoot, "FCSettingRestrictDefenseMapLootTip".Translate());
-            if (ls.ButtonText("FCSettingBattleMode".Translate() + battleMode)) Find.WindowStack.Add(new FloatMenu(BattleModeOptions));
+            // Defense battle mode (Auto / Manual / Hybrid) -- button + tooltip.
+            Rect defenseModeRect = ls.GetRect(30f);
+            Widgets.DrawHighlightIfMouseover(defenseModeRect);
+            TooltipHandler.TipRegion(defenseModeRect, "FCSettingBattleModeTip".Translate());
+            if (Widgets.ButtonText(defenseModeRect, "FCSettingBattleMode".Translate() + battleMode))
+                Find.WindowStack.Add(new FloatMenu(BattleModeOptions));
+
+            // Offense battle mode (Auto / Manual) -- button + tooltip.
+            Rect offenseModeRect = ls.GetRect(30f);
+            Widgets.DrawHighlightIfMouseover(offenseModeRect);
+            TooltipHandler.TipRegion(offenseModeRect, "FCSettingOffenseBattleModeTip".Translate());
+            string offenseModeState = (manualOffenseBattle ? "FCBattleModeManual" : "FCBattleModeAuto").Translate();
+            if (Widgets.ButtonText(offenseModeRect, "FCSettingOffenseBattleMode".Translate() + offenseModeState))
+                Find.WindowStack.Add(new FloatMenu(OffenseBattleModeOptions));
 
             ls.Gap(10f);
 
@@ -1410,6 +1455,18 @@ namespace FactionColonies
 
             defenderAdvantage = ls.SliderTextField("FCSettingDefenderAdvantage",
                 "FCSettingDefenderAdvantage".Translate(), defenderAdvantage, 1.0f, 1.5f, decimals: 2, unit: "x");
+
+            extraNPCDefensiveLevels = ls.SliderTextField("FCSettingExtraNPCDefensiveLevels",
+                "FCSettingExtraNPCDefensiveLevels".Translate(), extraNPCDefensiveLevels, 0, 50,
+                tooltip: "FCSettingExtraNPCDefensiveLevelsTip".Translate());
+
+            extraNPCOffensiveLevels = ls.SliderTextField("FCSettingExtraNPCOffensiveLevels",
+                "FCSettingExtraNPCOffensiveLevels".Translate(), extraNPCOffensiveLevels, 0, 50,
+                tooltip: "FCSettingExtraNPCOffensiveLevelsTip".Translate());
+
+            raidPointsMultiplier = ls.NumericTextField("FCSettingRaidPointsMultiplier",
+                "FCSettingRaidPointsMultiplier".Translate(), raidPointsMultiplier, 1f, 100000f,
+                tooltip: "FCSettingRaidPointsMultiplierTip".Translate());
 
             maxConcurrentBattleMaps = ls.SliderTextField("FCSettingMaxConcurrentBattleMaps",
                 "FCSettingMaxConcurrentBattleMaps".Translate(), maxConcurrentBattleMaps, 0, 10,

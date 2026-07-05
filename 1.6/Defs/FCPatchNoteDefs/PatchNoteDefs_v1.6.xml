@@ -110,4 +110,22 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_7</defName>
+		<label>Manual Offense Battles</label>
+		<description>Adds manual offense battles! With this, you should now be able to run all Empire battles manually!</description>
+		<releaseDate>2026-07-05</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Adds Manual Offense battles (e.g. raid, capture, enslave). Offense battles have their own auto-vs-manual toggle in the settings, independent of defense battles</li>
+		<li>Adds a Raze attack type, the sole objective of which is to destroy the target settlement. Only available to Militaristic, Isolationist, or Authortarian empires</li>
+		<li>Barracks changed: it is more expensive to build and upkeep, but now grants +1 squad slot to its settlement</li>
+		<li>Add mod settings to let the user add additional military levels to npc factions, for added difficulty</li>
+		<li>Add mod setting to let the user control the military level -&gt; raid points conversion</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

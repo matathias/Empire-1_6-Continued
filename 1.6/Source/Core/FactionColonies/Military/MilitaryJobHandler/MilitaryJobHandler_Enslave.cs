@@ -5,7 +5,7 @@ using Verse;
 
 namespace FactionColonies
 {
-    public class MilitaryJobHandler_Enslave : MilitaryJobHandler
+    public class MilitaryJobHandler_Enslave : MilitaryJobHandler_Offensive
     {
         public override bool IsValidTarget(Faction targetFaction) => targetFaction?.def?.defName != "Insect";
 

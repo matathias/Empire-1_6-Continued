@@ -1,6 +1,7 @@
 using FactionColonies.util;
 using HarmonyLib;
 using RimWorld;
+using RimWorld.Planet;
 using System.Linq;
 using Verse;
 using Verse.AI;
@@ -22,7 +23,22 @@ namespace FactionColonies
         static bool Prefix(ref JobDriver_Goto __instance)
         {
             Pawn pawn = __instance.pawn;
-            if (!(pawn.Map?.Parent is WorldSettlementFC settlement)) return true;
+            if (!(pawn.Map?.Parent is WorldSettlementFC settlement))
+            {
+                // Manual offensive battles run on a vanilla enemy Settlement. Undrafted Empire
+                // attackers may freely walk off the edge to extract, but a pawn the player DRAFTED
+                // (now Faction.OfPlayer) must be trapped until the battle resolves -- otherwise the
+                // player could march it off the map and keep it as a free colonist. EndOffense
+                // restores drafted pawns to Empire on teardown, lifting this block.
+                Settlement enemyBase = pawn.Map?.Parent as Settlement;
+                if (enemyBase is object)
+                {
+                    BattlefieldContext offBf = FindFC.MilitaryManager?.GetBattlefield(enemyBase.Tile);
+                    if (offBf is object && offBf.HasOffenseAt() && offBf.draftedNPCs.Contains(pawn))
+                        return false;
+                }
+                return true;
+            }
 
             var military = settlement.MilitaryComp;
             if (military == null || !military.isUnderAttack) return true;

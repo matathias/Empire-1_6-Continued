@@ -162,7 +162,10 @@ namespace FactionColonies
 
             return enemies.RandomElementByWeight(f =>
             {
-                double factionLevel = FindFC.EnemyPower?.GetOrCompute(f)?.level ?? 1.0;
+                // Extra NPC offensive levels raise each faction's effective level before weighting,
+                // so a normally low-tier faction is treated (and later fielded) as if higher-level.
+                double factionLevel = (FindFC.EnemyPower?.GetOrCompute(f)?.level ?? 1.0)
+                                      + FCSettings.extraNPCOffensiveLevels;
                 return (float)ComputeFactionSelectionWeight(factionLevel, avgMilitaryLevel);
             });
         }

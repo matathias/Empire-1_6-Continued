@@ -6,6 +6,9 @@
     <xpath>Defs/WorldObjectDef[defName="Settlement"]/comps</xpath>
     <value>
       <li Class="FactionColonies.WorldObjectCompProperties_FactionInteraction" />
+      <!-- Withdraw / watch-battle controls during an Empire manual offensive battle. Inert on
+           every settlement without an active offense battlefield (and on Empire's own settlements). -->
+      <li Class="FactionColonies.WorldObjectCompProperties_OffenseControls" />
     </value>
   </Operation>
 </Patch>

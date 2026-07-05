@@ -7,7 +7,7 @@ using Verse;
 
 namespace FactionColonies
 {
-    public class MilitaryJobHandler_Raid : MilitaryJobHandler
+    public class MilitaryJobHandler_Raid : MilitaryJobHandler_Offensive
     {
         public override void OnOpCreated(MilitaryOperation op)
         {

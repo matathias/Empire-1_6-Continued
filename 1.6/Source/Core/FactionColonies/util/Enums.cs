@@ -139,7 +139,8 @@ namespace FactionColonies.util
         Raid = 1,
         Capture = 2,
         Enslave = 3,
-        Defense = 4
+        Defense = 4,
+        Raze = 5
     }
 
     /// <summary>

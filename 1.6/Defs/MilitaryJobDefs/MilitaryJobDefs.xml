@@ -36,7 +36,7 @@
     <FactionColonies.MilitaryJobDef>
         <defName>EnslaveEnemySettlement</defName>
         <label>enslave enemy settlement</label>
-        <description>Storm the settlement and take what you can, with an eye on the people instead of their goods</description>
+        <description>Storm the settlement and take what you can, with an eye on the people instead of their goods.</description>
         <handlerClass>FactionColonies.MilitaryJobHandler_Enslave</handlerClass>
         <statusLabelKey>FCMilStatusEnslaving</statusLabelKey>
         <floatMenuLabelKey>FCEnslavePopulation</floatMenuLabelKey>
@@ -54,6 +54,18 @@
         <floatMenuLabelKey>FCCaptureSettlement</floatMenuLabelKey>
         <floatMenuDescKey>FCCaptureFloatMenuOption</floatMenuDescKey>
         <rewardsDesc>The settlement is annexed as a new settlement. Starting level scales with the previous owner's tech level.</rewardsDesc>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>RazeEnemySettlement</defName>
+        <label>raze enemy settlement</label>
+        <description>Burn the settlement to the ground and wipe it from the map. Nothing is annexed or carried home.</description>
+        <handlerClass>FactionColonies.MilitaryJobHandler_Raze</handlerClass>
+        <statusLabelKey>FCMilStatusRazing</statusLabelKey>
+        <floatMenuLabelKey>FCRazeSettlement</floatMenuLabelKey>
+        <floatMenuDescKey>FCRazeFloatMenuOption</floatMenuDescKey>
+        <rewardsDesc>The settlement is destroyed and removed from the world. No loot is taken.</rewardsDesc>
+        <defaultEnabled>false</defaultEnabled>
     </FactionColonies.MilitaryJobDef>
 
     <FactionColonies.MilitaryJobDef>
