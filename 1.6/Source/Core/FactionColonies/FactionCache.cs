@@ -992,6 +992,8 @@ namespace FactionColonies
             _cachedFactionConditionedSituationDefs = null;
             _cachedSettlementConditionedSituationDefs = null;
 
+            CodexTab_Info.InvalidateTreeCache();
+
             InvalidateCustomXenotypeCache();
         }
         /* Custom xenotypes are actually expected to change while the game is loaded, and thus we may have to refresh that specific cache more frequently than the rest.

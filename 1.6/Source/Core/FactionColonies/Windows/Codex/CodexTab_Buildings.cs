@@ -50,7 +50,8 @@ namespace FactionColonies
 
         /* Data model */
         private readonly CodexWindow parentWindow;
-        private readonly List<TechGroup> allTechGroups;
+        private readonly List<TechGroup> allTechGroups = new List<TechGroup>();
+        private bool built;
         private BuildingFCDef selectedBuilding;
         private string searchTerm = "";
 
@@ -84,7 +85,14 @@ namespace FactionColonies
         public CodexTab_Buildings(CodexWindow window)
         {
             parentWindow = window;
-            allTechGroups = new List<TechGroup>();
+        }
+
+        /* Deferred so opening the Codex only pays for the tab that is actually shown. Invoked from
+         * OnTabSelected and every Draw*Pane; the guard makes repeat calls free. */
+        private void EnsureBuilt()
+        {
+            if (built) return;
+            built = true;
 
             foreach (var kvp in FactionCache.BuildingDefsByTechLevel.OrderBy(g => (int)g.Key))
             {
@@ -122,7 +130,7 @@ namespace FactionColonies
                 selectedBuilding = allTechGroups[0].buildings[0];
         }
 
-        public void OnTabSelected() { }
+        public void OnTabSelected() { EnsureBuilt(); }
         public void OnTabDeselected() { }
 
         private static Color GetTechColor(TechLevel level)
@@ -199,6 +207,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawLeftPane(Rect rect)
         {
+            EnsureBuilt();
             // Search bar at top
             Rect searchRect = new Rect(rect.x, rect.y, rect.width, SearchBarHeight);
             string prevSearch = searchTerm;
@@ -288,6 +297,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawCenterPane(Rect rect)
         {
+            EnsureBuilt();
             if (selectedBuilding is null)
             {
                 Text.Font = GameFont.Medium;
@@ -366,6 +376,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawRightPane(Rect rect)
         {
+            EnsureBuilt();
             float contentHeight = CalculateRightPaneHeight(rect.width - ScrollUtil.ScrollbarWidth - 1f);
 
             Rect viewRect = ScrollUtil.BeginScrollView(rect, ref rightScroll, contentHeight);

@@ -38,8 +38,18 @@ namespace FactionColonies
         private static readonly Color SeeAlsoColor = new Color(0.4f, 0.6f, 0.9f);
 
         /* Data model */
-        private readonly List<ModGroup> modGroups;
+        private List<ModGroup> modGroups;
+        private bool built;
         private CodexEntryDef selectedEntry;
+
+        /* The mod -> category -> entry tree is derived purely from immutable def data, so it is
+         * built once and shared across every window that opens the Codex. Per-window expand/select
+         * state lives in the instance fields below, not here. Cleared by FactionCache.InvalidateCache
+         * (e.g. on def reload) so a changed def set rebuilds the tree. */
+        private static List<ModGroup> cachedModGroups;
+
+        /// <summary>Drops the shared entry tree so the next open rebuilds it from current defs.</summary>
+        public static void InvalidateTreeCache() => cachedModGroups = null;
 
         /* Scroll state */
         private Vector2 leftScroll;
@@ -71,9 +81,16 @@ namespace FactionColonies
         public string TabLabel => "FCCodexTabInfo".Translate();
         public bool HasRightPane => true;
 
-        public CodexTab_Info()
+        public CodexTab_Info() { }
+
+        /* Deferred so opening the Codex only pays for the tab that is actually shown. Invoked from
+         * OnTabSelected and every Draw*Pane; the guard makes repeat calls free. */
+        private void EnsureBuilt()
         {
-            modGroups = BuildModGroups();
+            if (built) return;
+            built = true;
+
+            modGroups = cachedModGroups ?? (cachedModGroups = BuildModGroups());
 
             if (modGroups.Count > 0)
             {
@@ -100,7 +117,7 @@ namespace FactionColonies
             }
         }
 
-        public void OnTabSelected() { }
+        public void OnTabSelected() { EnsureBuilt(); }
         public void OnTabDeselected() { }
 
         private static string CatKey(CategoryGroup cg) => cg.modId + "|" + cg.categoryDef.defName;
@@ -148,6 +165,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawLeftPane(Rect rect)
         {
+            EnsureBuilt();
             float measureWidth = rect.width - ScrollUtil.ScrollbarWidth - 1f;
             float totalHeight = CalculateLeftPaneHeight(measureWidth);
             Rect viewRect = ScrollUtil.BeginScrollView(rect, ref leftScroll, totalHeight);
@@ -254,6 +272,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawCenterPane(Rect rect)
         {
+            EnsureBuilt();
             if (selectedEntry is null)
             {
                 Text.Font = GameFont.Medium;
@@ -438,6 +457,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawRightPane(Rect rect)
         {
+            EnsureBuilt();
             float contentHeight = CalculateRightPaneHeight(rect.width - ScrollUtil.ScrollbarWidth - 1f);
 
             Rect viewRect = ScrollUtil.BeginScrollView(rect, ref rightScroll, contentHeight);

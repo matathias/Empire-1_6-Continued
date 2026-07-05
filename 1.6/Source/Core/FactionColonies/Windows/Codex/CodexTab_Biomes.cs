@@ -34,7 +34,8 @@ namespace FactionColonies
 
         /* Data */
         private readonly CodexWindow parentWindow;
-        private readonly List<ModGroup> modGroups;
+        private List<ModGroup> modGroups;
+        private bool built;
         private BiomeEntry selectedEntry;
 
         /* Expand/collapse state (left pane mod groups) */
@@ -75,6 +76,14 @@ namespace FactionColonies
         public CodexTab_Biomes(CodexWindow window)
         {
             parentWindow = window;
+        }
+
+        /* Deferred so opening the Codex only pays for the tab that is actually shown. Invoked from
+         * OnTabSelected, SelectDef, and every Draw*Pane; the guard makes repeat calls free. */
+        private void EnsureBuilt()
+        {
+            if (built) return;
+            built = true;
 
             /* Build entries: only biomes that have a matching BiomeDef. This excludes synthetic
              * defs (e.g. defaultBiome) and lets each biome be attributed to its source mod. */
@@ -134,6 +143,7 @@ namespace FactionColonies
         public bool SelectDef(BiomeResourceDef def)
         {
             if (def is null) return false;
+            EnsureBuilt();
             foreach (ModGroup g in modGroups)
             {
                 foreach (BiomeEntry e in g.biomes)
@@ -151,7 +161,7 @@ namespace FactionColonies
             return false;
         }
 
-        public void OnTabSelected() { }
+        public void OnTabSelected() { EnsureBuilt(); }
         public void OnTabDeselected() { }
 
         /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -159,6 +169,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawLeftPane(Rect rect)
         {
+            EnsureBuilt();
             float totalHeight = CalculateLeftPaneHeight();
             Rect viewRect = ScrollUtil.BeginScrollView(rect, ref leftScroll, totalHeight);
             float curY = 0f;
@@ -254,6 +265,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawCenterPane(Rect rect)
         {
+            EnsureBuilt();
             if (selectedEntry is null)
             {
                 Text.Font = GameFont.Medium;
@@ -315,6 +327,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawRightPane(Rect rect)
         {
+            EnsureBuilt();
             float contentHeight = CalculateRightPaneHeight(rect.width - ScrollUtil.ScrollbarWidth - 1f);
 
             Rect viewRect = ScrollUtil.BeginScrollView(rect, ref rightScroll, contentHeight);
