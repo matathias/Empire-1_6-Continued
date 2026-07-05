@@ -769,8 +769,9 @@ namespace FactionColonies
 
         /// <summary>
         /// Shared force-matched hostile/garrison spawner. Builds raid <see cref="IncidentParms"/>
-        /// sized from <paramref name="force"/> via the same AdjustedRaidPoints(forceRemaining * 175,
-        /// ...) formula (clamped to a 300-point minimum), generates + arrives the pawns, applies
+        /// sized from <paramref name="force"/> via the same
+        /// AdjustedRaidPoints(forceRemaining * <see cref="FCSettings.raidPointsMultiplier"/>, ...)
+        /// formula (clamped to a 300-point minimum), generates + arrives the pawns, applies
         /// combat-efficiency hediffs from <c>force.militaryEfficiency</c>, appends them to
         /// <paramref name="targetPawnList"/>, bumps <paramref name="initialPawnCount"/>, and attaches
         /// the lord the caller supplies via <paramref name="lordFactory"/>. Returns the spawned
@@ -797,7 +798,7 @@ namespace FactionColonies
             };
             parms.points = Math.Max(
                 IncidentWorker_Raid.AdjustedRaidPoints(
-                    (float)force.forceRemaining * 175,
+                    (float)force.forceRemaining * FCSettings.raidPointsMultiplier,
                     PawnsArrivalModeDefOf.EdgeWalkIn, parms.raidStrategy,
                     parms.faction, PawnGroupKindDefOf.Combat,
                     parms.target),

@@ -75,6 +75,12 @@ Spreading out the computation will reduce the impact on performance, but no road
 	<FCSettingMinMaxMilitaryAction>Min/Max Days Until Military Action (ex. Settlements being attacked)</FCSettingMinMaxMilitaryAction>
 	<FCSettingMaxThreatScaling>Maximum Threat Scaling</FCSettingMaxThreatScaling>
 	<FCSettingDefenderAdvantage>Defender Advantage</FCSettingDefenderAdvantage>
+	<FCSettingExtraNPCDefensiveLevels>Extra NPC Defensive Levels</FCSettingExtraNPCDefensiveLevels>
+	<FCSettingExtraNPCDefensiveLevelsTip>Extra military levels added to an npc settlement's defending force when you attack it. Does not affect npc raids against you.</FCSettingExtraNPCDefensiveLevelsTip>
+	<FCSettingExtraNPCOffensiveLevels>Extra NPC Offensive Levels</FCSettingExtraNPCOffensiveLevels>
+	<FCSettingExtraNPCOffensiveLevelsTip>Extra military levels for npc raids targeting your settlements. Does not affect your raids against npc settlements.</FCSettingExtraNPCOffensiveLevelsTip>
+	<FCSettingRaidPointsMultiplier>Raid Points Multiplier</FCSettingRaidPointsMultiplier>
+	<FCSettingRaidPointsMultiplierTip>Converts a force's military level into vanilla raid points when spawning attackers or defenders. Higher values mean larger, more dangerous battles. Default 175.</FCSettingRaidPointsMultiplierTip>
 	<FCSettingMaxConcurrentBattleMaps>Max Concurrent Battle Maps</FCSettingMaxConcurrentBattleMaps>
 	<FCSettingMaxConcurrentBattleMapsTip>Maximum number of manual defense battle maps that can be open simultaneously across all settlements. Set to 0 for unlimited. Additional battles beyond this limit will auto-resolve.</FCSettingMaxConcurrentBattleMapsTip>
 	<FCUnlimited>Unlimited</FCUnlimited>

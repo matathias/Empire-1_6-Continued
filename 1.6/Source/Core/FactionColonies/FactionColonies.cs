@@ -115,6 +115,10 @@ namespace FactionColonies
         public const float DEFAULT_MAX_THREAT_MULTIPLIER = 3.0f;
         public const float DEFAULT_DEFENDER_ADVANTAGE = 1.15f;
         public const float DEFAULT_EFFICIENCY_DAMPING = 0.5f;
+        // Extra military levels the player can add to NPC forces, and the forceRemaining->raid-points multiplier.
+        public const int DEFAULT_EXTRA_NPC_DEFENSIVE_LEVELS = 0;
+        public const int DEFAULT_EXTRA_NPC_OFFENSIVE_LEVELS = 0;
+        public const float DEFAULT_RAID_POINTS_MULTIPLIER = 175f;
         public const bool DEFAULT_ANTI_EXPLOIT = true;
         public const bool DEFAULT_RESTRICT_DEFENSE_MAP_LOOT = true;
         public const int DEFAULT_MAX_CONCURRENT_BATTLE_MAPS = 3;
@@ -253,6 +257,13 @@ namespace FactionColonies
         public static float maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
         public static float defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
         public static float efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
+
+        // Extra levels added to NPC settlements when the player attacks them.
+        public static int extraNPCDefensiveLevels = DEFAULT_EXTRA_NPC_DEFENSIVE_LEVELS;
+        // Extra levels added to NPC raids targeting the player (biases faction selection and boosts the raid force).
+        public static int extraNPCOffensiveLevels = DEFAULT_EXTRA_NPC_OFFENSIVE_LEVELS;
+        // Multiplier converting a force's forceRemaining into vanilla raid points.
+        public static float raidPointsMultiplier = DEFAULT_RAID_POINTS_MULTIPLIER;
 
         /* Squad hiring economy. squadHireCostMultiplier scales the up-front silver paid when
          * hiring a squad from a template (1.0 = template's full equipment cost; 0.0 = free).
@@ -504,6 +515,9 @@ namespace FactionColonies
             Scribe_Values.Look(ref maxThreatMultiplier, "maxThreatMultiplier", DEFAULT_MAX_THREAT_MULTIPLIER);
             Scribe_Values.Look(ref defenderAdvantage, "defenderAdvantage", DEFAULT_DEFENDER_ADVANTAGE);
             Scribe_Values.Look(ref efficiencyDamping, "efficiencyDamping", DEFAULT_EFFICIENCY_DAMPING);
+            Scribe_Values.Look(ref extraNPCDefensiveLevels, "extraNPCDefensiveLevels", DEFAULT_EXTRA_NPC_DEFENSIVE_LEVELS);
+            Scribe_Values.Look(ref extraNPCOffensiveLevels, "extraNPCOffensiveLevels", DEFAULT_EXTRA_NPC_OFFENSIVE_LEVELS);
+            Scribe_Values.Look(ref raidPointsMultiplier, "raidPointsMultiplier", DEFAULT_RAID_POINTS_MULTIPLIER);
             Scribe_Values.Look(ref maxConcurrentBattleMaps, "maxConcurrentBattleMaps", DEFAULT_MAX_CONCURRENT_BATTLE_MAPS);
             Scribe_Values.Look(ref defenseMapBaseSize, "defenseMapBaseSize", DEFAULT_DEFENSE_MAP_BASE_SIZE);
             Scribe_Values.Look(ref defenseMapPerLevelStep, "defenseMapPerLevelStep", DEFAULT_DEFENSE_MAP_PER_LEVEL_STEP);
@@ -803,6 +817,9 @@ namespace FactionColonies
             minMaxDaysTillMilitaryAction = new IntRange(minDaysTillMilitaryAction, maxDaysTillMilitaryAction);
             maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
             defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
+            extraNPCDefensiveLevels = DEFAULT_EXTRA_NPC_DEFENSIVE_LEVELS;
+            extraNPCOffensiveLevels = DEFAULT_EXTRA_NPC_OFFENSIVE_LEVELS;
+            raidPointsMultiplier = DEFAULT_RAID_POINTS_MULTIPLIER;
             maxConcurrentBattleMaps = DEFAULT_MAX_CONCURRENT_BATTLE_MAPS;
             defenseMapBaseSize = DEFAULT_DEFENSE_MAP_BASE_SIZE;
             defenseMapPerLevelStep = DEFAULT_DEFENSE_MAP_PER_LEVEL_STEP;
@@ -1438,6 +1455,18 @@ namespace FactionColonies
 
             defenderAdvantage = ls.SliderTextField("FCSettingDefenderAdvantage",
                 "FCSettingDefenderAdvantage".Translate(), defenderAdvantage, 1.0f, 1.5f, decimals: 2, unit: "x");
+
+            extraNPCDefensiveLevels = ls.SliderTextField("FCSettingExtraNPCDefensiveLevels",
+                "FCSettingExtraNPCDefensiveLevels".Translate(), extraNPCDefensiveLevels, 0, 50,
+                tooltip: "FCSettingExtraNPCDefensiveLevelsTip".Translate());
+
+            extraNPCOffensiveLevels = ls.SliderTextField("FCSettingExtraNPCOffensiveLevels",
+                "FCSettingExtraNPCOffensiveLevels".Translate(), extraNPCOffensiveLevels, 0, 50,
+                tooltip: "FCSettingExtraNPCOffensiveLevelsTip".Translate());
+
+            raidPointsMultiplier = ls.NumericTextField("FCSettingRaidPointsMultiplier",
+                "FCSettingRaidPointsMultiplier".Translate(), raidPointsMultiplier, 1f, 100000f,
+                tooltip: "FCSettingRaidPointsMultiplierTip".Translate());
 
             maxConcurrentBattleMaps = ls.SliderTextField("FCSettingMaxConcurrentBattleMaps",
                 "FCSettingMaxConcurrentBattleMaps".Translate(), maxConcurrentBattleMaps, 0, 10,

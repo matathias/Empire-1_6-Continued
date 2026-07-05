@@ -156,5 +156,56 @@ namespace FactionColonies
             lastValues[key] = value;
             return value;
         }
+
+        /// <summary>
+        /// Like <see cref="SliderTextField(Listing_Standard,string,string,float,float,int,string,string)"/>
+        /// but with no slider — just a name label and an editable numeric box. Shares the same
+        /// zebra striping and buffer/last-value resync, so Reset-to-defaults updates the box.
+        /// Use for values with no meaningful bounded range to drag across.
+        /// </summary>
+        public static float NumericTextField(this Listing_Standard ls, string key, string label,
+            float value, float min, float max, int decimals = 0, string unit = null, string tooltip = null)
+        {
+            string format = decimals <= 0 ? "0" : "0." + new string('0', decimals);
+
+            Rect row = ls.GetRect(RowHeight);
+            if (stripe % 2 == 1) Widgets.DrawAltRect(row);
+            if (!tooltip.NullOrEmpty())
+            {
+                Widgets.DrawHighlightIfMouseover(row);
+                TooltipHandler.TipRegion(row, tooltip);
+            }
+            stripe++;
+
+            TextAnchor prevAnchor = Text.Anchor;
+
+            // Name label (far left).
+            Rect labelRect = new Rect(row.x, row.y, row.width * LabelPct, row.height);
+            Text.Anchor = TextAnchor.MiddleLeft;
+            UIUtil.ClampedLabel(labelRect, label);
+
+            // Unit area on the far right — reserved so the box lines up with slider rows.
+            Rect unitRect = new Rect(row.xMax - UnitWidth, row.y, UnitWidth, row.height);
+            if (!unit.NullOrEmpty()) UIUtil.ClampedLabel(unitRect, unit);
+            Text.Anchor = prevAnchor;
+
+            // Editable box, left of the reserved unit area. Wider than a slider-row box since
+            // there's no slider competing for the row's horizontal space.
+            const float wideFieldWidth = FieldWidth * 2f;
+            Rect fieldRect = new Rect(unitRect.x - Gap - wideFieldWidth,
+                row.y + (RowHeight - FieldHeight) / 2f, wideFieldWidth, FieldHeight);
+
+            // Resync the box when the value was changed from outside this widget (e.g. reset).
+            if (!lastValues.TryGetValue(key, out float last) || !Mathf.Approximately(last, value))
+            {
+                buffers[key] = value.ToString(format);
+            }
+
+            string buffer = buffers.TryGetValue(key, out string b) ? b : value.ToString(format);
+            DrawNumericField(fieldRect, ref value, ref buffer, min, max);
+            buffers[key] = buffer;
+            lastValues[key] = value;
+            return value;
+        }
     }
 }

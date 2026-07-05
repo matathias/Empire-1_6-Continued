@@ -971,6 +971,14 @@ namespace FactionColonies
 
                                 EnemyPower attackerEntry = FindFC.EnemyPower?.GetOrCompute(enemy);
                                 MilitaryForce attackingForce = attackerEntry?.SampleBattleForce(enemy, handicap: true);
+                                // Extra NPC offensive levels boost the raid force (on top of the early-game grace cap).
+                                if (attackingForce is object && FCSettings.extraNPCOffensiveLevels > 0)
+                                {
+                                    attackingForce = new MilitaryForce(
+                                        attackingForce.militaryLevel + FCSettings.extraNPCOffensiveLevels,
+                                        attackingForce.militaryEfficiency,
+                                        attackingForce.homeSettlement, attackingForce.homeFaction);
+                                }
                                 if (attackingForce is null)
                                 {
                                     LogUtil.Warning($"AI attack from {enemy?.Name} aborted: no power entry resolvable.");
