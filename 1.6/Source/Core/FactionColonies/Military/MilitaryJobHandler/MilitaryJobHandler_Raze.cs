@@ -8,11 +8,6 @@ namespace FactionColonies
 {
     public class MilitaryJobHandler_Raze : MilitaryJobHandler_Offensive
     {
-        // Raze's ApplyResult destroys the host Settlement outright (no replacement colony), so a
-        // win tears the live offense map down under the player just like Capture. Force the
-        // immediate-teardown branch on a Raze win.
-        public override bool SkipLootLingerOnWin => true;
-
         public override void OnOpCreated(MilitaryOperation op)
         {
             WorldSettlementFC home = op.aggressor?.homeSettlement;
@@ -44,7 +39,13 @@ namespace FactionColonies
 
             if (result.AttackerVictory)
             {
-                ApplyRazeSuccess(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
+                // A manual battle defers destroying the settlement to map teardown so the live
+                // battle map is never destroyed under the player. The abstract path has no map and
+                // razes immediately.
+                if (result.wasManualBattle)
+                    DeferManualRaze(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
+                else
+                    ApplyRazeSuccess(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
             }
             else if (result.DefenderVictory)
             {
@@ -111,6 +112,35 @@ namespace FactionColonies
             MilitaryLetterUtil.SendBattleReportLetter("FCRazeSettlement".Translate(),
                 body, FCLetterDefOf.FCBattleReportLetterPositive,
                 new LookTargets(razedTile), reportId, op);
+        }
+
+        /* Deferred raze for a MANUAL offensive battle: the squad won on the enemy base's real map.
+         * Grant XP and send the battle report now, but record the settlement destruction on the
+         * tile's BattlefieldContext so it runs at map teardown (once the player's forces leave),
+         * never destroying a live map under the player. */
+        private static void DeferManualRaze(FactionFC faction, WorldSettlementFC home,
+            PlanetTile razedTile, Settlement target, MilitaryOperation op, BattleResult result)
+        {
+            string tmpName = target.LabelCap;
+
+            faction.AddExperienceToFactionLevel(5f);
+
+            BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(razedTile);
+            if (bf is object)
+                bf.RegisterPendingRaze();
+            else
+                LogUtil.Warning($"DeferManualRaze: no battlefield at {razedTile}; deferred raze will not complete.");
+
+            string body = "FCRazeEnemySettlementSuccessManual".Translate(home.Name, tmpName);
+            if (MilitaryLetterUtil.IsOverwhelmingWin(result, playerWon: true))
+            {
+                body += "\n\n" + "FCOverwhelmingVictoryDesc".Translate();
+                MilitaryLetterUtil.ApplyOverwhelmingVictoryReward(home, ref body);
+            }
+            int reportId = BattleArchiveUtil.ArchiveAndGetId(op, op?.result, BattleOperationKind.Raze);
+            MilitaryLetterUtil.SendBattleReportLetter("FCRazeSettlement".Translate(),
+                body, FCLetterDefOf.FCBattleReportLetterPositive,
+                new LookTargets(new GlobalTargetInfo(razedTile)), reportId, op);
         }
 
         /* Failed-raze fallback: target's Destroy() was blocked by another mod, but the squad won

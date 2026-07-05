@@ -37,13 +37,5 @@ namespace FactionColonies
             if (mgr is null) { op.BeginAutoResolveProgress(); return; }
             mgr.GetOrCreateBattlefield(op.targetTile).StartOffense(op);
         }
-
-        /// <summary>
-        /// When true, a player VICTORY tears the offense map down immediately with no loot-linger.
-        /// Capture overrides this: its ApplyResult destroys the host Settlement (the live map's
-        /// parent) and builds an Empire colony there, so lingering the map for physical looting
-        /// would destroy a live map under the player.
-        /// </summary>
-        public virtual bool SkipLootLingerOnWin => false;
     }
 }

@@ -142,7 +142,8 @@ namespace FactionColonies
             SpawnForceMatchedGroup(
                 op.defender.force, op.defender.faction, op.defender.pawns, ref initial,
                 (pawns, spawnCenter, arriveMode) =>
-                    new LordJob_DefendBase(op.defender.faction, baseCenter, 0));
+                    new LordJob_DefendBase(op.defender.faction, baseCenter, 0),
+                spawnInBaseInterior: true);
             op.defender.initialPawnCount = initial;
 
             if (!op.defender.pawns.Any())
@@ -228,6 +229,47 @@ namespace FactionColonies
             CameraJumper.TryJumpAndSelect(jump);
         }
 
+        /// <summary>Drops a player caravan's pawns into an ongoing assault as player-controlled
+        /// combatants (mirrors joining a manual defense with a caravan). They spawn at a map edge,
+        /// are tracked as attackers so win/loss detection doesn't count the squad as wiped while the
+        /// player's colonists still fight, and count as player pawns for the linger teardown. The
+        /// caravan is consumed. Hostility to the garrison is already guaranteed by the op-launch
+        /// AttackFaction call, so the colonists can engage immediately once the player drafts them.</summary>
+        public void CaravanJoinAttack(Caravan caravan)
+        {
+            if (caravan is null) return;
+            if (map is null || !isOffense)
+            {
+                Messages.Message("FCJoinAttackNoBattle".Translate(), MessageTypeDefOf.RejectInput, false);
+                return;
+            }
+
+            MilitaryOperation op = activeOps?.FirstOrDefault(o => o?.aggressor is object);
+            List<Pawn> pawns = caravan.pawns.InnerListForReading.ListFullCopy();
+
+            // Release the pawns from the caravan container before spawning them (mirrors the defense
+            // CaravanDefend order: copy list -> destroy caravan -> spawn on map).
+            if (!caravan.Destroyed) caravan.Destroy();
+
+            IntVec3 edge = FindNearEdgeCell(map);
+            foreach (Pawn pawn in pawns)
+            {
+                if (pawn.Spawned) continue;
+                IntVec3 loc = CellFinder.RandomClosewalkCellNear(edge, map, 8);
+                GenSpawn.Spawn(pawn, loc, map, Rot4.Random);
+                map.mapPawns.RegisterPawn(pawn);
+            }
+
+            if (op?.aggressor?.pawns is object)
+            {
+                op.aggressor.pawns.AddRange(pawns);
+                op.aggressor.initialPawnCount += pawns.Count;
+            }
+
+            Find.TickManager.Notify_GeneratedPotentiallyHostileMap();
+            CameraJumper.TryJumpAndSelect(new GlobalTargetInfo(map.Center, map));
+        }
+
         /* -*-*-*-*- Tick -*-*-*-*- */
 
         /// <summary>Per-tick offense backstop, called by the FactionFC sweep only for isOffense
@@ -268,11 +310,12 @@ namespace FactionColonies
 
         /// <summary>Resolves the offense: restores drafted attackers, strips efficiency hediffs,
         /// completes each active op (loot / capture / enslave via ApplyResult), then tears the map
-        /// down. A player win with mobile squad pawns still on the map lingers for physical looting
-        /// unless the handler opts out (Capture, whose ApplyResult destroys the host settlement).</summary>
+        /// down following the defense scheme exactly -- close immediately when no player colonists
+        /// are on the map, otherwise linger until they leave.</summary>
         public void EndOffense(bool won)
         {
             Faction empire = FindFC.EmpireFaction;
+            offenseWon = won;
 
             // Restore faction on Empire attackers the player drafted, before resolving -- so the
             // squad reconcile in CompleteBattle sees Empire pawns and drafted mercs rejoin Empire.
@@ -287,16 +330,13 @@ namespace FactionColonies
                     MilitaryEfficiencyUtil.RemoveCombatEfficiencyHediff(p);
 
             // Resolve each active op through the normal abstract outcome path (ApplyResult runs
-            // loot / capture-and-colony / enslave delivery + letter + archive + cooldown).
-            bool skipLinger = false;
+            // loot / enslave delivery + letter + archive + cooldown). A manual Capture win defers
+            // its settlement->colony swap to teardown via RegisterPendingCapture.
             List<MilitaryOperation> ops = activeOps is object
                 ? activeOps.ToList() : new List<MilitaryOperation>();
             foreach (MilitaryOperation op in ops)
             {
                 if (op is null) continue;
-                MilitaryJobHandler_Offensive off = op.kind?.Handler as MilitaryJobHandler_Offensive;
-                if (won && off is object && off.SkipLootLingerOnWin) skipLinger = true;
-
                 op.CompleteBattle(new BattleResult
                 {
                     wasManualBattle = true,
@@ -309,7 +349,7 @@ namespace FactionColonies
                 });
             }
 
-            bool lingering = TeardownOffenseMap(won, skipLinger);
+            bool lingering = TeardownOffenseMap(won);
             endingBattle = false;
             if (lingering)
             {
@@ -324,87 +364,143 @@ namespace FactionColonies
         }
 
         /// <summary>Teardown recipe reimplemented against <c>tile</c> (never calls DeleteMap, which
-        /// dereferences the null ParentSettlement). Returns true when the map was kept alive for a
-        /// post-win loot linger. On a win with mobile pawns and no handler opt-out: idle the mobile
-        /// pawns under a stripped lord, return only downed pawns home, keep the map. Otherwise
-        /// (loss / withdraw / Capture win / all-downed win): return all player pawns home and deinit
-        /// the map immediately.</summary>
-        private bool TeardownOffenseMap(bool won, bool skipLinger)
+        /// dereferences the null ParentSettlement). Mirrors defense DeleteMap exactly: the
+        /// linger-vs-close decision is gated on genuine player colonists (Faction.OfPlayer, e.g. a
+        /// Join Attack caravan), NOT the Empire squad mercs. Returns true when the map is kept alive
+        /// for the player's colonists to leave; the Empire squad is preserved off-map on close.</summary>
+        private bool TeardownOffenseMap(bool won)
         {
             if (map is null) return false;
-            Faction empire = FindFC.EmpireFaction;
 
-            List<Pawn> playerPawns = new List<Pawn>();
+            List<Pawn> playerColonists = new List<Pawn>();
             bool anyMobile = false;
             foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
             {
-                if (pawn.Faction != empire) continue;
-                playerPawns.Add(pawn);
+                if (pawn.Faction != Faction.OfPlayer) continue;
+                playerColonists.Add(pawn);
                 if (!pawn.Downed) anyMobile = true;
             }
 
-            if (won && !skipLinger && anyMobile)
+            if (anyMobile)
             {
-                // LINGER: keep the map alive so the player can physically haul spoils out (pods /
-                // reform caravan). Idle the mobile pawns; return only downed pawns home now.
+                // LINGER: keep the map alive until the player's colonists leave. Idle the surviving
+                // Empire mercs under a stripped lord; return only downed colonists home now.
+                Faction empire = FindFC.EmpireFaction;
                 foreach (Lord lord in map.lordManager.lords.ListFullCopy())
                     map.lordManager.RemoveLord(lord);
-                List<Pawn> idlers = playerPawns.Where(p => !p.Dead && !p.Downed).ToList();
+                List<Pawn> idlers = new List<Pawn>();
+                foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
+                    if (pawn.Faction == empire && !pawn.Dead && !pawn.Downed) idlers.Add(pawn);
                 foreach (Pawn p in idlers) p.jobs?.StopAll();
                 if (idlers.Any())
                     LordMaker.MakeNewLord(empire, new LordJob_ColonistsIdle(null), map, idlers);
-                ReturnOffensePawnsHome(true, playerPawns.Where(p => p.Downed).ToList());
+                ReturnPlayerColonistsHome(won, playerColonists.Where(p => p.Downed).ToList());
                 return true;
             }
 
-            // IMMEDIATE TEARDOWN.
-            foreach (Lord lord in map.lordManager.lords.ListFullCopy())
-                map.lordManager.RemoveLord(lord);
-            ReturnOffensePawnsHome(won, playerPawns);
-
-            CameraJumper.TryJump(tile);
-            if (Find.CurrentMap == map) Current.Game.CurrentMap = Find.AnyPlayerHomeMap;
-            Current.Game.DeinitAndRemoveMap(map, false);
-            map = null;
+            CloseOffenseMap(won, playerColonists);
             return false;
         }
 
-        /// <summary>Finishes a post-win loot linger once the last mobile Empire pawn has left the map
-        /// (via vanilla caravan/pod extraction), then returns any remaining downed pawns and deinits
-        /// the map. Called from OffenseTick while awaitingPlayerExit.</summary>
+        /// <summary>Finishes a loot linger once the last mobile player colonist has left the map
+        /// (via vanilla caravan/pod extraction), then closes the map. Called from OffenseTick while
+        /// awaitingPlayerExit.</summary>
         private void FinishLingerIfEmpty()
         {
             if (map is null) { awaitingPlayerExit = false; isOffense = false; return; }
-            Faction empire = FindFC.EmpireFaction;
 
+            List<Pawn> playerColonists = new List<Pawn>();
             bool anyMobile = false;
-            List<Pawn> remaining = new List<Pawn>();
             foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
             {
-                if (pawn.Faction != empire) continue;
-                remaining.Add(pawn);
+                if (pawn.Faction != Faction.OfPlayer) continue;
+                playerColonists.Add(pawn);
                 if (!pawn.Downed) { anyMobile = true; break; }
             }
-            if (anyMobile) return;   // player still on-map looting
+            if (anyMobile) return;   // player colonists still on-map looting
 
-            foreach (Lord lord in map.lordManager.lords.ListFullCopy())
-                map.lordManager.RemoveLord(lord);
-            ReturnOffensePawnsHome(true, remaining);
-
-            CameraJumper.TryJump(tile);
-            if (Find.CurrentMap == map) Current.Game.CurrentMap = Find.AnyPlayerHomeMap;
-            Current.Game.DeinitAndRemoveMap(map, false);
-            map = null;
+            CloseOffenseMap(offenseWon, playerColonists);
             ClearAllOpPawns();
             awaitingPlayerExit = false;
             isOffense = false;
         }
 
-        /// <summary>Despawns the given Empire pawns, tends the injured, and delivers them back to the
-        /// home settlement via a DeliveryEvent (the DeleteMap injured-return recipe, reimplemented
-        /// against <c>tile</c> and the op's home settlement so it never dereferences the null
-        /// ParentSettlement). A loss adds a one-day return penalty, matching defense.</summary>
-        private void ReturnOffensePawnsHome(bool won, List<Pawn> pawns)
+        /// <summary>Common close path (immediate or linger-end): remove lords, return the player's
+        /// downed colonists home, preserve the Empire squad off-map (the defense-map hook that does
+        /// this never fires on an enemy-Settlement map, so it is invoked explicitly here), deinit the
+        /// map, and complete any deferred Capture swap.</summary>
+        private void CloseOffenseMap(bool won, List<Pawn> playerColonists)
+        {
+            if (map is null) return;
+
+            foreach (Lord lord in map.lordManager.lords.ListFullCopy())
+                map.lordManager.RemoveLord(lord);
+
+            // Player colonists (Join Attack) return home injured; Empire squad mercs are NOT routed
+            // through the delivery event -- the squad holds them off-map via the preserve helper.
+            ReturnPlayerColonistsHome(won, playerColonists);
+            SquadMapTeardownUtil.PreserveEmpirePawns(map);
+            FindFC.Military?.TryAutoReplaceAllSquads();
+
+            Map homeMap = Find.AnyPlayerHomeMap;
+            CameraJumper.TryJump(tile);
+            if (Find.CurrentMap == map && homeMap is object) Current.Game.CurrentMap = homeMap;
+            Current.Game.DeinitAndRemoveMap(map, false);
+            map = null;
+
+            CompletePendingSettlementFate();
+        }
+
+        /// <summary>Records a deferred Capture: a manual Capture win completes the settlement->colony
+        /// swap on map teardown (see <see cref="CompletePendingSettlementFate"/>) rather than during
+        /// CompleteBattle, so the live battle map is never destroyed under the player.</summary>
+        public void RegisterPendingCapture(string name, TechLevel tech)
+        {
+            pendingCapture = true;
+            pendingCaptureName = name;
+            pendingCaptureTech = tech;
+        }
+
+        /// <summary>Records a deferred Raze: a manual Raze win destroys the enemy settlement on map
+        /// teardown rather than during CompleteBattle, so the live battle map is never destroyed
+        /// under the player.</summary>
+        public void RegisterPendingRaze()
+        {
+            pendingRaze = true;
+        }
+
+        /// <summary>Completes a deferred Capture/Raze once the map is gone: destroys the enemy
+        /// settlement world object at this tile and (for Capture) stands up the Empire colony in its
+        /// place via the same ColonyUtil.SetupCapturedSettlement used by the abstract path.</summary>
+        private void CompletePendingSettlementFate()
+        {
+            if (!pendingCapture && !pendingRaze) return;
+            bool capture = pendingCapture;
+            pendingCapture = false;
+            pendingRaze = false;
+
+            Settlement enemy = Find.WorldObjects.SettlementAt(tile);
+            Faction enemyFaction = enemy?.Faction;
+            if (enemy is object && !enemy.Destroyed)
+                enemy.Destroy();
+
+            // Mark the faction defeated if it has no settlements left (mirrors ApplyCaptureSuccess /
+            // ApplyRazeSuccess).
+            if (enemyFaction is object &&
+                !Find.WorldObjects.Settlements.Any(s => s.Faction != null && s.Faction == enemyFaction))
+                enemyFaction.defeated = true;
+
+            if (capture)
+                ColonyUtil.SetupCapturedSettlement(tile, pendingCaptureName, pendingCaptureTech);
+            pendingCaptureName = null;
+            pendingCaptureTech = TechLevel.Undefined;
+        }
+
+        /// <summary>Despawns the given player colonists, tends the injured, and delivers them back to
+        /// the home settlement via a DeliveryEvent (the DeleteMap injured-return recipe, reimplemented
+        /// against <c>tile</c> and the op's home settlement). A loss adds a one-day return penalty,
+        /// matching defense. Empire squad mercs are handled separately by the preserve helper.</summary>
+        private void ReturnPlayerColonistsHome(bool won, List<Pawn> pawns)
         {
             if (pawns is null || pawns.Count == 0) return;
             PlanetTile homeTile = OffenseHomeTile();
@@ -417,7 +513,7 @@ namespace FactionColonies
                     int guard = 0;
                     while (pawn.health.HasHediffsNeedingTend())
                     {
-                        if (++guard > 10000) { LogUtil.Error("ReturnOffensePawnsHome: too many tend iterations."); break; }
+                        if (++guard > 10000) { LogUtil.Error("ReturnPlayerColonistsHome: too many tend iterations."); break; }
                         TendUtility.DoTend(null, pawn, null);
                     }
                 }

@@ -53,9 +53,11 @@
 	<FCRaidFailure>Raid Failure</FCRaidFailure>
 	<FCRaidEnemySettlementFailure>The raid on {0} has resulted in failure</FCRaidEnemySettlementFailure>
 	<FCCaptureEnemySettlementSuccess>{0}'s military forces have successfully captured {1}. Due to the previous faction's tech level, the starting settlement level of the new settlement is {2}.</FCCaptureEnemySettlementSuccess>
+	<FCCaptureEnemySettlementSuccessManual>{0}'s forces have taken {1}. It will be annexed into your Empire once your forces leave the settlement.</FCCaptureEnemySettlementSuccessManual>
 	<FCCaptureEnemySettlementFailure>{0}'s military forces has failed to capture {1}</FCCaptureEnemySettlementFailure>
 	<FCCaptureBlockedFallbackToRaid>{0}'s military forces overwhelmed {1}'s defenders, but were unable to permanently neutralize the settlement. The squad raided what supplies they could and is returning home.</FCCaptureBlockedFallbackToRaid>
 	<FCRazeEnemySettlementSuccess>{0}'s military forces have razed {1} to the ground. Nothing remains.</FCRazeEnemySettlementSuccess>
+	<FCRazeEnemySettlementSuccessManual>{0}'s forces have overrun {1}. It will be burned to the ground once your forces leave the settlement.</FCRazeEnemySettlementSuccessManual>
 	<FCRazeEnemySettlementFailure>The assault to raze {0} has ended in failure</FCRazeEnemySettlementFailure>
 	<FCRazeBlockedFallbackToRaid>{0}'s military forces overwhelmed {1}'s defenders, but were unable to burn the settlement down. The squad raided what supplies they could and is returning home.</FCRazeBlockedFallbackToRaid>
 	<FCOverwhelmingVictory>Overwhelming Victory</FCOverwhelmingVictory>
@@ -83,6 +85,9 @@
 	<FCOffenseWithdrawDesc>End the assault now. Surviving mobile attackers extract; injured attackers are returned home. The enemy settlement is left intact.</FCOffenseWithdrawDesc>
 	<FCOffenseWatchBattle>Go to battle</FCOffenseWatchBattle>
 	<FCOffenseWatchBattleDesc>Jump the camera to the ongoing assault map.</FCOffenseWatchBattleDesc>
+	<FCJoinAttack>Join Attack</FCJoinAttack>
+	<FCJoinAttackDesc>Send this caravan to reinforce the ongoing assault. Its pawns arrive on the battle map at a map edge under your direct control.</FCJoinAttackDesc>
+	<FCJoinAttackNoBattle>There is no active assault to join at this settlement.</FCJoinAttackNoBattle>
 	<FCAutoBattleCommenced>Battle commenced at {0}</FCAutoBattleCommenced>
 	<FCAutoBattleCommencedDesc>The defenders of {0} have engaged forces from {1}. The settlement remains militarily committed until the battle resolves.</FCAutoBattleCommencedDesc>
 

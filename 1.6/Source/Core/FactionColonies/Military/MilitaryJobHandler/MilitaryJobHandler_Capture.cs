@@ -8,11 +8,6 @@ namespace FactionColonies
 {
     public class MilitaryJobHandler_Capture : MilitaryJobHandler_Offensive
     {
-        // Capture's ApplyResult destroys the host Settlement and builds an Empire colony in its
-        // place, so there is no "haul spoils out" phase and lingering the live map would be
-        // destroyed underfoot. Force the immediate-teardown branch on a Capture win.
-        public override bool SkipLootLingerOnWin => true;
-
         public override void OnOpCreated(MilitaryOperation op)
         {
             WorldSettlementFC home = op.aggressor?.homeSettlement;
@@ -44,7 +39,13 @@ namespace FactionColonies
 
             if (result.AttackerVictory)
             {
-                ApplyCaptureSuccess(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
+                // A manual battle defers the settlement->colony swap to map teardown so the live
+                // battle map is never destroyed under the player. The abstract (auto-resolve) path
+                // has no map and swaps immediately.
+                if (result.wasManualBattle)
+                    DeferManualCapture(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
+                else
+                    ApplyCaptureSuccess(FindFC.FactionComp, op.aggressor.homeSettlement, op.targetTile, target, op, result);
             }
             else if (result.DefenderVictory)
             {
@@ -113,6 +114,37 @@ namespace FactionColonies
             MilitaryLetterUtil.SendBattleReportLetter("FCCaptureSettlement".Translate(),
                 body, FCLetterDefOf.FCBattleReportLetterPositive,
                 new LookTargets(worldsettlement), reportId, op);
+        }
+
+        /* Deferred capture for a MANUAL offensive battle: the squad won on the enemy base's real
+         * map. Grant XP and send the battle report now, but record the settlement->colony swap on
+         * the tile's BattlefieldContext so it runs at map teardown (once the player's forces leave),
+         * never destroying a live map under the player. SetupCapturedSettlement sends its own
+         * "settlement formed" letter when the colony is stood up. */
+        private static void DeferManualCapture(FactionFC faction, WorldSettlementFC home,
+            PlanetTile capturedTile, Settlement target, MilitaryOperation op, BattleResult result)
+        {
+            string tmpName = target.LabelCap;
+            TechLevel tech = target.Faction.def.techLevel;
+
+            faction.AddExperienceToFactionLevel(5f);
+
+            BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(capturedTile);
+            if (bf is object)
+                bf.RegisterPendingCapture(tmpName, tech);
+            else
+                LogUtil.Warning($"DeferManualCapture: no battlefield at {capturedTile}; deferred capture will not complete.");
+
+            string body = "FCCaptureEnemySettlementSuccessManual".Translate(home.Name, tmpName);
+            if (MilitaryLetterUtil.IsOverwhelmingWin(result, playerWon: true))
+            {
+                body += "\n\n" + "FCOverwhelmingVictoryDesc".Translate();
+                MilitaryLetterUtil.ApplyOverwhelmingVictoryReward(home, ref body);
+            }
+            int reportId = BattleArchiveUtil.ArchiveAndGetId(op, op?.result, BattleOperationKind.Capture);
+            MilitaryLetterUtil.SendBattleReportLetter("FCCaptureSettlement".Translate(),
+                body, FCLetterDefOf.FCBattleReportLetterPositive,
+                new LookTargets(new GlobalTargetInfo(capturedTile)), reportId, op);
         }
 
         /* Failed-capture fallback: target's Destroy() was blocked by another mod, but the squad

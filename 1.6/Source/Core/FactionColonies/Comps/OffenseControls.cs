@@ -15,10 +15,10 @@ namespace FactionColonies
     }
 
     /// <summary>
-    /// Hangs the Withdraw + watch-battle controls on a vanilla enemy Settlement while an Empire
-    /// manual offensive battle owns its tile. Inert otherwise: <see cref="GetGizmos"/> early-returns
-    /// unless an active offense <see cref="BattlefieldContext"/> owns this tile AND the parent is not
-    /// a <see cref="WorldSettlementFC"/> (so these controls never appear on Empire's own settlements).
+    /// Hangs offense controls on a vanilla enemy Settlement while an Empire manual offensive battle
+    /// owns its tile: Withdraw + watch-battle on the settlement's own gizmos (<see cref="GetGizmos"/>),
+    /// and a "Join Attack" command on a player caravan parked at the tile (<see cref="GetCaravanGizmos"/>).
+    /// Inert otherwise, and never on Empire's own settlements (the parent is a <see cref="WorldSettlementFC"/>).
     /// </summary>
     public class WorldObjectComp_OffenseControls : WorldObjectComp
     {
@@ -27,6 +27,40 @@ namespace FactionColonies
             if (parent is WorldSettlementFC) return null;   // never on Empire settlements
             BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(parent.Tile);
             return (bf is object && bf.HasOffenseAt()) ? bf : null;
+        }
+
+        /// <summary>Caravan-context controls: a "Join Attack" command shown when a player caravan is
+        /// on this settlement's tile during an active assault (the offense counterpart of joining a
+        /// defense with a caravan). Uses the same icon as the attack gizmo it replaces.</summary>
+        public override IEnumerable<Gizmo> GetCaravanGizmos(Caravan caravan)
+        {
+            foreach (Gizmo g in base.GetCaravanGizmos(caravan)) yield return g;
+
+            BattlefieldContext bf = ActiveOffense();
+            if (bf is null || caravan is null || !caravan.IsPlayerControlled) yield break;
+
+            yield return new Command_Action
+            {
+                defaultLabel = "FCJoinAttack".Translate(),
+                defaultDesc = "FCJoinAttackDesc".Translate(),
+                icon = TexLoad.iconMilitary,
+                action = () => bf.CaravanJoinAttack(caravan)
+            };
+        }
+
+        /// <summary>Caravan right-click float-menu option to send a caravan to join the ongoing
+        /// assault (the offense counterpart of the defense "Defend" caravan option). The vanilla
+        /// "Attack settlement" option is separately suppressed during an active offense
+        /// (see CaravanAttackSettlement_SuppressDuringOffense).</summary>
+        public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan)
+        {
+            foreach (FloatMenuOption o in base.GetFloatMenuOptions(caravan)) yield return o;
+
+            if (ActiveOffense() is null) yield break;
+            Settlement settlement = parent as Settlement;
+            if (settlement is null) yield break;
+            foreach (FloatMenuOption o in WorldSettlementJoinAttackAction.GetFloatMenuOptions(caravan, settlement))
+                yield return o;
         }
 
         public override IEnumerable<Gizmo> GetGizmos()
