@@ -930,9 +930,7 @@ namespace FactionColonies
 
         public bool IsTargetOccupied(PlanetTile location)
         {
-            MilitaryOperationManager manager = FindFC.MilitaryManager;
-            IReadOnlyList<MilitaryOperation> opsAtTile = manager?.GetOpsAt(location);
-            if (opsAtTile is object && opsAtTile.Count > 0)
+            if (FindFC.MilitaryManager?.HasAnyOpAt(location) ?? false)
             {
                 Messages.Message("FCTargetAlreadyBeingAttacked".Translate(), MessageTypeDefOf.RejectInput);
                 return true;

@@ -36,7 +36,7 @@
     <FactionColonies.MilitaryJobDef>
         <defName>EnslaveEnemySettlement</defName>
         <label>enslave enemy settlement</label>
-        <description>Storm the settlement and take what you can, with an eye on the people instead of their goods</description>
+        <description>Storm the settlement and take what you can, with an eye on the people instead of their goods.</description>
         <handlerClass>FactionColonies.MilitaryJobHandler_Enslave</handlerClass>
         <statusLabelKey>FCMilStatusEnslaving</statusLabelKey>
         <floatMenuLabelKey>FCEnslavePopulation</floatMenuLabelKey>

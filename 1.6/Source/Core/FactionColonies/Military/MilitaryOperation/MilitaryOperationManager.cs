@@ -469,6 +469,31 @@ namespace FactionColonies
             return Array.Empty<MilitaryOperation>();
         }
 
+        /// <summary>True if any military operation currently targets this tile (a squad en route or a
+        /// battle in progress, offense or defense, manual or auto). Ops stay registered until they
+        /// resolve after cooldown, so this covers Scheduled/Traveling/Engaged/CooldownPending. This
+        /// is the same set the attack-launch gate (<see cref="WorldObjectComp_SettlementMilitary.IsTargetOccupied"/>)
+        /// uses.</summary>
+        public bool HasAnyOpAt(PlanetTile tile) => GetOpsAt(tile).Count > 0;
+
+        /// <summary>Like <see cref="HasAnyOpAt"/> but ignores ops that are winding down
+        /// (CooldownPending) or finished (Resolved) -- i.e. only counts a squad still en route or a
+        /// battle still in progress (Scheduled/Traveling/Engaged). Used to decide whether to hide the
+        /// launch-attack gizmo: an op in cooldown is over and should not block a fresh attack.</summary>
+        public bool HasActiveOpAt(PlanetTile tile)
+        {
+            IReadOnlyList<MilitaryOperation> ops = GetOpsAt(tile);
+            for (int i = 0; i < ops.Count; i++)
+            {
+                MilitaryOperation op = ops[i];
+                if (op is null) continue;
+                if (op.phase == MilitaryOperationPhase.CooldownPending) continue;
+                if (op.phase == MilitaryOperationPhase.Resolved) continue;
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>Returns the first registered op the squad is participating in, or <c>null</c>.
         /// Convenience wrapper over <see cref="GetOpsForSquad"/> for callers that just want
         /// "the active op" (most do — squads usually appear on at most one op at a time).</summary>
