@@ -381,6 +381,16 @@ namespace FactionColonies
             foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
             {
                 if (pawn.Faction != Faction.OfPlayer) continue;
+                // A squad merc still in OfPlayer (drafted and not yet restored) is NOT a player
+                // colonist: return it to Empire (which also undrafts it) so the preserve step holds
+                // it off-map for redeployment instead of ReturnPlayerColonistsHome shipping it home
+                // under the player's control. It must also not count toward anyMobile, or a stray
+                // drafted merc would keep the map lingering indefinitely.
+                if (pawn.IsMercenary())
+                {
+                    pawn.SetFaction(FindFC.EmpireFaction);
+                    continue;
+                }
                 playerColonists.Add(pawn);
                 if (!pawn.Downed) anyMobile = true;
             }
@@ -418,6 +428,14 @@ namespace FactionColonies
             foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
             {
                 if (pawn.Faction != Faction.OfPlayer) continue;
+                // Reclaim any squad merc re-drafted during the linger back to Empire (undrafts it) so
+                // it is preserved off-map on close rather than delivered home, and so it never keeps
+                // the linger alive as a false "player colonist still looting".
+                if (pawn.IsMercenary())
+                {
+                    pawn.SetFaction(FindFC.EmpireFaction);
+                    continue;
+                }
                 playerColonists.Add(pawn);
                 if (!pawn.Downed) { anyMobile = true; break; }
             }
