@@ -79,7 +79,7 @@ namespace FactionColonies
                 {
                     if (bf.endingBattle || bf.awaitingPlayerExit) return;
                     bf.endingBattle = true;
-                    LongEventHandler.QueueLongEvent(() => bf.EndOffense(false),
+                    LongEventHandler.QueueLongEvent(() => bf.EndOffense(false, withdrawn: true),
                         "EndingAttack", false, error =>
                         {
                             DelayedErrorWindowRequest.Add("FCErrorEndingAttack".Translate(),

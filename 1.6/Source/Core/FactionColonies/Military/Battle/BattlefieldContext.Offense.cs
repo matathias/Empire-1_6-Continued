@@ -311,8 +311,9 @@ namespace FactionColonies
         /// <summary>Resolves the offense: restores drafted attackers, strips efficiency hediffs,
         /// completes each active op (loot / capture / enslave via ApplyResult), then tears the map
         /// down following the defense scheme exactly -- close immediately when no player colonists
-        /// are on the map, otherwise linger until they leave.</summary>
-        public void EndOffense(bool won)
+        /// are on the map, otherwise linger until they leave. <paramref name="withdrawn"/> marks a
+        /// voluntary retreat, which is a failed op but never a crushing defeat.</summary>
+        public void EndOffense(bool won, bool withdrawn = false)
         {
             Faction empire = FindFC.EmpireFaction;
             offenseWon = won;
@@ -340,10 +341,13 @@ namespace FactionColonies
                 op.CompleteBattle(new BattleResult
                 {
                     wasManualBattle = true,
+                    wasWithdrawal = withdrawn,
                     winner = won ? BattleWinner.Attacker : BattleWinner.Defender,
                     attackerInitialForce = op.aggressor?.initialPawnCount ?? 0,
                     defenderInitialForce = op.defender?.initialPawnCount ?? 0,
-                    attackerForceRemaining = won ? standingAttackerPawns.Count() : 0,
+                    // A withdrawal extracts the surviving squad rather than a wipe, so its attacker
+                    // remaining is the standing count (not 0).
+                    attackerForceRemaining = (won || withdrawn) ? standingAttackerPawns.Count() : 0,
                     defenderForceRemaining = won ? 0 : standingDefenderPawns.Count(),
                     targetTile = tile
                 });
