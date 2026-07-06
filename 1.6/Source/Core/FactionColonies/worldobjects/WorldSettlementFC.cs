@@ -2218,13 +2218,16 @@ namespace FactionColonies
                 desc = "";
                 bool isAdditive = stat.aggregation == FCStatAggregation.Additive;
                 bool invert = stat.invertedForDisplay;
+                // hardinvert flips the displayed sign, so the color test must flip with it to
+                // keep "harmful modifier = red". Additive-only; multiplier lines aren't sign-flipped.
+                bool colorInvert = invert ^ hardinvert;
 
                 // Settlement-level modifiers (buildings, settlement type, events)
                 foreach (TaggedStatModifier tagged in statModifiers)
                 {
                     if (tagged.mod.stat != stat) continue;
                     if (isAdditive)
-                        desc += TextUtil.ColorizeAdditiveBonus(tagged.mod.value, invert: invert, hardinvert: hardinvert) + " - " + tagged.sourceLabel + "\n";
+                        desc += TextUtil.ColorizeAdditiveBonus(tagged.mod.value, invert: colorInvert, hardinvert: hardinvert) + " - " + tagged.sourceLabel + "\n";
                     else
                         desc += TextUtil.ColorizeMultiplierBonus(tagged.mod.value, invert: invert) + " - " + tagged.sourceLabel + "\n";
                 }
@@ -2234,7 +2237,7 @@ namespace FactionColonies
                 {
                     if (perm.stat != stat) continue;
                     if (isAdditive)
-                        desc += TextUtil.ColorizeAdditiveBonus(perm.value, invert: invert, hardinvert: hardinvert) + " - " + perm.sourceLabel + " (permanent)\n";
+                        desc += TextUtil.ColorizeAdditiveBonus(perm.value, invert: colorInvert, hardinvert: hardinvert) + " - " + perm.sourceLabel + " (permanent)\n";
                     else
                         desc += TextUtil.ColorizeMultiplierBonus(perm.value, invert: invert) + " - " + perm.sourceLabel + " (permanent)\n";
                 }
@@ -2245,14 +2248,19 @@ namespace FactionColonies
                     if (penalty.stat != stat) continue;
                     desc += TextUtil.AdditiveBonusLine(penalty.CurrentValue,
                         penalty.sourceLabel + " (" + "FCDecayingPenaltyDaysLeft".Translate(penalty.DaysLeft) + ")",
-                        invert: invert, hardinvert: hardinvert) + "\n";
+                        invert: colorInvert, hardinvert: hardinvert) + "\n";
                 }
 
-                // IStatModifierProvider comps
+                // IStatModifierProvider comps. Each provider joins its own lines with "\n" but
+                // omits a trailing one, so add the separator every other block above already emits.
                 foreach (WorldObjectComp comp in AllComps)
                 {
                     if (comp is IStatModifierProvider provider)
-                        desc += provider.GetStatModifierDesc(stat);
+                    {
+                        string provDesc = provider.GetStatModifierDesc(stat);
+                        if (!provDesc.NullOrEmpty())
+                            desc += provDesc + "\n";
+                    }
                 }
 
                 // Faction-level policy/trait modifiers (delegated to FactionFC)

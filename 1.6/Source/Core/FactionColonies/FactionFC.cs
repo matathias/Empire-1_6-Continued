@@ -1396,11 +1396,14 @@ namespace FactionColonies
         {
             bool isAdditive = stat.aggregation == FCStatAggregation.Additive;
             bool invert = stat.invertedForDisplay;
+            // hardinvert flips the displayed sign, so the color test must flip with it to
+            // keep "harmful modifier = red". Additive-only; multiplier lines aren't sign-flipped.
+            bool colorInvert = invert ^ hardinvert;
             foreach (FCStatModifier mod in statModifiers)
             {
                 if (mod.stat != stat) continue;
                 if (isAdditive)
-                    desc += $"{TextUtil.ColorizeAdditiveBonus(mod.value, invert: invert, hardinvert: hardinvert)} - {label}\n";
+                    desc += $"{TextUtil.ColorizeAdditiveBonus(mod.value, invert: colorInvert, hardinvert: hardinvert)} - {label}\n";
                 else
                     desc += $"{TextUtil.ColorizeMultiplierBonus(mod.value, invert: invert)} - {label}\n";
             }
