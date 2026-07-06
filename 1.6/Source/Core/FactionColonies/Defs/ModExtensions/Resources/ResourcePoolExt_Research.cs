@@ -43,7 +43,11 @@ namespace FactionColonies
 
             yield return new FloatMenuOption("FCResearchLevel".Translate(), delegate
             {
-                Messages.Message("FCCurrentResearchLevel".Translate(faction.techLevel.ToString(), faction.ReturnNextTechToLevel()), MessageTypeDefOf.NeutralEvent);
+                // Mirror mode pins Empire tech to the player faction, so research doesn't advance it.
+                string msg = FCSettings.mirrorPlayerTechLevel
+                    ? "FCCurrentResearchLevelMirror".Translate(FindFC.EmpireName, faction.techLevel.ToString())
+                    : "FCCurrentResearchLevel".Translate(FindFC.EmpireName, faction.techLevel.ToString(), faction.ReturnNextTechToLevel());
+                Messages.Message(msg, MessageTypeDefOf.NeutralEvent);
             });
         }
         public override void DailyUpdate(ResourcePool pool)

@@ -249,7 +249,7 @@
 	<!-- EN: Check Tech Level -->
   <FCResearchLevel>技術レベルを確認</FCResearchLevel>
 	<!-- EN: Your current tech level is {0}. To reach the next tech level you must research {1} -->
-  <FCCurrentResearchLevel>現在の技術レベルは{0}です。次の技術レベルに到達するには{1}を研究する必要があります</FCCurrentResearchLevel>
+  <FCCurrentResearchLevel>{0}の現在の技術レベルは{1}です。次の技術レベルに到達するには{2}を研究する必要があります</FCCurrentResearchLevel>
 	<!-- EN: Ship Basics -->
   <FCShipBasics>宇宙船の基礎</FCShipBasics>
 	<!-- EN: Fabrication -->

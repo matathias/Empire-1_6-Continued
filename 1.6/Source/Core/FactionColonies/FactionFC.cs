@@ -2210,21 +2210,27 @@ namespace FactionColonies
 
         public string ReturnNextTechToLevel()
         {
-            switch (techLevel)
+            // Medieval-only cap: once at (or past) Medieval there is no next tier to unlock.
+            if (FCSettings.medievalTechOnly && techLevel >= TechLevel.Medieval)
+                return "FCReachedMaxLevel".Translate();
+
+            // Find the lowest barrier strictly above the current tech level; its research is what
+            // unlocks the next tier.
+            TechLevelBarrier nextBarrier = null;
+            TechLevel nextLevel = TechLevel.Undefined;
+            foreach (KeyValuePair<TechLevel, TechLevelBarrier> kvp in FactionCache.TechBarriers)
             {
-                case TechLevel.Ultra:
-                    return "FCReachedMaxLevel".Translate();
-                case TechLevel.Spacer:
-                    return "FCShipBasics".Translate();
-                case TechLevel.Industrial:
-                    return "FCFabrication".Translate();
-                case TechLevel.Medieval:
-                    return "FCElectricity".Translate();
-                case TechLevel.Neolithic:
-                    return "FCSmithing".Translate();
-                default:
-                    return "N/A";
+                if (kvp.Key <= techLevel) continue;
+                if (nextBarrier is null || kvp.Key < nextLevel)
+                {
+                    nextLevel = kvp.Key;
+                    nextBarrier = kvp.Value;
+                }
             }
+
+            if (nextBarrier is null) return "FCReachedMaxLevel".Translate();
+            string label = nextBarrier.DisplayLabel;
+            return label.NullOrEmpty() ? (string)"FCReachedMaxLevel".Translate() : label.CapitalizeFirst();
         }
 
         #endregion

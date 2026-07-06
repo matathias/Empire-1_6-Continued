@@ -137,11 +137,8 @@
 	<FCSendResearchItems>Send Research Items</FCSendResearchItems>
 	<FCFactionResearch>Faction Research</FCFactionResearch>
 	<FCResearchLevel>Check Tech Level</FCResearchLevel>
-	<FCCurrentResearchLevel>Your current tech level is {0}. To reach the next tech level you must research {1}</FCCurrentResearchLevel>
-	<FCShipBasics>Ship Basics</FCShipBasics>
-	<FCFabrication>Fabrication</FCFabrication>
-	<FCElectricity>Electricity</FCElectricity>
-	<FCSmithing>Smithing</FCSmithing>
+	<FCCurrentResearchLevel>{0}'s current tech level is {1}. To reach the next tech level you must research {2}</FCCurrentResearchLevel>
+	<FCCurrentResearchLevelMirror>{0}'s current tech level is {1}. It is pinned to your own faction's tech level (mirror setting is on).</FCCurrentResearchLevelMirror>
 
 	<!-- Relations -->
 	<FCRelationImproved>Relation Improved!</FCRelationImproved>
