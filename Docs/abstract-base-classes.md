@@ -142,8 +142,8 @@ Override `ExposeData()` to save/load custom state. Uses standard `Scribe_*` meth
 |----------|------|-------------|
 | `settlement` | `WorldSettlementFC` | The parent settlement. |
 | `buildingSlots` | `List<int>` | Which building slots this comp occupies. |
-| `CanDestroy` | `bool` | Settable flag for destruction logic. |
-| `parentComp` | `WorldObjectComp_SettlementBuildings` | The parent buildings comp. |
+| `CanDestroy` | `bool` | Read-only; `true` when the comp occupies no building slots (`buildingSlots.Count == 0`). |
+| `parentComp` | `WorldObjectComp_SettlementBuildings` | Read-only; the parent buildings comp (resolved from the settlement). |
 
 ### Virtual Methods
 
@@ -197,7 +197,11 @@ Override `ExposeData()` to save/load custom state. Uses standard `Scribe_*` meth
 | `OnManualResolve` | `void OnManualResolve(MilitaryOperation op)` | no-op | Spawn pawns / lords on the op's `BattlefieldContext` (typically via `op.AttachToBattlefield()` and `bf.SpawnParticipantOnMap(op, ParticipantSide.X)`). Submods own when `op.CompleteBattle` fires. |
 | `IsValidTarget` | `bool IsValidTarget(Faction targetFaction)` | `true` | Return false to exclude a faction from valid targets for this job. Used to filter hostile menu options. |
 
-**Base mod examples**: `MilitaryJobHandler_Raid` (loot + prisoners), `MilitaryJobHandler_Capture` (converts settlement), `MilitaryJobHandler_Enslave` (1-3 prisoners), `MilitaryJobHandler_Defend` (settlement defense, routes through `BattlefieldContext.StartDefense`).
+**Base mod examples**: `MilitaryJobHandler_Raid` (loot + prisoners), `MilitaryJobHandler_Capture` (converts settlement), `MilitaryJobHandler_Enslave` (1-3 prisoners), `MilitaryJobHandler_Raze` (destroys settlement), `MilitaryJobHandler_Defend` (settlement defense, routes through `BattlefieldContext.StartDefense`).
+
+### MilitaryJobHandler_Offensive
+
+Offensive operations that can be played out as a manual battle (Raid, Capture, Enslave, Raze) extend `MilitaryJobHandler_Offensive` rather than `MilitaryJobHandler` directly. It adds the manual-battle seam: when the target resolves to a map-gennable enemy settlement, `ResolvesManually` returns true and `OnManualResolve` delegates to the tile's `BattlefieldContext.StartOffense` (which re-checks the manual-offense setting and the concurrent-map cap, falling back to auto-resolve when appropriate). Subclasses keep their own `ApplyResult` for loot/capture/enslave. Handlers that extend the raw `MilitaryJobHandler` stay auto-resolve only.
 
 ---
 

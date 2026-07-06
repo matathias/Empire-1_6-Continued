@@ -1,6 +1,6 @@
 # Interfaces & Registries
 
-Empire provides 23 C# interfaces for submod extensibility. Some use static registries (global hooks); others are discovered on WorldObjectComps (per-settlement hooks) or DefModExtensions.
+Empire provides C# interfaces for submod extensibility across several domains — lifecycle, economy/tax, military/battle, raid targeting, roads, and UI. Some use static registries (global hooks); others are discovered on WorldObjectComps (per-settlement hooks) or DefModExtensions. The authoritative, always-current list of registry-probed interfaces is the body of `EmpireRegistry.Register(object)` in `util/Registries/EmpireRegistry.cs`.
 
 All registry-based interfaces follow the same pattern — register an instance, and the base mod invokes it at the appropriate time.
 
@@ -107,6 +107,26 @@ A class implementing none of the four listener interfaces logs a warning and is 
 
 ---
 
+### IMercAutoTendProvider
+
+**Registry**: `MercAutoTendRegistry`
+**Purpose**: Influence the auto-tending of off-map (injured) mercenary pawns.
+
+```csharp
+public interface IMercAutoTendProvider
+{
+    Pawn ProvideTendingDoctor(Mercenary patient, WorldSettlementFC settlement);
+    ThingDef OverrideTendingMedicine(Mercenary patient, WorldSettlementFC settlement, ThingDef currentChoice);
+}
+```
+
+| Method | Description |
+|--------|-------------|
+| `ProvideTendingDoctor` | Return a pawn to act as the tending doctor (vanilla only reads its `MedicalTendQuality` stat — it need not be spawned), or `null` to defer. **First non-null wins**; later providers don't run. |
+| `OverrideTendingMedicine` | Override the medicine `ThingDef`. Receives the running choice (initially the base mod's tech-level pick); return it to defer, another `ThingDef` to override, or `null` to force no-medicine tending. **Chains** across all providers. |
+
+---
+
 ### ITaxTickParticipant
 
 **Registry**: `TaxTickRegistry`
@@ -131,6 +151,42 @@ public interface ITaxTickParticipant
 
 ---
 
+### IDailyAccrualParticipant
+
+**Registry**: `DailyAccrualRegistry`
+**Purpose**: Run faction-wide logic once per day, immediately after every settlement has accrued the day's production/upkeep and stockpile deposits have landed.
+
+```csharp
+public interface IDailyAccrualParticipant
+{
+    void PostDailyAccrual(FactionFC faction);
+}
+```
+
+Fires once for the whole faction (not per settlement or per allocation) after the daily accrual loop completes. This is the place for daily consumption that must resolve across every settlement (e.g., Routes &amp; Resources' produce-then-consume pass).
+
+---
+
+### ITaxDeliveryInterceptor
+
+**Registry**: `TaxDeliveryRegistry`
+**Purpose**: Intercept and redirect tax delivery (`taxColony`) events — both when the event is queued and when it fires.
+
+```csharp
+public interface ITaxDeliveryInterceptor
+{
+    void OnTaxEventCreated(TaxDeliveryContext context);
+    bool TryDeliverGoods(TaxDeliveryContext context);
+}
+```
+
+| Method | When it fires |
+|--------|--------------|
+| `OnTaxEventCreated` | When a `taxColony` event is about to be queued (after goods consolidation). Mutate `context.Event.location` / `timeTillTrigger` to redirect the destination; set `context.Redirected = true` to stop further interceptors. |
+| `TryDeliverGoods` | When the event fires and goods are about to be delivered. Return `true` to consume the delivery (you handled the goods); `false` to fall through to the next interceptor or the default delivery. |
+
+---
+
 ### IFactionPowerModifier / ISettlementPowerModifier / IBattleModifier
 
 **Registry**: `BattleModifierRegistry`
@@ -138,8 +194,9 @@ public interface ITaxTickParticipant
 **Purpose**: Three modifier sites covering the lifecycle of an enemy power value.
 
 ```csharp
-// (1) Cache-time, faction-level. Mutates the EnemyPower baseline derived from
-//     tech + ETL + threatAdaptation. Use for faction-wide effects.
+// (1) Cache-time, faction-level. Mutates the deterministic EnemyPower baseline
+//     (from the faction's EnemyPowerTechDef + EnemyPowerFactionDef override).
+//     Use for faction-wide effects.
 public interface IFactionPowerModifier
 {
     void ModifyFactionPower(Faction faction, EnemyPower power);
@@ -200,7 +257,7 @@ Called when a settlement is considered as a defender for another settlement (bot
 ```csharp
 public interface ISquadAssignmentValidator
 {
-    bool CanAssign(WorldSettlementFC settlement, MilSquadFC squad, out string reason);
+    bool CanAssign(WorldSettlementFC settlement, MercenarySquadFC squad, out string reason);
 }
 ```
 
@@ -208,10 +265,58 @@ Called before a squad loadout is assigned to a settlement. Return `false` with a
 
 ---
 
+### ISquadPowerModifier
+
+**Registry**: `SquadPowerRegistry`
+**Purpose**: Compose adjustments to a mercenary squad's projected combat power (veterancy bonuses, specialist multipliers, augmentations, etc.).
+
+```csharp
+public interface ISquadPowerModifier
+{
+    int Priority { get; }
+    SquadPower ModifyPower(MercenarySquadFC squad, SquadPower currentPower);
+}
+
+public struct SquadPower
+{
+    public double militaryLevel;       // same scale as WorldSettlementFC.settlementMilitaryLevel
+    public double militaryEfficiency;  // multiplier, typical range 0.5-1.5
+}
+```
+
+Modifiers **chain**: each receives the running `SquadPower` (initially the base computed from loadout cost + settlement efficiency) and returns the modified value. **Higher `Priority` runs first.** To no-op in a given case, return `currentPower` unchanged. Throw-safe — an exception is logged and the running power preserved.
+
+---
+
+### IAnimalPickerFilter
+
+**Registry**: `AnimalPickerFilterRegistry`
+**Purpose**: Gate which animal kinds appear in the military unit designer's companion-animal and mount pickers.
+
+```csharp
+public interface IAnimalPickerFilter
+{
+    bool IsAnimalAllowed(PawnKindDef animal);
+}
+```
+
+**AND semantics**: every registered filter must return `true` for a kind for it to be offered. With no filters registered, every kind is allowed (base behavior unchanged). Called per-kind during picker redraw, so keep it cheap (back it with a cached set).
+
+---
+
+### IPsycastSystemProvider
+
+**Registry**: `PsycastSystemRegistry` (registered directly — app-lifetime, **not** facade-managed, like `MilitaryWindowRegistry`)
+**Purpose**: Wrap a psycast system (base-game Royalty vs. Vanilla Psycasts Expanded) for the unit designer's Psycasts tab.
+
+The base-game provider is built in; an external system registers a higher-priority provider from its compat assembly's `[StaticConstructorOnStartup]`. Exactly one provider is "active" at a time (`PsycastSystemRegistry.Active`); saved picks carry their provider's `Key` so they apply through the right system on load. This is a broad interface (editor UI, psylink cost/grant, budget clamping) — see `Interfaces/Military/IPsycastSystemProvider.cs` for the full member set. Register via `PsycastSystemRegistry.Register(provider)`.
+
+---
+
 ### IThreatScalingContributor
 
 **Registry**: `ThreatScalingRegistry`
-**Purpose**: Modify the Empire Threat Level (ETL).
+**Purpose**: Contribute additive/multiplicative modifiers to the Empire's composite "scale" measures in `ThreatScalingUtil`.
 
 ```csharp
 public interface IThreatScalingContributor
@@ -223,10 +328,12 @@ public interface IThreatScalingContributor
 
 | Method | Effect | No-op value |
 |--------|--------|-------------|
-| `GetAdditiveContribution` | Added to raw ETL score before multiplication | `0` |
-| `GetMultiplicativeContribution` | Multiplied into final ETL result | `1.0` |
+| `GetAdditiveContribution` | Added to the raw composite before multiplication | `0` |
+| `GetMultiplicativeContribution` | Multiplied into the final composite | `1.0` |
 
 All additive contributions are summed, then all multiplicative contributions are multiplied together.
+
+> **Note — mostly dormant.** These contributions feed the Empire Threat Level (`ComputeEmpireThreatLevel`), which is **no longer used by the live raid path** — incoming raids scale off the attacking faction's own power (`EnemyPowerTechDef` + `EnemyPowerFactionDef`) and an early-game cap, not ETL. The contributions still affect the live uncapped empire-scale measure (`ComputeEmpireScaleUncapped`, used for things like policy re-pick cost). The interface and registry are retained for that use and for a future threat-scaling submod. Don't rely on this to influence raid strength.
 
 ---
 
@@ -238,9 +345,9 @@ All additive contributions are summed, then all multiplicative contributions are
 ```csharp
 public interface ISettlementFoundingValidator
 {
-    bool CanFoundSettlement(PlanetTile tile, WorldSettlementDef type, out string reason);
-    string GetAdditionalCostDescription(PlanetTile tile, WorldSettlementDef type);
-    void OnSettlementFounded(PlanetTile tile, WorldSettlementDef type);
+    bool CanFoundSettlement(PlanetTile tile, WorldSettlementDef type, out string reason, float costMultiplier);
+    string GetAdditionalCostDescription(PlanetTile tile, WorldSettlementDef type, float costMultiplier);
+    void OnSettlementFounded(PlanetTile tile, WorldSettlementDef type, float costMultiplier);
 }
 ```
 
@@ -249,6 +356,8 @@ public interface ISettlementFoundingValidator
 | `CanFoundSettlement` | Return `false` to prevent founding. Set `reason` for player feedback. |
 | `GetAdditionalCostDescription` | Return additional cost text for the founding UI (e.g., "100 Steel"). Return `null` for no extra text. |
 | `OnSettlementFounded` | Called after silver payment succeeds. Consume custom resources or perform side effects here. |
+
+`costMultiplier` is the founding-cost scale in effect for this attempt (e.g. from a VOE outpost->settlement conversion discount); factor it into any custom cost you compute or charge.
 
 ---
 
@@ -269,6 +378,22 @@ public interface IRaidWeightProvider
 | `GetSettlementRaidWeight` | Weight multiplier for raid targeting. `>1` = more likely, `<1` = less likely, `0` = excluded. | `1.0f` |
 
 All provider weights are multiplied together per settlement. A settlement's final targeting weight is `baseWeight * product(allProviderWeights)`.
+
+---
+
+### IRoadNodeProvider
+
+**Registry**: `RoadNodeProviderRegistry`
+**Purpose**: Contribute extra world tiles that should participate in Empire's road-network MST (e.g., VOE outposts), alongside Empire settlements.
+
+```csharp
+public interface IRoadNodeProvider
+{
+    IEnumerable<PlanetTile> GetRoadNodeTiles();
+}
+```
+
+Called on the main thread during road-queue recalculation. The road system is surface-only, but you may yield freely — non-surface or invalid tiles are filtered out by `RoadNodeProviderRegistry.CollectInto`, so implementations don't need to enforce the invariant themselves.
 
 ---
 
@@ -365,7 +490,7 @@ public interface IRaidTarget
 {
     WorldObject WorldObject { get; }
     string Name { get; }
-    int Tile { get; }
+    PlanetTile Tile { get; }
     int MilitaryLevel { get; }
     bool IsUnderAttack { get; set; }
     void OnRaidWon(BattleResult result);
@@ -390,7 +515,7 @@ public interface IRaidTarget
 **Registry**: `AutoDefenderRegistry`
 **Purpose**: Register external world objects as auto-defenders for Empire settlements (and other `IRaidTarget`s).
 
-When a settlement is attacked, the registry searches for the best available defender within range. The defender creates a `militaryForce` and is placed on cooldown after battle resolution.
+When a settlement is attacked, the registry searches for the best available defender within range. The defender creates a `MilitaryForce` and is placed on cooldown after battle resolution.
 
 ```csharp
 public interface IAutoDefender
@@ -399,7 +524,8 @@ public interface IAutoDefender
     int MilitaryLevel { get; }
     int Range { get; }
     bool CanAutoDefend { get; }
-    militaryForce CreateDefendingForce();
+    MilitaryForce CreateDefendingForce();
+    void OnDefensePledged(WorldObject target);
     void OnDefenseStarted(WorldObject target);
     void OnDefenseComplete(bool won, BattleResult result);
     void OnDefenseReplaced();
@@ -414,7 +540,8 @@ public interface IAutoDefender
 | `MilitaryLevel` | Military strength for comparison when selecting the best defender. |
 | `Range` | Maximum tile distance for auto-defense eligibility. |
 | `CanAutoDefend` | True if the defender is available (enabled, not busy, etc.). |
-| `CreateDefendingForce` | Generate a `militaryForce` to defend with. |
+| `CreateDefendingForce` | Generate a `MilitaryForce` to defend with. |
+| `OnDefensePledged` | Called when this defender is chosen to protect a target (pledge time, before engagement). |
 | `OnDefenseStarted` | Called when this defender is assigned to protect a target. |
 | `OnDefenseComplete` | Called when the battle resolves. |
 | `OnDefenseReplaced` | Called when this defender is replaced by another force (not defeated). |
@@ -498,6 +625,46 @@ public interface IMilitaryTabEntry
 
 ---
 
+### ISquadInspectionSection
+
+**Registry**: `SquadInspectionRegistry`
+**Purpose**: Add sections to the squad inspection window (below the per-pawn rows).
+
+```csharp
+public interface ISquadInspectionSection
+{
+    string SectionLabel { get; }
+    float GetSectionHeight(MercenarySquadFC squad, float width);
+    void DrawSection(MercenarySquadFC squad, Rect contentRect);
+    int Order { get; }
+}
+```
+
+| Member | Description |
+|--------|-------------|
+| `SectionLabel` | Header label for the section (the caller draws the header). |
+| `GetSectionHeight` | Total height needed below the header. Return `0` to hide the section entirely. |
+| `DrawSection` | Draw the section content into `contentRect` (below the caller-drawn header). |
+| `Order` | Lower values render earlier; ties broken by registration order. |
+
+---
+
+### IFoundingCompanionWindow
+
+**Registry**: none — implemented by a `Window` subclass; the base mod discovers open windows implementing it.
+**Purpose**: Dock a companion window beside the settlement Found screen (`CreateColonyWindowFc`).
+
+```csharp
+public interface IFoundingCompanionWindow
+{
+    int CompanionOrder { get; }
+}
+```
+
+The base mod lays all companion windows out in a horizontal cascade via `FoundingScreenHooks.ReflowCompanions` — implementers must **not** set their own `windowRect.x/y`. Lower `CompanionOrder` sits closer to the main window (rightmost).
+
+---
+
 ## Comp-Based Interfaces
 
 These interfaces are implemented on `WorldObjectComp` classes attached to `WorldSettlementFC`. They are discovered by iterating `settlement.AllComps` — no registry needed. See [Settlement Comps](worldobject-comps.md) for how to attach a comp.
@@ -576,14 +743,14 @@ See [Stat System — Resource Production Formula](stat-system.md#resource-produc
 ```csharp
 public interface ITitheBudgetModifier
 {
-    double GetExternalTitheBudget(ResourceFC resource);
+    double GetDailyExternalTitheBudget(ResourceFC resource);
     string GetExternalTitheBudgetDesc(ResourceFC resource);
 }
 ```
 
 | Method | Description | No-op return |
 |--------|-------------|-------------|
-| `GetExternalTitheBudget` | Returns additional tithe budget (in silver value) for the given resource. | `0` |
+| `GetDailyExternalTitheBudget` | Returns additional daily tithe budget (in silver value) for the given resource. | `0` |
 | `GetExternalTitheBudgetDesc` | Tooltip description for the tithe budget breakdown. | `null` or `""` |
 
 Must be implemented by a `WorldObjectComp` attached to the settlement. Queried during tithe budget calculation via `ResourceFC.externalTitheBudget`.
@@ -599,19 +766,19 @@ Must be implemented by a `WorldObjectComp` attached to the settlement. Queried d
 ```csharp
 public interface IProfitContributor
 {
-    double GetUpkeepContribution();
-    string GetUpkeepContributionDesc();
-    double GetIncomeContribution();
-    string GetIncomeContributionDesc();
+    double GetDailyUpkeepContribution();
+    string GetDailyUpkeepContributionDesc();
+    double GetDailyIncomeContribution();
+    string GetDailyIncomeContributionDesc();
 }
 ```
 
 | Method | Description | No-op return |
 |--------|-------------|-------------|
-| `GetUpkeepContribution` | Additional upkeep cost added to the settlement's total. | `0` |
-| `GetUpkeepContributionDesc` | Tooltip line for the upkeep breakdown. | `null` or `""` |
-| `GetIncomeContribution` | Additional income added to the settlement's total. | `0` |
-| `GetIncomeContributionDesc` | Tooltip line for the income breakdown. | `null` or `""` |
+| `GetDailyUpkeepContribution` | Additional daily upkeep cost added to the settlement's total. | `0` |
+| `GetDailyUpkeepContributionDesc` | Tooltip line for the upkeep breakdown. | `null` or `""` |
+| `GetDailyIncomeContribution` | Additional daily income added to the settlement's total. | `0` |
+| `GetDailyIncomeContributionDesc` | Tooltip line for the income breakdown. | `null` or `""` |
 
 Must be implemented by a `WorldObjectComp` attached to the settlement.
 
@@ -675,16 +842,19 @@ Every facade-managed registry is cleared by `EmpireRegistry.ClearAll()` on cache
 |----------|-------------------|
 | `LifecycleRegistry` | (none) |
 | `TaxTickRegistry` | `.Taxers` |
+| `DailyAccrualRegistry` | `.Participants` |
+| `TaxDeliveryRegistry` | `.Interceptors` |
 | `BattleModifierRegistry` | `.Modifiers` |
 | `DefenseValidatorRegistry` | (none) |
 | `SquadAssignmentRegistry` | (none) |
 | `FoundingValidatorRegistry` | (none) |
 | `RaidWeightRegistry` | `.Providers` |
+| `RoadNodeProviderRegistry` | `.Providers` |
 | `ThreatScalingRegistry` | `.Contributors` |
 | `SilverPaymentRegistry` | `.Modifiers` |
-| `TaxDeliveryRegistry` | `.Interceptors` |
 | `MercAutoTendRegistry` | `.Providers` |
 | `SquadPowerRegistry` | `.Modifiers` |
+| `AnimalPickerFilterRegistry` | `.Filters` |
 | `RaidTargetRegistry` | `.Targets` |
 | `AutoDefenderRegistry` | `.Defenders` |
 | `MilitaryTabRegistry` | `.Entries` |
@@ -692,6 +862,8 @@ Every facade-managed registry is cleared by `EmpireRegistry.ClearAll()` on cache
 | `SettlementButtonRegistry` | `.Entries` |
 | `SquadInspectionRegistry` | `.Sections` |
 | `BuildingFilterRegistry` | `.Filters` |
+
+`PsycastSystemRegistry` and `MilitaryWindowRegistry` are app-lifetime and **not** facade-managed (registered directly, not cleared on game dispose).
 
 ---
 

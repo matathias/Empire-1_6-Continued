@@ -60,17 +60,18 @@ Register a class instance with a static registry. The base mod iterates register
 
 **Use for**: global lifecycle hooks, tax interception, battle modification, defense/squad validation, threat scaling, silver payment interception, main tab UI tabs, building UI filters.
 
-All registries follow the same pattern:
+Register through the unified `EmpireRegistry` facade — a single call probes your instance for every supported interface and routes it to the matching domain registries (the per-domain `XxxRegistry.Register` methods are `internal` to the base mod):
 
 ```csharp
-// Register (typically in a static constructor or comp Initialize)
-MyRegistry.Register(myInstance);
+// Register (typically in a static constructor or comp Initialize).
+// One call covers every Empire interface myInstance implements.
+EmpireRegistry.Register(myInstance);
 
 // Unregister (in cleanup, if needed)
-MyRegistry.Unregister(myInstance);
+EmpireRegistry.Unregister(myInstance);
 ```
 
-Registries are not serialized. Your mod must re-register on game load.
+Registries are not serialized. Your mod must re-register on game load. (`PsycastSystemRegistry` and `MilitaryWindowRegistry` are app-lifetime exceptions registered directly — see [Interfaces & Registries](interfaces-and-registries.md).)
 
 See [Interfaces & Registries](interfaces-and-registries.md).
 

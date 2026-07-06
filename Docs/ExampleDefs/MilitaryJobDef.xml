@@ -4,7 +4,7 @@
   <!-- This file shows all options for MilitaryJobDef, and explains what they do and their default values -->
   <!-- MilitaryJobDefs define military actions that squads can perform (e.g. raid, enslave, capture, defend). -->
   <!-- Each job has a handler class that implements the actual behavior, and configuration for how it -->
-  <!-- appears in menus, whether it occupies a target, and what cooldown stat governs it. -->
+  <!-- appears in menus, whether it occupies a target, and whether it is enabled by default. -->
   <FactionColonies.MilitaryJobDef>
 	<defName>exampleMilitaryJob</defName>
 	<label>Example Military Job</label>
@@ -26,11 +26,6 @@
 	<occupiesTarget>true</occupiesTarget>
 	<!-- If true, this job represents a persistent state rather than a one-time action. Default: false -->
 	<isState>false</isState>
-	<!-- The FCStatDef that controls cooldown duration for this job. -->
-	<!-- When set, the cooldown is modified by this stat's aggregated value. -->
-	<cooldownStatDef>militaryCooldownOffset</cooldownStatDef>
-	<!-- If true, the cooldown uses the dead pawn cooldown formula instead of the standard one. Default: false -->
-	<deadPawnCooldown>false</deadPawnCooldown>
 	<!-- If true, this job is enabled by default (can be blocked by FCPolicyDef.blockedMilitaryJobs). -->
 	<!-- If false, it must be explicitly enabled by FCPolicyDef.enabledMilitaryJobs. Default: true -->
 	<defaultEnabled>true</defaultEnabled>

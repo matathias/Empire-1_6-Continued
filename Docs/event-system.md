@@ -96,7 +96,7 @@ Events can present choices to the player via `FCOptionDef`:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `baseChanceOfSuccess` | `int` | Success probability (0-100). |
+| `baseChanceOfSuccess` | `float` | Success probability (0-100). |
 | `silverCost` | `int` | Silver cost to choose this option. |
 | `parentEvent` | `FCEventDef` | The event this option belongs to. |
 | `successEvent` | `FCEventDef` | Event fired on success (null = nothing). |
@@ -120,9 +120,13 @@ The primary C# hook for custom event behavior. Attach it to an `FCEventDef` via 
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
+| `OnEventQueued` | `void OnEventQueued(FCEvent evt, FactionFC faction)` | Called once when the event is enqueued. The default applies the def's temporary + permanent stat modifiers to the targeted settlements (or all settlements if untargeted). |
+| `OnEventExpired` | `void OnEventExpired(FCEvent evt, FactionFC faction)` | Called once when the event leaves the queue. The default removes the temporary modifiers added at queue time and subtracts `def.prosperityLost` (permanent modifiers are kept). |
 | `ResolveEvent` | `bool ResolveEvent(FCEvent evt, FactionFC faction)` | Called when the event triggers. Return `true` to skip built-in resolution. Standard post-processing (loot, stat cleanup, chains, options) still runs regardless. |
 | `OnEventTriggered` | `void OnEventTriggered(FCEvent evt)` | Called after **all** processing is complete (loot, stats, chains). Always called, even if `ResolveEvent` returned true. |
 | `ShouldCancelOnSettlementRemoval` | `bool ShouldCancelOnSettlementRemoval(FCEvent evt, WorldSettlementFC settlement)` | Called when a settlement is removed. Return `true` to cancel this event. Default: `false`. |
+
+`OnEventQueued`/`OnEventExpired` bracket the event's queued lifetime (stat-modifier apply/remove), whereas `ResolveEvent`/`OnEventTriggered` fire at the moment the timer expires. See the Option Display Hooks in [DefModExtensions](def-mod-extensions.md#fceventhandlerextension) for the dynamic option label/chance/availability methods.
 
 ### Resolution Flow Diagram
 
