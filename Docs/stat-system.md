@@ -65,7 +65,7 @@ A `{stat, value}` pair used in lists on many def types. Not a Def itself.
 
 ## Stat Aggregation Pipeline
 
-`FactionFC.GetStatValue(FCStatDef stat, WorldSettlementFC settlement = null, MercenarySquadFC squad = null, Mercenary unit = null)` is the entry point. It folds together a **scope chain** — faction (cached) → settlement (cached) → squad-instance → unit-instance — where each scope beyond the faction contributes only if the stat opts into it (`appliesToSettlements` / `appliesToSquads` / `appliesToUnits`) *and* the matching context argument is supplied. On top of that sits an uncached behavior layer:
+`FactionFC.GetStatValue(FCStatDef stat, WorldSettlementFC settlement)` is the entry point. It combines two cached partials plus an uncached behavior layer:
 
 ### 1. Faction-Level Partial (cached)
 Starts from `stat.IdentityValue`, then applies modifiers from:
@@ -81,9 +81,8 @@ Starts from `stat.IdentityValue`, then applies modifiers from:
 2. **`IStatModifierProvider` comps** — any WorldObjectComp on the settlement that implements this interface
 
 ### 3. Combination
-Each scope is combined into the running value using the stat's aggregation:
-- **Additive stats**: scopes are summed (`factionPartial + settlementPartial + …`)
-- **Multiplicative stats**: scopes are multiplied (`factionPartial * settlementPartial * …`)
+- **Additive stats**: `factionPartial + settlementPartial`
+- **Multiplicative stats**: `factionPartial * settlementPartial`
 
 ### 4. Behavior Adjustment (uncached)
 Each active `FCPolicyBehavior` gets a chance to modify the result via `ModifyStat(stat, currentValue, settlement)`. This is called last and can depend on runtime state.
