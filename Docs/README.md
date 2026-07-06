@@ -9,10 +9,10 @@ Empire exposes a layered extensibility system designed for submods to add conten
 | Guide | What it covers                                                                                  |
 |-------|-------------------------------------------------------------------------------------------------|
 | [Getting Started](getting-started.md) | Empire-specific conventions, access points, registration patterns                               |
-| [XML Def Types](xml-defs.md) | All 12 custom def types — fields, defaults, cross-references                                    |
+| [XML Def Types](xml-defs.md) | The custom def types — fields, defaults, cross-references                                    |
 | [Stat & Production System](stat-system.md) | FCStatDef, aggregation pipeline, resource production formula                                    |
-| [Interfaces & Registries](interfaces-and-registries.md) | 20 C# interfaces, 14 static registries — method signatures, invocation timing                   |
-| [DefModExtensions](def-mod-extensions.md) | 10 DefModExtension classes + 1 extension interface for events, buildings, resources, settlements, policies, tile features |
+| [Interfaces & Registries](interfaces-and-registries.md) | C# extension interfaces and their static registries — method signatures, invocation timing      |
+| [DefModExtensions](def-mod-extensions.md) | DefModExtension classes + extension interface for events, buildings, resources, settlements, policies, tile features |
 | [Abstract Base Classes](abstract-base-classes.md) | FCPolicyBehavior, SettlementBuildingComp, MilitaryJobHandler                                    |
 | [Settlement Comps](worldobject-comps.md) | WorldObjectComp pattern for per-settlement extensibility in Empire                              |
 | [Event System](event-system.md) | Event lifecycle, chains, options, handler extensions                                            |
@@ -38,8 +38,14 @@ Annotated XML examples for every def type are in [ExampleDefs/](ExampleDefs/).
 | Restrict defense assignments or squad assignments | [Interfaces & Registries](interfaces-and-registries.md#idefensevalidator) |
 | Validate or restrict settlement founding | [Interfaces & Registries](interfaces-and-registries.md#isettlementfoundingvalidator) |
 | Influence which settlements get raided | [Interfaces & Registries](interfaces-and-registries.md#iraidweightprovider) |
-| Modify Empire Threat Level | [Interfaces & Registries](interfaces-and-registries.md#ithreatscalingcontributor) |
+| Contribute road-network nodes (e.g. external outposts) | [Interfaces & Registries](interfaces-and-registries.md#iroadnodeprovider) |
 | Intercept silver payments | [Interfaces & Registries](interfaces-and-registries.md#isilverpaymentmodifier) |
+| Run daily faction-wide logic after production accrues | [Interfaces & Registries](interfaces-and-registries.md#idailyaccrualparticipant) |
+| Redirect or handle tax delivery | [Interfaces & Registries](interfaces-and-registries.md#itaxdeliveryinterceptor) |
+| Adjust a mercenary squad's combat power | [Interfaces & Registries](interfaces-and-registries.md#isquadpowermodifier) |
+| Customize off-map mercenary auto-tending | [Interfaces & Registries](interfaces-and-registries.md#imercautotendprovider) |
+| Filter animal kinds in the unit designer | [Interfaces & Registries](interfaces-and-registries.md#ianimalpickerfilter) |
+| Add a section to the squad inspection window | [Interfaces & Registries](interfaces-and-registries.md#isquadinspectionsection) |
 | Create a custom policy with procedural logic | [Abstract Base Classes — FCPolicyBehavior](abstract-base-classes.md#fcpolicybehavior) |
 | Create a building with custom C# behavior | [Abstract Base Classes — SettlementBuildingComp](abstract-base-classes.md#settlementbuildingcomp) |
 | Create a custom military operation | [Abstract Base Classes — MilitaryJobHandler](abstract-base-classes.md#militaryjobhandler) |

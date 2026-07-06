@@ -22,6 +22,13 @@
 	<iconPath>path/to/building/icon</iconPath>
 	<!-- Silver upkeep cost deducted periodically. Default: 0 -->
 	<upkeep>0</upkeep>
+	<!-- Whether upkeep is authored at the post-rework per-day scale. -->
+	<!-- When false, upkeep is divided by a legacy divisor at runtime to approximate a per-day -->
+	<!-- value. This is solely a backwards-compatibility scheme. If writing building defs for -->
+	<!-- Empire Refactored v1.6, set postRework to true and set upkeep as a daily value. -->
+	<postRework>false</postRework>
+	<!-- Marks this as a military building for cost/upkeep classification. Default: false -->
+	<isMilitary>false</isMilitary>
 
 	<!-- *=*=* Stat Modifiers *=*=* -->
 	<!-- Stat bonuses this building provides while built. See FCStatDef.xml for details on FCStatModifier. -->
@@ -49,6 +56,18 @@
 	<!-- Valid values: Undefined, Flat, SmallHills, LargeHills, Mountainous, Impassable -->
 	<minhilliness>Undefined</minhilliness>
 	<maxhilliness>Undefined</maxhilliness>
+
+	<!-- *=*=* Tile Mutator Restrictions *=*=* -->
+	<!-- Restrict by the settlement tile's TileMutatorDefs (vanilla world-tile features, e.g. rivers, coast). -->
+	<!-- allowList: the building can ONLY be built on tiles that have at least one listed mutator. -->
+	<!-- blockList: the building CANNOT be built on tiles that have any listed mutator. -->
+	<!-- Both empty (the default) means no mutator restriction. -->
+	<tileMutatorAllowList>
+		<!-- <li>Coast</li> -->
+	</tileMutatorAllowList>
+	<tileMutatorBlockList>
+		<!-- <li>CoastalIsland</li> -->
+	</tileMutatorBlockList>
 
 	<!-- *=*=* Settlement Type Restrictions *=*=* -->
 	<!-- These two lists are mutually exclusive - specify at most one. -->

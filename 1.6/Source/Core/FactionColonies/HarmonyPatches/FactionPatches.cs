@@ -31,21 +31,6 @@ namespace FactionColonies
         }
     }
 
-    //CheckReachNaturalGoodwill()
-    [HarmonyPatch(typeof(Faction), "CheckReachNaturalGoodwill")]
-    class GoodwillPatchFunctionsGoodwillTendency
-    {
-        static bool Prefix(ref Faction __instance)
-        {
-            if (__instance == FindFC.EmpireFaction)
-            {
-                return false;
-            }
-
-            return true;
-        }
-    }
-
     //tryAffectGoodwillWith
     [HarmonyPatch(typeof(Faction), "TryAffectGoodwillWith")]
     class GoodwillPatchFunctionsGoodwillAffect
@@ -57,7 +42,8 @@ namespace FactionColonies
             {
                 if (reason == HistoryEventDefOf.RequestedTrader ||
                     reason == HistoryEventDefOf.GaveGift ||
-                    reason == HistoryEventDefOf.Traded)
+                    reason == HistoryEventDefOf.Traded ||
+                    reason == HistoryEventDefOf.ReachNaturalGoodwill)
                 {
                     return false;
                 }

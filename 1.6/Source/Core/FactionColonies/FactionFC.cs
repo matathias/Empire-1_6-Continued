@@ -1396,11 +1396,14 @@ namespace FactionColonies
         {
             bool isAdditive = stat.aggregation == FCStatAggregation.Additive;
             bool invert = stat.invertedForDisplay;
+            // hardinvert flips the displayed sign, so the color test must flip with it to
+            // keep "harmful modifier = red". Additive-only; multiplier lines aren't sign-flipped.
+            bool colorInvert = invert ^ hardinvert;
             foreach (FCStatModifier mod in statModifiers)
             {
                 if (mod.stat != stat) continue;
                 if (isAdditive)
-                    desc += $"{TextUtil.ColorizeAdditiveBonus(mod.value, invert: invert, hardinvert: hardinvert)} - {label}\n";
+                    desc += $"{TextUtil.ColorizeAdditiveBonus(mod.value, invert: colorInvert, hardinvert: hardinvert)} - {label}\n";
                 else
                     desc += $"{TextUtil.ColorizeMultiplierBonus(mod.value, invert: invert)} - {label}\n";
             }
@@ -1773,6 +1776,13 @@ namespace FactionColonies
 
         private void EnsureResourcePools()
         {
+            // Protection against save corruption. Though if resourcePools has null fields on a load, then there are likely
+            // other, bigger problems hiding elsewhere...
+            int numNull = resourcePools.RemoveAll(p => p is null);
+            if (numNull > 0)
+            {
+                LogUtil.Warning($"[EnsureResourePools] Removed {numNull} null items from resourcePools");
+            }
             foreach (ResourceTypeDef def in FactionCache.PoolResourceTypeDefs)
             {
                 if (!resourcePools.Any(p => p.resource == def))
@@ -2200,21 +2210,27 @@ namespace FactionColonies
 
         public string ReturnNextTechToLevel()
         {
-            switch (techLevel)
+            // Medieval-only cap: once at (or past) Medieval there is no next tier to unlock.
+            if (FCSettings.medievalTechOnly && techLevel >= TechLevel.Medieval)
+                return "FCReachedMaxLevel".Translate();
+
+            // Find the lowest barrier strictly above the current tech level; its research is what
+            // unlocks the next tier.
+            TechLevelBarrier nextBarrier = null;
+            TechLevel nextLevel = TechLevel.Undefined;
+            foreach (KeyValuePair<TechLevel, TechLevelBarrier> kvp in FactionCache.TechBarriers)
             {
-                case TechLevel.Ultra:
-                    return "FCReachedMaxLevel".Translate();
-                case TechLevel.Spacer:
-                    return "FCShipBasics".Translate();
-                case TechLevel.Industrial:
-                    return "FCFabrication".Translate();
-                case TechLevel.Medieval:
-                    return "FCElectricity".Translate();
-                case TechLevel.Neolithic:
-                    return "FCSmithing".Translate();
-                default:
-                    return "N/A";
+                if (kvp.Key <= techLevel) continue;
+                if (nextBarrier is null || kvp.Key < nextLevel)
+                {
+                    nextLevel = kvp.Key;
+                    nextBarrier = kvp.Value;
+                }
             }
+
+            if (nextBarrier is null) return "FCReachedMaxLevel".Translate();
+            string label = nextBarrier.DisplayLabel;
+            return label.NullOrEmpty() ? (string)"FCReachedMaxLevel".Translate() : label.CapitalizeFirst();
         }
 
         #endregion

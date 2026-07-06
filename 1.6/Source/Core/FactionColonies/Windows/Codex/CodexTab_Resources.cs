@@ -26,7 +26,8 @@ namespace FactionColonies
 
         /* Data */
         private readonly CodexWindow parentWindow;
-        private readonly List<ResourceTypeDef> resourceDefs;
+        private List<ResourceTypeDef> resourceDefs;
+        private bool built;
         private ResourceTypeDef selectedResource;
 
         /* Scroll state */
@@ -59,6 +60,15 @@ namespace FactionColonies
         public CodexTab_Resources(CodexWindow window)
         {
             parentWindow = window;
+        }
+
+        /* Deferred so opening the Codex only pays for the tab that is actually shown. Invoked from
+         * OnTabSelected, SelectDef, and every Draw*Pane; the guard makes repeat calls free. */
+        private void EnsureBuilt()
+        {
+            if (built) return;
+            built = true;
+
             resourceDefs = FactionCache.SortedResourceTypeDefsForUI;
 
             if (resourceDefs.Count > 0)
@@ -67,6 +77,7 @@ namespace FactionColonies
 
         public void SelectDef(ResourceTypeDef def)
         {
+            EnsureBuilt();
             if (def is object && resourceDefs.Contains(def))
             {
                 selectedResource = def;
@@ -76,7 +87,7 @@ namespace FactionColonies
             }
         }
 
-        public void OnTabSelected() { }
+        public void OnTabSelected() { EnsureBuilt(); }
         public void OnTabDeselected() { }
 
         private Color GetAccent(ResourceTypeDef def)
@@ -89,6 +100,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawLeftPane(Rect rect)
         {
+            EnsureBuilt();
             float totalHeight = resourceDefs.Count * EntryRowHeight;
             Rect viewRect = ScrollUtil.BeginScrollView(rect, ref leftScroll, totalHeight);
             float curY = 0f;
@@ -122,6 +134,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawCenterPane(Rect rect)
         {
+            EnsureBuilt();
             if (selectedResource is null)
             {
                 Text.Font = GameFont.Medium;
@@ -197,6 +210,7 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawRightPane(Rect rect)
         {
+            EnsureBuilt();
             float contentHeight = CalculateRightPaneHeight(rect.width - ScrollUtil.ScrollbarWidth - 1f);
 
             Rect viewRect = ScrollUtil.BeginScrollView(rect, ref rightScroll, contentHeight);

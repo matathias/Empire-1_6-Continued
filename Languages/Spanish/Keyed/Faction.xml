@@ -137,7 +137,7 @@
 	<FCSendResearchItems>Enviar objetos de investigación</FCSendResearchItems>
 	<FCFactionResearch>Investigación de la facción</FCFactionResearch>
 	<FCResearchLevel>Comprobar nivel tecnológico</FCResearchLevel>
-	<FCCurrentResearchLevel>Tu nivel tecnológico actual es {0}. Para alcanzar el siguiente nivel tecnológico debes investigar {1}</FCCurrentResearchLevel>
+	<FCCurrentResearchLevel>El nivel tecnológico actual de {0} es {1}. Para alcanzar el siguiente nivel tecnológico debes investigar {2}</FCCurrentResearchLevel>
 	<FCShipBasics>Nociones de naves</FCShipBasics>
 	<FCFabrication>Fabricación</FCFabrication>
 	<FCElectricity>Electricidad</FCElectricity>

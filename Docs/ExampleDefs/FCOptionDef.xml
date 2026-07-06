@@ -29,6 +29,16 @@
 	</requiredPolicies>
 	<!-- Whether all or any of the required policies must be active. Valid values: All, Any. Default: All -->
 	<requirementMode>All</requirementMode>
+	<!-- *=*=* Ideology Meme Requirements (optional) *=*=* -->
+	<!-- MemeDef defNames the empire's primary ideoligion must have for this option to appear. Stored as -->
+	<!-- raw strings (not MemeDef references) so meme-gated options load without errors when Ideology is off. -->
+	<!-- When Ideology is disabled, any option with a meme gate is hidden entirely (unlike policy gates, -->
+	<!-- which grey out unmet options). If empty, no meme requirement. -->
+	<requiredMemes>
+		<!-- <li>Raider</li> -->
+	</requiredMemes>
+	<!-- Whether all or any of the required memes must be present. Valid values: All, Any. Default: All -->
+	<memeRequirementMode>All</memeRequirementMode>
   </FactionColonies.FCOptionDef>
 
 </Defs>

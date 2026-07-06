@@ -130,7 +130,7 @@
   <FCSendResearchItems>Отправить предметы для исследований</FCSendResearchItems>
   <FCFactionResearch>Исследования фракции</FCFactionResearch>
   <FCResearchLevel>Проверить технологический уровень</FCResearchLevel>
-  <FCCurrentResearchLevel>Ваш текущий технологический уровень - {0}. Чтобы достичь следующего уровня, вам нужно исследовать {1}</FCCurrentResearchLevel>
+  <FCCurrentResearchLevel>Текущий технологический уровень {0} - {1}. Чтобы достичь следующего уровня, вам нужно исследовать {2}</FCCurrentResearchLevel>
   <FCShipBasics>Основы кораблестроения</FCShipBasics>
   <FCFabrication>Производство</FCFabrication>
   <FCElectricity>Электричество</FCElectricity>

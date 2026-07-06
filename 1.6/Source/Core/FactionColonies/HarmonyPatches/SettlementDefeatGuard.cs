@@ -19,21 +19,12 @@ namespace FactionColonies
         public static bool OffenseActiveAt(Settlement s)
         {
             if (s is null || s is WorldSettlementFC) return false;
-            BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(s.Tile);
+            // CheckDefeated runs this per settlement every settlement tick. Skip the PlanetTile hash +
+            // dict probe when no battlefield exists at all (the common case: no active Empire offense).
+            MilitaryOperationManager mgr = FindFC.MilitaryManager;
+            if (mgr?.battlefields is null || mgr.battlefields.Count == 0) return false;
+            BattlefieldContext bf = mgr.GetBattlefield(s.Tile);
             return bf is object && bf.HasOffenseAt();
-        }
-    }
-
-    [HarmonyPatch(typeof(SettlementDefeatUtility), nameof(SettlementDefeatUtility.CheckDefeated))]
-    public static class SettlementDefeatUtility_CheckDefeated_OffenseGuard
-    {
-        // Priority.First so this runs before SettlementCapturePatch's prefix; returning false skips
-        // the original and any later prefixes for this call. SettlementCapturePatch also early-outs
-        // on the same condition (belt-and-suspenders against Harmony prefix-ordering assumptions).
-        [HarmonyPriority(Priority.First)]
-        public static bool Prefix(Settlement factionBase)
-        {
-            return !OffenseGuardUtil.OffenseActiveAt(factionBase);
         }
     }
 

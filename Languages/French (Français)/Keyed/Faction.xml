@@ -193,7 +193,7 @@
 	
   <FCResearchLevel>Vérifier le niveau technologique</FCResearchLevel>
 	
-  <FCCurrentResearchLevel>Votre niveau technologique actuel est {0}. Pour atteindre le niveau suivant, vous devez rechercher {1}</FCCurrentResearchLevel>
+  <FCCurrentResearchLevel>Le niveau technologique actuel de {0} est {1}. Pour atteindre le niveau suivant, vous devez rechercher {2}</FCCurrentResearchLevel>
 	
   <FCShipBasics>Bases du vaisseau</FCShipBasics>
 	

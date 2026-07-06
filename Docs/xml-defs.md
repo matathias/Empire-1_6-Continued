@@ -1,6 +1,6 @@
 # XML Def Types Reference
 
-Empire defines 12 custom def types. All support `modExtensions` for attaching [DefModExtensions](def-mod-extensions.md). Annotated XML examples for every def type are in [ExampleDefs/](ExampleDefs/).
+Empire defines a set of custom def types, documented below. All support `modExtensions` for attaching [DefModExtensions](def-mod-extensions.md). Annotated XML examples for each are in [ExampleDefs/](ExampleDefs/).
 
 ---
 
@@ -154,11 +154,15 @@ Defines a building that can be constructed in settlements. Buildings provide sta
 | `statModifiers` | `List<FCStatModifier>` | `[]` | Stat bonuses while built. |
 | `applicableBiomes` | `List<string>` | `[]` | BiomeResourceDef defNames where this building is available. Empty = all biomes. |
 | `upkeep` | `int` | `0` | Silver upkeep cost per period. |
+| `postRework` | `bool` | `false` | Whether `upkeep` is authored at the post-v1.6 per-day scale. |
+| `isMilitary` | `bool` | `false` | Marks a military building for cost/upkeep classification (uses `_Military` cost/upkeep stats and the Militaristic upkeep discount). |
 | `iconPath` | `string` | `"GUI/unrest"` | Path to icon texture. |
 | `settlementTypeAllowList` | `List<WorldSettlementDef>` | `[]` | Settlement types where this can be built. Mutually exclusive with block list. |
 | `settlementTypeBlockList` | `List<WorldSettlementDef>` | `[]` | Settlement types where this cannot be built. |
 | `minhilliness` | `Hilliness` | `Undefined` | Minimum tile hilliness. |
 | `maxhilliness` | `Hilliness` | `Undefined` | Maximum tile hilliness. |
+| `tileMutatorAllowList` | `List<TileMutatorDef>` | `[]` | Tile mutators the settlement tile must have at least one of. Empty = no restriction. |
+| `tileMutatorBlockList` | `List<TileMutatorDef>` | `[]` | Tile mutators that disqualify the settlement tile. Empty = no restriction. |
 | `baseBuilding` | `bool` | `true` | If false, only obtainable via upgrade (not directly buildable). |
 | `upgrades` | `List<BuildingFCDef>` | `[]` | Buildings this can be upgraded into. |
 | `requiredBuildings` | `List<BuildingFCDef>` | `[]` | Prerequisites that must be built first. |
@@ -276,13 +280,17 @@ Defines a player choice within an event.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `baseChanceOfSuccess` | `int` | — | Success chance (0-100). UI labels: 100+ = "Guaranteed", 75-99 = "Likely", 40-74 = "Uncertain", 0-39 = "Risky". |
+| `baseChanceOfSuccess` | `float` | — | Success chance (0-100). UI labels: 100+ = "Guaranteed", 75-99 = "Likely", 40-74 = "Uncertain", 0-39 = "Risky". |
 | `silverCost` | `int` | `0` | Silver cost to choose this option. |
 | `parentEvent` | `FCEventDef` | — | The event this option belongs to. |
 | `successEvent` | `FCEventDef` | `null` | Event fired on success. |
 | `failEvent` | `FCEventDef` | `null` | Event fired on failure. |
 | `requiredPolicies` | `List<FCPolicyDef>` | `[]` | Policies that must be active for this option to be available. |
 | `requirementMode` | `FCRequirementMode` | `All` | Whether `All` or `Any` required policies must be active. |
+| `requiredMemes` | `List<string>` | `[]` | Ideology MemeDef defNames the empire's primary ideoligion must have. Stored as raw strings so meme-gated options load without Ideology. Meme-gated options are hidden entirely when Ideology is off. |
+| `memeRequirementMode` | `FCRequirementMode` | `All` | Whether `All` or `Any` required memes must be present. |
+
+For dynamic income/production-based silver-cost scaling, attach an [FCDynamicCostExtension](def-mod-extensions.md#fcdynamiccostextension) modExtension.
 
 See [ExampleDefs/FCOptionDef.xml](ExampleDefs/FCOptionDef.xml).
 
@@ -336,10 +344,9 @@ Defines a military operation type. Requires a C# handler class.
 | `statusLabelKey` | `string` | — | Translation key for status label (e.g., "Raiding"). |
 | `floatMenuLabelKey` | `string` | — | Translation key for float menu label. |
 | `floatMenuDescKey` | `string` | — | Translation key for float menu tooltip. |
+| `rewardsDesc` | `string` | — | Per-job rewards summary shown in the Squad Source Picker (prefixed "Rewards: "). Translatable via DefInjections. Optional. |
 | `occupiesTarget` | `bool` | `true` | If true, the target location is "occupied" during this job. |
 | `isState` | `bool` | `false` | If true, represents a persistent state rather than a one-time action. |
-| `cooldownStatDef` | `FCStatDef` | — | Stat that modifies cooldown duration. |
-| `deadPawnCooldown` | `bool` | `false` | If true, uses the dead pawn cooldown formula. |
 | `defaultEnabled` | `bool` | `true` | If false, must be explicitly enabled by an `FCPolicyDef.enabledMilitaryJobs`. |
 
 See [ExampleDefs/MilitaryJobDef.xml](ExampleDefs/MilitaryJobDef.xml).

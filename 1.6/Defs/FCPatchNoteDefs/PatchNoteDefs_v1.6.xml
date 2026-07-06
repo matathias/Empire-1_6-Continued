@@ -128,4 +128,20 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_8</defName>
+		<label>Performance and Fixes</label>
+		<description>A handful of small fixes and performance improvements.</description>
+		<releaseDate>2026-07-06</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Fixes some issues with rendering settlement stat modifiers</li>
+		<li>Updates the message that appears when checking the Empire faction tech level to be aware of the &quot;mirror player faction tech level&quot; setting</li>
+		<li>Minor perf-related changes to the Codex and a couple of harmony patches on hot paths</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

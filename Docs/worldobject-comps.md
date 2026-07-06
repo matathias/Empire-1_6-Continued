@@ -126,7 +126,7 @@ Injects external tithe budget into a settlement's resource production. The addit
 ```csharp
 public class MyComp : WorldObjectComp, ITitheBudgetModifier
 {
-    public double GetExternalTitheBudget(ResourceFC resource)
+    public double GetDailyExternalTitheBudget(ResourceFC resource)
     {
         // Add 50 silver worth of tithe budget to food
         if (resource.def.defName == "RTD_Food")
@@ -157,22 +157,22 @@ Contributes upkeep or income to a settlement's economic calculations (displayed 
 ```csharp
 public class MyComp : WorldObjectComp, IProfitContributor
 {
-    public double GetUpkeepContribution()
+    public double GetDailyUpkeepContribution()
     {
-        return 25; // +25 silver upkeep
+        return 25; // +25 silver daily upkeep
     }
 
-    public string GetUpkeepContributionDesc()
+    public string GetDailyUpkeepContributionDesc()
     {
         return "+25 - My Comp\n";
     }
 
-    public double GetIncomeContribution()
+    public double GetDailyIncomeContribution()
     {
         return 0; // no income contribution
     }
 
-    public string GetIncomeContributionDesc()
+    public string GetDailyIncomeContributionDesc()
     {
         return null;
     }

@@ -1,6 +1,6 @@
 # DefModExtension Classes
 
-Empire provides 10 DefModExtension classes and 1 extension interface that attach custom behavior to specific def types. Add them via the standard `modExtensions` list on any def.
+Empire provides a set of DefModExtension classes (plus one extension interface) that attach custom behavior to specific def types. Add them via the standard `modExtensions` list on any def.
 
 ```xml
 <modExtensions>
@@ -21,6 +21,8 @@ Empire provides 10 DefModExtension classes and 1 extension interface that attach
 
 | Virtual Method | Signature | When Called |
 |----------------|-----------|------------|
+| `OnEventQueued` | `void OnEventQueued(FCEvent evt, FactionFC faction)` | Once after the event is enqueued. Default impl applies `def.statModifiers` + `def.permanentStatModifiers` to the targeted settlements (or all settlements if untargeted). Override to add setup, or replace the default stat application. |
+| `OnEventExpired` | `void OnEventExpired(FCEvent evt, FactionFC faction)` | Once when the event leaves the queue (transitions to Completed). Default impl removes the temporary modifiers added in `OnEventQueued` and subtracts `def.prosperityLost` (permanent modifiers are intentionally kept). |
 | `ResolveEvent` | `bool ResolveEvent(FCEvent evt, FactionFC faction)` | When the event triggers. Return `true` to skip built-in resolution logic (loot, stat cleanup, etc. still run). Return `false` for normal processing. |
 | `OnEventTriggered` | `void OnEventTriggered(FCEvent evt)` | After all standard processing (loot, stat cleanup, cascading events). Always called regardless of `ResolveEvent`'s return value. |
 | `ShouldCancelOnSettlementRemoval` | `bool ShouldCancelOnSettlementRemoval(FCEvent evt, WorldSettlementFC settlement)` | When a settlement is removed. Return `true` to cancel this event. Default: `false`. |
@@ -36,6 +38,35 @@ These methods let you dynamically modify how event options appear in the option 
 | `IsOptionAvailable` | `bool IsOptionAvailable(FCOptionDef option, FCEvent parentEvent, out string unavailableReason)` | `true` | After policy requirements are checked. Return `false` with a reason string to grey out the option. |
 
 See [Event System](event-system.md) for the full event lifecycle.
+
+---
+
+## FCDynamicCostExtension
+
+**Attaches to**: `FCOptionDef`
+**Purpose**: Scale an event option's silver cost by current empire income and/or by the resource production the option changes — on top of the automatic per-settlement cost multiplier.
+
+**Class**: `FactionColonies.FCDynamicCostExtension` (extends `DefModExtension`)
+
+Contributions are **additive**: this extension can only raise an option's cost, never lower it.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `costPerEmpireIncomeUnit` | `float` | `0` | Coefficient applied to current income (silver/cycle). `0.05` = +5% of income. |
+| `costPerResourceDelta` | `List<ResourceProductionDeltaCost>` | empty | Per-resource scaling on the marginal production the option rescues or adds. |
+| `productionScope` | `FCProductionCostScope` | `AffectedSettlements` | Which settlements contribute to the production-delta sum (`AffectedSettlements` or `FactionWide`). |
+| `incomeScope` | `FCIncomeCostScope` | `FactionWide` | Which settlements contribute to the income sum (`FactionWide` or `AffectedSettlements`). |
+
+**ResourceProductionDeltaCost fields:**
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `resource` | `ResourceTypeDef` | — | The resource whose production delta drives the cost. |
+| `additiveDelta` | `float` | — | The change in the resource's ProductionAdditive this option represents, relative to the free fallback option. Multiplied by production multiplier and assigned workers per settlement. |
+| `coefficient` | `float` | — | Fraction of the resource's silver-per-unit value charged per unit of delta. `0.5` = 50%. |
+| `framing` | `FCResourceCostFraming` | `Mitigated` | Tooltip wording only (`Mitigated` = rescues lost production, `Added` = grants new production). Does not affect the cost. |
+
+The computed cost is snapshotted onto the event when its option window first opens, so the price shown equals the price paid (see `FCOptionDef.GetEffectiveSilverCost`).
 
 ---
 

@@ -25,11 +25,11 @@ See [ExampleDefs/FCStatDef.xml](ExampleDefs/FCStatDef.xml) for an annotated XML 
 
 ### Built-in Stats (FCStatDefOf)
 
-The base mod defines ~36 stats across these categories:
+The base mod defines many stats (see `1.6/Defs/FCStatDefs/`). The categories below are illustrative, not exhaustive:
 
 | Category | Stats |
 |----------|-------|
-| **Military** | `militaryBaseLevel`, `militaryCombatEfficiency`, `militaryLevelBonusDefending/Attacking`, `militaryEfficiencyBonusAttacking/Defending`, `militaryCooldownOffset`, `raidCooldownOffset`, `deadPawnCooldownOffset` |
+| **Military** | `militaryBaseLevel`, `militaryCombatEfficiency`, `militaryLevelBonusDefending/Attacking`, `militaryEfficiencyBonusAttacking/Defending`, `militaryCooldownOffset`, `raidCooldownOffset` |
 | **Threat** | `threatScalingBase`, `threatScalingMultiplier` |
 | **Battle penalties** | `battleProsperityLossMultiplier`, `battleHappinessLossMultiplier`, `battleLoyaltyLossMultiplier` |
 | **Economy** | `taxBasePercentage`, `taxBaseRandomModifier`, `taxBonusFlat`, `titheValueMultiplier`, `lootMultiplier`, `settlementCostMultiplier`, `buildTimeMultiplier`, `createSettlementBaseCost`, `createSettlementMultiplier`, `researchContributionMultiplier` |
