@@ -597,13 +597,17 @@ namespace FactionColonies
             {
                 /* New-world path. Scribe is Inactive, disk I/O is legal. */
                 EnsureFiltersInitialized();
-            }
 
-            /* Rebuild caravan trader kinds last, once factionResources, settlements, and tech
-             * level are settled. If production hasn't computed yet (new world, or load path
-             * where caches still warm up), the helper preserves the FactionDef's existing list
-             * rather than clobbering it with an empty result. */
-            RebuildCaravanTraderKinds();
+                /* Rebuild caravan trader kinds last, once factionResources, settlements, and tech
+                 * level are settled. If production hasn't computed yet, the helper preserves the
+                 * FactionDef's existing list rather than clobbering it with an empty result.
+                 *
+                 * New-world path only. On the load path this is deferred to FirstTick: it reads the
+                 * techLevel property, whose getter would run RecomputeTechLevel during LoadingVars,
+                 * firing xenotypeFilter.FinalizeInit mid-Scribe and stripping disk-only custom
+                 * xenotypes from the loaded filter. FirstTick rebuilds it once Scribe is Inactive. */
+                RebuildCaravanTraderKinds();
+            }
         }
 
         /* Rebuilt on each game init from DefDatabase, ensures defs stay in sync across load. */
