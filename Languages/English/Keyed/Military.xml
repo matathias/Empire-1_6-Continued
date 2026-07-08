@@ -29,6 +29,7 @@
 	<FCSettlementUnderAttack>That settlement is under attack</FCSettlementUnderAttack>
 	<FCSettlementNotBeingAttacked>Settlement is not under attack</FCSettlementNotBeingAttacked>
 	<FCTargetAlreadyBeingAttacked>The target is already being attacked</FCTargetAlreadyBeingAttacked>
+	<FCTargetHasPlayerMap>Your own forces are already on the ground there. The military cannot launch an operation against a site with an active map.</FCTargetHasPlayerMap>
 
 	<!-- Military Sent Notifications -->
 	<FCMilitarySent>Military Sent</FCMilitarySent>

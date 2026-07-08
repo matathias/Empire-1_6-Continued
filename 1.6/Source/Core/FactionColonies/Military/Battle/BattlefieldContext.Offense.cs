@@ -21,6 +21,13 @@ namespace FactionColonies
     /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
     public partial class BattlefieldContext
     {
+        /* Poll cadences for the offense sweep. Offense has no lord-notification path (defense's
+         * RemoveAttacker/RemoveDefender), so polling is the only win/loss detection -- 60 ticks
+         * keeps the end-of-battle latency imperceptible while cutting the per-tick LINQ work.
+         * The linger check merely waits for the player to leave; 250 matches defense's gate. */
+        private const int OffenseWinCheckInterval = 60;
+        private const int OffenseLingerCheckInterval = 250;
+
         /// <summary>An active offense battle owns this tile (offense flag set and a live map).</summary>
         public bool HasOffenseAt() => isOffense && map is object;
 
@@ -51,6 +58,16 @@ namespace FactionColonies
             if (op.defender?.force is null)
             {
                 LogUtil.Warning($"StartOffense: null defender force for op id={op.id}; auto-resolving.");
+                op.BeginAutoResolveProgress();
+                return;
+            }
+
+            // A map already exists at this tile but isn't ours (the player attacked in person
+            // after launch, a quest spawned a site map, ...): never hijack it -- resolve
+            // abstractly instead. The launch gate makes this rare; this is the backstop.
+            if (map is null && Current.Game.FindMap(tile) is object)
+            {
+                LogUtil.Warning($"StartOffense: foreign map already present at tile {tile}; auto-resolving op id={op.id}.");
                 op.BeginAutoResolveProgress();
                 return;
             }
@@ -262,8 +279,15 @@ namespace FactionColonies
 
             if (op?.aggressor?.pawns is object)
             {
-                op.aggressor.pawns.AddRange(pawns);
-                op.aggressor.initialPawnCount += pawns.Count;
+                // Track only fighting colonists as attackers: a surviving pack animal or a
+                // caravan prisoner must not hold the squad-wiped loss condition open.
+                foreach (Pawn pawn in pawns)
+                {
+                    if (pawn.RaceProps?.Humanlike != true) continue;
+                    if (pawn.IsPrisonerOfColony) continue;
+                    op.aggressor.pawns.Add(pawn);
+                    op.aggressor.initialPawnCount++;
+                }
             }
 
             Find.TickManager.Notify_GeneratedPotentiallyHostileMap();
@@ -272,11 +296,12 @@ namespace FactionColonies
 
         /* -*-*-*-*- Tick -*-*-*-*- */
 
-        /// <summary>Per-tick offense backstop, called by the FactionFC sweep only for isOffense
-        /// contexts (defense stays comp-ticked). Detects player win (garrison cleared) / loss
-        /// (squad cleared) and prunes stale pawns. During a post-win loot linger it instead waits
-        /// for the last mobile player pawn to leave before tearing the map down. Cheap standing-pawn
-        /// poll that early-exits instantly when no live battle is running.</summary>
+        /// <summary>Offense backstop, called by the FactionFC sweep only for isOffense contexts
+        /// (defense stays comp-ticked). Detects player win (garrison cleared) / loss (squad cleared)
+        /// and prunes stale pawns on a 60-tick cadence -- offense has no lord-notification path, so
+        /// polling is the only win/loss detection. During a post-win loot linger it instead waits
+        /// (on a 250-tick cadence) for the last mobile player pawn to leave before tearing the map
+        /// down. Early-exits instantly when no live battle is running.</summary>
         public void OffenseTick()
         {
             if (!isOffense) return;
@@ -284,12 +309,15 @@ namespace FactionColonies
 
             if (awaitingPlayerExit)
             {
+                if (Find.TickManager.TicksGame % OffenseLingerCheckInterval != 0) return;
                 FinishLingerIfEmpty();
                 return;
             }
             if (endingBattle) return;
+            if (Find.TickManager.TicksGame % OffenseWinCheckInterval != 0) return;
 
             PruneStalePawns();
+            CaptureUntrackedAttackers();
 
             bool playerWon = !standingDefenderPawns.Any();   // enemy garrison cleared
             bool playerLost = !standingAttackerPawns.Any();  // player squad cleared
@@ -304,6 +332,29 @@ namespace FactionColonies
                         "FCErrorEndingAttackDescription".Translate());
                     LogUtil.Error(error.Message);
                 });
+        }
+
+        /// <summary>Registers player pawns that arrived on the offense map outside
+        /// CaravanJoinAttack (drop pods, shuttles) as attackers, so win/loss accounting sees them
+        /// -- the offense mirror of the defense Tick's untracked-pawn capture. Humanlike,
+        /// non-prisoner colonists only: animals and prisoners must not gate the loss condition.
+        /// No lord is assigned; these are the player's own colonists.</summary>
+        private void CaptureUntrackedAttackers()
+        {
+            MilitaryOperation op = activeOps?.FirstOrDefault(o => o?.aggressor?.pawns is object);
+            if (op is null) return;
+            HashSet<Pawn> tracked = new HashSet<Pawn>(attackerPawns);
+            foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
+            {
+                if (pawn.Faction != Faction.OfPlayer) continue;
+                if (pawn.Dead || pawn.Downed) continue;
+                if (pawn.RaceProps?.Humanlike != true) continue;
+                if (pawn.IsPrisonerOfColony) continue;
+                if (tracked.Contains(pawn)) continue;
+                LogUtil.Message($"Registering untracked player pawn {pawn.LabelShort} with offense at tile {tile}");
+                op.aggressor.pawns.Add(pawn);
+                op.aggressor.initialPawnCount++;
+            }
         }
 
         /* -*-*-*-*- Resolution + teardown -*-*-*-*- */
@@ -368,19 +419,30 @@ namespace FactionColonies
         }
 
         /// <summary>Teardown recipe reimplemented against <c>tile</c> (never calls DeleteMap, which
-        /// dereferences the null ParentSettlement). Mirrors defense DeleteMap exactly: the
-        /// linger-vs-close decision is gated on genuine player colonists (Faction.OfPlayer, e.g. a
-        /// Join Attack caravan), NOT the Empire squad mercs. Returns true when the map is kept alive
-        /// for the player's colonists to leave; the Empire squad is preserved off-map on close.</summary>
+        /// dereferences the null ParentSettlement). Mirrors defense DeleteMap: the linger-vs-close
+        /// decision is gated on genuine mobile player colonists (Faction.OfPlayer, e.g. a Join
+        /// Attack caravan) -- NOT the Empire squad mercs, and NOT player animals (an animal cannot
+        /// reform a caravan on its own, so it must never hold the map open). Returns true when the
+        /// map is kept alive for the player's colonists to leave; the Empire squad is preserved
+        /// off-map on close.</summary>
         private bool TeardownOffenseMap(bool won)
         {
             if (map is null) return false;
 
             List<Pawn> playerColonists = new List<Pawn>();
             bool anyMobile = false;
-            foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
+            // Snapshot the spawned-pawn list: SetFaction on a spawned pawn de/re-registers it in
+            // mapPawns' internal list -- the very list AllPawnsSpawned returns -- and mutating it
+            // mid-enumeration throws.
+            foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned.ToList())
             {
-                if (pawn.Faction != Faction.OfPlayer) continue;
+                if (pawn.Faction != Faction.OfPlayer)
+                {
+                    // The player's caravan prisoners spawn with their own faction; ship them home
+                    // with the colonists instead of letting map removal destroy them.
+                    if (pawn.IsPrisonerOfColony) playerColonists.Add(pawn);
+                    continue;
+                }
                 // A squad merc still in OfPlayer (drafted and not yet restored) is NOT a player
                 // colonist: return it to Empire (which also undrafts it) so the preserve step holds
                 // it off-map for redeployment instead of ReturnPlayerColonistsHome shipping it home
@@ -392,22 +454,41 @@ namespace FactionColonies
                     continue;
                 }
                 playerColonists.Add(pawn);
-                if (!pawn.Downed) anyMobile = true;
+                // Animals never gate the linger: a lone surviving pack animal cannot reform a
+                // caravan, so counting it mobile would hold the map open forever. Vehicles are
+                // pawns but not RaceProps.Animal, so they still count.
+                if (!pawn.Downed && !pawn.RaceProps.Animal) anyMobile = true;
             }
 
             if (anyMobile)
             {
-                // LINGER: keep the map alive until the player's colonists leave. Idle the surviving
-                // Empire mercs under a stripped lord; return only downed colonists home now.
+                // LINGER: keep the map alive until the player's colonists leave. Strip only OUR
+                // side's lords -- on a withdrawal the enemy garrison is still alive and must keep
+                // its defend-base lord, or it degrades into uncoordinated lordless individuals.
                 Faction empire = FindFC.EmpireFaction;
                 foreach (Lord lord in map.lordManager.lords.ListFullCopy())
-                    map.lordManager.RemoveLord(lord);
-                List<Pawn> idlers = new List<Pawn>();
-                foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
-                    if (pawn.Faction == empire && !pawn.Dead && !pawn.Downed) idlers.Add(pawn);
-                foreach (Pawn p in idlers) p.jobs?.StopAll();
-                if (idlers.Any())
-                    LordMaker.MakeNewLord(empire, new LordJob_ColonistsIdle(null), map, idlers);
+                    if (lord.faction == empire || lord.faction == Faction.OfPlayer)
+                        map.lordManager.RemoveLord(lord);
+
+                if (won)
+                {
+                    // Won: the garrison is cleared; idle the surviving Empire mercs as loot-phase
+                    // guards until the player leaves.
+                    List<Pawn> idlers = new List<Pawn>();
+                    foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
+                        if (pawn.Faction == empire && !pawn.Dead && !pawn.Downed) idlers.Add(pawn);
+                    foreach (Pawn p in idlers) p.jobs?.StopAll();
+                    if (idlers.Any())
+                        LordMaker.MakeNewLord(empire, new LordJob_ColonistsIdle(null), map, idlers);
+                }
+                else
+                {
+                    // Withdrawn (a loss never lingers -- mobile colonists count as standing
+                    // attackers): the garrison is still alive, so idling mercs among live hostiles
+                    // just gets them shot. Extract the squad off-map now.
+                    SquadMapTeardownUtil.PreserveEmpirePawns(map);
+                    FindFC.Military?.TryAutoReplaceAllSquads();
+                }
                 ReturnPlayerColonistsHome(won, playerColonists.Where(p => p.Downed).ToList());
                 return true;
             }
@@ -417,27 +498,40 @@ namespace FactionColonies
         }
 
         /// <summary>Finishes a loot linger once the last mobile player colonist has left the map
-        /// (via vanilla caravan/pod extraction), then closes the map. Called from OffenseTick while
-        /// awaitingPlayerExit.</summary>
+        /// (via vanilla caravan/pod extraction), then closes the map and releases this context if
+        /// its ops already detached. Called from OffenseTick while awaitingPlayerExit.</summary>
         private void FinishLingerIfEmpty()
         {
-            if (map is null) { awaitingPlayerExit = false; isOffense = false; return; }
+            if (map is null)
+            {
+                awaitingPlayerExit = false;
+                isOffense = false;
+                ReleaseBattlefieldIfOrphaned();
+                return;
+            }
 
             List<Pawn> playerColonists = new List<Pawn>();
             bool anyMobile = false;
-            foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
+            // Snapshot: the merc-reclaim SetFaction below mutates the spawned-pawn list
+            // (see TeardownOffenseMap).
+            foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned.ToList())
             {
-                if (pawn.Faction != Faction.OfPlayer) continue;
-                // Reclaim any squad merc re-drafted during the linger back to Empire (undrafts it) so
-                // it is preserved off-map on close rather than delivered home, and so it never keeps
-                // the linger alive as a false "player colonist still looting".
+                if (pawn.Faction != Faction.OfPlayer)
+                {
+                    if (pawn.IsPrisonerOfColony) playerColonists.Add(pawn);
+                    continue;
+                }
+                // Reclaim any squad merc found in OfPlayer back to Empire (undrafts it) so it is
+                // preserved off-map on close rather than delivered home, and so it never keeps the
+                // linger alive as a false "player colonist still looting". Drafting is blocked once
+                // the linger starts, so this is a safety net for older saves / other-mod faction flips.
                 if (pawn.IsMercenary())
                 {
                     pawn.SetFaction(FindFC.EmpireFaction);
                     continue;
                 }
                 playerColonists.Add(pawn);
-                if (!pawn.Downed) { anyMobile = true; break; }
+                if (!pawn.Downed && !pawn.RaceProps.Animal) { anyMobile = true; break; }
             }
             if (anyMobile) return;   // player colonists still on-map looting
 
@@ -445,6 +539,17 @@ namespace FactionColonies
             ClearAllOpPawns();
             awaitingPlayerExit = false;
             isOffense = false;
+            ReleaseBattlefieldIfOrphaned();
+        }
+
+        /// <summary>Drops this context from the manager once its last op has already detached.
+        /// Normally Detach removes the context, but an op that resolves mid-linger detaches while
+        /// the player is still on the map, so no later Detach fires -- without this, the context
+        /// (with stale battleMapInitialized/offenseWon flags) leaks in the battlefields dict.</summary>
+        private void ReleaseBattlefieldIfOrphaned()
+        {
+            if (activeOps is object && activeOps.Count > 0) return;
+            FindFC.MilitaryManager?.RemoveBattlefield(tile);
         }
 
         /// <summary>Common close path (immediate or linger-end): remove lords, return the player's
@@ -469,6 +574,7 @@ namespace FactionColonies
             if (Find.CurrentMap == map && homeMap is object) Current.Game.CurrentMap = homeMap;
             Current.Game.DeinitAndRemoveMap(map, false);
             map = null;
+            battleMapInitialized = false;
 
             CompletePendingSettlementFate();
         }
@@ -525,7 +631,6 @@ namespace FactionColonies
         private void ReturnPlayerColonistsHome(bool won, List<Pawn> pawns)
         {
             if (pawns is null || pawns.Count == 0) return;
-            PlanetTile homeTile = OffenseHomeTile();
 
             foreach (Pawn pawn in pawns)
                 if (pawn.Spawned) pawn.DeSpawn();
@@ -542,7 +647,9 @@ namespace FactionColonies
 
             Map home = Find.AnyPlayerHomeMap;
             if (home is null) return;
-            int travelTicks = TravelUtil.ReturnTicksToArrive(homeTile, home.Tile);
+            // Travel is from the battle site (this tile) -- the pawns are physically at the enemy
+            // settlement, not at the squad's home billet.
+            int travelTicks = TravelUtil.ReturnTicksToArrive(tile, home.Tile);
             if (!won) travelTicks += GenDate.TicksPerDay;
 
             List<Thing> goods = new List<Thing>(pawns.Count);
@@ -551,7 +658,7 @@ namespace FactionColonies
             DeliveryEvent.CreateDeliveryEvent(new FCEvent
             {
                 location = home.Tile,
-                source = homeTile,
+                source = tile,
                 goods = goods,
                 customDescription = won
                     ? DeliveryNotification.ShuttleEventInjuredString
@@ -561,18 +668,6 @@ namespace FactionColonies
             string travelDays = ((float)travelTicks / GenDate.TicksPerDay).ToString("0.#");
             Messages.Message("FCInjuredCaravanMembersReturning".Translate(pawns.Count, travelDays),
                 MessageTypeDefOf.NeutralEvent);
-        }
-
-        /// <summary>Home tile for pawn return: the first active op's aggressor home settlement,
-        /// falling back to any player home map tile.</summary>
-        private PlanetTile OffenseHomeTile()
-        {
-            if (activeOps is object)
-                foreach (MilitaryOperation op in activeOps)
-                    if (op?.aggressor?.homeSettlement is object)
-                        return op.aggressor.homeSettlement.Tile;
-            Map home = Find.AnyPlayerHomeMap;
-            return home is object ? home.Tile : tile;
         }
     }
 }

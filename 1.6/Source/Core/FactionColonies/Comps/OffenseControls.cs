@@ -70,24 +70,26 @@ namespace FactionColonies
             BattlefieldContext bf = ActiveOffense();
             if (bf is null) yield break;
 
-            yield return new Command_Action
-            {
-                defaultLabel = "FCOffenseWithdraw".Translate(),
-                defaultDesc = "FCOffenseWithdrawDesc".Translate(),
-                icon = TexCommand.ClearPrioritizedWork,
-                action = () =>
+            // The battle is over once teardown/linger begins -- Withdraw would be a no-op.
+            if (!bf.endingBattle && !bf.awaitingPlayerExit)
+                yield return new Command_Action
                 {
-                    if (bf.endingBattle || bf.awaitingPlayerExit) return;
-                    bf.endingBattle = true;
-                    LongEventHandler.QueueLongEvent(() => bf.EndOffense(false, withdrawn: true),
-                        "EndingAttack", false, error =>
-                        {
-                            DelayedErrorWindowRequest.Add("FCErrorEndingAttack".Translate(),
-                                "FCErrorEndingAttackDescription".Translate());
-                            LogUtil.Error(error.Message);
-                        });
-                }
-            };
+                    defaultLabel = "FCOffenseWithdraw".Translate(),
+                    defaultDesc = "FCOffenseWithdrawDesc".Translate(),
+                    icon = TexCommand.ClearPrioritizedWork,
+                    action = () =>
+                    {
+                        if (bf.endingBattle || bf.awaitingPlayerExit) return;
+                        bf.endingBattle = true;
+                        LongEventHandler.QueueLongEvent(() => bf.EndOffense(false, withdrawn: true),
+                            "EndingAttack", false, error =>
+                            {
+                                DelayedErrorWindowRequest.Add("FCErrorEndingAttack".Translate(),
+                                    "FCErrorEndingAttackDescription".Translate());
+                                LogUtil.Error(error.Message);
+                            });
+                    }
+                };
 
             if (bf.map is object)
                 yield return new Command_Action

@@ -936,6 +936,16 @@ namespace FactionColonies
                 return true;
             }
 
+            // A live map at the target means the player is already there in person (vanilla
+            // caravan attack, quest site). Launching an op would later hijack that map --
+            // StripNativeGarrison would delete the defenders mid-raid -- and an auto-resolved
+            // capture/raze would destroy the settlement underneath the player.
+            if (Current.Game.FindMap(location) is object)
+            {
+                Messages.Message("FCTargetHasPlayerMap".Translate(), MessageTypeDefOf.RejectInput);
+                return true;
+            }
+
             return false;
         }
     }
