@@ -950,6 +950,25 @@ namespace FactionColonies
 
                     if (settlements.Any() || RaidTargetRegistry.Targets.Count > 0)
                     {
+                        // Self-heal orphaned raid-target flags: a target whose attacking op resolved
+                        // without clearing IsUnderAttack (older saves from before that path existed,
+                        // or an op lost without resolution) would be excluded from the pool below
+                        // forever. Clear the flag on any registered target with no live op attacking
+                        // it, so it re-enters raid selection this same tick.
+                        MilitaryOperationManager opManager = FindFC.MilitaryManager;
+                        if (opManager is object)
+                        {
+                            foreach (IRaidTarget rt in RaidTargetRegistry.Targets)
+                            {
+                                if (rt is object && rt.IsUnderAttack && !opManager.HasActiveOpTargeting(rt.WorldObject))
+                                {
+                                    LogUtil.Warning($"Clearing orphaned IsUnderAttack flag on raid target '{rt.Name}' " +
+                                        "(no live operation targeting it).");
+                                    rt.IsUnderAttack = false;
+                                }
+                            }
+                        }
+
                         List<WorldSettlementFC> validSettlements = settlements
                             .Where(s => s.MilitaryComp?.isUnderAttack != true && s.settlementDef.canBeRaided)
                             .ToList();

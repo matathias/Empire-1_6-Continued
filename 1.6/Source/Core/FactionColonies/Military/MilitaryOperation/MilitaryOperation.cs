@@ -425,6 +425,39 @@ namespace FactionColonies
                 def?.OnDefenseComplete(victory, battleResult);
             }
 
+            // Notify an externally-registered IRaidTarget of the raid outcome and clear its
+            // under-attack flag so it re-enters the raid-selection pool (FactionFC filters that
+            // pool on !IsUnderAttack). Empire settlements aren't IRaidTargets, so FindByWorldObject
+            // returns null for them and this block self-gates to external targets. The raid target
+            // is always the op's defender (CreateDefensiveOp forces defender.faction to the empire),
+            // so 'victory' here means the target defended successfully. The flag is cleared in a
+            // finally so a throwing third-party handler can't leave the target permanently excluded;
+            // win/loss notification is skipped on an Error result (no real battle happened), matching
+            // the handler and threat-adaptation paths.
+            if (targetObject is object)
+            {
+                IRaidTarget raidTarget = RaidTargetRegistry.FindByWorldObject(targetObject);
+                if (raidTarget is object)
+                {
+                    try
+                    {
+                        if (battleResult is object && battleResult.winner != BattleWinner.Error)
+                        {
+                            if (victory) raidTarget.OnRaidWon(battleResult);
+                            else raidTarget.OnRaidLost(battleResult);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        LogUtil.Error($"MilitaryOperation.CompleteBattle: IRaidTarget handler threw for {raidTarget.Name}: {e}");
+                    }
+                    finally
+                    {
+                        raidTarget.IsUnderAttack = false;
+                    }
+                }
+            }
+
             // Drive EmpireThreatAdaptation from every battle the empire participates in
             // (offensive and defensive), so raid outcomes tune the threat curve alongside
             // defensive ones. Skip on Error results — the battle didn't really happen.
