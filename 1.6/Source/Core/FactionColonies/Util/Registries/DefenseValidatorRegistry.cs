@@ -13,6 +13,8 @@ namespace FactionColonies
 
         /// <summary>
         /// Returns true if all registered validators allow the defense assignment.
+        /// <para>Fail-open: a validator that throws is logged and skipped, never blocking the
+        /// assignment — a buggy submod validator cannot brick base defense.</para>
         /// </summary>
         public static bool CanDefend(WorldSettlementFC defender, WorldSettlementFC target)
             => RegistryDispatch.All(_list.Items, v => v.CanDefend(defender, target), nameof(IDefenseValidator.CanDefend));

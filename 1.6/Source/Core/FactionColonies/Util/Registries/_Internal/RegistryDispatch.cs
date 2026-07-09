@@ -14,7 +14,7 @@ namespace FactionColonies
         /// <summary>Calls <paramref name="action"/> on every item; exceptions are caught and logged.</summary>
         public static void Each<T>(IReadOnlyList<T> items, Action<T> action, string call) where T : class
         {
-            foreach (T item in items)
+            foreach (T item in Snapshot(items))
             {
                 try { action(item); }
                 catch (Exception e) { Log(item, call, e); }
@@ -28,7 +28,7 @@ namespace FactionColonies
         /// </summary>
         public static void EachInvalidating<T>(IReadOnlyList<T> items, Action<T> action, Action invalidate, string call) where T : class
         {
-            foreach (T item in items)
+            foreach (T item in Snapshot(items))
             {
                 try { action(item); }
                 catch (Exception e) { Log(item, call, e); }
@@ -36,10 +36,16 @@ namespace FactionColonies
             }
         }
 
-        /// <summary>Short-circuits: returns false on the first item whose predicate is false.</summary>
+        /// <summary>
+        /// Short-circuits: returns false on the first item whose predicate is false.
+        /// <para>A predicate that <b>throws</b> is logged and skipped (treated as passing) — the walk
+        /// continues and can still return true. Callers using this for veto semantics
+        /// (<see cref="IDefenseValidator"/>, <see cref="ISquadAssignmentValidator"/>) therefore
+        /// <b>fail open</b>: a broken validator cannot block the action.</para>
+        /// </summary>
         public static bool All<T>(IReadOnlyList<T> items, Func<T, bool> predicate, string call) where T : class
         {
-            foreach (T item in items)
+            foreach (T item in Snapshot(items))
             {
                 try { if (!predicate(item)) return false; }
                 catch (Exception e) { Log(item, call, e); }
@@ -51,7 +57,7 @@ namespace FactionColonies
         public static TAcc Aggregate<T, TAcc>(IReadOnlyList<T> items, TAcc seed, Func<TAcc, T, TAcc> reducer, string call) where T : class
         {
             TAcc acc = seed;
-            foreach (T item in items)
+            foreach (T item in Snapshot(items))
             {
                 try { acc = reducer(acc, item); }
                 catch (Exception e) { Log(item, call, e); }
@@ -62,7 +68,7 @@ namespace FactionColonies
         /// <summary>Returns the first item matching <paramref name="predicate"/>, or null.</summary>
         public static T First<T>(IReadOnlyList<T> items, Func<T, bool> predicate, string call) where T : class
         {
-            foreach (T item in items)
+            foreach (T item in Snapshot(items))
             {
                 try { if (predicate(item)) return item; }
                 catch (Exception e) { Log(item, call, e); }
@@ -75,13 +81,21 @@ namespace FactionColonies
             where T : class
             where TResult : class
         {
-            foreach (T item in items)
+            foreach (T item in Snapshot(items))
             {
                 try { if (selector(item) is object) return item; }
                 catch (Exception e) { Log(item, call, e); }
             }
             return null;
         }
+
+        /// <summary>
+        /// Copies <paramref name="items"/> so iteration is decoupled from the live backing list. A
+        /// participant that unregisters itself (or otherwise mutates its registry) inside its own
+        /// callback would otherwise invalidate the enumerator and throw <see cref="InvalidOperationException"/>
+        /// out of the <c>foreach</c> — past the per-item try/catch — and into game code.
+        /// </summary>
+        private static List<T> Snapshot<T>(IReadOnlyList<T> items) where T : class => new List<T>(items);
 
         private static void Log<T>(T offender, string call, Exception e) where T : class
         {

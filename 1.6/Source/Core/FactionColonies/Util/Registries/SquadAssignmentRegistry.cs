@@ -14,6 +14,8 @@ namespace FactionColonies
         /// <summary>
         /// Returns true if all registered validators allow the assignment.
         /// On first rejection, outputs the reason string.
+        /// <para>Fail-open: a validator that throws is logged and skipped, never blocking the
+        /// assignment — a buggy submod validator cannot brick base squad assignment.</para>
         /// <para>The <c>out</c> parameter on <see cref="ISquadAssignmentValidator.CanAssign"/>
         /// can't flow through an <c>Action&lt;T&gt;</c> closure cleanly, so the rejection
         /// reason is captured to a local and copied out at the end.</para>

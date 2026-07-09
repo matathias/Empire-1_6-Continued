@@ -163,35 +163,6 @@ namespace FactionColonies
             LogUtil.Message("Cleared faction traits and policies.");
         }
 
-        [DebugAction("Empire", "Reset All Military Squad Assignments", allowedGameStates = AllowedGameStates.Playing)]
-        private static void ResetAllMilitarySquads()
-        {
-            LogUtil.MessageForce("Debug - Reset All Military Squad Assignments");
-            MilitaryFC mfc = FindFC.Military;
-            var allMercs = mfc.AllMercenaries.ToList();
-            for (int i = allMercs.Count - 1; i >= 0; i--)
-            {
-                if (allMercs[i].squad.Deployment.HasLord)
-                {
-                    allMercs[i].squad.Deployment.Map.lordManager.RemoveLord(allMercs[i].squad.Deployment.Lord);
-                }
-
-                allMercs[i].pawn.Destroy();
-                allMercs[i].squad.mercenaries.Remove(allMercs[i]);
-            }
-
-            for (int k = mfc.mercenarySquads.Count() - 1; k >= 0; k--)
-            {
-                MercenarySquadFC squad = mfc.mercenarySquads[k];
-                if (squad?.settlement != null) squad.settlement = null;
-                mfc.mercenarySquads.RemoveAt(k);
-            }
-
-
-            mfc.CheckMilitaryUtilForErrors();
-        }
-
-
         [DebugAction("Empire", "Make Random Event", allowedGameStates = AllowedGameStates.Playing)]
         private static void MakeRandomEvent()
         {

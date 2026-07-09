@@ -1427,5 +1427,66 @@ namespace FactionColonies
             TestAssert.DoesNotThrow(() => EmpireRegistry.Register(null));
             TestAssert.DoesNotThrow(() => EmpireRegistry.Unregister(null));
         }
+
+        // ============================
+        // RegistryDispatch re-entrancy
+        // ============================
+        // Exercises RegistryDispatch against a private RegistryList so a participant can
+        // unregister itself mid-callback without fanning out to live listeners or the real
+        // settlement. Before the snapshot fix, the self-removal invalidated the foreach
+        // enumerator and threw InvalidOperationException out past the per-item try/catch.
+
+        private class SelfUnregisteringParticipant
+        {
+            public RegistryList<SelfUnregisteringParticipant> Owner;
+            public bool UnregisterSelf;
+            public int InvokeCount;
+
+            public void Fire()
+            {
+                InvokeCount++;
+                if (UnregisterSelf) Owner.Unregister(this);
+            }
+        }
+
+        [EmpireTest("Registry")]
+        public static void RegistryDispatch_Each_SelfUnregisterMidCallback_NoThrowRemainingRun()
+        {
+            var list = new RegistryList<SelfUnregisteringParticipant>();
+            var a = new SelfUnregisteringParticipant { Owner = list, UnregisterSelf = true };
+            var b = new SelfUnregisteringParticipant { Owner = list };
+            var c = new SelfUnregisteringParticipant { Owner = list };
+            list.Register(a);
+            list.Register(b);
+            list.Register(c);
+
+            TestAssert.DoesNotThrow(() =>
+                RegistryDispatch.Each(list.Items, p => p.Fire(), "Fire"),
+                "self-unregister mid-callback must not invalidate the iteration");
+
+            TestAssert.AreEqual(1, a.InvokeCount, "self-unregistering item still fires once");
+            TestAssert.AreEqual(1, b.InvokeCount, "later items still run after a mid-callback unregister");
+            TestAssert.AreEqual(1, c.InvokeCount, "later items still run after a mid-callback unregister");
+            TestAssert.AreEqual(2, list.Count, "the self-unregister still took effect");
+        }
+
+        [EmpireTest("Registry")]
+        public static void RegistryDispatch_All_SelfUnregisterMidPredicate_NoThrow()
+        {
+            var list = new RegistryList<SelfUnregisteringParticipant>();
+            var a = new SelfUnregisteringParticipant { Owner = list, UnregisterSelf = true };
+            var b = new SelfUnregisteringParticipant { Owner = list };
+            list.Register(a);
+            list.Register(b);
+
+            bool result = true;
+            TestAssert.DoesNotThrow(() =>
+                result = RegistryDispatch.All(list.Items, p => { p.Fire(); return true; }, "Fire"),
+                "self-unregister mid-predicate must not invalidate the iteration");
+
+            TestAssert.IsTrue(result, "no predicate returned false");
+            TestAssert.AreEqual(1, a.InvokeCount);
+            TestAssert.AreEqual(1, b.InvokeCount, "later validators still run after a mid-callback unregister");
+        }
     }
 }
