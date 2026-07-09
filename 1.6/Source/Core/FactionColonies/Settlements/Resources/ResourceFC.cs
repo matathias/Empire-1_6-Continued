@@ -86,20 +86,26 @@ namespace FactionColonies
         public double totalStockpileAllocation => stockpileAllocations.Values.Sum(e => e.amount);
 
         /// <summary>
-        /// Attempts to register a named production diversion for a stockpile.
-        /// Returns false without registering if the amount would push total diversions above <see cref="rawTotalProduction"/>.
-        /// If the key already exists, the old entry is replaced (using the new amount in the capacity check).
+        /// Registers a named production diversion for a stockpile. The full request is always
+        /// registered (an over-subscribed diversion grows into headroom if production later rises);
+        /// each day only what actually exists is delivered, clamped in registration order (see
+        /// <see cref="AccumulateDailyProduction"/>), so an over-subscribed resource never drives
+        /// effective production or income negative. If the key already exists, the old entry is replaced.
         /// </summary>
         /// <param name="key">Unique identifier for the calling mod (e.g. "MyMod.MyFeature").</param>
         /// <param name="realize">Optional callback invoked each day with (requested, actual) units diverted.</param>
-        public bool SetStockpileAllocation(string key, double amount, Action<double, double> realize = null)
+        /// <returns>
+        /// The amount current production can actually deliver toward this request right now
+        /// (<c>min(request, remaining production after other diversions)</c>). A value below the
+        /// requested amount means the diversion is currently clamped and will only be filled in part.
+        /// </returns>
+        public double SetStockpileAllocation(string key, double amount, Action<double, double> realize = null)
         {
-            double currentForKey = stockpileAllocations.TryGetValue(key, out var existing) ? existing.amount : 0;
-            if (totalStockpileAllocation - currentForKey + amount > rawTotalProduction)
-                return false;
-            stockpileAllocations[key] = new StockpileEntry { amount = amount, realize = realize };
+            double requested = Math.Max(0, amount);
+            stockpileAllocations[key] = new StockpileEntry { amount = requested, realize = realize };
             settlement?.DirtyProfitCache();
-            return true;
+            double otherAllocations = totalStockpileAllocation - requested;
+            return Math.Min(requested, Math.Max(0, rawTotalProduction - otherAllocations));
         }
 
         /// <summary>Removes a previously registered stockpile allocation. The eviction callback is NOT invoked.</summary>
@@ -204,7 +210,7 @@ namespace FactionColonies
 
         /// <summary>Live instantaneous per-day rate (production * workers). For display and projections.</summary>
         public double rawTotalProduction => InstantaneousProduction;
-        public double effectiveRawTotalProduction => rawTotalProduction - totalStockpileAllocation;
+        public double effectiveRawTotalProduction => Math.Max(0, rawTotalProduction - totalStockpileAllocation);
         public double grossMarketValue => rawTotalProduction * FCSettings.silverPerResource;
         public double stockpileMarketValue => totalStockpileAllocation * FCSettings.silverPerResource;
         public double taxableProductionMarketValue => effectiveRawTotalProduction * FCSettings.silverPerResource;
