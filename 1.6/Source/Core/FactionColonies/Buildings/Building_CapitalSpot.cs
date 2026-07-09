@@ -190,8 +190,10 @@ namespace FactionColonies
 
         public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
         {
-            // If this was the active capital spot and it's being destroyed, clear the capital
-            if (isActiveCapitalSpot)
+            // If this was the active capital spot and it's being destroyed, clear the capital.
+            // Skip on WillReplace (gravship launch repositions this same instance) so the capital
+            // survives the flight; TickRare re-syncs the tile after landing.
+            if (isActiveCapitalSpot && mode != DestroyMode.WillReplace)
             {
                 FactionFC faction = FindFC.FactionComp;
                 if (faction != null)

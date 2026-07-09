@@ -1164,6 +1164,9 @@ namespace FactionColonies
             removeWorldObject = false;
             var map = Map;
             if (map is null) return false;
+            // Vanilla guard (Settlement.ShouldRemoveMapNow): never tear down a map holding a landed
+            // gravship or grav anchor, or those buildings would be destroyed.
+            if (map.AnyBuildingBlockingMapRemoval) return false;
             if (MilitaryComp?.isUnderAttack == true) return false;
             if (MilitaryComp is object && (MilitaryComp.defenders.Any() || MilitaryComp.attackers.Any())) return false;
             // Vanilla checks: wait for player pawns to leave and incoming transporters to arrive
@@ -1187,16 +1190,23 @@ namespace FactionColonies
             base.Notify_MyMapAboutToBeRemoved();
         }
 
+        /// <summary>
+        /// Clamps a settlement level to the valid range: at least 0, at most the lower of the global
+        /// cap (<see cref="FCSettings.settlementMaxLevel"/>) and this settlement type's own def cap.
+        /// An over-cap value settles down to the def cap rather than jumping up to the global max.
+        /// </summary>
+        public static int ClampSettlementLevel(int level, WorldSettlementDef def)
+        {
+            int cap = Math.Min(FCSettings.settlementMaxLevel, def.maxSettlementLevel);
+            if (level > cap) level = cap;
+            if (level < 0) level = 0;
+            return level;
+        }
+
         public void UpgradeSettlement(int times = 1, bool setFlags = false)
         {
             int oldLevel = settlementLevel;
-            settlementLevel += times;
-            if (settlementLevel > FCSettings.settlementMaxLevel ||
-                settlementLevel > settlementDef.maxSettlementLevel)
-            {
-                settlementLevel = FCSettings.settlementMaxLevel;
-            }
-            if (settlementLevel < 0) settlementLevel = 0;
+            settlementLevel = ClampSettlementLevel(settlementLevel + times, settlementDef);
             DirtyStatsCache();
             DirtyDescriptionCache();
             settlementDef.GetSettlementTypeExtension()?.OnUpgrade(this, oldLevel, settlementLevel);
@@ -1354,8 +1364,9 @@ namespace FactionColonies
                 }
             }
 
-            // Comp set changed; rebuild the ticking-comp filter on the next tick.
+            // Comp set changed; rebuild both ticking-comp filters on the next tick.
             tickingComps = null;
+            tickIntervalComps = null;
         }
 
         public double GainUnrestWithReason(Message message, double amount)

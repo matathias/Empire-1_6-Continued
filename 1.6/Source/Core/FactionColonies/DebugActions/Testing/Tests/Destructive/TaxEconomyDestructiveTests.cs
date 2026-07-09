@@ -66,7 +66,7 @@ namespace FactionColonies
             DestructiveTestUtil.AssertEmpireInvariants(f, "AddTax_WithTransientSettlement_ThenRemove");
         }
 
-        /* -*-*-*-  Random-tithe escrow accounting (regression cover for M1/M2)  -*-*-*- */
+        /* -*-*-*-  Random-tithe escrow accounting  -*-*-*- */
 
         /// <summary>
         /// Configures a fresh transient settlement so exactly one tithe-able resource drives the
@@ -228,7 +228,7 @@ namespace FactionColonies
 
                 TestAssert.GreaterThan(oneDay, 0, "Single-day accrual should escrow a positive budget");
                 // The per-day random budget is scaled by accrued days, so three days should escrow
-                // clearly more than one. Pre-M2-fix it was capped at ~one day's budget regardless.
+                // clearly more than one, rather than being capped at ~one day's budget regardless.
                 TestAssert.GreaterThan(threeDay, oneDay * 2,
                     $"Three-day escrow ({threeDay:F0}) should exceed 2x the one-day escrow ({oneDay:F0})");
 
