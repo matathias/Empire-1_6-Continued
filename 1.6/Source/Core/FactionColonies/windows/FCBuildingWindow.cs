@@ -1262,10 +1262,10 @@ namespace FactionColonies
 
             if (isSameBuilding)
             {
-                if (UIUtil.ClampedButtonText(buttonRect, "FCDestroy".Translate()))
-                {
-                    ExecuteDestroy();
-                }
+                // Already built in this slot; removal is handled by the Demolish button above.
+                GUI.color = new Color(1f, 1f, 1f, 0.4f);
+                UIUtil.ClampedButtonText(buttonRect, "Empire_BuildingWindow_CurrentBuilding".Translate());
+                GUI.color = Color.white;
             }
             else if (isLocked)
             {
@@ -1291,13 +1291,6 @@ namespace FactionColonies
                     ExecuteBuild();
                 }
             }
-        }
-
-        private void ExecuteDestroy()
-        {
-            if (!FindFC.FactionComp.IsActionAllowed(FCActionType.DemolishBuilding)) return;
-            settlement.DeconstructBuilding(buildingSlot);
-            Find.WindowStack.TryRemove(this);
         }
 
         private void ExecuteBuild()
