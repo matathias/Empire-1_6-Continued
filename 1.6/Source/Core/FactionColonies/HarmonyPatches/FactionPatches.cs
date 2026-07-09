@@ -76,6 +76,11 @@ namespace FactionColonies
                     EmpireDeathPenaltyUtil.HandleCivilianDefenderDeath(member, dinfo, map.Parent as WorldSettlementFC);
                 }
 
+                // Returning false blocks vanilla Notify_MemberDied, so replicate the two vanilla side
+                // effects unrelated to goodwill: ideo member-count refresh and picking a new leader.
+                if (__instance.ideos != null) __instance.ideos.Notify_MemberGainedOrLost();
+                if (member == __instance.leader) __instance.Notify_LeaderDied();
+
                 return false;
             }
 

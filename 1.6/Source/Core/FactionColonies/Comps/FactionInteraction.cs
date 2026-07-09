@@ -48,6 +48,7 @@ namespace FactionColonies
         }
 
         private bool HasValidFaction() =>
+            parent.Faction is object &&
             parent.Faction != FindFC.EmpireFaction &&
             parent.Faction != Find.FactionManager.OfPlayer;
 

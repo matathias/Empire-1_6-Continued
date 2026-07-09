@@ -765,8 +765,10 @@ namespace FactionColonies
         public override void CompTick()
         {
             // base.CompTick() is empty in Rimworld 1.6
-            List<SettlementBuildingComp> ticking = settlementBuildingComps_Ticking;
-            foreach (SettlementBuildingComp comp in ticking)
+            // Invariant: a comp's Tick() must not add/remove comps from this list -- building
+            // construction/deconstruction is driven by the parent (HandleOnConstructionComps /
+            // Add/RemoveComp), never from inside a tick. So iterating the live list directly is safe.
+            foreach (SettlementBuildingComp comp in settlementBuildingComps_Ticking)
             {
                 comp.Tick();
             }

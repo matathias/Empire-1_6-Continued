@@ -455,7 +455,7 @@ namespace FactionColonies
 
         public override IEnumerable<Gizmo> GetCaravanGizmos(Caravan caravan)
         {
-            foreach (Gizmo gizmo in base.GetGizmos())
+            foreach (Gizmo gizmo in base.GetCaravanGizmos(caravan))
             {
                 yield return gizmo;
             }
