@@ -93,6 +93,11 @@ namespace FactionColonies
         [EmpireTest("Battle")]
         public static void FightRound_HigherEfficiency_CompensatesLowerRoll()
         {
+            // A rolls 6 * DampenEff(2.0), B rolls 8 * DampenEff(1.0)=8. DampenEff(2.0)=1+efficiencyDamping,
+            // so A only overcomes the lower roll while efficiencyDamping > 1/3 (default 0.5). Skip otherwise.
+            if (6.0 * (1.0 + FCSettings.efficiencyDamping) <= 8.0)
+                TestAssert.Skip($"efficiencyDamping={FCSettings.efficiencyDamping} too low for higher efficiency to overcome the lower roll");
+
             var mfa = CreateForce(5, 2.0, 5); // 2x efficiency
             var mfb = CreateForce(5, 1.0, 5);
             // A rolls 6 * DampenEff(2.0)=1.5 = 9, B rolls 8 * DampenEff(1.0)=1.0 = 8 → A wins

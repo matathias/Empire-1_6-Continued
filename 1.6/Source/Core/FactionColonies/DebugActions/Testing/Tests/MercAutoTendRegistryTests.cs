@@ -33,6 +33,20 @@ namespace FactionColonies
                 => throw new System.InvalidOperationException("test");
         }
 
+        /// <summary>Records whether it was probed, returning null. A throwing sentinel cannot prove
+        /// short-circuiting because RegistryDispatch swallows provider exceptions and keeps walking;
+        /// a probe flag proves the provider was never reached.</summary>
+        private class SpyDoctorProvider : IMercAutoTendProvider
+        {
+            public bool DoctorProbed;
+            public Pawn ProvideTendingDoctor(Mercenary patient, WorldSettlementFC settlement)
+            {
+                DoctorProbed = true;
+                return null;
+            }
+            public ThingDef OverrideTendingMedicine(Mercenary patient, WorldSettlementFC settlement, ThingDef currentChoice) => currentChoice;
+        }
+
         private static Pawn AnyPawn()
         {
             // Find any alive pawn — colonist, world pawn, doesn't matter (we use it as a reference
@@ -97,16 +111,18 @@ namespace FactionColonies
             Pawn token = AnyPawn();
             if (token is null) TestAssert.Skip("No world pawns available as reference token");
 
-            // First provider returns the token; second is registered but its return is ignored.
+            // First provider returns the token; the spy sentinel is registered after it. If PickDoctor
+            // short-circuits on the first non-null, the sentinel is never probed (DoctorProbed stays false).
             var first = new FixedDoctorProvider(token);
-            // Second provider would throw if called — proves PickDoctor short-circuits.
-            var sentinel = new ThrowingProvider();
+            var sentinel = new SpyDoctorProvider();
             MercAutoTendRegistry.Register(first);
             MercAutoTendRegistry.Register(sentinel);
             try
             {
                 Pawn result = MercAutoTendRegistry.PickDoctor(null, null);
-                TestAssert.IsTrue(ReferenceEquals(token, result));
+                TestAssert.IsTrue(ReferenceEquals(token, result), "First non-null provider's return value should win");
+                TestAssert.IsFalse(sentinel.DoctorProbed,
+                    "PickDoctor should short-circuit and never probe the provider after the first non-null");
             }
             finally
             {
@@ -234,7 +250,8 @@ namespace FactionColonies
                     if (ReferenceEquals(p, provider)) count++;
                 TestAssert.AreEqual(1, count, "Should only appear once");
             }
-            finally { MercAutoTendRegistry.Unregister(provider); }
+            // Unregister twice so a dedup regression can't leak a test double for the session.
+            finally { MercAutoTendRegistry.Unregister(provider); MercAutoTendRegistry.Unregister(provider); }
         }
 
         [EmpireTest("Registry")]

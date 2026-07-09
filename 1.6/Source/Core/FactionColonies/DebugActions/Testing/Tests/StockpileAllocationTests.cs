@@ -8,6 +8,11 @@ namespace FactionColonies
         private static ResourceFC MakeResource(double productionPerWorker, int workers)
         {
             var res = new ResourceFC();
+            // A resolved def is required: AccumulateDailyProduction reads `canTithe` (=> def.canTithe),
+            // so a null def NREs. Use a fresh in-memory, non-pool, non-tithing def so the accumulate
+            // path stays pure (canTithe == false skips the tithe block's faction/settlement derefs) and
+            // no game state is needed — matching this suite's "without requiring game state" design.
+            res.def = new ResourceTypeDef { defName = "TestResource", isPoolResource = false, canTithe = false };
             // A non-empty desc is required to avoid a null-settlement warning branch in AddProductionAdditive
             res.AddProductionAdditive("test.production", productionPerWorker, "test bonus");
             res.assignedWorkers = workers;

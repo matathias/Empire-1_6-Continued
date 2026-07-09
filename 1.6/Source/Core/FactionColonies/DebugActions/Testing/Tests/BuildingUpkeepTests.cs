@@ -34,7 +34,7 @@ namespace FactionColonies
         // ============================
 
         [EmpireTest("BuildingUpkeep")]
-        public static void AllBuildingUpkeep_IsFiniteAndNonNegative()
+        public static void AllBuildingUpkeep_IsSaneMagnitude()
         {
             WorldSettlementFC settlement = GetSettlement();
             if (settlement == null) TestAssert.Skip("No settlement with BuildingsComp");
@@ -43,8 +43,10 @@ namespace FactionColonies
             for (int i = 0; i < comp.NumBuildingSlots; i++)
             {
                 int upkeep = comp.GetBuildingUpkeep(i);
-                TestAssert.IsTrue(upkeep >= 0,
-                    $"Slot {i} ({comp.GetBuildingInSlot(i)?.defName ?? "null"}): upkeep should be >= 0, got {upkeep}");
+                // Negative upkeep is a shipped feature (income-generating buildings, e.g. Neolithic
+                // buildings with upkeep -10), so only assert a sane magnitude to catch overflow/garbage.
+                TestAssert.IsTrue(System.Math.Abs(upkeep) < 1000000,
+                    $"Slot {i} ({comp.GetBuildingInSlot(i)?.defName ?? "null"}): upkeep magnitude looks wrong, got {upkeep}");
             }
         }
 

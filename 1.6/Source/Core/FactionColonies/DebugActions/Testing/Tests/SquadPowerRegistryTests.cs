@@ -227,7 +227,9 @@ namespace FactionColonies
                 TestAssert.AreEqual(basePower + 5, result,
                     message: "Duplicate registration should only apply the modifier once");
             }
-            finally { SquadPowerRegistry.Unregister(modifier); }
+            // Unregister twice: the try body registers the modifier twice, and a dedup regression
+            // would otherwise leak a copy (a permanent +5 on every squad-power resolution) for the session.
+            finally { SquadPowerRegistry.Unregister(modifier); SquadPowerRegistry.Unregister(modifier); }
         }
 
         [EmpireTest("Registry")]

@@ -1,4 +1,5 @@
 using Verse;
+using RimWorld;
 
 namespace FactionColonies
 {
@@ -63,18 +64,27 @@ namespace FactionColonies
             if (Find.Storyteller.difficulty.adaptationEffectFactor <= 0f)
                 TestAssert.Skip("adaptationEffectFactor is zero; ThreatFactor is curve-insensitive");
 
+            // 100 wins push adaptDays from 0 to min(200 * growthMult, adaptDaysMax) (see
+            // EmpireThreatAdaptation.Notify_BattleWon), and ThreatFactor = Lerp(1, curve.Evaluate(adaptDays),
+            // effectFactor). Predict the exact endpoints; if they don't differ by the assertion tolerance
+            // (flat curve, or an effectFactor small enough to damp the curve delta below tolerance), the
+            // movement can't be observed — skip rather than falsely fail.
+            StorytellerDef sdef = Find.Storyteller.def;
+            float effectFactor = Find.Storyteller.difficulty.adaptationEffectFactor;
+            float growthMult = (float)(FindFC.FactionComp?.GetStatValue(FCStatDefOf.threatAdaptationGrowthMultiplier) ?? 1);
+            float endAdaptDays = System.Math.Min(200f * growthMult, sdef.adaptDaysMax);
+            float predictedBefore = UnityEngine.Mathf.Lerp(1f, sdef.pointsFactorFromAdaptDays.Evaluate(0f), effectFactor);
+            float predictedAfter = UnityEngine.Mathf.Lerp(1f, sdef.pointsFactorFromAdaptDays.Evaluate(endAdaptDays), effectFactor);
+            if (System.Math.Abs(predictedAfter - predictedBefore) <= 0.0001f)
+                TestAssert.Skip("ThreatFactor cannot move measurably over the range 100 wins traverse (flat curve or tiny effectFactor)");
+
             var adapt = new EmpireThreatAdaptation();
             double before = adapt.ThreatFactor;
-            // Push hard so even a flat-near-zero curve registers some change.
             for (int i = 0; i < 100; i++) adapt.Notify_BattleWon();
             double after = adapt.ThreatFactor;
 
-            // We don't pin the direction — some curves go up, some flat, some down.
-            // We just verify the field actually moved, OR that we're sitting at the curve's
-            // saturated value (no change because of a clamp).
-            // Allow saturation-at-equal as a valid outcome.
-            TestAssert.IsTrue(System.Math.Abs(after - before) > 0.0001
-                              || System.Math.Abs(before - 1.0) < 0.0001 == false,
+            // Endpoints predicted to differ by > tolerance (guarded above), so ThreatFactor must move.
+            TestAssert.IsTrue(System.Math.Abs(after - before) > 0.0001,
                 $"Expected ThreatFactor to move after 100 BattleWon calls; before={before}, after={after}");
         }
 

@@ -4,11 +4,24 @@ using Verse;
 namespace FactionColonies
 {
     /* Tests for WorldComponent_Archive's battle-report storage. Recording is a persistent
-       mutation — tests stamp each recorded result with a "_TestArchive_*" attackerLabel so a
-       human can spot leaked test records in the archive viewer if needed. */
+       mutation on the live archive, so these tests run against a THROWAWAY archive instance
+       (NewArchive) rather than the save-persisted WorldComponent_Archive.Get(): the record /
+       cap-eviction / ordering / count logic is entirely instance-local (it only reads
+       Find.TickManager and FCSettings), so a fresh instance gives full coverage without ever
+       touching — or leaking test records into — the player's real archive. */
     public static class WorldComponentArchiveTests
     {
         private const string TestLabelPrefix = "_TestArchive_";
+
+        /// <summary>
+        /// A fresh, unregistered <see cref="WorldComponent_Archive"/> for isolated testing. All
+        /// storage logic operates on the instance's own list, so nothing here mutates the live,
+        /// save-persisted archive returned by <see cref="WorldComponent_Archive.Get"/>.
+        /// </summary>
+        private static WorldComponent_Archive NewArchive()
+        {
+            return new WorldComponent_Archive(Find.World);
+        }
 
         private static BattleResult MakeTestResult(string tag)
         {
@@ -31,8 +44,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void RecordBattleReport_AssignsAscendingIds()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
 
             int id1 = archive.RecordBattleReport(MakeTestResult("ids_1"));
             int id2 = archive.RecordBattleReport(MakeTestResult("ids_2"));
@@ -46,8 +59,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void RecordBattleReport_StoresRecordedTick()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
 
             BattleResult r = MakeTestResult("tick");
             archive.RecordBattleReport(r);
@@ -58,8 +71,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void RecordBattleReport_StoresReportId()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
 
             BattleResult r = MakeTestResult("reportid");
             int returnedId = archive.RecordBattleReport(r);
@@ -70,8 +83,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void RecordBattleReport_NullResult_ReturnsZero()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
 
             TestAssert.AreEqual(0, archive.RecordBattleReport(null));
         }
@@ -81,8 +94,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void TryGetBattleReport_Found_ReturnsTrueAndResult()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
 
             BattleResult r = MakeTestResult("get_found");
             int id = archive.RecordBattleReport(r);
@@ -95,8 +108,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void TryGetBattleReport_NotFound_ReturnsFalse()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
 
             TestAssert.IsFalse(archive.TryGetBattleReport(int.MaxValue, out BattleResult fetched));
             TestAssert.IsNull(fetched);
@@ -106,8 +119,8 @@ namespace FactionColonies
         public static void TryGetBattleReport_ZeroId_ReturnsFalse()
         {
             // Guard in TryGetBattleReport — id <= 0 short-circuits.
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
 
             TestAssert.IsFalse(archive.TryGetBattleReport(0, out BattleResult fetched));
             TestAssert.IsNull(fetched);
@@ -116,8 +129,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void TryGetBattleReport_NegativeId_ReturnsFalse()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
 
             TestAssert.IsFalse(archive.TryGetBattleReport(-1, out BattleResult fetched));
             TestAssert.IsNull(fetched);
@@ -128,8 +141,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void RecentBattleReports_NewestFirst()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
 
             int id1 = archive.RecordBattleReport(MakeTestResult("order_1"));
             int id2 = archive.RecordBattleReport(MakeTestResult("order_2"));
@@ -156,8 +169,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void BattleReportCount_MatchesRecorded()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
             if (FCSettings.battleArchiveUnlimited) TestAssert.Skip("Archive cap disabled");
 
             int before = archive.BattleReportCount;
@@ -178,8 +191,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void RecordBattleReport_RespectsCap()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
             if (FCSettings.battleArchiveUnlimited) TestAssert.Skip("Archive cap disabled");
 
             int cap = FCSettings.battleArchiveMaxEntries;
@@ -195,8 +208,8 @@ namespace FactionColonies
         [EmpireTest("Military")]
         public static void RecordBattleReport_Unlimited_DoesNotEvict()
         {
-            WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is null) TestAssert.Skip("No world archive component");
+            if (Find.World is null) TestAssert.Skip("No world");
+            WorldComponent_Archive archive = NewArchive();
             // Only meaningful when the user has opted into unlimited archiving.
             if (!FCSettings.battleArchiveUnlimited) TestAssert.Skip("Archive cap enabled");
 

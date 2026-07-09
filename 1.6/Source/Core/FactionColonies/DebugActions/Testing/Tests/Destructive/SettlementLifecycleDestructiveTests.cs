@@ -61,23 +61,25 @@ namespace FactionColonies
         }
 
         [EmpireDestructiveTest("Destructive.Settlement")]
-        public static void RemoveCapital_Guarded()
+        public static void RemoveSettlement_SetCapitalSurvives()
         {
             FactionFC f = DestructiveTestUtil.RequireFaction();
             if (f.settlements.Count == 0) TestAssert.Skip("No settlements to remove");
 
-            // Identify the capital (settlement sitting on the capital tile), falling back to the first.
-            WorldSettlementFC capital = f.settlements.FirstOrDefault(s => s.Tile == f.capitalLocation)
-                ?? f.settlements.First();
+            // NOTE: the faction "capital" (capitalLocation) is a player-colony tile set by the Capital
+            // Spot building — it is never an Empire settlement tile, so there is no capital-settlement to
+            // single out here. This exercises removing an ordinary settlement and confirms the capital
+            // re-selection path (SetCapital) stays resilient afterward.
+            WorldSettlementFC target = f.settlements.First();
 
-            // Create a throwaway spare first so removing the capital doesn't necessarily drop us to
-            // zero settlements (reduces crash surface while still exercising capital teardown).
+            // Create a throwaway spare first so removal doesn't necessarily drop us to zero settlements
+            // (reduces crash surface while still exercising the teardown path).
             DestructiveTestUtil.CreateTransientSettlement();
 
-            DestructiveTestUtil.SafeRemoveSettlement(capital);
-            TestAssert.IsFalse(f.settlements.Contains(capital), "Capital should be gone after removal");
-            TestAssert.DoesNotThrow(() => f.SetCapital(), "SetCapital should not throw after capital removal");
-            DestructiveTestUtil.AssertEmpireInvariants(f, "RemoveCapital_Guarded");
+            DestructiveTestUtil.SafeRemoveSettlement(target);
+            TestAssert.IsFalse(f.settlements.Contains(target), "Settlement should be gone after removal");
+            TestAssert.DoesNotThrow(() => f.SetCapital(), "SetCapital should not throw after a settlement removal");
+            DestructiveTestUtil.AssertEmpireInvariants(f, "RemoveSettlement_SetCapitalSurvives");
         }
     }
 }

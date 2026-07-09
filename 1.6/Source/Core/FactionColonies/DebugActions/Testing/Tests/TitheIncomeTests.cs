@@ -223,8 +223,9 @@ namespace FactionColonies
             {
                 resource.RemoveTitheAt(before); // remove the two appended entries (regardless of order)
                 resource.RemoveTitheAt(before);
-                TestAssert.AreEqual(before, resource.Tithes.Count, message: "cleanup should restore the list");
             }
+            // Verify cleanup outside finally so an in-body failure isn't masked by this assertion.
+            TestAssert.AreEqual(before, resource.Tithes.Count, message: "cleanup should restore the list");
         }
 
         [EmpireTest("TitheIncome")]
@@ -255,8 +256,9 @@ namespace FactionColonies
             {
                 resource.RemoveTitheAt(before);
                 resource.RemoveTitheAt(before);
-                TestAssert.AreEqual(before, resource.Tithes.Count, message: "cleanup should restore the list");
             }
+            // Verify cleanup outside finally so an in-body failure isn't masked by this assertion.
+            TestAssert.AreEqual(before, resource.Tithes.Count, message: "cleanup should restore the list");
         }
     }
 }

@@ -131,6 +131,9 @@ namespace FactionColonies
             }
             finally
             {
+                // Unregister twice: if dedup regresses (the condition under test), both copies must
+                // be removed so a failing run can't leak a test double for the rest of the session.
+                ThreatScalingRegistry.Unregister(c);
                 ThreatScalingRegistry.Unregister(c);
             }
         }
