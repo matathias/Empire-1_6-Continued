@@ -65,5 +65,179 @@ namespace FactionColonies
                 "Removing the settlement should sweep its orphaned bills");
             DestructiveTestUtil.AssertEmpireInvariants(f, "AddTax_WithTransientSettlement_ThenRemove");
         }
+
+        /* -*-*-*-  Random-tithe escrow accounting (regression cover for M1/M2)  -*-*-*- */
+
+        /// <summary>
+        /// Configures a fresh transient settlement so exactly one tithe-able resource drives the
+        /// random-tithe path deterministically: all other resources are paused (their production
+        /// becomes plain silver, no RNG goods), the target's specified tithes are cleared, and the
+        /// target has workers so it actually produces. Returns null if no positive-production
+        /// tithe-able resource could be prepared (caller skips).
+        /// </summary>
+        private static ResourceFC PrepareEscrowTarget(WorldSettlementFC s)
+        {
+            // Pick the tithe-able resource that produces the most per worker; pause all others.
+            ResourceFC target = null;
+            foreach (ResourceFC r in s.Resources)
+            {
+                if (!r.canTithe) continue;
+                if (target is null || r.production > target.production) target = r;
+            }
+            if (target is null) return null;
+
+            foreach (ResourceFC r in s.Resources)
+                r.tithesPaused = !ReferenceEquals(r, target);
+
+            for (int i = target.Tithes.Count - 1; i >= 0; i--) target.RemoveTitheAt(i);
+
+            if (target.assignedWorkers == 0) s.IncreaseWorkers(target, 3);
+            target.SetDirtyCache();
+            s.DirtyProfitCache();
+            return target.taxableProductionMarketValue > 0 ? target : null;
+        }
+
+        /// <summary>Zeroes one-time silver (for determinism), accrues 'days' identical daily cycles, then taxes.</summary>
+        private static int AccrueAndTax(WorldSettlementFC s, int days)
+        {
+            s.oneTimeSilverIncome = 0;
+            for (int d = 0; d < days; d++) s.AccumulateDailyProduction();
+            s.CreateTax(out int silver);
+            return silver;
+        }
+
+        [EmpireDestructiveTest("Destructive.Tax")]
+        public static void RandomTitheRollover_WithholdsFromSilver_NotStoreAndPay()
+        {
+            FactionFC f = DestructiveTestUtil.RequireFaction();
+            WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
+            if (s is null) TestAssert.Skip("No valid tile for a settlement");
+            try
+            {
+                ResourceFC target = PrepareEscrowTarget(s);
+                if (target is null) TestAssert.Skip("No positive-production tithe-able resource");
+
+                const int days = 3;
+
+                // Baseline: no random tithe, so the target's production is paid entirely as silver.
+                target.hasRandomTithe = false;
+                target.randomTitheStock = 0;
+                target.disburseTitheStock = false;
+                target.SetDirtyCache();
+                int baselineSilver = AccrueAndTax(s, days);
+
+                // Same production, now with a random tithe whose filter allows nothing -> the budget
+                // deterministically rolls into escrow (no goods, no RNG, no ThingSetMaker).
+                target.hasRandomTithe = true;
+                target.autoMaxRandomTithe = true;
+                target.randomTitheFilter.SetDisallowAll();
+                target.randomTitheStock = 0;
+                target.disburseTitheStock = false;
+                target.SetDirtyCache();
+                int rolloverSilver = AccrueAndTax(s, days);
+
+                double escrow = target.randomTitheStock;
+                TestAssert.GreaterThan(escrow, 0,
+                    "Empty-filter random tithe should escrow its budget into randomTitheStock");
+
+                // The escrowed value must be WITHHELD from silver exactly once: paid silver plus the
+                // value now held in escrow reconciles to the baseline. The pre-fix bug both paid the
+                // value as silver AND stored it, so rolloverSilver would equal baselineSilver and this
+                // sum would overshoot the baseline by 'escrow'.
+                TestAssert.AreEqual(baselineSilver, rolloverSilver + escrow, tolerance: 3,
+                    message: $"rolloverSilver({rolloverSilver}) + escrow({escrow:F0}) should equal baseline({baselineSilver})");
+
+                DestructiveTestUtil.AssertEmpireInvariants(f, "RandomTitheRollover_Withholds");
+            }
+            finally
+            {
+                DestructiveTestUtil.SafeRemoveSettlement(s);
+            }
+        }
+
+        [EmpireDestructiveTest("Destructive.Tax")]
+        public static void RandomTitheDisburse_PaysEscrowExactlyOnce()
+        {
+            FactionFC f = DestructiveTestUtil.RequireFaction();
+            WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
+            if (s is null) TestAssert.Skip("No valid tile for a settlement");
+            try
+            {
+                ResourceFC target = PrepareEscrowTarget(s);
+                if (target is null) TestAssert.Skip("No positive-production tithe-able resource");
+
+                const int days = 2;
+                const double stock = 500;
+
+                // No new random tithe; a fixed escrow already sits in stock (as if a prior rollover
+                // withheld it). Disburse off -> stock is untouched and excluded from the baseline silver.
+                target.hasRandomTithe = false;
+                target.disburseTitheStock = false;
+                target.randomTitheStock = stock;
+                target.SetDirtyCache();
+                int noDisburse = AccrueAndTax(s, days);
+                TestAssert.AreEqual(stock, target.randomTitheStock, tolerance: 0.001,
+                    message: "With disburse off and no random tithe, escrow stock should be untouched");
+
+                // Same state, disburse on -> the escrow is paid out once and cleared.
+                target.randomTitheStock = stock;
+                target.disburseTitheStock = true;
+                target.SetDirtyCache();
+                int disbursed = AccrueAndTax(s, days);
+
+                TestAssert.AreEqual(stock, disbursed - noDisburse, tolerance: 3,
+                    message: $"Disburse should add exactly the escrow to silver (disbursed={disbursed}, noDisburse={noDisburse}, stock={stock})");
+                TestAssert.AreEqual(0, (int)target.randomTitheStock,
+                    message: "Disburse should clear the escrow stock");
+
+                DestructiveTestUtil.AssertEmpireInvariants(f, "RandomTitheDisburse_PaysOnce");
+            }
+            finally
+            {
+                DestructiveTestUtil.SafeRemoveSettlement(s);
+            }
+        }
+
+        [EmpireDestructiveTest("Destructive.Tax")]
+        public static void RandomTitheBudget_ScalesWithAccruedDays()
+        {
+            FactionFC f = DestructiveTestUtil.RequireFaction();
+            WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
+            if (s is null) TestAssert.Skip("No valid tile for a settlement");
+            try
+            {
+                ResourceFC target = PrepareEscrowTarget(s);
+                if (target is null) TestAssert.Skip("No positive-production tithe-able resource");
+
+                target.hasRandomTithe = true;
+                target.autoMaxRandomTithe = true;
+                target.randomTitheFilter.SetDisallowAll();
+                target.disburseTitheStock = false;
+
+                // One-day accrual escrow.
+                target.randomTitheStock = 0;
+                target.SetDirtyCache();
+                AccrueAndTax(s, 1);
+                double oneDay = target.randomTitheStock;
+
+                // Three-day accrual escrow.
+                target.randomTitheStock = 0;
+                target.SetDirtyCache();
+                AccrueAndTax(s, 3);
+                double threeDay = target.randomTitheStock;
+
+                TestAssert.GreaterThan(oneDay, 0, "Single-day accrual should escrow a positive budget");
+                // The per-day random budget is scaled by accrued days, so three days should escrow
+                // clearly more than one. Pre-M2-fix it was capped at ~one day's budget regardless.
+                TestAssert.GreaterThan(threeDay, oneDay * 2,
+                    $"Three-day escrow ({threeDay:F0}) should exceed 2x the one-day escrow ({oneDay:F0})");
+
+                DestructiveTestUtil.AssertEmpireInvariants(f, "RandomTitheBudget_ScalesWithDays");
+            }
+            finally
+            {
+                DestructiveTestUtil.SafeRemoveSettlement(s);
+            }
+        }
     }
 }

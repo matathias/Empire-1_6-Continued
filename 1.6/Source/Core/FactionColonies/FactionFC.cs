@@ -1801,10 +1801,13 @@ namespace FactionColonies
         {
             // Protection against save corruption. Though if resourcePools has null fields on a load, then there are likely
             // other, bigger problems hiding elsewhere...
-            int numNull = resourcePools.RemoveAll(p => p is null);
+            // Scrub both null entries and pools whose ResourceTypeDef no longer resolves (e.g. a submod
+            // that added a pool resource was uninstalled). A surviving null-resource pool would NRE
+            // every day in UpdateDailyResourcePools and abort the rest of the faction's WorldComponentTick.
+            int numNull = resourcePools.RemoveAll(p => p ?.resource is null);
             if (numNull > 0)
             {
-                LogUtil.Warning($"[EnsureResourePools] Removed {numNull} null items from resourcePools");
+                LogUtil.Warning($"[EnsureResourePools] Removed {numNull} null or unresolved-def items from resourcePools");
             }
             foreach (ResourceTypeDef def in FactionCache.PoolResourceTypeDefs)
             {
@@ -1879,6 +1882,7 @@ namespace FactionColonies
         {
             foreach (ResourcePool pool in resourcePools)
             {
+                if (pool?.resource is null) continue; // defensive: EnsureResourcePools already scrubs these
                 LogUtil.Message($"Daily ResourcePool update for resourceTypeDef {pool.resource.defName}. Pool size: {pool.pool}");
                 pool.resource.DailyUpdate(pool);
                 LogUtil.Message($"Post-Daily ResourcePool update for resourceTypeDef {pool.resource.defName}. New Pool size: {pool.pool}");

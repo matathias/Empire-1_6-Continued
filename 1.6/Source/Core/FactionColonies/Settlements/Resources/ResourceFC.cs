@@ -1072,13 +1072,19 @@ namespace FactionColonies
                 ResetThingFilter();
             }
 
-            // Determine random tithing budget (computed here; consumed after the specified-tithe walk below)
-            if (disburseTitheStock && randomTitheStock > 0)
+            // Determine random tithing budget (computed here; consumed after the specified-tithe walk below).
+            // randomTitheStock is an escrow: any value it holds was already withheld from silver when it
+            // accrued (see the rollover branches below), so releasing it must add silver exactly once.
+            double priorStock = randomTitheStock;
+            if (disburseTitheStock && priorStock > 0)
             {
-                outSilver += (int)randomTitheStock;
+                outSilver += (int)priorStock;
+                priorStock = 0;
                 randomTitheStock = 0;
             }
-            double randomBudget = randomTitheBudget + randomTitheStock;
+            // randomTitheBudget is a per-day amount; scale it to the days accrued this cycle so the random
+            // tithe can consume its full share of the accrued budget (not just ~one day's worth).
+            double randomBudget = randomTitheBudget * AccrualDays + priorStock;
 
             // Walk the ordered priority list against the accrued tithe budget. Fully fulfil while affordable,
             // partial-fill the straddler, then stop. Unfulfilled entries persist untouched (no prune).
@@ -1121,6 +1127,7 @@ namespace FactionColonies
             {
                 if (!randomTitheFilter.AllowedThingDefs.Any())
                 {
+                    outSilver -= (int)(effectiveRandomBudget - priorStock); // withhold the new production escrowed this cycle
                     randomTitheStock = effectiveRandomBudget;
                     Find.LetterStack.ReceiveLetter("FCNoTitheLetterLabel".Translate(settlement.Name), "FCNoTitheLetterDesc".Translate(settlement.Name, label, randomTitheStock), LetterDefOf.NeutralEvent);
                 }
@@ -1164,11 +1171,16 @@ namespace FactionColonies
                                 LogUtil.Message($"  randomTitheList[{i}]: {randomTitheList[i].LabelCap}");
                             }
                             titheItems.AddRange(randomTitheList);
+                            // Goods are billed in full via CreateTax.fulfilledTitheValue, including the
+                            // stock-funded portion — which was already withheld when it accrued, so
+                            // un-escrow priorStock here to avoid charging it twice.
+                            outSilver += (int)priorStock;
                             randomTitheStock = 0;
                         }
                     }
                     else
                     {
+                        outSilver -= (int)(effectiveRandomBudget - priorStock); // withhold the new production escrowed this cycle
                         randomTitheStock = effectiveRandomBudget;
                         Find.LetterStack.ReceiveLetter("FCNoTitheLetterLabel".Translate(settlement.Name), "FCNoTitheLetterDesc2".Translate(settlement.Name, label, randomTitheStock), LetterDefOf.NeutralEvent);
                     }

@@ -1873,23 +1873,17 @@ namespace FactionColonies
             int singleMod = (numWorkers > 0) ? 1 : -1;
             if (resource is null)
             {
-                if (numWorkers >= 0 && _workers <= workersUltraMax)
+                // Shed exactly one worker. The sole caller (GetTotalWorkers) invokes this once per
+                // excess worker, so shedding decisions are the caller's. Keep the cached _workers in
+                // step and dirty the profit cache — mirroring the non-null branch below — so the count,
+                // worker-upkeep display, and CanStillModify cap check don't go stale after a shed.
+                for (int num = 0; num < resources.Count; num++)
                 {
-                    return false;
-                }
-
-                int maxAttempts = resources.Count * 3;
-                while (_workers > workersUltraMax)
-                {
-                    if (--maxAttempts < 0)
-                    {
-                        LogUtil.Error($"IncreaseWorkers: exceeded max attempts finding a worker to shed for {Name}. Bailing out to prevent freeze.");
-                        break;
-                    }
-                    int num = Rand.RangeInclusive(0, resources.Count - 1);
                     if (resources[num].assignedWorkers > 0)
                     {
                         resources[num].assignedWorkers -= 1;
+                        _workers -= 1;
+                        DirtyProfitCache();
                         return true;
                     }
                 }

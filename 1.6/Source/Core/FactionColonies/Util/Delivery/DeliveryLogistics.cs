@@ -122,13 +122,12 @@ namespace FactionColonies.util
             List<Pawn> pawns = new List<Pawn>();
             List<Pawn> securityGuards = new List<Pawn>();
 
-            // Generate delivery pawns using allowed xenotypes first
-            int maxAttempts = 100; // Prevent infinite loops
-            int attempts = 0;
-
-            while (evt.goods.Count() > 0 && attempts < maxAttempts)
+            // Generate delivery pawns using allowed xenotypes first. Every iteration consumes exactly one
+            // good (carried by a pawn, or placed directly on any failure), so the loop terminates in
+            // evt.goods.Count iterations. No artificial attempt cap — the old cap counted successful
+            // carries too, stranding (and silently destroying) every stack past the 100th.
+            while (evt.goods.Count > 0)
             {
-                attempts++;
                 try
                 {
                     Pawn deliveryPawn = null;
@@ -146,7 +145,11 @@ namespace FactionColonies.util
                     }
                     catch (Exception ex)
                     {
+                        // Guarantee progress so the loop can't spin: place this good directly rather than retrying.
                         LogUtil.Warning($"Failed to generate pawn with civilian request: {ex.Message}");
+                        Thing lostItem = evt.goods[0];
+                        evt.goods.RemoveAt(0);
+                        PaymentUtil.PlaceThing(lostItem);
                         continue;
                     }
 
@@ -213,9 +216,11 @@ namespace FactionColonies.util
 
             LogUtil.Message($"# Delivery pawns generated: {pawns.Count}");
 
-            if (attempts >= maxAttempts)
+            // Backstop: the loop above consumes every good, but never silently lose any that slipped through.
+            for (int i = evt.goods.Count - 1; i >= 0; i--)
             {
-                LogUtil.Warning("Reached maximum attempts for generating delivery pawns, some items may not be delivered");
+                PaymentUtil.PlaceThing(evt.goods[i]);
+                evt.goods.RemoveAt(i);
             }
 
             // Always add at least one guard animal for protection, plus extra if caravan is small
