@@ -302,9 +302,9 @@ namespace FactionColonies
         {
             if (full)
             {
-                return GenDate.DateFullStringAt(foundingTick, startingLongLat);
+                return GenDate.DateFullStringAt(GenDate.TickGameToAbs(foundingTick), startingLongLat);
             }
-            return GenDate.DateShortStringAt(foundingTick, startingLongLat);
+            return GenDate.DateShortStringAt(GenDate.TickGameToAbs(foundingTick), startingLongLat);
         }
 
         #endregion

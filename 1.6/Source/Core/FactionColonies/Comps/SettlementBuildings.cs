@@ -807,6 +807,8 @@ namespace FactionColonies
 
         private void RecoverCompsOnLoad()
         {
+            if (buildings is null)
+                buildings = new List<BuildingFC>();
             if (settlementBuildingComps is null)
                 settlementBuildingComps = new List<SettlementBuildingComp>();
             settlementBuildingComps.RemoveAll(c => c == null);

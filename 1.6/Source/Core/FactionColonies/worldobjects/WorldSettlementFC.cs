@@ -898,9 +898,9 @@ namespace FactionColonies
         {
             if (full)
             {
-                return GenDate.DateFullStringAt(foundingTick, FindFC.FactionComp?.StartingLongLat ?? default(Vector2));
+                return GenDate.DateFullStringAt(GenDate.TickGameToAbs(foundingTick), FindFC.FactionComp?.StartingLongLat ?? default(Vector2));
             }
-            return GenDate.DateShortStringAt(foundingTick, FindFC.FactionComp?.StartingLongLat ?? default(Vector2));
+            return GenDate.DateShortStringAt(GenDate.TickGameToAbs(foundingTick), FindFC.FactionComp?.StartingLongLat ?? default(Vector2));
         }
 
         public override void ExposeData()
