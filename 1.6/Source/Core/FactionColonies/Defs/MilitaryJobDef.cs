@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Verse;
 
 namespace FactionColonies
@@ -27,6 +28,17 @@ namespace FactionColonies
                 }
                 return cachedHandler;
             }
+        }
+
+        public override IEnumerable<string> ConfigErrors()
+        {
+            foreach (string err in base.ConfigErrors())
+                yield return err;
+
+            // handlerClass is legitimately null for isState defs (Undefined, Cooldown, ...);
+            // only validate that, when set, it can actually be cast to MilitaryJobHandler.
+            if (handlerClass is object && !typeof(MilitaryJobHandler).IsAssignableFrom(handlerClass))
+                yield return $"MilitaryJobDef {defName}: handlerClass '{handlerClass.FullName}' does not derive from MilitaryJobHandler";
         }
     }
 }

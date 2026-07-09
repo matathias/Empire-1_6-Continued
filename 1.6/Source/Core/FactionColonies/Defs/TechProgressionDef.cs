@@ -24,7 +24,7 @@ namespace FactionColonies
         public List<ResearchProjectDef> researchProjects = new List<ResearchProjectDef>();
         public TechBarrierMode mode = TechBarrierMode.All;
 
-        public bool IsSatisfied(ResearchManager rm)
+        public bool IsSatisfied()
         {
             // Empty list: All mode is satisfied (nothing required), Any mode is not (nothing can satisfy it).
             if (researchProjects.NullOrEmpty())
@@ -35,7 +35,7 @@ namespace FactionColonies
                 foreach (ResearchProjectDef rp in researchProjects)
                 {
                     if (rp is null) continue;
-                    if (rm.GetProgress(rp) < rp.baseCost) return false;
+                    if (!rp.IsFinished) return false;
                 }
                 return true;
             }
@@ -44,7 +44,7 @@ namespace FactionColonies
                 foreach (ResearchProjectDef rp in researchProjects)
                 {
                     if (rp is null) continue;
-                    if (rm.GetProgress(rp) >= rp.baseCost) return true;
+                    if (rp.IsFinished) return true;
                 }
                 return false;
             }

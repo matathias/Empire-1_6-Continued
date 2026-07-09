@@ -1215,14 +1215,13 @@ namespace FactionColonies
             else
             {
                 // Research-barrier cascade: the highest satisfied barrier wins.
-                ResearchManager researchManager = Find.ResearchManager;
                 newLevel = TechLevel.Undefined;
                 foreach (TechLevel tl in TechLevelDescending)
                 {
                     if (medievalOnly && tl > TechLevel.Medieval) continue;
                     TechLevelBarrier barrier = FactionCache.GetTechBarrier(tl);
                     if (barrier is null) continue;
-                    if (barrier.IsSatisfied(researchManager))
+                    if (barrier.IsSatisfied())
                     {
                         newLevel = tl;
                         LogUtil.Message("updateTechLevel: " + tl);

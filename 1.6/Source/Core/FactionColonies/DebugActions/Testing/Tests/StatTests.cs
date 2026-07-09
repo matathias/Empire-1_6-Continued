@@ -136,6 +136,62 @@ namespace FactionColonies
         }
 
         // ============================
+        // Tier 1: FCSituation statModifier validation
+        // ============================
+
+        [EmpireTest("Stat")]
+        public static void ConfigErrors_FCSituationStageDef_NullStat_YieldsError()
+        {
+            var stage = new FCSituationStageDef
+            {
+                defName = "EmpireTest_SituationStage",
+                statModifiers = new List<FCStatModifier> { new FCStatModifier { stat = null, value = 1 } }
+            };
+            bool hasNullStatError = stage.ConfigErrors().Any(e => e.Contains("null stat"));
+            TestAssert.IsTrue(hasNullStatError,
+                "FCSituationStageDef with a null-stat modifier should surface a config error");
+        }
+
+        [EmpireTest("Stat")]
+        public static void ConfigErrors_FCSituationStageDef_ValidStat_NoNullStatError()
+        {
+            var stage = new FCSituationStageDef
+            {
+                defName = "EmpireTest_SituationStage",
+                statModifiers = new List<FCStatModifier> { new FCStatModifier { stat = FCStatDefOf.militaryBaseLevel, value = 1 } }
+            };
+            bool hasNullStatError = stage.ConfigErrors().Any(e => e.Contains("null stat"));
+            TestAssert.IsFalse(hasNullStatError,
+                "FCSituationStageDef with a valid stat should not surface a null-stat error");
+        }
+
+        [EmpireTest("Stat")]
+        public static void ConfigErrors_FCSituationApproachDef_NullStat_YieldsError()
+        {
+            var approach = new FCSituationApproachDef
+            {
+                defName = "EmpireTest_SituationApproach",
+                statModifiers = new List<FCStatModifier> { new FCStatModifier { stat = null, value = 1 } }
+            };
+            bool hasNullStatError = approach.ConfigErrors().Any(e => e.Contains("null stat"));
+            TestAssert.IsTrue(hasNullStatError,
+                "FCSituationApproachDef with a null-stat modifier should surface a config error");
+        }
+
+        [EmpireTest("Stat")]
+        public static void ConfigErrors_FCSituationApproachDef_ValidStat_NoNullStatError()
+        {
+            var approach = new FCSituationApproachDef
+            {
+                defName = "EmpireTest_SituationApproach",
+                statModifiers = new List<FCStatModifier> { new FCStatModifier { stat = FCStatDefOf.militaryBaseLevel, value = 1 } }
+            };
+            bool hasNullStatError = approach.ConfigErrors().Any(e => e.Contains("null stat"));
+            TestAssert.IsFalse(hasNullStatError,
+                "FCSituationApproachDef with a valid stat should not surface a null-stat error");
+        }
+
+        // ============================
         // Tier 1: GetDescription
         // ============================
 
