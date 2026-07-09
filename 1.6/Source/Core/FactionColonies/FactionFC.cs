@@ -594,6 +594,9 @@ namespace FactionColonies
             EnsureCaravanTypesPopulated();
             EnsureResourcePools();
             EmpireRegistry.Register(this);
+            // Drop per-session death-penalty state so it can't leak across saves loaded in one session
+            // (Lord loadIDs collide across games and would suppress a repeated pack-animal-wipe penalty).
+            EmpireDeathPenaltyUtil.ResetSessionState();
 
             // Rebuild op indices from `active` whether we just migrated a save or not — cheap
             // and always-correct even on a fresh-game start (no-op when active is empty).

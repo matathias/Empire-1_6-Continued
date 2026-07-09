@@ -183,6 +183,9 @@ namespace FactionColonies
         /// the defender; the defender needs <c>attackerHP</c> round-wins to deplete the attacker.
         /// <c>P(attacker wins) = P(X &gt;= defenderHP)</c> where <c>X ~ Binomial(attackerHP+defenderHP-1, p)</c>.
         /// Does not account for <see cref="BattleModifierRegistry"/> modifications.
+        /// <para>Expects <b>raw / pre-advantage</b> forces: it applies <see cref="FCSettings.defenderAdvantage"/>
+        /// to the defender internally. Never pass a force already run through
+        /// <see cref="ApplyDefenderAdvantage"/> (double-counts the advantage).</para>
         /// </summary>
         /// <returns>Defender win probability in [0, 1].</returns>
         public static double CalculateDefenderWinChance(MilitaryForce attacker, MilitaryForce defender)

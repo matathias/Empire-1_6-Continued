@@ -251,9 +251,12 @@ namespace FactionColonies
             MilitaryForce atk = aggressor.force;
             MilitaryForce def = defender.force;
 
-            // Apply defender advantage in place on the live defender force so MilitaryForce-based
-            // readers (e.g. CalculateDefenderWinChance) see the same post-advantage baseline. The
-            // result object snapshots this value as defenderInitialForce.
+            // Apply the defender advantage in place on the live defender force; the result object
+            // snapshots the post-advantage value as defenderInitialForce.
+            // WARNING: def.forceRemaining now already includes defenderAdvantage. Do NOT pass this
+            // post-advantage force to SimulateBattleFc.CalculateDefenderWinChance / CalculateAttackerWinChance
+            // — those expect raw (pre-advantage) forces and re-apply defenderAdvantage themselves, so
+            // feeding them the mutated force double-counts it.
             SimulateBattleFc.ApplyDefenderAdvantage(def);
 
             battleResult = new BattleResult

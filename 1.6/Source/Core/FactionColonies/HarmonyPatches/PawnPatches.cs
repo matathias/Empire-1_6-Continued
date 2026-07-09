@@ -87,11 +87,12 @@ namespace FactionColonies
             return true;
         }
 
-        // Clears the per-Kill dedup marker after the whole Pawn.Kill (incl. Faction.Notify_MemberDied)
-        // has run, so the next death starts clean and we don't pin a dead pawn reference.
+        // Clears this pawn's dedup marker after the whole Pawn.Kill (incl. Faction.Notify_MemberDied)
+        // has run, so the next death starts clean and we don't pin a dead pawn reference. Keyed by
+        // __instance so a nested Pawn.Kill completing mid-Kill can't wipe the outer pawn's marker.
         static void Postfix(Pawn __instance)
         {
-            EmpireDeathPenaltyUtil.ClearHandledByKillPrefix();
+            EmpireDeathPenaltyUtil.ClearHandledByKillPrefix(__instance);
         }
 
         /// <summary>Turns a dead sub-pawn wrapper into a "Missing" placeholder: severs a mech's Overseer
