@@ -771,4 +771,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_49</defName>
+		<label>Artificial Bodyparts Are Implants</label>
+		<description>Fixes an issue with artificial body parts not being pickable in the unit designer.</description>
+		<releaseDate>2026-07-08</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>In Rimworld, artificial bodyparts and implants are two distinct categories. The unit designer only allowed implants, resulting in stuff like bionic arms never appearing. With this patch, bionics should now be an option</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

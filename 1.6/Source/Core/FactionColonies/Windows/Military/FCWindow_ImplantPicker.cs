@@ -10,8 +10,8 @@ namespace FactionColonies
 {
     /// <summary>
     /// Modal picker that lists every surgical implant currently installable on the unit's
-    /// preview pawn, reusing the base game's own surgery validation (Recipe_InstallImplant +
-    /// RecipeWorker.GetPartsToApplyOn/AvailableOnNow). Because the preview pawn already carries
+    /// preview pawn, reusing the base game's own surgery validation (Recipe_InstallImplant and
+    /// Recipe_InstallArtificialBodyPart + RecipeWorker.GetPartsToApplyOn/AvailableOnNow). Because the preview pawn already carries
     /// the unit's previously-chosen implants, taken/conflicting slots are filtered out for free.
     /// Stays open so multiple implants can be added; the option list rebuilds whenever the unit's
     /// editVersion changes (each add regenerates the preview pawn).
@@ -153,12 +153,26 @@ namespace FactionColonies
 
             foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefs)
             {
-                if (!(recipe.Worker is Recipe_InstallImplant)) continue;
+                // Accept hediff implants and artificial body parts (prosthetic/bionic/archotech).
+                // Both derive from Recipe_Surgery but not from each other, so an explicit pair of
+                // checks is needed. Natural-organ transplants (Recipe_InstallNaturalBodyPart) are
+                // intentionally excluded — harvested organs aren't installable augmentations here.
+                if (!(recipe.Worker is Recipe_InstallImplant) &&
+                    !(recipe.Worker is Recipe_InstallArtificialBodyPart)) continue;
                 if (recipe.addsHediff == null) continue;
                 // The death acidifier is auto-applied to all mercs (see
                 // MercenaryPawnFactory.TryApplyDeathAcidifier), so it isn't manually selectable here.
                 if (recipe == FCRecipeDefOf.InstallDeathAcidifier) continue;
                 if (!recipe.AvailableNow) continue;
+
+                // Artificial body parts carry no research prerequisite on the INSTALL recipe — the gate
+                // lives on the part item's crafting recipe (e.g. a bionic arm needs the Bionic Replacements
+                // research). Only offer parts the Empire can actually make or obtain.
+                if (recipe.Worker is Recipe_InstallArtificialBodyPart)
+                {
+                    ThingDef partThing = MilUnitFC.ImplantIconThing(recipe); // fixed ingredient = the part item
+                    if (partThing is null || !CraftUtil.CanCraftItem(partThing)) continue;
+                }
 
                 List<BodyPartRecord> parts = new List<BodyPartRecord>(recipe.Worker.GetPartsToApplyOn(pawn, recipe));
 
