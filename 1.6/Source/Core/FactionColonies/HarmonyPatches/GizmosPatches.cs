@@ -28,6 +28,11 @@ namespace FactionColonies
                 if (enemySettlement is null) return;
                 BattlefieldContext offBf = FindFC.MilitaryManager?.GetBattlefield(enemySettlement.Tile);
                 if (offBf is null || !offBf.HasOffenseAt()) return;
+                // The battle is over once teardown or the loot linger begins: no new combat can
+                // happen, and a merc drafted now would be an OfPlayer pawn on a resolved
+                // battlefield that the teardown reclaim loops have to unwind. Offer no
+                // draft/undraft toggles past that point.
+                if (offBf.endingBattle || offBf.awaitingPlayerExit) return;
                 TryAddOffenseDraftGizmo(__instance, offBf, ref __result);
                 return;
             }

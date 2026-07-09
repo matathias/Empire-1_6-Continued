@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RimWorld;
 using RimWorld.Planet;
 using Verse;
 
@@ -19,6 +20,17 @@ namespace FactionColonies
         public WorldSettlementJoinAttackAction(Settlement settlement)
         {
             this.settlement = settlement;
+        }
+
+        public override FloatMenuAcceptanceReport StillValid(Caravan caravan, PlanetTile destinationTile)
+        {
+            FloatMenuAcceptanceReport report = base.StillValid(caravan, destinationTile);
+            if (!report) return report;
+            if (settlement is null || !settlement.Spawned || settlement.Tile != destinationTile)
+                return false;
+            if (!(FindFC.MilitaryManager?.GetBattlefield(settlement.Tile)?.HasOffenseAt() ?? false))
+                return FloatMenuAcceptanceReport.WithFailReason("FCJoinAttackNoBattle".Translate());
+            return true;
         }
 
         public override void Arrived(Caravan caravan)

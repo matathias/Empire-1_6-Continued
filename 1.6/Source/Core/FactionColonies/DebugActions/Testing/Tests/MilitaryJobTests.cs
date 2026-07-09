@@ -57,12 +57,14 @@ namespace FactionColonies
         [EmpireTest("MilitaryJob")]
         public static void DefaultEnabled_KnownOptIns_IsFalse()
         {
-            // EnslaveEnemySettlement is policy-gated (Authoritarian unlocks it).
+            // EnslaveEnemySettlement is policy-gated (Authoritarian and Slaver unlock it).
+            // RazeEnemySettlement is policy-gated too (militaristic/authoritarian/isolationist unlock it).
             // DefendOwnSettlement is internal: never selectable from the offensive float menu;
             // the manager assigns it directly when it creates a defensive op.
             foreach (MilitaryJobDef def in DefDatabase<MilitaryJobDef>.AllDefsListForReading)
             {
                 if (def == MilitaryJobDefOf.EnslaveEnemySettlement
+                    || def == MilitaryJobDefOf.RazeEnemySettlement
                     || def == MilitaryJobDefOf.DefendOwnSettlement)
                 {
                     TestAssert.IsFalse(def.defaultEnabled,

@@ -455,7 +455,7 @@ namespace FactionColonies
 
         public override IEnumerable<Gizmo> GetCaravanGizmos(Caravan caravan)
         {
-            foreach (Gizmo gizmo in base.GetGizmos())
+            foreach (Gizmo gizmo in base.GetCaravanGizmos(caravan))
             {
                 yield return gizmo;
             }
@@ -526,14 +526,14 @@ namespace FactionColonies
             bf.CaravanDefend(caravan);
         }
 
-        public void AddToDefenceFromList(List<Pawn> pawns, int destinationTile)
+        public void AddToDefenceFromList(List<Pawn> pawns, PlanetTile destinationTile)
         {
             AddToDefenceFromList(pawns, destinationTile, assignToLord: true);
         }
 
-        public void AddToDefenceFromList(List<Pawn> pawns, int destinationTile, bool assignToLord)
+        public void AddToDefenceFromList(List<Pawn> pawns, PlanetTile destinationTile, bool assignToLord)
         {
-            BattlefieldContext bf = FindFC.MilitaryManager?.GetOrCreateBattlefield(new PlanetTile(destinationTile));
+            BattlefieldContext bf = FindFC.MilitaryManager?.GetOrCreateBattlefield(destinationTile);
             if (bf is null)
             {
                 LogUtil.Error($"AddToDefenceFromList: no battlefield for tile {destinationTile}.");
@@ -933,6 +933,16 @@ namespace FactionColonies
             if (FindFC.MilitaryManager?.HasAnyOpAt(location) ?? false)
             {
                 Messages.Message("FCTargetAlreadyBeingAttacked".Translate(), MessageTypeDefOf.RejectInput);
+                return true;
+            }
+
+            // A live map at the target means the player is already there in person (vanilla
+            // caravan attack, quest site). Launching an op would later hijack that map --
+            // StripNativeGarrison would delete the defenders mid-raid -- and an auto-resolved
+            // capture/raze would destroy the settlement underneath the player.
+            if (Current.Game.FindMap(location) is object)
+            {
+                Messages.Message("FCTargetHasPlayerMap".Translate(), MessageTypeDefOf.RejectInput);
                 return true;
             }
 

@@ -223,5 +223,48 @@ namespace FactionColonies
             TestAssert.AreEqual(0, r.repairHandles.Count);
             TestAssert.AreEqual(0, r.replacements.Count);
         }
+
+        // -*- Quality is part of the match key: worn gear is matched to its design by
+        //     (def, stuff, quality). A present item whose quality differs from the design no longer
+        //     matches, so it is billed at full value and re-equipped. This is the failure the removed
+        //     combat-efficiency gear-quality shift caused every manual battle (the shift raised worn
+        //     gear above the design quality, so surviving gear was rebilled as destroyed). -*-
+
+        private static List<SavedThing> DesignQ(ThingDef thing, QualityCategory quality) =>
+            new List<SavedThing> { new SavedThing(thing, null, 1, quality) };
+
+        private static SquadRestockUtil.PresentItem PresentQ(ThingDef thing, QualityCategory quality) =>
+            new SquadRestockUtil.PresentItem
+            {
+                thing = thing, stuff = null, quality = quality,
+                hitPoints = 100, maxHitPoints = 100, handle = new object()
+            };
+
+        [EmpireTest("SquadRestock")]
+        public static void ComputeEquipmentRestock_MatchingQuality_NoCharge()
+        {
+            ThingDef armor = Item(100f);
+            var present = new List<SquadRestockUtil.PresentItem> { PresentQ(armor, QualityCategory.Normal) };
+            var r = SquadRestockUtil.ComputeEquipmentRestock(DesignQ(armor, QualityCategory.Normal), present);
+
+            TestAssert.AreEqual(0.0, r.value, "gear matching the design quality is neither repaired nor rebilled");
+            TestAssert.AreEqual(0, r.replacements.Count);
+            TestAssert.AreEqual(0, r.repairHandles.Count);
+        }
+
+        [EmpireTest("SquadRestock")]
+        public static void ComputeEquipmentRestock_QualityShiftedAboveDesign_RebilledAsDestroyed()
+        {
+            // Regression guard for the removed efficiency gear-quality shift: a surviving item whose
+            // quality was bumped above the design fails the (def, stuff, quality) match, so it bills
+            // full value and re-equips instead of being recognized as the same item.
+            ThingDef armor = Item(100f);
+            var present = new List<SquadRestockUtil.PresentItem> { PresentQ(armor, QualityCategory.Excellent) };
+            var r = SquadRestockUtil.ComputeEquipmentRestock(DesignQ(armor, QualityCategory.Normal), present);
+
+            TestAssert.AreEqual(100.0, r.value, "a quality-mismatched item bills the full design value");
+            TestAssert.AreEqual(1, r.replacements.Count, "mismatched item is treated as destroyed/lost");
+            TestAssert.AreEqual(0, r.repairHandles.Count, "the mismatched present item is ignored, not repaired");
+        }
     }
 }

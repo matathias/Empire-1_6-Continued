@@ -215,7 +215,7 @@ namespace FactionColonies
             if (canDestroyBuildings && settlement?.BuildingsComp != null)
             {
                 List<int> candidates = new List<int>();
-                for (int k = 0; k < 4; k++)
+                for (int k = 0; k < settlement.BuildingsComp.NumBuildingSlots; k++)
                 {
                     int deconstructRoll = new IntRange(0, 10).RandomInRange;
                     if (deconstructRoll < deconstructChance

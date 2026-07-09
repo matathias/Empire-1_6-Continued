@@ -108,6 +108,11 @@ namespace FactionColonies
             Scribe_Values.Look(ref tickLastUsed, "tickLastUsed", -1);
             Scribe_Values.Look(ref cooldownTicks, "cooldownTicks");
             Scribe_Values.Look(ref abilityEndTick, "abilityEndTick", 0);
+
+            /* wasReady is a transient [Unsaved] latch; reconstruct it from live state on load so the
+             * ready-letter fires once when a cooldown spanning the save session later expires. */
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+                wasReady = IsReady;
         }
     }
 }

@@ -615,10 +615,11 @@ namespace FactionColonies
                 runningCost += entryCost;
 
                 Rect row = new Rect(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
-                /* Up/down reorder arrows (left-most, 12px wide each) */
-                float arrowW = 12f;
-                Rect upArrow = new Rect(row.x + margin, row.y + 2, arrowW, (rowHeight - 4) / 2f);
-                Rect downArrow = new Rect(row.x + margin, upArrow.yMax, arrowW, (rowHeight - 4) / 2f);
+                /* Up/down reorder arrows (left-most, square icons stacked vertically) */
+                float arrowH = (rowHeight - 4) / 2f;          // ~9.5px each, half the row
+                float arrowColW = arrowH;                      // square icons -> column == arrow height
+                Rect upArrow = new Rect(row.x + margin, row.y + 2, arrowColW, arrowH);
+                Rect downArrow = new Rect(row.x + margin, upArrow.yMax, arrowColW, arrowH);
                 Rect icon = new Rect(downArrow.xMax + margin, row.y, rowHeight, rowHeight);
                 Rect info = new Rect(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
                 Rect xBox = new Rect(row.xMax - margin - 20f, row.y + 2, rowHeight - 4, rowHeight - 4);
@@ -632,15 +633,14 @@ namespace FactionColonies
                     Widgets.DrawHighlight(row);
                 }
 
-                /* Up/Down arrows */
-                Text.Anchor = TextAnchor.MiddleCenter;
-                if (i > 0 && UIUtil.ClampedButtonText(upArrow, "^"))
+                /* Up/Down reorder arrows */
+                if (i > 0 && Widgets.ButtonImage(upArrow, TexButton.ReorderUp))
                 {
                     res.MoveTitheEntry(i, i - 1);
                     UpdateTitheDictBuffers(res);
                     break;
                 }
-                if (i < orderedTithes.Count - 1 && UIUtil.ClampedButtonText(downArrow, "v"))
+                if (i < orderedTithes.Count - 1 && Widgets.ButtonImage(downArrow, TexButton.ReorderDown))
                 {
                     res.MoveTitheEntry(i, i + 1);
                     UpdateTitheDictBuffers(res);

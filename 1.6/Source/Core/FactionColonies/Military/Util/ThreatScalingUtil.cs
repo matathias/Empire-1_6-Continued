@@ -54,7 +54,7 @@ namespace FactionColonies
         };
 
         /* Frequency curve: maps settlement count to a frequency multiplier */
-        private static readonly SimpleCurve FrequencyCurve = new SimpleCurve
+        public static readonly SimpleCurve FrequencyCurve = new SimpleCurve
         {
             new CurvePoint(1f, 1.0f),
             new CurvePoint(3f, 1.2f),

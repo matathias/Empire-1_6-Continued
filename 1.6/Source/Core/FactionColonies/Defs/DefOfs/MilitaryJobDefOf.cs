@@ -5,6 +5,11 @@ namespace FactionColonies
     [DefOf]
     public static class MilitaryJobDefOf
     {
+        static MilitaryJobDefOf()
+        {
+            DefOfHelper.EnsureInitializedInCtor(typeof(MilitaryJobDefOf));
+        }
+
         public static MilitaryJobDef Undefined;
         public static MilitaryJobDef Cooldown;
         public static MilitaryJobDef Deploy;

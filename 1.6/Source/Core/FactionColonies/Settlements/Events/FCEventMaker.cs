@@ -16,7 +16,8 @@ namespace FactionColonies
             if (option.successEvent is null) return;
 
             float baseChance = option.baseChanceOfSuccess;
-            int roll = Rand.Range(1, 100);
+            // Max-inclusive: 1..100 so chance is exactly chance/100 (0 = never, 100 = always).
+            int roll = Rand.RangeInclusive(1, 100);
             FCEventDef chosen = roll <= baseChance ? option.successEvent : option.failEvent;
             if (chosen is null) return;
 
@@ -659,7 +660,8 @@ namespace FactionColonies
                         FCEventDef target;
                         if (evt.def.splitEventFollows)
                         {
-                            int roll = Rand.Range(1, 100);
+                            // Max-inclusive: 1..100 so splitEventChance is exact (100 = always).
+                            int roll = Rand.RangeInclusive(1, 100);
                             target = roll <= evt.def.splitEventChance
                                 ? evt.def.followingEvent
                                 : evt.def.followingEvent2;

@@ -86,20 +86,26 @@ namespace FactionColonies
         public double totalStockpileAllocation => stockpileAllocations.Values.Sum(e => e.amount);
 
         /// <summary>
-        /// Attempts to register a named production diversion for a stockpile.
-        /// Returns false without registering if the amount would push total diversions above <see cref="rawTotalProduction"/>.
-        /// If the key already exists, the old entry is replaced (using the new amount in the capacity check).
+        /// Registers a named production diversion for a stockpile. The full request is always
+        /// registered (an over-subscribed diversion grows into headroom if production later rises);
+        /// each day only what actually exists is delivered, clamped in registration order (see
+        /// <see cref="AccumulateDailyProduction"/>), so an over-subscribed resource never drives
+        /// effective production or income negative. If the key already exists, the old entry is replaced.
         /// </summary>
         /// <param name="key">Unique identifier for the calling mod (e.g. "MyMod.MyFeature").</param>
         /// <param name="realize">Optional callback invoked each day with (requested, actual) units diverted.</param>
-        public bool SetStockpileAllocation(string key, double amount, Action<double, double> realize = null)
+        /// <returns>
+        /// The amount current production can actually deliver toward this request right now
+        /// (<c>min(request, remaining production after other diversions)</c>). A value below the
+        /// requested amount means the diversion is currently clamped and will only be filled in part.
+        /// </returns>
+        public double SetStockpileAllocation(string key, double amount, Action<double, double> realize = null)
         {
-            double currentForKey = stockpileAllocations.TryGetValue(key, out var existing) ? existing.amount : 0;
-            if (totalStockpileAllocation - currentForKey + amount > rawTotalProduction)
-                return false;
-            stockpileAllocations[key] = new StockpileEntry { amount = amount, realize = realize };
+            double requested = Math.Max(0, amount);
+            stockpileAllocations[key] = new StockpileEntry { amount = requested, realize = realize };
             settlement?.DirtyProfitCache();
-            return true;
+            double otherAllocations = totalStockpileAllocation - requested;
+            return Math.Min(requested, Math.Max(0, rawTotalProduction - otherAllocations));
         }
 
         /// <summary>Removes a previously registered stockpile allocation. The eviction callback is NOT invoked.</summary>
@@ -204,7 +210,7 @@ namespace FactionColonies
 
         /// <summary>Live instantaneous per-day rate (production * workers). For display and projections.</summary>
         public double rawTotalProduction => InstantaneousProduction;
-        public double effectiveRawTotalProduction => rawTotalProduction - totalStockpileAllocation;
+        public double effectiveRawTotalProduction => Math.Max(0, rawTotalProduction - totalStockpileAllocation);
         public double grossMarketValue => rawTotalProduction * FCSettings.silverPerResource;
         public double stockpileMarketValue => totalStockpileAllocation * FCSettings.silverPerResource;
         public double taxableProductionMarketValue => effectiveRawTotalProduction * FCSettings.silverPerResource;
@@ -1072,13 +1078,19 @@ namespace FactionColonies
                 ResetThingFilter();
             }
 
-            // Determine random tithing budget (computed here; consumed after the specified-tithe walk below)
-            if (disburseTitheStock && randomTitheStock > 0)
+            // Determine random tithing budget (computed here; consumed after the specified-tithe walk below).
+            // randomTitheStock is an escrow: any value it holds was already withheld from silver when it
+            // accrued (see the rollover branches below), so releasing it must add silver exactly once.
+            double priorStock = randomTitheStock;
+            if (disburseTitheStock && priorStock > 0)
             {
-                outSilver += (int)randomTitheStock;
+                outSilver += (int)priorStock;
+                priorStock = 0;
                 randomTitheStock = 0;
             }
-            double randomBudget = randomTitheBudget + randomTitheStock;
+            // randomTitheBudget is a per-day amount; scale it to the days accrued this cycle so the random
+            // tithe can consume its full share of the accrued budget (not just ~one day's worth).
+            double randomBudget = randomTitheBudget * AccrualDays + priorStock;
 
             // Walk the ordered priority list against the accrued tithe budget. Fully fulfil while affordable,
             // partial-fill the straddler, then stop. Unfulfilled entries persist untouched (no prune).
@@ -1121,6 +1133,7 @@ namespace FactionColonies
             {
                 if (!randomTitheFilter.AllowedThingDefs.Any())
                 {
+                    outSilver -= (int)(effectiveRandomBudget - priorStock); // withhold the new production escrowed this cycle
                     randomTitheStock = effectiveRandomBudget;
                     Find.LetterStack.ReceiveLetter("FCNoTitheLetterLabel".Translate(settlement.Name), "FCNoTitheLetterDesc".Translate(settlement.Name, label, randomTitheStock), LetterDefOf.NeutralEvent);
                 }
@@ -1164,11 +1177,16 @@ namespace FactionColonies
                                 LogUtil.Message($"  randomTitheList[{i}]: {randomTitheList[i].LabelCap}");
                             }
                             titheItems.AddRange(randomTitheList);
+                            // Goods are billed in full via CreateTax.fulfilledTitheValue, including the
+                            // stock-funded portion — which was already withheld when it accrued, so
+                            // un-escrow priorStock here to avoid charging it twice.
+                            outSilver += (int)priorStock;
                             randomTitheStock = 0;
                         }
                     }
                     else
                     {
+                        outSilver -= (int)(effectiveRandomBudget - priorStock); // withhold the new production escrowed this cycle
                         randomTitheStock = effectiveRandomBudget;
                         Find.LetterStack.ReceiveLetter("FCNoTitheLetterLabel".Translate(settlement.Name), "FCNoTitheLetterDesc2".Translate(settlement.Name, label, randomTitheStock), LetterDefOf.NeutralEvent);
                     }

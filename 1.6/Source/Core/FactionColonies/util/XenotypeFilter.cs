@@ -679,7 +679,10 @@ namespace FactionColonies.util
 
                 foreach (PawnKindDef clone in clones)
                 {
-                    var pawnOption = new PawnGenOption
+                    // Each list gets its OWN PawnGenOption instance: ReweightPawnGroupMakers rewrites
+                    // selectionWeight per list, so a shared object would have the last-written list's
+                    // weight leak into every other list it was added to.
+                    PawnGenOption Opt() => new PawnGenOption
                     {
                         kind = clone,
                         selectionWeight = raceWeight
@@ -687,28 +690,28 @@ namespace FactionColonies.util
 
                     if (clone.isFighter)
                     {
-                        faction.pawnGroupMakers[0].options.Add(pawnOption); // Combat
-                        faction.pawnGroupMakers[1].guards.Add(pawnOption); // Trader guards
-                        faction.pawnGroupMakers[2].options.Add(pawnOption); // Settlement
+                        faction.pawnGroupMakers[0].options.Add(Opt()); // Combat
+                        faction.pawnGroupMakers[1].guards.Add(Opt()); // Trader guards
+                        faction.pawnGroupMakers[2].options.Add(Opt()); // Settlement
                     }
 
                     if (clone.factionLeader)
                     {
-                        faction.pawnGroupMakers[0].options.Add(pawnOption); // Combat (for TryGenerateNewLeader)
-                        faction.pawnGroupMakers[2].options.Add(pawnOption); // Settlement
+                        faction.pawnGroupMakers[0].options.Add(Opt()); // Combat (for TryGenerateNewLeader)
+                        faction.pawnGroupMakers[2].options.Add(Opt()); // Settlement
                     }
 
                     if (clone.trader)
                     {
-                        faction.pawnGroupMakers[1].traders.Add(pawnOption);
+                        faction.pawnGroupMakers[1].traders.Add(Opt());
                     }
 
                     // Non-fighter, non-trader: civilian types go in Trader options, Peaceful, and Settlement
                     if (!clone.isFighter && !clone.trader && !clone.factionLeader)
                     {
-                        faction.pawnGroupMakers[1].options.Add(pawnOption); // Trader
-                        faction.pawnGroupMakers[3].options.Add(pawnOption); // Peaceful
-                        faction.pawnGroupMakers[2].options.Add(pawnOption); // Settlement
+                        faction.pawnGroupMakers[1].options.Add(Opt()); // Trader
+                        faction.pawnGroupMakers[3].options.Add(Opt()); // Peaceful
+                        faction.pawnGroupMakers[2].options.Add(Opt()); // Settlement
                     }
                 }
             }

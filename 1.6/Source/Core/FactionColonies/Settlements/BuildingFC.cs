@@ -18,6 +18,10 @@ namespace FactionColonies
         {
             Scribe_Defs.Look(ref def, "buildingdef");
             Scribe_Defs.Look(ref underConstructionDef, "underConstructionDef");
+            // Restore the Empty fallback if the saved def no longer resolves (or is absent);
+            // the building window dereferences underConstructionDef.label for a slot under construction.
+            if (Scribe.mode == LoadSaveMode.LoadingVars && underConstructionDef is null)
+                underConstructionDef = BuildingFCDefOf.Empty;
             Scribe_Values.Look(ref startedTick, "startedtick");
             Scribe_Values.Look(ref completionTick, "completionTick");
             Scribe_Values.Look(ref active, "active", true);

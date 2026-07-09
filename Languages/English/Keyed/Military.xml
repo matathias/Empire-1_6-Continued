@@ -29,6 +29,7 @@
 	<FCSettlementUnderAttack>That settlement is under attack</FCSettlementUnderAttack>
 	<FCSettlementNotBeingAttacked>Settlement is not under attack</FCSettlementNotBeingAttacked>
 	<FCTargetAlreadyBeingAttacked>The target is already being attacked</FCTargetAlreadyBeingAttacked>
+	<FCTargetHasPlayerMap>Your own forces are already on the ground there. The military cannot launch an operation against a site with an active map.</FCTargetHasPlayerMap>
 
 	<!-- Military Sent Notifications -->
 	<FCMilitarySent>Military Sent</FCMilitarySent>
@@ -395,8 +396,8 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCOn>On</FCOn>
 	<FCOff>Off</FCOff>
 
-	<FCTraitDesc_squadCapPerSettlement>Increases the number of squads each settlement can host. Base cap is 1.</FCTraitDesc_squadCapPerSettlement>
-	<FCTraitDesc_maxSquadSize>Modifies the maximum number of mercenaries a squad assigned here may have. Base size is 30.</FCTraitDesc_maxSquadSize>
+	<FCTraitDesc_squadCapPerSettlement>{0} Squad Capacity</FCTraitDesc_squadCapPerSettlement>
+	<FCTraitDesc_maxSquadSize>{0} Max Squad Size</FCTraitDesc_maxSquadSize>
 
 	<!-- Squad Fill Empty Slots -->
 	<FCSquadFillSlotsInsufficient>Not enough silver (${0} required) to fill empty slots.</FCSquadFillSlotsInsufficient>

@@ -67,6 +67,30 @@ namespace FactionColonies
                 if (factionTraits == null) factionTraits = SeedDefaultTraits();
                 if (edicts == null) edicts = new Dictionary<FCPolicyCategory, FCPolicy>();
                 pendingEdictActivations = new HashSet<FCPolicyCategory>();
+                ScrubDeadPolicies();
+            }
+        }
+
+        /// <summary>
+        /// Removes policy/edict entries whose def failed to resolve (removed content), mirroring
+        /// the event manager's null-def scrub. factionTraits is intentionally left alone: it uses
+        /// fixed slots seeded with FCPolicyDefOf.empty and is def-null-guarded at every read, so
+        /// removing entries would shrink the slot list.
+        /// </summary>
+        internal void ScrubDeadPolicies()
+        {
+            policies?.RemoveAll(p => p?.def is null);
+            if (edicts != null)
+            {
+                List<FCPolicyCategory> deadEdicts = null;
+                foreach (KeyValuePair<FCPolicyCategory, FCPolicy> kv in edicts)
+                {
+                    if (kv.Value?.def is null)
+                        (deadEdicts ?? (deadEdicts = new List<FCPolicyCategory>())).Add(kv.Key);
+                }
+                if (deadEdicts != null)
+                    foreach (FCPolicyCategory cat in deadEdicts)
+                        edicts.Remove(cat);
             }
         }
 
@@ -417,6 +441,9 @@ namespace FactionColonies
 
             if (anyActivated)
             {
+                // A newly-active edict's action/job gates are only folded into the caches
+                // for IsFullyActive edicts, so rebuild now that enactment finished.
+                RebuildActionCache();
                 FactionFC faction = Faction;
                 faction?.InvalidateFactionStatCache();
                 faction?.DirtyFactionProfitCache();

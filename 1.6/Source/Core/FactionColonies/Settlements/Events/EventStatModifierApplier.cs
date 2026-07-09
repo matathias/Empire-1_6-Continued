@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using FactionColonies.util;
 
 namespace FactionColonies
@@ -19,29 +20,24 @@ namespace FactionColonies
         {
             if (evt?.def is null || faction is null) return;
 
+            /* Freeze the settlement cohort this event applies to, so Remove/reload reverse
+             * exactly this set. Recorded even for prosperity-only events (which have no
+             * stat/permanent modifiers) so Remove's prosperityLost hits only the cohort. */
+            List<WorldSettlementFC> cohort = evt.settlementTraitLocations.Count > 0
+                ? evt.settlementTraitLocations.Where(s => s != null).ToList()
+                : faction.settlements.Where(s => s != null).ToList();
+            evt.appliedStatSettlements = cohort;
+
             string sourceId = SourceId(evt);
             string label = evt.def.label;
             bool hasStats = evt.def.statModifiers != null && evt.def.statModifiers.Count > 0;
             bool hasPermanent = evt.def.permanentStatModifiers != null && evt.def.permanentStatModifiers.Count > 0;
             if (!hasStats && !hasPermanent) return;
 
-            if (evt.settlementTraitLocations.Count > 0)
+            foreach (WorldSettlementFC settlement in cohort)
             {
-                foreach (WorldSettlementFC location in evt.settlementTraitLocations)
-                {
-                    if (location is null) continue;
-                    if (hasStats) location.AddStatModifiers(evt.def.statModifiers, sourceId, label);
-                    if (hasPermanent) location.AddPermanentModifiers(evt.def.permanentStatModifiers, sourceId, label);
-                }
-            }
-            else
-            {
-                foreach (WorldSettlementFC settlement in faction.settlements)
-                {
-                    if (settlement is null) continue;
-                    if (hasStats) settlement.AddStatModifiers(evt.def.statModifiers, sourceId, label);
-                    if (hasPermanent) settlement.AddPermanentModifiers(evt.def.permanentStatModifiers, sourceId, label);
-                }
+                if (hasStats) settlement.AddStatModifiers(evt.def.statModifiers, sourceId, label);
+                if (hasPermanent) settlement.AddPermanentModifiers(evt.def.permanentStatModifiers, sourceId, label);
             }
 
             faction.InvalidateFactionStatCache();
@@ -58,30 +54,28 @@ namespace FactionColonies
             bool hasStats = evt.def.statModifiers != null && evt.def.statModifiers.Count > 0;
             double prosperityLost = evt.def.prosperityLost;
 
-            if (evt.settlementTraitLocations.Count > 0)
-            {
-                /* Strip null references; events whose targeted settlements were removed
-                 * mid-flight would otherwise NRE inside the loop. */
-                evt.settlementTraitLocations.RemoveAll(s => s == null);
+            /* Reverse exactly the cohort Apply recorded. Legacy in-flight events (recorded
+             * before appliedStatSettlements existed) fall back to targeted-or-all. Nulls are
+             * skipped in the loop so a since-removed settlement can't NRE it. */
+            List<WorldSettlementFC> cohort = ResolveRemovalCohort(evt, faction);
 
-                foreach (WorldSettlementFC location in evt.settlementTraitLocations)
-                {
-                    if (location is null) continue;
-                    if (hasStats) location.RemoveStatModifiers(evt.def.statModifiers, sourceId);
-                    location.prosperity -= prosperityLost;
-                }
-            }
-            else
+            foreach (WorldSettlementFC settlement in cohort)
             {
-                foreach (WorldSettlementFC settlement in faction.settlements)
-                {
-                    if (settlement is null) continue;
-                    if (hasStats) settlement.RemoveStatModifiers(evt.def.statModifiers, sourceId);
-                    settlement.prosperity -= prosperityLost;
-                }
+                if (settlement is null) continue;
+                if (hasStats) settlement.RemoveStatModifiers(evt.def.statModifiers, sourceId);
+                settlement.prosperity -= prosperityLost;
             }
 
             faction.InvalidateFactionStatCache();
+        }
+
+        /// <summary>Selects the settlement list that Remove reverses: the frozen apply cohort
+        /// when recorded, else the legacy targeted-or-all fallback. Pure seam for testing.</summary>
+        internal static List<WorldSettlementFC> ResolveRemovalCohort(FCEvent evt, FactionFC faction)
+        {
+            if (evt.appliedStatSettlements != null) return evt.appliedStatSettlements;
+            if (evt.settlementTraitLocations.Count > 0) return evt.settlementTraitLocations;
+            return faction?.settlements;
         }
 
         /// <summary>Settlement-scoped reapply used by WorldSettlementFC.PostLoadInit.
@@ -90,7 +84,16 @@ namespace FactionColonies
         {
             if (evt?.def?.statModifiers is null || evt.def.statModifiers.Count == 0) return;
             if (settlement is null) return;
-            if (evt.settlementTraitLocations.Count != 0 && !evt.settlementTraitLocations.Contains(settlement)) return;
+            /* Reapply only to the recorded cohort so reload matches the original apply set.
+             * Legacy events (no cohort) fall back to the targeted-or-all gate. */
+            if (evt.appliedStatSettlements != null)
+            {
+                if (!evt.appliedStatSettlements.Contains(settlement)) return;
+            }
+            else if (evt.settlementTraitLocations.Count != 0 && !evt.settlementTraitLocations.Contains(settlement))
+            {
+                return;
+            }
 
             settlement.AddStatModifiers(evt.def.statModifiers, SourceId(evt), evt.def.label);
         }

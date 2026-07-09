@@ -21,7 +21,7 @@ namespace FactionColonies
                     double resource = 0;
                     for (int k = 0; k < factionFC.settlements.Count; k++)
                     {
-                        resource += (int)(factionFC.settlements[k].GetResource(resourceDef)?.rawTotalProduction ?? 0);
+                        resource += factionFC.settlements[k].GetResource(resourceDef)?.rawTotalProduction ?? 0;
                     }
 
                     cachedAmount = resource;

@@ -8,7 +8,7 @@ namespace FactionColonies.util
     {
         public static bool IsValidTileForNewSettlement(PlanetTile tile, WorldSettlementDef settlementdef, StringBuilder reason = null)
         {
-            if (tile == -1)
+            if (!tile.Valid)
             {
                 reason?.Append("FCSelectedInvalidTile".Translate());
                 return false;

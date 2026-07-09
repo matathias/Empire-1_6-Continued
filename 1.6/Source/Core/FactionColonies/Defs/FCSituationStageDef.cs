@@ -36,6 +36,9 @@ namespace FactionColonies
             foreach (string err in base.ConfigErrors())
                 yield return err;
 
+            foreach (string err in FCStatModifier.ConfigErrors(statModifiers, defName))
+                yield return err;
+
             if (threshold < 0f)
                 yield return $"FCSituationStageDef {defName}: threshold {threshold} is negative.";
         }

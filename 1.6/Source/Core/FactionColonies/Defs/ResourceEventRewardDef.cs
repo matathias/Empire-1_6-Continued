@@ -94,6 +94,16 @@ namespace FactionColonies
                     (float)(valueBase + valueMaxFlatOffset));
             }
 
+            // Tech level (assigned before the filter so ResourceFilterExtensions see the real level)
+            if (overrideTechLevel)
+            {
+                param.techLevel = techLevel;
+            }
+            else
+            {
+                param.techLevel = FindFC.EmpireFaction.def.techLevel;
+            }
+
             // Filter
             param.filter = new ThingFilter();
             foreach (ThingCategoryDef cat in thingCategoryAllowList)
@@ -135,16 +145,6 @@ namespace FactionColonies
             if (useQualityGenerator)
             {
                 param.qualityGenerator = qualityGenerator;
-            }
-
-            // Tech level
-            if (overrideTechLevel)
-            {
-                param.techLevel = techLevel;
-            }
-            else
-            {
-                param.techLevel = FindFC.EmpireFaction.def.techLevel;
             }
 
             return param;

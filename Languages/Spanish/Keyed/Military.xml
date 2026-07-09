@@ -363,8 +363,8 @@ Por favor, informa de esto si no recuperas a los colonos que enviaste a defender
 	<FCOn>Sí</FCOn>
 	<FCOff>No</FCOff>
 
-	<FCTraitDesc_squadCapPerSettlement>Aumenta el número de escuadrones que cada asentamiento puede albergar. El límite base es 1.</FCTraitDesc_squadCapPerSettlement>
-	<FCTraitDesc_maxSquadSize>Modifica el número máximo de mercenarios que puede tener un escuadrón asignado aquí. El tamaño base es 30.</FCTraitDesc_maxSquadSize>
+	<FCTraitDesc_squadCapPerSettlement>{0} Capacidad de Escuadrones</FCTraitDesc_squadCapPerSettlement>
+	<FCTraitDesc_maxSquadSize>{0} Tamaño Máximo de Escuadrón</FCTraitDesc_maxSquadSize>
 
 	<!-- Squad Fill Empty Slots -->
 	<FCSquadFillSlotsInsufficient>No hay suficiente plata (${0} necesarios) para rellenar las ranuras vacías.</FCSquadFillSlotsInsufficient>

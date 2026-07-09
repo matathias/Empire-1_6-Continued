@@ -44,13 +44,38 @@ namespace FactionColonies
         /* -*- Dedup between the Pawn.Kill prefix and Faction.Notify_MemberDied -*- */
         // The Kill prefix runs first in the same synchronous Kill call; when it handles a merc/caravan
         // pawn it records it here so Notify_MemberDied skips it (avoiding a second, faction-wide hit).
-        private static Pawn lastHandledByKillPrefix;
+        // Keyed by pawn (not a single slot) so a nested Pawn.Kill — e.g. a death explosion killing a
+        // second pawn mid-Kill — clears only its own entry in the postfix, never the outer pawn's.
+        private static readonly HashSet<Pawn> handledByKillPrefix = new HashSet<Pawn>();
         // Per-caravan dedupe so a pack-animal wipe fires once, not once per dying animal. Transient.
         private static readonly HashSet<int> wipedCaravanLords = new HashSet<int>();
 
-        public static void MarkHandledByKillPrefix(Pawn pawn) => lastHandledByKillPrefix = pawn;
-        public static bool WasHandledByKillPrefix(Pawn pawn) => pawn is object && pawn == lastHandledByKillPrefix;
-        public static void ClearHandledByKillPrefix() => lastHandledByKillPrefix = null;
+        public static void MarkHandledByKillPrefix(Pawn pawn)
+        {
+            if (pawn is object) handledByKillPrefix.Add(pawn);
+        }
+        public static bool WasHandledByKillPrefix(Pawn pawn) => pawn is object && handledByKillPrefix.Contains(pawn);
+        public static void ClearHandledByKillPrefix(Pawn pawn)
+        {
+            if (pawn is object) handledByKillPrefix.Remove(pawn);
+        }
+
+        /// <summary>Clears all transient, per-session static state. Called on game init (new game and
+        /// load) so nothing leaks across saves — notably the wiped-caravan set, whose Lord loadIDs
+        /// collide across games (the loadID counter resets per game), which would otherwise suppress a
+        /// pack-animal-wipe penalty in a save loaded after another in the same session.</summary>
+        public static void ResetSessionState()
+        {
+            wipedCaravanLords.Clear();
+            handledByKillPrefix.Clear();
+        }
+
+        /* Test support: the wiped-caravan set is otherwise only mutated through a full caravan death
+         * path (a Lord + FactionFC), so the non-destructive regression test seeds/inspects it directly
+         * (and gates itself on the set being empty so it never clobbers live entries). */
+        internal static void MarkCaravanWipedForTest(int lordLoadID) => wipedCaravanLords.Add(lordLoadID);
+        internal static bool IsCaravanWiped(int lordLoadID) => wipedCaravanLords.Contains(lordLoadID);
+        internal static int WipedCaravanCountForTest => wipedCaravanLords.Count;
 
         /* -*-*-*-*-*-*-*-*-*-*-*-* Public death entry points *-*-*-*-*-*-*-*-*-*-*-*- */
 

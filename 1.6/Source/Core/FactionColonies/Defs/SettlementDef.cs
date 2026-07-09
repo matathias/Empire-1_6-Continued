@@ -240,19 +240,27 @@ namespace FactionColonies
 
         public int GetCreationTime(PlanetTile tile)
         {
-            return GetSettlementTypeExtension().GetCreationTime(tile);
+            SettlementTypeExtension ext = GetSettlementTypeExtension();
+            if (ext is null) { LogUtil.Error($"WorldSettlementDef {defName} is missing a SettlementTypeExtension; returning 0 creation time."); return 0; }
+            return ext.GetCreationTime(tile);
         }
         public int GetCreationCost()
         {
-            return GetSettlementTypeExtension().GetCreationCost();
+            SettlementTypeExtension ext = GetSettlementTypeExtension();
+            if (ext is null) { LogUtil.Error($"WorldSettlementDef {defName} is missing a SettlementTypeExtension; returning 0 creation cost."); return 0; }
+            return ext.GetCreationCost();
         }
         public PlanetTile GetTileForSettlement(PlanetTile tile)
         {
-            return GetSettlementTypeExtension().GetTileForSettlement(tile);
+            SettlementTypeExtension ext = GetSettlementTypeExtension();
+            if (ext is null) { LogUtil.Error($"WorldSettlementDef {defName} is missing a SettlementTypeExtension; returning the source tile unchanged."); return tile; }
+            return ext.GetTileForSettlement(tile);
         }
         public TaxDeliveryMode GetTaxDeliveryMode(bool canUseShuttle, PlanetTile sourceTile)
         {
-            return GetSettlementTypeExtension().GetTaxDeliveryMode(canUseShuttle, sourceTile);
+            SettlementTypeExtension ext = GetSettlementTypeExtension();
+            if (ext is null) { LogUtil.Error($"WorldSettlementDef {defName} is missing a SettlementTypeExtension; returning the default tax delivery mode."); return default(TaxDeliveryMode); }
+            return ext.GetTaxDeliveryMode(canUseShuttle, sourceTile);
         }
         public bool IsInList(List<WorldSettlementDef> deflist)
         {

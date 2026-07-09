@@ -548,6 +548,26 @@ namespace FactionColonies
             return null;
         }
 
+        /// <summary>
+        /// True when a live operation is currently attacking <paramref name="target"/> (matched by
+        /// the op's <c>targetObject</c>, excluding ops whose battle is already over). Used to detect
+        /// an orphaned <see cref="IRaidTarget.IsUnderAttack"/> flag left set by a resolution path that
+        /// never cleared it, so the target can be re-admitted to the raid pool.
+        /// </summary>
+        public bool HasActiveOpTargeting(WorldObject target)
+        {
+            if (target is null) return false;
+            for (int i = 0; i < active.Count; i++)
+            {
+                MilitaryOperation op = active[i];
+                if (op is null || op.targetObject != target) continue;
+                if (op.phase == MilitaryOperationPhase.CooldownPending) continue;
+                if (op.phase == MilitaryOperationPhase.Resolved) continue;
+                return true;
+            }
+            return false;
+        }
+
         public bool HasOffensiveOpFrom(WorldSettlementFC settlement)
         {
             if (settlement is null) return false;

@@ -158,7 +158,7 @@ namespace FactionColonies
                 used.Add(found.Name);
             }
 
-            return NameGenerator.GenerateName(pfaction.def.factionNameMaker, used, true);
+            return NameGenerator.GenerateName(pfaction.def.settlementNameMaker, used, true);
         }
 
         /// <summary>

@@ -182,7 +182,7 @@ namespace FactionColonies
         // LifecycleRegistry
         // ============================
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void Lifecycle_Register_InvokesSettlementCreated()
         {
             var settlement = GetFirstSettlement();
@@ -198,7 +198,7 @@ namespace FactionColonies
             finally { LifecycleRegistry.Unregister(p); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void Lifecycle_Register_InvokesSettlementRemoved()
         {
             var settlement = GetFirstSettlement();
@@ -214,7 +214,7 @@ namespace FactionColonies
             finally { LifecycleRegistry.Unregister(p); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void Lifecycle_Register_InvokesBuildingConstructed()
         {
             var settlement = GetFirstSettlement();
@@ -230,7 +230,7 @@ namespace FactionColonies
             finally { LifecycleRegistry.Unregister(p); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void Lifecycle_Register_InvokesBattleResolved()
         {
             var settlement = GetFirstSettlement();
@@ -259,7 +259,7 @@ namespace FactionColonies
             return op;
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void Lifecycle_Unregister_StopsInvocations()
         {
             var settlement = GetFirstSettlement();
@@ -272,7 +272,7 @@ namespace FactionColonies
             TestAssert.AreEqual(0, p.SettlementCreatedCount);
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void Lifecycle_DuplicateRegister_Ignored()
         {
             var settlement = GetFirstSettlement();
@@ -289,7 +289,7 @@ namespace FactionColonies
             finally { LifecycleRegistry.Unregister(p); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void Lifecycle_Exception_DoesNotCrash()
         {
             var settlement = GetFirstSettlement();
@@ -304,7 +304,7 @@ namespace FactionColonies
             finally { LifecycleRegistry.Unregister(bad); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void Lifecycle_MultipleParticipants_AllInvoked()
         {
             var settlement = GetFirstSettlement();
@@ -327,7 +327,7 @@ namespace FactionColonies
             }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void Lifecycle_ExceptionDoesNotBlockOthers()
         {
             var settlement = GetFirstSettlement();
@@ -391,7 +391,9 @@ namespace FactionColonies
                 BattleModifierRegistry.InvokeBattleModifiers(null, force, true);
                 TestAssert.AreEqual(7.0, force.militaryLevel, message: "Should only apply once");
             }
-            finally { BattleModifierRegistry.Unregister(c); }
+            // Unregister twice: if dedup regresses (the condition under test), both copies must
+            // be removed so a failing run can't leak a test double for the rest of the session.
+            finally { BattleModifierRegistry.Unregister(c); BattleModifierRegistry.Unregister(c); }
         }
 
         [EmpireTest("Registry")]
@@ -590,7 +592,8 @@ namespace FactionColonies
                 SilverPaymentRegistry.InvokeModifiers(ctx);
                 TestAssert.AreEqual(150, ctx.Amount, message: "Should only apply once");
             }
-            finally { SilverPaymentRegistry.Unregister(c); }
+            // Unregister twice so a dedup regression can't leak a test double for the session.
+            finally { SilverPaymentRegistry.Unregister(c); SilverPaymentRegistry.Unregister(c); }
         }
 
         [EmpireTest("Registry")]
@@ -675,7 +678,7 @@ namespace FactionColonies
         // TaxTickRegistry
         // ============================
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void TaxTick_Register_InvokesPreTax()
         {
             var c = new TestTaxTicker();
@@ -688,7 +691,7 @@ namespace FactionColonies
             finally { TaxTickRegistry.Unregister(c); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void TaxTick_Register_InvokesPostTax()
         {
             var c = new TestTaxTicker();
@@ -701,7 +704,7 @@ namespace FactionColonies
             finally { TaxTickRegistry.Unregister(c); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void TaxTick_Unregister_StopsInvocations()
         {
             var c = new TestTaxTicker();
@@ -711,7 +714,7 @@ namespace FactionColonies
             TestAssert.AreEqual(0, c.PreTaxCount);
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void TaxTick_DuplicateRegister_Ignored()
         {
             var c = new TestTaxTicker();
@@ -725,7 +728,7 @@ namespace FactionColonies
             finally { TaxTickRegistry.Unregister(c); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void TaxTick_Exception_DoesNotCrash()
         {
             var bad = new ThrowingTaxTicker();
@@ -839,7 +842,8 @@ namespace FactionColonies
                 MainTableRegistry.InvokePostCloseWindow();
                 TestAssert.AreEqual(1, tab.PostCloseCount, "Should only invoke once");
             }
-            finally { MainTableRegistry.Unregister(tab); }
+            // Unregister twice so a dedup regression can't leak a test double for the session.
+            finally { MainTableRegistry.Unregister(tab); MainTableRegistry.Unregister(tab); }
         }
 
         [EmpireTest("Registry")]
@@ -892,7 +896,8 @@ namespace FactionColonies
                     if (ReferenceEquals(f, filter)) count++;
                 TestAssert.AreEqual(1, count, "Should only appear once");
             }
-            finally { BuildingFilterRegistry.Unregister(filter); }
+            // Unregister twice so a dedup regression can't leak a test double for the session.
+            finally { BuildingFilterRegistry.Unregister(filter); BuildingFilterRegistry.Unregister(filter); }
         }
 
         // ============================
@@ -940,7 +945,11 @@ namespace FactionColonies
         // EmpireCacheUtil (external invalidators)
         // ============================
 
-        [EmpireTest("Registry")]
+        // NOTE: EmpireCacheUtil.InvalidateAll() calls EmpireRegistry.ClearAll(), which wipes every
+        // live registry (FactionFC listeners, built-in validators, submod hooks) that only
+        // re-registers on save load. These CacheInvalidator tests are therefore DESTRUCTIVE: a
+        // pass still leaves the session's registries gutted until a reload.
+        [EmpireDestructiveTest("Registry")]
         public static void CacheInvalidator_Register_InvokesOnInvalidateAll()
         {
             int count = 0;
@@ -953,7 +962,7 @@ namespace FactionColonies
             finally { EmpireCacheUtil.UnregisterCacheInvalidator("_test"); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void CacheInvalidator_SurvivesInvalidateAll()
         {
             int count = 0;
@@ -967,7 +976,7 @@ namespace FactionColonies
             finally { EmpireCacheUtil.UnregisterCacheInvalidator("_test"); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void CacheInvalidator_DuplicateKey_ReplacesOld()
         {
             int oldCount = 0;
@@ -983,7 +992,7 @@ namespace FactionColonies
             finally { EmpireCacheUtil.UnregisterCacheInvalidator("_test"); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void CacheInvalidator_Exception_DoesNotBlockOthers()
         {
             int count = 0;
@@ -1001,7 +1010,7 @@ namespace FactionColonies
             }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void CacheInvalidator_Unregister_StopsInvocations()
         {
             int count = 0;
@@ -1031,6 +1040,11 @@ namespace FactionColonies
         [EmpireTest("Registry")]
         public static void RaidWeight_NoProviders_ReturnsOne()
         {
+            // Premise: no providers registered. A live submod (e.g. VOE) may register one, which
+            // would make the combined weight != 1; skip rather than falsely fail.
+            if (RaidWeightRegistry.Providers.Count > 0)
+                TestAssert.Skip("Live raid-weight providers registered; identity-weight premise does not hold");
+
             // Default identity weight when no provider is registered.
             TestAssert.AreEqual(1.0, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001);
         }
@@ -1090,7 +1104,8 @@ namespace FactionColonies
                 TestAssert.AreEqual(2.0, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001,
                     "Duplicate should be ignored");
             }
-            finally { RaidWeightRegistry.Unregister(p); }
+            // Unregister twice so a dedup regression can't leak a test double for the session.
+            finally { RaidWeightRegistry.Unregister(p); RaidWeightRegistry.Unregister(p); }
         }
 
         [EmpireTest("Registry")]
@@ -1165,9 +1180,10 @@ namespace FactionColonies
                 int count = 0;
                 foreach (IRaidTarget r in RaidTargetRegistry.Targets)
                     if (System.Object.ReferenceEquals(r, t)) count++;
-                TestAssert.AreEqual(1, count);
+                TestAssert.AreEqual(1, count, "Duplicate should be ignored");
             }
-            finally { RaidTargetRegistry.Unregister(t); }
+            // Unregister twice so a dedup regression can't leak a test double for the session.
+            finally { RaidTargetRegistry.Unregister(t); RaidTargetRegistry.Unregister(t); }
         }
 
         [EmpireTest("Registry")]
@@ -1255,9 +1271,10 @@ namespace FactionColonies
                 int count = 0;
                 foreach (IAutoDefender def in AutoDefenderRegistry.Defenders)
                     if (System.Object.ReferenceEquals(def, d)) count++;
-                TestAssert.AreEqual(1, count);
+                TestAssert.AreEqual(1, count, "Duplicate should be ignored");
             }
-            finally { AutoDefenderRegistry.Unregister(d); }
+            // Unregister twice so a dedup regression can't leak a test double for the session.
+            finally { AutoDefenderRegistry.Unregister(d); AutoDefenderRegistry.Unregister(d); }
         }
 
         [EmpireTest("Registry")]
@@ -1270,6 +1287,11 @@ namespace FactionColonies
         [EmpireTest("Registry")]
         public static void AutoDefender_FindBestDefender_NoDefenders_ReturnsNull()
         {
+            // Premise: no auto-defenders registered. A live submod (e.g. VOE outposts) may register
+            // one, which could make FindBestDefender return non-null; skip rather than falsely fail.
+            if (AutoDefenderRegistry.Defenders.Count > 0)
+                TestAssert.Skip("Live auto-defenders registered; no-defenders premise does not hold");
+
             // With no defenders registered, FindBestDefender returns null.
             TestAssert.IsNull(AutoDefenderRegistry.FindBestDefender(RimWorld.Planet.PlanetTile.Invalid, 0));
         }
@@ -1346,7 +1368,7 @@ namespace FactionColonies
         /// </summary>
         private class NonParticipant { }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void EmpireRegistry_Register_RoutesToAllMatchingDomains()
         {
             WorldSettlementFC settlement = GetFirstSettlement();
@@ -1371,7 +1393,7 @@ namespace FactionColonies
             finally { EmpireRegistry.Unregister(p); }
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void EmpireRegistry_Unregister_RemovesFromAllMatchingDomains()
         {
             WorldSettlementFC settlement = GetFirstSettlement();
@@ -1390,7 +1412,7 @@ namespace FactionColonies
             TestAssert.AreEqual(0, p.CanDefendCalls, "Defense validator should be removed");
         }
 
-        [EmpireTest("Registry")]
+        [EmpireDestructiveTest("Registry")]
         public static void EmpireRegistry_ClearAll_ClearsEveryFacadeManagedRegistry()
         {
             MultiInterfaceParticipant p = new MultiInterfaceParticipant();
@@ -1426,6 +1448,67 @@ namespace FactionColonies
         {
             TestAssert.DoesNotThrow(() => EmpireRegistry.Register(null));
             TestAssert.DoesNotThrow(() => EmpireRegistry.Unregister(null));
+        }
+
+        // ============================
+        // RegistryDispatch re-entrancy
+        // ============================
+        // Exercises RegistryDispatch against a private RegistryList so a participant can
+        // unregister itself mid-callback without fanning out to live listeners or the real
+        // settlement. Before the snapshot fix, the self-removal invalidated the foreach
+        // enumerator and threw InvalidOperationException out past the per-item try/catch.
+
+        private class SelfUnregisteringParticipant
+        {
+            public RegistryList<SelfUnregisteringParticipant> Owner;
+            public bool UnregisterSelf;
+            public int InvokeCount;
+
+            public void Fire()
+            {
+                InvokeCount++;
+                if (UnregisterSelf) Owner.Unregister(this);
+            }
+        }
+
+        [EmpireTest("Registry")]
+        public static void RegistryDispatch_Each_SelfUnregisterMidCallback_NoThrowRemainingRun()
+        {
+            var list = new RegistryList<SelfUnregisteringParticipant>();
+            var a = new SelfUnregisteringParticipant { Owner = list, UnregisterSelf = true };
+            var b = new SelfUnregisteringParticipant { Owner = list };
+            var c = new SelfUnregisteringParticipant { Owner = list };
+            list.Register(a);
+            list.Register(b);
+            list.Register(c);
+
+            TestAssert.DoesNotThrow(() =>
+                RegistryDispatch.Each(list.Items, p => p.Fire(), "Fire"),
+                "self-unregister mid-callback must not invalidate the iteration");
+
+            TestAssert.AreEqual(1, a.InvokeCount, "self-unregistering item still fires once");
+            TestAssert.AreEqual(1, b.InvokeCount, "later items still run after a mid-callback unregister");
+            TestAssert.AreEqual(1, c.InvokeCount, "later items still run after a mid-callback unregister");
+            TestAssert.AreEqual(2, list.Count, "the self-unregister still took effect");
+        }
+
+        [EmpireTest("Registry")]
+        public static void RegistryDispatch_All_SelfUnregisterMidPredicate_NoThrow()
+        {
+            var list = new RegistryList<SelfUnregisteringParticipant>();
+            var a = new SelfUnregisteringParticipant { Owner = list, UnregisterSelf = true };
+            var b = new SelfUnregisteringParticipant { Owner = list };
+            list.Register(a);
+            list.Register(b);
+
+            bool result = true;
+            TestAssert.DoesNotThrow(() =>
+                result = RegistryDispatch.All(list.Items, p => { p.Fire(); return true; }, "Fire"),
+                "self-unregister mid-predicate must not invalidate the iteration");
+
+            TestAssert.IsTrue(result, "no predicate returned false");
+            TestAssert.AreEqual(1, a.InvokeCount);
+            TestAssert.AreEqual(1, b.InvokeCount, "later validators still run after a mid-callback unregister");
         }
     }
 }

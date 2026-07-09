@@ -241,8 +241,8 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCProductionPerDay>Per Day</FCProductionPerDay>
 	<FCTotalAccrued>Accrued</FCTotalAccrued>
 	<FCNetIncome>Net Income</FCNetIncome>
-	<FCProjectedIncome>Proj. Income</FCProjectedIncome>
-	<FCProjectedIncomeDesc>The silver this resource is projected to produce by the next tax: accrued so far this cycle plus its current daily rate times the days remaining. Stockpile diversions are already deducted; tithes are settled at the settlement level.</FCProjectedIncomeDesc>
+	<FCProjectedIncome>Total</FCProjectedIncome>
+	<FCProjectedIncomeDesc>The total silver this resource is projected to produce by the next tax: the amount accrued so far this cycle, plus its current daily rate times the days remaining.\n\nStockpile diversions are already deducted; tithes are settled at the settlement level.</FCProjectedIncomeDesc>
 	<FCProjectedIncomeBreakdownAccrued>Accrued so far: {0}</FCProjectedIncomeBreakdownAccrued>
 	<FCProjectedIncomeBreakdownPerDay>Per day: {0} (× {1} days remaining)</FCProjectedIncomeBreakdownPerDay>
 	<FCProjectedIncomeBreakdownProjected>Projected total: {0}</FCProjectedIncomeBreakdownProjected>

@@ -50,11 +50,15 @@ namespace FactionColonies
             return squad?.mercenaries?.Any(m => m?.pawn?.Map != null) ?? false;
         }
 
-        /// <summary>Migration drain — adopts the legacy top-level fields from a pre-refactor
-        /// save into this sub-object. Always-drains: passing all defaults is a no-op since the
-        /// sub-object's own defaults match.</summary>
+        /// <summary>Migration drain — adopts legacy top-level deployment fields from a pre-refactor
+        /// save into this sub-object. Post-refactor saves store deployment under the nested "deployment"
+        /// node and leave the legacy buffers at their defaults, so this no-ops for them and preserves the
+        /// already-resolved live state.</summary>
         internal void AdoptLegacyValues(Lord lord, Map map, MilitaryOrder order, IntVec3 orderLoc)
         {
+            if (lord is null && map is null && order == MilitaryOrder.Undefined
+                && orderLoc == default(IntVec3))
+                return;
             Lord = lord;
             Map = map;
             MilitaryOrder = order;

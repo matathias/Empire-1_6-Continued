@@ -62,8 +62,11 @@ namespace FactionColonies
         [EmpireTest("BattleCasualty")]
         public static void ComputeDeathChance_RateBelowThreshold_ReturnsZero()
         {
-            // Threshold defaults to 0.75; rate of 0.5 is below.
-            double chance = BattleCasualtyApplicator.ComputeDeathChance(null, 0.5, null);
+            // Derive the sample from the (player-adjustable) threshold rather than hard-coding 0.5.
+            float threshold = FCSettings.autoResolveCasualtyDeathThreshold;
+            if (threshold <= 0f) TestAssert.Skip("threshold is at floor; no rate below it");
+            double belowRate = threshold / 2.0;
+            double chance = BattleCasualtyApplicator.ComputeDeathChance(null, belowRate, null);
             TestAssert.AreEqual(0.0, chance);
         }
 

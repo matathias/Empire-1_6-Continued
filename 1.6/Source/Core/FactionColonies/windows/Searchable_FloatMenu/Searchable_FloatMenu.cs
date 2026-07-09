@@ -163,7 +163,14 @@ namespace FactionColonies
                     vanishIfMouseDistant = false;
                     if (useIgnoreBeforeChar)
                     {
-                        options.AddRange(filteredOptions.Where(option => option.Label.ToLower().Substring(0, (option.Label.IndexOf(ignoreBeforeChar) < 0) ? option.Label.Length : option.Label.IndexOf(ignoreBeforeChar) - 1).Contains(searchTerm.ToLower())));
+                        options.AddRange(filteredOptions.Where(option =>
+                        {
+                            // Strip the trailing suffix after the last ignoreBeforeChar (e.g. " - $cost")
+                            // while preserving any dashes inside the name itself. No delimiter -> search whole label.
+                            int cut = option.Label.LastIndexOf(ignoreBeforeChar);
+                            string searchable = (cut < 0 ? option.Label : option.Label.Substring(0, cut)).ToLower();
+                            return searchable.Contains(searchTerm.ToLower());
+                        }));
                     }
                     else
                     {

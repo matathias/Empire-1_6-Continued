@@ -204,8 +204,11 @@ namespace FactionColonies
             int bn = b == null ? 0 : b.Count(x => x.thing != null);
             if (an != bn) return false;
             if (an == 0) return true;
-            List<SavedThing> sa = a.Where(x => x.thing != null).OrderBy(x => x.thing.defName).ThenBy(x => x.count).ToList();
-            List<SavedThing> sb = b.Where(x => x.thing != null).OrderBy(x => x.thing.defName).ThenBy(x => x.count).ToList();
+            // Sort on a fully-discriminating key (every field SavedThingEquivalent inspects, incl. count),
+            // so same-def rows differing only in stuff/quality/count still land in matching positions and
+            // the positional pairing below is valid.
+            List<SavedThing> sa = a.Where(x => x.thing != null).OrderBy(SavedThingSortKey, StringComparer.Ordinal).ToList();
+            List<SavedThing> sb = b.Where(x => x.thing != null).OrderBy(SavedThingSortKey, StringComparer.Ordinal).ToList();
             for (int i = 0; i < an; i++)
             {
                 if (!SavedThingEquivalent(sa[i], sb[i])) return false;
@@ -242,8 +245,10 @@ namespace FactionColonies
             int bn = b == null ? 0 : b.Count(x => x.thing != null);
             if (an != bn) return false;
             if (an == 0) return true;
-            List<SavedThing> sa = a.Where(x => x.thing != null).OrderBy(x => x.thing.defName).ToList();
-            List<SavedThing> sb = b.Where(x => x.thing != null).OrderBy(x => x.thing.defName).ToList();
+            // Fully-discriminating sort key (see InventoryEquivalent): same-def apparel differing only in
+            // stuff/quality/color must sort into matching positions for the positional pairing to hold.
+            List<SavedThing> sa = a.Where(x => x.thing != null).OrderBy(SavedThingSortKey, StringComparer.Ordinal).ToList();
+            List<SavedThing> sb = b.Where(x => x.thing != null).OrderBy(SavedThingSortKey, StringComparer.Ordinal).ToList();
             for (int i = 0; i < an; i++)
             {
                 if (!SavedThingEquivalent(sa[i], sb[i])) return false;
@@ -261,6 +266,17 @@ namespace FactionColonies
             if (wa.HasValue != wb.HasValue) return false;
             if (!wa.HasValue) return true;
             return SavedThingEquivalent(wa.Value, wb.Value);
+        }
+
+        /* Canonical string key over every field SavedThingEquivalent compares, so an OrderBy on it
+         * yields identical ordering for equal multisets. Color is only included when hasColor, matching
+         * SavedThingEquivalent's color check. */
+        private static string SavedThingSortKey(SavedThing t)
+        {
+            string q = t.quality.HasValue ? ((int)t.quality.Value).ToString() : "-1";
+            string col = t.hasColor ? ("|" + t.color.r + "," + t.color.g + "," + t.color.b + "," + t.color.a) : "|-";
+            return (t.thing?.defName ?? "") + "|" + (t.stuff?.defName ?? "") + "|" + q + "|"
+                + (t.hasColor ? "1" : "0") + col + "|" + t.count;
         }
 
         public static bool SavedThingEquivalent(SavedThing a, SavedThing b)

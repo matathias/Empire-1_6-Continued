@@ -45,7 +45,7 @@
 	<FCCodexResStage1>Stage 1 (Additives): {0} base</FCCodexResStage1>
 	<FCCodexResStage2>Stage 2 (Multipliers): ×{0} (includes prosperity {1}%)</FCCodexResStage2>
 	<FCCodexResStage3>Stage 3 (Workers): {0} workers → {1} total production</FCCodexResStage3>
-	<FCCodexResSilver>Daily silver accrual: {0} silver per production unit/day.</FCCodexResSilver>
+	<FCCodexResSilver>Daily silver accrual: {0} silver per production unit/day (× {1} units produced).</FCCodexResSilver>
 
 	<!-- Prosperity Provider -->
 	<FCCodexProsNoSettlements>No settlements to show prosperity data.</FCCodexProsNoSettlements>

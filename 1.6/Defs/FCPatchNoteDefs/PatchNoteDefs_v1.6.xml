@@ -144,4 +144,42 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_9</defName>
+		<label>Bugfixes Galore</label>
+		<description>Numerous fixes for features new and old.</description>
+		<releaseDate>2026-07-09</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Numerous manual offense bugfixes</li>
+		<li>Bugfix: when loading a post-squad-refactor save with deployed merc squads, their lord, map, and order would be clobbered by default values</li>
+		<li>Bugfix: on-disk custom xenotypes could be wiped from the xenotype filter when loading a save</li>
+		<li>Bugfix: non-settlement objects that participate in Empire&apos;s raid system (such as Vanilla Outposts Expanded outposts when using the Outposts &amp; Settlements submod) would not correctly resolve their post-battle events, and would permanently become un-choosable for further raids</li>
+		<li>Bugfix: when viewing a building after selecting the slot that it&apos;s currently in, the UI would show both a &quot;Demolish&quot; and a &quot;Destroy&quot; button, with the latter having almost none of the protections of the former</li>
+		<li>Bugfix: rolled-over random-tithe stock is paid out twice due to never actually being subtracted from the original budget</li>
+		<li>Bugfix: settlements use the faction name generator instead of the settlement generator</li>
+		<li>Bugfix: caravan deliveries with more than 100 items would silently lose everything past the 100th</li>
+		<li>Bugfix: merc gear quality would shift as a result of combat efficiency. Now that players can set their gear quality directly, this feature is defunct</li>
+		<li>Bugfix: some cooldowns were saved incorrectly, resulting in them never firing a letter on cooldown completion after saving and loading the game</li>
+		<li>Bugfix: the founding date for both the faction and settlements was calculated incorrectly</li>
+		<li>Bugfix: gravship launches could improperly destroy the capital spot</li>
+		<li>Bugfix: settlement levels were improperly capped, resulting in them clamping to the global cap instead of the minimum of the global cap and the settlement type cap</li>
+		<li>Bugfix: the weighting of pawn options derived from the xenotype filter was calculated incorrectly</li>
+		<li>Bugfix: the &quot;starting&quot; lat/long was overwritten on every game load</li>
+		<li>Bugfix: the inventory and apparel sections in the unit designer would only consider thingdef and count when it comes to equality, ignoring stuff and quality</li>
+		<li>Bugfix: an overly terse patch on Notify_MemberDied would skip ideo and faction leader death handling</li>
+		<li>Bugfix: delivery pawns would lose their lord info across a save and load</li>
+		<li>Bugfix: when processing a defense battle loss, we would only check the first 4 buldings for destruction instead of all of them</li>
+		<li>Bugfix: faction-wide events could apply their penalties to settlements that didn&apos;t exist when the event first fired</li>
+		<li>Bugfix: edict activation wouldn&apos;t properly rebuild their action gates</li>
+		<li>Remove the now-outdated &quot;Reset All Military Squad Assignments&quot; debug action</li>
+		<li>Bugfix: the computation for if a shuttle or other skyfaller would fit in a space could return true when it shouldn&apos;t</li>
+		<li>Bugfix: rewire the stat modifier descriptions for squadCapPerSettlement and maxSquadSize to match how other stat modifiers are printed in the UI</li>
+		<li>Update the buttons used for rearranging tithe priority in the settlement window</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

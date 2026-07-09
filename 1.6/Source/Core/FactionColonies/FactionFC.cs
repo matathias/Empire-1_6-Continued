@@ -44,17 +44,17 @@ namespace FactionColonies
         public string LoadedModVersion => loadedModVersion;
         private Vector2 startingLongLat = new Vector2();
         public Vector2 StartingLongLat => startingLongLat;
+        // Latch: the founding longlat is captured once (first session with a player home map) and then frozen.
+        // Prevents FirstTick from re-deriving it every load and clobbering it to (0,0) during nomad phase.
+        private bool startingLongLatCaptured;
 
         /* Capital & Maps */
         public PlanetTile capitalLocation = PlanetTile.Invalid;
-        private Map taxMap;
 
         public Map TaxMap
         {
             get
             {
-                if (taxMap is object) return taxMap;
-
                 FactionFC comp = FindFC.FactionComp;
                 Map map = null;
                 if (comp is object)
@@ -302,9 +302,9 @@ namespace FactionColonies
         {
             if (full)
             {
-                return GenDate.DateFullStringAt(foundingTick, startingLongLat);
+                return GenDate.DateFullStringAt(GenDate.TickGameToAbs(foundingTick), startingLongLat);
             }
-            return GenDate.DateShortStringAt(foundingTick, startingLongLat);
+            return GenDate.DateShortStringAt(GenDate.TickGameToAbs(foundingTick), startingLongLat);
         }
 
         #endregion
@@ -318,8 +318,8 @@ namespace FactionColonies
             Scribe_Values.Look(ref title, "title");
             Scribe_Values.Look(ref foundingTick, "foundingTick", defaultValue: 0);
             Scribe_Values.Look(ref startingLongLat, "foundingLongLat");
-            Scribe_Values.Look(ref capitalLocation, "capitalLocation");
-            Scribe_References.Look(ref taxMap, "taxMap");
+            Scribe_Values.Look(ref startingLongLatCaptured, "startingLongLatCaptured", false);
+            Scribe_Values.Look(ref capitalLocation, "capitalLocation", PlanetTile.Invalid);
             Scribe_Values.Look(ref factionCreated, "factionCreated");
 
             // Save-format version stamp. Always re-stamp to the active version on save; capture the
@@ -348,6 +348,12 @@ namespace FactionColonies
             Scribe_Values.Look(ref factionColorSecondary, "factionColorSecondary", Color.white);
 
             Scribe_Collections.Look(ref settlements, "settlements", LookMode.Reference);
+            // Re-init ONLY in PostLoadInit — a reference-valued list re-inited before ResolvingCrossRefs crashes the cross-ref resolve.
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && settlements is null)
+            {
+                LogUtil.Warning("Loaded a null 'settlements' list, expected non-null. Recovering with an empty list; save may be corrupted.");
+                settlements = new List<WorldSettlementFC>();
+            }
 
             Scribe_Deep.Look(ref policyManager, "policyManager");
             if (policyManager is null) policyManager = new PolicyManager();
@@ -370,6 +376,11 @@ namespace FactionColonies
 
             //New Production types
             Scribe_Collections.Look(ref resourcePools, "resourcePools", LookMode.Deep);
+            if (resourcePools is null)
+            {
+                LogUtil.Warning("Loaded a null 'resourcePools' list, expected non-null. Recovering with an empty list; save may be corrupted.");
+                resourcePools = new List<ResourcePool>();
+            }
             Scribe_References.Look(ref powerOutput, "powerOutput");
 
             Scribe_Deep.Look(ref xenotypeFilter, "xenotypeFilter");
@@ -394,6 +405,11 @@ namespace FactionColonies
 
             //Road builder
             Scribe_Deep.Look(ref roadBuilder, "roadBuilder");
+            if (roadBuilder is null)
+            {
+                LogUtil.Warning("Loaded a null 'roadBuilder', expected non-null. Recovering with a fresh instance; save may be corrupted.");
+                roadBuilder = new FCRoadBuilder();
+            }
 
             //Threat adaptation
             Scribe_Deep.Look(ref threatAdaptation, "threatAdaptation");
@@ -578,6 +594,9 @@ namespace FactionColonies
             EnsureCaravanTypesPopulated();
             EnsureResourcePools();
             EmpireRegistry.Register(this);
+            // Drop per-session death-penalty state so it can't leak across saves loaded in one session
+            // (Lord loadIDs collide across games and would suppress a repeated pack-animal-wipe penalty).
+            EmpireDeathPenaltyUtil.ResetSessionState();
 
             // Rebuild op indices from `active` whether we just migrated a save or not — cheap
             // and always-correct even on a fresh-game start (no-op when active is empty).
@@ -597,13 +616,17 @@ namespace FactionColonies
             {
                 /* New-world path. Scribe is Inactive, disk I/O is legal. */
                 EnsureFiltersInitialized();
-            }
 
-            /* Rebuild caravan trader kinds last, once factionResources, settlements, and tech
-             * level are settled. If production hasn't computed yet (new world, or load path
-             * where caches still warm up), the helper preserves the FactionDef's existing list
-             * rather than clobbering it with an empty result. */
-            RebuildCaravanTraderKinds();
+                /* Rebuild caravan trader kinds last, once factionResources, settlements, and tech
+                 * level are settled. If production hasn't computed yet, the helper preserves the
+                 * FactionDef's existing list rather than clobbering it with an empty result.
+                 *
+                 * New-world path only. On the load path this is deferred to FirstTick: it reads the
+                 * techLevel property, whose getter would run RecomputeTechLevel during LoadingVars,
+                 * firing xenotypeFilter.FinalizeInit mid-Scribe and stripping disk-only custom
+                 * xenotypes from the loaded filter. FirstTick rebuilds it once Scribe is Inactive. */
+                RebuildCaravanTraderKinds();
+            }
         }
 
         /* Rebuilt on each game init from DefDatabase, ensures defs stay in sync across load. */
@@ -840,16 +863,18 @@ namespace FactionColonies
                 }
             }
 
-            /* Get the longlat of the player's starting location. This will be used when calculating founding dates. */
-            Map playerHome = Find.AnyPlayerHomeMap;
-            if (playerHome is null)
+            /* Capture the longlat of the player's starting location once — it feeds the founding-date display.
+             * Guarded by a latch so it isn't re-derived (and clobbered to (0,0) during nomad phase, when there
+             * is no home map) on every load. */
+            if (!startingLongLatCaptured)
             {
-                LogUtil.Warning("Found NULL for player map on first tick. This probably shouldn't happen...");
-                startingLongLat = default(Vector2);
-            }
-            else
-            {
-                startingLongLat = Find.WorldGrid.LongLatOf(playerHome.Tile);
+                Map playerHome = Find.AnyPlayerHomeMap;
+                if (playerHome is object)
+                {
+                    startingLongLat = Find.WorldGrid.LongLatOf(playerHome.Tile);
+                    startingLongLatCaptured = true;
+                }
+                // No home map yet (nomad phase): leave startingLongLat unset and retry next session.
             }
 
             /* Rebuild caravan trader kinds last, once factionResources, settlements, and tech
@@ -946,6 +971,25 @@ namespace FactionColonies
 
                     if (settlements.Any() || RaidTargetRegistry.Targets.Count > 0)
                     {
+                        // Self-heal orphaned raid-target flags: a target whose attacking op resolved
+                        // without clearing IsUnderAttack (older saves from before that path existed,
+                        // or an op lost without resolution) would be excluded from the pool below
+                        // forever. Clear the flag on any registered target with no live op attacking
+                        // it, so it re-enters raid selection this same tick.
+                        MilitaryOperationManager opManager = FindFC.MilitaryManager;
+                        if (opManager is object)
+                        {
+                            foreach (IRaidTarget rt in RaidTargetRegistry.Targets)
+                            {
+                                if (rt is object && rt.IsUnderAttack && !opManager.HasActiveOpTargeting(rt.WorldObject))
+                                {
+                                    LogUtil.Warning($"Clearing orphaned IsUnderAttack flag on raid target '{rt.Name}' " +
+                                        "(no live operation targeting it).");
+                                    rt.IsUnderAttack = false;
+                                }
+                            }
+                        }
+
                         List<WorldSettlementFC> validSettlements = settlements
                             .Where(s => s.MilitaryComp?.isUnderAttack != true && s.settlementDef.canBeRaided)
                             .ToList();
@@ -1171,14 +1215,13 @@ namespace FactionColonies
             else
             {
                 // Research-barrier cascade: the highest satisfied barrier wins.
-                ResearchManager researchManager = Find.ResearchManager;
                 newLevel = TechLevel.Undefined;
                 foreach (TechLevel tl in TechLevelDescending)
                 {
                     if (medievalOnly && tl > TechLevel.Medieval) continue;
                     TechLevelBarrier barrier = FactionCache.GetTechBarrier(tl);
                     if (barrier is null) continue;
-                    if (barrier.IsSatisfied(researchManager))
+                    if (barrier.IsSatisfied())
                     {
                         newLevel = tl;
                         LogUtil.Message("updateTechLevel: " + tl);
@@ -1778,10 +1821,13 @@ namespace FactionColonies
         {
             // Protection against save corruption. Though if resourcePools has null fields on a load, then there are likely
             // other, bigger problems hiding elsewhere...
-            int numNull = resourcePools.RemoveAll(p => p is null);
+            // Scrub both null entries and pools whose ResourceTypeDef no longer resolves (e.g. a submod
+            // that added a pool resource was uninstalled). A surviving null-resource pool would NRE
+            // every day in UpdateDailyResourcePools and abort the rest of the faction's WorldComponentTick.
+            int numNull = resourcePools.RemoveAll(p => p ?.resource is null);
             if (numNull > 0)
             {
-                LogUtil.Warning($"[EnsureResourePools] Removed {numNull} null items from resourcePools");
+                LogUtil.Warning($"[EnsureResourePools] Removed {numNull} null or unresolved-def items from resourcePools");
             }
             foreach (ResourceTypeDef def in FactionCache.PoolResourceTypeDefs)
             {
@@ -1856,6 +1902,7 @@ namespace FactionColonies
         {
             foreach (ResourcePool pool in resourcePools)
             {
+                if (pool?.resource is null) continue; // defensive: EnsureResourcePools already scrubs these
                 LogUtil.Message($"Daily ResourcePool update for resourceTypeDef {pool.resource.defName}. Pool size: {pool.pool}");
                 pool.resource.DailyUpdate(pool);
                 LogUtil.Message($"Post-Daily ResourcePool update for resourceTypeDef {pool.resource.defName}. New Pool size: {pool.pool}");
@@ -2138,7 +2185,7 @@ namespace FactionColonies
             if (result.Count == 0)
                 LogUtil.Warning($"RebuildCaravanTraderKinds produced an empty list. enabledCaravanTypes: {enabledCaravanTypes?.Count ?? 0}");
             else
-                LogUtil.Message($"RebuildCaravanTraderKinds produced a list of {enabledCaravanTypes?.Count ?? 0} caravan types");
+                LogUtil.Message($"RebuildCaravanTraderKinds produced a list of {result.Count} caravan types");
         }
 
         /// <summary>

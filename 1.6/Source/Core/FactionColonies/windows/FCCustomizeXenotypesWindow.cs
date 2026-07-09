@@ -42,10 +42,11 @@ namespace FactionColonies
             base.PreOpen();
 
             faction = FindFC.FactionComp;
-            if (faction == null)
+            if (faction is null)
             {
                 LogUtil.Error("Null FactionFC WorldComponent when opening FCCustomizeXenotypesWindow");
                 Close();
+                return;
             }
             allXenotypes = FactionCache.XenotypeDefs;
             allCustomXenotypes = FactionCache.CustomXenotypes;

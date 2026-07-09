@@ -88,5 +88,14 @@ namespace FactionColonies
                 if (t.def == def) return true;
             return false;
         }
+
+        public override IEnumerable<string> ConfigErrors()
+        {
+            foreach (string err in base.ConfigErrors())
+                yield return err;
+
+            foreach (string err in FCStatModifier.ConfigErrors(statModifiers, defName))
+                yield return err;
+        }
     }
 }

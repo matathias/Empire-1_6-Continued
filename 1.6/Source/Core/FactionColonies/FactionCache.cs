@@ -337,29 +337,39 @@ namespace FactionColonies
             {
                 if (!_checkedForNonViolentXenos)
                 {
+                    bool exists = false;
                     if (XenotypeDefs?.Count > 0)
                     {
                         foreach (XenotypeDef xenotype in XenotypeDefs)
                         {
                             if (XenotypeFilter.IsXenotypeNonViolent(xenotype))
                             {
-                                _cachedNonViolentXenosExist = true;
+                                exists = true;
                                 break;
                             }
                         }
                     }
-                    if (!_cachedNonViolentXenosExist && CustomXenotypes?.Count > 0)
+                    if (!exists && CustomXenotypes?.Count > 0)
                     {
                         foreach (CustomXenotype xenotype in CustomXenotypes)
                         {
                             if (XenotypeFilter.IsCustomXenotypeNonViolent(xenotype.name))
                             {
-                                _cachedNonViolentXenosExist = true;
+                                exists = true;
                                 break;
                             }
                         }
                     }
-                    _checkedForNonViolentXenos = true;
+
+                    // Only latch when the Scribe is inactive. During loading, CustomXenotypes omits disk
+                    // xenotypes (see BuildMergedCustomXenotypeList), so the result is incomplete — returning
+                    // without latching lets the next post-load access recompute fully.
+                    if (Scribe.mode == LoadSaveMode.Inactive)
+                    {
+                        _cachedNonViolentXenosExist = exists;
+                        _checkedForNonViolentXenos = true;
+                    }
+                    return exists;
                 }
                 return _cachedNonViolentXenosExist;
             }
@@ -370,11 +380,16 @@ namespace FactionColonies
             {
                 if (_cachedXenotypeViolenceDict is null && XenotypeDefs?.Count > 0)
                 {
-                    _cachedXenotypeViolenceDict = new Dictionary<XenotypeDef, bool>();
+                    var dict = new Dictionary<XenotypeDef, bool>();
                     foreach (XenotypeDef xenotype in XenotypeDefs)
                     {
-                        _cachedXenotypeViolenceDict.Add(xenotype, !XenotypeFilter.IsXenotypeNonViolent(xenotype));
+                        dict.Add(xenotype, !XenotypeFilter.IsXenotypeNonViolent(xenotype));
                     }
+                    // Built from XenotypeDefs only (always fully loaded), but guarded for consistency with the
+                    // CustomXenotypes-dependent caches so nothing latches mid-Scribe.
+                    if (Scribe.mode == LoadSaveMode.Inactive)
+                        _cachedXenotypeViolenceDict = dict;
+                    return dict;
                 }
                 return _cachedXenotypeViolenceDict;
             }
@@ -385,11 +400,16 @@ namespace FactionColonies
             {
                 if (_cachedCustomXenotypeViolenceDict is null && CustomXenotypes?.Count > 0)
                 {
-                    _cachedCustomXenotypeViolenceDict = new Dictionary<string, bool>();
+                    var dict = new Dictionary<string, bool>();
                     foreach (CustomXenotype xenotype in CustomXenotypes)
                     {
-                        _cachedCustomXenotypeViolenceDict.Add(xenotype.name, !XenotypeFilter.IsCustomXenotypeNonViolent(xenotype.name));
+                        dict.Add(xenotype.name, !XenotypeFilter.IsCustomXenotypeNonViolent(xenotype.name));
                     }
+                    // Only cache when the Scribe is inactive — during loading CustomXenotypes omits disk
+                    // xenotypes, so the dict is incomplete (see CustomXenotypes accessor).
+                    if (Scribe.mode == LoadSaveMode.Inactive)
+                        _cachedCustomXenotypeViolenceDict = dict;
+                    return dict;
                 }
                 return _cachedCustomXenotypeViolenceDict;
             }
@@ -436,8 +456,23 @@ namespace FactionColonies
         public static void InvalidatePolicyDescs() => _cachedFCPolicyDescs = null;
         public static List<XenotypeDef> ViolentXenotypeDefs => _cachedViolentXenotypeList ??
                                                                (_cachedViolentXenotypeList = XenotypeDefs.Where(x => !XenotypeIsNonViolent(x)).ToList());
-        public static List<CustomXenotype> ViolentCustomXenotypes => _cachedViolentCustomXenotypeList ??
-                                                                     (_cachedViolentCustomXenotypeList = CustomXenotypes.Where(x => !CustomXenotypeIsNonViolent(x)).ToList());
+        public static List<CustomXenotype> ViolentCustomXenotypes
+        {
+            get
+            {
+                if (_cachedViolentCustomXenotypeList != null)
+                    return _cachedViolentCustomXenotypeList;
+
+                List<CustomXenotype> list = CustomXenotypes.Where(x => !CustomXenotypeIsNonViolent(x)).ToList();
+
+                // Only cache when the Scribe is inactive — CustomXenotypes omits disk xenotypes during loading,
+                // so the list is incomplete (mirrors the CustomXenotypes accessor guard).
+                if (Scribe.mode == LoadSaveMode.Inactive)
+                    _cachedViolentCustomXenotypeList = list;
+
+                return list;
+            }
+        }
 
         /* Tech caching */
         public static Dictionary<TechLevel, TechLevelBarrier> TechBarriers

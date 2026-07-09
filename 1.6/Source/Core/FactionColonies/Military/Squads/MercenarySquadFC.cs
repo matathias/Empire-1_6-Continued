@@ -169,8 +169,9 @@ namespace FactionColonies
                 _legacyUsedApparelList = null;
 
                 if (Deployment is null) Deployment = CreateDeployment();
-                /* Always-drain: a fresh-hire squad has all-default legacy buffers, which
-                   match SquadDeploymentState's own defaults — adopting is a no-op. */
+                /* Conditional drain: only pre-refactor saves carry non-default legacy buffers.
+                   Post-refactor saves loaded the real state into the nested "deployment" node, so
+                   AdoptLegacyValues skips (all buffers default) and preserves that live state. */
                 Deployment.AdoptLegacyValues(_legacyLord, _legacyMap,
                                              _legacyMilitaryOrder, _legacyOrderLocation);
                 _legacyLord = null;

@@ -251,9 +251,12 @@ namespace FactionColonies
             MilitaryForce atk = aggressor.force;
             MilitaryForce def = defender.force;
 
-            // Apply defender advantage in place on the live defender force so MilitaryForce-based
-            // readers (e.g. CalculateDefenderWinChance) see the same post-advantage baseline. The
-            // result object snapshots this value as defenderInitialForce.
+            // Apply the defender advantage in place on the live defender force; the result object
+            // snapshots the post-advantage value as defenderInitialForce.
+            // WARNING: def.forceRemaining now already includes defenderAdvantage. Do NOT pass this
+            // post-advantage force to SimulateBattleFc.CalculateDefenderWinChance / CalculateAttackerWinChance
+            // — those expect raw (pre-advantage) forces and re-apply defenderAdvantage themselves, so
+            // feeding them the mutated force double-counts it.
             SimulateBattleFc.ApplyDefenderAdvantage(def);
 
             battleResult = new BattleResult
@@ -423,6 +426,39 @@ namespace FactionColonies
             {
                 IAutoDefender def = AutoDefenderRegistry.FindByWorldObject(externalDefenderSource);
                 def?.OnDefenseComplete(victory, battleResult);
+            }
+
+            // Notify an externally-registered IRaidTarget of the raid outcome and clear its
+            // under-attack flag so it re-enters the raid-selection pool (FactionFC filters that
+            // pool on !IsUnderAttack). Empire settlements aren't IRaidTargets, so FindByWorldObject
+            // returns null for them and this block self-gates to external targets. The raid target
+            // is always the op's defender (CreateDefensiveOp forces defender.faction to the empire),
+            // so 'victory' here means the target defended successfully. The flag is cleared in a
+            // finally so a throwing third-party handler can't leave the target permanently excluded;
+            // win/loss notification is skipped on an Error result (no real battle happened), matching
+            // the handler and threat-adaptation paths.
+            if (targetObject is object)
+            {
+                IRaidTarget raidTarget = RaidTargetRegistry.FindByWorldObject(targetObject);
+                if (raidTarget is object)
+                {
+                    try
+                    {
+                        if (battleResult is object && battleResult.winner != BattleWinner.Error)
+                        {
+                            if (victory) raidTarget.OnRaidWon(battleResult);
+                            else raidTarget.OnRaidLost(battleResult);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        LogUtil.Error($"MilitaryOperation.CompleteBattle: IRaidTarget handler threw for {raidTarget.Name}: {e}");
+                    }
+                    finally
+                    {
+                        raidTarget.IsUnderAttack = false;
+                    }
+                }
             }
 
             // Drive EmpireThreatAdaptation from every battle the empire participates in

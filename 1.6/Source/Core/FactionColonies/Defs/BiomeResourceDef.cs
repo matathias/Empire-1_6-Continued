@@ -53,6 +53,7 @@ namespace FactionColonies
             base.ResolveReferences();
             foreach (ResourceAvailability rb in resources)
             {
+                if (rb.resourceDef is null) continue;
                 if (double.IsNaN(rb.additive))
                 {
                     rb.additive = rb.resourceDef.defaultBiomeAdditive;
@@ -69,6 +70,11 @@ namespace FactionColonies
             if (label.NullOrEmpty())
             {
                 yield return "BiomeResourceDef " + this.defName + " has a null or empty label";
+            }
+            for (int i = 0; i < resources.Count; i++)
+            {
+                if (resources[i].resourceDef is null)
+                    yield return "BiomeResourceDef " + this.defName + " has a resources entry with a null resourceDef (unresolved defName?)";
             }
         }
     }

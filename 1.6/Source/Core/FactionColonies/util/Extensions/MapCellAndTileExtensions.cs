@@ -46,7 +46,8 @@ namespace FactionColonies.util
         {
             foreach (IntVec3 cell in GenAdj.OccupiedRect(targetCell, Rot4.North, spaceSize))
             {
-                return !(!cell.InBounds(map) || !cell.Walkable(map) || (targetCell.CellIsRoofedNaturalOrThick(map) && !ignoreRoofing) || CellBlockedByThing(targetCell, map));
+                if (!cell.InBounds(map) || !cell.Walkable(map) || (cell.CellIsRoofedNaturalOrThick(map) && !ignoreRoofing) || CellBlockedByThing(cell, map))
+                    return false;
             }
             return true;
         }

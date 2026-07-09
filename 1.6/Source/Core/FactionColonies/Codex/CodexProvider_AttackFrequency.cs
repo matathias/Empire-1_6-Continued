@@ -1,3 +1,4 @@
+using System;
 using Verse;
 
 namespace FactionColonies
@@ -17,23 +18,25 @@ namespace FactionColonies
             result += "FCCodexFreqRange".Translate(range.min, range.max) + "\n";
             result += "FCCodexFreqCount".Translate(count) + "\n\n";
 
-            // Show frequency curve points
+            // Show frequency curve points, read straight from the live curve so this
+            // never drifts when the curve is rebalanced.
             result += "FCCodexFreqCurve".Translate() + "\n";
-            int[] points = { 1, 3, 5, 10, 15 };
-            foreach (int p in points)
+            bool currentShown = false;
+            foreach (CurvePoint point in ThreatScalingUtil.FrequencyCurve)
             {
-                string marker = (p == count) ? " <--" : "";
-                double freq;
-                switch (p)
-                {
-                    case 1: freq = 1.0; break;
-                    case 3: freq = 1.2; break;
-                    case 5: freq = 1.4; break;
-                    case 10: freq = 1.8; break;
-                    case 15: freq = 2.0; break;
-                    default: freq = 1.0; break;
-                }
-                result += "  " + "FCCodexFreqPoint".Translate(p, freq) + marker + "\n";
+                int settlements = (int)point.x;
+                bool isCurrent = settlements == count;
+                if (isCurrent) currentShown = true;
+                string marker = isCurrent ? " <--" : "";
+                result += "  " + "FCCodexFreqPoint".Translate(settlements, Math.Round(point.y, 2)) + marker + "\n";
+            }
+
+            // Ensure the "you are here" row always renders, even when the current
+            // settlement count falls between the sampled curve points.
+            if (!currentShown)
+            {
+                double currentFreq = ThreatScalingUtil.FrequencyCurve.Evaluate(count);
+                result += "  " + "FCCodexFreqPoint".Translate(count, Math.Round(currentFreq, 2)) + " <--\n";
             }
 
             return result;

@@ -149,6 +149,10 @@ namespace FactionColonies
             // The contract here is the absence of the *settlement-level* addition: force.militaryLevel
             // must not exceed the squad's resolved level by anywhere near the settlement's mil level.
             double settlementLevel = squad.settlement.settlementMilitaryLevel;
+            // At a fresh level-1 settlement settlementMilitaryLevel is 0, so "overshoot < 0" is
+            // unsatisfiable and the no-settlement-addition invariant is vacuous — skip.
+            if (settlementLevel <= 0)
+                TestAssert.Skip("settlementMilitaryLevel is 0; the no-settlement-addition invariant is vacuous");
             double overshoot = force.militaryLevel - resolvedLevel;
             TestAssert.IsTrue(overshoot < settlementLevel,
                 $"CreateMilitaryForceFromSquad should not silently add settlementMilitaryLevel " +

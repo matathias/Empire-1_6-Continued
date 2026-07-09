@@ -148,6 +148,8 @@ namespace FactionColonies
         {
             get
             {
+                if (authors.NullOrEmpty()) return "";
+
                 List<string> workList = authors.ListFullCopy();
                 string lastAuthor = workList.Pop();
 
