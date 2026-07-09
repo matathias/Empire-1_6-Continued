@@ -24,6 +24,15 @@ namespace FactionColonies
         public static readonly HashSet<PlanetTile> awaitingDecision = new HashSet<PlanetTile>();
         public static readonly HashSet<PlanetTile> razeApproved = new HashSet<PlanetTile>();
 
+        // A tile lingering in awaitingDecision across a game switch would make the CheckDefeated
+        // prefix suppress the re-prompt forever (stranding the base), so reset with the other
+        // per-game static state on load / new game.
+        public static void Reset()
+        {
+            awaitingDecision.Clear();
+            razeApproved.Clear();
+        }
+
         public static bool HasPendingCapture(PlanetTile tile)
         {
             FactionFC fc = FindFC.FactionComp;

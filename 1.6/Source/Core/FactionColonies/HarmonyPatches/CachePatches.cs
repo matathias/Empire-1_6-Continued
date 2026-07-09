@@ -38,6 +38,7 @@ namespace FactionColonies
 
             SettlementTypeExtension_Orbital.InvalidateCache();
             FactionDefDescriptionPatch.Invalidate();
+            SettlementCaptureTracker.Reset();
 
             foreach (KeyValuePair<string, Action> entry in _invalidators)
             {
