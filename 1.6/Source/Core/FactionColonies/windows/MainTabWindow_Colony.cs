@@ -62,8 +62,6 @@ namespace FactionColonies
         private HashSet<int> collapsedPrisonerSections = new HashSet<int>();
 
         // ===== SORTED LIST CACHES =====
-        private List<BillFC> cachedSortedBills;
-        private int cachedBillsCount = -1;
         private List<FCEvent> cachedSortedEvents;
         private int cachedEventsVersion = -1;
         private int cachedHiddenCategoriesCount = -1;
@@ -1070,12 +1068,10 @@ namespace FactionColonies
             float contentH = bills.Count * (rowH + rowGap);
             Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref billsScroll, contentH);
 
-            if (cachedSortedBills == null || cachedBillsCount != bills.Count)
-            {
-                cachedSortedBills = bills.OrderBy(b => b.dueTick).ToList();
-                cachedBillsCount = bills.Count;
-            }
-            List<BillFC> sorted = cachedSortedBills;
+            // Sort the live ledger list every frame (tiny list). Caching by count let stale
+            // bills linger when AutoresolveBills removed one while AddTax added another in the
+            // same cycle, which allowed resolving an already-removed bill twice.
+            List<BillFC> sorted = bills.OrderBy(b => b.dueTick).ToList();
             for (int i = 0; i < sorted.Count; i++)
             {
                 BillFC bill = sorted[i];
@@ -1137,7 +1133,6 @@ namespace FactionColonies
                     if (bill.AttemptResolve())
                     {
                         Messages.Message("FCBillResolved".Translate(), MessageTypeDefOf.NeutralEvent);
-                        cachedSortedBills = null;
                     }
                     else
                     {
