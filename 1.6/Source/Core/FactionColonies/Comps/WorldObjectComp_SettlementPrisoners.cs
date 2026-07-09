@@ -291,6 +291,11 @@ namespace FactionColonies
             WorldSettlementFC s = WorldSettlement;
             if (s is null) return;
 
+            // No home colony map to deliver to (nomad/caravan phase): keep the prisoner here rather
+            // than downing them and destroying them in a delivery that can't be routed.
+            Map playerHome = Find.AnyPlayerHomeMap;
+            if (playerHome is null) return;
+
             if (!HealthUtility.TryAnesthetize(p.prisoner))
                 HealthUtility.DamageUntilDowned(p.prisoner, false);
 
@@ -300,11 +305,11 @@ namespace FactionColonies
 
             DeliveryEvent.CreateDeliveryEvent(new FCEvent
             {
-                location = Find.AnyPlayerHomeMap.Tile,
+                location = playerHome.Tile,
                 source = s.Tile,
                 goods = new List<Thing> { p.prisoner },
                 customDescription = "FCAPrisonerIsBeingDeliveredToYou".Translate(),
-                timeTillTrigger = Find.TickManager.TicksGame + TravelUtil.ReturnTicksToArrive(s.Tile, Find.AnyPlayerHomeMap.Tile)
+                timeTillTrigger = Find.TickManager.TicksGame + TravelUtil.ReturnTicksToArrive(s.Tile, playerHome.Tile)
             });
 
             RemovePrisoner(p);

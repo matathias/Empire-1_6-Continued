@@ -6,8 +6,6 @@ namespace FactionColonies
 {
     public static class MilitaryEfficiencyUtil
     {
-        private const float QualityScaleFactor = 4f;
-
         /// <summary>
         /// Applies a combat efficiency hediff (buff or debuff) to a pawn based on
         /// the force's military efficiency. Removes any existing FC combat efficiency
@@ -54,44 +52,6 @@ namespace FactionColonies
             {
                 pawn.health.RemoveHediff(existing);
             }
-        }
-
-        /// <summary>
-        /// Shifts the quality of all equipment and apparel on a pawn based on
-        /// combat efficiency. Only for squad pawns whose gear comes from loadout templates.
-        /// </summary>
-        public static void ShiftPawnGearQuality(Pawn pawn, double efficiency)
-        {
-            if (pawn == null) return;
-
-            float dampedDelta = (float)((efficiency - 1.0) * FCSettings.efficiencyDamping);
-            int shift = (int)Math.Round(dampedDelta * QualityScaleFactor);
-            if (shift == 0) return;
-
-            if (pawn.equipment != null)
-            {
-                foreach (ThingWithComps weapon in pawn.equipment.AllEquipmentListForReading)
-                {
-                    ShiftThingQuality(weapon, shift);
-                }
-            }
-
-            if (pawn.apparel != null)
-            {
-                foreach (Apparel apparel in pawn.apparel.WornApparel)
-                {
-                    ShiftThingQuality(apparel, shift);
-                }
-            }
-        }
-
-        private static void ShiftThingQuality(Thing thing, int shift)
-        {
-            CompQuality compQ = thing.TryGetComp<CompQuality>();
-            if (compQ == null) return;
-
-            int newQual = Math.Min(Math.Max((int)compQ.Quality + shift, (int)QualityCategory.Awful), (int)QualityCategory.Legendary);
-            compQ.SetQuality((QualityCategory)newQual, null);
         }
     }
 }

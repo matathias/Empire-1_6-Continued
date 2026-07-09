@@ -10,12 +10,12 @@ namespace FactionColonies.util
 {
     class ShuttleSender
     {
-        protected readonly int Tile = -1;
+        protected readonly PlanetTile Tile = PlanetTile.Invalid;
         public static readonly int ShuttleRange = 70;
         public SettlementBuildingComp_Shuttles comp = null;
         public static readonly int cost = 1;
 
-        public ShuttleSender(int Tile, SettlementBuildingComp_Shuttles comp)
+        public ShuttleSender(PlanetTile Tile, SettlementBuildingComp_Shuttles comp)
         {
             this.Tile = Tile;
             this.comp = comp;

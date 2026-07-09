@@ -191,7 +191,6 @@ namespace FactionColonies
             List<Pawn> mercs = squad.SpawnableMercenaryPawns.ToList();
             foreach (Pawn merc in mercs)
             {
-                MilitaryEfficiencyUtil.ShiftPawnGearQuality(merc, efficiency);
                 MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(merc, efficiency);
             }
 

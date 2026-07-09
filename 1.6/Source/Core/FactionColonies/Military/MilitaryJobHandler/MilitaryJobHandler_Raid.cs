@@ -129,15 +129,21 @@ namespace FactionColonies
                 body, FCLetterDefOf.FCBattleReportLetterPositive,
                 new LookTargets(target), reportId, op);
 
-            FCEvent eventParams = new FCEvent()
+            // Nomad/caravan-phase players have no home colony map to deliver loot to; skip the
+            // delivery (the victory letter above already fired) rather than NRE on the null map.
+            Map playerHome = Find.AnyPlayerHomeMap;
+            if (playerHome is object)
             {
-                location = Find.AnyPlayerHomeMap.Tile,
-                source = home.Tile,
-                goods = loot,
-                customDescription = text,
-                timeTillTrigger = Find.TickManager.TicksGame + TravelUtil.ReturnTicksToArrive(home.Tile, Find.AnyPlayerHomeMap.Tile)
-            };
-            DeliveryEvent.CreateDeliveryEvent(eventParams);
+                FCEvent eventParams = new FCEvent()
+                {
+                    location = playerHome.Tile,
+                    source = home.Tile,
+                    goods = loot,
+                    customDescription = text,
+                    timeTillTrigger = Find.TickManager.TicksGame + TravelUtil.ReturnTicksToArrive(home.Tile, playerHome.Tile)
+                };
+                DeliveryEvent.CreateDeliveryEvent(eventParams);
+            }
         }
     }
 }

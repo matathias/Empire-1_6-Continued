@@ -526,14 +526,14 @@ namespace FactionColonies
             bf.CaravanDefend(caravan);
         }
 
-        public void AddToDefenceFromList(List<Pawn> pawns, int destinationTile)
+        public void AddToDefenceFromList(List<Pawn> pawns, PlanetTile destinationTile)
         {
             AddToDefenceFromList(pawns, destinationTile, assignToLord: true);
         }
 
-        public void AddToDefenceFromList(List<Pawn> pawns, int destinationTile, bool assignToLord)
+        public void AddToDefenceFromList(List<Pawn> pawns, PlanetTile destinationTile, bool assignToLord)
         {
-            BattlefieldContext bf = FindFC.MilitaryManager?.GetOrCreateBattlefield(new PlanetTile(destinationTile));
+            BattlefieldContext bf = FindFC.MilitaryManager?.GetOrCreateBattlefield(destinationTile);
             if (bf is null)
             {
                 LogUtil.Error($"AddToDefenceFromList: no battlefield for tile {destinationTile}.");

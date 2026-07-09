@@ -907,7 +907,6 @@ namespace FactionColonies
             double efficiency = op.defender.force.militaryEfficiency;
             foreach (Pawn merc in reinforcements)
             {
-                MilitaryEfficiencyUtil.ShiftPawnGearQuality(merc, efficiency);
                 MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(merc, efficiency);
             }
             Lord defenseLord = defenderPawns.FirstOrDefault()?.GetLord();
@@ -1099,7 +1098,6 @@ namespace FactionColonies
                     double efficiency = force.militaryEfficiency;
                     foreach (Pawn merc in friendlies)
                     {
-                        MilitaryEfficiencyUtil.ShiftPawnGearQuality(merc, efficiency);
                         MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(merc, efficiency);
                     }
 
@@ -1499,6 +1497,10 @@ namespace FactionColonies
             foreach (var lord in map.lordManager.lords.ListFullCopy())
                 map.lordManager.RemoveLord(lord);
 
+            // Nomad/caravan-phase players may have no home colony map; the injured-return delivery
+            // and the post-teardown camera/map switch below are skipped when it is null.
+            Map playerHome = Find.AnyPlayerHomeMap;
+
             if (playerPawns.Count > 0)
             {
                 foreach (Pawn pawn in playerPawns)
@@ -1520,37 +1522,40 @@ namespace FactionColonies
                         }
                     }
 
-                string eventText = won
-                    ? DeliveryNotification.ShuttleEventInjuredString
-                    : DeliveryNotification.ShuttleEventInjuredLostString;
-                int travelTicks = TravelUtil.ReturnTicksToArrive(settlement.Tile, Find.AnyPlayerHomeMap.Tile);
-                if (!won) travelTicks += GenDate.TicksPerDay;
-
-                var goods = new List<Thing>(playerPawns.Count);
-                foreach (Pawn pawn in playerPawns) goods.Add(pawn);
-
-                var eventParams = new FCEvent
+                if (playerHome is object)
                 {
-                    location = Find.AnyPlayerHomeMap.Tile,
-                    source = settlement.Tile,
-                    goods = goods,
-                    customDescription = eventText,
-                    timeTillTrigger = Find.TickManager.TicksGame + travelTicks
-                };
-                DeliveryEvent.CreateDeliveryEvent(eventParams);
-                string travelDays = ((float)travelTicks / GenDate.TicksPerDay).ToString("0.#");
-                pendingDeliveryMessage = "FCInjuredCaravanMembersReturning".Translate(playerPawns.Count, travelDays);
+                    string eventText = won
+                        ? DeliveryNotification.ShuttleEventInjuredString
+                        : DeliveryNotification.ShuttleEventInjuredLostString;
+                    int travelTicks = TravelUtil.ReturnTicksToArrive(settlement.Tile, playerHome.Tile);
+                    if (!won) travelTicks += GenDate.TicksPerDay;
+
+                    var goods = new List<Thing>(playerPawns.Count);
+                    foreach (Pawn pawn in playerPawns) goods.Add(pawn);
+
+                    var eventParams = new FCEvent
+                    {
+                        location = playerHome.Tile,
+                        source = settlement.Tile,
+                        goods = goods,
+                        customDescription = eventText,
+                        timeTillTrigger = Find.TickManager.TicksGame + travelTicks
+                    };
+                    DeliveryEvent.CreateDeliveryEvent(eventParams);
+                    string travelDays = ((float)travelTicks / GenDate.TicksPerDay).ToString("0.#");
+                    pendingDeliveryMessage = "FCInjuredCaravanMembersReturning".Translate(playerPawns.Count, travelDays);
+                }
             }
 
             CameraJumper.TryJump(settlement.Tile);
-            Current.Game.CurrentMap = Find.AnyPlayerHomeMap;
+            if (playerHome is object) Current.Game.CurrentMap = playerHome;
             Current.Game.DeinitAndRemoveMap(map, false);
             map = null;
         }
 
         /* -*-*-*-*- Caravan defend / external pawn injection -*-*-*-*- */
 
-        public void AddToDefenceFromList(List<Pawn> pawns, int destinationTile)
+        public void AddToDefenceFromList(List<Pawn> pawns, PlanetTile destinationTile)
         {
             AddToDefenceFromList(pawns, destinationTile, assignToLord: true);
         }
@@ -1558,7 +1563,7 @@ namespace FactionColonies
         /// <summary>Registers pawns with the defense system. When <paramref name="assignToLord"/>
         /// is false, pawns are added to defenders but not to the battle lord (used for VEF
         /// vehicles that have their own job systems).</summary>
-        public void AddToDefenceFromList(List<Pawn> pawns, int destinationTile, bool assignToLord)
+        public void AddToDefenceFromList(List<Pawn> pawns, PlanetTile destinationTile, bool assignToLord)
         {
             if (pawns.NullOrEmpty())
             {
@@ -1575,7 +1580,7 @@ namespace FactionColonies
             }
 
             // Battle hasn't started yet — start it via the op linked to the warning event.
-            FCEvent warning = MilitaryOperationsUtil.ReturnMilitaryEventByLocation(new PlanetTile(destinationTile));
+            FCEvent warning = MilitaryOperationsUtil.ReturnMilitaryEventByLocation(destinationTile);
             if (warning is null)
             {
                 LogUtil.Warning("AddToDefenceFromList: no settlementBeingAttacked event at destination tile.");
