@@ -44,17 +44,17 @@ namespace FactionColonies
         public string LoadedModVersion => loadedModVersion;
         private Vector2 startingLongLat = new Vector2();
         public Vector2 StartingLongLat => startingLongLat;
+        // Latch: the founding longlat is captured once (first session with a player home map) and then frozen.
+        // Prevents FirstTick from re-deriving it every load and clobbering it to (0,0) during nomad phase.
+        private bool startingLongLatCaptured;
 
         /* Capital & Maps */
         public PlanetTile capitalLocation = PlanetTile.Invalid;
-        private Map taxMap;
 
         public Map TaxMap
         {
             get
             {
-                if (taxMap is object) return taxMap;
-
                 FactionFC comp = FindFC.FactionComp;
                 Map map = null;
                 if (comp is object)
@@ -318,8 +318,8 @@ namespace FactionColonies
             Scribe_Values.Look(ref title, "title");
             Scribe_Values.Look(ref foundingTick, "foundingTick", defaultValue: 0);
             Scribe_Values.Look(ref startingLongLat, "foundingLongLat");
-            Scribe_Values.Look(ref capitalLocation, "capitalLocation");
-            Scribe_References.Look(ref taxMap, "taxMap");
+            Scribe_Values.Look(ref startingLongLatCaptured, "startingLongLatCaptured", false);
+            Scribe_Values.Look(ref capitalLocation, "capitalLocation", PlanetTile.Invalid);
             Scribe_Values.Look(ref factionCreated, "factionCreated");
 
             // Save-format version stamp. Always re-stamp to the active version on save; capture the
@@ -348,6 +348,12 @@ namespace FactionColonies
             Scribe_Values.Look(ref factionColorSecondary, "factionColorSecondary", Color.white);
 
             Scribe_Collections.Look(ref settlements, "settlements", LookMode.Reference);
+            // Re-init ONLY in PostLoadInit — a reference-valued list re-inited before ResolvingCrossRefs crashes the cross-ref resolve.
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && settlements is null)
+            {
+                LogUtil.Warning("Loaded a null 'settlements' list, expected non-null. Recovering with an empty list; save may be corrupted.");
+                settlements = new List<WorldSettlementFC>();
+            }
 
             Scribe_Deep.Look(ref policyManager, "policyManager");
             if (policyManager is null) policyManager = new PolicyManager();
@@ -370,6 +376,11 @@ namespace FactionColonies
 
             //New Production types
             Scribe_Collections.Look(ref resourcePools, "resourcePools", LookMode.Deep);
+            if (resourcePools is null)
+            {
+                LogUtil.Warning("Loaded a null 'resourcePools' list, expected non-null. Recovering with an empty list; save may be corrupted.");
+                resourcePools = new List<ResourcePool>();
+            }
             Scribe_References.Look(ref powerOutput, "powerOutput");
 
             Scribe_Deep.Look(ref xenotypeFilter, "xenotypeFilter");
@@ -394,6 +405,11 @@ namespace FactionColonies
 
             //Road builder
             Scribe_Deep.Look(ref roadBuilder, "roadBuilder");
+            if (roadBuilder is null)
+            {
+                LogUtil.Warning("Loaded a null 'roadBuilder', expected non-null. Recovering with a fresh instance; save may be corrupted.");
+                roadBuilder = new FCRoadBuilder();
+            }
 
             //Threat adaptation
             Scribe_Deep.Look(ref threatAdaptation, "threatAdaptation");
@@ -844,16 +860,18 @@ namespace FactionColonies
                 }
             }
 
-            /* Get the longlat of the player's starting location. This will be used when calculating founding dates. */
-            Map playerHome = Find.AnyPlayerHomeMap;
-            if (playerHome is null)
+            /* Capture the longlat of the player's starting location once — it feeds the founding-date display.
+             * Guarded by a latch so it isn't re-derived (and clobbered to (0,0) during nomad phase, when there
+             * is no home map) on every load. */
+            if (!startingLongLatCaptured)
             {
-                LogUtil.Warning("Found NULL for player map on first tick. This probably shouldn't happen...");
-                startingLongLat = default(Vector2);
-            }
-            else
-            {
-                startingLongLat = Find.WorldGrid.LongLatOf(playerHome.Tile);
+                Map playerHome = Find.AnyPlayerHomeMap;
+                if (playerHome is object)
+                {
+                    startingLongLat = Find.WorldGrid.LongLatOf(playerHome.Tile);
+                    startingLongLatCaptured = true;
+                }
+                // No home map yet (nomad phase): leave startingLongLat unset and retry next session.
             }
 
             /* Rebuild caravan trader kinds last, once factionResources, settlements, and tech
@@ -2165,7 +2183,7 @@ namespace FactionColonies
             if (result.Count == 0)
                 LogUtil.Warning($"RebuildCaravanTraderKinds produced an empty list. enabledCaravanTypes: {enabledCaravanTypes?.Count ?? 0}");
             else
-                LogUtil.Message($"RebuildCaravanTraderKinds produced a list of {enabledCaravanTypes?.Count ?? 0} caravan types");
+                LogUtil.Message($"RebuildCaravanTraderKinds produced a list of {result.Count} caravan types");
         }
 
         /// <summary>
