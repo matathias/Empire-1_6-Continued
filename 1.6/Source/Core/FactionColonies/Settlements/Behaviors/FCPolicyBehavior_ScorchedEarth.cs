@@ -18,7 +18,7 @@ namespace FactionColonies
 
             var ext = Ext<FCPolicyBehaviorExt_ScorchedEarth>();
             List<int> damaged = new List<int>();
-            for (int k = 0; k < 4; k++)
+            for (int k = 0; k < settlement.BuildingsComp.NumBuildingSlots; k++)
             {
                 if (!settlement.BuildingsComp.BuildingSlotIsBuilding(k)) continue;
                 if (Rand.RangeInclusive(0, ext.damageRollMax) >= ext.damageThreshold)

@@ -59,7 +59,15 @@ namespace FactionColonies
             }
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit && behavior != null)
-                behavior.PostInitialize();
+            {
+                // If the def failed to resolve (removed content) the behavior's extension was
+                // never wired; PostInitialize would deref a null extension. Drop the orphan so
+                // it isn't initialized or folded into the faction behavior/action caches.
+                if (def is null || behavior.extension is null)
+                    behavior = null;
+                else
+                    behavior.PostInitialize();
+            }
         }
     }
 }

@@ -21,6 +21,10 @@ namespace FactionColonies
         public int buildingSlot = -1;
         public BuildingFCDef building;
         public List<WorldSettlementFC> settlementTraitLocations = new List<WorldSettlementFC>();
+        /* Frozen cohort of settlements this event actually applied its stat/permanent
+         * modifiers to (recorded at Apply time). Removal reverses exactly this set so a
+         * settlement founded mid-event is neither buffed nor penalized. */
+        public List<WorldSettlementFC> appliedStatSettlements;
         /* Per-option scaled silver cost, keyed by FCOptionDef.defName. Null until the options
          * window first opens; populated by FCOptionWindow so the price shown is the price paid
          * and survives save/reload. Recomputes lazily for legacy events that never snapshotted. */
@@ -139,6 +143,9 @@ namespace FactionColonies
             Scribe_Values.Look(ref source, "source");
             Scribe_Values.Look(ref hasDestination, "hasDestination");
             Scribe_Collections.Look(ref settlementTraitLocations, "settlementTraitLocations", LookMode.Reference);
+            Scribe_Collections.Look(ref appliedStatSettlements, "appliedStatSettlements", LookMode.Reference);
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+                appliedStatSettlements?.RemoveAll(s => s == null);
             Scribe_Collections.Look(ref optionCostSnapshots, "optionCostSnapshots", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref goods, "goods", LookMode.Deep);
             Scribe_Values.Look(ref loadID, "loadID");
