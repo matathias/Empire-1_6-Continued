@@ -12,13 +12,19 @@ namespace FactionColonies
        Category "DeathPenalty". */
     public static class EmpireDeathPenaltyUtilTests
     {
+        // A bare `new Pawn()` has def == null and thingIDNumber == -1, so HashSet<Pawn> membership
+        // checks — which route through Pawn.Equals -> def.defName — throw NRE. Give each marker pawn a
+        // stub def and a unique thingIDNumber so equality and hashing are well-defined.
+        private static Pawn MarkerPawn(int id) =>
+            new Pawn { def = new ThingDef { defName = "EmpireTestPawn" }, thingIDNumber = id };
+
         // -*- Fix 4: nested Kill must not clear the outer pawn's marker -*-
 
         [EmpireTest("DeathPenalty")]
         public static void KillPrefixMarker_NestedClear_KeepsOuterMarker()
         {
-            var outer = new Pawn();
-            var inner = new Pawn();
+            var outer = MarkerPawn(1);
+            var inner = MarkerPawn(2);
             try
             {
                 // Outer Kill's prefix marks the outer pawn.
@@ -43,8 +49,8 @@ namespace FactionColonies
         [EmpireTest("DeathPenalty")]
         public static void KillPrefixMarker_ClearRemovesOnlyTarget()
         {
-            var a = new Pawn();
-            var b = new Pawn();
+            var a = MarkerPawn(1);
+            var b = MarkerPawn(2);
             try
             {
                 EmpireDeathPenaltyUtil.MarkHandledByKillPrefix(a);
