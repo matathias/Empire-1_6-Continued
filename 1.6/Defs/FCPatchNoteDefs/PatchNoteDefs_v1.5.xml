@@ -785,4 +785,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_50</defName>
+		<label>Hostility Fix</label>
+		<description>Fixes an issue with Empire pawns becoming hostile to themselves. The root cause of the bug is likely a mod conflict of some kind, but this patch should at least prevent the hostility.</description>
+		<releaseDate>2026-07-10</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: the Empire faction could become hostile to the player, at which point Empire pawns would become hostile to each other and even themselves</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

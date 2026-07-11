@@ -92,6 +92,32 @@ namespace FactionColonies
             }
         }
 
+        [DebugAction("Empire", "Reset Empire-Player Relations to Ally", allowedGameStates = AllowedGameStates.Playing)]
+        private static void ResetEmpirePlayerRelations()
+        {
+            Faction empire = FindFC.EmpireFaction;
+            Faction player = Find.FactionManager?.OfPlayer;
+            if (empire is null || player is null)
+            {
+                LogUtil.MessageForce("Reset Empire-Player Relations: Empire or player faction is null.");
+                return;
+            }
+
+            FactionRelation beforeRel = empire.RelationWith(player, allowNull: true);
+            FactionRelationKind before = empire.RelationKindWith(player);
+            int beforeGoodwill = beforeRel is object ? beforeRel.baseGoodwill : empire.PlayerGoodwill;
+
+            // Drive both directions back to a non-hostile ally state. TrySetRelationKind clamps goodwill
+            // appropriately for goodwill-bearing factions and uses SetRelationDirect otherwise.
+            RelationsUtilFC.TrySetRelationKind(empire, player, FactionRelationKind.Ally, canSendLetter: false);
+            RelationsUtilFC.TrySetRelationKind(player, empire, FactionRelationKind.Ally, canSendLetter: false);
+
+            FactionRelation afterRel = empire.RelationWith(player, allowNull: true);
+            int afterGoodwill = afterRel is object ? afterRel.baseGoodwill : empire.PlayerGoodwill;
+            LogUtil.MessageForce($"Reset Empire-Player Relations: {before} ({beforeGoodwill}) -> " +
+                $"{empire.RelationKindWith(player)} ({afterGoodwill}).");
+        }
+
         [DebugAction("Empire", "Print Races", allowedGameStates = AllowedGameStates.Playing)]
         private static void PrintRaces()
         {
