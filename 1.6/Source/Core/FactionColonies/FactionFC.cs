@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
+using Verse.AI;
+using Verse.AI.Group;
 
 namespace FactionColonies
 {
@@ -930,6 +932,7 @@ namespace FactionColonies
             {
                 ValidateSettlementCaravansList();
                 RecoverOrphanedConstructions(ticksGame);
+                SweepOrphanedCaravanAnimals();
 
                 if (faction.leader is null || faction.leader.Dead)
                     ColonyUtil.CreatePlayerFactionLeader(faction);
@@ -2525,6 +2528,49 @@ namespace FactionColonies
                         }
                     }
                 }
+            }
+        }
+
+        /* Walks orphaned Empire-faction animals off the map. An Empire animal that is still part of
+         * an active trade caravan (LordJob_TradeWithColony) or supply delivery (LordJob_DeliverSupplies)
+         * is always a member of a Lord, so a null lord marks it as abandoned — left behind when a
+         * caravan's departure was interrupted, or hatched on the map from a dropped fertilized-egg
+         * stack (which hatch as Empire-faction animals). Left alone they accumulate and cripple TPS.
+         * Rather than deleting them, hand each map's orphans to a vanilla ExitMapBest Lord so they
+         * leave the way a normal caravan does. INVARIANT: any Empire animal meant to stay on-map must
+         * be lord-attached (or a mercenary sub-pawn), or this sweep will send it off. */
+        private void SweepOrphanedCaravanAnimals()
+        {
+            Faction empire = FindFC.EmpireFaction;
+            if (empire is null) return;
+
+            MilitaryFC mil = FindFC.Military;
+
+            foreach (Map map in Find.Maps)
+            {
+                if (!map.IsPlayerHome) continue;
+
+                List<Pawn> spawned = map.mapPawns.SpawnedPawnsInFaction(empire);
+                List<Pawn> toEvict = null;
+
+                for (int i = 0; i < spawned.Count; i++)
+                {
+                    Pawn p = spawned[i];
+                    if (p is null || p.Dead || p.Destroyed) continue;
+                    if (!(p.RaceProps?.Animal ?? false)) continue;      // animals only
+                    if (p.GetLord() is object) continue;                // active caravan/delivery member
+                    if (mil is object && mil.IsMercenaryPawn(p)) continue; // merc animals / bonded mounts
+                    if (p.IsPrisoner || p.HostFaction is object) continue; // under player custody
+
+                    if (toEvict is null) toEvict = new List<Pawn>();
+                    toEvict.Add(p);
+                }
+
+                if (toEvict is null) continue;
+
+                // canDig mirrors vanilla's trapped-caravan fallback: leave normally, mine only if walled in.
+                LordMaker.MakeNewLord(empire, new LordJob_ExitMapBest(LocomotionUrgency.Jog, canDig: true), map, toEvict);
+                LogUtil.Message($"SweepOrphanedCaravanAnimals: sent {toEvict.Count} orphaned Empire animal(s) to leave {map.Parent?.LabelCap}");
             }
         }
 
