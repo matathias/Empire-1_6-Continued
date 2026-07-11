@@ -276,6 +276,8 @@ namespace FactionColonies
         /// <returns></returns>
         public static string ToShortName(string name)
         {
+            if (name.NullOrEmpty()) return name;
+
             IEnumerable<string> nameSplit = name.Split(' ').Where(str => !str.NullOrEmpty() && char.IsUpper(str[0]));
 
             if (nameSplit.EnumerableNullOrEmpty()) return name;
