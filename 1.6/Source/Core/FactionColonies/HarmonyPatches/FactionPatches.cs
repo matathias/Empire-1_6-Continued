@@ -50,7 +50,14 @@ namespace FactionColonies
     [HarmonyPatch(typeof(Faction), "TryAffectGoodwillWith")]
     class GoodwillPatchFunctionsGoodwillAffect
     {
-        static bool Prefix(ref Faction __instance, Faction other, int goodwillChange, bool canSendMessage = true,
+        // The Empire is a vassal/ally by design and must never be driven Hostile to the player by
+        // uncontrolled vanilla goodwill accidents (e.g. Empire-pawn deaths on caravan/op maps that
+        // escape GoodwillPatchFunctionsMemberDied). Keep Empire->player goodwill at or above this
+        // floor, one point inside the non-hostile band (hostile threshold is -75; see
+        // RelationsUtilFC.TrySetRelationKind).
+        private const int EmpirePlayerGoodwillFloor = -74;
+
+        static bool Prefix(ref Faction __instance, Faction other, ref int goodwillChange, bool canSendMessage = true,
             bool canSendHostilityLetter = true, HistoryEventDef reason = null, GlobalTargetInfo? lookTarget = null)
         {
             if (__instance == FindFC.EmpireFaction && other == Find.FactionManager.OfPlayer)
@@ -60,6 +67,21 @@ namespace FactionColonies
                     reason == HistoryEventDefOf.Traded)
                 {
                     return false;
+                }
+
+                // Clamp so the resulting goodwill can never fall below the floor. Only ever reduces the
+                // magnitude of a loss; gains and non-negative results are untouched.
+                if (goodwillChange < 0)
+                {
+                    FactionRelation relation = __instance.RelationWith(other, allowNull: true);
+                    int current = relation is object ? relation.baseGoodwill : __instance.PlayerGoodwill;
+                    if (current + goodwillChange < EmpirePlayerGoodwillFloor)
+                    {
+                        int clamped = EmpirePlayerGoodwillFloor - current;
+                        if (clamped > 0) clamped = 0;
+                        goodwillChange = clamped;
+                        LogUtil.Message($"GoodwillAffect Prefix: floored Empire->player goodwill change to {goodwillChange} (current {current}).");
+                    }
                 }
 
                 return true;
@@ -261,7 +283,18 @@ namespace FactionColonies
         static void Postfix(Thing t, Faction fac, ref bool __result)
         {
             if (__result) return;
-            if (fac != FindFC.EmpireFaction) return;
+            if (t is null) return;
+
+            Faction pcFaction = FindFC.EmpireFaction;
+            if (pcFaction is null || fac != pcFaction) return;
+
+            // Never mirror an Empire thing or a player-faction thing into hostility with the Empire
+            // faction. This overload feeds AttackTargetsCache; a mis-hit here is what would register
+            // an Empire pawn as a valid target of its own faction.
+            Faction tFac = t.Faction;
+            if (tFac == pcFaction) return;
+            if (tFac == Faction.OfPlayer) return;
+
             __result = t.HostileTo(Faction.OfPlayer);
         }
     }
@@ -275,6 +308,11 @@ namespace FactionColonies
         static void Postfix(Thing a, Thing b, ref bool __result)
         {
             if (__result) return;
+            if (a is null || b is null) return;
+
+            // A thing is never hostile to itself. Without this guard an Empire pawn whose faction is
+            // (accidentally) hostile to the player computes HostileTo(self) == true and attacks itself.
+            if (a == b) return;
 
             Faction pcFaction = FindFC.EmpireFaction;
             if (pcFaction is null) return;
@@ -285,6 +323,13 @@ namespace FactionColonies
             else if (b.Faction == pcFaction)
                 other = a;
             else return;
+
+            // The mirror only applies to Empire-vs-outsider. Never mirror against another Empire thing
+            // (mutual friendly-fire between two Empire pawns) or against a player-faction thing (the
+            // Empire is an ally by design).
+            Faction otherFac = other.Faction;
+            if (otherFac == pcFaction) return;
+            if (otherFac == Faction.OfPlayer) return;
 
             __result = other.HostileTo(Faction.OfPlayer);
         }
