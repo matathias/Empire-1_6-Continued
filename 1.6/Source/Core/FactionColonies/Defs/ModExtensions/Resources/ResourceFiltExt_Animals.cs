@@ -50,6 +50,7 @@ namespace FactionColonies
 
             HashSet<ThingDef> allowedProducts = new HashSet<ThingDef>();
             HashSet<ThingDef> allProducts = new HashSet<ThingDef>();
+            HashSet<ThingDef> fertilizedEggs = new HashSet<ThingDef>();
 
             foreach (ThingDef def in DefDatabase<ThingDef>.AllDefs)
             {
@@ -60,9 +61,18 @@ namespace FactionColonies
                 {
                     CollectProducts(def, allowedProducts);
                 }
+
+                // Fertilized eggs hatch into live animals (vanilla CompHatcher spawns one pawn per
+                // egg in the stack), so a delivered or trader-dropped stack hatches into a herd on the
+                // player's map. Collect them for EVERY animal so they can be blocked unconditionally
+                // below, regardless of whether the animal is allowed. Unfertilized (food) eggs stay.
+                CompProperties_EggLayer eggLayer = def.GetCompProperties<CompProperties_EggLayer>();
+                if (eggLayer?.eggFertilizedDef is object)
+                    fertilizedEggs.Add(eggLayer.eggFertilizedDef);
             }
 
             allProducts.ExceptWith(allowedProducts);
+            allProducts.UnionWith(fertilizedEggs);
 
             // Block members of the animal-textile categories (Leathers/Wools) that no allowed animal
             // produces. This removes manufactured/composite textiles like patchleather, which sit in
@@ -92,7 +102,8 @@ namespace FactionColonies
 
             CompProperties_EggLayer eggLayer = race.GetCompProperties<CompProperties_EggLayer>();
             if (eggLayer?.eggUnfertilizedDef != null) products.Add(eggLayer.eggUnfertilizedDef);
-            if (eggLayer?.eggFertilizedDef != null) products.Add(eggLayer.eggFertilizedDef);
+            // Fertilized eggs are handled separately in BuildBlockedProductSet: they hatch into live
+            // animals, so they are blocked for every animal rather than tracked as a normal product.
 
             CompProperties_Milkable milkable = race.GetCompProperties<CompProperties_Milkable>();
             if (milkable?.milkDef != null) products.Add(milkable.milkDef);
