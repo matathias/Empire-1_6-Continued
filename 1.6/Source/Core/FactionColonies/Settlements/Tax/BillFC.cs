@@ -215,8 +215,8 @@ namespace FactionColonies
         public bool AttemptResolve()
         {
             FactionFC factionfc = FindFC.FactionComp;
-            if (PaymentUtil.GetSilver() >= -1 * taxes.silverAmount || taxes.silverAmount >= 0)
-            { //if have enough silver on the current map to pay  & map belongs to player
+            if (taxes.silverAmount >= 0 || PaymentUtil.CanAfford((int)(-1 * taxes.silverAmount), PaymentUtil.Reason_TaxPayment, settlement))
+            { //if the payment can be afforded (crediting this settlement's financing, if any) & map belongs to player
 
                 FCEventMaker.CreateTaxEvent(this);
                 if (taxes.resourcePools.Count > 0)

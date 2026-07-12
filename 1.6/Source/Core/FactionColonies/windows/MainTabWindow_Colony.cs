@@ -2243,7 +2243,7 @@ namespace FactionColonies
                         {
                             if (milComp.artilleryTimer <= Find.TickManager.TicksGame)
                             {
-                                if (PaymentUtil.GetSilver() >= cost)
+                                if (PaymentUtil.CanAfford((int)cost, PaymentUtil.Reason_FireSupport, settlement))
                                 {
                                     MilitaryDeploymentUtil.FireSupport(settlement, support);
                                 }

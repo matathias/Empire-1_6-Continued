@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace FactionColonies
@@ -11,11 +12,47 @@ namespace FactionColonies
         /// <summary>The settlement this payment is associated with, if any.</summary>
         public WorldSettlementFC Settlement;
 
+        // Side effects a modifier wants to perform (e.g. draining an outpost) only if the payment
+        // actually commits. Collected during ModifyPayment, but run by the payment path only after
+        // affordability is confirmed, and never for a pure CanAfford query. Keeps modifiers from
+        // consuming resources for a payment that turns out to be unaffordable.
+        private List<Action> commitActions;
+
         public SilverPaymentContext(int amount, string reason, WorldSettlementFC settlement = null)
         {
             Amount = amount;
             Reason = reason;
             Settlement = settlement;
+        }
+
+        /// <summary>
+        /// Enqueue a side effect to run only when the payment commits. Modifiers must not consume
+        /// resources inline in ModifyPayment; enqueue the consumption here instead.
+        /// </summary>
+        public void Commit(Action action)
+        {
+            if (action is null) return;
+            if (commitActions is null) commitActions = new List<Action>();
+            commitActions.Add(action);
+        }
+
+        /// <summary>
+        /// Run all enqueued commit actions. Each is isolated so one failing modifier cannot abort the rest.
+        /// </summary>
+        public void RunCommit()
+        {
+            if (commitActions is null) return;
+            foreach (Action action in commitActions)
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception e)
+                {
+                    LogUtil.Error("Silver payment commit action threw: " + e);
+                }
+            }
         }
     }
 
