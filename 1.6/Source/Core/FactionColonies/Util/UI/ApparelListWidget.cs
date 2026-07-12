@@ -182,10 +182,10 @@ namespace FactionColonies
             BodyDef body = raceDef?.race?.body ?? BodyDefOf.Human;
             List<SavedThing> currentApparel = displayUnit?.apparel ?? new List<SavedThing>();
 
-            List<ThingDef> apparelDefs = DefDatabase<ThingDef>.AllDefs
-                .Where(t => t.IsApparel
-                    && t.apparel.PawnCanWear(Gender.None, DevelopmentalStage.Adult)
-                    && CraftUtil.CanCraftItem(t)
+            // Static predicates (IsApparel/PawnCanWear) are cached in the pool; only the live research
+            // + race gates and the worn-set exclusion run per open.
+            List<ThingDef> apparelDefs = MilitaryEquipmentPoolUtil.ApparelPool()
+                .Where(t => CraftUtil.CanCraftItem(t)
                     && HARUtil.CanRaceWearApparel(raceDef, t)
                     && !currentApparel.Any(a => a.thing == t))
                 .OrderBy(t => t.label)
@@ -209,10 +209,10 @@ namespace FactionColonies
             BodyDef body = raceDef?.race?.body ?? BodyDefOf.Human;
             List<SavedThing> currentApparel = displayUnit?.apparel ?? new List<SavedThing>();
 
-            List<ThingDef> apparelDefs = DefDatabase<ThingDef>.AllDefs
-                .Where(t => t.IsApparel
-                    && t.apparel.PawnCanWear(Gender.None, DevelopmentalStage.Adult)
-                    && CraftUtil.CanCraftItem(t)
+            // Static predicates (IsApparel/PawnCanWear) are cached in the pool; only the live research
+            // + race gates run per open (the replace picker keeps the currently-worn item selectable).
+            List<ThingDef> apparelDefs = MilitaryEquipmentPoolUtil.ApparelPool()
+                .Where(t => CraftUtil.CanCraftItem(t)
                     && HARUtil.CanRaceWearApparel(raceDef, t))
                 .OrderBy(t => t.label)
                 .ToList();
