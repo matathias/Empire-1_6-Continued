@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using RimWorld.Planet;
+using Verse;
 
 namespace FactionColonies
 {
@@ -72,6 +74,79 @@ namespace FactionColonies
             TestAssert.AreEqual((object)MilitaryOperationPhase.Resolved, (object)op.phase);
             TestAssert.AreEqual(phaseStartBefore, op.phaseStartedTick,
                 "phaseStartedTick should not change on idempotent Resolve");
+        }
+
+        // -*- Resolve releases a pledged external auto-defender (IAutoDefender contract) -*-
+
+        [EmpireTest("Military")]
+        public static void Resolve_PreBattleWithExternalDefender_FiresReplaced()
+        {
+            // Pre-battle teardown (e.g. the target settlement is removed during the warning window):
+            // the pledged external defender must be released via OnDefenseReplaced, not left stuck.
+            var stub = new StubAutoDefender { worldObject = new WorldObject() };
+            AutoDefenderRegistry.Register(stub);
+            try
+            {
+                var op = Make(MilitaryOperationPhase.Scheduled);
+                op.externalDefenderSource = stub.worldObject;
+
+                op.Resolve();
+
+                TestAssert.IsTrue(stub.replacedCalled,
+                    "OnDefenseReplaced should fire when a pledged op is torn down pre-battle");
+                TestAssert.IsFalse(stub.completeCalled,
+                    "OnDefenseComplete must not fire on a battle-less teardown");
+                TestAssert.IsNull(op.externalDefenderSource,
+                    "externalDefenderSource should be cleared after release");
+            }
+            finally
+            {
+                AutoDefenderRegistry.Unregister(stub);
+            }
+        }
+
+        [EmpireTest("Military")]
+        public static void Resolve_CooldownWithExternalDefender_DoesNotFireReplaced()
+        {
+            // Post-battle teardown: CompleteBattle already fired OnDefenseComplete, so Resolve must
+            // NOT fire OnDefenseReplaced (that would be a double terminal callback).
+            var stub = new StubAutoDefender { worldObject = new WorldObject() };
+            AutoDefenderRegistry.Register(stub);
+            try
+            {
+                var op = Make(MilitaryOperationPhase.CooldownPending);
+                op.externalDefenderSource = stub.worldObject;
+
+                op.Resolve();
+
+                TestAssert.IsFalse(stub.replacedCalled,
+                    "OnDefenseReplaced must not fire once the battle already completed (CooldownPending)");
+            }
+            finally
+            {
+                AutoDefenderRegistry.Unregister(stub);
+            }
+        }
+
+        /* Minimal IAutoDefender that records which terminal callback fired and keys off a bare
+           WorldObject sentinel (AutoDefenderRegistry.FindByWorldObject matches by reference). */
+        private class StubAutoDefender : IAutoDefender
+        {
+            public WorldObject worldObject;
+            public bool replacedCalled;
+            public bool completeCalled;
+
+            public WorldObject WorldObject => worldObject;
+            public int MilitaryLevel => 0;
+            public int Range => 0;
+            public bool CanAutoDefend => false;
+            public MilitaryForce CreateDefendingForce() => null;
+            public void OnDefensePledged(WorldObject target) { }
+            public void OnDefenseStarted(WorldObject target) { }
+            public void OnDefenseComplete(bool won, BattleResult result) { completeCalled = true; }
+            public void OnDefenseReplaced() { replacedCalled = true; }
+            public List<Pawn> GetDefendingPawns() => null;
+            public void ReturnDefendingPawns(List<Pawn> pawns) { }
         }
 
         // -*- BuildBattleContext -*-
