@@ -27,7 +27,7 @@
         <defName>militaryLevelBonusDefending</defName>
         <label>military level bonus (defending)</label>
         <aggregation>Additive</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
+        <appliesToSettlements>true</appliesToSettlements>
         <appliesToSquads>true</appliesToSquads>
         <descriptionKey>FCTraitDesc_militaryLevelBonusDefending</descriptionKey>
     </FactionColonies.FCStatDef>
