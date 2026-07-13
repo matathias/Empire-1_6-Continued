@@ -361,7 +361,14 @@ namespace FactionColonies
                 for (int i = 0; i < FindFC.PolicyManager.policies.Count; i++)
                 {
                     Rect policyBox = new Rect(leftX + (i * (policySize + margin)), y, policySize, policySize);
-                    if (Widgets.ButtonImage(policyBox, FindFC.PolicyManager.policies[i].def.IconLight))
+                    // Guard IconLight: policies without an icon path (e.g. submod traits) resolve to
+                    // null; ButtonImage(null) spams Unity errors. Fall back to an invisible button so
+                    // the customize action still works.
+                    Texture2D policyIcon = FindFC.PolicyManager.policies[i].def.IconLight;
+                    bool policyClicked = policyIcon is object
+                        ? Widgets.ButtonImage(policyBox, policyIcon)
+                        : Widgets.ButtonInvisible(policyBox);
+                    if (policyClicked)
                     {
                         Find.WindowStack.Add(new FactionCustomizePoliciesWindowFC(faction));
                     }
