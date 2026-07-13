@@ -782,6 +782,17 @@ namespace FactionColonies
                     {
                         if (def.followingEvent != null) _cachedEventFollowUpDefNames.Add(def.followingEvent.defName);
                         if (def.followingEvent2 != null) _cachedEventFollowUpDefNames.Add(def.followingEvent2.defName);
+
+                        // Option success/fail targets are also continuations, not independent triggers,
+                        // so they must be excluded from the settings list just like followingEvents.
+                        if (def.options != null)
+                        {
+                            foreach (FCOptionDef opt in def.options)
+                            {
+                                if (opt?.successEvent != null) _cachedEventFollowUpDefNames.Add(opt.successEvent.defName);
+                                if (opt?.failEvent != null) _cachedEventFollowUpDefNames.Add(opt.failEvent.defName);
+                            }
+                        }
                     }
                 }
                 return _cachedEventFollowUpDefNames;
@@ -805,7 +816,7 @@ namespace FactionColonies
                     foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)
                     {
                         if (followUps.Contains(def.defName)) continue;
-                        if (def.activateAtStart || (def.isRandomEvent && def.options.Count == 0))
+                        if (def.activateAtStart || (def.isRandomEvent && def.options.Count == 0) || def.includeInSettingsList)
                         {
                             _cachedRandomRollableEvents.Add(def);
                         }
