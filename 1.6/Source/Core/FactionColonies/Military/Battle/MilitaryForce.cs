@@ -106,7 +106,7 @@ namespace FactionColonies
                 else
                 {
                     combinedLevel += faction.GetStatValue(FCStatDefOf.militaryLevelBonusDefending, anchorSettlement, squad);
-                    blendedEff *= faction.GetStatValue(FCStatDefOf.militaryEfficiencyBonusDefending, null, squad);
+                    blendedEff *= faction.GetStatValue(FCStatDefOf.militaryEfficiencyBonusDefending, anchorSettlement, squad);
                 }
             }
 

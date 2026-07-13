@@ -165,16 +165,16 @@ namespace FactionColonies
                 settlement.GetStatValue(FCStatDefOf.battleLossProsperityBase),
                 settlement.GetStatValue(FCStatDefOf.battleLossHappinessBase),
                 settlement.GetStatValue(FCStatDefOf.battleLossLoyaltyBase));
-            prosperityLoss *= faction.GetStatValue(FCStatDefOf.battleProsperityLossMultiplier);
-            happinessLoss *= faction.GetStatValue(FCStatDefOf.battleHappinessLossMultiplier);
-            loyaltyLoss *= faction.GetStatValue(FCStatDefOf.battleLoyaltyLossMultiplier);
+            prosperityLoss *= faction.GetStatValue(FCStatDefOf.battleProsperityLossMultiplier, settlement);
+            happinessLoss *= faction.GetStatValue(FCStatDefOf.battleHappinessLossMultiplier, settlement);
+            loyaltyLoss *= faction.GetStatValue(FCStatDefOf.battleLoyaltyLossMultiplier, settlement);
             bool canDestroyBuildings = !FindFC.FactionComp.IsBuildingDestructionPrevented();
 
             // buildingDestructionChance stat scales the survival threshold:
             //  stat=1.0 -> threshold 7 (36% destruction, default)
             //  stat<1.0 -> higher threshold (less destruction)
             //  stat>1.0 -> lower threshold (more destruction)
-            double destructionStat = faction.GetStatValue(FCStatDefOf.buildingDestructionChance);
+            double destructionStat = faction.GetStatValue(FCStatDefOf.buildingDestructionChance, settlement);
 
             // Crushing-defeat amplifier: a defensive loss with zero enemy casualties
             // multiplies the settlement-side penalty set. Mirrors the OV cooldown skip on the

@@ -1863,7 +1863,7 @@ namespace FactionColonies
                 (double powLevel, double powEff, SettlementPowerStatus powStatus) = settlement.GetDisplayedPower();
                 double defPower = Math.Round(
                     (powLevel + fcBadge.GetStatValue(FCStatDefOf.militaryLevelBonusDefending))
-                    * powEff * fcBadge.GetStatValue(FCStatDefOf.militaryEfficiencyBonusDefending)
+                    * powEff * fcBadge.GetStatValue(FCStatDefOf.militaryEfficiencyBonusDefending, settlement)
                     * FCSettings.defenderAdvantage);
                 string badgeStr = "FCMilBadge".Translate(defPower, maxDeploy);
                 UIUtil.DrawColoredLabel(
