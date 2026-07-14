@@ -200,4 +200,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_11</defName>
+		<label>Manual Offense Bugfix</label>
+		<description>Fixes a bug with manual offense battles.</description>
+		<releaseDate>2026-07-14</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>During a manual offense battle that the player has reinforced with their own pawns, in the period between vanilla thinking that the battle is over and Empire thinking that the battle is over, the player could Reform Caravan to take draft Empire mercs out of the map. They&apos;d be culled a second later due to not being world pawns, so the exploit potential is minimal; but the player should not be able to form a caravan with empire pawns in the first place</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
