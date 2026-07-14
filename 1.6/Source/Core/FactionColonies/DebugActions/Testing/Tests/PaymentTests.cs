@@ -143,6 +143,86 @@ namespace FactionColonies
         }
 
         // ============================
+        // CanAfford + deferred commit (H1/H5)
+        // ============================
+
+        [EmpireTest("Payment")]
+        public static void CanAfford_NoModifier_MatchesGetSilver()
+        {
+            int before = PaymentUtil.GetSilver();
+            TestAssert.IsTrue(PaymentUtil.CanAfford(0), "CanAfford(0) should be true");
+            TestAssert.IsTrue(PaymentUtil.CanAfford(before), "CanAfford(balance) should be true");
+            TestAssert.IsFalse(PaymentUtil.CanAfford(before + 1_000_000),
+                "CanAfford beyond the balance should be false with no modifiers");
+        }
+
+        [EmpireTest("Payment")]
+        public static void CanAfford_DoesNotRunCommit()
+        {
+            // A financing modifier covers the amount, but CanAfford is a pure query: the commit
+            // (the drain) must NOT run and the financer's pool must be untouched.
+            var financer = new TestPaymentFinancer(500);
+            SilverPaymentRegistry.Register(financer);
+            try
+            {
+                TestAssert.IsTrue(PaymentUtil.CanAfford(200, "test"),
+                    "CanAfford should be true when the financer fully covers it");
+                TestAssert.IsFalse(financer.committed, "CanAfford must not run commit actions");
+                TestAssert.AreEqual(500, financer.available, message: "CanAfford must not drain the financer");
+            }
+            finally
+            {
+                SilverPaymentRegistry.Unregister(financer);
+            }
+        }
+
+        [EmpireTest("Payment")]
+        public static void TryPaySilver_Unaffordable_DoesNotCommit()
+        {
+            // Financer covers only part; the residual exceeds home storage, so the payment fails.
+            // The drain must NOT have run (H5: no eager consumption on a failed payment).
+            int before = PaymentUtil.GetSilver();
+            var financer = new TestPaymentFinancer(100);
+            SilverPaymentRegistry.Register(financer);
+            try
+            {
+                int amount = before + 100 + 1_000_000; // residual after cover = before + 1_000_000 > balance
+                TestAssert.IsFalse(PaymentUtil.TryPaySilver(amount, "test"),
+                    "Unaffordable payment should return false");
+                TestAssert.IsFalse(financer.committed, "Unaffordable payment must not commit (H5)");
+                TestAssert.AreEqual(100, financer.available, message: "Unaffordable payment must not drain the financer (H5)");
+                TestAssert.AreEqual(before, PaymentUtil.GetSilver(), message: "Unaffordable payment must not deduct home silver");
+            }
+            finally
+            {
+                SilverPaymentRegistry.Unregister(financer);
+            }
+        }
+
+        [EmpireTest("Payment")]
+        public static void TryPaySilver_FullyFinanced_CommitsNoHomeDeduction()
+        {
+            // The financer fully covers the amount: the payment succeeds, the drain runs (commit),
+            // and no home silver is touched. Proves the covered silver is really consumed -- not
+            // phantom silver that lets the purchase go through for free (H1).
+            int before = PaymentUtil.GetSilver();
+            var financer = new TestPaymentFinancer(500);
+            SilverPaymentRegistry.Register(financer);
+            try
+            {
+                TestAssert.IsTrue(PaymentUtil.TryPaySilver(300, "test"),
+                    "Fully-financed payment should succeed");
+                TestAssert.IsTrue(financer.committed, "Fully-financed payment must commit the drain");
+                TestAssert.AreEqual(200, financer.available, message: "Financer must be drained by the covered amount");
+                TestAssert.AreEqual(before, PaymentUtil.GetSilver(), message: "Fully-financed payment must not touch home silver");
+            }
+            finally
+            {
+                SilverPaymentRegistry.Unregister(financer);
+            }
+        }
+
+        // ============================
         // GetSilver (game state)
         // ============================
 
@@ -212,6 +292,22 @@ namespace FactionColonies
             public void ModifyPayment(SilverPaymentContext context)
             {
                 context.Amount += add;
+            }
+        }
+
+        // Mimics OutpostFinancer: covers part of the amount from an external pool, but defers the
+        // actual drain to a commit action so a query or a failed payment never consumes it.
+        private class TestPaymentFinancer : ISilverPaymentModifier
+        {
+            public int available;
+            public bool committed;
+            public TestPaymentFinancer(int available) { this.available = available; }
+            public void ModifyPayment(SilverPaymentContext context)
+            {
+                int cover = context.Amount < available ? context.Amount : available;
+                if (cover <= 0) return;
+                context.Amount -= cover;
+                context.Commit(delegate { available -= cover; committed = true; });
             }
         }
     }

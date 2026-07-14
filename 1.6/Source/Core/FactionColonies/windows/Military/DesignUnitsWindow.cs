@@ -369,11 +369,10 @@ namespace FactionColonies
             // --- Weapon Slot ---
             if (Widgets.ButtonInvisible(EquipmentWeapon))
             {
-                List<ThingDef> weaponDefs = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsWeapon && t.BaseMarketValue != 0
-                        && !CraftUtil.WeaponBlockedForMercs(t)
-                        && t.generateAllowChance > 0f // blocks unique weapons
-                        && CraftUtil.CanCraftItem(t)
+                // Static predicates (IsWeapon/market value/generateAllowChance/merc block) are cached
+                // in the pool; only the live research + race gates run per open.
+                List<ThingDef> weaponDefs = MilitaryEquipmentPoolUtil.WeaponPool()
+                    .Where(t => CraftUtil.CanCraftItem(t)
                         && HARUtil.CanRaceUseWeapon(selectedUnit.pawnKind?.race, t))
                     .OrderBy(t => t.label)
                     .ToList();

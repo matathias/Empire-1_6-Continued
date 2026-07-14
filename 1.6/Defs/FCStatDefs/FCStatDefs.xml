@@ -27,7 +27,7 @@
         <defName>militaryLevelBonusDefending</defName>
         <label>military level bonus (defending)</label>
         <aggregation>Additive</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
+        <appliesToSettlements>true</appliesToSettlements>
         <appliesToSquads>true</appliesToSquads>
         <descriptionKey>FCTraitDesc_militaryLevelBonusDefending</descriptionKey>
     </FactionColonies.FCStatDef>
@@ -53,7 +53,6 @@
         <defName>militaryEfficiencyBonusDefending</defName>
         <label>military efficiency bonus (defending)</label>
         <aggregation>Multiplicative</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
         <appliesToSquads>true</appliesToSquads>
         <descriptionKey>FCTraitDesc_militaryEfficiencyBonusDefending</descriptionKey>
     </FactionColonies.FCStatDef>
@@ -134,7 +133,6 @@
         <defName>battleProsperityLossMultiplier</defName>
         <label>battle prosperity loss multiplier</label>
         <aggregation>Multiplicative</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
         <invertedForDisplay>true</invertedForDisplay>
         <descriptionKey>FCTraitDesc_battleProsperityLossMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
@@ -143,7 +141,6 @@
         <defName>battleHappinessLossMultiplier</defName>
         <label>battle happiness loss multiplier</label>
         <aggregation>Multiplicative</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
         <invertedForDisplay>true</invertedForDisplay>
         <descriptionKey>FCTraitDesc_battleHappinessLossMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
@@ -152,7 +149,6 @@
         <defName>battleLoyaltyLossMultiplier</defName>
         <label>battle loyalty loss multiplier</label>
         <aggregation>Multiplicative</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
         <invertedForDisplay>true</invertedForDisplay>
         <descriptionKey>FCTraitDesc_battleLoyaltyLossMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
@@ -161,7 +157,6 @@
         <defName>buildingDestructionChance</defName>
         <label>building destruction chance</label>
         <aggregation>Multiplicative</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
         <invertedForDisplay>true</invertedForDisplay>
         <descriptionKey>FCTraitDesc_BuildingDestructionChance</descriptionKey>
     </FactionColonies.FCStatDef>
@@ -202,7 +197,6 @@
         <defName>taxBonusFlat</defName>
         <label>flat tax bonus</label>
         <aggregation>Additive</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
         <descriptionKey>FCTraitDesc_taxBonusFlat</descriptionKey>
     </FactionColonies.FCStatDef>
 
@@ -370,7 +364,6 @@
         <defName>researchContributionMultiplier</defName>
         <label>research contribution multiplier</label>
         <aggregation>Multiplicative</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
         <descriptionKey>FCTraitDesc_researchContributionMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
 
@@ -402,7 +395,6 @@
         <defName>extraWorkersSoftcap</defName>
         <label>extra workers softcap</label>
         <aggregation>Additive</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
         <descriptionKey>FCTraitDesc_extraWorkersSoftcap</descriptionKey>
     </FactionColonies.FCStatDef>
 
@@ -410,7 +402,6 @@
         <defName>overMaxWorkersAdjustment</defName>
         <label>over-max workers adjustment</label>
         <aggregation>Additive</aggregation>
-        <appliesToSettlements>false</appliesToSettlements>
         <descriptionKey>FCTraitDesc_overMaxWorkersAdjustment</descriptionKey>
     </FactionColonies.FCStatDef>
 

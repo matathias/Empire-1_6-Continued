@@ -595,6 +595,19 @@ namespace FactionColonies
         {
             if (phase == MilitaryOperationPhase.Resolved) return;
 
+            // An external auto-defender pledged during the warning window is normally released by
+            // OnDefenseComplete (CompleteBattle) or OnDefenseReplaced (a manual swap). If the op is torn
+            // down before its battle completes -- e.g. a participating settlement is removed mid-warning --
+            // neither fires and the IAutoDefender is left pledged forever (its WorldObject stuck "defending").
+            // Release it here so the pledge is always terminated. Post-battle teardown (CooldownPending+)
+            // already fired OnDefenseComplete, so the phase guard skips it to avoid a double terminal callback.
+            if (phase < MilitaryOperationPhase.CooldownPending && externalDefenderSource is object)
+            {
+                IAutoDefender def = AutoDefenderRegistry.FindByWorldObject(externalDefenderSource);
+                def?.OnDefenseReplaced();
+                externalDefenderSource = null;
+            }
+
             phase = MilitaryOperationPhase.Resolved;
             phaseStartedTick = Find.TickManager.TicksGame;
 

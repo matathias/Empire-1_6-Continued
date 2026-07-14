@@ -70,32 +70,53 @@ namespace FactionColonies
             DeliveryEvent.CreateDeliveryEvent(things, source, let, msg);
         }
 
+        /// <summary>Side-effect-free affordability query. Runs payment modifiers (which may reduce
+        /// the effective amount, e.g. via an outpost that would finance part of it) and reports
+        /// whether the effective amount is covered by home storage. Modifier commit actions are NOT
+        /// run, so nothing is consumed. Use this for pre-check gates that must credit the paying
+        /// settlement's financing before allowing an action -- pass the same reason/settlement the
+        /// eventual <see cref="TryPaySilver"/> will use. With no modifiers registered this is exactly
+        /// <c>GetSilver() &gt;= amount</c>.</summary>
+        public static bool CanAfford(int amount, string reason = null, WorldSettlementFC settlement = null)
+        {
+            SilverPaymentContext context = new SilverPaymentContext(amount, reason, settlement);
+            SilverPaymentRegistry.InvokeModifiers(context);
+            return context.Amount <= 0 || GetSilver() >= context.Amount;
+        }
+
         /// <summary>Atomic affordability-checked silver payment. Runs payment modifiers, then:
-        /// returns true (deducting nothing) when the effective amount is &lt;= 0; returns
-        /// <c>false</c> (deducting nothing) when the player lacks enough silver in storage;
-        /// otherwise deducts the effective amount and returns true. Prefer this at every call
-        /// site so affordability and payment stay a single atomic operation -- callers no longer
-        /// need to pair a separate <see cref="GetSilver"/> check with the deduction.</summary>
+        /// returns true when the effective amount is &lt;= 0 (running any modifier commit actions but
+        /// deducting no home silver); returns <c>false</c> (consuming nothing) when the player lacks
+        /// enough silver in storage; otherwise commits the modifiers and deducts the effective amount.
+        /// The affordability check runs BEFORE any commit, so a modifier's side effects (e.g. draining
+        /// an outpost) never fire for a payment that turns out to be unaffordable. Prefer this at every
+        /// call site so affordability and payment stay a single atomic operation.</summary>
         public static bool TryPaySilver(int amount, string reason = null, WorldSettlementFC settlement = null)
         {
             SilverPaymentContext context = new SilverPaymentContext(amount, reason, settlement);
             SilverPaymentRegistry.InvokeModifiers(context);
             int effective = context.Amount;
-            if (effective <= 0) return true;            // modifiers waived it / nothing owed
-            if (GetSilver() < effective) return false;  // atomic: shortfall -> deduct nothing
+            if (effective <= 0)                         // modifiers waived / fully financed it
+            {
+                context.RunCommit();
+                return true;
+            }
+            if (GetSilver() < effective) return false;  // atomic: shortfall -> consume nothing
+            context.RunCommit();                        // affordable: now perform modifier side effects
             DeductSilverFromStorage(effective);
             return true;
         }
 
-        /// <summary>Best-effort UNCHECKED deduction: runs payment modifiers and removes up to the
-        /// effective amount of silver from storage, returning true even if the player had less
-        /// than owed. Does NOT verify affordability -- prefer <see cref="TryPaySilver"/> in all new
-        /// code. Retained only as an escape hatch for callers that have already verified the balance
-        /// upstream and explicitly want a best-effort deduction.</summary>
+        /// <summary>Best-effort UNCHECKED deduction: runs payment modifiers, commits their side effects,
+        /// and removes up to the effective amount of silver from storage, returning true even if the
+        /// player had less than owed. Does NOT verify affordability -- prefer <see cref="TryPaySilver"/>
+        /// in all new code. Retained only as an escape hatch for callers that have already verified the
+        /// balance upstream and explicitly want a best-effort deduction.</summary>
         public static bool PaySilver(int amount, string reason = null, WorldSettlementFC settlement = null)
         {
             SilverPaymentContext context = new SilverPaymentContext(amount, reason, settlement);
             SilverPaymentRegistry.InvokeModifiers(context);
+            context.RunCommit();
             int effective = context.Amount;
             if (effective <= 0) return true;
             DeductSilverFromStorage(effective);

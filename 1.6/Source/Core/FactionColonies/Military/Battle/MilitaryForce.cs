@@ -96,7 +96,8 @@ namespace FactionColonies
             if (faction is object)
             {
                 // squad context folds per-squad (design + accolade) bonuses on top of the faction values.
-                // settlement stays unapplied here (these bonuses are faction/squad scoped, as before).
+                // For defending, the anchor settlement also folds in (biome + governor/specialist
+                // defensive bonuses are settlement-scoped); GetStatValue no-ops a null settlement.
                 if (isAttacking)
                 {
                     combinedLevel += faction.GetStatValue(FCStatDefOf.militaryLevelBonusAttacking, null, squad);
@@ -104,8 +105,8 @@ namespace FactionColonies
                 }
                 else
                 {
-                    combinedLevel += faction.GetStatValue(FCStatDefOf.militaryLevelBonusDefending, null, squad);
-                    blendedEff *= faction.GetStatValue(FCStatDefOf.militaryEfficiencyBonusDefending, null, squad);
+                    combinedLevel += faction.GetStatValue(FCStatDefOf.militaryLevelBonusDefending, anchorSettlement, squad);
+                    blendedEff *= faction.GetStatValue(FCStatDefOf.militaryEfficiencyBonusDefending, anchorSettlement, squad);
                 }
             }
 

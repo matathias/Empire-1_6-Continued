@@ -17,6 +17,9 @@ namespace FactionColonies
         //Random Event Information
         public bool isRandomEvent = false;
         public bool activateAtStart;
+        // Force a condition-triggered event (neither isRandomEvent nor activateAtStart) into the
+        // settings enable/disable list so the player can toggle it.
+        public bool includeInSettingsList = false;
         public int requiredWealth = 0;
         public IntRange rangeSettlementsAffected = new IntRange(0, 0);
         public bool targetAllSettlements = false;

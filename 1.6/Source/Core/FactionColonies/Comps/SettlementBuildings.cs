@@ -280,7 +280,8 @@ namespace FactionColonies
                 Messages.Message("FCBuildingAlreadyType".Translate() + "!", MessageTypeDefOf.RejectInput);
             }
 
-            if (PaymentUtil.GetSilver() < GetBuildingCost(building)) //check if the player has enough money
+            //check if the player can afford it (crediting this settlement's financing, if any)
+            if (!PaymentUtil.CanAfford(GetBuildingCost(building), PaymentUtil.Reason_BuildingConstruction, WorldSettlement))
             {
                 valid = false;
                 Messages.Message("FCNotEnoughSilverConstructBuilding".Translate() + "!", MessageTypeDefOf.RejectInput);

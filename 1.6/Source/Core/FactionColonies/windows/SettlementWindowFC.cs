@@ -1693,8 +1693,8 @@ namespace FactionColonies
             // traits, edicts, permanent/decaying modifiers, behaviors (each line ends in \n).
             body += settlement.GetStatDesc(FCStatDefOf.workerBaseMax);
 
-            // Faction-wide softcap bonus — applied per settlement level, so flagged separately.
-            string softcap = FindFC.FactionComp.GetFactionStatDesc(FCStatDefOf.extraWorkersSoftcap);
+            // Softcap bonus — applied per settlement level, so flagged separately.
+            string softcap = settlement.GetStatDesc(FCStatDefOf.extraWorkersSoftcap);
             if (!softcap.NullOrEmpty())
                 body += "FCExtraWorkersSoftcapTooltipSub".Translate().Resolve() + "\n" + softcap;
 
@@ -1726,9 +1726,9 @@ namespace FactionColonies
             // traits, edicts, permanent/decaying modifiers, behaviors (each line ends in \n).
             body += settlement.GetStatDesc(FCStatDefOf.workerBaseOverMax);
 
-            // Faction-wide overmax adjustment — a flat additive (not scaled by settlement level),
-            // so it's listed inline rather than under a per-level sub-header. "" when no modifiers.
-            body += FindFC.FactionComp.GetFactionStatDesc(FCStatDefOf.overMaxWorkersAdjustment);
+            // Overmax adjustment — a flat additive (not scaled by settlement level), so it's listed
+            // inline rather than under a per-level sub-header. "" when no modifiers.
+            body += settlement.GetStatDesc(FCStatDefOf.overMaxWorkersAdjustment);
 
             // Prisoner-provided overmax slots.
             int prisonerOvermax = settlement.PrisonerComp?.ReturnOverMaxWorkersFromPrisoners() ?? 0;

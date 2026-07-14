@@ -35,6 +35,19 @@ namespace FactionColonies
 
         private int itemSortIndex = 0;
         private int stuffSortIndex = 0;
+
+        // Filtered+sorted view caches, rebuilt only when their inputs change (not every frame). Without
+        // these the panels re-sort and re-allocate the whole list every frame, which could make the
+        // designer lag with thousands of modded defs. Cache keys track the inputs each view depends on.
+        private List<ThingDef> itemFilteredCache;
+        private string itemFilterCacheTerm;
+        private int itemFilterCacheSort = -1;
+
+        private List<ThingDef> stuffFilteredCache;
+        private string stuffFilterCacheTerm;
+        private int stuffFilterCacheSort = -1;
+        private ThingDef stuffCacheItem;
+        private QualityCategory? stuffCacheQuality;
         private static readonly string[] sortLabelKeys = { "FCTitheSortNameAZ", "FCTitheSortNameZA", "FCTitheSortPriceLow", "FCTitheSortPriceHigh" };
 
         private Vector2 itemScrollPos;
@@ -182,10 +195,8 @@ namespace FactionColonies
                 panelRect.width, panelRect.height - (SearchBarHeight * 2) - (margin * 2));
             Widgets.DrawMenuSection(scrollOutRect);
 
-            List<ThingDef> filtered = string.IsNullOrEmpty(itemSearchTerm)
-                ? items
-                : items.Where(t => (t.label ?? t.defName).IndexOf(itemSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-            filtered = ApplySort(filtered, itemSortIndex);
+            EnsureItemFilter();
+            List<ThingDef> filtered = itemFilteredCache;
 
             float viewHeight = filtered.Count * RowHeight;
             float scrollMargin = viewHeight > scrollOutRect.height ? ScrollUtil.ScrollbarWidth : 0f;
@@ -195,7 +206,10 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Rect scrollViewRect = ScrollUtil.BeginScrollView(scrollOutRect, ref itemScrollPos, viewHeight);
 
-            for (int i = 0; i < filtered.Count; i++)
+            // Cull to the visible viewport so per-frame draw is bounded regardless of pool size.
+            int firstRow = Mathf.Max(0, Mathf.FloorToInt(itemScrollPos.y / RowHeight));
+            int lastRow = Mathf.Min(filtered.Count, Mathf.CeilToInt((itemScrollPos.y + scrollOutRect.height) / RowHeight));
+            for (int i = firstRow; i < lastRow; i++)
             {
                 ThingDef item = filtered[i];
                 Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width, RowHeight);
@@ -298,10 +312,8 @@ namespace FactionColonies
                 panelRect.width, panelRect.height - (SearchBarHeight * 2) - (margin * 2));
             Widgets.DrawMenuSection(scrollOutRect);
 
-            List<ThingDef> filtered = string.IsNullOrEmpty(stuffSearchTerm)
-                ? currentStuffs
-                : currentStuffs.Where(s => (s.label ?? s.defName).IndexOf(stuffSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-            filtered = ApplySort(filtered, stuffSortIndex, isStuffList: true);
+            EnsureStuffFilter();
+            List<ThingDef> filtered = stuffFilteredCache;
 
             float viewHeight = filtered.Count * RowHeight;
             float scrollMargin = viewHeight > scrollOutRect.height ? ScrollUtil.ScrollbarWidth : 0f;
@@ -311,7 +323,10 @@ namespace FactionColonies
             Text.Font = GameFont.Small;
             Rect scrollViewRect = ScrollUtil.BeginScrollView(scrollOutRect, ref stuffScrollPos, viewHeight);
 
-            for (int i = 0; i < filtered.Count; i++)
+            // Cull to the visible viewport so per-frame draw is bounded regardless of pool size.
+            int firstRow = Mathf.Max(0, Mathf.FloorToInt(stuffScrollPos.y / RowHeight));
+            int lastRow = Mathf.Min(filtered.Count, Mathf.CeilToInt((stuffScrollPos.y + scrollOutRect.height) / RowHeight));
+            for (int i = firstRow; i < lastRow; i++)
             {
                 ThingDef stuff = filtered[i];
                 Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width, RowHeight);
@@ -468,6 +483,52 @@ namespace FactionColonies
                     Close();
                 }
             }
+        }
+
+        /// <summary>Rebuilds the item view (filter + sort) only when the search term or sort index has
+        /// changed since the last build. The draw loop reads <see cref="itemFilteredCache"/>, so the
+        /// full sort/allocation no longer runs every frame.</summary>
+        private void EnsureItemFilter()
+        {
+            if (itemFilteredCache is object
+                && itemFilterCacheTerm == itemSearchTerm
+                && itemFilterCacheSort == itemSortIndex)
+            {
+                return;
+            }
+
+            List<ThingDef> filtered = string.IsNullOrEmpty(itemSearchTerm)
+                ? items
+                : items.Where(t => (t.label ?? t.defName).IndexOf(itemSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+
+            itemFilteredCache = ApplySort(filtered, itemSortIndex);
+            itemFilterCacheTerm = itemSearchTerm;
+            itemFilterCacheSort = itemSortIndex;
+        }
+
+        /// <summary>Rebuilds the stuff view only when its inputs change. The key also tracks the selected
+        /// item and quality because the price sort keys off <see cref="CraftUtil.ThingValue"/> and the
+        /// source list (<see cref="currentStuffs"/>) is rebuilt whenever a new item is selected.</summary>
+        private void EnsureStuffFilter()
+        {
+            if (stuffFilteredCache is object
+                && stuffFilterCacheTerm == stuffSearchTerm
+                && stuffFilterCacheSort == stuffSortIndex
+                && stuffCacheItem == selectedItem
+                && stuffCacheQuality == selectedQuality)
+            {
+                return;
+            }
+
+            List<ThingDef> filtered = string.IsNullOrEmpty(stuffSearchTerm)
+                ? currentStuffs
+                : currentStuffs.Where(s => (s.label ?? s.defName).IndexOf(stuffSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+
+            stuffFilteredCache = ApplySort(filtered, stuffSortIndex, isStuffList: true);
+            stuffFilterCacheTerm = stuffSearchTerm;
+            stuffFilterCacheSort = stuffSortIndex;
+            stuffCacheItem = selectedItem;
+            stuffCacheQuality = selectedQuality;
         }
 
         private List<ThingDef> ApplySort(List<ThingDef> list, int sortIndex, bool isStuffList = false)

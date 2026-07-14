@@ -121,12 +121,13 @@ namespace FactionColonies
         }
 
         [EmpireTest("MilitaryForce")]
-        public static void CreateFromSquad_ForceEqualsResolvedSquadPower_NoHiddenSettlementBonus()
+        public static void CreateFromSquad_ForceIsResolvedPlusDefendingBonus()
         {
-            // The squad-only model means CreateMilitaryForceFromSquad produces a militaryLevel
-            // equal to the squad's resolved power level (plus faction-wide bonuses only) — the
-            // settlement being defended contributes nothing. This guards against any settlement-
-            // based addition creeping back into the defender-selection paths.
+            // A defending squad force = the squad's resolved power level + the defending-level bonus
+            // (faction + settlement + squad scopes, aggregated by GetStatValue). The settlement scope
+            // was intentionally excluded until militaryLevelBonusDefending became appliesToSettlements
+            // (so a Military governor / cavern biome could feed defense). The invariant here is the
+            // EXACT composition — in particular that the raw settlementMilitaryLevel is NOT added on top.
             FactionFC faction = FindFC.FactionComp;
             if (faction is null) TestAssert.Skip("No FactionFC");
 
@@ -145,18 +146,15 @@ namespace FactionColonies
             MilitaryForce force = MilitaryForce.CreateMilitaryForceFromSquad(squad);
 
             TestAssert.IsNotNull(force, "Force should be created for a stationed squad");
-            // militaryLevel may include faction-wide attack/defense bonuses (CombineForce adds those).
-            // The contract here is the absence of the *settlement-level* addition: force.militaryLevel
-            // must not exceed the squad's resolved level by anywhere near the settlement's mil level.
-            double settlementLevel = squad.settlement.settlementMilitaryLevel;
-            // At a fresh level-1 settlement settlementMilitaryLevel is 0, so "overshoot < 0" is
-            // unsatisfiable and the no-settlement-addition invariant is vacuous — skip.
-            if (settlementLevel <= 0)
-                TestAssert.Skip("settlementMilitaryLevel is 0; the no-settlement-addition invariant is vacuous");
-            double overshoot = force.militaryLevel - resolvedLevel;
-            TestAssert.IsTrue(overshoot < settlementLevel,
-                $"CreateMilitaryForceFromSquad should not silently add settlementMilitaryLevel " +
-                $"({settlementLevel}); force.militaryLevel={force.militaryLevel}, resolved={resolvedLevel}, overshoot={overshoot}");
+
+            // CombineForce (defending) adds exactly the aggregated militaryLevelBonusDefending for the
+            // anchor settlement + squad on top of the resolved level.
+            double defendingBonus = faction.GetStatValue(
+                FCStatDefOf.militaryLevelBonusDefending, squad.settlement, squad);
+            double expectedLevel = resolvedLevel + defendingBonus;
+            TestAssert.AreEqual(expectedLevel, force.militaryLevel,
+                message: $"defending force should be resolved({resolvedLevel}) + defending bonus({defendingBonus}), " +
+                         $"not include raw settlementMilitaryLevel ({squad.settlement.settlementMilitaryLevel})");
         }
 
         [EmpireTest("MilitaryForce")]

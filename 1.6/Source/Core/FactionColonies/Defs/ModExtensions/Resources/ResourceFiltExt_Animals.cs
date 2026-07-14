@@ -224,14 +224,11 @@ namespace FactionColonies
                     }
                     while (pawn.MarketValue + totalValue > maxBudget && attempts < MAX_ATTEMPTS_FEW);
 
-                    if (attempts >= MAX_ATTEMPTS_FEW)
+                    // Decide keep/discard from the pawn's actual value, not the attempt count: a
+                    // pawn generated on the final allowed attempt can still fit the budget.
+                    if (pawn.MarketValue + totalValue > maxBudget)
                     {
-                        LogUtil.Warning($"ThingSetMaker_Animals: Attempted to generate valid animal pawn {MAX_ATTEMPTS_FEW} times, but failed. Moving on");
-                        // Destroy the last over-budget pawn
-                        if (pawn != null)
-                        {
-                            pawn.Destroy();
-                        }
+                        pawn.Destroy();
                     }
                     else
                     {

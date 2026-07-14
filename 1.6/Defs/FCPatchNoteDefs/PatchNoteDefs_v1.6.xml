@@ -182,4 +182,22 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_10</defName>
+		<label>Even More Fixes</label>
+		<description>Numerous fixes and minor changes.</description>
+		<releaseDate>2026-07-13</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Performance: use caching and viewport culling to improve performance of the unit designer</li>
+		<li>Bugfix: if an external auto-defender is assigned to a settlement under attack, and the militayr op is torn down without going through the battle path (e.g. by removing the settlement outright), then the external auto-defender would never be alerted that they can stand down</li>
+		<li>Alter several stats to actually apply to the settlement scope: military level bonus (defending), military efficiency bonus (defending), battle prosperity/happiness/loyalty loss multiplier, building destruction chance, flat tax bonus, research contribution multiplier, extra workers softcap, over-max workers adjustment</li>
+		<li>Bugfix: events that open with options wouldn&apos;t actually increase their fire count, meaning that events that are supposed to happen only once or twice could actually happen endlessly</li>
+		<li>Bugfix: some events would show up in the mod settings disablement window when they aren&apos;t supposed to</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

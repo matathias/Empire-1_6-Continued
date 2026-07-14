@@ -81,6 +81,18 @@ namespace FactionColonies
             TestAssert.AreEqual("The CF", TextUtil.ToShortName("The Crimson Fleet"));
         }
 
+        [EmpireTest("Text")]
+        public static void ToShortName_Null_ReturnsNullWithoutThrowing()
+        {
+            TestAssert.AreEqual(null, TextUtil.ToShortName(null));
+        }
+
+        [EmpireTest("Text")]
+        public static void ToShortName_Empty_ReturnsEmptyWithoutThrowing()
+        {
+            TestAssert.AreEqual("", TextUtil.ToShortName(""));
+        }
+
         // --- TextUtil.ColorizeAdditiveBonus ---
 
         [EmpireTest("Text")]

@@ -420,6 +420,12 @@ namespace FactionColonies
                 //open event option window
                 if (tempEvent.def.options.Count > 0 && tempEvent.def.activateAtStart)
                 {
+                    // This path bypasses the event queue (returns null), so ProcessEvents' fire-count
+                    // recording never runs for these roots. Record it here to keep maxFireCount honest.
+                    if (tempEvent.def.maxFireCount > 0)
+                    {
+                        FindFC.FactionComp.RecordEventFired(tempEvent.def);
+                    }
                     Find.WindowStack.Add(new FCOptionWindow(tempEvent.def, tempEvent));
                     return null;
                 }

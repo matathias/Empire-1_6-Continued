@@ -1802,19 +1802,10 @@ namespace FactionColonies
             if (!settlementMods.NullOrEmpty())
                 desc += settlementMods;
 
-            // taxBonusFlat: faction-only stat (appliesToSettlements=false, so GetStatDesc skips it)
-            FactionFC faction = FindFC.FactionComp;
-            string factionMods = faction.GetFactionStatDesc(FCStatDefOf.taxBonusFlat);
-            if (!factionMods.NullOrEmpty())
-                desc += factionMods;
-
-            // Behavior contributions for taxBonusFlat (e.g., Egalitarian tax-break penalty)
-            FindFC.PolicyManager.ForEachBehavior(b =>
-            {
-                string behaviorDesc = b.GetStatDescription(FCStatDefOf.taxBonusFlat, this);
-                if (!behaviorDesc.NullOrEmpty())
-                    desc += behaviorDesc;
-            });
+            // taxBonusFlat: settlement + faction + behavior contributions (GetStatDesc combines all three)
+            string taxBonusMods = GetStatDesc(FCStatDefOf.taxBonusFlat);
+            if (!taxBonusMods.NullOrEmpty())
+                desc += taxBonusMods;
 
             return desc.Trim();
         }
