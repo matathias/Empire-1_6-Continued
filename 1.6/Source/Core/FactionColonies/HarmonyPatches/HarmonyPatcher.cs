@@ -24,11 +24,21 @@ namespace FactionColonies
             LogUtil.MessageForce("harmony patch complete");
         }
 
-        // Fix a crash related to a harmony bug on Linux
-        // This gets all patches Empire makes, gets the ones that would crash on Linux, and fixes them
-        // Note from Matathias to future maintainers: I haven't the slightest idea what this function is doing; I
-        //  inherited it. But it seems to work, per the report of one Linux user. So don't touch it unless something
-        //  breaks, or you know what you're doing.
+        /* Works around a historical Harmony-on-Mono (Linux/Mac) crash */
+        // On Mono, patching an "empty" virtual method -- one whose IL body is absent or is a single `ret`
+        //  (opcode 0x2A) -- could throw InvalidProgramException / crash to desktop. Mono's JIT treats these
+        //  tiny bodies specially (inlining/dead-code rules), so Harmony can't safely detour them.
+        // The fix: before the real PatchAll() runs, apply an empty Harmony patch (no prefix/postfix/transpiler)
+        //  to each such method. That forces Mono to JIT-compile the method and build a stable trampoline up
+        //  front, so the actual patch attaches cleanly instead of crashing.
+        // Below we scope this to only the empty virtual methods Empire itself patches: we read the
+        //  [HarmonyPatch] attributes on Empire's own patch classes to find each target method, then prime the
+        //  ones matching the crash profile. (Adapted from notfood's "Harmony Fix For Penguins" mod, which
+        //  primed every empty virtual in the entire game assembly.)
+        // STATUS: this Harmony bug was fixed upstream and the fix is bundled in the Harmony version used with
+        //  modern RimWorld (the Penguins mod is deprecated for that reason), so this function is almost
+        //  certainly dead weight and safe to delete. It survives only because I have no Linux install to
+        //  confirm removal is safe on -- it's Linux/Mac-only and otherwise harmless, so it stays until verified.
         static void FixLinuxHarmonyCrash(Harmony harmony)
         {
             bool WouldCrash(MethodInfo method)
@@ -64,7 +74,8 @@ namespace FactionColonies
 
             foreach (MethodInfo i in methods)
             {
-                // Patching methods without any Prefixes/Postfixes before actually patching them fixes it. Idk why
+                // An empty patch (no prefix/postfix/transpiler) is enough: it forces Mono to JIT-compile the
+                //  method and build its trampoline now, so the real patch in PatchAll() won't crash on it.
                 harmony.Patch(i);
             }
             LogUtil.MessageForce($"FixLinuxHarmonyCrash complete");
