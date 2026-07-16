@@ -123,7 +123,7 @@ namespace FactionColonies
                 if (autoMaxRandomTithe)
                 {
                     RefreshTitheCacheIfDirty();
-                    return Math.Max(0, (int)(GetTitheIncome() - cachedTitheTotalValue));
+                    return Math.Max(0, (int)(GetProjectedTitheBudget() - cachedTitheTotalValue));
                 }
                 return storedRandomTitheBudget;
             }
@@ -393,6 +393,11 @@ namespace FactionColonies
             double multForTotal = GetTitheValueMultiplier();
             return ((taxableProductionMarketValue + GetTotalTitheModifierForWorkers()) * multForTotal) + DailyExternalTitheBudget;
         }
+        /// <summary>Projected full-cycle tithe budget: accrued so far + live per-day rate * days remaining.</summary>
+        public double GetProjectedTitheBudget()
+        {
+            return AccruedTitheBudget + GetTitheIncome() * (settlement?.DaysRemaining ?? 0);
+        }
         public void RefreshOnRandomTitheBudgetChange()
         {
             if (storedRandomTitheBudget != oldStoredRandomTitheBudget)
@@ -433,7 +438,7 @@ namespace FactionColonies
             // When toggling auto-max off, snap stored budget to current effective max.
             if (!enabled && wasEnabled)
             {
-                storedRandomTitheBudget = Math.Max(0, (int)(GetTitheIncome() - titheTotalValueNoRandom));
+                storedRandomTitheBudget = Math.Max(0, (int)(GetProjectedTitheBudget() - titheTotalValueNoRandom));
                 storedRandomTitheBudgetBuffer = storedRandomTitheBudget.ToString();
             }
             settlement?.DirtyProfitCache();
@@ -1003,11 +1008,11 @@ namespace FactionColonies
             if (autoMaxRandomTithe)
             {
                 RefreshTitheCacheIfDirty();
-                available = GetTitheIncome() - cachedTitheTotalValue;
+                available = GetProjectedTitheBudget() - cachedTitheTotalValue;
             }
             else
             {
-                available = GetTitheIncome() - titheTotalValue;
+                available = GetProjectedTitheBudget() - titheTotalValue;
             }
             return ResourceFormulas.CanAffordThingAmount(TitheThingTotalValue(thing, quanity), available);
         }
@@ -1017,11 +1022,11 @@ namespace FactionColonies
             if (autoMaxRandomTithe)
             {
                 RefreshTitheCacheIfDirty();
-                available = GetTitheIncome() - cachedTitheTotalValue;
+                available = GetProjectedTitheBudget() - cachedTitheTotalValue;
             }
             else
             {
-                available = GetTitheIncome() - titheTotalValue;
+                available = GetProjectedTitheBudget() - titheTotalValue;
             }
             return MaxThingCanAfford(thing, available);
         }
@@ -1088,9 +1093,9 @@ namespace FactionColonies
                 priorStock = 0;
                 randomTitheStock = 0;
             }
-            // randomTitheBudget is a per-day amount; scale it to the days accrued this cycle so the random
-            // tithe can consume its full share of the accrued budget (not just ~one day's worth).
-            double randomBudget = randomTitheBudget * AccrualDays + priorStock;
+            // randomTitheBudget is a whole-cycle (tax-time) amount, so it is consumed directly against the
+            // accrued budget this cycle. Any carried-over stock is added on top.
+            double randomBudget = randomTitheBudget + priorStock;
 
             // Walk the ordered priority list against the accrued tithe budget. Fully fulfil while affordable,
             // partial-fill the straddler, then stop. Unfulfilled entries persist untouched (no prune).

@@ -396,7 +396,7 @@ namespace FactionColonies
                 foreach (ResourceFC r in resources)
                 {
                     if (!r.canTithe || r.tithesPaused) continue;
-                    double projBudget = r.AccruedTitheBudget + r.GetTitheIncome() * DaysRemaining;
+                    double projBudget = r.GetProjectedTitheBudget();
                     total += Math.Min(r.titheTotalValue, projBudget);
                 }
                 return total;

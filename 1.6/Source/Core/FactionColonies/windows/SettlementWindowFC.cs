@@ -334,9 +334,10 @@ namespace FactionColonies
                 // Resource color accent
                 Widgets.DrawBoxSolid(new Rect(tabBox.x, tabBox.y, 3f, tabBox.height), resources[i].def.color);
                 TooltipHandler.TipRegion(tabBox, resources[i].def.LabelCap);
-                // Tithe budget status indicator on right edge
-                double titheIncome = resources[i].GetTitheIncome();
-                if (titheIncome > 0)
+                // Tithe budget status indicator on right edge. Compare the committed tithe value against the
+                // projected full-cycle budget (not the daily rate); thresholds mirror the footer readout.
+                double projBudget = resources[i].GetProjectedTitheBudget();
+                if (projBudget > 0)
                 {
                     Color alertColor;
                     if (resources[i].tithesPaused)
@@ -345,10 +346,10 @@ namespace FactionColonies
                     }
                     else
                     {
-                        float ratio = (float)(resources[i].titheTotalValue / titheIncome);
-                        if (ratio >= 1f)
+                        double committed = resources[i].titheTotalValue;
+                        if (committed > projBudget)
                             alertColor = Color.red;
-                        else if (ratio >= 0.5f)
+                        else if (committed > projBudget * 0.75)
                             alertColor = Color.yellow;
                         else
                             alertColor = Color.green;
@@ -369,7 +370,10 @@ namespace FactionColonies
             /* Calculate heights */
             float bodyX = boundingBox.x + tabWidth + margin;
             float bodyWidth = boundingBox.width - tabWidth - margin;
-            float headerHeight = 30 + margin + (23f * 3);//60f;
+            /* Right column stacks Total Production, per-day budget, and projected budget (3 rows). An
+             * injection row, when present, adds a 4th, so the header grows by one row in that case. */
+            bool headerHasInjection = titheRes.DailyExternalTitheBudget > 0.01;
+            float headerHeight = 30 + margin + (23f * (headerHasInjection ? 4 : 3));
             float footerHeight = 23f;
             float bodyHeight = boundingBox.height - headerHeight - footerHeight - (margin * 2);
             float randomboxHeight = 0f;
@@ -464,8 +468,9 @@ namespace FactionColonies
 
             Rect titheModBox = new Rect(boundingBox.x, iconBox.yMax + margin, (boundingBox.width - margin) / 2f, rowHeight * 3f);
             Rect prodBox = new Rect(titheModBox.xMax + margin, iconBox.yMax + margin, (boundingBox.width - margin) / 2f, rowHeight);
-            float budgetY = hasInjection ? prodBox.yMax + rowHeight : prodBox.yMax;
-            Rect budgetBox = new Rect(titheModBox.xMax + margin, budgetY, (boundingBox.width - margin) / 2f, rowHeight);
+            float perDayBudgetY = hasInjection ? prodBox.yMax + rowHeight : prodBox.yMax;
+            Rect perDayBudgetBox = new Rect(titheModBox.xMax + margin, perDayBudgetY, (boundingBox.width - margin) / 2f, rowHeight);
+            Rect projectedBudgetBox = new Rect(titheModBox.xMax + margin, perDayBudgetBox.yMax, (boundingBox.width - margin) / 2f, rowHeight);
 
             /* Tithe modifier info */
             Rect titheRow1 = new Rect(titheModBox.x, titheModBox.y, titheModBox.width, rowHeight);
@@ -487,16 +492,28 @@ namespace FactionColonies
             double totalWorkerRaw = res.GetTotalTitheModifierForWorkers();
             UIUtil.ClampedLabel(trow2num, Math.Round(perWorkerRaw * titheMult).ToString());
             UIUtil.ClampedLabel(trow3num, Math.Round(totalWorkerRaw * titheMult).ToString());
+
+            /* Explanatory tooltips; append the multiplier breakdown when it applies.
+             * Keep these as TaggedString: assigning to a string would StripTags() the colorized multiplier.
+             * TipRegion's TipSignal(TaggedString) ctor calls .Resolve(), preserving the color. */
+            TooltipHandler.TipRegion(titheRow1, "FCTitheModifierDesc".Translate());
+            TaggedString perWorkerTip = "FCPerWorkerDesc".Translate();
+            TaggedString totalModTip = "FCTotalTitheModDesc".Translate();
             if (showMult)
             {
-                // Keep as TaggedString: assigning to a string here would StripTags() the colorized multiplier.
-                // TipRegion's TipSignal(TaggedString) ctor calls .Resolve(), preserving the color.
-                TaggedString titheTip = "FCTitheValueMultiplierTooltip".Translate(
+                perWorkerTip += "\n\n";
+                perWorkerTip += "FCTitheValueMultiplierTooltip".Translate(
                     Math.Round(perWorkerRaw).ToString(),
                     TextUtil.ColorizeMultiplierBonus(titheMult),
                     Math.Round(perWorkerRaw * titheMult).ToString());
-                TooltipHandler.TipRegion(titheRow2, titheTip);
+                totalModTip += "\n\n";
+                totalModTip += "FCTitheValueMultiplierTooltip".Translate(
+                    Math.Round(totalWorkerRaw).ToString(),
+                    TextUtil.ColorizeMultiplierBonus(titheMult),
+                    Math.Round(totalWorkerRaw * titheMult).ToString());
             }
+            TooltipHandler.TipRegion(titheRow2, perWorkerTip);
+            TooltipHandler.TipRegion(titheRow3, totalModTip);
 
             /* Production */
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -507,11 +524,14 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleRight;
             double prodRaw = res.taxableProductionMarketValue;
             UIUtil.ClampedLabel(prodnum, Math.Round(prodRaw * titheMult).ToString());
+            TaggedString prodTip = "FCTotalProdDesc".Translate();
             if (showMult)
             {
-                TooltipHandler.TipRegion(prodBox, "FCTitheValueMultiplierTooltip".Translate(
-                    Math.Round(prodRaw).ToString(), TextUtil.ColorizeMultiplierBonus(titheMult), Math.Round(prodRaw * titheMult).ToString()));
+                prodTip += "\n\n";
+                prodTip += "FCTitheValueMultiplierTooltip".Translate(
+                    Math.Round(prodRaw).ToString(), TextUtil.ColorizeMultiplierBonus(titheMult), Math.Round(prodRaw * titheMult).ToString());
             }
+            TooltipHandler.TipRegion(prodBox, prodTip);
 
             /* External Tithe Injection */
             if (hasInjection)
@@ -538,14 +558,24 @@ namespace FactionColonies
                     TooltipHandler.TipRegion(injBox, injTip.ToString().TrimEnd());
             }
 
-            /* Tithe Budget */
+            /* Per-day tithe budget (zebra highlight, no outline) */
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect budgetLabel = new Rect(budgetBox.x + smallMargin, budgetBox.y + smallMargin, (budgetBox.width - (margin * 2)) * 0.75f, labelHeight);
-            Rect budgetnum = new Rect(budgetLabel.xMax, budgetLabel.y, (budgetBox.width - (margin * 2)) * 0.25f, labelHeight);
-            Widgets.DrawMenuSection(budgetBox);
-            UIUtil.ClampedLabel(budgetLabel, "FCTotalTitheBudget".Translate());
+            Rect budgetLabel = new Rect(perDayBudgetBox.x + smallMargin, perDayBudgetBox.y + smallMargin, (perDayBudgetBox.width - (margin * 2)) * 0.75f, labelHeight);
+            Rect budgetnum = new Rect(budgetLabel.xMax, budgetLabel.y, (perDayBudgetBox.width - (margin * 2)) * 0.25f, labelHeight);
+            Widgets.DrawHighlight(perDayBudgetBox);
+            UIUtil.ClampedLabel(budgetLabel, "FCPerDayTitheBudget".Translate());
             Text.Anchor = TextAnchor.MiddleRight;
             UIUtil.ClampedLabel(budgetnum, Math.Round(res.GetTitheIncome()).ToString());
+            TooltipHandler.TipRegion(perDayBudgetBox, "FCPerDayTitheBudgetDesc".Translate());
+
+            /* Projected tithe budget (expected budget at tax time) */
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Rect projLabel = new Rect(projectedBudgetBox.x + smallMargin, projectedBudgetBox.y + smallMargin, (projectedBudgetBox.width - (margin * 2)) * 0.75f, labelHeight);
+            Rect projNum = new Rect(projLabel.xMax, projLabel.y, (projectedBudgetBox.width - (margin * 2)) * 0.25f, labelHeight);
+            UIUtil.ClampedLabel(projLabel, "FCProjectedTitheBudget".Translate());
+            Text.Anchor = TextAnchor.MiddleRight;
+            UIUtil.ClampedLabel(projNum, Math.Round(res.GetProjectedTitheBudget()).ToString());
+            TooltipHandler.TipRegion(projectedBudgetBox, "FCProjectedTitheBudgetDesc".Translate());
         }
         private Vector2 titheScrollBar = new Vector2();
         private void UpdateTitheDictBuffers(ResourceFC res)
@@ -591,7 +621,7 @@ namespace FactionColonies
             IReadOnlyList<TitheEntry> orderedTithes = res.Tithes;
 
             /* Compute waterline: projected full-cycle tithe budget */
-            double projectedBudget = res.AccruedTitheBudget + res.GetTitheIncome() * settlement.DaysRemaining;
+            double projectedBudget = res.GetProjectedTitheBudget();
             double runningCost = 0.0;
 
             /* Doing weird box-in-a-box to try and fix some UI drawing issues */
@@ -798,7 +828,9 @@ namespace FactionColonies
                 {
                     int budget = res.storedRandomTitheBudget;
                     string buffer = res.storedRandomTitheBudgetBuffer;
-                    Widgets.TextFieldNumericLabeled(budgetTextBox, "FCRandomTitheBudget".Translate() + ": ", ref budget, ref buffer, 0, (float)(res.GetTitheIncome() - res.titheTotalValueNoRandom));
+                    // No upper clamp: the random tithe budget is a target the player sets freely. It is only
+                    // spent after explicit tithes, so the projected budget may not fully cover it at tax time.
+                    Widgets.TextFieldNumericLabeled(budgetTextBox, "FCRandomTitheBudget".Translate() + ": ", ref budget, ref buffer, 0, float.MaxValue);
                     res.storedRandomTitheBudgetBuffer = buffer;
                     if (budget != res.storedRandomTitheBudget) res.SetStoredRandomTitheBudget(budget);
                 }
@@ -858,7 +890,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
 
             /* Waterline readout: selected total vs. projected full-cycle budget */
-            double projectedBudget = res.AccruedTitheBudget + res.GetTitheIncome() * settlement.DaysRemaining;
+            double projectedBudget = res.GetProjectedTitheBudget();
             double selectedTotal = res.titheTotalValue;
 
             Widgets.DrawHighlight(boundingBox);

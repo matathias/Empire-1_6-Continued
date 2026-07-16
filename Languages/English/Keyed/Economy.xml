@@ -98,6 +98,10 @@
 	<FCTithe>Tithe</FCTithe>
 	<FCTithing>Tithing</FCTithing>
 	<FCTitheModifier>Tithe Modifier</FCTitheModifier>
+	<FCTitheModifierDesc>A flat silver bonus added to this resource's tithe budget on top of the value of the resource itself. It scales with the number of workers assigned to this resource.</FCTitheModifierDesc>
+	<FCPerWorkerDesc>The tithe modifier contributed by each assigned worker, after the tithe value multiplier. A flat daily silver amount added to the tithe budget per worker, independent of production.</FCPerWorkerDesc>
+	<FCTotalTitheModDesc>The combined tithe modifier from all assigned workers (the per-worker modifier times the number of workers), after the tithe value multiplier.</FCTotalTitheModDesc>
+	<FCTotalProdDesc>The daily silver value of this resource's taxable production, after the tithe value multiplier. This is the production component of the daily tithe budget.</FCTotalProdDesc>
 	<FCTitheValueMultiplierTooltip>{0} {1} tithe value multiplier = {2}</FCTitheValueMultiplierTooltip>
 	<FCTitheSelection>Item Selection</FCTitheSelection>
 	<FCTitheEnableAll>Enable All</FCTitheEnableAll>
@@ -116,11 +120,13 @@
 	<FCRandomTitheSelectionHeader>Random Tithe Item Selection</FCRandomTitheSelectionHeader>
 	<FCRandomTitheBudget>Random Tithe Budget</FCRandomTitheBudget>
 	<FCAutoMaxRandomTithe>Max</FCAutoMaxRandomTithe>
-	<FCAutoMaxRandomTitheDesc>When enabled, the random tithe budget automatically fills the remaining income after manual tithes. Adding manual tithes will reduce the random budget accordingly.</FCAutoMaxRandomTitheDesc>
+	<FCAutoMaxRandomTitheDesc>When enabled, the random tithe budget automatically fills the remaining projected tithe budget after your explicit tithes. Adding explicit tithes will reduce the random budget accordingly.</FCAutoMaxRandomTitheDesc>
 	<FCTitheOverBudget>If the used tithe budget is greater than the available tithe budget, then at tax time, all selected tithe options will be pruned until the used budget meets the available budget.</FCTitheOverBudget>
 	<FCRandomTithesDesc>At tax time, you will receive a random selection of items, with a total value equal to or less than the Random Tithe Budget. You can add or remove items to the list to control what is or isn't selected.
 
-If the lowest value item in the list has a higher value than your Random Tithe Budget, or if there are no items to select from, then the budget is carried over to the next tax period.</FCRandomTithesDesc>
+If the lowest value item in the list has a higher value than your Random Tithe Budget, or if there are no items to select from, then the budget is carried over to the next tax period.
+
+Random tithes are considered after your explicit tithe items are paid. If your explicit tithes consume most of the projected tithe budget, the allocated Random Tithe Budget may not actually be available at tax time.</FCRandomTithesDesc>
 	<FCRandomTitheAccrued>Accrued Budget: ${0}</FCRandomTitheAccrued>
 	<FCRandomTitheAccruedDesc>The amount of leftover Random Tithe Budget that has accrued. This will be added to your Random Tithe Budget to determine the total budget for Random Tithes at tax time.</FCRandomTitheAccruedDesc>
 	<FCDisburseAccruedRandomTithe>Disburse Accrued Budget</FCDisburseAccruedRandomTithe>
@@ -134,6 +140,10 @@ Total accrued budget: {2}</FCNoTitheLetterDesc>
 Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCExternalTitheBudget>Tithe Injection</FCExternalTitheBudget>
 	<FCTotalTitheBudget>Total Tithe Budget</FCTotalTitheBudget>
+	<FCPerDayTitheBudget>Per-Day Tithe Budget</FCPerDayTitheBudget>
+	<FCPerDayTitheBudgetDesc>The tithe budget this resource generates each day: its taxable production value plus the worker tithe modifier (after the tithe value multiplier), plus any tithe injections. Tithes are paid from the budget accrued across the whole tax period, not from a single day.</FCPerDayTitheBudgetDesc>
+	<FCProjectedTitheBudget>Projected Tithe Budget</FCProjectedTitheBudget>
+	<FCProjectedTitheBudgetDesc>The tithe budget expected to be available at tax time: everything accrued so far this period plus the per-day budget for each remaining day. Your selected tithes are paid from this projected budget.</FCProjectedTitheBudgetDesc>
 	<FCAvailableTitheBudget>Available Budget</FCAvailableTitheBudget>
 	<FCUsedTitheBudget>Used Budget</FCUsedTitheBudget>
 	<FCTitheXDesc>Remove this item from the tithes list.</FCTitheXDesc>
