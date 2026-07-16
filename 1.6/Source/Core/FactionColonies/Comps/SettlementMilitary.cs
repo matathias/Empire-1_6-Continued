@@ -930,23 +930,14 @@ namespace FactionColonies
 
         public bool IsTargetOccupied(PlanetTile location)
         {
-            if (FindFC.MilitaryManager?.HasAnyOpAt(location) ?? false)
-            {
-                Messages.Message("FCTargetAlreadyBeingAttacked".Translate(), MessageTypeDefOf.RejectInput);
-                return true;
-            }
-
-            // A live map at the target means the player is already there in person (vanilla
-            // caravan attack, quest site). Launching an op would later hijack that map --
-            // StripNativeGarrison would delete the defenders mid-raid -- and an auto-resolved
-            // capture/raze would destroy the settlement underneath the player.
-            if (Current.Game.FindMap(location) is object)
-            {
-                Messages.Message("FCTargetHasPlayerMap".Translate(), MessageTypeDefOf.RejectInput);
-                return true;
-            }
-
-            return false;
+            // Single source of truth for launch eligibility: an existing op or a live map at the
+            // tile (player there in person) both block a launch. CanLaunchOffensiveAt supplies the
+            // keyed reject reason.
+            MilitaryOperationManager manager = FindFC.MilitaryManager;
+            if (manager is null) return false;
+            if (manager.CanLaunchOffensiveAt(location, out string rejectReason)) return false;
+            Messages.Message(rejectReason, MessageTypeDefOf.RejectInput);
+            return true;
         }
     }
 }

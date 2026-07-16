@@ -42,8 +42,12 @@ namespace FactionColonies
             // you can't launch a new attack on a settlement that is already an active target. Ops in
             // cooldown are ignored: that battle is over, so a fresh attack is allowed again. During an
             // offense the enemy settlement instead shows the "Join Attack" control (WorldObjectComp_OffenseControls).
-            bool underActiveOp = FindFC.MilitaryManager?.HasActiveOpAt(tile) ?? false;
-            if (!underActiveOp && FindFC.FactionComp.IsActionAllowed(FCActionType.DeployMilitary))
+            // Also hide it when a live map already exists at the tile: the player is attacking the
+            // settlement in person (vanilla caravan / quest site), and an Empire op would hijack that
+            // map. Prevents opening an attack dialog that can only be rejected at launch.
+            bool blockLaunch = (FindFC.MilitaryManager?.HasActiveOpAt(tile) ?? false)
+                || Current.Game.FindMap(tile) is object;
+            if (!blockLaunch && FindFC.FactionComp.IsActionAllowed(FCActionType.DeployMilitary))
                 yield return HostileAction(factionFC, faction, tile);
         }
 

@@ -37,7 +37,9 @@ namespace FactionColonies
             foreach (Gizmo g in base.GetCaravanGizmos(caravan)) yield return g;
 
             BattlefieldContext bf = ActiveOffense();
-            if (bf is null || caravan is null || !caravan.IsPlayerControlled) yield break;
+            // bf.endingBattle: the assault is resolving, so no new joiners. The loot linger
+            // (awaitingPlayerExit) is intentionally still joinable, so it is not excluded.
+            if (bf is null || bf.endingBattle || caravan is null || !caravan.IsPlayerControlled) yield break;
 
             yield return new Command_Action
             {
@@ -56,7 +58,8 @@ namespace FactionColonies
         {
             foreach (FloatMenuOption o in base.GetFloatMenuOptions(caravan)) yield return o;
 
-            if (ActiveOffense() is null) yield break;
+            BattlefieldContext bf = ActiveOffense();
+            if (bf is null || bf.endingBattle) yield break;
             Settlement settlement = parent as Settlement;
             if (settlement is null) yield break;
             foreach (FloatMenuOption o in WorldSettlementJoinAttackAction.GetFloatMenuOptions(caravan, settlement))

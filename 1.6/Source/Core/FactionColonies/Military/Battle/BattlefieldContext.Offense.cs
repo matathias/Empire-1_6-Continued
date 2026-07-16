@@ -31,6 +31,11 @@ namespace FactionColonies
         /// <summary>An active offense battle owns this tile (offense flag set and a live map).</summary>
         public bool HasOffenseAt() => isOffense && map is object;
 
+        /// <summary>An offense is live AND still fightable -- not in the endingBattle resolving
+        /// window. The post-win loot linger (awaitingPlayerExit) is intentionally still joinable so
+        /// a caravan can arrive to haul loot, so it is deliberately not excluded here.</summary>
+        public bool CanJoinAttack() => HasOffenseAt() && !endingBattle;
+
         /// <summary>The vanilla enemy settlement being assaulted at this tile, or null.</summary>
         private Settlement OffenseTargetSettlement => Find.WorldObjects.SettlementAt(tile);
 
@@ -254,7 +259,10 @@ namespace FactionColonies
         public void CaravanJoinAttack(Caravan caravan)
         {
             if (caravan is null) return;
-            if (map is null || !isOffense)
+            // Reject once the battle has no live map, isn't an offense, or is already resolving
+            // (endingBattle): the gizmo/arrival-action state can lag a tick behind the battle
+            // ending, so this is the authoritative backstop. The loot linger stays joinable.
+            if (map is null || !isOffense || endingBattle)
             {
                 Messages.Message("FCJoinAttackNoBattle".Translate(), MessageTypeDefOf.RejectInput, false);
                 return;
@@ -296,8 +304,8 @@ namespace FactionColonies
         /* -*-*-*-*- Tick -*-*-*-*- */
 
         /// <summary>Offense backstop, called by the FactionFC sweep only for isOffense contexts
-        /// (defense stays comp-ticked). Detects player win (garrison cleared) / loss (squad cleared)
-        /// and prunes stale pawns on a 60-tick cadence -- offense has no lord-notification path, so
+        /// (defense stays comp-ticked). Detects player win (garrison cleared) / loss (no standing
+        /// humanlike attacker) and prunes stale pawns on a 60-tick cadence -- offense has no lord-notification path, so
         /// polling is the only win/loss detection. During a post-win loot linger it instead waits
         /// (on a 250-tick cadence) for the last mobile player pawn to leave before tearing the map
         /// down. Early-exits instantly when no live battle is running.</summary>
@@ -319,7 +327,13 @@ namespace FactionColonies
             CaptureUntrackedAttackers();
 
             bool playerWon = !standingDefenderPawns.Any();   // enemy garrison cleared
-            bool playerLost = !standingAttackerPawns.Any();  // player squad cleared
+            // Loss is scoped to standing HUMANLIKE attackers: a surviving squad companion animal or
+            // riderless mount is not a fighting force and must not hold a lost battle open (offense
+            // has no timeout). The player's squad is always humanlike-cored (mercs are humanlike;
+            // mechs/animals/mounts are bonded sub-pawns), so no standing human means the assault is
+            // over. Win stays any-pawn on purpose: an enemy garrison can legitimately be all
+            // mechanoid/insect, so humanlike-scoping the win would false-win against those bases.
+            bool playerLost = !standingAttackerPawns.Any(p => p.RaceProps?.Humanlike == true);
             if (!playerWon && !playerLost) return;
 
             endingBattle = true;
