@@ -214,9 +214,9 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCIncome>Income</FCIncome>
 	<FCUpkeep>Upkeep</FCUpkeep>
 	<FCRaw>Raw</FCRaw>
-	<FCRawIncomeDesc>The total income a resource produces, before any deductions.</FCRawIncomeDesc>
+	<FCRawIncomeDesc>The total per-day income a resource produces in silver, before any deductions.</FCRawIncomeDesc>
 	<FCNet>Net</FCNet>
-	<FCNetIncomeDesc>The total income a resource produces, after accounting for stockpile diversions and tithes.</FCNetIncomeDesc>
+	<FCNetIncomeDesc>The total income a resource produces in silver, after accounting for stockpile diversions and tithes.</FCNetIncomeDesc>
 	<FCNetIncomeBreakdownGross>Gross income: {0}</FCNetIncomeBreakdownGross>
 	<FCNetIncomeBreakdownStockpile>Stockpile diversions: -{0}</FCNetIncomeBreakdownStockpile>
 	<FCNetIncomeBreakdownTithes>Tithes: -{0}</FCNetIncomeBreakdownTithes>
@@ -240,9 +240,10 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCSettlementProjectedIncome>Projected Income</FCSettlementProjectedIncome>
 	<FCProductionPerDay>Per Day</FCProductionPerDay>
 	<FCTotalAccrued>Accrued</FCTotalAccrued>
+	<FCTotalAccruedDesc>The income, in silver, this settlement has accrued from this resource since the last tax.</FCTotalAccruedDesc>
 	<FCNetIncome>Net Income</FCNetIncome>
 	<FCProjectedIncome>Total</FCProjectedIncome>
-	<FCProjectedIncomeDesc>The total silver this resource is projected to produce by the next tax: the amount accrued so far this cycle, plus its current daily rate times the days remaining.\n\nStockpile diversions are already deducted; tithes are settled at the settlement level.</FCProjectedIncomeDesc>
+	<FCProjectedIncomeDesc>The total silver this resource is projected to produce by the next tax: the amount accrued so far this cycle, plus its current daily rate times the days remaining.\n\nStockpile diversions are already deducted; tithes are settled at tax time.</FCProjectedIncomeDesc>
 	<FCProjectedIncomeBreakdownAccrued>Accrued so far: {0}</FCProjectedIncomeBreakdownAccrued>
 	<FCProjectedIncomeBreakdownPerDay>Per day: {0} (× {1} days remaining)</FCProjectedIncomeBreakdownPerDay>
 	<FCProjectedIncomeBreakdownProjected>Projected total: {0}</FCProjectedIncomeBreakdownProjected>

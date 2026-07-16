@@ -1809,6 +1809,7 @@ namespace FactionColonies
             TooltipHandler.TipRegion(incomePerDayBox, "FCRawIncomeDesc".Translate());
             UIUtil.DrawColoredHighlight(incomeAccruedBox, highlightColor);
             UIUtil.ClampedLabel(incomeAccruedBox, "FCTotalAccrued".Translate());
+            TooltipHandler.TipRegion(incomeAccruedBox, "FCTotalAccruedDesc".Translate());
             UIUtil.DrawColoredHighlight(incomeNetBox, highlightColor);
             UIUtil.ClampedLabel(incomeNetBox, "FCProjectedIncome".Translate());
             TooltipHandler.TipRegion(incomeNetBox, "FCProjectedIncomeDesc".Translate());
