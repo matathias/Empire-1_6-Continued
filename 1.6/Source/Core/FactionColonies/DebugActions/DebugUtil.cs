@@ -1446,7 +1446,7 @@ namespace FactionColonies
                 LogUtil.MessageForce($"--- Resources for {settlement.Name} ---");
                 foreach (ResourceFC r in settlement.Resources)
                 {
-                    LogUtil.MessageForce($"  {r.def.defName}: Workers:{r.assignedWorkers} Base:{r.productionBase:F2} Mult:{r.productionMult:F2} Production:{r.production:F2} Income:{r.actualIncome:F2}");
+                    LogUtil.MessageForce($"  {r.def.defName}: Workers:{r.assignedWorkers} Base:{r.productionBase:F2} Mult:{r.productionMult:F2} Production:{r.production:F2} Income/day:{r.taxableProductionMarketValue:F2}");
                 }
             });
         }

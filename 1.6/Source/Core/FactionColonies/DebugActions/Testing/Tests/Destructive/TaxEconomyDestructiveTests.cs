@@ -239,5 +239,45 @@ namespace FactionColonies
                 DestructiveTestUtil.SafeRemoveSettlement(s);
             }
         }
+
+        [EmpireDestructiveTest("Destructive.Tax")]
+        public static void RandomTitheEscrow_AccumulatesAcrossCycles()
+        {
+            FactionFC f = DestructiveTestUtil.RequireFaction();
+            WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
+            if (s is null) TestAssert.Skip("No valid tile for a settlement");
+            try
+            {
+                ResourceFC target = PrepareEscrowTarget(s);
+                if (target is null) TestAssert.Skip("No positive-production tithe-able resource");
+
+                target.hasRandomTithe = true;
+                target.autoMaxRandomTithe = true;
+                target.randomTitheFilter.SetDisallowAll();
+                target.disburseTitheStock = false;
+                target.randomTitheStock = 0;
+                target.SetDirtyCache();
+
+                const int days = 2;
+                AccrueAndTax(s, days);
+                double afterOne = target.randomTitheStock;
+
+                // Second cycle WITHOUT resetting the stock: carried escrow must ride on top of the new
+                // cycle's budget instead of being re-capped at one cycle's worth (which would freeze the
+                // stock and make items above one cycle's budget forever unaffordable).
+                AccrueAndTax(s, days);
+                double afterTwo = target.randomTitheStock;
+
+                TestAssert.GreaterThan(afterOne, 0, "First cycle should escrow a positive budget");
+                TestAssert.GreaterThan(afterTwo, afterOne * 1.5,
+                    $"Escrow must accumulate across cycles (after one: {afterOne:F0}, after two: {afterTwo:F0})");
+
+                DestructiveTestUtil.AssertEmpireInvariants(f, "RandomTitheEscrow_AccumulatesAcrossCycles");
+            }
+            finally
+            {
+                DestructiveTestUtil.SafeRemoveSettlement(s);
+            }
+        }
     }
 }

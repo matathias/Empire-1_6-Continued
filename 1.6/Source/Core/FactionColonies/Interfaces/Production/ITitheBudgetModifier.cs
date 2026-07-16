@@ -2,9 +2,9 @@ namespace FactionColonies
 {
     /// <summary>
     /// A WorldObjectComp interface for injecting additional tithe budget into a resource.
-    /// The injected budget raises the tithe income cap (<see cref="ResourceFC.GetTitheIncome"/>).
-    /// In <see cref="ResourceFC.actualIncome"/>, only the portion of tithe actually covered by the
-    /// injection is offset, so the settlement is not penalised for externally-sourced goods.
+    /// The injected budget raises the per-day tithe budget (<see cref="ResourceFC.GetTitheIncome"/>) and
+    /// accrues into the cycle's tithe budget each day (<see cref="ResourceFC.AccumulateDailyProduction"/>),
+    /// so externally-funded tithe goods don't reduce the settlement's own silver income.
     /// <para>Queried during tithe budget calculation via <see cref="ResourceFC.DailyExternalTitheBudget"/>.
     /// Caches are automatically invalidated after all lifecycle events. Call
     /// <c>((WorldSettlementFC)parent).InvalidateStatCache()</c> manually if changing values outside

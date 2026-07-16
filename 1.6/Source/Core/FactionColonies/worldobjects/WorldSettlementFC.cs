@@ -379,7 +379,22 @@ namespace FactionColonies
         public int TaxAccrualDays => taxAccrualDays;
         public double AccruedGrossIncome => resources.Sum(r => r.AccruedTaxableValue) + accruedNonResourceIncome;
         public double AccruedUpkeep => accruedTotalUpkeep;
-        public int DaysRemaining => Math.Max(0, FCSettings.timeBetweenTaxes / GenDate.TicksPerDay - taxAccrualDays);
+        /* Accrual days left before the faction-wide tax due tick: the number of daily-accrual boundaries
+         * in (now, nextTaxDueTick]. Floor-dividing both ticks counts exactly those boundaries (accrual
+         * fires at ticksGame % TicksPerDay == 0, and StatTick runs before TaxTick within a tick), and
+         * yields 0 during CreateTax (the ledger reschedules only after AddTax returns). Deriving this
+         * from the ledger rather than interval - taxAccrualDays keeps projections honest for settlements
+         * founded mid-cycle, whose own accrual count lags the cycle. */
+        public int DaysRemaining
+        {
+            get
+            {
+                TaxLedger ledger = FindFC.TaxLedger;
+                if (ledger is null) return 0;
+                int now = Find.TickManager.TicksGame;
+                return Math.Max(0, ledger.nextTaxDueTick / GenDate.TicksPerDay - now / GenDate.TicksPerDay);
+            }
+        }
 
         /* Forward-looking full-cycle projection: accrued so far + live per-day rate * days remaining. */
         public double ProjectedIncome => AccruedGrossIncome + totalIncome * DaysRemaining;
@@ -1921,23 +1936,6 @@ namespace FactionColonies
         public float Unrest => (float)Math.Round(unrest, 1);
         public float Loyalty => (float)Math.Round(loyalty, 1);
         public float Prosperity => (float)Math.Round(prosperity, 1);
-
-        public ResourceFC ReturnHighestResource()
-        {
-            double highest = -1;
-            ResourceFC highestResource = null;
-
-            foreach (ResourceFC resource in resources)
-            {
-                if (resource.actualIncome > highest)
-                {
-                    highest = resource.actualIncome;
-                    highestResource = resource;
-                }
-            }
-
-            return highestResource;
-        }
 
         public double GetDefenseBonus()
         {
