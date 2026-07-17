@@ -195,7 +195,7 @@
 	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
 		<defName>1_4_13</defName>
 		<label>More Backend Updates</label>
-		<description>Changes all fields that refer to a planet tile to use the actual PlanetTile type. Rimworld does technically allow for straight casting between int and PlanetTile, but you lose layer information when you do that. Empire actually does handle multiple layers (see orbital settlements), so switching over to using the actual PlanetTile type should protect agaisnt future errors.</description>
+		<description>Changes all fields that refer to a planet tile to use the actual PlanetTile type. Rimworld does technically allow for straight casting between int and PlanetTile, but you lose layer information when you do that. Empire actually does handle multiple layers (see orbital settlements), so switching over to using the actual PlanetTile type should protect against future errors.</description>
 		<releaseDate>2026-04-23</releaseDate>
 		<patchNoteType>Patch</patchNoteType>
 		<patchNoteLines>

@@ -310,7 +310,7 @@
 	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
 		<defName>1_5_20</defName>
 		<label>Animal Selection Fixes</label>
-		<description>Changes the list of pack animals to be the list of animals that are allowed in at least one biome&apos;s allowedPackAnimals list. Further, the number of biomes that a pack animal supports is shown in their Pack badge on the animal filter. And if the player doesn&apos;t select any pack animals that support the biome they&apos;re playing in, then the filter will warn them that they won&apos;t recieve any Empire trading caravans.</description>
+		<description>Changes the list of pack animals to be the list of animals that are allowed in at least one biome&apos;s allowedPackAnimals list. Further, the number of biomes that a pack animal supports is shown in their Pack badge on the animal filter. And if the player doesn&apos;t select any pack animals that support the biome they&apos;re playing in, then the filter will warn them that they won&apos;t receive any Empire trading caravans.</description>
 		<releaseDate>2026-06-04</releaseDate>
 		<patchNoteType>Minor</patchNoteType>
 		<patchNoteLines>
@@ -597,7 +597,7 @@
 		<patchNoteType>Minor</patchNoteType>
 		<patchNoteLines>
 		<li>Show the player&apos;s available silver in the Found New Settlement dialog</li>
-		<li>When Merc Squads use items from their inventory or have their weapons or apparel damaged in a fight, they are now restocked afterwards, with the cost being billed to the player (seperate from the cost of deploying)</li>
+		<li>When Merc Squads use items from their inventory or have their weapons or apparel damaged in a fight, they are now restocked afterwards, with the cost being billed to the player (separate from the cost of deploying)</li>
 		<li>Change the default Max Concurrent Battle Maps to 3 (instead of Unlimited), and increase the max slider value to 10 (from 5)</li>
 		</patchNoteLines>
 		<authors>

@@ -20,7 +20,7 @@
 	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
 		<defName>0_122_1</defName>
 		<label>Event Rewards Fix</label>
-		<description>Fixes events that grant animal rewords.</description>
+		<description>Fixes events that grant animal rewards.</description>
 		<releaseDate>2026-03-23</releaseDate>
 
 		<patchNoteType>Patch</patchNoteType>

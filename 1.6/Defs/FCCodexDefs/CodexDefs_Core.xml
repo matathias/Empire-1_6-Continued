@@ -333,7 +333,7 @@ More technologically advanced NPC factions field more efficient forces – the c
         <label>Battle Simulation Modifiers</label>
         <description>Both auto-defend battles and offensive raids involving Empire settlements are resolved by simulation. Two settings control how that simulation behaves.
 
-Defender Advantage is a flat multiplier on the defender's effective combat power. The default reflects the natural edge that comes from prepared positions; raising it makes garrisons more durable, lowering it makes attackers more deadly. This advantage applies to both Empire settlements and NPC settlements: you benefit when someone attacks you, but they beneift when you raid them.
+Defender Advantage is a flat multiplier on the defender's effective combat power. The default reflects the natural edge that comes from prepared positions; raising it makes garrisons more durable, lowering it makes attackers more deadly. This advantage applies to both Empire settlements and NPC settlements: you benefit when someone attacks you, but they benefit when you raid them.
 
 Efficiency Damping compresses extreme efficiency ratios toward 1.0, so neither side runs away with the fight on a single lucky composition. The formula is straightforward: final = 1 + (raw − 1) × damping. A raw efficiency of 2.0 with the default damping of 0.5 becomes 1.5, and a raw of 0.3 with the same damping becomes 0.65.
 
@@ -356,7 +356,7 @@ An [b]Overwhelming Victory[/b] is a win in which your force takes zero casualtie
 
 A [b]Crushing Defeat[/b] is the same situation seen from the losing side: you lose the battle without inflicting a single casualty in return. It applies penalties well beyond those of an ordinary loss.
 
-Tiny skirmishes don't count for either option: at least one side must field a meaningful force for the outcome to quality as an Overwhelming Victory or Crushing Defeat.
+Tiny skirmishes don't count for either option: at least one side must field a meaningful force for the outcome to qualify as an Overwhelming Victory or Crushing Defeat.
 
 Both outcomes hinge on the casualty count, not the final margin. So a strong, efficient force is the surest way to court Overwhelming Victories and avoid Crushing Defeats.</description>
         <category>CodexCat_Military</category>
@@ -514,7 +514,7 @@ The Buildings tab of this Codex lists every building with its cost, requirements
 
 Each advancement is tied to specific research; reaching a tier requires completing the projects that gate it. These gates are defined through XML Defs, so other mods can alter their progression.
 
-There is a mod setting to pin your Empire's tech level directly to your own faction's tech level, so that they advance with you instead of at arbitary techs. (Note: in vanilla Rimworld, this will result in the Empire faction effectively being locked at either Neolithic or Industrial. Player-faction tech level advancing requires mods.)
+There is a mod setting to pin your Empire's tech level directly to your own faction's tech level, so that they advance with you instead of at arbitrary techs. (Note: in vanilla Rimworld, this will result in the Empire faction effectively being locked at either Neolithic or Industrial. Player-faction tech level advancing requires mods.)
 
 The live values below show your current tech level and what advances it next.</description>
         <category>CodexCat_Settlements</category>

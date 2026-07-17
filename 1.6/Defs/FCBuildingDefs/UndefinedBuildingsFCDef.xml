@@ -103,7 +103,7 @@
 		<!--Name of Def -->
 		<label>SlavePit</label>
 		<!--Lable of Def -->
-		<desc>A pit where Slaves goes to sleep.</desc>
+		<desc>A pit where Slaves go to sleep.</desc>
 		<!-- Description of trait -->
 		<cost>500</cost>
 		<constructionDuration>60000</constructionDuration>

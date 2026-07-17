@@ -54,7 +54,7 @@
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
 		<defName>fletcher</defName> <!--Name of Def -->
 		<label>Fletcher</label> <!--Lable of Def -->
-		<desc>A creator of arrows - the best ammuniotion in the neolithic!</desc> <!-- Description of trait -->
+		<desc>A creator of arrows - the best ammunition in the neolithic!</desc> <!-- Description of trait -->
 		<cost>175</cost>
 		<constructionDuration>40000</constructionDuration> <!-- Ticks it takes until construction is finished -->
 		<statModifiers>
@@ -129,7 +129,7 @@
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
 		<defName>brewer</defName> <!--Name of Def -->
 		<label>Brewer</label> <!--Lable of Def -->
-		<desc>Brews the finest ethanols and ethanol biproducts. Please drink responsibly.</desc> <!-- Description of trait -->
+		<desc>Brews the finest ethanols and ethanol byproducts. Please drink responsibly.</desc> <!-- Description of trait -->
 		<cost>500</cost>
 		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
 		<statModifiers>

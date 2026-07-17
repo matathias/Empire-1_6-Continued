@@ -116,7 +116,7 @@
 	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
 		<defName>1_2_8</defName>
 		<label>Conditionally allow settlements on Impassable tiles</label>
-		<description>Adds a mechanism to conditinally allow settlements to be founded on Impassable tiles.</description>
+		<description>Adds a mechanism to conditionally allow settlements to be founded on Impassable tiles.</description>
 		<releaseDate>2026-04-10</releaseDate>
 		<patchNoteType>Patch</patchNoteType>
 		<patchNoteLines>
@@ -524,7 +524,7 @@
 	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
 		<defName>1_2_37</defName>
 		<label>Suttle Port Patch</label>
-		<description>Fixes a null-reference but with the shuttle port gizmo.</description>
+		<description>Fixes a null-reference bug with the shuttle port gizmo.</description>
 		<releaseDate>2026-04-15</releaseDate>
 		<patchNoteType>Hotfix</patchNoteType>
 		<patchNoteLines>

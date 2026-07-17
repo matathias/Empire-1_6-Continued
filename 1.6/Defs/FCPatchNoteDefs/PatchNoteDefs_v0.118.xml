@@ -3,7 +3,7 @@
 	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
 			<defName>0_118_3</defName>
 			<label>Minor performance improvement</label>
-			<description>Prevents unnecessary re-computed of designed mercenaries every time the main window is closed.</description>
+			<description>Prevents unnecessary re-computation of designed mercenaries every time the main window is closed.</description>
 			<releaseDate>2026-03-21</releaseDate>
 	
 			<patchNoteType>Patch</patchNoteType>

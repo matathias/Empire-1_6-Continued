@@ -88,7 +88,7 @@
 	<FactionColonies.FCPolicyDef>
 		<defName>authoritarian</defName>
 		<label>Authoritarian</label>
-		<desc>A authoritarian society that seeks to hold control over its members by whatever means necessary.</desc>
+		<desc>An authoritarian society that seeks to hold control over its members by whatever means necessary.</desc>
 		<category>Core</category>
 		<factionLevelRequirement>0</factionLevelRequirement>
 		<techLevelRequirement>Undefined</techLevelRequirement>
@@ -123,7 +123,7 @@
 	<FactionColonies.FCPolicyDef>
 		<defName>egalitarian</defName>
 		<label>Egalitarian</label>
-		<desc>A egalatarian society is one that seeks equality amongst all.</desc>
+		<desc>An egalitarian society is one that seeks equality amongst all.</desc>
 		<category>Core</category>
 		<factionLevelRequirement>0</factionLevelRequirement>
 		<techLevelRequirement>Undefined</techLevelRequirement>

@@ -129,7 +129,7 @@
   <FactionColonies.FCEventDef>
     <defName>unexpectedCraftsmanship_1-2_2</defName>
     <label>Unexpected Craftsmanship (Weapon)</label>
-    <desc>After a week of work, the craftsmens' focus has produced a fine weapon.</desc>
+    <desc>After a week of work, the craftsmen's focus has produced a fine weapon.</desc>
     <category>EC_Economy</category>
     <timeTillTrigger>1500</timeTillTrigger>
     <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
@@ -144,7 +144,7 @@
   <FactionColonies.FCEventDef>
     <defName>unexpectedCraftsmanship_1-3_2</defName>
     <label>Unexpected Craftsmanship (Apparel Focus)</label>
-    <desc>After a week of work, the craftsmens' focus has produced a fine piece of armor.</desc>
+    <desc>After a week of work, the craftsmen's focus has produced a fine piece of armor.</desc>
     <category>EC_Economy</category>
     <timeTillTrigger>1500</timeTillTrigger>
     <rangeSettlementsAffected>1~3</rangeSettlementsAffected>

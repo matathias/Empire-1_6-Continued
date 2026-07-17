@@ -4,7 +4,7 @@
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
 		<defName>researchLabs</defName> <!--Name of Def -->
 		<label>Research Labs</label> <!--Lable of Def -->
-		<desc>Scienctists spend their days researching here.</desc> <!-- Description of trait -->
+		<desc>Scientists spend their days researching here.</desc> <!-- Description of trait -->
 		<cost>1000</cost>
 		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
 		<statModifiers>
@@ -18,7 +18,7 @@
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
 		<defName>indoorHydroponics</defName> <!--Name of Def -->
 		<label>Indoor Hydroponics</label> <!--Lable of Def -->
-		<desc>Food is produced indoors, protecting it from the harshes from the world.</desc> <!-- Description of trait -->
+		<desc>Food is produced indoors, protecting it from the harshness of the world.</desc> <!-- Description of trait -->
 		<cost>1000</cost>
 		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
 		<statModifiers>
