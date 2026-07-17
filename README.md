@@ -2,9 +2,9 @@
 
 Now under new management!
 
-[Get Empire Refactored now on the Steam workshop!](https://steamcommunity.com/sharedfiles/filedetails/?id=3701480464) (Note: the Steam Workshop is on the 1.5 branch, while the development branch here on Github is the 1.6 branch. For the 1.5 branch, look for dev-v1-5)
+[Get Empire Refactored now on the Steam workshop!](https://steamcommunity.com/sharedfiles/filedetails/?id=3701480464)
 
-This branch of Empire is under active development. Adding features and stamping out bugs is the name of the game.
+I'm moving development into a mere "bugfixing" phase. Simple suggestions *may* be implemented, but otherwise, I am ceasing feature development to focus on other projects (including a successor mod to Empire).
 
 If you do run into a bug, please report it in the issues section with logs and, if applicable, screenshots. The more information I have, the faster I can fix issues.
 
@@ -33,9 +33,7 @@ Any mod whose compatibility with Empire depends entirely on referencing the PCol
 - Empire Codex -- a helpful in-game resource to explain the mod's mechanics, similar to the Civilopedia from the Civilization games
 
 ## Manual Battles!
-Yes, you heard that right. Manual battles are back!
-
-Currently, only defense battles can be run manually.
+Yes, you heard that right. Manual battles are back! You can even play out offense battles manually, now!
 
 ## Submods and Extensibility
 Along with the refactor comes far greater extensibility. Settlement and resource types are defined by XML defs now; basic resources and settlements can be created in XML alone. And if you want to get fancy, there is a handy set of extensible abstract classes to use.
