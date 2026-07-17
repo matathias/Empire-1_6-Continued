@@ -123,7 +123,7 @@ namespace FactionColonies
                 if (autoMaxRandomTithe)
                 {
                     RefreshTitheCacheIfDirty();
-                    return Math.Max(0, (int)(GetTitheIncome() - cachedTitheTotalValue));
+                    return Math.Max(0, (int)(GetProjectedTitheBudget() - cachedTitheTotalValue));
                 }
                 return storedRandomTitheBudget;
             }
@@ -192,8 +192,6 @@ namespace FactionColonies
          *  grossMarketValue            — silver value of rawTotalProduction; displayed as "Raw Income" (before any deductions).
          *  stockpileMarketValue        — silver value of totalStockpileAllocation; used in Net Income tooltip breakdown.
          *  taxableProductionMarketValue — silver value of effectiveRawTotalProduction; the budget available to taxes and tithes.
-         *  actualIncome                — taxableProductionMarketValue minus tithe costs; displayed as "Net Income".
-         *                                Can be negative if tithe modifiers push the tithe value above taxable production.
          */
         /// <summary>Current snapshot: production * workers, ignoring accumulation.</summary>
         public double InstantaneousProduction => production * assignedWorkers;
@@ -215,9 +213,9 @@ namespace FactionColonies
         public double stockpileMarketValue => totalStockpileAllocation * FCSettings.silverPerResource;
         public double taxableProductionMarketValue => effectiveRawTotalProduction * FCSettings.silverPerResource;
         /// <summary>
-        /// Aggregates additional tithe budget (in silver) from all <see cref="ITitheBudgetModifier"/> comps
-        /// on this settlement. Added to the tithe income cap; in actualIncome, only the portion of tithe
-        /// covered by this budget is offset (capped to titheTotalValue).
+        /// Aggregates additional per-day tithe budget (in silver) from all <see cref="ITitheBudgetModifier"/>
+        /// comps on this settlement. Added on top of the per-day tithe budget by
+        /// <see cref="AccumulateDailyProduction"/> and <see cref="GetTitheIncome"/>.
         /// </summary>
         public double DailyExternalTitheBudget
         {
@@ -235,8 +233,6 @@ namespace FactionColonies
                 return total;
             }
         }
-        public double actualIncome => taxableProductionMarketValue - titheTotalValue + Math.Min(titheTotalValue, DailyExternalTitheBudget);
-
         public bool canTithe => !def.isPoolResource && def.canTithe;
 
         public Texture2D getIcon
@@ -393,6 +389,11 @@ namespace FactionColonies
             double multForTotal = GetTitheValueMultiplier();
             return ((taxableProductionMarketValue + GetTotalTitheModifierForWorkers()) * multForTotal) + DailyExternalTitheBudget;
         }
+        /// <summary>Projected full-cycle tithe budget: accrued so far + live per-day rate * days remaining.</summary>
+        public double GetProjectedTitheBudget()
+        {
+            return AccruedTitheBudget + GetTitheIncome() * (settlement?.DaysRemaining ?? 0);
+        }
         public void RefreshOnRandomTitheBudgetChange()
         {
             if (storedRandomTitheBudget != oldStoredRandomTitheBudget)
@@ -433,7 +434,7 @@ namespace FactionColonies
             // When toggling auto-max off, snap stored budget to current effective max.
             if (!enabled && wasEnabled)
             {
-                storedRandomTitheBudget = Math.Max(0, (int)(GetTitheIncome() - titheTotalValueNoRandom));
+                storedRandomTitheBudget = Math.Max(0, (int)(GetProjectedTitheBudget() - titheTotalValueNoRandom));
                 storedRandomTitheBudgetBuffer = storedRandomTitheBudget.ToString();
             }
             settlement?.DirtyProfitCache();
@@ -1003,11 +1004,11 @@ namespace FactionColonies
             if (autoMaxRandomTithe)
             {
                 RefreshTitheCacheIfDirty();
-                available = GetTitheIncome() - cachedTitheTotalValue;
+                available = GetProjectedTitheBudget() - cachedTitheTotalValue;
             }
             else
             {
-                available = GetTitheIncome() - titheTotalValue;
+                available = GetProjectedTitheBudget() - titheTotalValue;
             }
             return ResourceFormulas.CanAffordThingAmount(TitheThingTotalValue(thing, quanity), available);
         }
@@ -1017,11 +1018,11 @@ namespace FactionColonies
             if (autoMaxRandomTithe)
             {
                 RefreshTitheCacheIfDirty();
-                available = GetTitheIncome() - cachedTitheTotalValue;
+                available = GetProjectedTitheBudget() - cachedTitheTotalValue;
             }
             else
             {
-                available = GetTitheIncome() - titheTotalValue;
+                available = GetProjectedTitheBudget() - titheTotalValue;
             }
             return MaxThingCanAfford(thing, available);
         }
@@ -1088,9 +1089,10 @@ namespace FactionColonies
                 priorStock = 0;
                 randomTitheStock = 0;
             }
-            // randomTitheBudget is a per-day amount; scale it to the days accrued this cycle so the random
-            // tithe can consume its full share of the accrued budget (not just ~one day's worth).
-            double randomBudget = randomTitheBudget * AccrualDays + priorStock;
+            // randomTitheBudget is a whole-cycle (tax-time) amount, consumed directly against the accrued
+            // budget this cycle. Carried-over stock rides on top AFTER the cap (see below): it was already
+            // funded (and withheld from silver) by prior cycles, so re-capping it against this cycle's
+            // budget would drain the escrow and make multi-cycle accumulation impossible.
 
             // Walk the ordered priority list against the accrued tithe budget. Fully fulfil while affordable,
             // partial-fill the straddler, then stop. Unfulfilled entries persist untouched (no prune).
@@ -1127,8 +1129,9 @@ namespace FactionColonies
                 }
             }
 
-            // Random tithe is the lowest-priority consumer; it draws from the post-specified remainder.
-            double effectiveRandomBudget = Math.Min(randomBudget, budgetRemaining);
+            // Random tithe is the lowest-priority consumer; the current-cycle request draws from the
+            // post-specified remainder, while prior-cycle escrow is added uncapped.
+            double effectiveRandomBudget = Math.Min(randomTitheBudget, budgetRemaining) + priorStock;
             if (hasRandomTithe && effectiveRandomBudget > 0)
             {
                 if (!randomTitheFilter.AllowedThingDefs.Any())

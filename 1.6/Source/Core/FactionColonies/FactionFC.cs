@@ -298,6 +298,10 @@ namespace FactionColonies
         public void OnCreation()
         {
             foundingTick = Find.TickManager.TicksGame;
+            /* nextTaxDueTick was initialized at world-component construction (long before the player
+             * creates the faction), so without this the first TaxTick would fire AddTax immediately
+             * against zero settlements. Anchor the first tax cycle to faction creation instead. */
+            taxLedger.Reschedule(FCSettings.timeBetweenTaxes);
         }
 
         public string GetFoundingDate(bool full = true)

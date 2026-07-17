@@ -354,6 +354,15 @@ namespace FactionColonies
                 Close();
                 return;
             }
+            // Refuse the launch before declaring war or charging the deployment bill when the target
+            // already has an op or a live map (the player is attacking it in person) -- launching
+            // would later hijack that map. Message + return, leaving the dialog open, matching the
+            // morale-lockout reject above.
+            if (target is object && !manager.CanLaunchOffensiveAt(target.Tile, out string launchReject))
+            {
+                Messages.Message(launchReject, MessageTypeDefOf.RejectInput);
+                return;
+            }
             RelationsUtilFC.AttackFaction(enemy);
             FindFC.TaxLedger.CreateDeploymentCostBill(selected);
             manager.CreateOffensiveOp(selected, target, currentJob, enemy, travel);

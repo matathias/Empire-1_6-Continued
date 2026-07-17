@@ -125,6 +125,16 @@ namespace FactionColonies
                 return null;
             }
 
+            // Launch-gate backstop: refuse a tile that already has an op or a live map (the player
+            // is there in person). Entry points (Dialog_AttackSettlement) gate before charging their
+            // bill, so on the live path this never fires; this guards any caller that reaches the
+            // manager directly.
+            if (!CanLaunchOffensiveAt(target.Tile, out string launchReject))
+            {
+                LogUtil.Warning($"CreateOffensiveOp: target tile {target.Tile} not launchable ({launchReject}); rejecting offensive op.");
+                return null;
+            }
+
             int newId = nextOperationId++;
             var op = new MilitaryOperation(newId, jobDef, target.Tile, target);
             op.phase = MilitaryOperationPhase.Traveling;
@@ -471,10 +481,34 @@ namespace FactionColonies
 
         /// <summary>True if any military operation currently targets this tile (a squad en route or a
         /// battle in progress, offense or defense, manual or auto). Ops stay registered until they
-        /// resolve after cooldown, so this covers Scheduled/Traveling/Engaged/CooldownPending. This
-        /// is the same set the attack-launch gate (<see cref="WorldObjectComp_SettlementMilitary.IsTargetOccupied"/>)
-        /// uses.</summary>
+        /// resolve after cooldown, so this covers Scheduled/Traveling/Engaged/CooldownPending.
+        /// The offensive-launch gate (<see cref="CanLaunchOffensiveAt"/>) uses the cooldown-excluding
+        /// <see cref="HasActiveOpAt"/> instead, so a fresh attack is allowed once a prior battle ends.</summary>
         public bool HasAnyOpAt(PlanetTile tile) => GetOpsAt(tile).Count > 0;
+
+        /// <summary>True when an offensive op may launch at this tile. Rejects a tile that has an
+        /// active op (<see cref="HasActiveOpAt"/> -- cooldown ops are ignored, matching the attack
+        /// gizmo's own suppression, so a fresh attack is allowed once a prior battle is over) or a
+        /// live map -- a live map means the player is there in person (vanilla caravan attack, quest
+        /// site), and launching would later hijack that map (StripNativeGarrison deletes the
+        /// defenders mid-raid) or auto-resolve a capture/raze under the player. This also catches a
+        /// still-lingering post-battle map whose op has entered cooldown, via the map check.
+        /// <paramref name="rejectReason"/> carries the keyed message for the caller to surface.</summary>
+        public bool CanLaunchOffensiveAt(PlanetTile tile, out string rejectReason)
+        {
+            if (HasActiveOpAt(tile))
+            {
+                rejectReason = "FCTargetAlreadyBeingAttacked".Translate();
+                return false;
+            }
+            if (Current.Game.FindMap(tile) is object)
+            {
+                rejectReason = "FCTargetHasPlayerMap".Translate();
+                return false;
+            }
+            rejectReason = null;
+            return true;
+        }
 
         /// <summary>Like <see cref="HasAnyOpAt"/> but ignores ops that are winding down
         /// (CooldownPending) or finished (Resolved) -- i.e. only counts a squad still en route or a

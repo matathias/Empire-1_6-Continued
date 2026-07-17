@@ -28,7 +28,7 @@ namespace FactionColonies
             if (!report) return report;
             if (settlement is null || !settlement.Spawned || settlement.Tile != destinationTile)
                 return false;
-            if (!(FindFC.MilitaryManager?.GetBattlefield(settlement.Tile)?.HasOffenseAt() ?? false))
+            if (!(FindFC.MilitaryManager?.GetBattlefield(settlement.Tile)?.CanJoinAttack() ?? false))
                 return FloatMenuAcceptanceReport.WithFailReason("FCJoinAttackNoBattle".Translate());
             return true;
         }
@@ -53,7 +53,7 @@ namespace FactionColonies
         {
             return CaravanArrivalActionUtility.GetFloatMenuOptions(
                 () => settlement.Spawned
-                    && (FindFC.MilitaryManager?.GetBattlefield(settlement.Tile)?.HasOffenseAt() ?? false),
+                    && (FindFC.MilitaryManager?.GetBattlefield(settlement.Tile)?.CanJoinAttack() ?? false),
                 () => new WorldSettlementJoinAttackAction(settlement),
                 "FCJoinAttack".Translate(), caravan,
                 settlement.Tile, settlement);

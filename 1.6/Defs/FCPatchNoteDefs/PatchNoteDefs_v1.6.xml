@@ -214,4 +214,20 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_12</defName>
+		<label>More Fixes</label>
+		<description>Final wave of fixes before the workshop release of Empire Refactored 1.6.</description>
+		<releaseDate>2026-07-16</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Update tooltips in the production area of the settlement window</li>
+		<li>Update the tithing UI and tooltips to better explain how tithing works with the new daily cadence</li>
+		<li>Bugfix: settlements founded in the middle of a tax cycle would show an incorrect &apos;days til tax&apos; estimate</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
