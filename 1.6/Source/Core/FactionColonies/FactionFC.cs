@@ -1795,13 +1795,22 @@ namespace FactionColonies
 
             if (CanMakeRandomEventNow())
             {
-                FCEvent tmpEvt = FCEventMaker.MakeRandomEvent(FCEventMaker.ReturnRandomEvent(), null);
-                if (tmpEvt != null)
+                FCEventDef picked = FCEventMaker.ReturnRandomEvent();
+                if (picked != null)
                 {
-                    eventManager.AddEvent(tmpEvt);
+                    // A random event is being raised this cycle. Reset the timer now, before dispatch:
+                    // roots with options + activateAtStart open their option window and return null, so
+                    // gating the reset on a non-null return leaks the timer for the vast majority of events
+                    // and fires a fresh random event every day thereafter.
                     randomEventLastAdded = 0f;
 
-                    Find.LetterStack.ReceiveLetter("FCRandomEventLetterLabel".Translate(), FCEventMaker.BuildEventLetterBody(tmpEvt), LetterDefOf.NeutralEvent);
+                    FCEvent tmpEvt = FCEventMaker.MakeRandomEvent(picked, null);
+                    if (tmpEvt != null)
+                    {
+                        eventManager.AddEvent(tmpEvt);
+
+                        Find.LetterStack.ReceiveLetter("FCRandomEventLetterLabel".Translate(), FCEventMaker.BuildEventLetterBody(tmpEvt), LetterDefOf.NeutralEvent);
+                    }
                 }
             }
         }
