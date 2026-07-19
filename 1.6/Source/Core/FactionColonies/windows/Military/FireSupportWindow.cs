@@ -270,7 +270,7 @@ namespace FactionColonies
             Rect sliderRect = new Rect(rect.x, sliderY, rect.width, 20f);
             selectedSupport.accuracy = Widgets.HorizontalSlider(sliderRect,
                 selectedSupport.accuracy,
-                Math.Max(3, 15 - FindFC.FactionComp.ReturnHighestMilitaryLevel()), 30,
+                Math.Max(3, 15 - FindFC.FactionComp.ReturnHighestMilitaryLevel()), 100,
                 roundTo: 1);
 
             Text.Font = fontBefore;

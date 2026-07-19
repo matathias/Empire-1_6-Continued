@@ -244,4 +244,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_14</defName>
+		<label>Minor Fix &amp; Update</label>
+		<description>An events bugfix and minor tweak.</description>
+		<releaseDate>2026-07-18</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: random events could fire more frequently than the min/max days per random event setting should allow</li>
+		<li>Max radius for fire support changed to 100 (was 30)</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
