@@ -188,7 +188,7 @@
 		<statModifiers>
 			<li><stat>workerBaseMax</stat><value>4</value></li>
 			<li><stat>workerBaseOverMax</stat><value>4</value></li>
-			<li><stat>workerBaseCost</stat><value>5</value></li>
+			<li><stat>workerBaseCost</stat><value>1</value></li>
 		</statModifiers>
 		<upkeep>50</upkeep>
 		<postRework>true</postRework>

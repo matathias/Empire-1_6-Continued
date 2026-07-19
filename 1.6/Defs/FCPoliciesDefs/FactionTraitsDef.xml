@@ -139,7 +139,7 @@
 			<li>- Can grant a 10-day tax break to a settlement to boost happiness and prosperity at the cost of tax revenue</li>
 		</positiveEffects>
 		<negativeEffects>
-			<li>- All workers cost 10 additional silver</li>
+			<li>- All workers cost 2 additional silver</li>
 			<li>- -3 over-max worker cap</li>
 		</negativeEffects>
 		<modExtensions>
@@ -155,7 +155,7 @@
 			<li><stat>workerProductionMultiplier</stat><value>1.1</value></li>
 			<li><stat>extraWorkersSoftcap</stat><value>1</value></li>
 			<li><stat>overMaxWorkersAdjustment</stat><value>-3</value></li>
-			<li><stat>workerBaseCost</stat><value>10</value></li>
+			<li><stat>workerBaseCost</stat><value>2</value></li>
 		</statModifiers>
 	</FactionColonies.FCPolicyDef>
 

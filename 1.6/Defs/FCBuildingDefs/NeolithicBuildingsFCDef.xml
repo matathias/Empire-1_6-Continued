@@ -197,7 +197,7 @@
 		<cost>275</cost>
 		<constructionDuration>75000</constructionDuration> <!-- Ticks it takes until construction is finished -->
 		<statModifiers>
-			<li><stat>workerBaseCost</stat><value>2</value></li>
+			<li><stat>workerBaseCost</stat><value>0.4</value></li>
 			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.2</value></li>
 		</statModifiers>
 		<upkeep>40</upkeep> <!-- cost per week for the building -->

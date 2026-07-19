@@ -259,4 +259,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_15</defName>
+		<label>Daily Cadence Worker Cost Updates</label>
+		<description>Updates the workerBaseCost stat on many policies and buildings to actually respect the new Daily Cadence.</description>
+		<releaseDate>2026-07-18</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Every trait, policy, and buildings that affected worker base cost have had the value slashed to a fifth to respect the new Daily Cadence</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

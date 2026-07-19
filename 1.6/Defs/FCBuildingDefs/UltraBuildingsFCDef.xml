@@ -79,7 +79,7 @@
 			<li><stat>unrestLostBase</stat><value>0.75</value></li>
 			<li><stat>happinessGainedBase</stat><value>0.75</value></li>
 			<li><stat>loyaltyGainedBase</stat><value>0.75</value></li>
-			<li><stat>workerBaseCost</stat><value>50</value></li>
+			<li><stat>workerBaseCost</stat><value>10</value></li>
 			<li><stat>workerBaseMax</stat><value>10</value></li>
 			<li><stat>workerBaseOverMax</stat><value>10</value></li>
 		</statModifiers>

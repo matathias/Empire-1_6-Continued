@@ -221,7 +221,7 @@
 		<cost>500</cost>
 		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
 		<statModifiers>
-			<li><stat>workerBaseCost</stat><value>10</value></li>
+			<li><stat>workerBaseCost</stat><value>2</value></li>
 			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>1.25</value></li>
 			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>1.25</value></li>
 		</statModifiers>

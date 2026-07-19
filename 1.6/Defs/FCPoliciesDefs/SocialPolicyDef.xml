@@ -60,7 +60,7 @@
 			<li>authoritarian</li>
 		</incompatiblePolicies>
 		<statModifiers>
-			<li><stat>workerBaseCost</stat><value>-10</value></li>
+			<li><stat>workerBaseCost</stat><value>-2</value></li>
 			<li><stat>workerBaseMax</stat><value>1</value></li>
 			<li><stat>workerBaseOverMax</stat><value>2</value></li>
 		</statModifiers>
@@ -79,7 +79,7 @@
 		<statModifiers>
 			<li><stat>taxBasePercentage</stat><value>10</value></li>
 			<li><stat>taxBaseRandomModifier</stat><value>25</value></li>
-			<li><stat>workerBaseCost</stat><value>5</value></li>
+			<li><stat>workerBaseCost</stat><value>1</value></li>
 			<li><stat>titheValueMultiplier</stat><value>1.15</value></li>
 		</statModifiers>
 	</FactionColonies.FCPolicyDef>
