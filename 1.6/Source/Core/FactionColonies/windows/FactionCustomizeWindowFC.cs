@@ -316,7 +316,7 @@ namespace FactionColonies
                     Text.Anchor = TextAnchor.MiddleLeft;
                     UIUtil.DrawColoredLabel(infoRect.ContractedBy(4f),
                         "fcColorsRandomInfo".Translate(),
-                        new Color(0.72f, 0.53f, 0.04f));
+                        new Color(0.72f, 0.53f, 0.04f), false);
                 }
             }
         }
