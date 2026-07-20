@@ -273,4 +273,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_16</defName>
+		<label>Prisoner Goods Bugfix</label>
+		<description>Fixes an issue with items disappearing when delivering prisoners to settlements.</description>
+		<releaseDate>2026-07-19</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: when dropping a prisoner off at a settlement through a caravan that is carrying goods, some of the goods could disappear with the prisoner, and would not come back even if the prisoner was recalled</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

@@ -242,9 +242,57 @@ namespace FactionColonies
         public void TransferFromCaravan(Pawn pawn, Caravan caravan)
         {
             if (pawn is null || caravan is null) return;
+
+            // A caravan's goods are distributed across the inventories of ALL its pawns, prisoners
+            // included. Pull this prisoner's share of the caravan inventory back out before we absorb
+            // the pawn into the settlement — otherwise those items (carried loot, stashed sidearms)
+            // ride in with the prisoner and become unrecoverable (ReturnPrisonerToPlayer only ever
+            // delivers the pawn). Worn apparel and wielded equipment stay on the pawn: those are the
+            // captured pawn's own gear, not shared caravan goods.
+            List<Thing> carried = ExtractCarriedInventory(pawn);
+
             caravan.RemovePawn(pawn);
             caravan.Notify_PawnRemoved(pawn);
+
+            ReturnCarriedInventory(carried, caravan);
+
             AddPrisoner(pawn);
+        }
+
+        /* Detaches and returns a pawn's carried inventory (its share of the caravan goods). Worn
+         * apparel and wielded equipment are intentionally left on the pawn. */
+        private static List<Thing> ExtractCarriedInventory(Pawn pawn)
+        {
+            List<Thing> items = new List<Thing>();
+            ThingOwner inner = pawn?.inventory?.innerContainer;
+            if (inner is null) return items;
+            for (int i = inner.Count - 1; i >= 0; i--)
+            {
+                Thing thing = inner[i];
+                inner.Remove(thing);
+                items.Add(thing);
+            }
+            return items;
+        }
+
+        /* Routes detached prisoner-carried goods back to the player, mirroring
+         * SettlementPawnArrivalFallback.RouteLeftovers: onto the caravan while it still has carriers,
+         * else home through Empire's delivery pipeline. Nothing is ever destroyed. */
+        private void ReturnCarriedInventory(List<Thing> items, Caravan caravan)
+        {
+            if (items is null || items.Count == 0) return;
+
+            if (caravan is object && caravan.PawnsListForReading.Count > 0)
+            {
+                for (int i = 0; i < items.Count; i++)
+                    CaravanInventoryUtility.GiveThing(caravan, items[i]);
+                return;
+            }
+
+            // Caravan emptied out (the prisoner was its last pawn): route the goods home instead of
+            // dropping them on a world tile where they would be lost.
+            PlanetTile tile = WorldSettlement?.Tile ?? caravan?.Tile ?? PlanetTile.Invalid;
+            DeliveryEvent.CreateDeliveryEvent(items, tile);
         }
 
         public void DoTransferMenu(Caravan caravan)
