@@ -287,4 +287,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_17</defName>
+		<label>HAR Apparel Fix</label>
+		<description>Fixes an issue where low-tech empires with HAR races might general naked pawns due to lacking apparel selection.</description>
+		<releaseDate>2026-07-20</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: low-tech empires with HAR races could generate naked pawns due to how apparel tags were collected</li>
+		<li>Minor UI tweak: let the pawn apparel coloring text wordwrap in the Customize Faction window</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

@@ -17,6 +17,30 @@ namespace FactionColonies.util
         // Def-derived gear data per race, bucketed by tech level. Populated once per race, never cleared.
         private static Dictionary<ThingDef, PerRaceGearIndex> raceGearIndex = new Dictionary<ThingDef, PerRaceGearIndex>();
 
+        // Apparel tags that at least one loaded apparel ThingDef actually carries. A pawnkind can declare an
+        // apparelTag that no apparel uses (e.g. a race's vestigial "pilgrim" tag whose kinds equip via
+        // apparelRequired instead). Harvesting such a dead tag makes PawnApparelGenerator's strict tag filter
+        // reject every candidate -> naked pawns, so EnsureRaceGearIndex filters them out via this set.
+        private static HashSet<string> apparelTagsInUse;
+
+        private static HashSet<string> ApparelTagsInUse
+        {
+            get
+            {
+                if (apparelTagsInUse is null)
+                {
+                    apparelTagsInUse = new HashSet<string>();
+                    foreach (ThingDef def in DefDatabase<ThingDef>.AllDefsListForReading)
+                    {
+                        if (def.apparel?.tags is null) continue;
+                        foreach (string tag in def.apparel.tags)
+                            apparelTagsInUse.Add(tag);
+                    }
+                }
+                return apparelTagsInUse;
+            }
+        }
+
         private struct RaceGearData
         {
             public List<string> apparelTags;
@@ -291,7 +315,53 @@ namespace FactionColonies.util
                 result = MergeGearData(result, undefined);
             }
 
+            // If the tech-appropriate tier has no usable apparel tags (e.g. a low-tech tier whose only
+            // tags were dead-filtered), borrow apparel tags from the NEAREST tier that has some. This keeps
+            // generation restricted to the race's OWN apparel instead of falling back to any vanilla apparel
+            // (a HAR race wearing vanilla clothes). The borrowed tier's apparel budget is folded into the
+            // floor so its apparel is affordable; borrowing the *nearest* tier (not a union) keeps a low-tech
+            // Empire on the closest civilian tier (e.g. Medieval RK_Worker) rather than pulling higher-tier gear.
+            if (result.apparelTags is null || result.apparelTags.Count == 0)
+            {
+                RaceGearData borrowed = NearestTierWithApparelTags(index, techLevel);
+                if (borrowed.apparelTags != null && borrowed.apparelTags.Count > 0)
+                {
+                    result.apparelTags = borrowed.apparelTags;
+                    result.apparelMoney = new FloatRange(
+                        Math.Max(result.apparelMoney.min, borrowed.apparelMoney.min),
+                        Math.Max(result.apparelMoney.max, borrowed.apparelMoney.max));
+                }
+            }
+
             return result;
+        }
+
+        /// <summary>
+        /// Returns the gear data of the nearest tier (by tech-level distance to <paramref name="target"/>)
+        /// whose apparel tags are non-empty, preferring a tier at or below the target on ties. Used as a
+        /// fallback when the tech-appropriate tier itself has no usable apparel tags, so generation still
+        /// restricts to the race's own apparel. Returns default when no tier has usable apparel tags.
+        /// </summary>
+        private static RaceGearData NearestTierWithApparelTags(PerRaceGearIndex index, TechLevel target)
+        {
+            RaceGearData best = default;
+            int bestDist = int.MaxValue;
+            bool bestAtOrBelow = false;
+            foreach (KeyValuePair<TechLevel, RaceGearData> kvp in index.tiers)
+            {
+                if (kvp.Key == TechLevel.Undefined) continue;
+                if (kvp.Value.apparelTags is null || kvp.Value.apparelTags.Count == 0) continue;
+
+                int dist = Math.Abs((int)kvp.Key - (int)target);
+                bool atOrBelow = kvp.Key <= target;
+                if (dist < bestDist || (dist == bestDist && atOrBelow && !bestAtOrBelow))
+                {
+                    bestDist = dist;
+                    bestAtOrBelow = atOrBelow;
+                    best = kvp.Value;
+                }
+            }
+            return best;
         }
 
         /// <summary>
@@ -409,7 +479,11 @@ namespace FactionColonies.util
                 {
                     if (def.apparelTags != null)
                     {
-                        apparelTags.AddRange(def.apparelTags);
+                        // Skip dead tags (no loaded apparel carries them) — harvesting one would make
+                        // PawnApparelGenerator's tag filter reject every candidate and spawn the pawn naked.
+                        foreach (string tag in def.apparelTags)
+                            if (ApparelTagsInUse.Contains(tag))
+                                apparelTags.Add(tag);
                     }
                     if (def.weaponTags != null)
                     {
