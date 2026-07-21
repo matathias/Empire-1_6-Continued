@@ -302,4 +302,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_18</defName>
+		<label>Naked Pawns Fixes</label>
+		<description>A couple changes in regards to pawn nudity.</description>
+		<releaseDate>2026-07-20</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>When generating empire pawns, if one would generate without apparel on their torso, then force the cheapest available torso apparel</li>
+		<li>However, if the empire has the Nudism gene, then empire pawns are instead stripped of all apparel (does not apply to mercenaries - they keep their gear)</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
