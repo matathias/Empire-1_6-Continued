@@ -80,7 +80,7 @@ namespace FactionColonies.util
             tile.IsValidTile() &&
 FindFC.Settlements.Any(settlement =>
                 settlement.BuildingsComp?.HasBuilding(BuildingFCDefOf.shuttlePort) == true &&
-                Find.WorldGrid.TraversalDistanceBetween(settlement.Tile, tile) <= ShuttleSender.ShuttleRange
+                Find.WorldGrid.TraversalDistanceBetween(settlement.Tile, tile, canTraverseLayers: true) <= ShuttleSender.EffectiveRange(tile.Layer)
             );
 
         /// <summary>

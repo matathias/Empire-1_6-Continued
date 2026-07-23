@@ -34,7 +34,7 @@ namespace FactionColonies
                 if (podsAvailable)
                 {
                     int multiplier = (currentTile, destinationTile).AreTilesInAnyShuttleRange() ? 5 : 10;
-                    return Find.WorldGrid.TraversalDistanceBetween(currentTile, destinationTile) * multiplier;
+                    return Find.WorldGrid.TraversalDistanceBetween(currentTile, destinationTile, canTraverseLayers: true) * multiplier;
                 }
                 return timespanFallback; //10-day fallback
             }

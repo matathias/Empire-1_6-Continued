@@ -317,4 +317,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_19</defName>
+		<label>Orbit Layer Fixes</label>
+		<description>Fixes a couple of issues with cross-planet layer distance calculation.</description>
+		<releaseDate>2026-07-22</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: a shuttle port built on an orbital settlement wouldn&apos;t be able to send a shuttle to a colony on the planet&apos;s surface</li>
+		<li>Bugfix: squads assigned to orbital settlements can&apos;t auto-defend ground targets, and vice versa</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

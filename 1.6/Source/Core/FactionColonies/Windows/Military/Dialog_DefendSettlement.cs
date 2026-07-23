@@ -286,7 +286,9 @@ namespace FactionColonies
             {
                 if (defender?.WorldObject is null) continue;
                 if (!defender.CanAutoDefend) continue;
-                int distance = Find.WorldGrid.TraversalDistanceBetween(defender.WorldObject.Tile, targetTile);
+                // canTraverseLayers so a defender on a different planet layer (e.g. orbit) isn't treated
+                // as infinitely far — TraversalDistanceBetween returns int.MaxValue across layers otherwise.
+                int distance = Find.WorldGrid.TraversalDistanceBetween(defender.WorldObject.Tile, targetTile, canTraverseLayers: true);
                 if (distance > defender.Range) continue;
 
                 MilitaryForce extForce = defender.CreateDefendingForce();

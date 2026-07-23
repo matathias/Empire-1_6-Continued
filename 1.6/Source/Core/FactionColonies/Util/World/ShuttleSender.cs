@@ -23,7 +23,13 @@ namespace FactionColonies.util
 
         protected virtual bool TargetHasValidWorldObject(GlobalTargetInfo target) => target.HasWorldObject && target.WorldObject is MapParent mapParent && (mapParent.Map?.mapPawns?.AnyFreeColonistSpawned ?? false);
 
-        public virtual bool ChoseWorldTarget(GlobalTargetInfo target) => target.Tile > -1 && Find.WorldGrid.TraversalDistanceBetween(target.Tile, Tile) <= ShuttleRange && TargetHasValidWorldObject(target);
+        // The shuttle range is expressed in surface tiles. On other planet layers (e.g. Odyssey's Orbit,
+        // rangeDistanceFactor 20) a tile spans far more ground, so the range must be divided by the
+        // layer's factor — otherwise the range ring floods the whole layer into a broken mesh and the
+        // distance check no longer means what it does on the surface.
+        public static int EffectiveRange(PlanetLayer layer) => Mathf.RoundToInt(ShuttleRange / layer.Def.rangeDistanceFactor);
+
+        public virtual bool ChoseWorldTarget(GlobalTargetInfo target) => target.Tile.Valid && Find.WorldGrid.TraversalDistanceBetween(Tile, target.Tile, canTraverseLayers: true) <= EffectiveRange(target.Tile.Layer) && TargetHasValidWorldObject(target);
 
         protected virtual TransportShip SendWaitingShuttle(MapParent target)
         {
@@ -73,7 +79,8 @@ namespace FactionColonies.util
                 return null;
             }
 
-            if (shuttleRange > 0 && Find.WorldGrid.TraversalDistanceBetween(tile, target.Tile, true, int.MaxValue) > shuttleRange)
+            int effectiveRange = Mathf.RoundToInt(shuttleRange / target.Tile.LayerDef.rangeDistanceFactor);
+            if (shuttleRange > 0 && Find.WorldGrid.TraversalDistanceBetween(tile, target.Tile, true, int.MaxValue, true) > effectiveRange)
             {
                 GUI.color = ColorLibrary.RedReadable;
                 return "TransportPodDestinationBeyondMaximumRange".Translate();
@@ -139,6 +146,13 @@ namespace FactionColonies.util
             return "FCTargetAnythingWithColonists".Translate();
         }
 
-        public void DrawWorldRadiusRing() => GenDraw.DrawWorldRadiusRing(Tile, ShuttleRange);
+        public void DrawWorldRadiusRing()
+        {
+            // Draw the ring on the layer the player is currently looking at (projecting the origin onto
+            // it), scaled for that layer — mirroring vanilla CompLaunchable. Drawing the raw range on an
+            // orbit origin would flood the small orbit layer and render a tangled mesh across the globe.
+            PlanetTile center = Find.WorldSelector.SelectedLayer.GetClosestTile_NewTemp(Tile);
+            GenDraw.DrawWorldRadiusRing(center, EffectiveRange(center.Layer));
+        }
     }
 }

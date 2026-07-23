@@ -139,7 +139,7 @@ namespace FactionColonies
                         var tile = caravan.Tile;
                         Find.WorldTargeter.BeginTargeting(sender.ChoseWorldTarget, true,
                             CompLaunchable.TargeterMouseAttachment, false,
-                            delegate { GenDraw.DrawWorldRadiusRing(tile, ShuttleSender.ShuttleRange); },
+                            sender.DrawWorldRadiusRing,
                             target => sender.TargetingLabelGetter(target, tile, ShuttleSender.ShuttleRange,
                                 Gen.YieldSingle(caravan), sender.Launch));
                     })));

@@ -22,7 +22,9 @@ namespace FactionColonies
             {
                 if (!defender.CanAutoDefend) return best;
                 if (defender.MilitaryLevel <= minMilitaryLevel) return best;
-                int distance = Find.WorldGrid.TraversalDistanceBetween(defender.WorldObject.Tile, targetTile);
+                // canTraverseLayers so a defender on a different planet layer (e.g. orbit) isn't treated
+                // as infinitely far — TraversalDistanceBetween returns int.MaxValue across layers otherwise.
+                int distance = Find.WorldGrid.TraversalDistanceBetween(defender.WorldObject.Tile, targetTile, canTraverseLayers: true);
                 if (distance > defender.Range) return best;
                 return (best == null || defender.MilitaryLevel > best.MilitaryLevel) ? defender : best;
             }, "FindBestDefender");
