@@ -332,4 +332,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_20</defName>
+		<label>World Pawns Update</label>
+		<description>A small fix for Empire world pawns. Largely unused by Empire Refactored itself, but relevant for some submods.</description>
+		<releaseDate>2026-07-26</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Issue: Empire world pawns could be selected for Rimworld&apos;s visitor groups or trader caravans, which would mutate their gear and possibly other things about the pawn. This patch prevents Empire world pawns from being valid ReDress candidates to prevent that</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

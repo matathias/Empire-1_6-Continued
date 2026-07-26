@@ -6,8 +6,8 @@
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
         <OutputPath>..\..\Assemblies</OutputPath>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <AssemblyVersion>1.6.19.0</AssemblyVersion>
-        <FileVersion>1.6.19.0</FileVersion>
+        <AssemblyVersion>1.6.20.0</AssemblyVersion>
+        <FileVersion>1.6.20.0</FileVersion>
         <BaseOutputPath>..\..\Assemblies</BaseOutputPath>
         <Configurations>Debug;Release;Testing</Configurations>
         <PlatformTarget>x64</PlatformTarget>
