@@ -1995,22 +1995,22 @@ namespace FactionColonies
             Rect totalProd = new Rect(finalProd.xMax + margin, rectY, colWidth, rowHeight);
             UIUtil.ClampedLabel(totalProd, (TextUtil.FloorStat(resource.rawTotalProduction)));
 
-            //Per Day: effective silver per day (post-stockpile diversion)
+            //Per Day: silver/day for tithe resources, pool points/day (e.g. research) for pool resources
             Rect incomePerDayBox = new Rect(totalProd.xMax + margin, rectY, colWidth, rowHeight);
-            UIUtil.ClampedLabel(incomePerDayBox, TextUtil.FloorStat(resource.effectiveRawTotalProduction * FCSettings.silverPerResource));
+            UIUtil.ClampedLabel(incomePerDayBox, TextUtil.FloorStat(resource.PerDayIncomeValue));
 
-            //Total Accrued: accrued taxable silver this cycle
+            //Total Accrued: accrued silver (or accrued pool points) this cycle
             Rect incomeAccruedBox = new Rect(incomePerDayBox.xMax + margin, rectY, colWidth, rowHeight);
-            UIUtil.ClampedLabel(incomeAccruedBox, TextUtil.FloorStat(resource.AccruedTaxableValue));
+            UIUtil.ClampedLabel(incomeAccruedBox, TextUtil.FloorStat(resource.AccruedIncomeValue));
 
-            //Projected Income: accrued so far + per-day rate * days remaining (gross, post-diversion)
-            double perDay = resource.effectiveRawTotalProduction * FCSettings.silverPerResource;
-            double projectedIncome = resource.AccruedTaxableValue + perDay * settlement.DaysRemaining;
+            //Projected Income: accrued so far + per-day rate * days remaining
+            double perDay = resource.PerDayIncomeValue;
+            double projectedIncome = resource.AccruedIncomeValue + perDay * settlement.DaysRemaining;
             Rect incomeNetBox = new Rect(incomeAccruedBox.xMax + margin, rectY, colWidth, rowHeight);
             UIUtil.ClampedLabel(incomeNetBox, (TextUtil.FloorStat(projectedIncome)));
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("FCProjectedIncomeBreakdownAccrued".Translate(TextUtil.FloorStat(resource.AccruedTaxableValue)));
+            sb.AppendLine("FCProjectedIncomeBreakdownAccrued".Translate(TextUtil.FloorStat(resource.AccruedIncomeValue)));
             sb.AppendLine("FCProjectedIncomeBreakdownPerDay".Translate(TextUtil.FloorStat(perDay), settlement.DaysRemaining));
             sb.Append("FCProjectedIncomeBreakdownProjected".Translate(TextUtil.FloorStat(projectedIncome)));
             TooltipHandler.TipRegion(incomeNetBox, sb.ToString());

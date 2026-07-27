@@ -206,6 +206,18 @@ namespace FactionColonies
         /// <summary>Accrued gross silver value (post-stockpile, pre-tithe). Zero for pool resources.</summary>
         public double AccruedTaxableValue => def.isPoolResource ? 0 : accruedEffectiveProduction * FCSettings.silverPerResource;
 
+        /// <summary>Per-day income for the production UI: silver/day for tithe resources,
+        /// pool points/day (e.g. research) for pool resources.</summary>
+        public double PerDayIncomeValue => def.isPoolResource
+            ? def.GetModExtension<ResourcePoolExtension>().CreatePool(effectiveRawTotalProduction, settlement)
+            : effectiveRawTotalProduction * FCSettings.silverPerResource;
+
+        /// <summary>Accrued income so far this cycle for the production UI: accrued silver for tithe
+        /// resources, accrued pool points (matching the tax-time payout) for pool resources.</summary>
+        public double AccruedIncomeValue => def.isPoolResource
+            ? def.GetModExtension<ResourcePoolExtension>().CreatePool(AccruedEffectiveProduction, settlement)
+            : AccruedTaxableValue;
+
         /// <summary>Live instantaneous per-day rate (production * workers). For display and projections.</summary>
         public double rawTotalProduction => InstantaneousProduction;
         public double effectiveRawTotalProduction => Math.Max(0, rawTotalProduction - totalStockpileAllocation);

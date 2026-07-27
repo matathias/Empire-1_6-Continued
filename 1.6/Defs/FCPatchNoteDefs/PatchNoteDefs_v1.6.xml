@@ -361,4 +361,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_22</defName>
+		<label>Pool Resource Fix</label>
+		<description>Fixes an issue where pool resources wouldn&apos;t be shown as accruing in the production UI, even though they do.</description>
+		<releaseDate>2026-07-27</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: pool resources would always show 0 Accrued points in the production area of the settlement window, even though they really are (correctly) accruing points</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
