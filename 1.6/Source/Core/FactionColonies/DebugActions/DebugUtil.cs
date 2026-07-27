@@ -1421,21 +1421,36 @@ namespace FactionColonies
             FindFC.TaxLedger.nextTaxDueTick = Find.TickManager.TicksGame + 1;
         }
 
-        [DebugAction("Empire", "Snapshot Tax Production Now", allowedGameStates = AllowedGameStates.Playing)]
-        private static void SnapshotTaxProductionNow()
+        [DebugAction("Empire", "Invoke Daily Accrual", allowedGameStates = AllowedGameStates.Playing)]
+        private static void InvokeDailyAccrualNow() => RunDailyAccrual(1);
+
+        [DebugAction("Empire", "Invoke Daily Accrual x10", allowedGameStates = AllowedGameStates.Playing)]
+        private static void InvokeDailyAccrualx10() => RunDailyAccrual(10);
+
+        private static void RunDailyAccrual(int times)
         {
-            LogUtil.MessageForce("Debug - Snapshot Tax Production (1 day)");
-            foreach (WorldSettlementFC s in FindFC.Settlements)
-                s.AccumulateDailyProduction();
+            FactionFC faction = FindFC.FactionComp;
+            if (faction is null) return;
+            LogUtil.MessageForce($"Debug - Invoke Daily Accrual x{times}");
+            for (int i = 0; i < times; i++)
+                faction.StatTick();
         }
 
-        [DebugAction("Empire", "Snapshot Tax Production x10", allowedGameStates = AllowedGameStates.Playing)]
-        private static void SnapshotTaxProductionTenTimes()
+        [DebugAction("Empire", "Complete All Research", allowedGameStates = AllowedGameStates.Playing)]
+        private static void CompleteAllResearch()
         {
-            LogUtil.MessageForce("Debug - Snapshot Tax Production (10 days)");
-            foreach (WorldSettlementFC s in FindFC.Settlements)
-                for (int i = 0; i < 10; i++)
-                    s.AccumulateDailyProduction();
+            int count = 0;
+            foreach (ResearchProjectDef proj in DefDatabase<ResearchProjectDef>.AllDefsListForReading)
+            {
+                if (proj.knowledgeCategory is object) continue; // skip Anomaly knowledge research (different currency)
+                if (proj.baseCost <= 0f) continue;              // skip zero-cost / special projects
+                if (proj.IsFinished) continue;
+                // FinishProject (not DebugSetAllProjectsFinished) so Empire's ResearchCompleted postfix runs per project;
+                // suppress dialog/letter to avoid a flood when finishing the whole tree.
+                Find.ResearchManager.FinishProject(proj, doCompletionDialog: false, researcher: null, doCompletionLetter: false);
+                count++;
+            }
+            LogUtil.MessageForce($"Debug - Complete All Research ({count} projects finished)");
         }
 
         [DebugAction("Empire", "Log Resource Production", allowedGameStates = AllowedGameStates.Playing)]

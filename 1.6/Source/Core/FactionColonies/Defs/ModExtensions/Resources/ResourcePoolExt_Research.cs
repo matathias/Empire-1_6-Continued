@@ -1,4 +1,6 @@
-﻿using RimWorld;
+﻿using FactionColonies.util;
+using RimWorld;
+using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using Verse;
@@ -49,12 +51,23 @@ namespace FactionColonies
                     : "FCCurrentResearchLevel".Translate(FindFC.EmpireName, faction.techLevel.ToString(), faction.ReturnNextTechToLevel());
                 Messages.Message(msg, MessageTypeDefOf.NeutralEvent);
             });
+
+            // When nothing can be researched, leftover points would otherwise pile up unused.
+            // Offer to cash them out at 2 points -> 1 silver, shipped from the nearest settlement.
+            if (!Find.ResearchManager.AnyProjectIsAvailable && pool.pool >= 2 && (FindFC.Settlements?.Count ?? 0) > 0)
+            {
+                int silver = (int)Math.Floor(pool.pool) / 2;
+                yield return new FloatMenuOption("FCConvertResearchToSilver".Translate(silver * 2, silver), delegate
+                {
+                    ConvertResearchToSilver(pool);
+                });
+            }
         }
         public override void DailyUpdate(ResourcePool pool)
         {
             double researchPointPool = pool.pool;
             //Research adding
-            if ((Find.ResearchManager.GetProject() == null) && researchPointPool != 0)
+            if ((Find.ResearchManager.GetProject() == null) && researchPointPool != 0 && Find.ResearchManager.AnyProjectIsAvailable)
             {
                 Messages.Message("FCNoResearchExpended".Translate(Math.Round(researchPointPool)), MessageTypeDefOf.NeutralEvent);
             }
@@ -102,6 +115,56 @@ namespace FactionColonies
                 }
                 pool.pool = researchPointPool;
             }
+        }
+
+        /* Cash out leftover research points once nothing can be researched: 2 points -> 1 silver,
+           shipped from the settlement nearest the player's colony so it travels like a tax delivery. */
+        private static void ConvertResearchToSilver(ResourcePool pool)
+        {
+            int silver = (int)Math.Floor(pool.pool) / 2;
+            if (silver <= 0) return;
+
+            // The capital tile is a player-colony tile, not a settlement, so find the closest settlement by distance.
+            PlanetTile capital = FindFC.CapitalLocation;
+            WorldSettlementFC nearest = null;
+            float best = float.MaxValue;
+            foreach (WorldSettlementFC settlement in FindFC.Settlements)
+            {
+                float dist = capital.Valid ? Find.WorldGrid.ApproxDistanceInTiles(capital, settlement.Tile) : 0f;
+                if (dist < best)
+                {
+                    best = dist;
+                    nearest = settlement;
+                }
+            }
+            if (nearest is null) return;
+
+            int pointsConsumed = silver * 2;
+            pool.pool -= pointsConsumed;
+
+            // Split into stack-limit-sized silver piles, matching how tax deliveries are built.
+            List<Thing> goods = new List<Thing>();
+            int remaining = silver;
+            while (remaining > 0)
+            {
+                Thing thing = ThingMaker.MakeThing(ThingDefOf.Silver);
+                int amount = Math.Min(remaining, thing.def.stackLimit);
+                thing.stackCount = amount;
+                goods.Add(thing);
+                remaining -= amount;
+            }
+
+            Messages.Message("FCResearchConvertedToSilver".Translate(pointsConsumed, silver, nearest.Name),
+                MessageTypeDefOf.PositiveEvent);
+
+            DeliveryEvent.CreateDeliveryEvent(new FCEvent
+            {
+                source = nearest.Tile,
+                goods = goods,
+                customDescription = "",
+                timeTillTrigger = Find.TickManager.TicksGame +
+                    (capital.Valid ? TravelUtil.ReturnTicksToArrive(nearest.Tile, capital) : 10)
+            });
         }
     }
 }

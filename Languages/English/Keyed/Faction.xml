@@ -139,6 +139,8 @@
 	<FCResearchLevel>Check Tech Level</FCResearchLevel>
 	<FCCurrentResearchLevel>{0}'s current tech level is {1}. To reach the next tech level you must research {2}</FCCurrentResearchLevel>
 	<FCCurrentResearchLevelMirror>{0}'s current tech level is {1}. It is pinned to your own faction's tech level (mirror setting is on).</FCCurrentResearchLevelMirror>
+	<FCConvertResearchToSilver>Convert {0} research into {1} silver</FCConvertResearchToSilver>
+	<FCResearchConvertedToSilver>Converted {0} research points into {1} silver. A delivery is on its way from {2}.</FCResearchConvertedToSilver>
 
 	<!-- Relations -->
 	<FCRelationImproved>Relation Improved!</FCRelationImproved>

@@ -346,4 +346,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_21</defName>
+		<label>Research Points Update</label>
+		<description>A couple of changes to make research points less annoying to have once you&apos;ve researched everything.</description>
+		<releaseDate>2026-07-27</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>When everything available has been researched, the daily unspent research points notification is suppressed</li>
+		<li>When everything available has been researched, it becomes possible to convert research points into silver at a 2:1 ratio through the research pool float menu</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
