@@ -28,10 +28,20 @@ namespace FactionColonies
         /// <summary>Tick interval for the orphan-flag clearing sweep in <see cref="Tick"/>.</summary>
         private const int OrphanCheckTickInterval = 2500;
 
+        /// <summary>Grace window after a battle map is created during which the stuck-battle guard
+        /// will not force-resolve. Protects a just-started battle from being torn down before its
+        /// defenders/attackers finish spawning. Genuinely-empty older battles (e.g. resurfaced on
+        /// load) are past this window and still get cleaned up.</summary>
+        private const int StuckBattleGraceTicks = 300;
+
         public PlanetTile tile = PlanetTile.Invalid;
 
         /// <summary>The battle map. Lazy: created when the first op transitions to Engaged on this tile.</summary>
         public Map map;
+
+        /// <summary>Game tick at which <see cref="map"/> was generated, or -1 if none. Used by the
+        /// stuck-battle guard's <see cref="StuckBattleGraceTicks"/> grace window.</summary>
+        public int battleMapCreatedTick = -1;
 
         /// <summary>Ops currently using this battlefield. The context cannot be destroyed while non-empty.</summary>
         public List<MilitaryOperation> activeOps = new List<MilitaryOperation>();
@@ -126,6 +136,7 @@ namespace FactionColonies
         {
             Scribe_Values.Look(ref tile, "tile", PlanetTile.Invalid);
             Scribe_References.Look(ref map, "map");
+            Scribe_Values.Look(ref battleMapCreatedTick, "battleMapCreatedTick", -1);
             Scribe_Collections.Look(ref activeOps, "activeOps", LookMode.Reference);
             Scribe_Values.Look(ref awaitingPlayerExit, "awaitingPlayerExit", false);
 
@@ -281,9 +292,24 @@ namespace FactionColonies
             // not the raw lists, so an incapacitated-but-lordless combatant (never pruned via
             // Notify_PawnLost) still resolves the battle instead of dragging it out until it dies.
             bool attackersGone = !standingAttackerPawns.Any() && !HasPendingPodAttackers();
-            if (attackersGone || !standingDefenderPawns.Any())
+            bool defendersGone = !standingDefenderPawns.Any();
+            if (attackersGone || defendersGone)
             {
-                LogUtil.Warning($"Stuck battle detected at {settlement.Name}, forcing resolution.");
+                // Grace window: a just-created battle map may not have finished spawning both sides
+                // (staggered LongEvents, shuttle deliveries). Don't force-resolve before the battle
+                // is established. Normal end-of-battle resolution runs via RemoveAttacker/
+                // RemoveDefender as pawns fall; this Tick guard is only the backstop, so gating it
+                // never delays a real victory/defeat.
+                int mapAge = battleMapCreatedTick >= 0 ? ticks - battleMapCreatedTick : int.MaxValue;
+                if (mapAge < StuckBattleGraceTicks) return;
+
+                // Diagnostic detail: which side was empty and by how much, so a recurrence
+                // distinguishes "attackers wiped" from "defenders never spawned".
+                LogUtil.Warning($"Stuck battle detected at {settlement.Name}, forcing resolution. " +
+                    $"attackersGone={attackersGone} defendersGone={defendersGone} " +
+                    $"attackers(standing/total)={standingAttackerPawns.Count()}/{attackerPawns.Count()} " +
+                    $"defenders(standing/total)={standingDefenderPawns.Count()}/{defenderPawns.Count()} " +
+                    $"pendingPods={HasPendingPodAttackers()} mapAgeTicks={mapAge} activeOps={activeOps?.Count ?? 0}");
                 endingBattle = true;
                 LongEventHandler.QueueLongEvent(EndAttack,
                     "EndingAttack", false, error =>
@@ -307,6 +333,45 @@ namespace FactionColonies
             if (p.Spawned) return false;
             if (p.ParentHolder is object) return false;
             return true;
+        }
+
+        /// <summary>True if any live (alive, not-downed) player pawn is held inside an on-map
+        /// transporter — a passenger shuttle / drop pod / other ejectable pod holder. These pawns are
+        /// <c>!Spawned</c> so <c>map.mapPawns.AllPawnsSpawned</c> misses them; <see cref="DeleteMap"/>
+        /// uses this to avoid tearing the map (and the transport with the pawns inside) down at battle
+        /// end. Mirrors the pod-holder scan vanilla uses in <c>MapPawns.AnyPawnBlockingMapRemoval</c>,
+        /// filtered to non-downed player pawns.</summary>
+        private static bool AnyLivePlayerPawnInMapContainers(Map map)
+        {
+            if (map is null) return false;
+            Faction player = Faction.OfPlayer;
+            List<Thing> holders = map.listerThings.ThingsInGroup(ThingRequestGroup.ThingHolder);
+            List<Thing> contained = new List<Thing>();
+            for (int i = 0; i < holders.Count; i++)
+            {
+                IThingHolder holder = AsTransporterHolder(holders[i]);
+                if (holder is null) continue;
+                contained.Clear();
+                ThingOwnerUtility.GetAllThingsRecursively(holder, contained);
+                for (int j = 0; j < contained.Count; j++)
+                {
+                    if (contained[j] is Pawn p && !p.Dead && !p.Downed && p.Faction == player)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>Returns the <see cref="IThingHolder"/> for a transporter-like thing (shuttle / pod /
+        /// active transporter / enterable building) that can hold and later eject player pawns, or null
+        /// for anything else. Narrower cousin of vanilla's <c>MapPawns.PlayerEjectablePodHolder</c>.</summary>
+        private static IThingHolder AsTransporterHolder(Thing thing)
+        {
+            CompTransporter transporter = thing.TryGetComp<CompTransporter>();
+            if (transporter is object) return transporter;
+            if (thing is IActiveTransporter || thing is PawnFlyer || thing is Building_Enterable)
+                return thing as IThingHolder;
+            return null;
         }
 
         /// <summary>Shared "is this a valid edge spawn cell" test: standable, unfogged, and
@@ -464,6 +529,7 @@ namespace FactionColonies
             map = MapGenerator.GenerateMap(
                 new IntVec3(size, 1, size),
                 settlement, settlement.MapGeneratorDef, settlement.ExtraGenStepDefs);
+            battleMapCreatedTick = Find.TickManager.TicksGame;
             return map;
         }
 
@@ -1065,26 +1131,31 @@ namespace FactionColonies
             {
                 WorldSettlementFC homeSettlement = force.homeSettlement;
                 // Use the squad recorded on the op, set at op creation by PickPrimaryDefendingSquad
-                // (target's own squad) or ApplyAutoDefenderSelection (foreign auto-defender)
+                // (target's own squad) or ApplyAutoDefenderSelection (foreign auto-defender).
+                // A squad only counts as usable here if it isn't already physically deployed (e.g.
+                // fighting another concurrent battle) — a deployed squad's mercs are on another map
+                // and can't spawn here. Treating a deployed squad as "no usable squad" makes it fall
+                // through to the militia fallback below so a settlement with a defending force never
+                // fields zero defenders (which would trip the stuck-battle guard into an instant loss).
                 MercenarySquadFC squad = op?.defender?.squad;
                 bool hasSquad = squad != null
                     && squad.outfit != null
-                    && squad.mercenaries.Any();
+                    && squad.mercenaries.Any()
+                    && !squad.Deployment.IsPhysicallyDeployed();
 
-                // No stationed squad: field a militia from the player's own unit designs instead of
-                // wholly-random pawns. The ephemeral squad flows through the same squadAvailable path
-                // below (CheckInitialization generates and equips its designed pawns). Returns null —
-                // and we keep the random-raid fallback — only when the player has designed no units.
+                // No usable stationed squad (none billeted, or the billeted one is deployed
+                // elsewhere): field a militia from the player's own unit designs instead of
+                // wholly-random pawns. The ephemeral squad flows through the same spawn path below
+                // (CheckInitialization generates and equips its designed pawns) and is freshly built
+                // so it is never already deployed. Returns null — and we keep the random-raid
+                // fallback — only when the player has designed no units.
                 if (!hasSquad)
                 {
                     MercenarySquadFC militia = TryBuildDesignMilitia(settlement, force);
                     if (militia != null) { squad = militia; hasSquad = true; }
                 }
 
-                bool squadDeployed = hasSquad && squad.Deployment.IsPhysicallyDeployed();
-                bool squadAvailable = hasSquad && !squadDeployed;
-
-                if (squadAvailable)
+                if (hasSquad)
                 {
                     squad.CheckInitialization();
                     squad.UpdateSquadStats(homeSettlement.settlementMilitaryLevel);
@@ -1110,8 +1181,10 @@ namespace FactionColonies
                             riders.Add(sub.handler.pawn, sub.pawn);
                     }
                 }
-                else if (!hasSquad)
+                else
                 {
+                    // No squad and no design militia: last-resort random militia raid, sized to the
+                    // defending force, so the settlement always fields something to fight with.
                     var parms = new IncidentParms
                     {
                         target = map,
@@ -1134,7 +1207,6 @@ namespace FactionColonies
                         MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(defender, efficiency);
                     }
                 }
-                // else: squad exists but is physically deployed — settlement fights with inhabitants only.
             }
 
             void tryFindLoc(out IntVec3 loc, Pawn friendly)
@@ -1270,12 +1342,15 @@ namespace FactionColonies
 
         private void RecruitMapInhabitants(MilitaryOperation op)
         {
-            if (map == null || !defenderPawns.Any()) return;
+            if (map == null) return;
             WorldSettlementFC settlement = ParentSettlement;
             if (settlement is null) return;
 
+            // May be null when GenerateFriendlies produced no squad/militia defenders (e.g. the
+            // settlement's squad is deployed elsewhere and the player has designed no units). In that
+            // case the inhabitants themselves become the defense and we stand up a lord for them below,
+            // rather than leaving the settlement with zero defenders and an instant stuck-battle loss.
             Lord defenseLord = defenderPawns.FirstOrDefault()?.GetLord();
-            if (defenseLord == null) return;
 
             Faction empireFaction = FindFC.EmpireFaction;
             var defenderSet = new HashSet<Pawn>(defenderPawns);
@@ -1330,8 +1405,24 @@ namespace FactionColonies
                 Lord existingLord = inhabitant.GetLord();
                 if (existingLord != null)
                     existingLord.Notify_PawnLost(inhabitant, PawnLostCondition.LeftVoluntarily);
+            }
 
-                defenseLord.AddPawn(inhabitant);
+            // With no existing defender lord the inhabitants ARE the defense: stand up a fresh
+            // defense lord for them. Otherwise fold them into the existing defenders' lord.
+            if (defenseLord == null)
+            {
+                if (inhabitants.Any())
+                    defenseLord = LordMaker.MakeNewLord(empireFaction,
+                        new LordJob_DefendColony(settlement, new Dictionary<Pawn, Pawn>()), map, inhabitants);
+            }
+            else
+            {
+                foreach (Pawn inhabitant in inhabitants)
+                    defenseLord.AddPawn(inhabitant);
+            }
+
+            foreach (Pawn inhabitant in inhabitants)
+            {
                 civilianPawns.Add(inhabitant);
                 if (op?.defender?.pawns is object)
                 {
@@ -1472,6 +1563,14 @@ namespace FactionColonies
                 playerPawns.Add(pawn);
                 if (!pawn.Downed) anyMobile = true;
             }
+
+            // A player pawn the player has boarded into a shuttle / drop pod (or a mid-departure
+            // caravan) is no longer Spawned, so the AllPawnsSpawned scan above misses it. Without this,
+            // tearing the map down at battle end would destroy the transport and the pawns inside it.
+            // Count live containerized player pawns as "mobile" so we take the keep-the-map path; the
+            // normal CheckRemoveMapNow / ShouldRemoveMapNow lifecycle then removes the map safely once
+            // the shuttle actually launches (vanilla keeps the map while a loaded transporter is present).
+            if (!anyMobile && AnyLivePlayerPawnInMapContainers(map)) anyMobile = true;
 
             if (anyMobile || shuttleLandingPending)
             {

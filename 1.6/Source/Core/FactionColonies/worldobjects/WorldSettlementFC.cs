@@ -1184,6 +1184,10 @@ namespace FactionColonies
             if (map.AnyBuildingBlockingMapRemoval) return false;
             if (MilitaryComp?.isUnderAttack == true) return false;
             if (MilitaryComp is object && (MilitaryComp.defenders.Any() || MilitaryComp.attackers.Any())) return false;
+            // A defense shuttle mid-landing holds its pawns in an unspawned TransportShip that
+            // AnyPawnBlockingMapRemoval can't see. DeleteMap keeps the map for this state; mirror that
+            // here so the map isn't torn down (destroying the shuttle) while the landing zone is chosen.
+            if (FindFC.MilitaryManager?.GetBattlefield(Tile)?.shuttleLandingPending == true) return false;
             // Vanilla checks: wait for player pawns to leave and incoming transporters to arrive
             if (map.mapPawns.AnyPawnBlockingMapRemoval) return false;
             if (TransporterUtility.IncomingTransporterPreventingMapRemoval(map)) return false;
@@ -1192,8 +1196,12 @@ namespace FactionColonies
 
         public override void Notify_MyMapAboutToBeRemoved()
         {
+            // Safety net: ShouldRemoveMapNow + DeleteMap's container-aware keep check should ensure no
+            // live player pawn is still here, but if one slipped through, deliver it home (with a warning)
+            // rather than let the map removal destroy it.
+            SquadMapTeardownUtil.EvacuatePlayerPawns(Map);
+
             // Clean up Empire faction pawns to prevent ghost colonists in the world pawn pool.
-            // By this point all player pawns have left (ShouldRemoveMapNow confirmed no blockers).
             // Shared with the manual-offense teardown so both preserve the squad identically.
             SquadMapTeardownUtil.PreserveEmpirePawns(Map);
 

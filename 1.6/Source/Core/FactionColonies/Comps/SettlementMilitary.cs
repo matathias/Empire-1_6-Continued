@@ -398,12 +398,22 @@ namespace FactionColonies
         {
             MilitaryOperationManager mgr = FindFC.MilitaryManager;
             if (mgr is null) return null;
-            IReadOnlyList<MilitaryOperation> active = mgr.active;
-            foreach (MilitaryOperation op in active)
+            WorldSettlementFC settlement = WorldSettlement;
+            if (settlement is null) return null;
+            // Target-based match, not defender-based: the "watch battle" gizmo belongs on the
+            // settlement actually under attack, not on whichever settlement is supplying the
+            // defenders. When a foreign auto-defender is selected op.defender.homeSettlement points
+            // at the squad's billet, so matching on it put the gizmo on the wrong settlement (and
+            // hid it on the real target). Scan the target tile's ops for the engaged one whose
+            // battleResult is live (auto-resolve battles only). Mirrors GetDefensiveOpAt.
+            IReadOnlyList<MilitaryOperation> ops = mgr.GetOpsAt(settlement.Tile);
+            for (int i = 0; i < ops.Count; i++)
             {
+                MilitaryOperation op = ops[i];
                 if (op?.battleResult is null) continue;
                 if (op.phase != MilitaryOperationPhase.Engaged) continue;
-                if (op.defender?.homeSettlement == WorldSettlement) return op;
+                if (op.targetObject != settlement) continue;
+                return op;
             }
             return null;
         }

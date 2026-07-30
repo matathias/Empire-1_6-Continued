@@ -389,4 +389,20 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_24</defName>
+		<label>Manual Battle Fixes</label>
+		<description>A couple fixes for manual battle issues.</description>
+		<releaseDate>2026-07-29</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: the &quot;watch battle&quot; gizmo would show up on the home settlement of the defending squad, rather than the actual defending settlement</li>
+		<li>Add protections against starting a manual defense battle with zero defenders</li>
+		<li>Bugfix: loading pawns into a shuttle after a manual defense battle is finished could result in the map being removed along with the shuttle and the pawns, disappearing them into the ether</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
