@@ -400,19 +400,26 @@ namespace FactionColonies
             if (mgr is null) return null;
             WorldSettlementFC settlement = WorldSettlement;
             if (settlement is null) return null;
-            // Target-based match, not defender-based: the "watch battle" gizmo belongs on the
-            // settlement actually under attack, not on whichever settlement is supplying the
-            // defenders. When a foreign auto-defender is selected op.defender.homeSettlement points
-            // at the squad's billet, so matching on it put the gizmo on the wrong settlement (and
-            // hid it on the real target). Scan the target tile's ops for the engaged one whose
-            // battleResult is live (auto-resolve battles only). Mirrors GetDefensiveOpAt.
-            IReadOnlyList<MilitaryOperation> ops = mgr.GetOpsAt(settlement.Tile);
+            return FindWatchBattleOp(mgr.GetOpsAt(settlement.Tile), settlement);
+        }
+
+        /// <summary>Selects the live auto-resolving battle op whose TARGET is <paramref name="target"/>
+        /// — the "watch battle" gizmo op — from the ops at the target's tile. Target-based, not
+        /// defender-based: the gizmo belongs on the settlement actually under attack, not on whichever
+        /// settlement is supplying the defenders. A foreign auto-defender leaves
+        /// <c>op.defender.homeSettlement</c> pointing at the squad's billet, so matching on that would
+        /// show the gizmo on the wrong settlement (and hide it on the real target). Only auto-resolving
+        /// battles have a live <c>battleResult</c>. Extracted to a static so it is unit-testable without
+        /// a live comp/world (see <c>MilitaryOperationManagerTests</c>). Mirrors <c>GetDefensiveOpAt</c>.</summary>
+        internal static MilitaryOperation FindWatchBattleOp(IReadOnlyList<MilitaryOperation> ops, WorldSettlementFC target)
+        {
+            if (ops is null || target is null) return null;
             for (int i = 0; i < ops.Count; i++)
             {
                 MilitaryOperation op = ops[i];
                 if (op?.battleResult is null) continue;
                 if (op.phase != MilitaryOperationPhase.Engaged) continue;
-                if (op.targetObject != settlement) continue;
+                if (op.targetObject != target) continue;
                 return op;
             }
             return null;

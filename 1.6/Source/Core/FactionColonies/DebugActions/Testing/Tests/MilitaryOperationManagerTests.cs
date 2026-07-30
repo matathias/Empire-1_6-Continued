@@ -14,6 +14,18 @@ namespace FactionColonies
             return op;
         }
 
+        /* An engaged, auto-resolving defensive op: targets one settlement, defended by (possibly a
+           foreign) squad billeted at another. battleResult non-null + phase Engaged is what the
+           "watch battle" gizmo lookup (FindWatchBattleOp) filters on. */
+        private static MilitaryOperation MakeEngagedDefensiveOp(WorldSettlementFC target, WorldSettlementFC homeDefender)
+        {
+            var op = new MilitaryOperation(-1, null, target.Tile, target);
+            op.defender.homeSettlement = homeDefender;
+            op.phase = MilitaryOperationPhase.Engaged;
+            op.battleResult = new BattleResult();
+            return op;
+        }
+
         private static WorldSettlementFC FirstSettlement()
         {
             var settlements = FindFC.Settlements;
@@ -111,6 +123,38 @@ namespace FactionColonies
 
             var ops = manager.GetOpsAt(tile);
             TestAssert.AreEqual(2, ((System.Collections.Generic.IReadOnlyList<MilitaryOperation>)ops).Count);
+        }
+
+        // -*- Watch-battle gizmo op selection (target-based, not defender-based) -*-
+
+        /* Regression for the "only one settlement shows the battle-in-progress gizmo" bug: when a
+           foreign auto-defender defends settlement B, both B's op and A's op carry
+           defender.homeSettlement == A. FindWatchBattleOp must select by op.targetObject so B (the real
+           target) gets its own watch op and A doesn't hijack B's battle. */
+        [EmpireTest("Military")]
+        public static void FindWatchBattleOp_MatchesTarget_NotDefenderHome()
+        {
+            var settlements = FindFC.Settlements;
+            if (settlements is null || settlements.Count < 2) TestAssert.Skip("Needs >= 2 settlements");
+            WorldSettlementFC a = settlements[0];
+            WorldSettlementFC b = settlements[1];
+            if (a is null || b is null || System.Object.ReferenceEquals(a, b))
+                TestAssert.Skip("Need two distinct settlements");
+
+            // op targeting A defended by A's own squad; op targeting B defended by a FOREIGN squad from A.
+            // Both have defender.homeSettlement == A — the shape that broke the old defender-home matching.
+            var opA = MakeEngagedDefensiveOp(a, homeDefender: a);
+            var opB = MakeEngagedDefensiveOp(b, homeDefender: a);
+
+            // opB first, so a defender-home match for A would wrongly return opB; target-based returns opA.
+            var ops = new System.Collections.Generic.List<MilitaryOperation> { opB, opA };
+
+            TestAssert.IsTrue(
+                System.Object.ReferenceEquals(opA, WorldObjectComp_SettlementMilitary.FindWatchBattleOp(ops, a)),
+                "A's watch op must be the op targeting A, not the foreign-defended op targeting B");
+            TestAssert.IsTrue(
+                System.Object.ReferenceEquals(opB, WorldObjectComp_SettlementMilitary.FindWatchBattleOp(ops, b)),
+                "B (foreign-defended target) must get its own watch op, not be skipped");
         }
 
         [EmpireTest("Military")]

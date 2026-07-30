@@ -340,8 +340,9 @@ namespace FactionColonies
         /// <c>!Spawned</c> so <c>map.mapPawns.AllPawnsSpawned</c> misses them; <see cref="DeleteMap"/>
         /// uses this to avoid tearing the map (and the transport with the pawns inside) down at battle
         /// end. Mirrors the pod-holder scan vanilla uses in <c>MapPawns.AnyPawnBlockingMapRemoval</c>,
-        /// filtered to non-downed player pawns.</summary>
-        private static bool AnyLivePlayerPawnInMapContainers(Map map)
+        /// filtered to non-downed player pawns. Internal so the battle-teardown destructive tests can
+        /// assert it directly.</summary>
+        internal static bool AnyLivePlayerPawnInMapContainers(Map map)
         {
             if (map is null) return false;
             Faction player = Faction.OfPlayer;
