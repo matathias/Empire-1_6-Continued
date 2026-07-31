@@ -36,6 +36,9 @@ namespace FactionColonies.util
             evt.let = evtParams.let;
             evt.msg = evtParams.msg;
             evt.isDelayed = evtParams.isDelayed;
+            /* Carry the reschedule count across the fresh event so the SendShuttle cap actually
+               accumulates instead of resetting to 0 each 0.4h retry. */
+            evt.deliveryAttempts = evtParams.deliveryAttempts;
             evt.deliveryMode = evtParams.deliveryMode;
             FindFC.EventManager.AddEvent(evt);
         }

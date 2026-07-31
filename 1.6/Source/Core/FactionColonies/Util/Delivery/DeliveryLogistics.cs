@@ -16,6 +16,12 @@ namespace FactionColonies.util
        reschedule via DeliveryEvent.CreateDeliveryEvent when the world isn't ready. */
     public static class DeliveryLogistics
     {
+        /* Max times a shuttle delivery may reschedule (each +1000 ticks ≈ 0.4h) while its landing
+           zone stays blocked. A few retries let a transiently-occupied pad (a shuttle mid-landing,
+           etc.) clear; past the cap the delivery falls back to drop pods so a permanently-blocked
+           pad can never loop the delivery forever. */
+        private const int MaxDeliveryReschedules = 3;
+
         public static TraverseParms DeliveryTraverseParms => new TraverseParms()
         {
             canBashDoors = false,
@@ -66,6 +72,17 @@ namespace FactionColonies.util
             }
             else
             {
+                /* Landing zone blocked. Retry a few times (a pad occupied mid-landing usually clears),
+                   but never loop forever: once past the cap, fall back to drop pods, which need no
+                   landing zone. */
+                evt.deliveryAttempts++;
+                if (evt.deliveryAttempts > MaxDeliveryReschedules)
+                {
+                    Messages.Message(((string)"FCShuttleLandingBlockedFallbackDropPod".Translate(evt.goods.ToLetterString())).Replace("\n", " "), MessageTypeDefOf.NeutralEvent);
+                    SendDropPod(evt);
+                    return;
+                }
+
                 if (!evt.isDelayed)
                 {
                     Messages.Message(((string)"FCShuttleLandingBlockedWithItems".Translate(evt.goods.ToLetterString())).Replace("\n", " "), MessageTypeDefOf.RejectInput);

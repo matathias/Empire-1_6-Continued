@@ -44,6 +44,10 @@ namespace FactionColonies
         public Message msg = null;
         public Letter let = null;
         public bool isDelayed = false;
+        /* Counts how many times a shuttle delivery has been rescheduled because its landing zone
+           was blocked. Capped in DeliveryLogistics.SendShuttle so a permanently-blocked pad falls
+           back to drop pods instead of looping forever. */
+        public int deliveryAttempts = 0;
         public TaxDeliveryMode deliveryMode;
 
         //Military Force stuff — drained into MilitaryOperation by MilitaryMigrationUtil on
@@ -163,6 +167,7 @@ namespace FactionColonies
             Scribe_Deep.Look(ref msg, "msg");
             Scribe_Deep.Look(ref let, "let");
             Scribe_Values.Look(ref isDelayed, "isDelayed", false);
+            Scribe_Values.Look(ref deliveryAttempts, "deliveryAttempts", 0);
             Scribe_Values.Look(ref deliveryMode, "deliveryMode");
             Scribe_Values.Look(ref phase, "phase", FCEventPhase.Queued);
 

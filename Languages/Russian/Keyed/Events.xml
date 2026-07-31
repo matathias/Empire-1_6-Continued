@@ -49,6 +49,7 @@
   <FCTransportingInjuredDropPodLost>Дроп-поды транспортируют раненых колонистов обратно к вам после проваленной обороны поселения</FCTransportingInjuredDropPodLost>
   <FCTransportingInjuredCaravanLost>Караван транспортирует раненых колонистов обратно к вам после проваленной обороны поселения</FCTransportingInjuredCaravanLost>
   <FCShuttleLandingBlockedWithItems>Шаттл не может найти свободное место для посадки и ждет его освобождения. Он содержит: {0}.</FCShuttleLandingBlockedWithItems>
+  <FCShuttleLandingBlockedFallbackDropPod>Шаттл так и не нашёл свободное место для посадки, поэтому груз отправляется дроп-подом. Он содержит: {0}.</FCShuttleLandingBlockedFallbackDropPod>
   <FCShuttleLandingBlocked>Шаттл не может найти свободное место для посадки и ждет его освобождения.</FCShuttleLandingBlocked>
   <FCCaravanDangerTooHigh>Караван ждет, пока ваша карта очистится от опасности, чтобы доставить груз.</FCCaravanDangerTooHigh>
   <FCCaravanDangerTooHighWithItems>Караван ждет, пока ваша карта очистится от опасности, чтобы доставить груз. Они несут: {0}.</FCCaravanDangerTooHighWithItems>

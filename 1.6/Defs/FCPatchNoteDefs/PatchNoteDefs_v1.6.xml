@@ -405,4 +405,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_25</defName>
+		<label>Shuttle Port Fix</label>
+		<description>Settlements with a shuttle port always send their deliveries via shuttle (if both Royalty and the settings option are enabled). If the shuttle repeatedly can&apos;t find a landing location, though, then the deliveries will never actually go through. This update provides a small fix for that.</description>
+		<releaseDate>2026-07-31</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Shuttle deliveries are attempted only 3 times in a row. If the shuttle can&apos;t find a place to land after the 3rd attempt, then the delivery is sent by drop pod instead.</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

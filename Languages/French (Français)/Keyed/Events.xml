@@ -70,6 +70,7 @@
   <FCTransportingInjuredCaravanLost>Une caravane ramène vers vous des colons blessés après une défense ratée de la colonie</FCTransportingInjuredCaravanLost>
 	
   <FCShuttleLandingBlockedWithItems>Une navette n’a pas trouvé de zone d’atterrissage libre et attend qu’un emplacement se libère. Elle contient : {0}.</FCShuttleLandingBlockedWithItems>
+  <FCShuttleLandingBlockedFallbackDropPod>Une navette n’a toujours pas trouvé de zone d’atterrissage libre ; sa cargaison est donc envoyée par capsule de largage. Elle contient : {0}.</FCShuttleLandingBlockedFallbackDropPod>
 	
   <FCShuttleLandingBlocked>Une navette n’a pas trouvé de zone d’atterrissage libre et attend qu’un emplacement se libère.</FCShuttleLandingBlocked>
 	

@@ -86,6 +86,7 @@
   <FCTransportingInjuredCaravanLost>入植地の防衛失敗後、負傷した入植者をキャラバンで輸送中です</FCTransportingInjuredCaravanLost>
 	<!-- EN: A shuttle couldn't find a free landing spot and is waiting for one to be cleared. It contains: {0}. -->
   <FCShuttleLandingBlockedWithItems>シャトルが着陸地点を確保できず、待機中です。積荷：{0}。</FCShuttleLandingBlockedWithItems>
+  <FCShuttleLandingBlockedFallbackDropPod>シャトルが着陸地点を確保できなかったため、積荷はドロップポッドで送られます。積荷：{0}。</FCShuttleLandingBlockedFallbackDropPod>
 	<!-- EN: A shuttle couldn't find a free landing spot and is waiting for one to be cleared. -->
   <FCShuttleLandingBlocked>シャトルが着陸地点を確保できず、待機中です。</FCShuttleLandingBlocked>
 	<!-- EN: A caravan is waiting with it's delivery until your map is clear of danger. -->

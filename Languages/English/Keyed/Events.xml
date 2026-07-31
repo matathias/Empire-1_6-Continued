@@ -65,6 +65,7 @@
 	<FCTransportingInjuredDropPodLost>Drop pods are transporting injured colonists back to you after a failed settlement defence</FCTransportingInjuredDropPodLost>
 	<FCTransportingInjuredCaravanLost>A caravan is transporting injured colonists back to you after a failed settlement defence</FCTransportingInjuredCaravanLost>
 	<FCShuttleLandingBlockedWithItems>A shuttle couldn't find a free landing spot and is waiting for one to be cleared. It contains: {0}.</FCShuttleLandingBlockedWithItems>
+	<FCShuttleLandingBlockedFallbackDropPod>A shuttle delivery couldn't find a free landing spot, so its cargo is being sent by drop pod instead. It contains: {0}.</FCShuttleLandingBlockedFallbackDropPod>
 	<FCShuttleLandingBlocked>A shuttle couldn't find a free landing spot and is waiting for one to be cleared.</FCShuttleLandingBlocked>
 	<FCCaravanDangerTooHigh>A caravan is waiting with it's delivery until your map is clear of danger.</FCCaravanDangerTooHigh>
 	<FCCaravanDangerTooHighWithItems>A caravan is waiting with it's delivery until your map is clear of danger. They carry: {0}.</FCCaravanDangerTooHighWithItems>
