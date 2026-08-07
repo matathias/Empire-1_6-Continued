@@ -431,24 +431,28 @@ namespace FactionColonies.util
             {
                 return true;
             }
+
+            // Only classify as non-violent when ALL of shooting accuracy, melee hit chance, and melee
+            // dodge chance are reduced below 50%.
+            bool shootingReduced = false;
+            bool meleeHitReduced = false;
+            bool meleeDodgeReduced = false;
+
             foreach (GeneDef gene in genes)
             {
-                if (gene.statFactors != null)
+                if (gene.statFactors is null) continue;
+
+                foreach (var statModifier in gene.statFactors)
                 {
-                    foreach (var statModifier in gene.statFactors)
-                    {
-                        // Check for severely reduced combat stats
-                        if ((statModifier.stat == StatDefOf.ShootingAccuracyPawn ||
-                             statModifier.stat == StatDefOf.MeleeHitChance ||
-                             statModifier.stat == StatDefOf.MeleeDodgeChance) &&
-                            statModifier.value < 0.5f)
-                        {
-                            return true;
-                        }
-                    }
+                    if (statModifier.value >= 0.5f) continue;
+
+                    if (statModifier.stat == StatDefOf.ShootingAccuracyPawn) shootingReduced = true;
+                    else if (statModifier.stat == StatDefOf.MeleeHitChance) meleeHitReduced = true;
+                    else if (statModifier.stat == StatDefOf.MeleeDodgeChance) meleeDodgeReduced = true;
                 }
             }
-            return false;
+
+            return shootingReduced && meleeHitReduced && meleeDodgeReduced;
         }
         public static bool CanGeneListDoRequiredWork(WorkTags requiredTags, List<GeneDef> genes)
         {

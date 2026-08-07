@@ -447,4 +447,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_28</defName>
+		<label>&apos;Non-Violent&apos; Xenotype Reclassification</label>
+		<description>Previously, if a xenotype had *any* of shooting accuracy &lt; 50%, melee hit chance &lt; 50%, or melee dodge chance &lt; 50%, then it would be classified as &apos;non-violent&apos;, and barred from use in the unit creator.\n\nThis patch changes the logic so that all three must be true for a xenotype to be classified as &apos;non-violent&apos;. So now you can have merc units that are incapable of dodging, or shit at shooting, but still capable in the other two stats.</description>
+		<releaseDate>2026-08-07</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Relax the non-violent xenotype classification to require shooting accuracy &lt; 50% AND melee hit chance &lt; 50% AND melee dodge chance &lt; 50%. This is independent of the check for whether or not a xenotype can do violent work</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
