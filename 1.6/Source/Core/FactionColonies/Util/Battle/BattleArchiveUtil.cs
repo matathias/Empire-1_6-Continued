@@ -66,7 +66,8 @@ namespace FactionColonies
             }
             if (result.defenderLabel.NullOrEmpty())
             {
-                result.defenderLabel = op.defender?.homeSettlement?.Name
+                result.defenderLabel = (op.targetObject as WorldSettlementFC)?.Name
+                    ?? op.defender?.homeSettlement?.Name
                     ?? op.defender?.squad?.DisplayName
                     ?? op.defender?.faction?.Name
                     ?? "?";

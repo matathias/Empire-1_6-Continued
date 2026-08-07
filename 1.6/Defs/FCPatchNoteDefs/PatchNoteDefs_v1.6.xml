@@ -419,4 +419,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_26</defName>
+		<label>Battle Archive Fix</label>
+		<description>Fixes an issue where the battle log would display the name of the defending squad&apos;s home settlement, rather than the actual settlement that&apos;s under attack.</description>
+		<releaseDate>2026-08-06</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: the battle log would show the name of the defending squad&apos;s home settlement, rather than the settlement that is under attack</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

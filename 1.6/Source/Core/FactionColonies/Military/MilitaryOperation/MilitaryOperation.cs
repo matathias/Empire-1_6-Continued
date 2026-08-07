@@ -268,7 +268,7 @@ namespace FactionColonies
                 attackerEfficiency = atk.militaryEfficiency,
                 defenderEfficiency = def.militaryEfficiency,
                 attackerLabel = aggressor.squad?.DisplayName ?? aggressor.homeSettlement?.Name ?? aggressor.faction?.Name ?? "?",
-                defenderLabel = defender.homeSettlement?.Name ?? defender.squad?.DisplayName ?? defender.faction?.Name ?? "?",
+                defenderLabel = (targetObject as WorldSettlementFC)?.Name ?? defender.homeSettlement?.Name ?? defender.squad?.DisplayName ?? defender.faction?.Name ?? "?",
                 attackerFactionName = aggressor.faction?.Name ?? "?",
                 defenderFactionName = defender.faction?.Name ?? "?",
                 attackerFaction = aggressor.faction,
