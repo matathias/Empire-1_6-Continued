@@ -433,4 +433,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_27</defName>
+		<label>Death Acidifier Compat Fix</label>
+		<description>Fixes an issue with merc hires being broken by mods that disable or remove the Death Acidifier.</description>
+		<releaseDate>2026-08-07</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: when Empire&apos;s &quot;Anti-Exploit&quot; setting is on, Death Acidifiers are applied to mercs unconditionally. If a mod disables or removes the Death Acidifier, then any attempt to add it will error and fail, resulting in the merc not being generated</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

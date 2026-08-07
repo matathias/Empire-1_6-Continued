@@ -456,13 +456,26 @@ namespace FactionColonies
             RecipeDef recipe = FCRecipeDefOf.InstallDeathAcidifier;
             if (recipe?.Worker is null) return;
 
+            // Nothing to install if another mod stripped/failed to resolve the acidifier hediff
+            // (leaving addsHediff null). ApplyOnPawn would otherwise pass null to HediffMaker.MakeHediff
+            // and NRE, aborting the whole squad hire. Guarded here just as MilUnitFC.IsImplantApplicable does.
+            if (recipe.addsHediff is null) return;
+
             // Install through the game's own surgery worker (Recipe_InstallImplant.ApplyOnPawn with a
             // null bill doer), exactly as MilUnitFC.ApplyImplantsToPawn does. GetPartsToApplyOn resolves
             // the recipe's fixed part (Torso) and returns nothing if the pawn already has the acidifier,
             // so a legacy unit design that already installed it is a no-op.
-            BodyPartRecord part = recipe.Worker.GetPartsToApplyOn(pawn, recipe).FirstOrFallback();
-            if (part is null) return;
-            recipe.Worker.ApplyOnPawn(pawn, part, null, null, null);
+            try
+            {
+                BodyPartRecord part = recipe.Worker.GetPartsToApplyOn(pawn, recipe).FirstOrFallback();
+                if (part is null) return;
+                recipe.Worker.ApplyOnPawn(pawn, part, null, null, null);
+            }
+            catch (Exception ex)
+            {
+                // Best-effort: a surgery-worker failure (e.g. mod interaction) must not abort squad hire.
+                LogUtil.Warning($"Failed to apply death acidifier to {pawn.LabelShortCap}: {ex.Message}");
+            }
         }
     }
 }
