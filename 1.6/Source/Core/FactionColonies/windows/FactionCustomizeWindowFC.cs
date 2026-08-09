@@ -234,7 +234,7 @@ namespace FactionColonies
             {
                 Rect clearRect = new Rect(primarySwatchRect.x, primaryLabelRect.yMax, swatchSize, 18f);
                 GUI.color = new Color(0.72f, 0.53f, 0.04f);
-                if (UIUtil.ClampedButtonText(clearRect, "Clear", drawBackground: false))
+                if (UIUtil.ClampedButtonText(clearRect, "FCClear".Translate(), drawBackground: false))
                 {
                     tempHasPrimaryColor = false;
                     tempPrimaryColor = Color.white;
@@ -281,7 +281,7 @@ namespace FactionColonies
             {
                 Rect clearRect = new Rect(secondarySwatchRect.x, secondaryLabelRect.yMax, swatchSize, 18f);
                 GUI.color = new Color(0.72f, 0.53f, 0.04f);
-                if (UIUtil.ClampedButtonText(clearRect, "Clear", drawBackground: false))
+                if (UIUtil.ClampedButtonText(clearRect, "FCClear".Translate(), drawBackground: false))
                 {
                     tempHasSecondaryColor = false;
                     tempSecondaryColor = Color.white;

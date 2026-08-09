@@ -35,18 +35,18 @@ namespace FactionColonies
         {
             switch (f)
             {
-                case TileField.Temperature: return "Temperature";
-                case TileField.Rainfall: return "Rainfall";
-                case TileField.Swampiness: return "Swampiness";
-                case TileField.Elevation: return "Elevation";
-                case TileField.Pollution: return "Pollution";
-                case TileField.AnimalDensity: return "Animal density";
-                case TileField.PlantDensityFactor: return "Plant density";
-                case TileField.FishPopulationFactor: return "Fish population";
-                case TileField.BiomePlantDensity: return "Biome plant density";
-                case TileField.RiverDistance: return "River distance";
-                case TileField.RoadCount: return "Road connectivity";
-                case TileField.HasAnyRiver: return "River";
+                case TileField.Temperature: return "FCTileFieldTemperature".Translate();
+                case TileField.Rainfall: return "Rainfall".Translate();
+                case TileField.Swampiness: return "FCTileFieldSwampiness".Translate();
+                case TileField.Elevation: return "Elevation".Translate();
+                case TileField.Pollution: return "FCTileFieldPollution".Translate();
+                case TileField.AnimalDensity: return "FCTileFieldAnimalDensity".Translate();
+                case TileField.PlantDensityFactor: return "FCTileFieldPlantDensity".Translate();
+                case TileField.FishPopulationFactor: return "FCTileFieldFishPopulation".Translate();
+                case TileField.BiomePlantDensity: return "FCTileFieldBiomePlantDensity".Translate();
+                case TileField.RiverDistance: return "FCTileFieldRiverDistance".Translate();
+                case TileField.RoadCount: return "FCTileFieldRoadConnectivity".Translate();
+                case TileField.HasAnyRiver: return "River".Translate();
                 default: return f.ToString();
             }
         }

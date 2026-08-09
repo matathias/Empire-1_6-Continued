@@ -45,6 +45,8 @@
 	<titheMaxCountScaler>1</titheMaxCountScaler>
 	<modExtensions>
 		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
 			<resourceHilliness>
 				<li>
 					<hilliness>Flat</hilliness>
@@ -163,6 +165,8 @@
 	<defenseWeight>1.0</defenseWeight>
 	<modExtensions>
 		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
 			<resourceHilliness>
 				<li>
 					<hilliness>Mountainous</hilliness>
@@ -390,6 +394,8 @@
 	<titheMaxCountScaler>2</titheMaxCountScaler>
 	<modExtensions>
 		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
 			<resourceHilliness>
 				<li>
 					<hilliness>SmallHills</hilliness>
@@ -548,6 +554,8 @@
 	<modExtensions>
 		<li Class="FactionColonies.ResourcePoolExt_Research" />
 		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
 			<resourceHilliness>
 				<li>
 					<hilliness>LargeHills</hilliness>
@@ -596,6 +604,8 @@
 	<modExtensions>
 		<li Class="FactionColonies.ResourcePoolExt_Power" />
 		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
 			<resourceHilliness>
 				<li>
 					<hilliness>LargeHills</hilliness>

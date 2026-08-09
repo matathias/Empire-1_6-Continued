@@ -7,6 +7,8 @@
 	<FCNo>No</FCNo>
 	<FCYes>Yes</FCYes>
 	<FCSet>Set</FCSet>
+	<FCClear>Clear</FCClear>
+	<FCOther>Other</FCOther>
 	<FCDeploy>Deploy</FCDeploy>
 	<FCReset>Reset</FCReset>
 	<FCBase>Base</FCBase>

@@ -899,7 +899,7 @@ namespace FactionColonies
 
             if (alert)
             {
-                Find.LetterStack.ReceiveLetter("Military Cooldown", "FCMilitaryCooldown".Translate(WorldSettlement.Name),
+                Find.LetterStack.ReceiveLetter("FCMilitaryCooldownLabel".Translate(), "FCMilitaryCooldown".Translate(WorldSettlement.Name),
                     LetterDefOf.PositiveEvent);
             }
         }

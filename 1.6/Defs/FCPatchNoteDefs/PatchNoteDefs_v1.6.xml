@@ -461,4 +461,20 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_29</defName>
+		<label>Translation Update</label>
+		<description>Change a few hard-coded strings to use translation keys instead, particularly in the Tile Field Resource Production Extension.</description>
+		<releaseDate>2026-08-09</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Change the hard-coded strings in ResourceProductionExtension_TileField to use translation keys</li>
+		<li>Explicitly set extName and extDesc for Hilliness resource production extensions in the XML, to make it more obvious that resource production extensions should set their extName and extDesc through XML</li>
+		<li>Clean up a couple of other scattered hard-coded strings</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

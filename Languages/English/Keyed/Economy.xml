@@ -278,4 +278,15 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCGoodsReceived>Goods Received</FCGoodsReceived>
 	<FCGoodsReceivedFollowing>You have received the following goods from the {0} event:</FCGoodsReceivedFollowing>
 
+	<!-- Tile Field Production Labels (Rainfall/Elevation/River reuse vanilla Core keys) -->
+	<FCTileFieldTemperature>Temperature</FCTileFieldTemperature>
+	<FCTileFieldSwampiness>Swampiness</FCTileFieldSwampiness>
+	<FCTileFieldPollution>Pollution</FCTileFieldPollution>
+	<FCTileFieldAnimalDensity>Animal density</FCTileFieldAnimalDensity>
+	<FCTileFieldPlantDensity>Plant density</FCTileFieldPlantDensity>
+	<FCTileFieldFishPopulation>Fish population</FCTileFieldFishPopulation>
+	<FCTileFieldBiomePlantDensity>Biome plant density</FCTileFieldBiomePlantDensity>
+	<FCTileFieldRiverDistance>River distance</FCTileFieldRiverDistance>
+	<FCTileFieldRoadConnectivity>Road connectivity</FCTileFieldRoadConnectivity>
+
 </LanguageData>

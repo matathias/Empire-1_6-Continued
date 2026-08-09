@@ -1365,7 +1365,7 @@ namespace FactionColonies
             var grouped = new Dictionary<string, List<FCEventDef>>();
             foreach (FCEventDef def in rootEvents)
             {
-                string catLabel = def.category != null ? def.category.LabelCap.ToString() : "Other";
+                string catLabel = def.category != null ? def.category.LabelCap.ToString() : "FCOther".Translate().ToString();
                 if (!grouped.ContainsKey(catLabel))
                     grouped[catLabel] = new List<FCEventDef>();
                 grouped[catLabel].Add(def);

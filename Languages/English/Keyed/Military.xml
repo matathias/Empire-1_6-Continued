@@ -46,6 +46,7 @@
 	<FCSquadCooldown>Squad {0} is re-organizing at {1} after their last mission.</FCSquadCooldown>
 	<FCTravelingSquadLabel>Traveling squad</FCTravelingSquadLabel>
 	<FCMilitaryCooldown>The military forces of {0} are ready to be used again</FCMilitaryCooldown>
+	<FCMilitaryCooldownLabel>Military Cooldown</FCMilitaryCooldownLabel>
 	<FCNoFactionForMilitary>You cannot make a military without a faction!</FCNoFactionForMilitary>
 
 	<!-- Raid/Capture Results -->
