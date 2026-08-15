@@ -477,4 +477,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_30</defName>
+		<label>Naked Merc Update</label>
+		<description>Fixes a bug where merc units wouldn&apos;t spawn if they have no equipped apparel or weapons.</description>
+		<releaseDate>2026-08-15</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: if a merc unit had no apparel or weapons, then it wouldn&apos;t spawn with its squad</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

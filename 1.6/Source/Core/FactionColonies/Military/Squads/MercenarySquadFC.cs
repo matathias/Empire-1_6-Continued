@@ -216,12 +216,7 @@ namespace FactionColonies
         }
 
         public IEnumerable<Mercenary> EquippedMercenaries =>
-            mercenaries.Where(merc => merc?.pawn?.apparel != null
-                                       && merc.pawn.equipment != null
-                                       && (merc.pawn.apparel.WornApparel.Any()
-                                           || merc.pawn.equipment.AllEquipmentListForReading.Any()
-                                           || merc.animals.Any())
-                                       && merc.deployable);
+            mercenaries.Where(merc => merc?.pawn != null && merc.deployable);
 
         public IEnumerable<Pawn> EquippedMercenaryPawns =>
             EquippedMercenaries.Select(merc => merc.pawn);

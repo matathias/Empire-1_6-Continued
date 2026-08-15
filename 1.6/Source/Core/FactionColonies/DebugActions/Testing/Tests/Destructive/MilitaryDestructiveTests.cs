@@ -1,5 +1,6 @@
 using System.Linq;
 using RimWorld.Planet;
+using Verse;
 
 namespace FactionColonies
 {
@@ -98,6 +99,55 @@ namespace FactionColonies
             TestAssert.DoesNotThrow(() => FindFC.MilitaryManager.Unregister(op), "Unregister threw");
             TestAssert.IsFalse(FindFC.MilitaryManager.Active.Contains(op), "Op should be gone from active after Unregister");
             DestructiveTestUtil.AssertEmpireInvariants(f, "CreateDeployOp_RegistersThenUnregister");
+        }
+
+        /* Regression: a merc whose loadout is a real (non-blank) design but carries NO apparel,
+           weapon, or animals must still count as equipped/spawnable. The old EquippedMercenaries
+           predicate required worn apparel OR a weapon OR an animal, so an intentionally
+           unarmed/unarmored unit was silently dropped from every spawn path. Generates one real
+           pawn and destroys it best-effort afterward. */
+        [EmpireDestructiveTest("Destructive.Military")]
+        public static void EquippedMercenaries_IncludesUnarmedUnarmoredMerc()
+        {
+            DestructiveTestUtil.RequireFaction();
+            if (FindFC.Military?.blankUnit is null) TestAssert.Skip("No blank unit available");
+
+            // A real, non-blank loadout that carries nothing. MilUnitFC(false) already has empty
+            // apparel/weapon lists and a valid pawnKind; ClearAllEquipment makes the intent explicit.
+            MilUnitFC loadout = MilTemplateFactory.CreateUnit(false);
+            loadout.ClearAllEquipment();
+
+            MercenarySquadFC squad = new MercenarySquadFC();
+            squad.mercenaries = new System.Collections.Generic.List<Mercenary>();
+            Mercenary merc = new Mercenary(true);
+            TestAssert.DoesNotThrow(() => MercenaryPawnFactory.CreateNewPawn(squad, ref merc,
+                loadout.pawnKind, loadout.xenotype, loadout.customXenotypeName, loadout),
+                "CreateNewPawn threw");
+            if (merc?.pawn is null) TestAssert.Skip("Could not create test pawn");
+            merc.loadout = loadout;              // non-blank loadout => deployable == true
+            squad.mercenaries.Add(merc);
+
+            try
+            {
+                // Preconditions: the pawn genuinely carries nothing, yet is deployable.
+                TestAssert.IsEmpty(merc.pawn.apparel.WornApparel, "test pawn should have no apparel");
+                TestAssert.IsEmpty(merc.pawn.equipment.AllEquipmentListForReading, "test pawn should have no weapon");
+                TestAssert.IsTrue(merc.deployable, "non-blank loadout should be deployable");
+
+                // The fix: an unarmed/unarmored deployable merc must still be equipped + spawnable.
+                TestAssert.Contains(squad.EquippedMercenaries, merc,
+                    "unarmed/unarmored deployable merc must be in EquippedMercenaries");
+                TestAssert.Contains(squad.SpawnableMercenaryPawns, merc.pawn,
+                    "...and therefore spawnable");
+            }
+            finally
+            {
+                // Clean up the free-floating pawn we generated (destructive tests aren't auto-cleaned).
+                TestAssert.DoesNotThrow(() =>
+                {
+                    if (merc?.pawn is object && !merc.pawn.Destroyed) merc.pawn.Destroy();
+                });
+            }
         }
 
         [EmpireDestructiveTest("Destructive.Military")]
