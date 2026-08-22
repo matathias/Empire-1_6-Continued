@@ -217,6 +217,12 @@
 				<li>Wools</li>
 			</categories>
 		</li>
+		<!-- Adds fabric textiles crafted by a recipe rather than harvested from a crop (e.g. cloth spun at a workbench), gated behind that recipe's research. Fabrics with no recipe (e.g. devilstrand cloth, or vanilla cloth as a plain cotton harvest) are left to the farming resource's crop extension. -->
+		<li Class="FactionColonies.ResourceFilterExtension_CraftedTextiles">
+			<categories>
+				<li>Textiles</li>
+			</categories>
+		</li>
 	</modExtensions>
   </FactionColonies.ResourceTypeDef>
 

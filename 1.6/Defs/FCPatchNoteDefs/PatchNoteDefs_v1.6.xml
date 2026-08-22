@@ -491,4 +491,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_31</defName>
+		<label>Medieval Overhaul Compat Update</label>
+		<description>Allows manufactured textiles to be selected as materials for mercenary gear when Medieval Overhaul is enabled.</description>
+		<releaseDate>2026-08-21</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Allows crafted textiles to be picked for merc gear when Medieval Overhaul is enabled</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

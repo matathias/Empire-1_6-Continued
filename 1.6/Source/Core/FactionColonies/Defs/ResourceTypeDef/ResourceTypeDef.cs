@@ -770,7 +770,8 @@ namespace FactionColonies
                 {
                     foreach (ResourceFilterExtension ext2 in modExtensions.OfType<ResourceFilterExtension>())
                     {
-                        if (ext != ext2)
+                        // Distinct filter extension types are meant to compose (FilterResource runs all of them), so only flag the same concrete type appearing more than once.
+                        if (ext != ext2 && ext.GetType() == ext2.GetType())
                         {
                             yield return "ResourceFilterExtension " + ext.ToStringSafe() + " appears more than once in defModExtensions for ResourceTypeDef " + this.defName;
                         }
