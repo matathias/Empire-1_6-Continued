@@ -519,4 +519,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_33</defName>
+		<label>Settlement Destruction Update</label>
+		<description>Empire is coded defensively when it comes to settlement destruction, in that it prevents the actual destruction unless Empire does it itself. It&apos;s a bit *too* jealous in its defense, though, causing errors when RimWorld itself tries to clean up a corrupted settlement.\n\nIt shouldn&apos;t be possible to hit this issue through legitimate play, but a hole is a hole. This patch makes the destroy handling a little more robust.</description>
+		<releaseDate>2026-09-06</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Allow Empire settlements to be destroyed by RimWorld if they have no associated faction (the typical corruption clean-up case)</li>
+		<li>Add a debug action to force deletion of an Empire settlement</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

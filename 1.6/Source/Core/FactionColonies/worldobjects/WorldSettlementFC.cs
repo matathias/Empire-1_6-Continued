@@ -733,6 +733,16 @@ namespace FactionColonies
         /// </summary>
         public override void Destroy()
         {
+            // A faction-less WorldSettlementFC is corrupt and unrecoverable (e.g. vanilla's
+            // Settlement.ExposeData PostLoadInit cleanup destroys settlements whose faction failed
+            // to load). Never block that removal, and skip the combat-loss handling below — there is
+            // no battle to end.
+            if (Faction is null)
+            {
+                base.Destroy();
+                return;
+            }
+
             MilitaryComp?.EndBattle(false, 0);
 
             if (destroyFlag)

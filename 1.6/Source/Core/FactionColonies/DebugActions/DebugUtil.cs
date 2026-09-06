@@ -14,6 +14,38 @@ namespace FactionColonies
     public static class DebugUtil
     {
 
+        [DebugAction("Empire", "Force destroy settlement",
+            actionType = DebugActionType.ToolWorld, allowedGameStates = AllowedGameStates.PlayingOnWorld)]
+        private static void ForceDestroyEmpireSettlement()
+        {
+            PlanetTile tile = GenWorld.MouseTile();
+            foreach (WorldObject obj in Find.WorldObjects.ObjectsAt(tile).ToList())
+            {
+                WorldSettlementFC settlement = obj as WorldSettlementFC;
+                if (settlement is null) continue;
+
+                // Best-effort clean removal: unregisters from the faction, tears down buildings,
+                // cancels ops/events, and removes the world object. This is the normal delete path.
+                try
+                {
+                    ColonyUtil.RemovePlayerSettlement(settlement);
+                }
+                catch (Exception e)
+                {
+                    LogUtil.Warning($"Force destroy: clean removal of {settlement.Name} failed " +
+                                    $"({e.Message}); forcing raw destroy.");
+                }
+
+                // Unconditional backstop: if the clean path threw or the object was an unregistered
+                // orphan, guarantee the world object is gone regardless of destroyFlag state.
+                if (settlement.Spawned)
+                {
+                    settlement.PrepareDestroy();
+                    settlement.Destroy();
+                }
+            }
+        }
+
         [DebugAction("Empire", "Force auto-resolve round now", allowedGameStates = AllowedGameStates.Playing)]
         private static void ForceAutoResolveRoundNow()
         {
