@@ -245,7 +245,7 @@ namespace FactionColonies
             raceChoice = faction.RandomPawnKind();
 
             pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind: raceChoice,
-                faction: FindFC.EmpireFaction, context: PawnGenerationContext.NonPlayer, tile: -1,
+                faction: faction, context: PawnGenerationContext.NonPlayer, tile: -1,
                 forceGenerateNewPawn: false, allowDead: false, allowDowned: false,
                 canGeneratePawnRelations: false, mustBeCapableOfViolence: true, colonistRelationChanceFactor: 0,
                 forceAddFreeWarmLayerIfNeeded: false, allowGay: false, allowFood: false, allowAddictions: false,
