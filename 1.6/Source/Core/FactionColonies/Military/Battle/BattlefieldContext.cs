@@ -159,6 +159,13 @@ namespace FactionColonies
                 if (draftedNPCs is null) draftedNPCs = new List<Pawn>();
                 if (settlementLoot is null) settlementLoot = new HashSet<Thing>();
                 if (civilianPawns is null) civilianPawns = new HashSet<Pawn>();
+
+                // Repopulate the transient Empire battle-map marker for a save reloaded mid-battle, so
+                // vanilla settlement defeat/removal stays suppressed on the reloaded offense map (and
+                // keeps the defense register/unregister pairing uniform). A live context only holds a
+                // non-null map while its battle map exists.
+                if (map is object)
+                    FindFC.MilitaryManager?.RegisterBattleMap(map);
             }
         }
 
@@ -531,6 +538,10 @@ namespace FactionColonies
                 new IntVec3(size, 1, size),
                 settlement, settlement.MapGeneratorDef, settlement.ExtraGenStepDefs);
             battleMapCreatedTick = Find.TickManager.TicksGame;
+            // Track as an Empire battle map for teardown symmetry with offense. The defense map's
+            // parent is a WorldSettlementFC (which deliberately omits CheckDefeated), so this does not
+            // affect vanilla suppression -- it just keeps the register/unregister pairing uniform.
+            FindFC.MilitaryManager?.RegisterBattleMap(map);
             return map;
         }
 
@@ -1649,7 +1660,12 @@ namespace FactionColonies
 
             CameraJumper.TryJump(settlement.Tile);
             if (playerHome is object) Current.Game.CurrentMap = playerHome;
-            Current.Game.DeinitAndRemoveMap(map, false);
+            Map toRemove = map;
+            FindFC.MilitaryManager?.UnregisterBattleMap(toRemove);
+            if (toRemove is object && Current.Game.Maps.Contains(toRemove))
+                Current.Game.DeinitAndRemoveMap(toRemove, false);
+            else
+                LogUtil.Warning($"DeleteMap: defense map at tile {tile} already gone before teardown; skipping DeinitAndRemoveMap.");
             map = null;
         }
 

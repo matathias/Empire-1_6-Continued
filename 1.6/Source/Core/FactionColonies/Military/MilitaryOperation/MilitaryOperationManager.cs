@@ -34,6 +34,13 @@ namespace FactionColonies
         [Unsaved] private List<PlanetTile> _battlefieldKeyScratch;
         [Unsaved] private List<BattlefieldContext> _battlefieldValueScratch;
 
+        /* Live Empire-owned battle maps (offense on a vanilla enemy Settlement, and defense). Keyed
+         * on the Map instance so it stays valid even after vanilla reparents map.info.parent to a
+         * DestroyedSettlement. Not scribed: it is repopulated from the reloaded contexts in
+         * BattlefieldContext.ExposeData PostLoadInit. This is the durable predicate the offense
+         * defeat/removal guards consult -- a live battle map must never be resolved by vanilla. */
+        [Unsaved] private readonly HashSet<Map> empireBattleMaps = new HashSet<Map>();
+
         public MilitaryOperationManager()
         {
             _byTile = new Dictionary<PlanetTile, List<MilitaryOperation>>();
@@ -469,6 +476,19 @@ namespace FactionColonies
         {
             if (battlefields is object) battlefields.Remove(tile);
         }
+
+        /* -*-*-*-*- Empire battle-map marker -*-*-*-*- */
+
+        /// <summary>Marks <paramref name="map"/> as a live Empire-owned battle map so vanilla settlement
+        /// defeat/removal stays suppressed for its entire lifetime (see <c>OffenseGuardUtil</c>). Set
+        /// when the map is generated, cleared immediately before Empire removes it.</summary>
+        public void RegisterBattleMap(Map map) { if (map is object) empireBattleMaps.Add(map); }
+
+        /// <summary>Clears the Empire battle-map marker for <paramref name="map"/>.</summary>
+        public void UnregisterBattleMap(Map map) { if (map is object) empireBattleMaps.Remove(map); }
+
+        /// <summary>True while <paramref name="map"/> is a live Empire-owned battle map.</summary>
+        public bool IsEmpireBattleMap(Map map) => map is object && empireBattleMaps.Contains(map);
 
         /* -*-*-*-*- Queries -*-*-*-*- */
 

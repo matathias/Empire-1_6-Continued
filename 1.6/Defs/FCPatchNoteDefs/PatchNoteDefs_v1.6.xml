@@ -534,4 +534,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_34</defName>
+		<label>Manual Offense Fix</label>
+		<description>Fixes an issue where a non-raze manual offense battle could still result in the enemy settlement being destroyed.</description>
+		<releaseDate>2026-09-06</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: after completion of a non-raze manual offense battle, the enemy settlement could be destroyed, even though it&apos;s supposed to survive</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

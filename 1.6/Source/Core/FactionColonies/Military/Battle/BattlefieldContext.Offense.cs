@@ -129,7 +129,15 @@ namespace FactionColonies
             // MapGeneratorDef and the world's initial map size -- the same call vanilla's
             // SettlementUtility.Attack makes when a caravan attacks an enemy base.
             map = GetOrGenerateMapUtility.GetOrGenerateMap(tile, null);
-            if (map is object) map.fogGrid.ClearAllFog();
+            if (map is object)
+            {
+                // Mark the map before StripNativeGarrison / isOffense=true: the enemy Settlement is
+                // this map's parent, so vanilla's per-tick SettlementDefeatUtility.CheckDefeated /
+                // ShouldRemoveMapNow could otherwise resolve the base the instant its garrison reads
+                // defeated. The marker suppresses both for the whole map lifetime.
+                FindFC.MilitaryManager?.RegisterBattleMap(map);
+                map.fogGrid.ClearAllFog();
+            }
         }
 
         /// <summary>Removes the native humanlike garrison spawned by base generation (any faction that
@@ -585,7 +593,15 @@ namespace FactionColonies
             Map homeMap = Find.AnyPlayerHomeMap;
             CameraJumper.TryJump(tile);
             if (Find.CurrentMap == map && homeMap is object) Current.Game.CurrentMap = homeMap;
-            Current.Game.DeinitAndRemoveMap(map, false);
+            // Clear the marker before removal, then remove defensively: if vanilla (or another mod)
+            // already removed the map, DeinitAndRemoveMap would Log.Error "map ... not here" -- warn
+            // and skip so the rest of teardown (CompletePendingSettlementFate) still runs.
+            Map toRemove = map;
+            FindFC.MilitaryManager?.UnregisterBattleMap(toRemove);
+            if (toRemove is object && Current.Game.Maps.Contains(toRemove))
+                Current.Game.DeinitAndRemoveMap(toRemove, false);
+            else
+                LogUtil.Warning($"CloseOffenseMap: offense map at tile {tile} already gone before teardown; skipping DeinitAndRemoveMap.");
             map = null;
             battleMapInitialized = false;
 

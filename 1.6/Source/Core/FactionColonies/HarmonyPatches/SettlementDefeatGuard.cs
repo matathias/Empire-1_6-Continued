@@ -20,10 +20,18 @@ namespace FactionColonies
         public static bool OffenseActiveAt(Settlement s)
         {
             if (s is null || s is WorldSettlementFC) return false;
-            // CheckDefeated runs this per settlement every settlement tick. Skip the PlanetTile hash +
-            // dict probe when no battlefield exists at all (the common case: no active Empire offense).
             MilitaryOperationManager mgr = FindFC.MilitaryManager;
-            if (mgr?.battlefields is null || mgr.battlefields.Count == 0) return false;
+            if (mgr is null) return false;
+            // Primary: durable per-map marker. Keyed on the Map instance, it spans the whole map
+            // lifetime -- unlike the per-tile battlefield dict entry, which is torn down on op detach
+            // (op.Resolve -> Unregister -> Detach -> RemoveBattlefield) while the vanilla-parented map
+            // is still alive.
+            Map map = s.Map;
+            if (map is object && mgr.IsEmpireBattleMap(map)) return true;
+            // Secondary net: the flag-based test (also covers a mid-battle save/reload, where the
+            // battlefield/isOffense/map are scribed). Skip the PlanetTile hash + dict probe when no
+            // battlefield exists at all (the common case: no active Empire offense).
+            if (mgr.battlefields is null || mgr.battlefields.Count == 0) return false;
             BattlefieldContext bf = mgr.GetBattlefield(s.Tile);
             return bf is object && bf.HasOffenseAt();
         }
@@ -42,6 +50,30 @@ namespace FactionColonies
             if (mgr?.battlefields is null || mgr.battlefields.Count == 0) return false;
             BattlefieldContext bf = mgr.GetBattlefield(s.Tile);
             return bf is object && bf.HasOffenseAt() && !bf.awaitingPlayerExit;
+        }
+    }
+
+    /// <summary>
+    /// While Empire owns a live battle map, force <see cref="SettlementDefeatUtility.IsDefeated"/> to
+    /// return false for it. Both vanilla <c>CheckDefeated</c> AND third-party reimplementations of it
+    /// (e.g. Faction Territories and Vassalage's InterceptBaseDestroyedLetterPatch, which runs as a
+    /// separate Harmony prefix Empire's own CheckDefeated prefix cannot skip) gate their teardown on
+    /// this query. Neutralizing it here suppresses all of them in one place, so no external system can
+    /// convert/destroy the enemy settlement or record its defeat tale. Empire resolves the settlement's
+    /// fate itself (enslave leaves it intact; capture/raze via CompletePendingSettlementFate).
+    /// </summary>
+    [HarmonyPatch(typeof(SettlementDefeatUtility), nameof(SettlementDefeatUtility.IsDefeated))]
+    public static class SettlementDefeatUtility_IsDefeated_OffenseGuard
+    {
+        public static bool Prefix(Map map, ref bool __result)
+        {
+            MilitaryOperationManager mgr = FindFC.MilitaryManager;
+            if (mgr is object && mgr.IsEmpireBattleMap(map))
+            {
+                __result = false;
+                return false;
+            }
+            return true;
         }
     }
 
