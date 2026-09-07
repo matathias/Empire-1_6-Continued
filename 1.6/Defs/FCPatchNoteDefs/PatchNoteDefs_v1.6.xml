@@ -509,7 +509,7 @@
 	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
 		<defName>1_6_32</defName>
 		<label>Prisoner Fix</label>
-		<description>Fixes an issue where prisoners generated from a manual battle victory would be generated with the Empire faction, rather than the faction of the enemy settlement. This results in Empire trying to generate a xenotype of the Empire faction, rather than the enemy faction.</description>
+		<description>Fixes an issue where prisoners generated from a battle victory would be generated with the Empire faction, rather than the faction of the enemy settlement. This results in Empire trying to generate a xenotype of the Empire faction, rather than the enemy faction.</description>
 		<releaseDate>2026-09-06</releaseDate>
 		<patchNoteType>Patch</patchNoteType>
 		<patchNoteLines>
