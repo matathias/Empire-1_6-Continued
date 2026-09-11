@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FactionColonies.util;
 using RimWorld.Planet;
 using Verse;
 
@@ -227,6 +228,54 @@ namespace FactionColonies
             var op = new MilitaryOperation(123, null, PlanetTile.Invalid, null);
             string id = op.GetUniqueLoadID();
             TestAssert.AreEqual((object)"MilitaryOperation_123", (object)id);
+        }
+
+        // -*- HasPendingWakeup (stalled-op detection used by the orphan reconciliation) -*-
+
+        [EmpireTest("Military")]
+        public static void HasPendingWakeup_NoSourceEvents_False()
+        {
+            // A registered op with no wake-up event is stalled — its phase machine will never
+            // advance on its own. This is the state the reconciliation must resolve.
+            var op = Make(MilitaryOperationPhase.Engaged);
+            TestAssert.IsFalse(op.HasPendingWakeup);
+        }
+
+        [EmpireTest("Military")]
+        public static void HasPendingWakeup_QueuedEvent_True()
+        {
+            // A live auto-resolve battle always holds a Queued autoResolveBattleRound event; it
+            // must NOT be treated as orphaned.
+            var op = Make(MilitaryOperationPhase.Engaged);
+            op.sourceEvents.Add(new FCEvent()); // phase defaults to Queued
+            TestAssert.IsTrue(op.HasPendingWakeup);
+        }
+
+        [EmpireTest("Military")]
+        public static void HasPendingWakeup_OnlyNonQueuedEvents_False()
+        {
+            // A fired-but-not-yet-swept event is not a pending wake-up: the chain is broken.
+            var op = Make(MilitaryOperationPhase.Engaged);
+            op.sourceEvents.Add(new FCEvent { phase = FCEventPhase.Fired });
+            op.sourceEvents.Add(new FCEvent { phase = FCEventPhase.Completed });
+            TestAssert.IsFalse(op.HasPendingWakeup);
+        }
+
+        [EmpireTest("Military")]
+        public static void HasPendingWakeup_MixedEvents_TrueIfAnyQueued()
+        {
+            var op = Make(MilitaryOperationPhase.Engaged);
+            op.sourceEvents.Add(new FCEvent { phase = FCEventPhase.Completed });
+            op.sourceEvents.Add(new FCEvent()); // Queued
+            TestAssert.IsTrue(op.HasPendingWakeup);
+        }
+
+        [EmpireTest("Military")]
+        public static void HasPendingWakeup_NullEntry_Ignored()
+        {
+            var op = Make(MilitaryOperationPhase.Engaged);
+            op.sourceEvents.Add(null);
+            TestAssert.IsFalse(op.HasPendingWakeup);
         }
     }
 }

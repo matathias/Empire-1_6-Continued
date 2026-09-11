@@ -78,6 +78,25 @@ namespace FactionColonies
                                 && FindFC.EmpireFaction is object
                                 && aggressor.faction == FindFC.EmpireFaction;
 
+        /// <summary>True while this op still holds a pending (Queued) wake-up event in
+        /// <see cref="sourceEvents"/>. When this is false on a non-terminal op with no
+        /// battle map or combatants, the op is stalled: its event chain broke and it will never
+        /// reach CompleteBattle on its own. Reconciliation (BattlefieldContext.Tick,
+        /// SettlementMilitary.PostSettlementLoadInit) uses this to tell a stuck op from a
+        /// live auto-resolve battle, which always carries a Queued autoResolveBattleRound event.</summary>
+        public bool HasPendingWakeup
+        {
+            get
+            {
+                if (sourceEvents is null) return false;
+                foreach (FCEvent e in sourceEvents)
+                {
+                    if (e?.IsQueued == true) return true;
+                }
+                return false;
+            }
+        }
+
         public void ExposeData()
         {
             Scribe_Values.Look(ref id, "id", -1);

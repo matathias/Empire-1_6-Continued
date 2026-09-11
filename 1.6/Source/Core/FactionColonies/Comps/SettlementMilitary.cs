@@ -726,18 +726,33 @@ namespace FactionColonies
                 bf.draftedNPCs?.Clear();
                 bf.ClearAllOpPawns();
             }
+
+            // isUnderAttack is derived from the manager (HasDefenseAt); battlefield cleanup alone
+            // can't clear it while a stuck defensive op is still registered at this tile. So we
+            // have to terminate the op by Resolving it.
+            MilitaryOperationManager mgr = FindFC.MilitaryManager;
+            if (mgr is object && WorldSettlement is object)
+            {
+                MilitaryOperation orphan;
+                // Resolve() -> Unregister drops the op from the manager, so GetDefensiveOpAt
+                // eventually returns null and the loop terminates.
+                while ((orphan = mgr.GetDefensiveOpAt(WorldSettlement)) is object)
+                    orphan.Resolve();
+            }
         }
 
         public void PostSettlementLoadInit(WorldSettlementFC settlement)
         {
-            if (isUnderAttack
-                && MilitaryOperationsUtil.ReturnMilitaryEventByLocation(settlement.Tile) is null
+            // A truly-stuck op is registered + non-terminal (so isUnderAttack is true) but has no
+            // pending wake-up event. Detect that by the op's own sourceEvents rather than
+            // by the absence of a settlementBeingAttacked event: that warning event is also gone
+            // during a legitimate in-progress auto-resolve battle
+            MilitaryOperation stuckDefOp = FindFC.MilitaryManager?.GetDefensiveOpAt(settlement);
+            if (stuckDefOp is object && !stuckDefOp.HasPendingWakeup
                 && !attackers.Any() && !defenders.Any())
             {
-                // Save taken mid-battle: event was removed from the queue but combatants are still
-                // scribed. Leave the battle state alone (EndBattle will clear naturally on resolve).
                 LogUtil.Warning($"Repairing stuck isUnderAttack flag on {settlement.Name} during load " +
-                    $"(no matching settlementBeingAttacked event).");
+                    $"(defensive op has no pending event).");
                 ClearAttackState();
             }
 

@@ -241,15 +241,15 @@ namespace FactionColonies
 
             int ticks = Find.TickManager.TicksGame;
 
-            // Periodic orphan flag clearing: isUnderAttack is true but no map / no combatants
-            // and no warning event in queue.
+            // Periodic orphan flag clearing. Settlements sometimes get stuck in 'attack', so this
+            // should unstick those settlements.
             if (ticks % OrphanCheckTickInterval == 0 && map is null && !attackerPawns.Any() && !defenderPawns.Any())
             {
-                FCEvent evt = MilitaryOperationsUtil.ReturnMilitaryEventByLocation(settlement.Tile);
-                if (evt is null)
+                MilitaryOperation defOp = FindFC.MilitaryManager?.GetDefensiveOpAt(settlement);
+                if (defOp is object && !defOp.HasPendingWakeup)
                 {
                     LogUtil.Warning($"Clearing orphaned isUnderAttack flag on {settlement.Name} " +
-                        $"(no matching settlementBeingAttacked event in queue).");
+                        $"(defensive op has no pending event).");
                     ParentMilitaryComp?.ClearAttackState();
                     return;
                 }

@@ -548,4 +548,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_35</defName>
+		<label>Settlements Stuck In Attack Mode</label>
+		<description>Settlements sometimes get stuck in &apos;under attack&apos; mode, preventing upgrades, building buildings, and using their military. The full cause of this error eludes me, so this update hardens the stuck-settlement check to make it better at catching said stuck settlements and restoring them to a working state.</description>
+		<releaseDate>2026-09-11</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Harden Empire&apos;s stuck-settlement check so it can catch all such stuck settlements</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
