@@ -3,29 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire", "1.6\Source\Core\Empire.csproj", "{42D86855-C82C-D60A-6CB9-C301998EA678}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire", "Source\Core\Empire.csproj", "{42D86855-C82C-D60A-6CB9-C301998EA678}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.CE", "1.6\Source\Patch-CE\Empire.CE.csproj", "{30E96982-6B6E-AA30-DADF-F10FAE0EB832}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.CE", "Source\Patch-CE\Empire.CE.csproj", "{30E96982-6B6E-AA30-DADF-F10FAE0EB832}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.FTV", "1.6\Source\Patch-FTV\Empire.FTV.csproj", "{1B1B0A4C-A83A-218D-03FC-E25D49DC5768}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.FTV", "Source\Patch-FTV\Empire.FTV.csproj", "{1B1B0A4C-A83A-218D-03FC-E25D49DC5768}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.WD", "1.6\Source\Patch-WD\Empire.WD.csproj", "{91CFBACC-73CD-FE10-0E3E-64A40E9F269B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.WD", "Source\Patch-WD\Empire.WD.csproj", "{91CFBACC-73CD-FE10-0E3E-64A40E9F269B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.WDExp", "1.6\Source\Patch-WDExp\Empire.WDExp.csproj", "{A2B3C4D5-E6F7-8901-2345-678901ABCDEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.WDExp", "Source\Patch-WDExp\Empire.WDExp.csproj", "{A2B3C4D5-E6F7-8901-2345-678901ABCDEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.HAR", "1.6\Source\Patch-HAR\Empire.HAR.csproj", "{8A25014A-9508-F5CA-C809-D016C2586BD3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.HAR", "Source\Patch-HAR\Empire.HAR.csproj", "{8A25014A-9508-F5CA-C809-D016C2586BD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.KCSG", "1.6\Source\Patch-KCSG\Empire.KCSG.csproj", "{ADD38221-BC00-9C01-65F2-553F6475D46D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.KCSG", "Source\Patch-KCSG\Empire.KCSG.csproj", "{ADD38221-BC00-9C01-65F2-553F6475D46D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.PRD", "1.6\Source\Patch-PRD\Empire.PRD.csproj", "{C23C61BC-1DAA-406A-AF2F-542003644CDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.PRD", "Source\Patch-PRD\Empire.PRD.csproj", "{C23C61BC-1DAA-406A-AF2F-542003644CDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.RW", "1.6\Source\Patch-RW\Empire.RW.csproj", "{6EDDFA19-D3EA-4597-AA8E-C0C575BBDB1A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.RW", "Source\Patch-RW\Empire.RW.csproj", "{6EDDFA19-D3EA-4597-AA8E-C0C575BBDB1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.VF", "1.6\Source\Patch-VF\Empire.VF.csproj", "{57E619E9-2A49-4AF9-8B46-E910D15D1C45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.VF", "Source\Patch-VF\Empire.VF.csproj", "{57E619E9-2A49-4AF9-8B46-E910D15D1C45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.VPE", "1.6\Source\Patch-VPE\Empire.VPE.csproj", "{B1C2D3E4-F5A6-4789-9ABC-DEF012345678}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.VPE", "Source\Patch-VPE\Empire.VPE.csproj", "{B1C2D3E4-F5A6-4789-9ABC-DEF012345678}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.GiddyUp", "1.6\Source\Patch-GU2\Empire.GiddyUp.csproj", "{C7D8E9F0-A1B2-4C3D-8E5F-67890ABCDEF1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empire.GiddyUp", "Source\Patch-GU2\Empire.GiddyUp.csproj", "{C7D8E9F0-A1B2-4C3D-8E5F-67890ABCDEF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

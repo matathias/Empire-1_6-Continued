@@ -4,13 +4,13 @@
         <TargetFramework>net48</TargetFramework>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-        <OutputPath>..\..\..\Compat\1.6\RimWar\Assemblies</OutputPath>
+        <OutputPath>..\..\Compat\1.6\VehicleFramework\Assemblies</OutputPath>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <BaseOutputPath>..\..\..\Compat\1.6\RimWar\Assemblies</BaseOutputPath>
+        <BaseOutputPath>..\..\Compat\1.6\VehicleFramework\Assemblies</BaseOutputPath>
         <Configurations>Debug;Release;Testing</Configurations>
         <PlatformTarget>x64</PlatformTarget>
-        <RootNamespace>FactionColonies.RW</RootNamespace>
-        <AssemblyName>Empire.RW</AssemblyName>
+        <RootNamespace>FactionColonies.VF</RootNamespace>
+        <AssemblyName>Empire.VF</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
         <!-- Rimworld -->
@@ -25,19 +25,23 @@
     </ItemGroup>
     <ItemGroup>
         <Reference Include="Assembly-CSharp">
-            <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+            <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="RimWar">
-          <HintPath>..\..\..\Common\References\RimWar.dll</HintPath>
+        <Reference Include="Vehicles">
+          <HintPath>..\..\Common\References\Vehicles.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="SmashTools">
+          <HintPath>..\..\Common\References\SmashTools.dll</HintPath>
           <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine">
-            <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
+            <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
-            <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+            <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
     </ItemGroup>

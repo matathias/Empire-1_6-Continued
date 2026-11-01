@@ -4,13 +4,13 @@
         <TargetFramework>net48</TargetFramework>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-        <OutputPath>..\..\..\Compat\1.6\HumanoidAlienRaces\Assemblies</OutputPath>
+        <OutputPath>..\..\Compat\1.6\WorldDominationExperimental\Assemblies</OutputPath>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <BaseOutputPath>..\..\..\Compat\1.6\HumanoidAlienRaces\Assemblies</BaseOutputPath>
+        <BaseOutputPath>..\..\Compat\1.6\WorldDominationExperimental\Assemblies</BaseOutputPath>
         <Configurations>Debug;Release;Testing</Configurations>
         <PlatformTarget>x64</PlatformTarget>
-        <RootNamespace>FactionColonies.HAR</RootNamespace>
-        <AssemblyName>Empire.HAR</AssemblyName>
+        <RootNamespace>FactionColonies.WDExp</RootNamespace>
+        <AssemblyName>Empire.WDExp</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
         <!-- Rimworld -->
@@ -25,19 +25,19 @@
     </ItemGroup>
     <ItemGroup>
         <Reference Include="Assembly-CSharp">
-            <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+            <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="AlienRace">
-          <HintPath>..\..\..\Common\References\AlienRace.dll</HintPath>
+        <Reference Include="TSA_WorldDomination">
+          <HintPath>..\..\Common\References\TSA_WorldDomination.dll</HintPath>
           <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine">
-            <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
+            <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
-            <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+            <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
     </ItemGroup>

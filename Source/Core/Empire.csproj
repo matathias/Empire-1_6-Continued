@@ -4,17 +4,17 @@
         <TargetFramework>net48</TargetFramework>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-        <OutputPath>..\..\Assemblies</OutputPath>
+        <OutputPath>..\..\1.6\Assemblies</OutputPath>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AssemblyVersion>1.6.36.0</AssemblyVersion>
         <FileVersion>1.6.36.0</FileVersion>
-        <BaseOutputPath>..\..\Assemblies</BaseOutputPath>
+        <BaseOutputPath>..\..\1.6\Assemblies</BaseOutputPath>
         <Configurations>Debug;Release;Testing</Configurations>
         <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
     <ItemGroup>
         <!-- Rimworld -->
-        <Reference Condition="'$(Configuration)' == 'Debug'" Include="../../../RimWorldWin64_Data/*.dll">
+        <Reference Condition="'$(Configuration)' == 'Debug'" Include="../../RimWorldWin64_Data/*.dll">
             <Private>False</Private>
         </Reference>
         <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.*-*" />
@@ -26,22 +26,22 @@
     </ItemGroup>
     <ItemGroup>
       <Reference Include="Assembly-CSharp">
-        <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+        <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
         <Private>False</Private>
       </Reference>
       <Reference Include="UnityEngine">
-        <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
+        <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
         <Private>False</Private>
       </Reference>
       <Reference Include="UnityEngine.CoreModule">
-        <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+        <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
         <Private>False</Private>
       </Reference>
       <Reference Include="UnityEngine.IMGUIModule">
-        <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+        <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       </Reference>
       <Reference Include="UnityEngine.TextRenderingModule">
-        <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+        <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       </Reference>
     </ItemGroup>
     <ItemGroup>
