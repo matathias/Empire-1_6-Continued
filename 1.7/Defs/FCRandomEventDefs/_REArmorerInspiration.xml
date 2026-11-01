@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>armorerInspiration_0</defName>
+    <label>Armorer Inspiration</label>
+    <desc>An armorer in a nearby settlement has received a great inspiration and is seeking patrons for what he claims will be a work of unparalleled quality! He plans to give it to his patron as a token of his loyalty.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>10</weight>
+    <cooldownTicks>600000</cooldownTicks>
+    <requiredResource>RTD_Apparel</requiredResource>
+    <incompatibleEvents>
+      <li>armorerInspiration-working_good</li>
+      <li>armorerInspiration-fin_masterwork</li>
+      <li>armorerInspiration-fin_disappointing</li>
+      <li>armorerInspiration-working_materials</li>
+    </incompatibleEvents>
+    <options>
+      <li>armorerInspiration_0_1</li>
+      <li>armorerInspiration_0_2</li>
+      <li>armorerInspiration_0_3</li>
+      <li>armorerInspiration_0_4</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>armorerInspiration_0_1</defName>
+    <label>I cannot spare the funds for such an endeavor.</label>
+    <parentEvent>armorerInspiration_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>armorerInspiration_0_2</defName>
+    <label>A modest bag of silver for a modest commission.</label>
+    <parentEvent>armorerInspiration_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <silverCost>250</silverCost>
+    <successEvent>armorerInspiration-working_good</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>armorerInspiration_0_3</defName>
+    <label>Fund the masterwork! Spare no expense.</label>
+    <parentEvent>armorerInspiration_0</parentEvent>
+    <baseChanceOfSuccess>60</baseChanceOfSuccess>
+    <silverCost>1500</silverCost>
+    <successEvent>armorerInspiration-working_masterpiece</successEvent>
+    <failEvent>armorerInspiration-working_disappointing</failEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>armorerInspiration_0_4</defName>
+    <label>I'll provide workshop materials from our settlement stores.</label>
+    <parentEvent>armorerInspiration_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>armorerInspiration-working_materials</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>armorerInspiration-fin_disappointing</defName>
+    <label>Armorer Inspiration (Disappointing)</label>
+    <desc>The armorer's ambition outpaced his skill. The result is serviceable, but far from the masterwork promised.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>armorerInspiration_0</li>
+    </incompatibleEvents>
+    <randomThingValue>400</randomThingValue>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>armorerInspiration-fin_masterwork</defName>
+    <label>Armorer Inspiration (Masterwork)</label>
+    <desc>After a few days of work, the armorer's inspiration has produced a true masterwork! The result exceeds all expectations.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>armorerInspiration_0</li>
+    </incompatibleEvents>
+    <randomThingValue>2800</randomThingValue>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>armorerInspiration-fin_good</defName>
+    <label>Armorer Inspiration (Good)</label>
+    <desc>After a few days of work, the armorer completes his commissioned piece. While "unparalleled quality" may have been an overstatement, the resulting armor is nonetheless quite acceptable.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>armorerInspiration_0</li>
+    </incompatibleEvents>
+    <randomThingValue>700</randomThingValue>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>armorerInspiration-fin_respectable</defName>
+    <label>Armorer Inspiration (Respectable)</label>
+    <desc>After several days of work, the armorer completes his commissioned piece. While no masterwork, the final product is nonetheless quite respectable.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>armorerInspiration_0</li>
+    </incompatibleEvents>
+    <randomThingValue>1000</randomThingValue>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>armorerInspiration-working_good</defName>
+    <label>Armorer Inspiration (Working)</label>
+    <desc>The armorer is working on your commission...</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>armorerInspiration_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>armorerInspiration-fin_good</followingEvent>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>armorerInspiration-working_masterpiece</defName>
+    <label>Armorer Inspiration (Working)</label>
+    <desc>The armorer is working on your commission...</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>armorerInspiration_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>armorerInspiration-fin_masterwork</followingEvent>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>armorerInspiration-working_disappointing</defName>
+    <label>Armorer Inspiration (Working)</label>
+    <desc>The armorer is working on your commission...</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>armorerInspiration_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>armorerInspiration-fin_disappointing</followingEvent>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>armorerInspiration-working_materials</defName>
+    <label>Armorer Inspiration (Workshop Materials)</label>
+    <desc>The armorer works with materials diverted from your settlement's production lines. The diversion slows apparel output, but the armorer's work proceeds well.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>armorerInspiration_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>armorerInspiration-fin_respectable</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>RTD_Apparel_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+</Defs>

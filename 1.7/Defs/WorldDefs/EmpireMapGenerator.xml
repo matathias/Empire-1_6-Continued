@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- Empire settlement map generator - like Base_Faction but uses GenStep_Colony (no inhabitant pawn spawning) -->
+  <MapGeneratorDef ParentName="MapCommonBase">
+    <defName>Empire_Base</defName>
+    <genSteps>
+      <li>RocksFromGrid</li>
+      <li>Empire_Colony</li>
+      <li>SettlementPower</li>
+    </genSteps>
+  </MapGeneratorDef>
+
+  <GenStepDef>
+    <defName>Empire_Colony</defName>
+    <order>400</order>
+    <genStep Class="FactionColonies.GenStep_Colony">
+      <count>1</count>
+      <nearMapCenter>true</nearMapCenter>
+    </genStep>
+  </GenStepDef>
+
+  <RuleDef>
+    <defName>Empire_Colony</defName>
+    <symbol>colony</symbol>
+    <resolvers>
+      <li Class="FactionColonies.SymbolResolver_Colony">
+        <minRectSize>(12, 12)</minRectSize>
+      </li>
+    </resolvers>
+  </RuleDef>
+
+</Defs>

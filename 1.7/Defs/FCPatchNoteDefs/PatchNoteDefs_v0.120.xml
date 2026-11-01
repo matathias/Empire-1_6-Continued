@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_120_2</defName>
+			<label>Minor merc changes</label>
+			<description>Minor changes to merc UI and code.</description>
+			<releaseDate>2026-03-21</releaseDate>
+	
+			<patchNoteType>Minor</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Remove the &quot;Reset&quot; button from the main military tab, and move its functionality to a &quot;Reset Squad&quot; float menu option for the Military button on the Settlement Window. Comes with a confirmation dialog</li>
+			<li>Injured mercs heal gradually over time, instead of instantly</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_120_1</defName>
+			<label>Military Squad Bugfixes</label>
+			<description>Handful of fixes for minor issues regarding military squads.</description>
+			<releaseDate>2026-03-21</releaseDate>
+	
+			<patchNoteType>Patch</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Various minor fixes</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_120_0</defName>
+			<label>Military Unit Update</label>
+			<description>Updates for military unit design.</description>
+			<releaseDate>2026-03-21</releaseDate>
+	
+			<patchNoteType>Minor</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Updates the Manage Units window to replace the 6 hard-coded apparel slots with being able to choose any apparel</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+</Defs>

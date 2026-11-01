@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_134_0</defName>
+		<label>Minor Settlement Window Updates</label>
+		<description>Changes how the center tabs in the settlement window are rendered</description>
+		<releaseDate>2026-04-01</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Changes to center tab rendering for settlement window tabs</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_134_1</defName>
+		<label>Settlement Window Updates</label>
+		<description>A few changes to how the settlement window is rendered. If a settlement type has a color, then much of the window is rendered in that color.</description>
+		<releaseDate>2026-04-01</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Alter rendering of settlement window to use a settlementDef&apos;s accentColor, if it exists</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_134_2</defName>
+		<label>Settlement Window UI Update</label>
+		<description>Small improvements to the settlement window UI</description>
+		<releaseDate>2026-04-01</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Round stat gain to 2 decimal places for the Happiness, Loyalty, Unrest, and Prosperity tooltips</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_134_3</defName>
+		<label>Minor Update</label>
+		<description>Some code cleanup.</description>
+		<releaseDate>2026-04-02</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Various code cleanup</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

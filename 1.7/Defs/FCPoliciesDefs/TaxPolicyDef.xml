@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>minimizeTaxation</defName>
+		<label>Minimize Taxation</label>
+		<desc>Collect less taxes from your settlements. This will make them happier and reduce unrest.</desc>
+		<category>Tax</category>
+		<upkeepSilver>0</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>-35</value></li>
+			<li><stat>happinessGainedBase</stat><value>0.5</value></li>
+			<li><stat>unrestLostBase</stat><value>1</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>heavyTaxation</defName>
+		<label>Heavy Taxation</label>
+		<desc>Increase the amount of taxes on your settlements at the cost of happiness and unrest.</desc>
+		<category>Tax</category>
+		<upkeepSilver>0</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>egalitarian</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>25</value></li>
+			<li><stat>happinessLostBase</stat><value>0.5</value></li>
+			<li><stat>unrestGainedBase</stat><value>1</value></li>
+			<li><stat>happinessGainedMultiplier</stat><value>0.5</value></li>
+			<li><stat>unrestLostMultiplier</stat><value>0.5</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>goodsEconomy</defName>
+		<label>Goods Economy</label>
+		<desc>Settlements prioritize sending physical goods over silver. Tithe budgets increase significantly, but silver income decreases.</desc>
+		<category>Tax</category>
+		<upkeepSilver>0</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<statModifiers>
+			<li><stat>titheValueMultiplier</stat><value>1.3</value></li>
+			<li><stat>taxBasePercentage</stat><value>-10</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>silverStandard</defName>
+		<label>Silver Standard</label>
+		<desc>Settlements sell goods locally and remit coin instead. Silver income increases, but tithe budgets are reduced.</desc>
+		<category>Tax</category>
+		<upkeepSilver>0</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>15</value></li>
+			<li><stat>titheValueMultiplier</stat><value>0.7</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+</Defs>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- =*=*=*=*  Empire test/demo situations  *=*=*=*= -->
+  <!-- Dormant by design: no spawn condition, so these never auto-start. Fire them via the "Start      -->
+  <!-- situation" debug action (Empire category). Event-free (Clamp endpoints, stat-only stages) so     -->
+  <!-- they need no companion FCEventDefs and pass ConfigErrors on their own. They also serve as the    -->
+  <!-- first concrete situation content and back the Destructive.Situations automated tests.           -->
+
+  <!-- -*-*-*  Shared stages (faction demo)  *-*-*- -->
+  <FactionColonies.FCSituationStageDef>
+    <defName>EmpireTest_FactionStage_Murmurs</defName>
+    <label>murmurs</label>
+    <threshold>25</threshold>
+    <statModifiers>
+      <li><stat>happinessGainedBase</stat><value>-1</value></li>
+    </statModifiers>
+  </FactionColonies.FCSituationStageDef>
+
+  <FactionColonies.FCSituationStageDef>
+    <defName>EmpireTest_FactionStage_Serious</defName>
+    <label>serious unrest</label>
+    <threshold>50</threshold>
+    <statModifiers>
+      <li><stat>happinessGainedBase</stat><value>-2</value></li>
+      <li><stat>unrestGainedBase</stat><value>2</value></li>
+    </statModifiers>
+  </FactionColonies.FCSituationStageDef>
+
+  <FactionColonies.FCSituationStageDef>
+    <defName>EmpireTest_FactionStage_Breaking</defName>
+    <label>breaking point</label>
+    <threshold>75</threshold>
+    <statModifiers>
+      <li><stat>happinessGainedBase</stat><value>-3</value></li>
+      <li><stat>unrestGainedBase</stat><value>4</value></li>
+      <li><stat>loyaltyGainedBase</stat><value>-2</value></li>
+    </statModifiers>
+  </FactionColonies.FCSituationStageDef>
+
+  <!-- -*-*-*  Shared approaches (faction demo)  *-*-*- -->
+  <FactionColonies.FCSituationApproachDef>
+    <defName>EmpireTest_Approach_Observe</defName>
+    <label>observe</label>
+    <description>Let the situation run its course. Free, no upkeep.</description>
+    <ratePerDay>0</ratePerDay>
+    <upkeepSilver>0</upkeepSilver>
+  </FactionColonies.FCSituationApproachDef>
+
+  <FactionColonies.FCSituationApproachDef>
+    <defName>EmpireTest_Approach_Concessions</defName>
+    <label>concessions</label>
+    <description>Buy calm with silver and softened policy. Pulls the bar down.</description>
+    <ratePerDay>-2</ratePerDay>
+    <upkeepSilver>50</upkeepSilver>
+    <statModifiers>
+      <li><stat>happinessGainedBase</stat><value>1</value></li>
+    </statModifiers>
+  </FactionColonies.FCSituationApproachDef>
+
+  <FactionColonies.FCSituationApproachDef>
+    <defName>EmpireTest_Approach_Crackdown</defName>
+    <label>crackdown</label>
+    <description>Garrison the streets. Drives the bar up but suppresses overt unrest.</description>
+    <ratePerDay>2</ratePerDay>
+    <upkeepSilver>80</upkeepSilver>
+    <statModifiers>
+      <li><stat>unrestGainedBase</stat><value>-2</value></li>
+    </statModifiers>
+  </FactionColonies.FCSituationApproachDef>
+
+  <!-- -*-*-*  Faction-scoped demo situation  *-*-*- -->
+  <FactionColonies.FCSituationDef>
+    <defName>EmpireTestSituation_Faction</defName>
+    <label>test faction crisis</label>
+    <description>A dormant demo situation, faction-wide. Fire it from the Empire debug menu to exercise the Events-tab situation subtab, stages, approaches, and daily upkeep.</description>
+    <category>EC_Social</category>
+
+    <scope>Faction</scope>
+    <maxProgress>100</maxProgress>
+    <startProgress>0</startProgress>
+
+    <baseRatePerDay>5</baseRatePerDay>
+    <decayRatePerDay>-3</decayRatePerDay>
+
+    <stages>
+      <li>EmpireTest_FactionStage_Murmurs</li>
+      <li>EmpireTest_FactionStage_Serious</li>
+      <li>EmpireTest_FactionStage_Breaking</li>
+    </stages>
+    <approaches>
+      <li>EmpireTest_Approach_Observe</li>
+      <li>EmpireTest_Approach_Concessions</li>
+      <li>EmpireTest_Approach_Crackdown</li>
+    </approaches>
+    <defaultApproach>EmpireTest_Approach_Observe</defaultApproach>
+
+    <topBehavior>Clamp</topBehavior>
+    <bottomBehavior>Clamp</bottomBehavior>
+
+    <cooldownDays>0</cooldownDays>
+    <maxConcurrent>1</maxConcurrent>
+  </FactionColonies.FCSituationDef>
+
+  <!-- -*-*-*  Settlement-scoped demo situation  *-*-*- -->
+  <!-- Reuses the shared approaches; carries its own stages so it can vary independently.               -->
+  <FactionColonies.FCSituationStageDef>
+    <defName>EmpireTest_SettlementStage_Tension</defName>
+    <label>local tension</label>
+    <threshold>30</threshold>
+    <statModifiers>
+      <li><stat>happinessGainedBase</stat><value>-1</value></li>
+    </statModifiers>
+  </FactionColonies.FCSituationStageDef>
+
+  <FactionColonies.FCSituationStageDef>
+    <defName>EmpireTest_SettlementStage_Revolt</defName>
+    <label>open revolt</label>
+    <threshold>65</threshold>
+    <statModifiers>
+      <li><stat>unrestGainedBase</stat><value>3</value></li>
+      <li><stat>loyaltyGainedBase</stat><value>-2</value></li>
+    </statModifiers>
+  </FactionColonies.FCSituationStageDef>
+
+  <FactionColonies.FCSituationDef>
+    <defName>EmpireTestSituation_Settlement</defName>
+    <label>test settlement crisis</label>
+    <description>A dormant demo situation scoped to a single settlement. Fire it on a settlement from the Empire debug menu to exercise the settlement panel's situation tab and the target-labelled row.</description>
+    <category>EC_Social</category>
+
+    <scope>Settlement</scope>
+    <maxProgress>100</maxProgress>
+    <startProgress>0</startProgress>
+
+    <baseRatePerDay>5</baseRatePerDay>
+    <decayRatePerDay>-3</decayRatePerDay>
+
+    <stages>
+      <li>EmpireTest_SettlementStage_Tension</li>
+      <li>EmpireTest_SettlementStage_Revolt</li>
+    </stages>
+    <approaches>
+      <li>EmpireTest_Approach_Observe</li>
+      <li>EmpireTest_Approach_Concessions</li>
+      <li>EmpireTest_Approach_Crackdown</li>
+    </approaches>
+    <defaultApproach>EmpireTest_Approach_Observe</defaultApproach>
+
+    <topBehavior>Clamp</topBehavior>
+    <bottomBehavior>Clamp</bottomBehavior>
+
+    <cooldownDays>0</cooldownDays>
+    <maxConcurrent>1</maxConcurrent>
+    <blocksSettlementRemoval>false</blocksSettlementRemoval>
+  </FactionColonies.FCSituationDef>
+
+</Defs>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.FCEventDef>
+		<defName>deliveryArrival</defName>
+		<label>Delivery</label>
+		<desc>A transport ship carrying items or pawns is traveling to your map</desc>
+		<timeTillTrigger>15000</timeTillTrigger>
+		<category>EC_Economy</category>
+		<modExtensions>
+			<li Class="FactionColonies.FCEventHandlerExtension_DeliveryArrival"/>
+		</modExtensions>
+	</FactionColonies.FCEventDef>
+</Defs>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+	<Operation Class="PatchOperationConditional">
+		<xpath>Defs/PlanetLayerDef[@Name="OrbitLayer"]/worldDrawLayers</xpath>
+		<nomatch Class="PatchOperationAdd">
+			<xpath>Defs/PlanetLayerDef[@Name="OrbitLayer"]</xpath>
+			<value>
+				<worldDrawLayers />
+			</value>
+		</nomatch>
+	</Operation>
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/PlanetLayerDef[@Name="OrbitLayer"]/worldDrawLayers</xpath>
+		<value>
+			<li>FactionColonies.WorldDrawLayer_OrbitalTileSelector</li>
+			<li>WorldDrawLayer_SelectedTile</li>
+			<li>WorldDrawLayer_MouseTile</li>
+		</value>
+	</Operation>
+</Patch>

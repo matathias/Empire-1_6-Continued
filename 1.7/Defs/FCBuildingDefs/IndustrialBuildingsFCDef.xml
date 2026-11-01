@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>researchLabs</defName> <!--Name of Def -->
+		<label>Research Labs</label> <!--Lable of Def -->
+		<desc>Scientists spend their days researching here.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>30</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/ResearchLab</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>indoorHydroponics</defName> <!--Name of Def -->
+		<label>Indoor Hydroponics</label> <!--Lable of Def -->
+		<desc>Food is produced indoors, protecting it from the harshness of the world.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Food_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/IndoorHydroponics</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>firearmsFactory</defName> <!--Name of Def -->
+		<label>Firearms Factory</label> <!--Lable of Def -->
+		<desc>A factory that produces mass quantities of firearms.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/FirearmsFactory</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>rimazonWarehouse</defName> <!--Name of Def -->
+		<label>Rimazon Warehouse</label> <!--Lable of Def -->
+		<desc>A warehouse stocked full of goods marked to be shipped.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>5</value></li>
+			<li><stat>taxBaseRandomModifier</stat><value>20</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/RimazonWarehouse</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>inhouseMercCompany</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
+		<label>In-House Merc Company</label> <!--Lable of Def -->
+		<desc>Barracks for an in-house mercenary company. They will provide security for the settlement.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+			<li><stat>taxBasePercentage</stat><value>-10</value></li>
+		</statModifiers>
+		<upkeep>40</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/InHouseMercCompany</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>adultEntertainmentCentre</defName> <!--Name of Def -->
+		<label>Adult Entertainment Centre</label> <!--Lable of Def -->
+		<desc>A place for the local people to spend a dime and have a good time.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>happinessGainedBase</stat><value>0.5</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/AdultEntertainmentCentre</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>forcedWorkCamps</defName> <!--Name of Def -->
+		<label>Forced Work Camps</label> <!--Lable of Def -->
+		<desc>Put those prisoners to work and increase your production!</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>unrestGainedBase</stat><value>0.5</value></li>
+			<li><stat>unrestLostMultiplier</stat><value>0.75</value></li>
+			<li><stat>workerBaseMax</stat><value>2</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/ForcedWorkCamps</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>artilleryOutpost</defName>
+		<isMilitary>true</isMilitary>
+		<label>Artillery Outpost</label>
+		<desc>When this building is built, an artillery strike can be called for a cost in the military menu.</desc>
+		<cost>2000</cost>
+		<constructionDuration>120000</constructionDuration>
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+		</statModifiers>
+		<upkeep>60</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/ArtilleryOutpost</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>JunkFoodFactory</defName>
+		<!--Name of Def -->
+		<label>Junk Food Factory</label>
+		<!--Lable of Def -->
+		<desc>It's quick, cheap, and unhealthy. The locals will complain about the lack of quality, but they'll be too unhealthy to do anything about it.</desc>
+		<!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>happinessLostBase</stat><value>0.5</value></li>
+			<li><stat>unrestLostBase</stat><value>0.5</value></li>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.25</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/JunkFood</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>TextileFactory</defName>
+		<!--Name of Def -->
+		<label>Textile Factory</label>
+		<!--Lable of Def -->
+		<desc>Making clothes is so much easier when machines do most of the work!</desc>
+		<!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Apparel_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>50</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/TextileFactory</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>LocalZoo</defName>
+		<!--Name of Def -->
+		<label>Local Zoo</label>
+		<!--Lable of Def -->
+		<desc>A place for people to ogle various different animals as they pass through the settlement for fun and profit!</desc>
+		<!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>happinessGainedBase</stat><value>0.3</value></li>
+			<li><stat>RTD_Animals_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>70</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/Zoo</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Tree Farm -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>TreeFarm</defName>
+		<!--Name of Def -->
+		<label>Tree Farm</label>
+		<!--Lable of Def -->
+		<desc>Stop stripping forest of trees and just grow your own!</desc>
+		<!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>0.5</value></li>
+			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>1.05</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/TreeFarm</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>IMED</defName>
+		<!--Name of Def -->
+		<label>Industrial Mining Equipment Depot</label>
+		<!--Lable of Def -->
+		<desc>Build a place to store and maintain big ugly machines that chew through rock like it's cardboard.</desc>
+		<!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>120000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>1.2</value></li>
+		</statModifiers>
+		<upkeep>110</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/IMED</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>soilFixer</defName> <!--Name of Def -->
+		<label>Soil Reclamation Bureau</label> <!--Lable of Def -->
+		<desc>Restores fertility to the damaged and depleted soil of Scarlands.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>30000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Food_ProductionAdditive</stat><value>1.5</value></li>
+		</statModifiers>
+		<applicableBiomes> <!-- If the building requires it to be in a biome, put it here-->
+			<li>Scarlands</li>
+		</applicableBiomes>
+		<upkeep>40</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/soilFixer</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>lavaPlant</defName> <!--Name of Def -->
+		<label>Geothermal Power Plant</label> <!--Lable of Def -->
+		<desc>Harness the easily accessible geothermal energy of volcanically active areas for power generation.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>30000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Power_ProductionMultiplier</stat><value>1.75</value></li>
+		</statModifiers>
+		<applicableBiomes> <!-- If the building requires it to be in a biome, put it here-->
+			<li>AB_PyroclasticConflagration</li>
+			<li>LavaField</li>
+		</applicableBiomes>
+		<upkeep>20</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/lavaPlant</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>lavaLab</defName> <!--Name of Def -->
+		<label>Volcanology Lab</label> <!--Lable of Def -->
+		<desc>A research facility dedicated to studying volcanology and any potential practical applications.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>30000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.75</value></li>
+		</statModifiers>
+		<applicableBiomes> <!-- If the building requires it to be in a biome, put it here-->
+			<li>AB_PyroclasticConflagration</li>
+			<li>LavaField</li>
+		</applicableBiomes>
+		<upkeep>20</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/lavaLab</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>batteryPowerStation</defName> <!--Name of Def -->
+		<label>Battery Power Station</label> <!--Lable of Def -->
+		<desc>A power station to store excess energy production.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>240000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Power_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>40</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/BatteryElectricStation</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>solarPlant</defName> <!--Name of Def -->
+		<label>Solar Plant</label> <!--Lable of Def -->
+		<desc>A solar powerplant to produce extra energy.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>240000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseCost</stat><value>2</value></li>
+			<li><stat>RTD_Power_ProductionMultiplier</stat><value>1.25</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/SolarPlant</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>cleanEnergyLab</defName> <!--Name of Def -->
+		<label>Clean Energy Lab</label> <!--Lable of Def -->
+		<desc>A research lab dedicated to researching and producing more efficient clean forms of energy.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>300000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Power_ProductionMultiplier</stat><value>1.25</value></li>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.25</value></li>
+		</statModifiers>
+		<upkeep>30</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/CleanEnergyLab</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>animalTestingFacility</defName> <!--Name of Def -->
+		<label>Animal Testing Facility</label> <!--Lable of Def -->
+		<desc>A research lab dedicated to testing products on animals. Unethical, but useful.</desc> <!-- Description of trait -->
+		<cost>1000</cost>
+		<constructionDuration>300000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>unrestGainedMultiplier</stat><value>1.25</value></li>
+			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.25</value></li>
+			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.25</value></li>
+		</statModifiers>
+		<upkeep>20</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/AnimalTestingFacility</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Industrial">
+		<defName>apartmentHousing</defName> <!--Name of Def -->
+		<label>Apartment Housing</label> <!--Lable of Def -->
+		<desc>A large apartment block to house local workers.</desc> <!-- Description of trait -->
+		<cost>5000</cost>
+		<constructionDuration>300000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>10</value></li>
+			<li><stat>workerBaseOverMax</stat><value>5</value></li>
+		</statModifiers>
+		<upkeep>100</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/ApartmentHousing</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+
+</Defs>

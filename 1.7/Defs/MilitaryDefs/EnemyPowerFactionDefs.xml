@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+         EnemyPowerFactionDef - per-FactionDef overrides of enemy
+         power baseline. Each numeric field is optional; missing
+         fields fall through to the matching EnemyPowerTechDef.
+         *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
+
+    <!-- *=*=* Animal *=*=* -->
+
+    <!-- Insectoid hives are tribal-tier (Animal) but punch above their weight.
+         Replaces the legacy `defName == "Insect"` hardcoded branch in MilitaryUtil. -->
+    <FactionColonies.EnemyPowerFactionDef>
+        <defName>EPF_Insect</defName>
+        <factionDef>Insect</factionDef>
+        <level>4</level>
+        <efficiency>1.1</efficiency>
+        <!-- variances inherited from EPT_Animal (2.0 / 0.0) -->
+    </FactionColonies.EnemyPowerFactionDef>
+
+    <!-- *=*=* Neolithic *=*=* -->
+
+    <!-- Permanent enemies with a blood-and-honor warrior culture. Hits harder than
+         the peaceful TribeCivil/TribeRough at the same tech level. -->
+    <FactionColonies.EnemyPowerFactionDef>
+        <defName>EPF_TribeSavage</defName>
+        <factionDef>TribeSavage</factionDef>
+        <efficiency>1.0</efficiency>
+        <!-- level + variances inherited from EPT_Neolithic (2 / 2.0 / 0) -->
+    </FactionColonies.EnemyPowerFactionDef>
+
+    <!-- Cannibal tribes, same shape as TribeSavage. Permanent enemies, vicious culture. -->
+    <FactionColonies.EnemyPowerFactionDef MayRequire="Ludeon.RimWorld.Ideology">
+        <defName>EPF_TribeCannibal</defName>
+        <factionDef>TribeCannibal</factionDef>
+        <efficiency>1.0</efficiency>
+        <!-- level + variances inherited from EPT_Neolithic (2 / 2.0 / 0) -->
+    </FactionColonies.EnemyPowerFactionDef>
+
+    <!-- *=*=* Ultra *=*=* -->
+
+    <!-- Mechanoids fight without morale, fatigue, or human spread. -->
+    <FactionColonies.EnemyPowerFactionDef>
+        <defName>EPF_Mechanoid</defName>
+        <factionDef>Mechanoid</factionDef>
+        <levelVariance>0</levelVariance>
+        <efficiencyVariance>0</efficiencyVariance>
+        <!-- level/efficiency inherited from EPT_Ultra (7 / 1.2) -->
+    </FactionColonies.EnemyPowerFactionDef>
+
+    <!-- Royalty Empire: Ultratech elites (Cataphract, Champion, Janissary loadouts).
+         Efficiency & level bump + less level variance to represent them being elite. -->
+    <FactionColonies.EnemyPowerFactionDef MayRequire="Ludeon.RimWorld.Royalty">
+        <defName>EPF_Empire</defName>
+        <factionDef>Empire</factionDef>
+		<level>8</level>
+        <efficiency>1.25</efficiency>
+        <levelVariance>1.0</levelVariance>
+        <!-- level + efficiencyVariance inherited from EPT_Ultra (7 / 0) -->
+    </FactionColonies.EnemyPowerFactionDef>
+
+</Defs>

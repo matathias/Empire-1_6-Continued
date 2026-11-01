@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<!-- Abstract base for all Empire pawn kinds -->
+	<PawnKindDef Name="PColonyBase" Abstract="True">
+		<race>Human</race>
+		<defaultFactionDef>PColony</defaultFactionDef>
+		<chemicalAddictionChance>0.05</chemicalAddictionChance>
+		<backstoryCryptosleepCommonality>0.05</backstoryCryptosleepCommonality>
+		<invNutrition>2.55</invNutrition>
+		<useFactionXenotypes>false</useFactionXenotypes>
+		<apparelTags>
+			<li>IndustrialBasic</li>
+			<li>IndustrialAdvanced</li>
+		</apparelTags>
+	</PawnKindDef>
+
+	<!-- Primary combat pawn -->
+	<PawnKindDef ParentName="PColonyBase">
+		<defName>PColony_Fighter</defName>
+		<label>empire soldier</label>
+		<combatPower>65</combatPower>
+		<isFighter>true</isFighter>
+		<gearHealthRange>0.6~2</gearHealthRange>
+		<weaponMoney>250~400</weaponMoney>
+		<weaponTags>
+			<li>Gun</li>
+			<li>MedievalMeleeBasic</li>
+		</weaponTags>
+		<requiredWorkTags>Violent</requiredWorkTags>
+		<apparelMoney>400~600</apparelMoney>
+		<apparelTags>
+			<li>IndustrialMilitaryBasic</li>
+			<li>BeltDefensePop</li>
+		</apparelTags>
+		<apparelAllowHeadgearChance>0.4</apparelAllowHeadgearChance>
+		<techHediffsChance>0.04</techHediffsChance>
+		<techHediffsMoney>200~700</techHediffsMoney>
+		<techHediffsTags>
+			<li>Poor</li>
+			<li>Simple</li>
+			<li>ImplantEmpireCommon</li>
+		</techHediffsTags>
+		<initialWillRange>1~3</initialWillRange>
+		<initialResistanceRange>15~24</initialResistanceRange>
+	</PawnKindDef>
+
+	<!-- High-tier combat pawn -->
+	<PawnKindDef ParentName="PColonyBase">
+		<defName>PColony_Elite</defName>
+		<label>empire elite</label>
+		<combatPower>100</combatPower>
+		<isFighter>true</isFighter>
+		<gearHealthRange>0.7~2</gearHealthRange>
+		<weaponMoney>400~700</weaponMoney>
+		<weaponTags>
+			<li>Gun</li>
+			<li>MedievalMeleeBasic</li>
+		</weaponTags>
+		<requiredWorkTags>Violent</requiredWorkTags>
+		<apparelMoney>600~1000</apparelMoney>
+		<apparelTags>
+			<li>IndustrialMilitaryBasic</li>
+			<li>IndustrialMilitaryAdvanced</li>
+			<li>BeltDefensePop</li>
+		</apparelTags>
+		<apparelAllowHeadgearChance>0.6</apparelAllowHeadgearChance>
+		<techHediffsChance>0.15</techHediffsChance>
+		<techHediffsMoney>600~1500</techHediffsMoney>
+		<techHediffsTags>
+			<li>Poor</li>
+			<li>Simple</li>
+			<li>Advanced</li>
+			<li>ImplantEmpireCommon</li>
+		</techHediffsTags>
+		<initialWillRange>2~4</initialWillRange>
+		<initialResistanceRange>18~28</initialResistanceRange>
+	</PawnKindDef>
+
+	<!-- Faction leader -->
+	<PawnKindDef ParentName="PColonyBase">
+		<defName>PColony_Leader</defName>
+		<label>empire leader</label>
+		<combatPower>50</combatPower>
+		<factionLeader>true</factionLeader>
+		<isFighter>false</isFighter>
+		<minGenerationAge>30</minGenerationAge>
+		<itemQuality>Good</itemQuality>
+		<gearHealthRange>1~1</gearHealthRange>
+		<weaponMoney>200~200</weaponMoney>
+		<weaponTags>
+			<li>Gun</li>
+		</weaponTags>
+		<apparelMoney>700~1200</apparelMoney>
+		<apparelTags>
+			<li>IndustrialMilitaryBasic</li>
+			<li>BeltDefensePop</li>
+		</apparelTags>
+		<techHediffsChance>0.15</techHediffsChance>
+		<techHediffsMoney>600~1500</techHediffsMoney>
+		<techHediffsTags>
+			<li>Simple</li>
+			<li>Advanced</li>
+			<li>ImplantEmpireCommon</li>
+		</techHediffsTags>
+		<initialWillRange>3~5</initialWillRange>
+		<initialResistanceRange>7~11</initialResistanceRange>
+	</PawnKindDef>
+
+	<!-- Caravan trader -->
+	<PawnKindDef ParentName="PColonyBase">
+		<defName>PColony_Trader</defName>
+		<label>empire trader</label>
+		<combatPower>45</combatPower>
+		<isFighter>false</isFighter>
+		<trader>true</trader>
+		<itemQuality>Normal</itemQuality>
+		<gearHealthRange>1~1</gearHealthRange>
+		<weaponMoney>200~200</weaponMoney>
+		<weaponTags>
+			<li>Gun</li>
+		</weaponTags>
+		<apparelMoney>400~600</apparelMoney>
+		<apparelTags>
+			<li>IndustrialMilitaryBasic</li>
+			<li>IndustrialMilitaryAdvanced</li>
+			<li>BeltDefensePop</li>
+		</apparelTags>
+		<techHediffsChance>0.15</techHediffsChance>
+		<techHediffsMoney>600~1500</techHediffsMoney>
+		<techHediffsTags>
+			<li>Poor</li>
+			<li>Simple</li>
+			<li>Advanced</li>
+			<li>ImplantEmpireCommon</li>
+		</techHediffsTags>
+		<initialWillRange>2~4</initialWillRange>
+		<initialResistanceRange>12~20</initialResistanceRange>
+	</PawnKindDef>
+
+	<!-- Trader caravan guard -->
+	<PawnKindDef ParentName="PColonyBase">
+		<defName>PColony_Guard</defName>
+		<label>empire guard</label>
+		<combatPower>60</combatPower>
+		<isFighter>true</isFighter>
+		<gearHealthRange>0.6~2</gearHealthRange>
+		<weaponMoney>250~400</weaponMoney>
+		<weaponTags>
+			<li>Gun</li>
+		</weaponTags>
+		<requiredWorkTags>Violent</requiredWorkTags>
+		<apparelMoney>400~600</apparelMoney>
+		<apparelTags>
+			<li>IndustrialMilitaryBasic</li>
+			<li>BeltDefensePop</li>
+		</apparelTags>
+		<apparelAllowHeadgearChance>0.4</apparelAllowHeadgearChance>
+		<techHediffsChance>0.04</techHediffsChance>
+		<techHediffsMoney>200~700</techHediffsMoney>
+		<techHediffsTags>
+			<li>Poor</li>
+			<li>Simple</li>
+			<li>ImplantEmpireCommon</li>
+		</techHediffsTags>
+		<initialWillRange>1~3</initialWillRange>
+		<initialResistanceRange>15~24</initialResistanceRange>
+	</PawnKindDef>
+
+	<!-- Basic civilian -->
+	<PawnKindDef ParentName="PColonyBase">
+		<defName>PColony_Villager</defName>
+		<label>empire citizen</label>
+		<combatPower>40</combatPower>
+		<isFighter>false</isFighter>
+		<itemQuality>Poor</itemQuality>
+		<gearHealthRange>0.2~2.0</gearHealthRange>
+		<weaponMoney>65~250</weaponMoney>
+		<weaponTags>
+			<li>Gun</li>
+			<li>MedievalMeleeBasic</li>
+		</weaponTags>
+		<apparelMoney>200~400</apparelMoney>
+		<apparelAllowHeadgearChance>0.4</apparelAllowHeadgearChance>
+		<techHediffsChance>0.06</techHediffsChance>
+		<techHediffsMoney>50~600</techHediffsMoney>
+		<techHediffsTags>
+			<li>Poor</li>
+			<li>Simple</li>
+			<li>ImplantEmpireCommon</li>
+		</techHediffsTags>
+		<initialWillRange>0~1</initialWillRange>
+		<initialResistanceRange>10~17</initialResistanceRange>
+	</PawnKindDef>
+</Defs>

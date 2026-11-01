@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>empty</defName>
+		<label>No trait</label>
+		<desc></desc>
+		<category>Undefined</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<positiveEffects>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>resilient</defName>
+		<label>Resilient</label>
+		<desc></desc>
+		<category>Trait</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<positiveEffects>
+			<li>- Reduce prosperity loss by 50% when attacked</li>
+			<li>- Cannot lose buildings or settlement levels upon a failed defense</li>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+		<statModifiers>
+			<li><stat>battleProsperityLossMultiplier</stat><value>0.5</value></li>
+		</statModifiers>
+		<preventBuildingDestruction>true</preventBuildingDestruction>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>raiders</defName>
+		<label>Raiders</label>
+		<desc></desc>
+		<category>Trait</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<positiveEffects>
+			<li>- Increases the value of loot by 20% when raiding</li>
+			<li>- Military forces are available 1 day sooner after using them to raid</li>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+		<statModifiers>
+			<li><stat>lootMultiplier</stat><value>1.2</value></li>
+			<li><stat>raidCooldownOffset</stat><value>-60000</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>defenseInDepth</defName>
+		<label>Defense In Depth</label>
+		<desc></desc>
+		<category>Trait</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<positiveEffects>
+			<li>- Military forces receive a +2 level bonus to combat when defending</li>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+		<statModifiers>
+			<li><stat>militaryLevelBonusDefending</stat><value>2</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>industrious</defName>
+		<label>Industrious</label>
+		<desc></desc>
+		<category>Trait</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<positiveEffects>
+			<li>- All settlements receive a steady +5 to base tax</li>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+		<statModifiers>
+			<li><stat>taxBonusFlat</stat><value>5</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>roadBuilders</defName>
+		<label>Road Builders</label>
+		<desc></desc>
+		<category>Trait</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<positiveEffects>
+			<li>- Automatically unlocks the first road technology</li>
+			<li>- Roads are constructed in 33% of the required time</li>
+			<li>- Roads will also be constructed to connect to allied faction's settlements</li>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_RoadBuilders">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_RoadBuilders</behaviorClass>
+				<autoUnlockResearch>FCRoadBuildingDirt</autoUnlockResearch>
+			</li>
+		</modExtensions>
+		<enabledActions>
+			<li>BuildRoadsToAllies</li>
+		</enabledActions>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>mercantile</defName>
+		<label>Mercantile</label>
+		<desc></desc>
+		<category>Trait</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<positiveEffects>
+			<li>- A random trade caravan will arrive to your capital every 3-5 days</li>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_Mercantile">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Mercantile</behaviorClass>
+				<caravanMinDays>3</caravanMinDays>
+				<caravanMaxDays>5</caravanMaxDays>
+				<caravanRetryDays>2</caravanRetryDays>
+			</li>
+		</modExtensions>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>innovative</defName>
+		<label>Innovative</label>
+		<desc></desc>
+		<category>Trait</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<positiveEffects>
+			<li>- Settlements passively generate research points equal to 5% of their total profit</li>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_Innovative">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Innovative</behaviorClass>
+				<profitToResearchRate>0.05</profitToResearchRate>
+			</li>
+		</modExtensions>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>lucky</defName>
+		<label>Lucky</label>
+		<desc></desc>
+		<category>Trait</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<positiveEffects>
+			<li>- Negative random Empire events have a 20% chance to be re-rolled in exchange for a new event</li>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_Lucky">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Lucky</behaviorClass>
+				<rerollChance>0.2</rerollChance>
+			</li>
+		</modExtensions>
+	</FactionColonies.FCPolicyDef>
+
+</Defs>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodSurplus_0</defName>
+    <label>Food Surplus</label>
+    <desc>Lucky harvests have led to a surplus of food in some settlements. What should be done with the excess?</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <cooldownTicks>900000</cooldownTicks>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <requiredResource>RTD_Food</requiredResource>
+    <incompatibleEvents>
+      <li>foodSurplus_1-1</li>
+      <li>foodSurplus_1-2</li>
+      <li>foodSurplus_1-3</li>
+      <li>foodShortage_0</li>
+      <li>foodShortage_1-1</li>
+      <li>foodShortage_1-2</li>
+      <li>foodShortage_1-3</li>
+      <li>foodShortage_1-4</li>
+    </incompatibleEvents>
+    <options>
+      <li>foodSurplus_0_1</li>
+      <li>foodSurplus_0_2</li>
+      <li>foodSurplus_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>foodSurplus_0_1</defName>
+    <label>Store the surplus for continued production.</label>
+    <parentEvent>foodSurplus_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>foodSurplus_1-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>foodSurplus_0_2</defName>
+    <label>Sell the excess harvest to traders.</label>
+    <parentEvent>foodSurplus_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>foodSurplus_1-2</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>foodSurplus_0_3</defName>
+    <label>Host a grand feast to celebrate the bounty.</label>
+    <parentEvent>foodSurplus_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>foodSurplus_1-3</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodSurplus_1-1</defName>
+    <label>Food Surplus</label>
+    <desc>The surplus is stored for continued production.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>foodSurplus_0</li>
+      <li>foodShortage_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Food_ProductionAdditive</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodSurplus_1-2</defName>
+    <label>Food Surplus (Sold)</label>
+    <desc>The excess harvest is sold to passing traders.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>60000</timeTillTrigger>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>foodSurplus_0</li>
+      <li>foodShortage_0</li>
+    </incompatibleEvents>
+    <randomThingValue>2600</randomThingValue>
+    <randomThingRewardDef>RERD_Silver</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodSurplus_1-3</defName>
+    <label>Food Surplus (Feast)</label>
+    <desc>A grand feast is held to celebrate the bounty! Citizens are happy and loyal.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>foodSurplus_0</li>
+      <li>foodShortage_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>happinessGainedBase</stat>
+        <value>2</value>
+      </li>
+      <li>
+        <stat>loyaltyGainedBase</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

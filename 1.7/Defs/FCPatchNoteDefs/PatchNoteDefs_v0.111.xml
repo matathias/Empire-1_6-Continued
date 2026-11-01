@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_111_0</defName>
+			<label>Building Updates</label>
+			<description>Handful of changes and fixes related to buildings.</description>
+			<releaseDate>2026-03-18</releaseDate>
+	
+			<patchNoteType>Minor</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Add an interface so that submods can inject their own information into a building&apos;s description in the building window</li>
+			<li>Add a &apos;baseSettlementType&apos; to WorldSettlementDef and add inheritence-aware settlementtype checks to buildings</li>
+			<li>Add several orbital buildings</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+</Defs>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCEventCategoryDef>
+		<defName>EC_Settlement</defName>
+		<label>Settlement</label>
+		<color>(0.2, 0.9, 0.85)</color>
+		<displayOrder>10</displayOrder>
+	</FactionColonies.FCEventCategoryDef>
+
+	<FactionColonies.FCEventCategoryDef>
+		<defName>EC_Construction</defName>
+		<label>Construction</label>
+		<color>(1.0, 0.65, 0.1)</color>
+		<displayOrder>20</displayOrder>
+	</FactionColonies.FCEventCategoryDef>
+
+	<FactionColonies.FCEventCategoryDef>
+		<defName>EC_Economy</defName>
+		<label>Economy</label>
+		<color>(1.0, 0.85, 0.1)</color>
+		<displayOrder>30</displayOrder>
+	</FactionColonies.FCEventCategoryDef>
+
+	<FactionColonies.FCEventCategoryDef>
+		<defName>EC_Policy</defName>
+		<label>Policy</label>
+		<color>(0.4, 0.55, 1.0)</color>
+		<displayOrder>40</displayOrder>
+	</FactionColonies.FCEventCategoryDef>
+
+	<FactionColonies.FCEventCategoryDef>
+		<defName>EC_Military</defName>
+		<label>Military</label>
+		<color>(1.0, 0.25, 0.25)</color>
+		<displayOrder>50</displayOrder>
+	</FactionColonies.FCEventCategoryDef>
+
+	<FactionColonies.FCEventCategoryDef>
+		<defName>EC_Social</defName>
+		<label>Social</label>
+		<color>(0.7, 0.4, 0.9)</color>
+		<displayOrder>60</displayOrder>
+	</FactionColonies.FCEventCategoryDef>
+
+	<FactionColonies.FCEventCategoryDef>
+		<defName>EC_Other</defName>
+		<label>Other</label>
+		<color>(0.65, 0.65, 0.65)</color>
+		<displayOrder>100</displayOrder>
+	</FactionColonies.FCEventCategoryDef>
+
+</Defs>

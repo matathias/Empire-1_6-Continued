@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- Food: meals and plant-based food items -->
+  <FactionColonies.ResourceEventRewardDef>
+    <defName>RERD_Food</defName>
+    <label>food</label>
+    <thingCategoryAllowList>
+      <li>Foods</li>
+    </thingCategoryAllowList>
+    <countRange>1~1</countRange>
+  </FactionColonies.ResourceEventRewardDef>
+
+  <!-- Weapons -->
+  <FactionColonies.ResourceEventRewardDef>
+    <defName>RERD_Weapons</defName>
+    <label>weapons</label>
+    <thingCategoryAllowList>
+      <li>Weapons</li>
+    </thingCategoryAllowList>
+    <useValueFactors>true</useValueFactors>
+    <valueMinFactor>0.5</valueMinFactor>
+    <valueMaxFactor>2.0</valueMaxFactor>
+    <countRange>1~1</countRange>
+    <useQualityGenerator>true</useQualityGenerator>
+    <qualityGenerator>Gift</qualityGenerator>
+  </FactionColonies.ResourceEventRewardDef>
+
+  <!-- Apparel (general) -->
+  <FactionColonies.ResourceEventRewardDef>
+    <defName>RERD_Apparel</defName>
+    <label>apparel</label>
+    <thingCategoryAllowList>
+      <li>Apparel</li>
+    </thingCategoryAllowList>
+    <useValueFactors>true</useValueFactors>
+    <valueMinFactor>0.5</valueMinFactor>
+    <valueMaxFactor>2.0</valueMaxFactor>
+    <countRange>1~1</countRange>
+    <useQualityGenerator>true</useQualityGenerator>
+    <qualityGenerator>Gift</qualityGenerator>
+  </FactionColonies.ResourceEventRewardDef>
+
+  <!-- Armor (subset of apparel) -->
+  <FactionColonies.ResourceEventRewardDef>
+    <defName>RERD_Armor</defName>
+    <label>armor</label>
+    <thingCategoryAllowList>
+      <li>ApparelArmor</li>
+      <li>Apparel</li>
+    </thingCategoryAllowList>
+    <useValueFactors>true</useValueFactors>
+    <valueMinFactor>0.5</valueMinFactor>
+    <valueMaxFactor>2.0</valueMaxFactor>
+    <countRange>1~1</countRange>
+    <useQualityGenerator>true</useQualityGenerator>
+    <qualityGenerator>Gift</qualityGenerator>
+  </FactionColonies.ResourceEventRewardDef>
+
+  <!-- Animals -->
+  <FactionColonies.ResourceEventRewardDef>
+    <defName>RERD_Animals</defName>
+    <label>animals</label>
+    <thingSetMakerClass>FactionColonies.ThingSetMaker_Animals</thingSetMakerClass>
+    <modExtensions>
+      <li Class="FactionColonies.ResourceFilterExtension_Animals" />
+    </modExtensions>
+    <useValueFactors>true</useValueFactors>
+    <valueMinFactor>0.5</valueMinFactor>
+    <valueMaxFactor>1.5</valueMaxFactor>
+    <useCountRange>false</useCountRange>
+    <overrideTechLevel>true</overrideTechLevel>
+    <techLevel>Undefined</techLevel>
+  </FactionColonies.ResourceEventRewardDef>
+
+  <!-- Logging -->
+  <FactionColonies.ResourceEventRewardDef>
+    <defName>RERD_Logging</defName>
+    <label>logging</label>
+    <thingAllowList>
+      <li>WoodLog</li>
+    </thingAllowList>
+    <countRange>1~10</countRange>
+  </FactionColonies.ResourceEventRewardDef>
+
+  <!-- Mining -->
+  <FactionColonies.ResourceEventRewardDef>
+    <defName>RERD_Mining</defName>
+    <label>mining</label>
+    <stuffCategoryAllowList>
+      <li>Metallic</li>
+    </stuffCategoryAllowList>
+    <thingBlockList>
+      <li>Silver</li>
+    </thingBlockList>
+    <countRange>1~10</countRange>
+  </FactionColonies.ResourceEventRewardDef>
+
+  <!-- Silver -->
+  <FactionColonies.ResourceEventRewardDef>
+    <defName>RERD_Silver</defName>
+    <label>silver</label>
+    <thingAllowList>
+      <li>Silver</li>
+    </thingAllowList>
+    <countRange>1~1</countRange>
+  </FactionColonies.ResourceEventRewardDef>
+
+  <!-- Drugs -->
+  <FactionColonies.ResourceEventRewardDef>
+    <defName>RERD_Drugs</defName>
+    <label>drugs</label>
+    <thingCategoryAllowList>
+      <li>Drugs</li>
+    </thingCategoryAllowList>
+    <countRange>1~2</countRange>
+  </FactionColonies.ResourceEventRewardDef>
+
+</Defs>

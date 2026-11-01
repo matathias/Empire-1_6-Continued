@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_114_0</defName>
+			<label>Prosperity Change</label>
+			<description>Changes how settlement prosperity is handled.</description>
+			<releaseDate>2026-03-19</releaseDate>
+	
+			<patchNoteType>Minor</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Settlement prosperity now targets the average value of happiness, loyalty, and (inverted) unrest. Prosperity will slowly drift towards this value.</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+</Defs>

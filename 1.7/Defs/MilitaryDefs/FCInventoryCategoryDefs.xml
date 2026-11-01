@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    Items a designed military unit may carry. BLOCKLIST model: the picker starts from every
+    ThingDef and removes the categories/items below, then applies the haulable + non-corpse +
+    research/craftable gate at list-build time. Any item a mod adds under ANY category (including
+    a brand-new root category) appears automatically with no patch.
+
+    To block something extra, add your own FCInventoryCategoryDef with excludeCategories/excludeThings
+    (or PatchOperation this def). To re-admit a child of a blocked subtree, list it under
+    <categories>/<things> (force-allow wins over excludes).
+
+    Notes:
+      - Buildings (incl. turrets/mortars), minified wrappers, and zero-market-value things are
+        blocked structurally in code (MilitaryInventoryUtil.IsNeverCarriable) rather than here,
+        because ThingDef.category is authoritative — many buildings declare no thingCategories at
+        all, so a "Buildings" entry here would miss them.
+      - FoodRaw is blocked to keep raw meat/veg/eggs/animal products out; FoodMeals, Pemmican, and
+        Kibble sit directly under Foods (not FoodRaw) and remain allowed.
+      - Components / Neutroamine / Wort sit directly under Manufactured (alongside the Medicine,
+        Drugs, and MortarShells subcategories we keep), so they are blocked individually.
+      - Chemfuel is intentionally left allowed (carryable fuel).
+  -->
+  <FactionColonies.FCInventoryCategoryDef>
+    <defName>Empire_DefaultInventory</defName>
+    <excludeCategories>
+      <li>Chunks</li>
+      <li>ResourcesRaw</li>
+      <li>Textiles</li>
+      <li>Apparel</li>
+      <li>BodyParts</li>
+      <li>Artifacts</li>
+      <li>InertRelics</li>
+      <li>Techprints</li>
+      <li>Books</li>
+      <li>FoodRaw</li>
+      <li>Unfinished</li>
+      <li>ItemsMisc</li>
+      <li>Neurotrainers</li>
+      <li>Plants</li>
+      <li>Animals</li>
+    </excludeCategories>
+    <excludeThings>
+      <li>ComponentIndustrial</li>
+      <li>ComponentSpacer</li>
+      <li>Neutroamine</li>
+      <li>Wort</li>
+      <!-- One-shot strategic consumables that the allowed trees would otherwise admit. -->
+      <li MayRequire="Ludeon.RimWorld.Biotech">DeathrestCapacitySerum</li>
+      <li MayRequire="Ludeon.RimWorld.Odyssey">SentienceCatalyst</li>
+    </excludeThings>
+  </FactionColonies.FCInventoryCategoryDef>
+
+</Defs>

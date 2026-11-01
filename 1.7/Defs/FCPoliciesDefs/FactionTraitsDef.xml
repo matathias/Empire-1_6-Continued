@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>militaristic</defName>
+		<label>Militaristic</label>
+		<desc>A militaristic society, one who seeks glory in blood and death for their cause.</desc>
+		<category>Core</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<iconPathLight>GUI/MainTraits/Militaristic</iconPathLight>
+		<iconPathDark>GUI/MainTraits/MilitaristicDark</iconPathDark>
+		<incompatiblePolicies>
+			<li>pacifist</li>
+		</incompatiblePolicies>
+		<positiveEffects>
+			<li>- +10% combat modifier when using your faction's military forces</li>
+			<li>- Once per five days, you can deploy a second squad from a single settlement by paying 40% of the squad's cost in Silver</li>
+			<li>- When creating a new settlement, it will start with a Barracks</li>
+			<li>- All military buildings cost 50 less upkeep</li>
+			<li>- Can send your military to raze another faction's settlement, destroying it and wiping it from the map</li>
+		</positiveEffects>
+		<negativeEffects>
+		</negativeEffects>
+		<enabledMilitaryJobs>
+			<li>RazeEnemySettlement</li>
+		</enabledMilitaryJobs>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_Militaristic">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Militaristic</behaviorClass>
+				<extraSquadCooldownDays>5</extraSquadCooldownDays>
+				<extraSquadCostFraction>0.4</extraSquadCostFraction>
+				<autoPlaceBuilding>barracks</autoPlaceBuilding>
+			</li>
+		</modExtensions>
+		<statModifiers>
+			<li><stat>militaryCombatEfficiency</stat><value>1.1</value></li>
+			<li><stat>mercenaryDeathHappinessPenalty</stat><value>-0.5</value></li>
+			<li><stat>happinessLostBase</stat><value>0.5</value></li>
+			<li><stat>buildingUpkeepBase_Military</stat><value>-10</value></li>
+		</statModifiers>
+		<enabledActions>
+			<li>DeployExtraSquad</li>
+		</enabledActions>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>pacifist</defName>
+		<label>Pacifist</label>
+		<desc>A pacifist society that seeks to avoid conflict when and where possible.</desc>
+		<category>Core</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<iconPathLight>GUI/MainTraits/Pacifist</iconPathLight>
+		<iconPathDark>GUI/MainTraits/PacifistDark</iconPathDark>
+		<incompatiblePolicies>
+			<li>militaristic</li>
+		</incompatiblePolicies>
+		<positiveEffects>
+			<li>- Once per five days, can send a diplomatic envoy to another faction to attempt to improve relations</li>
+			<li>- A populace at peace is a happy one (+0.5 happiness per day in every settlement)</li>
+		</positiveEffects>
+		<negativeEffects>
+			<li>- Cannot use military forces to raid or to capture other faction's settlements</li>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_Pacifist">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Pacifist</behaviorClass>
+				<diplomatCooldownDays>5</diplomatCooldownDays>
+				<successRollMax>10</successRollMax>
+				<successThreshold>4</successThreshold>
+				<relationImprovementMin>8</relationImprovementMin>
+				<relationImprovementMax>20</relationImprovementMax>
+			</li>
+		</modExtensions>
+		<statModifiers>
+			<li><stat>mercenaryDeathHappinessPenalty</stat><value>0.5</value></li>
+			<li><stat>happinessGainedBase</stat><value>0.5</value></li>
+		</statModifiers>
+		<blockedActions>
+			<li>DeployMilitary</li>
+		</blockedActions>
+		<enabledActions>
+			<li>SendDiplomat</li>
+		</enabledActions>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>authoritarian</defName>
+		<label>Authoritarian</label>
+		<desc>An authoritarian society that seeks to hold control over its members by whatever means necessary.</desc>
+		<category>Core</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<iconPathLight>GUI/MainTraits/Authoritarian</iconPathLight>
+		<iconPathDark>GUI/MainTraits/AuthoritarianDark</iconPathDark>
+		<incompatiblePolicies>
+			<li>egalitarian</li>
+		</incompatiblePolicies>
+		<positiveEffects>
+			<li>- Can send your military to raid another faction's settlement to enslave members of their faction instead of ordinary raiding</li>
+			<li>- Can send your military to raze another faction's settlement, destroying it and wiping it from the map</li>
+			<li>- You can spend silver to increase the loyalty of a settlement</li>
+		</positiveEffects>
+		<negativeEffects>
+			<li>- Loyalty starts at 70%</li>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_Authoritarian">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Authoritarian</behaviorClass>
+				<startingLoyalty>70</startingLoyalty>
+			</li>
+		</modExtensions>
+		<statModifiers>
+			<li><stat>mercenaryDeathHappinessPenalty</stat><value>-0.5</value></li>
+		</statModifiers>
+		<enabledMilitaryJobs>
+			<li>EnslaveEnemySettlement</li>
+			<li>RazeEnemySettlement</li>
+		</enabledMilitaryJobs>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>egalitarian</defName>
+		<label>Egalitarian</label>
+		<desc>An egalitarian society is one that seeks equality amongst all.</desc>
+		<category>Core</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<iconPathLight>GUI/MainTraits/Egalitarian</iconPathLight>
+		<iconPathDark>GUI/MainTraits/EgalitarianDark</iconPathDark>
+		<incompatiblePolicies>
+			<li>authoritarian</li>
+			<li>slaver</li>
+		</incompatiblePolicies>
+		<positiveEffects>
+			<li>- Every worker produces 10% more</li>
+			<li>- +1 to worker softcap per settlement level</li>
+			<li>- Can grant a 10-day tax break to a settlement to boost happiness and prosperity at the cost of tax revenue</li>
+		</positiveEffects>
+		<negativeEffects>
+			<li>- All workers cost 2 additional silver</li>
+			<li>- -3 over-max worker cap</li>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_Egalitarian">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Egalitarian</behaviorClass>
+				<taxBreakDurationDays>10</taxBreakDurationDays>
+				<taxBreakPenalty>30</taxBreakPenalty>
+				<taxBreakHappinessBonus>2</taxBreakHappinessBonus>
+				<taxBreakProsperityBonus>2</taxBreakProsperityBonus>
+			</li>
+		</modExtensions>
+		<statModifiers>
+			<li><stat>workerProductionMultiplier</stat><value>1.1</value></li>
+			<li><stat>extraWorkersSoftcap</stat><value>1</value></li>
+			<li><stat>overMaxWorkersAdjustment</stat><value>-3</value></li>
+			<li><stat>workerBaseCost</stat><value>2</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>isolationist</defName>
+		<label>Isolationist</label>
+		<desc>An isolationist society is one that seeks to stay reclusive amongst the world's politics and interactions.</desc>
+		<category>Core</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<iconPathLight>GUI/MainTraits/Isolationist</iconPathLight>
+		<iconPathDark>GUI/MainTraits/IsolationistDark</iconPathDark>
+		<incompatiblePolicies>
+			<li>expansionist</li>
+		</incompatiblePolicies>
+		<positiveEffects>
+			<li>- The time to upgrade settlements and construct buildings is reduced by 50%</li>
+			<li>- Every settlement receives an extra +3 to worker softcap per level of the settlement</li>
+			<li>- All settlements receive +10% to base tax</li>
+			<li>- Can send your military to raze another faction's settlement, destroying it and wiping it from the map</li>
+		</positiveEffects>
+		<negativeEffects>
+			<li>- The cost to create new settlements is increased by 100%</li>
+			<li>- Cannot use your military forces to capture other faction's settlements</li>
+		</negativeEffects>
+		<statModifiers>
+			<li><stat>settlementCostMultiplier</stat><value>2</value></li>
+			<li><stat>buildTimeMultiplier</stat><value>0.5</value></li>
+			<li><stat>extraWorkersSoftcap</stat><value>3</value></li>
+			<li><stat>taxBonusFlat</stat><value>10</value></li>
+		</statModifiers>
+		<blockedMilitaryJobs>
+			<li>CaptureEnemySettlement</li>
+		</blockedMilitaryJobs>
+		<enabledMilitaryJobs>
+			<li>RazeEnemySettlement</li>
+		</enabledMilitaryJobs>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>expansionist</defName>
+		<label>Expansionist</label>
+		<desc>An expansionist society is one that seeks to spread their glory across the entirety of the realm.</desc>
+		<category>Core</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<iconPathLight>GUI/MainTraits/Expansionist</iconPathLight>
+		<iconPathDark>GUI/MainTraits/ExpansionistDark</iconPathDark>
+		<incompatiblePolicies>
+			<li>isolationist</li>
+		</incompatiblePolicies>
+		<positiveEffects>
+			<li>- All new settlements cost 25% less to establish</li>
+			<li>- Settlements that you construct start at level 2</li>
+		</positiveEffects>
+		<negativeEffects>
+			<li>- New settlements start at 50% prosperity</li>
+			<li>- Rapid expansion strains governance (+0.5 unrest per day in every settlement)</li>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_Expansionist">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Expansionist</behaviorClass>
+				<autoUpgradeToLevel>2</autoUpgradeToLevel>
+				<startingProsperity>50</startingProsperity>
+			</li>
+		</modExtensions>
+		<statModifiers>
+			<li><stat>settlementCostMultiplier</stat><value>0.75</value></li>
+			<li><stat>unrestGainedBase</stat><value>0.5</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>technocratic</defName>
+		<label>Technocratic</label>
+		<desc>A technocratic society is one that seeks the furthering of knowledge and continuous improvement.</desc>
+		<category>Core</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<iconPathLight>GUI/MainTraits/Technocratic</iconPathLight>
+		<iconPathDark>GUI/MainTraits/TechnocraticDark</iconPathDark>
+		<incompatiblePolicies>
+			<li>feudal</li>
+		</incompatiblePolicies>
+		<positiveEffects>
+			<li>- All research produced by your settlements is doubled</li>
+			<li>- Can send items that you have not completed the research for or are above your tech level to your settlements to be reverse-engineered, giving you their value in research points</li>
+		</positiveEffects>
+		<negativeEffects>
+			<li>- Research investment reduces tax revenue (-10% base tax)</li>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExtension">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Technocratic</behaviorClass>
+			</li>
+		</modExtensions>
+		<statModifiers>
+			<li><stat>researchContributionMultiplier</stat><value>2</value></li>
+			<li><stat>taxBasePercentage</stat><value>-10</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>feudal</defName>
+		<label>Feudal</label>
+		<desc>A feudal society is one that supports a feudal contract, binding the society to a liege in return for protection.</desc>
+		<category>Core</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<iconPathLight>GUI/MainTraits/Feudal</iconPathLight>
+		<iconPathDark>GUI/MainTraits/FeudalDark</iconPathDark>
+		<incompatiblePolicies>
+			<li>technocratic</li>
+		</incompatiblePolicies>
+		<positiveEffects>
+			<li>- Once per season, can request for a mercenary from your faction to join your colony</li>
+			<li>- All tithes received have their value increased by 20%</li>
+		</positiveEffects>
+		<negativeEffects>
+			<li>- Failing to protect your settlements against a raid causes loyalty to drop significantly</li>
+		</negativeEffects>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_Feudal">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_Feudal</behaviorClass>
+				<mercenaryCooldownTicks>900000</mercenaryCooldownTicks>
+				<relationChanceFactor>20</relationChanceFactor>
+				<readyLetterKey>FCActionAvailable</readyLetterKey>
+				<cooldownMessageKey>FCActionMercenaryOnCooldown</cooldownMessageKey>
+			</li>
+		</modExtensions>
+		<statModifiers>
+			<li><stat>battleLoyaltyLossMultiplier</stat><value>2</value></li>
+			<li><stat>titheValueMultiplier</stat><value>1.2</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>slaver</defName>
+		<label>Slaver</label>
+		<desc>A Society that focuses on Slavery</desc>
+		<category>Core</category>
+		<factionLevelRequirement>0</factionLevelRequirement>
+		<techLevelRequirement>Undefined</techLevelRequirement>
+		<iconPathLight>GUI/MainTraits/Feudal</iconPathLight>
+		<iconPathDark>GUI/MainTraits/FeudalDark</iconPathDark>
+		<incompatiblePolicies>
+			<li>egalitarian</li>
+		</incompatiblePolicies>
+		<positiveEffects>
+			<li>- Your Faction has been using slaves for its projects since the start, gaining more workers at the cost of not being able to hire as many normal citizens.</li>
+			<li>- +1 Worker Per Settlement Level</li>
+			<li>- Can send your military to raid another faction's settlement to enslave its members instead of ordinary raiding</li>
+		</positiveEffects>
+		<negativeEffects>
+			<li>- -2 Over Max Workers</li>
+			<li>- Slave labor breeds discontent (-0.5 happiness gained, +0.5 unrest gained per day)</li>
+		</negativeEffects>
+		<statModifiers>
+			<li><stat>extraWorkersSoftcap</stat><value>1</value></li>
+			<li><stat>overMaxWorkersAdjustment</stat><value>-2</value></li>
+			<li><stat>happinessGainedBase</stat><value>-0.5</value></li>
+			<li><stat>unrestGainedBase</stat><value>0.5</value></li>
+		</statModifiers>
+		<enabledMilitaryJobs>
+			<li>EnslaveEnemySettlement</li>
+		</enabledMilitaryJobs>
+	</FactionColonies.FCPolicyDef>
+
+</Defs>

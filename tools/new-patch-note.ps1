@@ -1,15 +1,15 @@
 # new-patch-note.ps1
 # Interactive script to add a new PatchNoteDef and update About.xml modVersion
-# Run from the Empire/ directory (the one containing About/, 1.6/, etc.)
+# Run from the Empire/ directory (the one containing About/, 1.7/, etc.)
 
 $ErrorActionPreference = "Stop"
 
-$defsDir = "1.6\Defs\FCPatchNoteDefs"
+$defsDir = "1.7\Defs\FCPatchNoteDefs"
 $aboutPath = "About\About.xml"
 
 # Verify we're in the right directory
 if (-not (Test-Path $defsDir) -or -not (Test-Path $aboutPath)) {
-    Write-Host "ERROR: Run this script from the Empire/ directory (the one containing About/ and 1.6/)." -ForegroundColor Red
+    Write-Host "ERROR: Run this script from the Empire/ directory (the one containing About/ and 1.7/)." -ForegroundColor Red
     exit 1
 }
 
@@ -133,7 +133,7 @@ if ($aboutContent -match '<modVersion>') {
 Set-Content $aboutPath -Value $aboutContent -NoNewline
 
 # --- Update AssemblyVersion in .csproj ---
-$csprojPath = "1.6\Source\Core\Empire.csproj"
+$csprojPath = "Source\Core\Empire.csproj"
 if (Test-Path $csprojPath) {
     $assemblyVersion = "$major.$minor.$patch.0"
     $csprojContent = Get-Content $csprojPath -Raw

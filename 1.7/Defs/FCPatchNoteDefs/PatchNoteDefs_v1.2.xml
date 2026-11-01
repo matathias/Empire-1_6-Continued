@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_0</defName>
+		<label>Performance Update</label>
+		<description>A handful of changes made in the aim of improving performance. Perf was generally better than old Empire, but there were still some things to improve, so here we are. Hopefully nothing breaks!</description>
+		<releaseDate>2026-04-09</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Add more tick guards for sensitive code paths, and remove some redundant code</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_1</defName>
+		<label>Critical Fix for adding Empire mid-save</label>
+		<description>Fixes a crash when trying to add Empire mid-save. In this circumstance, Empire attempted to initialize the XenotypeFilter in the FactionFC.FinalizeInit function. As part of initializing the filter, Empire attempts to load all custom xenotypes through CustomXenotypesForReading. That calls CheckVersionAndLoad, which in turn calls InitLoadingMetaHeaderOnly. Fun fact: if the Scribe mode is *not* Inactive, then InitLoadingMetaHeaderOnly panics and force stops the scribe process. And guess what Empire&apos;s custom xenotype loading does? That&apos;s right: it calls InitLoadingMetaHeaderOnly when the Scribe mode is not Inactive. Thus, loading stops, and everything breaks. Fun.\n\nThis issue does not affect new saves.</description>
+		<releaseDate>2026-04-09</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Change the xenotype filter to be initialized on the first tick instead of during loading</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_2</defName>
+		<label>Harmony Patch Update</label>
+		<description>Change to make the harmony patching more robust.</description>
+		<releaseDate>2026-04-09</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Moves the harmony.PatchAll() call into a static class with a StaticConstructoreOnStartup tag</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_3</defName>
+		<label>Minor update</label>
+		<description>Additional hardening for handling custom xenotypes while loading.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Update XenotypeFilter.BuildMergedCustomXenotypeList to only access CharacterCardUtility.CustomXenotypesForReading when the Scribe mode is Inactive</li>
+		<li>Update XenotypeFilter.CustomXenotypes to only cache the list of custom xenotypes if the scribe mode is Inactive (to force re-calculating the list if it is access during loading)</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_4</defName>
+		<label>Event Options Delay</label>
+		<description>Changes the event window: buttons aren&apos;t clickable until a configurable delay after the window opens.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Event options can&apos;t be selected until 0.5 seconds after the event window appears</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_5</defName>
+		<label>Settlement Capture Fix</label>
+		<description>Fixes an issue where, on capturing a settlement with a squad, the squad&apos;s home settlement is penalized, instead of the captured settlement.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Change several lines in MilitaryJobHandler_Capture.OnResolved to use worldsettlement instead of milComp.WorldSettlement</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_6</defName>
+		<label>Manual Battle Error Handling</label>
+		<description>Adds more graceful error handling on pawn spawning for manual defense battles. This isn&apos;t an Empire bug per se, so much as defensive coding against bugs in other mods&apos; code.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Add try/catch guards to pawn spawning for manual battles. Pawns that fail to spawn are logged with the corresponding error message.</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_7</defName>
+		<label>Random Tithe Update</label>
+		<description>Add an option to let players set a resource to always use the maximum available budget for random tithes.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Updates resource and tithe handling to let the user automatically allocate all available tithe budget to random tithes</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_8</defName>
+		<label>Conditionally allow settlements on Impassable tiles</label>
+		<description>Adds a mechanism to conditionally allow settlements to be founded on Impassable tiles.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Add impassableAllowedMutators field to WorldSettlementDef. If an impassable tile has a tile mutator that is in a settlement&apos;s impassableAllowedMutators list, then the settlement can be founded on that tile</li>
+		<li>Reworks the tile check to skip the base game&apos;s Impassable check if a settlement has an impassible override</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_9</defName>
+		<label>Faction Goodwill Patches</label>
+		<description>Adds a few patches onto the game&apos;s goodwill functions to block goodwill drops between the player&apos;s faction and the Empire faction.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Notify_BuildingTookDamage, Notify_MemberStripped, and Notify_BuildingRemoved all patched to return early for the Empire NPC faction, just like Notify_MemberTookDamage</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_10</defName>
+		<label>Create New Colony Window fix</label>
+		<description>Fixes an issue that could cause the Create New Colony window to error out and show nothing.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Add a null check to FCRoadBuilder.DrawPaths() to prevent the Create New Colony window from crashing on a null road builder</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_11</defName>
+		<label>Roads &amp; Events</label>
+		<description>A couple of fixes and changes to road drawing and event timing.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>The paths of roads-to-be-built are drawn more consistently (when the Create New Colony window is open)</li>
+		<li>The defaults for minimum time between events and maximum time between events have been changed from 0 -&gt; 2 and 6 -&gt; 8, respectively. Average event interval should be around 5 days.</li>
+		<li>Actually save the &quot;disable forced pausing during events&quot; setting so it persists between game launches</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_12</defName>
+		<label>Minor fix</label>
+		<description>Updates the xenotype picker for military units to more gracefully handle Xenotype names that resolve to null.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Updates the xenotype picker for military units to more gracefully handle xenotype names that resolve to null</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_13</defName>
+		<label>Minor fixes</label>
+		<description>A handful of minor fixes in Empire&apos;s UI.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Adds numerous null guards across Empire&apos;s windows</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_14</defName>
+		<label>Squad Fixes</label>
+		<description>Fixes a handful of issues related to military squads.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>At Empire faction creation, copy all faction relations from the player faction</li>
+		<li>Bugfix: the deployed squad menu could get stuck with a stale squad selection, leaving the menu unusable</li>
+		<li>Additional null protections in the deployed squad menu</li>
+		<li>Bugfix: when a squad is deployed, if one of the pawns fails to spawn for any reason, the entire squad will never become ready for commands</li>
+		<li>Update lord handling for deployed squads</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_15</defName>
+		<label>More null guards</label>
+		<description>All the null guards! Man the walls! Stop the nothings from doing things!</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Adds numerous additional null protections</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_16</defName>
+		<label>Update WD Experimental Compat Patch</label>
+		<description>Updates the compatibility patch for World Domination Experimental.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Updates use of comp.strength to comp.GetTotalLocalDefensePower()</li>
+		<li>Updates world stats to remove the Empire faction&apos;s per-tier strength</li>
+		<li>Add a prefix to one of WDExp&apos;s prefixes to prevent WDExp from destroying Empire settlements</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_17</defName>
+		<label>Factionless Relations Update</label>
+		<description>Updates the Empire NPC faction to consider factionless pawns as hostile if the factionless pawn is fighting or has the AssaultColony duty.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Adds a Postfix on GenHostility.HostileTo for Empire pawns to consider aggressive factionless pawns as hostile</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_18</defName>
+		<label>Battle Forecast</label>
+		<description>Improves the impending battle notification by showing the probability of victory.</description>
+		<releaseDate>2026-04-11</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Adds victory percentages to the battle notification, as well as to all menus that let the player swap defenders.</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_19</defName>
+		<label>Settlement Gizmo Update</label>
+		<description>Changes how gizmos are assigned to non-Empire NPC settlements to increase general mod compatibility.</description>
+		<releaseDate>2026-04-11</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Replaces the semi-destructive harmony patches with a comp-based approach to add gizmos to non-Empire NPC settlements</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_20</defName>
+		<label>Settlement Trading Rework</label>
+		<description>Reworks settlement trading. Settlement inventories are based on the resources they produce, and their wealth is based on settlement income and the Empire faction&apos;s tech level.</description>
+		<releaseDate>2026-04-11</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Replace the old trader code with actual functional code that won&apos;t needlessly harm performance</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_21</defName>
+		<label>New Animal Picker</label>
+		<description>Adds the ability to pick what animals can accompany Empire pawns during delivery events.</description>
+		<releaseDate>2026-04-11</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Adds the ability to pick what animals can accompany Empire pawns during delivery events</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_22</defName>
+		<label>New Caravan Type Picker</label>
+		<description>Adds ability for player to select what types of trading caravans their Empire will send.</description>
+		<releaseDate>2026-04-11</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Adds menus and machinery for picking caravan types for the Empire faction. One caravan type per tithe-able resource, plus slaver and exotic (if certain conditions are met)</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_23</defName>
+		<label>HAR Pawkind Update</label>
+		<description>Updates Empire&apos;s pawnkind handling to take tech level into account for HAR races.</description>
+		<releaseDate>2026-04-12</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Updates Empire&apos;s pawnkind handling to take tech level into account for HAR races. Techlevel was already accounted for for the base human race; only HAR races had this issue</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_24</defName>
+		<label>Tech scaling bugfix</label>
+		<description>Fixes an issue where generated pawns might not have tech-level appropriate gear.</description>
+		<releaseDate>2026-04-12</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: several pawn generation request used the template pawnKindDefs instead of the tech-level derived clones, resulting in pawns generating with the wrong gear</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_25</defName>
+		<label>Pawnkind Race Diversification Patch</label>
+		<description>Provides compatibility with Pawnkind Race Diversification.</description>
+		<releaseDate>2026-04-12</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Patch PRD&apos;s ResetRequest to ignore Empire&apos;s runtime-generated pawnkinds</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_26</defName>
+		<label>Building &amp; Military Fixes</label>
+		<description>Couples fixes for a wrong building bonus, and military cooldown event issues.</description>
+		<releaseDate>2026-04-12</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Synthetic Wood Factory&apos;s 0.5 multiplier changed to a 0.5 additive bonus</li>
+		<li>Add several guards to prevent duplicate cooldown events or letters from firing</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_27</defName>
+		<label>Update the road builder</label>
+		<description>Updates the road builder so that it actually upgrades existing roads when higher-tech roads become available.</description>
+		<releaseDate>2026-04-12</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Road paths track what road def they were built with, and if new, better roads become available, old paths are wiped from the MST, enabling new paths with the new road type to be built</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_28</defName>
+		<label>Road Building Perf Changes</label>
+		<description>Updates the road builder to improve overall performance.</description>
+		<releaseDate>2026-04-12</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+			<li>Spreads the MST computation out over several road ticks, reducing the possibility of a hang any time the MST is recomputed.</li>
+			<li>Updates the road builder to build from both ends, instead of just one</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_30</defName>
+		<label>Tithe Pausing</label>
+		<description>Adds the ability to &apos;pause&apos; tithes, stopping the item shipping while preserving the tithe settings.</description>
+		<releaseDate>2026-04-12</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Adds the ability to &apos;pasue&apos; tithes, preserving the tithe settings while sending silver instead of items</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_31</defName>
+		<label>Animal Filter Defaults</label>
+		<description>Changes the animal filter to default to a handful of &quot;normal&quot; animals, so as to prevent exotic creatures (e.g. thrumbos, insectoids) from appearing without player opt-in.</description>
+		<releaseDate>2026-04-12</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Sets the default animal list to Husky, Timber Wolf, Arctic Wolf, Lynx, Cougar, Muffalo, Dromedary, Horse, Donkey, Elephant, and Yak</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_32</defName>
+		<label>Animal trader bugfix</label>
+		<description>Fixes a bug with animal traders.</description>
+		<releaseDate>2026-04-12</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>The stock generator for animal traders will now general pawns for animals instead of trying to use MakeThing</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_33</defName>
+		<label>New Buildings &amp; Icons</label>
+		<description>Adds a couple of new buildings and icons.</description>
+		<releaseDate>2026-04-13</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Updates the Orbital Fuel Depot to have an actual icon</li>
+		<li>Adds Salvage Guild, Fungal Farm, Wood Gatherer, Woodcutter buildings</li>
+		</patchNoteLines>
+		<authors>
+		<li>Pecha</li>
+		<li>Midnight</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_34</defName>
+		<label>Minor Fixes</label>
+		<description>A variety of code cleanup and typo-fixing.</description>
+		<releaseDate>2026-04-13</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+			<li>Fixes a couple building description typos</li>
+			<li>Fair bit of code cleanup</li>
+			<li>Bugfix: the shuttles building wouldn't refresh correctly</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_35</defName>
+		<label>Fix for event loading</label>
+		<description>Fixes an issue where modifiers from events would not get applied to settlements after reloading the game.</description>
+		<releaseDate>2026-04-13</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Move the event modifier application code out of FactionFC.FinalizeInit and into each settlement's PostLoadInit phase. WorldComponents are finalized before WorldObjects are, and event modifiers got lost in that difference</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_36</defName>
+		<label>Squad cooldown fixes</label>
+		<description>A number of fixes to resolve issues with squads cooling down.</description>
+		<releaseDate>2026-04-13</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Changes code to handle military cooldown only once per squad deployment</li>
+		<li>Handful of other fixes related to post-deployment cooldown</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_37</defName>
+		<label>Suttle Port Patch</label>
+		<description>Fixes a null-reference bug with the shuttle port gizmo.</description>
+		<releaseDate>2026-04-15</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: settlement gizmos would stop working when a shuttle port is built due to an NRE in the shuttle&apos;s comp&apos;s GetGizmos function</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_38</defName>
+		<label>Manual Defense Fix</label>
+		<description>Fixes an issue where attempting to start a manual defense battle with a caravan or the gizmo would cause a map to generate without attackers, immediately close, and then a second map to generate *with* attackers.</description>
+		<releaseDate>2026-04-15</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Fixes up event handling to cleanup a bug with manual defense</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_39</defName>
+		<label>Xenotype Filter Fixes</label>
+		<description>Fixes a handful of issues with the xenotype filter and xenotype handling.</description>
+		<releaseDate>2026-04-15</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: when there are no custom xenotypes saved at all, the custom xenotype caches aren&apos;t built, and can cause NREs</li>
+		<li>Bugfix: the check for if a xenotype is valid for a given pawn generation request was too permissive</li>
+		<li>When generating a faction leader for the Empire faction, use PawnKindDefOf.Villager as the ultimate fallback</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_2_40</defName>
+		<label>Building Bugfix</label>
+		<description>Fixes an issue affecting the Shuttle Port where it lost its usage.</description>
+		<releaseDate>2026-04-16</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: some values for building comps were serialized wrong, meaning that buildings like the Shuttle Port could load incorrectly</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

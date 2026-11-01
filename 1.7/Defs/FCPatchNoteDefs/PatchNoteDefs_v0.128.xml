@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_128_0</defName>
+		<label>Military Backend Changes</label>
+		<description>Handful of changes to the military backend for submod support.</description>
+		<releaseDate>2026-03-25</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>Add RaidWeightRegistry and associated interface, for submods to influence the raid weighting for Empire settlements</li>
+		<li>Add UnitOverlayRegistry and associated interface, for submods to add information to the military squad screen</li>
+		<li>Add MercenaryDeathEvent, for submods to potentially intercept mercenary deaths</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_128_1</defName>
+		<label>&quot;Ghost&quot; Caravan Fixes</label>
+		<description>Fixes a couple of issues that might cause &quot;Ghost&quot; caravans</description>
+		<releaseDate>2026-03-26</releaseDate>
+
+		<patchNoteType>Hotfix</patchNoteType>
+
+		<patchNoteLines>
+		<li>If a delivery good can&apos;t be added to a pawn for some reason, then it is placed at the tax spot, instead of silently destroyed</li>
+		<li>Tax delivery method is locked in at event creation time, rather than delivery time</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_128_2</defName>
+		<label>Resource-DLC Patch</label>
+		<description>Fixes a DLC-access issue for some resources.</description>
+		<releaseDate>2026-03-26</releaseDate>
+
+		<patchNoteType>Hotfix</patchNoteType>
+
+		<patchNoteLines>
+		<li>Bugfix: Deathrest capacity serum and Sentience catalyst on RTD_Medicine weren't gated behind DLC checks, causing problems for players without those DLC</li>
+		<li>Updated several other items to also check for DLC</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_128_3</defName>
+		<label>Biotech fixes</label>
+		<description>A couple of fixes to let Empire gracefully handle not having Biotech.</description>
+		<releaseDate>2026-03-26</releaseDate>
+
+		<patchNoteType>Hotfix</patchNoteType>
+
+		<patchNoteLines>
+		<li>Gate xenotype initialization behind a check for the Biotech DLC</li>
+		<li>Don&apos;t render the xenotype filter button if Biotech is disabled/not intalled, and there is only one humanlike race</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_128_4</defName>
+		<label>Policy Fixes</label>
+		<description>Fixes an issue where some policies wouldn&apos;t properly apply until restarting the game.</description>
+		<releaseDate>2026-03-26</releaseDate>
+
+		<patchNoteType>Hotfix</patchNoteType>
+
+		<patchNoteLines>
+		<li>Bugfix: Militaristic and Expansionist policies wouldn&apos;t correctly apply their bonuses until restarting the game</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_128_5</defName>
+		<label>Minor Fixes</label>
+		<description>Some minor fixes to make the road builder a little more robust.</description>
+		<releaseDate>2026-03-26</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Make sure that the settlement list is populated before processing paths</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_128_7</defName>
+		<label>Minor Fixes</label>
+		<description>Handful of minor fixes for unit importing and xenotype handling.</description>
+		<releaseDate>2026-03-26</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Detect when an imported unit encountered errors during loading, and mark it in the Import Units UI</li>
+		<li>Patch out references to &quot;Xenotypes&quot; in the Manage Units window when Biotech isn&apos;t active</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_128_8</defName>
+		<label>Minor Fixes</label>
+		<description>Adds a couple more DLC checks for DLC-using code.</description>
+		<releaseDate>2026-03-26</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Gates two code uses of shuttles behind checks for the Royalty DLC, with a fallback option to transport pods or regular caravans</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_115_0</defName>
+			<label>Patch Notes Update</label>
+			<description>Updates the patch notes window</description>
+			<releaseDate>2026-03-19</releaseDate>
+	
+			<patchNoteType>Minor</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Update the patch notes window to cut down redundant wording and to use less empty space</li>
+			<li>Lets users change in the settings when the patch notes auto-open on game start (or if they even auto-open at all)</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+</Defs>

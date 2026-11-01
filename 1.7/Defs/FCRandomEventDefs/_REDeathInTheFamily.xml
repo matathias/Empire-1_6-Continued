@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>deathInTheFamily_0</defName>
+    <label>Death In The Family</label>
+    <desc>A figure of high-importance and connection to your capital in a settlement has been assassinated. Some people on the streets are spreading that it was you who caused their death. How will you respond?</desc>
+    <category>EC_Social</category>
+    <isNegative>true</isNegative>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>10</weight>
+    <cooldownTicks>3600000</cooldownTicks>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>deathInTheFamily-1a</li>
+      <li>deathInTheFamily-1b_memorial</li>
+      <li>deathInTheFamily_1-3s</li>
+      <li>deathInTheFamily_1-3f</li>
+    </incompatibleEvents>
+    <options>
+      <li>deathInTheFamily_0_1</li>
+      <li>deathInTheFamily_0_2</li>
+      <li>deathInTheFamily_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>deathInTheFamily_0_1</defName>
+    <label>We'll mourn in private. Time will heal this wound.</label>
+    <parentEvent>deathInTheFamily_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>deathInTheFamily-1a</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>deathInTheFamily_0_2</defName>
+    <label>Hold a public memorial to honor their legacy.</label>
+    <parentEvent>deathInTheFamily_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <silverCost>400</silverCost>
+    <successEvent>deathInTheFamily-1b_memorial</successEvent>
+    <modExtensions>
+      <li Class="FactionColonies.FCDynamicCostExtension">
+        <costPerEmpireIncomeUnit>0.02</costPerEmpireIncomeUnit>
+      </li>
+    </modExtensions>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>deathInTheFamily_0_3</defName>
+    <label>Investigate the assassination — someone will answer for this.</label>
+    <parentEvent>deathInTheFamily_0</parentEvent>
+    <baseChanceOfSuccess>70</baseChanceOfSuccess>
+    <silverCost>500</silverCost>
+    <successEvent>deathInTheFamily-1c_investigation_good</successEvent>
+    <failEvent>deathInTheFamily-1d_investigation_bad</failEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>deathInTheFamily_1-3s</defName>
+    <label>Death In The Family (Justice Found)</label>
+    <desc>The investigation uncovers the assassin and brings them to justice. Conclusive results absolve you of guilt in the people's eyes, allowing them to properly focus on mourning the fallen figure — a process made all the easier by the catharsis of finding the killer.</desc>
+    <category>EC_Social</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>300000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>deathInTheFamily_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>happinessLostBase</stat>
+        <value>3</value>
+      </li>
+      <li>
+        <stat>loyaltyGainedBase</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>deathInTheFamily_1-3f</defName>
+    <label>Death In The Family (Investigation Failed)</label>
+    <desc>The investigation turns up nothing and only fuels the rumors that you were behind the assassination. The people grow restless.</desc>
+    <category>EC_Social</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>600000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>deathInTheFamily_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>happinessLostBase</stat>
+        <value>4</value>
+      </li>
+      <li>
+        <stat>unrestGainedBase</stat>
+        <value>2</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>deathInTheFamily-1a</defName>
+    <label>Death In The Family</label>
+    <desc>The settlements mourn in private. The grief weighs heavily on the people.
+
+Refusing to acknowledge the rumors allows them to fester, however. Amidst the grief, people continue to speculate on your involvement...</desc>
+    <category>EC_Social</category>
+    <timeTillTrigger>600000</timeTillTrigger>
+    <timeTillTriggerMax>780000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>deathInTheFamily_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>happinessLostBase</stat>
+        <value>4</value>
+      </li>
+      <li>
+        <stat>loyaltyLostBase</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>deathInTheFamily-1b_memorial</defName>
+    <label>Death In The Family (Memorial)</label>
+    <desc>A public memorial is held, honoring the fallen figure's legacy. The gesture helps ease the grief, and allays concerns that you were involved in their death.</desc>
+    <category>EC_Social</category>
+    <timeTillTrigger>600000</timeTillTrigger>
+    <timeTillTriggerMax>780000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>deathInTheFamily_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>happinessLostBase</stat>
+        <value>4</value>
+      </li>
+      <li>
+        <stat>happinessGainedBase</stat>
+        <value>1</value>
+      </li>
+      <li>
+        <stat>loyaltyGainedBase</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>deathInTheFamily-1c_investigation_good</defName>
+    <label>Death In The Family (Investigation)</label>
+    <desc>The announcement of the investigation sweeps aside most rumors of your involvement — but many still choose to reserve judgement until the investigation concludes.
+
+In the meantime, your settlements continue to grieve.</desc>
+    <category>EC_Social</category>
+    <timeTillTrigger>120000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>deathInTheFamily_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>deathInTheFamily_1-3s</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>happinessLostBase</stat>
+        <value>4</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>deathInTheFamily-1d_investigation_bad</defName>
+    <label>Death In The Family (Investigation)</label>
+    <desc>The announcement of the investigation sweeps aside most rumors of your involvement — but many still choose to reserve judgement until the investigation concludes.
+
+In the meantime, your settlements continue to grieve.</desc>
+    <category>EC_Social</category>
+    <timeTillTrigger>120000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>deathInTheFamily_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>deathInTheFamily_1-3f</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>happinessLostBase</stat>
+        <value>4</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

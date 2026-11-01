@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_113_0</defName>
+			<label>Late Payments</label>
+			<description>Small update to late payments to make them more visible.</description>
+			<releaseDate>2026-03-19</releaseDate>
+	
+			<patchNoteType>Minor</patchNoteType>
+	
+			<patchNoteLines>
+			<li>When a bill with a payment is allowed to come due (instead of paying it ahead of time), the player is sent a letter, and the affected settlements gain a small happiness and unrest penalty</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+</Defs>

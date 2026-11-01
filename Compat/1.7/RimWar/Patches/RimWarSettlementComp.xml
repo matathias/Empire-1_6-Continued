@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RimWar's own patch targets WorldObjectDef elements, but Empire's settlement defs
+     use FactionColonies.WorldSettlementDef as the XML element name, so the xpath misses them.
+     This patch adds the comp to the abstract base so all Empire settlement types inherit it. -->
+<Patch>
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/FactionColonies.WorldSettlementDef[@Name="WorldSettlementDefBase"]</xpath>
+    <value>
+      <comps>
+        <li Class="RimWar.Planet.WorldObjectCompProperties_RimWarSettlement" />
+      </comps>
+    </value>
+  </Operation>
+</Patch>

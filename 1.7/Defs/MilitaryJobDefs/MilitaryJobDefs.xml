@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>Undefined</defName>
+        <label>undefined</label>
+        <isState>true</isState>
+        <occupiesTarget>false</occupiesTarget>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>Cooldown</defName>
+        <label>cooldown</label>
+        <isState>true</isState>
+        <occupiesTarget>false</occupiesTarget>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>Deploy</defName>
+        <label>deploy</label>
+        <statusLabelKey>FCMilStatusDeployed</statusLabelKey>
+        <occupiesTarget>false</occupiesTarget>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>RaidEnemySettlement</defName>
+        <label>raid enemy settlement</label>
+        <description>Storm the settlement, plunder what you can carry, and return home. The settlement is left intact.</description>
+        <handlerClass>FactionColonies.MilitaryJobHandler_Raid</handlerClass>
+        <statusLabelKey>FCMilStatusRaiding</statusLabelKey>
+        <floatMenuLabelKey>FCRaidSettlement</floatMenuLabelKey>
+        <floatMenuDescKey>FCRaidFloatMenuOption</floatMenuDescKey>
+        <rewardsDesc>Random loot scaled to the enemy's tech level, with an occasional captured prisoner.</rewardsDesc>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>EnslaveEnemySettlement</defName>
+        <label>enslave enemy settlement</label>
+        <description>Storm the settlement and take what you can, with an eye on the people instead of their goods.</description>
+        <handlerClass>FactionColonies.MilitaryJobHandler_Enslave</handlerClass>
+        <statusLabelKey>FCMilStatusEnslaving</statusLabelKey>
+        <floatMenuLabelKey>FCEnslavePopulation</floatMenuLabelKey>
+        <floatMenuDescKey>FCEnslaveFloatMenuOption</floatMenuDescKey>
+        <rewardsDesc>Several prisoners abducted from the settlement's population, delivered as slaves.</rewardsDesc>
+        <defaultEnabled>false</defaultEnabled>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>CaptureEnemySettlement</defName>
+        <label>capture enemy settlement</label>
+        <description>Conquer the settlement and annex it as one of your own.</description>
+        <handlerClass>FactionColonies.MilitaryJobHandler_Capture</handlerClass>
+        <statusLabelKey>FCMilStatusCapturing</statusLabelKey>
+        <floatMenuLabelKey>FCCaptureSettlement</floatMenuLabelKey>
+        <floatMenuDescKey>FCCaptureFloatMenuOption</floatMenuDescKey>
+        <rewardsDesc>The settlement is annexed as a new settlement. Starting level scales with the previous owner's tech level.</rewardsDesc>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>RazeEnemySettlement</defName>
+        <label>raze enemy settlement</label>
+        <description>Burn the settlement to the ground and wipe it from the map. Nothing is annexed or carried home.</description>
+        <handlerClass>FactionColonies.MilitaryJobHandler_Raze</handlerClass>
+        <statusLabelKey>FCMilStatusRazing</statusLabelKey>
+        <floatMenuLabelKey>FCRazeSettlement</floatMenuLabelKey>
+        <floatMenuDescKey>FCRazeFloatMenuOption</floatMenuDescKey>
+        <rewardsDesc>The settlement is destroyed and removed from the world. No loot is taken.</rewardsDesc>
+        <defaultEnabled>false</defaultEnabled>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>DefendFriendlySettlement</defName>
+        <label>defend friendly settlement</label>
+        <statusLabelKey>FCMilStatusDefending</statusLabelKey>
+        <occupiesTarget>false</occupiesTarget>
+        <isState>true</isState>
+    </FactionColonies.MilitaryJobDef>
+
+    <FactionColonies.MilitaryJobDef>
+        <defName>DefendOwnSettlement</defName>
+        <label>defend settlement</label>
+        <handlerClass>FactionColonies.MilitaryJobHandler_Defend</handlerClass>
+        <statusLabelKey>FCMilStatusDefending</statusLabelKey>
+        <occupiesTarget>false</occupiesTarget>
+        <defaultEnabled>false</defaultEnabled>
+    </FactionColonies.MilitaryJobDef>
+
+</Defs>

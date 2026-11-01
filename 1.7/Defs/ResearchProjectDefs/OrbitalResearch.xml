@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<ResearchProjectDef MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>OrbitalConstruction</defName>
+		<label>Basic Orbital Settlements</label>
+		<description>Learn the basics of constructing habitable structures in the void of space. Unlocks basic space station construction capabilities.</description>
+		<baseCost>8000</baseCost>
+		<techLevel>Spacer</techLevel>
+		<tab>FCEmpire</tab>
+		<prerequisites>
+			<li>TransportPod</li>
+			<li>OrbitalTech</li>
+			<li>Fabrication</li>
+			<li>BasicGravtech</li>
+			<li>StandardGravtech</li>
+		</prerequisites>
+		<researchViewX>4.00</researchViewX>
+		<researchViewY>2.00</researchViewY>
+	</ResearchProjectDef>
+
+	<ResearchProjectDef MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>AdvancedOrbitalEngineering</defName>
+		<label>Advanced Orbital Settlements</label>
+		<description>Master advanced techniques for constructing larger and more efficient orbital installations. Reduces orbital platform construction costs by 25%.</description>
+		<baseCost>12000</baseCost>
+		<techLevel>Ultra</techLevel>
+		<tab>FCEmpire</tab>
+		<prerequisites>
+			<li>OrbitalConstruction</li>
+			<li>AdvancedGravtech</li>
+		</prerequisites>
+		<researchViewX>5.00</researchViewX>
+		<researchViewY>2.00</researchViewY>
+	</ResearchProjectDef>
+
+	<ResearchProjectDef MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>OrbitalLogistics</defName>
+		<label>Orbital Logistics</label>
+		<description>Develop efficient systems for moving resources between orbital platforms and planetary surfaces. Reduces tax delivery time by 50% and unlocks special space station buildings.</description>
+		<baseCost>25000</baseCost>
+		<techLevel>Ultra</techLevel>
+		<tab>FCEmpire</tab>
+		<prerequisites>
+			<li>TransportPod</li>
+			<li>OrbitalConstruction</li>
+		</prerequisites>
+		<researchViewX>4.00</researchViewX>
+		<researchViewY>3.00</researchViewY>
+	</ResearchProjectDef>
+
+	<ResearchProjectDef MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>GlitterworldOrbitalSettlements</defName>
+		<label>Glitterworld Orbital Settlements</label>
+		<description>A vision of orbital living inspired by glitterworld engineering.</description>
+		<baseCost>15000</baseCost>
+		<techLevel>Ultra</techLevel>
+		<tab>FCEmpire</tab>
+		<prerequisites>
+			<li>AdvancedOrbitalEngineering</li>
+			<li>AdvancedFabrication</li>
+		</prerequisites>
+		<researchViewX>6.00</researchViewX>
+		<researchViewY>2.00</researchViewY>
+	</ResearchProjectDef>
+</Defs>

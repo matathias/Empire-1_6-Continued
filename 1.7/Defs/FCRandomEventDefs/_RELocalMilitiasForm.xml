@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>localMilitiasForm_0</defName>
+    <label>Local Militias Form</label>
+    <desc>Due to lowered loyalty, citizens are starting to form local militias and are refusing to hand over their share of taxes. How will you handle the situation?</desc>
+    <category>EC_Military</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <cooldownTicks>900000</cooldownTicks>
+    <maximumLoyalty>80</maximumLoyalty>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>localMilitiasForm_1-1</li>
+      <li>localMilitiasForm_1-2</li>
+      <li>localMilitiasForm_1-3</li>
+    </incompatibleEvents>
+    <options>
+      <li>localMilitiasForm_0_1</li>
+      <li>localMilitiasForm_0_2</li>
+      <li>localMilitiasForm_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>localMilitiasForm_0_1</defName>
+    <label>Let them play soldier. They'll tire of it.</label>
+    <parentEvent>localMilitiasForm_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>localMilitiasForm_1-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>localMilitiasForm_0_2</defName>
+    <label>Fold the militias into our settlement garrisons.</label>
+    <parentEvent>localMilitiasForm_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <silverCost>500</silverCost>
+    <successEvent>localMilitiasForm_1-2</successEvent>
+    <modExtensions>
+      <li Class="FactionColonies.FCDynamicCostExtension">
+        <costPerEmpireIncomeUnit>0.03</costPerEmpireIncomeUnit>
+      </li>
+    </modExtensions>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>localMilitiasForm_0_3</defName>
+    <label>Disband them by force.</label>
+    <parentEvent>localMilitiasForm_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>localMilitiasForm_1-3</successEvent>
+    <requiredPolicies>
+      <li>authoritarian</li>
+      <li>militaristic</li>
+    </requiredPolicies>
+    <requirementMode>Any</requirementMode>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>localMilitiasForm_1-1</defName>
+    <label>Local Militias Form</label>
+    <desc>The militias continue their activities unchecked. Tax collection suffers as citizens refuse to pay their share.</desc>
+    <category>EC_Military</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>localMilitiasForm_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>taxBasePercentage</stat>
+        <value>-20</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>localMilitiasForm_1-2</defName>
+    <label>Local Militias Form (Garrisoned)</label>
+    <desc>The militias are folded into the settlement garrisons. Tax collection still suffers, but the settlements are better defended. Citizens resent the forced conscription.</desc>
+    <category>EC_Military</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>localMilitiasForm_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>taxBasePercentage</stat>
+        <value>-15</value>
+      </li>
+      <li>
+        <stat>militaryBaseLevel</stat>
+        <value>1</value>
+      </li>
+      <li>
+        <stat>happinessLostBase</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>localMilitiasForm_1-3</defName>
+    <label>Local Militias Form (Disbanded)</label>
+    <desc>The militias are forcibly disbanded. Tax collection resumes, but the heavy-handed response damages loyalty and breeds unrest.</desc>
+    <category>EC_Military</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>localMilitiasForm_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>loyaltyLostBase</stat>
+        <value>2</value>
+      </li>
+      <li>
+        <stat>unrestGainedBase</stat>
+        <value>2</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

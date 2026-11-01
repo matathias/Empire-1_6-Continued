@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Per-resource Empire caravan traders. Each generates stock from empire-wide
+     production of a single resource type. -->
+<Defs>
+
+  <TraderKindDef>
+    <defName>FC_Caravan_Empire_Food</defName>
+    <label>food trader</label>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+      <li Class="FactionColonies.EmpireCaravanStockGenerator">
+        <resourceDef>RTD_Food</resourceDef>
+      </li>
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+    </stockGenerators>
+  </TraderKindDef>
+
+  <TraderKindDef>
+    <defName>FC_Caravan_Empire_Weapons</defName>
+    <label>arms dealer</label>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+      <li Class="FactionColonies.EmpireCaravanStockGenerator">
+        <resourceDef>RTD_Weapons</resourceDef>
+      </li>
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+    </stockGenerators>
+  </TraderKindDef>
+
+  <TraderKindDef>
+    <defName>FC_Caravan_Empire_Apparel</defName>
+    <label>clothier</label>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+      <li Class="FactionColonies.EmpireCaravanStockGenerator">
+        <resourceDef>RTD_Apparel</resourceDef>
+      </li>
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+    </stockGenerators>
+  </TraderKindDef>
+
+  <TraderKindDef>
+    <defName>FC_Caravan_Empire_Animals</defName>
+    <label>animal trader</label>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+      <li Class="FactionColonies.EmpireCaravanStockGenerator">
+        <resourceDef>RTD_Animals</resourceDef>
+        <varietyRange>8~14</varietyRange>
+        <maxPawnCount>15</maxPawnCount>
+      </li>
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+    </stockGenerators>
+  </TraderKindDef>
+
+  <TraderKindDef>
+    <defName>FC_Caravan_Empire_Logging</defName>
+    <label>lumber trader</label>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+      <li Class="FactionColonies.EmpireCaravanStockGenerator">
+        <resourceDef>RTD_Logging</resourceDef>
+      </li>
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+    </stockGenerators>
+  </TraderKindDef>
+
+  <TraderKindDef>
+    <defName>FC_Caravan_Empire_Mining</defName>
+    <label>ore trader</label>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+      <li Class="FactionColonies.EmpireCaravanStockGenerator">
+        <resourceDef>RTD_Mining</resourceDef>
+      </li>
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+    </stockGenerators>
+  </TraderKindDef>
+
+  <TraderKindDef>
+    <defName>FC_Caravan_Empire_Medicine</defName>
+    <label>medical supplier</label>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+      <li Class="FactionColonies.EmpireCaravanStockGenerator">
+        <resourceDef>RTD_Medicine</resourceDef>
+      </li>
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+    </stockGenerators>
+  </TraderKindDef>
+
+  <TraderKindDef>
+    <defName>FC_Caravan_Empire_Chemfuel</defName>
+    <label>fuel trader</label>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+      <li Class="FactionColonies.EmpireCaravanStockGenerator">
+        <resourceDef>RTD_Chemfuel</resourceDef>
+      </li>
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+    </stockGenerators>
+  </TraderKindDef>
+
+  <TraderKindDef MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>FC_Caravan_Empire_Gravtech</defName>
+    <label>gravtech trader</label>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+      <li Class="FactionColonies.EmpireCaravanStockGenerator">
+        <resourceDef>RTD_Gravtech</resourceDef>
+      </li>
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+    </stockGenerators>
+  </TraderKindDef>
+
+</Defs>

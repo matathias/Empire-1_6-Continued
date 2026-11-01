@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <!-- Vanilla Gravships Expanded: make astrofuel tithtable under the chemfuel and gravtech
+       resources. -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/FactionColonies.ResourceTypeDef[defName="RTD_Chemfuel"]/thingAllowList</xpath>
+    <value>
+      <li>
+        <thingDef>VGE_Astrofuel</thingDef>
+        <researchProjectDefs>
+          <li>BasicGravtech</li>
+        </researchProjectDefs>
+      </li>
+    </value>
+  </Operation>
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/FactionColonies.ResourceTypeDef[defName="RTD_Gravtech"]/thingAllowList</xpath>
+    <value>
+      <li>
+        <thingDef>VGE_Astrofuel</thingDef>
+        <researchProjectDefs>
+          <li>BasicGravtech</li>
+        </researchProjectDefs>
+      </li>
+    </value>
+  </Operation>
+</Patch>

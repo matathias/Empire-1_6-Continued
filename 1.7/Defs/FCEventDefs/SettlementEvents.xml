@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>settleNewColony</defName>
+    <label>Found Settlement</label>
+    <desc>A caravan is forming a new settlement.</desc>
+    <category>EC_Settlement</category>
+    <timeTillTrigger>0</timeTillTrigger>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>taxColony</defName>
+    <label>Settlement Taxes En-Route</label>
+    <desc>A caravan is delivering taxes.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>constructBuilding</defName>
+    <label>Constructing Building</label>
+    <desc>A building is being constructed.</desc>
+    <category>EC_Construction</category>
+    <timeTillTrigger>0</timeTillTrigger>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>enactSettlementPolicy</defName>
+    <label>Enacting a Policy</label>
+    <desc>A settlement-wide policy is being enacted.</desc>
+    <category>EC_Policy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>enactFactionPolicy</defName>
+    <label>Enacting a Policy</label>
+    <desc>A faction-wide policy is being enacted.</desc>
+    <category>EC_Policy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>upgradeSettlement</defName>
+    <label>Upgrading A Settlement</label>
+    <desc>A settlement is being upgraded.</desc>
+    <category>EC_Settlement</category>
+    <timeTillTrigger>0</timeTillTrigger>
+  </FactionColonies.FCEventDef>
+
+</Defs>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+         EnemyPowerTechDef - per-TechLevel enemy power baselines.
+         One def per TechLevel value; consumed by
+         WorldComponent_EnemyPower.GetTechDef() and
+         MilitaryUtil.GetTechLevelBaseline().
+         *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
+
+    <FactionColonies.EnemyPowerTechDef>
+        <defName>EPT_Undefined</defName>
+        <techLevel>Undefined</techLevel>
+        <level>1</level>
+        <efficiency>0.5</efficiency>
+        <levelVariance>2.0</levelVariance>
+        <efficiencyVariance>0.0</efficiencyVariance>
+    </FactionColonies.EnemyPowerTechDef>
+
+    <FactionColonies.EnemyPowerTechDef>
+        <defName>EPT_Animal</defName>
+        <techLevel>Animal</techLevel>
+        <level>1</level>
+        <efficiency>0.5</efficiency>
+        <levelVariance>2.0</levelVariance>
+        <efficiencyVariance>0.0</efficiencyVariance>
+    </FactionColonies.EnemyPowerTechDef>
+
+    <FactionColonies.EnemyPowerTechDef>
+        <defName>EPT_Neolithic</defName>
+        <techLevel>Neolithic</techLevel>
+        <level>2</level>
+        <efficiency>0.9</efficiency>
+        <levelVariance>2.0</levelVariance>
+        <efficiencyVariance>0.0</efficiencyVariance>
+    </FactionColonies.EnemyPowerTechDef>
+
+    <FactionColonies.EnemyPowerTechDef>
+        <defName>EPT_Medieval</defName>
+        <techLevel>Medieval</techLevel>
+        <level>3</level>
+        <efficiency>1.0</efficiency>
+        <levelVariance>2.0</levelVariance>
+        <efficiencyVariance>0.0</efficiencyVariance>
+    </FactionColonies.EnemyPowerTechDef>
+
+    <FactionColonies.EnemyPowerTechDef>
+        <defName>EPT_Industrial</defName>
+        <techLevel>Industrial</techLevel>
+        <level>5</level>
+        <efficiency>1.0</efficiency>
+        <levelVariance>2.0</levelVariance>
+        <efficiencyVariance>0.0</efficiencyVariance>
+    </FactionColonies.EnemyPowerTechDef>
+
+    <FactionColonies.EnemyPowerTechDef>
+        <defName>EPT_Spacer</defName>
+        <techLevel>Spacer</techLevel>
+        <level>6</level>
+        <efficiency>1.1</efficiency>
+        <levelVariance>2.0</levelVariance>
+        <efficiencyVariance>0.0</efficiencyVariance>
+    </FactionColonies.EnemyPowerTechDef>
+
+    <FactionColonies.EnemyPowerTechDef>
+        <defName>EPT_Ultra</defName>
+        <techLevel>Ultra</techLevel>
+        <level>7</level>
+        <efficiency>1.2</efficiency>
+        <levelVariance>2.0</levelVariance>
+        <efficiencyVariance>0.0</efficiencyVariance>
+    </FactionColonies.EnemyPowerTechDef>
+
+    <FactionColonies.EnemyPowerTechDef>
+        <defName>EPT_Archotech</defName>
+        <techLevel>Archotech</techLevel>
+        <level>9</level>
+        <efficiency>1.3</efficiency>
+        <levelVariance>2.0</levelVariance>
+        <efficiencyVariance>0.0</efficiencyVariance>
+    </FactionColonies.EnemyPowerTechDef>
+
+</Defs>

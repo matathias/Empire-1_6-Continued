@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<!--  NEOLITHIC TIER   -->
+
+    <!-- Cereal Farmland -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>cerealFarmland</defName> <!--Name of Def -->
+		<label>Cereal Farmland</label> <!--Lable of Def -->
+		<desc>Land for growing cereal crops to feed more than a single village.</desc> <!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>-2</value></li>
+			<li><stat>RTD_Food_ProductionAdditive</stat><value>0.2</value></li>
+		</statModifiers>
+		<maxhilliness>Flat</maxhilliness>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/cerealFarmland</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Grain Mill -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>grainMill</defName> <!--Name of Def -->
+		<label>Grain Mill</label> <!--Lable of Def -->
+		<desc>A mill to process cereal crops with big, grindy rocks.</desc> <!-- Description of trait -->
+		<cost>300</cost>
+		<constructionDuration>45000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.15</value></li>
+		</statModifiers>
+		<upkeep>5</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/grainMill</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Granary -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>granary</defName> <!--Name of Def -->
+		<label>Granary</label> <!--Lable of Def -->
+		<desc>A safe place to store cereal crops from those pesky rats.</desc> <!-- Description of trait -->
+		<cost>150</cost>
+		<constructionDuration>30000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.10</value></li>
+		</statModifiers>
+		<upkeep>15</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/granary</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Fletcher -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>fletcher</defName> <!--Name of Def -->
+		<label>Fletcher</label> <!--Lable of Def -->
+		<desc>A creator of arrows - the best ammunition in the neolithic!</desc> <!-- Description of trait -->
+		<cost>175</cost>
+		<constructionDuration>40000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionMultiplier</stat><value>1.15</value></li>
+			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>0.85</value></li>
+		</statModifiers>
+		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/fletcher</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Stone Mason -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>stoneMason</defName> <!--Name of Def -->
+		<label>Stone Mason</label> <!--Lable of Def -->
+		<desc>An artisan of stone by day - rules the world by night.</desc> <!-- Description of trait -->
+		<cost>200</cost>
+		<constructionDuration>50000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>1.20</value></li>
+		</statModifiers>
+		<upkeep>20</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/stoneMason</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Furrier -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>furrier</defName> <!--Name of Def -->
+		<label>Furrier</label> <!--Lable of Def -->
+		<desc>Makes goods from furs and pelts. Ignore the funky smell.</desc> <!-- Description of trait -->
+		<cost>225</cost>
+		<constructionDuration>45000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>1.15</value></li>
+			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>0.85</value></li>
+		</statModifiers>
+		<applicableBiomes> <!-- If the building requires it to be in a biome, put it here-->
+			<li>BorealForest</li>
+			<li>TemperateForest</li>
+			<li>TropicalRainforest</li>
+			<li>TemperateGuldenForest</li>
+		</applicableBiomes>
+		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/furrier</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Hunter's Hut -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>huntersHut</defName> <!--Name of Def -->
+		<label>Hunter's Hut</label> <!--Lable of Def -->
+		<desc>Hunts the surrounding woods for food. Endangered species are delicious!</desc> <!-- Description of trait -->
+		<cost>125</cost>
+		<constructionDuration>30000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.15</value></li>
+			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>0.75</value></li>
+		</statModifiers>
+		<applicableBiomes> <!-- If the building requires it to be in a biome, put it here-->
+			<li>BorealForest</li>
+			<li>TemperateForest</li>
+			<li>TropicalRainforest</li>
+			<li>TemperateGuldenForest</li>
+		</applicableBiomes>
+		<upkeep>10</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/huntersHut</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Brewer -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>brewer</defName> <!--Name of Def -->
+		<label>Brewer</label> <!--Lable of Def -->
+		<desc>Brews the finest ethanols and ethanol byproducts. Please drink responsibly.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>happinessGainedBase</stat><value>0.4</value></li>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>0.95</value></li>
+		</statModifiers>
+		<upkeep>30</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/brewer</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Carpenter -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>carpenter</defName> <!--Name of Def -->
+		<label>Carpenter</label> <!--Lable of Def -->
+		<desc>Makes wonderful furniture to prevent the most heinous of war crimes.</desc> <!-- Description of trait -->
+		<cost>225</cost>
+		<constructionDuration>50000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>happinessGainedBase</stat><value>0.1</value></li>
+			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>0.8</value></li>
+		</statModifiers>
+		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/carpenter</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Apothecary -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>apothecary</defName> <!--Name of Def -->
+		<label>Apothecary</label> <!--Lable of Def -->
+		<desc>Makes elixirs to cure all ailments! (Results may vary.)</desc> <!-- Description of trait -->
+		<cost>200</cost>
+		<constructionDuration>65000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>happinessGainedBase</stat><value>0.2</value></li>
+			<li><stat>RTD_Medicine_ProductionMultiplier</stat><value>1.15</value></li>
+		</statModifiers>
+		<upkeep>10</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/apothecary</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Alchemist -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>alchemist</defName> <!--Name of Def -->
+		<label>Alchemist</label> <!--Lable of Def -->
+		<desc>Turn steel into gold? We'll find a way!</desc> <!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>50000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>0.85</value></li>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.10</value></li>
+		</statModifiers>
+		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/alchemist</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Ancient Academy -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>ancientAcademy</defName> <!--Name of Def -->
+		<label>Ancient Academy</label> <!--Lable of Def -->
+		<desc>Unlocks secrets of the universe which may or may not be true but not both!</desc> <!-- Description of trait -->
+		<cost>275</cost>
+		<constructionDuration>75000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseCost</stat><value>0.4</value></li>
+			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.2</value></li>
+		</statModifiers>
+		<upkeep>40</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/ancientAcademy</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Slave Market -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>slaveMarket</defName> <!--Name of Def -->
+		<label>Slave Market</label> <!--Lable of Def -->
+		<desc>Need some free labour?</desc> <!-- Description of trait -->
+		<cost>145</cost>
+		<constructionDuration>45000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>3</value></li>
+			<li><stat>workerBaseOverMax</stat><value>3</value></li>
+			<li><stat>happinessLostBase</stat><value>0.4</value></li>
+		</statModifiers>
+		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/slaveMarket</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- bailiff -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>bailiff</defName> <!--Name of Def -->
+		<label>bailiff</label> <!--Lable of Def -->
+		<desc>Does not accept excuses for late rent payments.</desc> <!-- Description of trait -->
+		<cost>220</cost>
+		<constructionDuration>35000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>unrestGainedMultiplier</stat><value>1.10</value></li>
+			<li><stat>taxBasePercentage</stat><value>10</value></li>
+		</statModifiers>
+		<upkeep>-10</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/bailiff</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- Militia -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>militia</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
+		<label>Militia</label> <!--Lable of Def -->
+		<desc>Ready to fight for their families, though not very effectively.</desc> <!-- Description of trait -->
+		<cost>300</cost>
+		<constructionDuration>35000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>unrestLostMultiplier</stat><value>0.6</value></li>
+			<li><stat>workerBaseMax</stat><value>-3</value></li>
+			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+			<li><stat>militaryCombatEfficiency</stat><value>0.8</value></li>
+		</statModifiers>
+		<upkeep></upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/militia</iconPath>
+	</FactionColonies.BuildingFCDef>
+	
+		<!-- Salvage Guild -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>salvageGuild</defName> <!--Name of Def -->
+		<label>Salvage Guild</label> <!--Lable of Def -->
+		<desc>A guild of trained salvage crews that searches the ruins of destroyed and abandoned settlements, recovering weapons and apparel while also potentially recovering research notes.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>40000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionMultiplier</stat><value>1.10</value></li>
+			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>1.10</value></li>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.10</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/salvageGuild</iconPath>
+	</FactionColonies.BuildingFCDef>
+	
+	<!-- Fungal Farm -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>mushfarmer</defName> <!--Name of Def -->
+		<label>Fungal Farms</label> <!--Lable of Def -->
+		<desc>Farmlands adapted to the local ecosystem by growing fungi for food and medicine.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>35000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>-3</value></li>
+			<li><stat>RTD_Food_ProductionAdditive</stat><value>0.25</value></li>
+			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.25</value></li>
+		</statModifiers>
+		<applicableBiomes>
+		<li>Glowforest</li>
+		<li>AB_MycoticJungle</li>
+	</applicableBiomes>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/mushfarmer</iconPath>
+	</FactionColonies.BuildingFCDef>
+	
+	<!-- Wood Gatherer -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>woodgatherer</defName> <!--Name of Def -->
+		<label>Wood Gatherer</label> <!--Lable of Def -->
+		<desc>A gatherer and forager specialising in gathering loose wood in the form of fallen branches and driftwood.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>35000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/woodgatherer</iconPath>
+	</FactionColonies.BuildingFCDef>
+	
+	<!-- Woodcutter -->
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
+		<defName>woodcutter</defName> <!--Name of Def -->
+		<label>Woodcutter</label> <!--Lable of Def -->
+		<desc>A local woodcutter making use of stone tools to fell trees and process lumber.</desc> <!-- Description of trait -->
+		<cost>600</cost>
+		<constructionDuration>35000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>-2</value></li>
+			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>1.15</value></li>
+		</statModifiers>
+		<upkeep>5</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/woodcutter</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+</Defs>

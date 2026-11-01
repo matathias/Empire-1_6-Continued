@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.BiomeResourceDef MayRequire="biomesteam.bunnies">
+		<defName>Bunnies_Carrotopia</defName>
+		<label>carrotopia</label>
+		<canSettle>true</canSettle>
+		<resources>
+
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>1.2</additive>
+			</li>		
+			<li>
+				<resourceDef>RTD_Weapons</resourceDef>
+				<additive>0.7</additive>
+			</li>						
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>1.2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0.8</additive>		
+			</li>	
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>1.1</additive>
+			</li>
+					
+		</resources>
+	</FactionColonies.BiomeResourceDef>	
+</Defs>

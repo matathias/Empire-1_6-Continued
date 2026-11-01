@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<MainButtonDef>
+		<defName>EmpireExtensionsButton</defName>
+		<label>Empire+</label>
+		<description>Extension tabs added by Empire submods</description>
+		<tabWindowClass>FactionColonies.MainTabWindow_EmpireExtensions</tabWindowClass>
+		<workerClass>FactionColonies.MainButtonWorker_EmpireExtensions</workerClass>
+		<buttonVisible>true</buttonVisible>
+		<order>499</order>
+		<validWithoutMap>true</validWithoutMap>
+	</MainButtonDef>
+
+</Defs>

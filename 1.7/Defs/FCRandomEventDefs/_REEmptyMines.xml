@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>emptyMines_0</defName>
+    <label>Empty Mines</label>
+    <desc>The affected region(s) have run short on veins to mine. What should be done?</desc>
+    <category>EC_Economy</category>
+    <isNegative>true</isNegative>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <cooldownTicks>1800000</cooldownTicks>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <requiredResource>RTD_Mining</requiredResource>
+    <incompatibleEvents>
+      <li>emptyMines-wait</li>
+      <li>emptyMines-search_fail</li>
+      <li>emptyMines-construction</li>
+      <li>struckRichOreVein_0</li>
+      <li>struckRichOreVein_1-1</li>
+      <li>struckRichOreVein_1-2</li>
+      <li>struckRichOreVein_1-3</li>
+    </incompatibleEvents>
+    <options>
+      <li>emptyMines_0_1</li>
+      <li>emptyMines_0_2</li>
+      <li>emptyMines_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>emptyMines_0_1</defName>
+    <label>The miners will have to wait for new veins to be found.</label>
+    <parentEvent>emptyMines_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>emptyMines-wait</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>emptyMines_0_2</defName>
+    <label>Hire prospectors to search for untapped deposits.</label>
+    <parentEvent>emptyMines_0</parentEvent>
+    <baseChanceOfSuccess>60</baseChanceOfSuccess>
+    <silverCost>300</silverCost>
+    <successEvent>emptyMines-searching_success</successEvent>
+    <failEvent>emptyMines-searching_fail</failEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>emptyMines_0_3</defName>
+    <label>Redirect the idle miners to settlement construction.</label>
+    <parentEvent>emptyMines_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>emptyMines-construction</successEvent>
+    <requiredPolicies>
+      <li>industrious</li>
+    </requiredPolicies>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>emptyMines-wait</defName>
+    <label>Empty Mines</label>
+    <desc>The miners wait for new veins to be found.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>480000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>emptyMines_0</li>
+      <li>struckRichOreVein_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Mining_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>emptyMines-searching_fail</defName>
+    <label>Empty Mines (Prospectors Searching)</label>
+    <desc>Your hired prospectors set out in search of new ore veins.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>120000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>emptyMines_0</li>
+      <li>struckRichOreVein_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>emptyMines-search_fail</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>RTD_Mining_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>emptyMines-search_fail</defName>
+    <label>Empty Mines (Prospectors Failed)</label>
+    <desc>The prospectors found nothing. The mines remain empty.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>emptyMines_0</li>
+      <li>struckRichOreVein_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Mining_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>emptyMines-searching_success</defName>
+    <label>Empty Mines (Prospectors Searching)</label>
+    <desc>Your hired prospectors set out in search of new ore veins.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>120000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>emptyMines_0</li>
+      <li>struckRichOreVein_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>emptyMines-search_success</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>RTD_Mining_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>emptyMines-search_success</defName>
+    <label>Empty Mines (Prospectors Succeed)</label>
+    <desc>The prospectors successfully located new veins of ore, and your miners gladly return to work. A small sample of the new ore is sent back for your own use.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>emptyMines_0</li>
+      <li>struckRichOreVein_0</li>
+    </incompatibleEvents>
+    <randomThingValue>250</randomThingValue>
+    <randomThingRewardDef>RERD_Mining</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>emptyMines-construction</defName>
+    <label>Empty Mines (Construction Redirect)</label>
+    <desc>Idle miners are put to work on settlement construction projects.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>480000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>emptyMines_0</li>
+      <li>struckRichOreVein_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Mining_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+      <li>
+        <stat>buildTimeMultiplier</stat>
+        <value>0.5</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodShortage_0</defName>
+    <label>Widespread Food Shortage</label>
+    <desc>There's a widespread food shortage in the affected regions. Your settlements need guidance on how to handle this crisis.</desc>
+    <category>EC_Economy</category>
+    <isNegative>true</isNegative>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <cooldownTicks>1800000</cooldownTicks>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <requiredResource>RTD_Food</requiredResource>
+    <incompatibleEvents>
+      <li>foodShortage_1-1</li>
+      <li>foodShortage_1-2</li>
+      <li>foodShortage_1-3</li>
+      <li>foodShortage_1-4</li>
+      <li>foodShortage_1-cannibal</li>
+      <li>foodSurplus_0</li>
+      <li>foodSurplus_1-1</li>
+      <li>foodSurplus_1-2</li>
+      <li>foodSurplus_1-3</li>
+    </incompatibleEvents>
+    <options>
+      <li>foodShortage_0_1</li>
+      <li>foodShortage_0_2</li>
+      <li>foodShortage_0_3</li>
+      <li>foodShortage_0_4</li>
+      <li>foodShortage_0_cannibal</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>foodShortage_0_1</defName>
+    <label>There's little we can do. We'll endure the shortage.</label>
+    <parentEvent>foodShortage_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>foodShortage_1-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>foodShortage_0_2</defName>
+    <label>Purchase emergency food imports to soften the blow.</label>
+    <parentEvent>foodShortage_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <silverCost>100</silverCost>
+    <successEvent>foodShortage_1-2</successEvent>
+    <modExtensions>
+      <li Class="FactionColonies.FCDynamicCostExtension">
+        <costPerResourceDelta>
+          <li>
+            <resource>RTD_Food</resource>
+            <additiveDelta>0.5</additiveDelta>
+            <coefficient>0.5</coefficient>
+          </li>
+        </costPerResourceDelta>
+      </li>
+    </modExtensions>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>foodShortage_0_3</defName>
+    <label>Enforce strict rationing — shared sacrifice builds loyalty.</label>
+    <parentEvent>foodShortage_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>foodShortage_1-3</successEvent>
+    <requiredPolicies>
+      <li>egalitarian</li>
+    </requiredPolicies>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>foodShortage_0_4</defName>
+    <label>Let the slaves starve. The workers will eat.</label>
+    <parentEvent>foodShortage_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>foodShortage_1-4</successEvent>
+    <requiredPolicies>
+      <li>slaver</li>
+    </requiredPolicies>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>foodShortage_0_cannibal</defName>
+    <label>Dark times call for dark sustenance. Let the dead feed the living.</label>
+    <parentEvent>foodShortage_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>foodShortage_1-cannibal</successEvent>
+    <requiredMemes>
+      <li>Cannibal</li>
+    </requiredMemes>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodShortage_1-1</defName>
+    <label>Food Shortage</label>
+    <desc>Your settlements endure the food shortage.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>foodShortage_0</li>
+      <li>foodSurplus_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Food_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodShortage_1-2</defName>
+    <label>Food Shortage (Imports)</label>
+    <desc>Emergency imports have arrived, lessening the impact of the food shortage.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>foodShortage_0</li>
+      <li>foodSurplus_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Food_ProductionAdditive</stat>
+        <value>-0.5</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodShortage_1-3</defName>
+    <label>Food Shortage (Rationing)</label>
+    <desc>Strict rationing is in effect. Citizens admire the shared sacrifice.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>foodShortage_0</li>
+      <li>foodSurplus_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Food_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+      <li>
+        <stat>loyaltyGainedBase</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodShortage_1-4</defName>
+    <label>Food Shortage (Slaves Starved)</label>
+    <desc>The slaves bear the brunt of the shortage. Your citizens eat like normal, but slaves starve across the land.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>foodShortage_0</li>
+      <li>foodSurplus_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>workerBaseMax</stat>
+        <value>-2</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>foodShortage_1-cannibal</defName>
+    <label>Food Shortage (Grim Provision)</label>
+    <desc>The starved fallen are quietly rendered into the food supply. No one goes hungry — production never falters — but being forced to feast on their own is unsettling. Eating human meat is one thing; killing a friend to eat them is another entirely.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>foodShortage_0</li>
+      <li>foodSurplus_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>happinessLostBase</stat>
+        <value>0.5</value>
+      </li>
+      <li>
+        <stat>unrestGainedBase</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_125_0</defName>
+		<label>Create Settlement Augments</label>
+		<description>A UI change for clarity in the Create Settlement window.</description>
+		<releaseDate>2026-03-24</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>Replaces the floatmenu for settlement type selection with a full dialog.</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

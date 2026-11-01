@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Ultra">
+		<defName>LightConverter</defName>
+		<!--Name of Def -->
+		<label>Archotech Light Converter</label>
+		<!--Lable of Def -->
+		<desc>A large, vanometrically powered, archotech machine that can turn light into just about anything that isn't alive. Needs a constant military presence to ward off raiders.</desc>
+		<!-- Description of trait -->
+		<cost>120000</cost>
+		<constructionDuration>600000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>-3</value></li>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.75</value></li>
+			<li><stat>RTD_Weapons_ProductionMultiplier</stat><value>1.75</value></li>
+			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>1.75</value></li>
+			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>1.75</value></li>
+			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>1.75</value></li>
+			<li><stat>RTD_Medicine_ProductionMultiplier</stat><value>1.75</value></li>
+		</statModifiers>
+		<upkeep>800</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/LightConverter</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Ultra">
+		<defName>AnimalBeacon</defName>
+		<!--Name of Def -->
+		<label>Archotech Animal Beacon</label>
+		<!--Lable of Def -->
+		<desc>An archotech tower that emits a signal which lures distant animals and calms nearby ones.</desc>
+		<!-- Description of trait -->
+		<cost>8000</cost>
+		<constructionDuration>600000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>2.0</value></li>
+		</statModifiers>
+		<upkeep>200</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/BaconBeacon</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Ultra">
+		<defName>TrappedAI</defName>
+		<!--Name of Def -->
+		<label>Trapped Archotech AI</label>
+		<!--Lable of Def -->
+		<desc>An archotech level AI trapped in a closed network. It's perfectly safe unless someone lets it out.</desc>
+		<!-- Description of trait -->
+		<cost>8000</cost>
+		<constructionDuration>600000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>unrestGainedBase</stat><value>0.5</value></li>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>2.0</value></li>
+		</statModifiers>
+		<upkeep>400</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/HAL9000</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Ultra">
+		<defName>UnionOffices</defName>
+		<!--Name of Def -->
+		<label>Union Offices</label>
+		<!--Lable of Def -->
+		<desc>A central building for local unions to operate out of. It's amazing how much happier and willing to work people are when you treat them well.</desc>
+		<!-- Description of trait -->
+		<cost>8000</cost>
+		<constructionDuration>600000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>unrestLostBase</stat><value>0.75</value></li>
+			<li><stat>happinessGainedBase</stat><value>0.75</value></li>
+			<li><stat>loyaltyGainedBase</stat><value>0.75</value></li>
+			<li><stat>workerBaseCost</stat><value>10</value></li>
+			<li><stat>workerBaseMax</stat><value>10</value></li>
+			<li><stat>workerBaseOverMax</stat><value>10</value></li>
+		</statModifiers>
+		<upkeep>200</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/CapitalismSucks</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Ultra">
+		<defName>OrbitalSpaceLaser</defName>
+		<isMilitary>true</isMilitary>
+		<!--Name of Def -->
+		<label>Orbital Space Laser</label>
+		<!--Lable of Def -->
+		<desc>It's kind of like a nuclear bomb, but reusable and solar powered.</desc>
+		<!-- Description of trait -->
+		<cost>8000</cost>
+		<constructionDuration>600000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>2</value></li>
+		</statModifiers>
+		<upkeep>200</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/CFinder</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Ultra">
+		<defName>TransdimensionalMarket</defName>
+		<!--Name of Def -->
+		<label>Transdimentional Market</label>
+		<!--Lable of Def -->
+		<desc>It's one thing to trade across the galaxy. It's another to build a flaming obsidian monolith to trade with the residents of a hell-dimension.</desc>
+		<!-- Description of trait -->
+		<cost>8000</cost>
+		<constructionDuration>600000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>taxBaseRandomModifier</stat><value>80</value></li>
+			<li><stat>taxBasePercentage</stat><value>25</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/NetherPortal</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Ultra">
+		<defName>archotechGenerator</defName> <!--Name of Def -->
+		<label>Archotech Generator</label> <!--Lable of Def -->
+		<desc>An arcane generator that even the maintainers can't hope to understand, but have acquired.</desc> <!-- Description of trait -->
+		<cost>8000</cost>
+		<constructionDuration>600000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Power_ProductionMultiplier</stat><value>2.0</value></li>
+		</statModifiers>
+		<upkeep>200</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/ArchotechGenerator</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+</Defs>

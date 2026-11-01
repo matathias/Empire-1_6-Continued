@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>bunkerDown</defName>
+		<label>Bunker Down</label>
+		<desc>Settlements prioritize fortifying infrastructure. Defenders fight cautiously to protect buildings.</desc>
+		<category>Doctrine</category>
+		<upkeepSilver>75</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<statModifiers>
+			<li><stat>buildingDestructionChance</stat><value>0.3</value></li>
+			<li><stat>militaryEfficiencyBonusDefending</stat><value>0.85</value></li>
+			<li><stat>battleProsperityLossMultiplier</stat><value>0.7</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>aggressiveCounterattack</defName>
+		<label>Aggressive Counterattack</label>
+		<desc>Settlements commit everything to repelling attackers. Higher chance of victory, but infrastructure suffers in the chaos.</desc>
+		<category>Doctrine</category>
+		<upkeepSilver>100</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<statModifiers>
+			<li><stat>buildingDestructionChance</stat><value>1.5</value></li>
+			<li><stat>militaryEfficiencyBonusDefending</stat><value>1.15</value></li>
+			<li><stat>battleProsperityLossMultiplier</stat><value>1.3</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>scorchedEarth</defName>
+		<label>Scorched Earth</label>
+		<desc>Your forces fight with total disregard for collateral damage. Even victories leave the settlement scarred.</desc>
+		<category>Doctrine</category>
+		<upkeepSilver>150</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<modExtensions>
+			<li Class="FactionColonies.FCPolicyBehaviorExt_ScorchedEarth">
+				<behaviorClass>FactionColonies.FCPolicyBehavior_ScorchedEarth</behaviorClass>
+				<damageRollMax>12</damageRollMax>
+				<damageThreshold>11</damageThreshold>
+			</li>
+		</modExtensions>
+		<statModifiers>
+			<li><stat>buildingDestructionChance</stat><value>1.25</value></li>
+			<li><stat>militaryEfficiencyBonusDefending</stat><value>1.5</value></li>
+			<li><stat>battleProsperityLossMultiplier</stat><value>1.2</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>totalMobilization</defName>
+		<label>Total Mobilization</label>
+		<desc>Every able body is on the walls. Massive combat power, but morale suffers and defeat is catastrophic.</desc>
+		<category>Doctrine</category>
+		<upkeepSilver>125</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<statModifiers>
+			<li><stat>militaryEfficiencyBonusDefending</stat><value>1.25</value></li>
+			<li><stat>militaryLevelBonusDefending</stat><value>1</value></li>
+			<li><stat>buildingDestructionChance</stat><value>1.8</value></li>
+			<li><stat>happinessGainedMultiplier</stat><value>0.85</value></li>
+			<li><stat>unrestGainedMultiplier</stat><value>1.15</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+</Defs>

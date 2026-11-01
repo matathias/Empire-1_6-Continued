@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCEventDef>
+		<defName>forestFire_0</defName>
+		<label>Massive Forest Fire</label>
+		<desc>The affected region(s) have forest fires blazing out of control. How should your settlements respond?</desc>
+		<category>EC_Economy</category>
+		<timeTillTrigger>0</timeTillTrigger>
+		<options>
+			<li>forestFire_0_1</li>
+			<li>forestFire_0_2</li>
+			<li>forestFire_0_3</li>
+		</options>
+		<activateAtStart>true</activateAtStart>
+		<isRandomEvent>true</isRandomEvent>
+		<isNegative>true</isNegative>
+		<weight>25</weight>
+		<cooldownTicks>1800000</cooldownTicks>
+		<incompatibleEvents>
+			<li>forestFire_1-1</li>
+			<li>forestFire_1-2s</li>
+			<li>forestFire_1-2f</li>
+			<li>forestFire_1-3</li>
+			<li>expandedForestry_0</li>
+			<li>expandedForestry_1-1</li>
+			<li>expandedForestry_1-2</li>
+			<li>expandedForestry_1-3</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+		<requiredResource>RTD_Logging</requiredResource>
+		<restrictedBiomes>
+			<li>Desert</li>
+			<li>ExtremeDesert</li>
+			<li>IceSheet</li>
+			<li>SeaIce</li>
+		</restrictedBiomes>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCOptionDef>
+		<defName>forestFire_0_1</defName>
+		<label>Let the fire burn itself out.</label>
+		<parentEvent>forestFire_0</parentEvent>
+		<baseChanceOfSuccess>100</baseChanceOfSuccess>
+		<silverCost>0</silverCost>
+		<successEvent>forestFire_1-1</successEvent>
+		<failEvent></failEvent>
+	</FactionColonies.FCOptionDef>
+
+	<FactionColonies.FCOptionDef>
+		<defName>forestFire_0_2</defName>
+		<label>Organize firefighting crews to contain the blaze.</label>
+		<parentEvent>forestFire_0</parentEvent>
+		<baseChanceOfSuccess>60</baseChanceOfSuccess>
+		<silverCost>500</silverCost>
+		<successEvent>forestFire_1-2s</successEvent>
+		<failEvent>forestFire_1-2f</failEvent>
+	</FactionColonies.FCOptionDef>
+
+	<FactionColonies.FCOptionDef>
+		<defName>forestFire_0_3</defName>
+		<label>Perform a controlled burn — cleared land can be farmed.</label>
+		<parentEvent>forestFire_0</parentEvent>
+		<baseChanceOfSuccess>100</baseChanceOfSuccess>
+		<silverCost>150</silverCost>
+		<successEvent>forestFire_1-3</successEvent>
+		<failEvent></failEvent>
+	</FactionColonies.FCOptionDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>forestFire_1-1</defName>
+		<label>Forest Fire</label>
+		<desc>The fire burns unchecked through the forests.</desc>
+		<category>EC_Economy</category>
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>480000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>-1</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>forestFire_0</li>
+			<li>expandedForestry_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>forestFire_1-2s</defName>
+		<label>Forest Fire (Contained)</label>
+		<desc>The firefighting crews managed to contain the blaze! The damage is limited.</desc>
+		<category>EC_Economy</category>
+		<timeTillTrigger>150000</timeTillTrigger>
+		<timeTillTriggerMax>210000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>-0.5</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>forestFire_0</li>
+			<li>expandedForestry_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>forestFire_1-2f</defName>
+		<label>Forest Fire (Containment Failed)</label>
+		<desc>Despite their best efforts, the firefighting crews couldn't contain the blaze. The fire rages on.</desc>
+		<category>EC_Economy</category>
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>480000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>-1</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>forestFire_0</li>
+			<li>expandedForestry_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>forestFire_1-3</defName>
+		<label>Forest Fire (Controlled Burn)</label>
+		<desc>The controlled burn clears damaged forest, opening land for farming.</desc>
+		<category>EC_Economy</category>
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>420000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>-1</value></li>
+			<li><stat>RTD_Food_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>forestFire_0</li>
+			<li>expandedForestry_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+</Defs>

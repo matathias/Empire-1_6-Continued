@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_132_0</defName>
+		<label>Minor Events Update</label>
+		<description>Adds a couple of useful new fields to the Event def.</description>
+		<releaseDate>2026-03-28</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>Adds targetAllSettlements field to FCEventDef. If true, the event targets all valid settlements</li>
+		<li>Adds serialized list of permanent stat modifiers to WorldSettlementFC, so that settlements can track permanent stat modifiers that aren&apos;t attached to buildings or events</li>
+		<li>Adds permanentStatModifiers field to FCEventDef. Listed modifiers will be permanently applied to all settlements affected by the event</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_132_1</defName>
+		<label>Minor Event Fix</label>
+		<description>Minor fix to the display of event options.</description>
+		<releaseDate>2026-03-28</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Show permanent stat modifiers for each event option alongside the temporary ones</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

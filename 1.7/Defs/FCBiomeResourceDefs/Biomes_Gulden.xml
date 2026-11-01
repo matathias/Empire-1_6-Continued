@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.BiomeResourceDef MayRequire="pphhyy.guldennew">
+		<defName>TemperateGuldenForest</defName>
+		<label>temperate gulden forest</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>1.5</additive>
+				<multiplier>1.25</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>1.5</additive>
+				<multiplier>1.25</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>1.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>0.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Medicine</resourceDef>
+				<additive>1.25</additive>
+				<multiplier>1.25</multiplier>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+</Defs>

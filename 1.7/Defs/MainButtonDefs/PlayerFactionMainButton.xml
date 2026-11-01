@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<MainButtonDef>
+		<defName>PColonyMainButton</defName>
+		<label>Settlements</label>
+		<description>Found and manage your NPC settlements</description>
+		<tabWindowClass>FactionColonies.MainTabWindow_Colony</tabWindowClass>
+		<buttonVisible>true</buttonVisible>
+		<order>498</order>
+		<validWithoutMap>true</validWithoutMap>
+	</MainButtonDef>
+
+</Defs>

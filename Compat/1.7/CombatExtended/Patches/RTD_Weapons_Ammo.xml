@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/FactionColonies.ResourceTypeDef[defName="RTD_Weapons"]/thingCategoryAllowList</xpath>
+        <value>
+            <li>
+                <thingCategoryDef>Ammo</thingCategoryDef>
+            </li>
+        </value>
+    </Operation>
+</Patch>

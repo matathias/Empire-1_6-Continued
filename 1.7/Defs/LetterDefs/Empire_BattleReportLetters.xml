@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- Battle outcome letters carrying a BattleResult report id. The "View battle
+       report" option in the letter dialog opens a BattleProgressWindow against the
+       archived result. Color/sound mirror the existing PositiveEvent / NegativeEvent
+       letters so the visual cue (good news vs bad news) is preserved. -->
+
+  <LetterDef>
+    <defName>FCBattleReportLetterPositive</defName>
+    <letterClass>FactionColonies.ChoiceLetter_BattleReport</letterClass>
+    <color>(120, 176, 216)</color>
+    <flashColor>(106, 179, 231)</flashColor>
+    <flashInterval>90</flashInterval>
+    <arriveSound>LetterArrive_Good</arriveSound>
+  </LetterDef>
+
+  <LetterDef>
+    <defName>FCBattleReportLetterNegative</defName>
+    <letterClass>FactionColonies.ChoiceLetter_BattleReport</letterClass>
+    <color>(204, 196, 135)</color>
+    <flashColor>(210, 198, 106)</flashColor>
+    <flashInterval>40</flashInterval>
+    <arriveSound>LetterArrive_BadUrgentSmall</arriveSound>
+  </LetterDef>
+
+  <LetterDef>
+    <defName>FCBattleReportLetterNeutral</defName>
+    <letterClass>FactionColonies.ChoiceLetter_BattleReport</letterClass>
+    <color>(175, 176, 185)</color>
+    <flashColor>(160, 170, 180)</flashColor>
+    <flashInterval>90</flashInterval>
+    <arriveSound>LetterArrive</arriveSound>
+  </LetterDef>
+
+</Defs>

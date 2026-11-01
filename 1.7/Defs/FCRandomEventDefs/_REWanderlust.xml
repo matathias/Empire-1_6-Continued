@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCEventDef>
+		<defName>wanderlust</defName>
+		<label>Wanderlust</label>
+		<desc>The citizens of {FACTION} are itching to get on the road and settle new lands.</desc>
+		<category>EC_Settlement</category>
+
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>420000</timeTillTriggerMax>
+
+		<statModifiers>
+			<li><stat>createSettlementMultiplier</stat><value>.5</value></li>
+		</statModifiers>
+
+		<options>
+		</options>
+		<activateAtStart>false</activateAtStart>
+
+		<isRandomEvent>true</isRandomEvent>
+		<weight>25</weight>
+		<cooldownTicks>900000</cooldownTicks>
+		<incompatibleEvents>
+		<li>settlingDown</li>
+		</incompatibleEvents>
+
+	</FactionColonies.FCEventDef>
+
+</Defs>

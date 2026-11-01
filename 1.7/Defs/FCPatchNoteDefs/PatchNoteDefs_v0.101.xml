@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_101_2</defName>
+			<label>Fix for goods deliveries</label>
+			<description>Some deliveries delivered goods one at a time; this patch fixes that.</description>
+			<releaseDate>2026-03-17</releaseDate>
+	
+			<patchNoteType>Patch</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Bugfix: some delivery types would deliver goods 1-3 at a time instead of stacking them</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_101_1</defName>
+			<label>Fix event stacking &amp; incompatibilities</label>
+			<description>Various fixes for Empire&apos;s events.</description>
+			<releaseDate>2026-03-17</releaseDate>
+	
+			<patchNoteType>Patch</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Update the event system so that events won&apos;t stack on the same settlement</li>
+			<li>Update event chains to have the proper incompatible tags, so that incompatible events won&apos;t fire at the same time</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_101_0</defName>
+			<label>Compatibility with Vanilla Base Generation Expanded</label>
+			<description>Update&apos;s Empire&apos;s compatibility with Vanilla Base Generation Expanded, including a transpiler fix to an out-of-bounds error in the Vanilla Expanded Framework.</description>
+			<releaseDate>2026-03-17</releaseDate>
+	
+			<patchNoteType>Minor</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Add transpiler patch to fix an out-of-bounds error during VBGE map generation</li>
+			<li>Fix the spawning of defense turrets for settlements that have weapons production</li>
+			<li>Extensiblity: tithe injections are properly reflected in the &quot;net income&quot; display on the settlement window</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+</Defs>

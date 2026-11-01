@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCEventDef>
+		<defName>loyaltyParade_0</defName>
+		<label>Loyalty Parade</label>
+		<desc>Some of the settlements in {FACTION} are having a parade in your honor! How will you respond to their display of loyalty?</desc>
+		<category>EC_Social</category>
+		<timeTillTrigger>0</timeTillTrigger>
+		<options>
+			<li>loyaltyParade_0_1</li>
+			<li>loyaltyParade_0_2</li>
+			<li>loyaltyParade_0_3</li>
+		</options>
+		<activateAtStart>true</activateAtStart>
+		<isRandomEvent>true</isRandomEvent>
+		<weight>25</weight>
+		<cooldownTicks>900000</cooldownTicks>
+		<incompatibleEvents>
+			<li>loyaltyParade_1-1</li>
+			<li>loyaltyParade_1-2</li>
+			<li>loyaltyParade_1-3</li>
+		</incompatibleEvents>
+		<minimumLoyalty>80</minimumLoyalty>
+		<maximumLoyalty>100</maximumLoyalty>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCOptionDef>
+		<defName>loyaltyParade_0_1</defName>
+		<label>Let the celebrations continue!</label>
+		<parentEvent>loyaltyParade_0</parentEvent>
+		<baseChanceOfSuccess>100</baseChanceOfSuccess>
+		<silverCost>0</silverCost>
+		<successEvent>loyaltyParade_1-1</successEvent>
+		<failEvent></failEvent>
+	</FactionColonies.FCOptionDef>
+
+	<FactionColonies.FCOptionDef>
+		<defName>loyaltyParade_0_2</defName>
+		<label>Join the parade and rally the people.</label>
+		<parentEvent>loyaltyParade_0</parentEvent>
+		<baseChanceOfSuccess>100</baseChanceOfSuccess>
+		<silverCost>250</silverCost>
+		<successEvent>loyaltyParade_1-2</successEvent>
+		<failEvent></failEvent>
+	</FactionColonies.FCOptionDef>
+
+	<FactionColonies.FCOptionDef>
+		<defName>loyaltyParade_0_3</defName>
+		<label>Use the gathering to recruit new workers.</label>
+		<parentEvent>loyaltyParade_0</parentEvent>
+		<baseChanceOfSuccess>100</baseChanceOfSuccess>
+		<silverCost>0</silverCost>
+		<successEvent>loyaltyParade_1-3</successEvent>
+		<failEvent></failEvent>
+	</FactionColonies.FCOptionDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>loyaltyParade_1-1</defName>
+		<label>Loyalty Parade</label>
+		<desc>The parade continues unhindered. Citizens feel proud and loyal.</desc>
+		<category>EC_Social</category>
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>420000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>loyaltyGainedBase</stat><value>1</value></li>
+			<li><stat>unrestLostBase</stat><value>2</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>loyaltyParade_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>loyaltyParade_1-2</defName>
+		<label>Loyalty Parade (Rally)</label>
+		<desc>Your personal appearance at the parade electrifies the crowd! The people are inspired by their leader's presence.</desc>
+		<category>EC_Social</category>
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>360000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>loyaltyGainedBase</stat><value>2</value></li>
+			<li><stat>unrestLostBase</stat><value>2</value></li>
+			<li><stat>happinessGainedBase</stat><value>1</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>loyaltyParade_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>loyaltyParade_1-3</defName>
+		<label>Loyalty Parade (Recruitment)</label>
+		<desc>The enthusiastic gathering is used to recruit new workers for {FACTION}'s settlements.</desc>
+		<category>EC_Social</category>
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>420000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>2</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>loyaltyParade_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+</Defs>

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+	     Existing orbital buildings
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalFuelDepot</defName>
+		<label>Orbital Fuel Depot</label>
+		<desc>Stores and processes fuel for spacecraft. Essential for maintaining orbital operations and supporting space travel.</desc>
+		<cost>2000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Power_ProductionAdditive</stat><value>0.5</value></li>
+			<li><stat>RTD_Chemfuel_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/OrbitalFuelDepot</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>asteroidMiningPlatform</defName>
+		<label>Asteroid Mining Platform</label>
+		<desc>Automated mining drones harvest resources from nearby asteroids and space debris. Much more efficient than planetary mining.</desc>
+		<cost>3500</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Mining_ProductionAdditive</stat><value>0.8</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/asteroidMining</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>solarCollectionArray</defName>
+		<label>Solar Collection Array</label>
+		<desc>Massive solar panel arrays with no atmospheric interference collect energy directly from the star. Powers the station and provides surplus energy.</desc>
+		<cost>7500</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Power_ProductionAdditive</stat><value>2</value></li>
+		</statModifiers>
+		<upkeep>130</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalSolarArray</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+	     Universal orbital buildings (all orbital types)
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalHydroponicsBay</defName>
+		<label>Orbital Hydroponics Bay</label>
+		<desc>Soilless grow chambers producing food in artificial light. Essential for station self-sufficiency.</desc>
+		<cost>3000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Food_ProductionAdditive</stat><value>1</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalHydroponics</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalTreeFarm</defName>
+		<label>Orbital Tree Farm</label>
+		<desc>Pressurized arboretums growing fast-cycle timber in enriched CO2 atmospheres.</desc>
+		<cost>3000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>1</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalTreeFarm</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>fabricationModules</defName>
+		<label>Fabrication Modules</label>
+		<desc>Zero-G manufacturing bays that produce weapons and apparel with minimal waste.</desc>
+		<cost>4000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionAdditive</stat><value>1</value></li>
+			<li><stat>RTD_Apparel_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>100</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/fabricationModules</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalLaboratory</defName>
+		<label>Orbital Laboratory</label>
+		<desc>Microgravity labs enable experiments impossible planetside, advancing medicine and research.</desc>
+		<cost>4000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Research_ProductionAdditive</stat><value>1</value></li>
+			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>100</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalLaboratory</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>workforceQuarters</defName>
+		<label>Workforce Quarters</label>
+		<desc>Functional dormitories with viewports to the stars. Houses additional station workers.</desc>
+		<cost>2500</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>10</value></li>
+			<li><stat>workerBaseOverMax</stat><value>5</value></li>
+		</statModifiers>
+		<upkeep>60</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/workforceQuarters</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>habitatRings</defName>
+		<label>Habitat Rings</label>
+		<desc>Centrifugal gravity rings housing workers in comfortable simulated-gravity conditions.</desc>
+		<cost>5000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>5</value></li>
+			<li><stat>workerBaseOverMax</stat><value>3</value></li>
+			<li><stat>happinessGainedBase</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>100</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/habitatRings</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalDefenseArray</defName>
+		<isMilitary>true</isMilitary>
+		<label>Orbital Defense Array</label>
+		<desc>Heavy weapons platform providing overwhelming defensive firepower against orbital threats.</desc>
+		<cost>5000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>2</value></li>
+			<li><stat>militaryEfficiencyBonusDefending</stat><value>1.15</value></li>
+		</statModifiers>
+		<upkeep>120</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalDefenseArray</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>pointDefenseBattery</defName>
+		<isMilitary>true</isMilitary>
+		<label>Point Defense Battery</label>
+		<desc>Close-range interceptor turrets protecting the station from incoming projectiles and boarding parties.</desc>
+		<cost>2500</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+			<li><stat>militaryEfficiencyBonusDefending</stat><value>1.05</value></li>
+		</statModifiers>
+		<upkeep>60</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/pointDefense</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalCommsArray</defName>
+		<label>Orbital Communications Array</label>
+		<desc>Long-range comms relay improving diplomatic coordination and suppressing dissent through propaganda.</desc>
+		<cost>3000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>loyaltyGainedBase</stat><value>0.5</value></li>
+			<li><stat>unrestLostBase</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalComms</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalLuxurySuites</defName>
+		<label>Orbital Luxury Suites</label>
+		<desc>Premium quarters with artificial gravity beds and fine amenities imported from glitterworlds.</desc>
+		<cost>4000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>happinessGainedBase</stat><value>1</value></li>
+			<li><stat>loyaltyGainedBase</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>120</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalLuxury</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+	     Logistics-exclusive orbital buildings
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalTradeHub</defName>
+		<label>Orbital Trade Hub</label>
+		<desc>A commercial nexus coordinating interstellar trade routes and maximizing profit margins.</desc>
+		<cost>5000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>15</value></li>
+			<li><stat>titheValueMultiplier</stat><value>1.2</value></li>
+		</statModifiers>
+		<upkeep>120</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/tradeHub</iconPath>
+		<settlementTypeAllowList Inherit="False">
+			<li>WorldSettlementDef_Orbital_Logistics</li>
+		</settlementTypeAllowList>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>spaceDistillery</defName>
+		<label>Space Distillery</label>
+		<desc>Micro-gravity fermentation produces unique chemfuel compounds and exotic trade goods.</desc>
+		<cost>3500</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Chemfuel_ProductionAdditive</stat><value>1</value></li>
+			<li><stat>taxBasePercentage</stat><value>5</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/spaceDistillery</iconPath>
+		<settlementTypeAllowList Inherit="False">
+			<li>WorldSettlementDef_Orbital_Logistics</li>
+		</settlementTypeAllowList>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+	     Advanced-exclusive orbital buildings
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalShipyard</defName>
+		<label>Orbital Shipyard</label>
+		<desc>Full-scale drydock for constructing and repairing spacecraft. Accelerates all station construction.</desc>
+		<cost>6000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>buildTimeMultiplier</stat><value>0.75</value></li>
+			<li><stat>RTD_Chemfuel_ProductionAdditive</stat><value>1</value></li>
+		</statModifiers>
+		<upkeep>120</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalShipyard</iconPath>
+		<settlementTypeAllowList Inherit="False">
+			<li>WorldSettlementDef_Orbital_Advanced</li>
+		</settlementTypeAllowList>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalSurfaceOps</defName>
+		<label>Orbital Surface Operations</label>
+		<desc>Coordinates surface resource extraction from orbit — managing livestock herds and mining operations remotely.</desc>
+		<cost>5000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Animals_ProductionAdditive</stat><value>1.5</value></li>
+			<li><stat>RTD_Mining_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>100</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalSurfaceClearing</iconPath>
+		<settlementTypeAllowList Inherit="False">
+			<li>WorldSettlementDef_Orbital_Advanced</li>
+		</settlementTypeAllowList>
+	</FactionColonies.BuildingFCDef>
+
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+	     Glitter-exclusive orbital buildings
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>orbitalAcademy</defName>
+		<label>Orbital Academy</label>
+		<desc>A premier research institution pushing the boundaries of science in microgravity.</desc>
+		<cost>6000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>RTD_Research_ProductionAdditive</stat><value>1.5</value></li>
+			<li><stat>researchContributionMultiplier</stat><value>1.2</value></li>
+		</statModifiers>
+		<upkeep>140</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/orbitalAcademy</iconPath>
+		<settlementTypeAllowList Inherit="False">
+			<li>WorldSettlementDef_Orbital_Glitter</li>
+		</settlementTypeAllowList>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+		<defName>navalAcademy</defName>
+		<isMilitary>true</isMilitary>
+		<label>Naval Academy</label>
+		<desc>Trains elite officers for fleet command. Significantly improves military readiness and reduces deployment cooldowns.</desc>
+		<cost>7000</cost>
+		<techLevel>Spacer</techLevel>
+		<constructionDuration>300000</constructionDuration>
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>2</value></li>
+			<li><stat>militaryCombatEfficiency</stat><value>1.15</value></li>
+			<li><stat>militaryCooldownOffset</stat><value>-5000</value></li>
+		</statModifiers>
+		<upkeep>160</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Orbital/navalAcademy</iconPath>
+		<settlementTypeAllowList Inherit="False">
+			<li>WorldSettlementDef_Orbital_Glitter</li>
+		</settlementTypeAllowList>
+	</FactionColonies.BuildingFCDef>
+
+</Defs>

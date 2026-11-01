@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.BiomeResourceDef MayRequire="heis.edo.themed.expansion">
+		<defName>HSBambooForest</defName>
+		<label>bamboo forest</label>
+		<canSettle>true</canSettle>
+		<resources>
+
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>1.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>1.5</additive>
+			</li>			
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>1.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>0.75</additive>		
+			</li>	
+			
+		</resources>
+	</FactionColonies.BiomeResourceDef>	
+</Defs>

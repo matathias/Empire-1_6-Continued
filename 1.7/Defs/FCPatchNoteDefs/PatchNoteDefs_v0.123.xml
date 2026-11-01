@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_123_0</defName>
+		<label>Faction Colors</label>
+		<description>Adds ability to set apparel colors for faction pawns.</description>
+		<releaseDate>2026-03-23</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>Can set primary and secondary faction colors in the faction customize menu</li>
+		<li>Can set individual apparel colors for military units in the Manage Units menu</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_123_1</defName>
+		<label>Squad Deployment Fix</label>
+		<description>Fixes an issue with squad deployment.</description>
+		<releaseDate>2026-03-23</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Bugfix: squads that are deployed to a map, and then told to leave, will not actually enter cooldown, leaving their settlement stuck in a &quot;Deployed&quot; state</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_123_2</defName>
+		<label>New color picker</label>
+		<description>Adds a new color picker window to compliment the faction color settings.</description>
+		<releaseDate>2026-03-23</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>New color picker</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_123_3</defName>
+		<label>New Faction Customization Window</label>
+		<description>Reworks the faction customization window.</description>
+		<releaseDate>2026-03-23</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>Reworks the faction customization window</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

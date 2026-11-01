@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Inject Empire's mercenary heal-rate StatPart into the vanilla InjuryHealingFactor stat.
+     Multiplies natural and tended healing rate for off-map mercs registered with the
+     hourly heal tick. See StatPart_EmpireMercHealRate.cs for the math. -->
+<Patch>
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/StatDef[defName="InjuryHealingFactor"]/parts</xpath>
+    <value>
+      <li Class="FactionColonies.StatPart_EmpireMercHealRate" />
+    </value>
+  </Operation>
+</Patch>

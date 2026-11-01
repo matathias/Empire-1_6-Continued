@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>sparseWildlife_0</defName>
+    <label>Sparse Wildlife</label>
+    <desc>The wildlife in the affected region(s) have all but disappeared. How should your settlements adapt?</desc>
+    <category>EC_Economy</category>
+    <isNegative>true</isNegative>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <cooldownTicks>900000</cooldownTicks>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <restrictedBiomes>
+      <li>Desert</li>
+      <li>ExtremeDesert</li>
+      <li>IceSheet</li>
+      <li>SeaIce</li>
+    </restrictedBiomes>
+    <requiredResource>RTD_Animals</requiredResource>
+    <incompatibleEvents>
+      <li>sparseWildlife_1-1</li>
+      <li>sparseWildlife_1-2</li>
+      <li>sparseWildlife_1-3</li>
+      <li>denseWildlife_0</li>
+      <li>denseWildlife_1-1</li>
+      <li>denseWildlife_1-2</li>
+      <li>denseWildlife_1-3</li>
+    </incompatibleEvents>
+    <options>
+      <li>sparseWildlife_0_1</li>
+      <li>sparseWildlife_0_2</li>
+      <li>sparseWildlife_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>sparseWildlife_0_1</defName>
+    <label>We'll manage without the wildlife.</label>
+    <parentEvent>sparseWildlife_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>sparseWildlife_1-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>sparseWildlife_0_2</defName>
+    <label>Send hunting parties further afield.</label>
+    <parentEvent>sparseWildlife_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <silverCost>500</silverCost>
+    <successEvent>sparseWildlife_1-2</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>sparseWildlife_0_3</defName>
+    <label>Shift focus to farming the land instead.</label>
+    <parentEvent>sparseWildlife_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <silverCost>700</silverCost>
+    <successEvent>sparseWildlife_1-3</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>sparseWildlife_1-1</defName>
+    <label>Sparse Wildlife</label>
+    <desc>Your settlements make do without the wildlife.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>sparseWildlife_0</li>
+      <li>denseWildlife_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Animals_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>sparseWildlife_1-2</defName>
+    <label>Sparse Wildlife (Extended Hunts)</label>
+    <desc>Hunting parties range further to compensate.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>480000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>sparseWildlife_0</li>
+      <li>denseWildlife_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Animals_ProductionAdditive</stat>
+        <value>-0.5</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>sparseWildlife_1-3</defName>
+    <label>Sparse Wildlife (Farming Shift)</label>
+    <desc>Settlers shift their focus from hunting to farming.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>360000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>sparseWildlife_0</li>
+      <li>denseWildlife_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Animals_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+      <li>
+        <stat>RTD_Food_ProductionAdditive</stat>
+        <value>0.5</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

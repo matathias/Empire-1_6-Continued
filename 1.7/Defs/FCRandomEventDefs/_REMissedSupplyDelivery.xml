@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCEventDef>
+		<defName>missedSupplyDelivery_0</defName>
+		<label>Missed Supply Delivery</label>
+		<desc>The craftsmen in the affected region(s) are suffering from a lack of supplies. How should they adapt?</desc>
+		<category>EC_Economy</category>
+		<timeTillTrigger>0</timeTillTrigger>
+		<options>
+			<li>missedSupplyDelivery_0_1</li>
+			<li>missedSupplyDelivery_0_2</li>
+			<li>missedSupplyDelivery_0_3</li>
+		</options>
+		<activateAtStart>true</activateAtStart>
+		<isRandomEvent>true</isRandomEvent>
+		<isNegative>true</isNegative>
+		<weight>25</weight>
+		<cooldownTicks>900000</cooldownTicks>
+		<incompatibleEvents>
+			<li>missedSupplyDelivery_1-1</li>
+			<li>missedSupplyDelivery_1-2</li>
+			<li>missedSupplyDelivery_1-3</li>
+			<li>unexpectedCraftsmanship_0</li>
+			<li>unexpectedCraftsmanship_1-1</li>
+			<li>unexpectedCraftsmanship_1-2</li>
+			<li>unexpectedCraftsmanship_1-3</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCOptionDef>
+		<defName>missedSupplyDelivery_0_1</defName>
+		<label>We'll wait for the next delivery.</label>
+		<parentEvent>missedSupplyDelivery_0</parentEvent>
+		<baseChanceOfSuccess>100</baseChanceOfSuccess>
+		<silverCost>0</silverCost>
+		<successEvent>missedSupplyDelivery_1-1</successEvent>
+		<failEvent></failEvent>
+	</FactionColonies.FCOptionDef>
+
+	<FactionColonies.FCOptionDef>
+		<defName>missedSupplyDelivery_0_2</defName>
+		<label>Source replacement supplies from local traders.</label>
+		<parentEvent>missedSupplyDelivery_0</parentEvent>
+		<baseChanceOfSuccess>100</baseChanceOfSuccess>
+		<silverCost>500</silverCost>
+		<successEvent>missedSupplyDelivery_1-2</successEvent>
+		<failEvent></failEvent>
+		<requiredPolicies>
+			<li>mercantile</li>
+		</requiredPolicies>
+		<modExtensions>
+			<li Class="FactionColonies.FCDynamicCostExtension">
+				<costPerEmpireIncomeUnit>0.015</costPerEmpireIncomeUnit>
+			</li>
+		</modExtensions>
+	</FactionColonies.FCOptionDef>
+
+	<FactionColonies.FCOptionDef>
+		<defName>missedSupplyDelivery_0_3</defName>
+		<label>Have the craftsmen improvise with local materials.</label>
+		<parentEvent>missedSupplyDelivery_0</parentEvent>
+		<baseChanceOfSuccess>100</baseChanceOfSuccess>
+		<silverCost>0</silverCost>
+		<successEvent>missedSupplyDelivery_1-3</successEvent>
+		<failEvent></failEvent>
+	</FactionColonies.FCOptionDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>missedSupplyDelivery_1-1</defName>
+		<label>Missed Supply Delivery</label>
+		<desc>The craftsmen wait for the next delivery.</desc>
+		<category>EC_Economy</category>
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>480000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionAdditive</stat><value>-0.3</value></li>
+			<li><stat>RTD_Apparel_ProductionAdditive</stat><value>-0.3</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>missedSupplyDelivery_0</li>
+			<li>unexpectedCraftsmanship_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>missedSupplyDelivery_1-2</defName>
+		<label>Missed Supply Delivery (Local Sourcing)</label>
+		<desc>Trade connections help source replacement supplies locally.</desc>
+		<category>EC_Economy</category>
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>360000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionAdditive</stat><value>-0.25</value></li>
+			<li><stat>RTD_Apparel_ProductionAdditive</stat><value>-0.25</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>missedSupplyDelivery_0</li>
+			<li>unexpectedCraftsmanship_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>missedSupplyDelivery_1-3</defName>
+		<label>Missed Supply Delivery (Improvised)</label>
+		<desc>The craftsmen improvise with local materials, focusing their limited supplies on apparel.</desc>
+		<category>EC_Economy</category>
+		<timeTillTrigger>180000</timeTillTrigger>
+		<timeTillTriggerMax>420000</timeTillTriggerMax>
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionAdditive</stat><value>-1</value></li>
+		</statModifiers>
+		<incompatibleEvents>
+			<li>missedSupplyDelivery_0</li>
+			<li>unexpectedCraftsmanship_0</li>
+		</incompatibleEvents>
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+		<settlementsCarryOver>true</settlementsCarryOver>
+	</FactionColonies.FCEventDef>
+
+</Defs>

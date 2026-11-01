@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>denseWildlife_0</defName>
+    <label>Dense Wildlife</label>
+    <desc>There is a great amount of animals roaming the region. How should your settlements take advantage?</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <cooldownTicks>900000</cooldownTicks>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <restrictedBiomes>
+      <li>Desert</li>
+      <li>ExtremeDesert</li>
+      <li>IceSheet</li>
+      <li>SeaIce</li>
+    </restrictedBiomes>
+    <incompatibleEvents>
+      <li>denseWildlife_1-1</li>
+      <li>denseWildlife_1-2</li>
+      <li>denseWildlife_1-3</li>
+      <li>denseWildlife_1-sanctuary</li>
+      <li>sparseWildlife_0</li>
+      <li>sparseWildlife_1-1</li>
+      <li>sparseWildlife_1-2</li>
+      <li>sparseWildlife_1-3</li>
+    </incompatibleEvents>
+    <options>
+      <li>denseWildlife_0_1</li>
+      <li>denseWildlife_0_2</li>
+      <li>denseWildlife_0_3</li>
+      <li>denseWildlife_0_sanctuary</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>denseWildlife_0_1</defName>
+    <label>Let the herds flourish and boost our animal production.</label>
+    <parentEvent>denseWildlife_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>denseWildlife_1-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>denseWildlife_0_2</defName>
+    <label>Organize a grand hunt and bring back the spoils.</label>
+    <parentEvent>denseWildlife_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>denseWildlife_1-2</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>denseWildlife_0_3</defName>
+    <label>Capture and domesticate what we can for long-term gains.</label>
+    <parentEvent>denseWildlife_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>denseWildlife_1-3</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>denseWildlife_0_sanctuary</defName>
+    <label>Establish a sanctuary. These creatures are people too, and they share this world with us.</label>
+    <parentEvent>denseWildlife_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>denseWildlife_1-sanctuary</successEvent>
+    <requiredMemes>
+      <li>AnimalPersonhood</li>
+    </requiredMemes>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>denseWildlife_1-1</defName>
+    <label>Dense Wildlife</label>
+    <desc>The herds flourish and boost animal production.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>denseWildlife_0</li>
+      <li>sparseWildlife_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Animals_ProductionAdditive</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>denseWildlife_1-2</defName>
+    <label>Dense Wildlife (Grand Hunt)</label>
+    <desc>A grand hunt is organized. Hunters join from across {FACTION}, eager to hone their skills with this opportunity.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>240000</timeTillTrigger>
+    <timeTillTriggerMax>360000</timeTillTriggerMax>
+    <incompatibleEvents>
+      <li>denseWildlife_0</li>
+      <li>sparseWildlife_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>denseWildlife_1-2_2</followingEvent>
+    <randomThingRewardDef>RERD_Animals</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>denseWildlife_1-3</defName>
+    <label>Dense Wildlife (Domestication)</label>
+    <desc>Some of the animals are captured and domesticated for long-term gains.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>360000</timeTillTrigger>
+    <timeTillTriggerMax>480000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>denseWildlife_0</li>
+      <li>sparseWildlife_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Animals_ProductionAdditive</stat>
+        <value>0.5</value>
+      </li>
+      <li>
+        <stat>RTD_Food_ProductionAdditive</stat>
+        <value>0.5</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>denseWildlife_1-2_2</defName>
+    <label>Dense Wildlife (Grand Hunt Result)</label>
+    <desc>The grand hunt concludes; your hunters were quite successful, bringing back valuable animal products.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <incompatibleEvents>
+      <li>denseWildlife_0</li>
+      <li>sparseWildlife_0</li>
+    </incompatibleEvents>
+    <randomThingValue>2200</randomThingValue>
+    <randomThingRewardDef>RERD_Animals</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>denseWildlife_1-sanctuary</defName>
+    <label>Dense Wildlife (Sanctuary)</label>
+    <desc>Rather than hunt or pen the animals, your settlements set aside the land as a sanctuary where the creatures live unmolested. The people take quiet pride in sharing their world rather than ruling it, and the herds that linger near the settlements still provide for those who tend them gently.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>denseWildlife_0</li>
+      <li>sparseWildlife_0</li>
+    </incompatibleEvents>
+    <permanentStatModifiers>
+      <li>
+        <stat>happinessGainedBase</stat>
+        <value>0.5</value>
+      </li>
+      <li>
+        <stat>RTD_Animals_ProductionAdditive</stat>
+        <value>0.25</value>
+      </li>
+    </permanentStatModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

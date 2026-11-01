@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_127_0</defName>
+		<label>Policy XML change</label>
+		<description>Changes a few things about how Policies/Traits/Edicts are defined.</description>
+		<releaseDate>2026-03-25</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>FCPolicyDef now uses modExtensions in conjunction with behaviorClass to expose several policy constants to XML editing</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

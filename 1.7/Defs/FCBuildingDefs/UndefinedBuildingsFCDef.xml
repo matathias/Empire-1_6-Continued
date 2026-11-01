@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>barracks</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
+		<label>Barracks</label> <!--Lable of Def -->
+		<desc>A building to house the local troops, letting the settlement muster one additional squad.</desc> <!-- Description of trait -->
+		<cost>400</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+			<li><stat>squadCapPerSettlement</stat><value>1</value></li>
+		</statModifiers>
+		<upkeep>50</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/Barracks</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>tradingPost</defName> <!--Name of Def -->
+		<label>Trading Post</label> <!--Lable of Def -->
+		<desc>A small outpost that roving traders frequent.</desc> <!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>taxBaseRandomModifier</stat><value>10</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/TradingPost</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>migrantHousing</defName> <!--Name of Def -->
+		<label>Migrant Housing</label> <!--Lable of Def -->
+		<desc>Local housing for traveling migrants to stay in.</desc> <!-- Description of trait -->
+		<cost>1500</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>2</value></li>
+			<li><stat>workerBaseOverMax</stat><value>2</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/MigrantHousing</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>quarry</defName> <!--Name of Def -->
+		<label>Quarry</label> <!--Lable of Def -->
+		<desc>Torn up land being used to mine for valuable ore.</desc> <!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Mining_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/Quarry</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>trainingYard</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
+		<label>Training Yard</label> <!--Lable of Def -->
+		<desc>A place for your soldiers to train.</desc> <!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>militaryCombatEfficiency</stat><value>1.1</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/TrainingYard</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>FurHunterCamp</defName>
+		<!--Name of Def -->
+		<label>Fur Hunter Camp</label>
+		<!--Lable of Def -->
+		<desc>A camp for your Fur Hunter.</desc>
+		<!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>1.25</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/WildernessGuild</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>FlintStorage</defName>
+		<!--Name of Def -->
+		<label>Flint Storage</label>
+		<!--Lable of Def -->
+		<desc>A Storage for Flint.</desc>
+		<!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Mining_ProductionAdditive</stat><value>0.2</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/Quarry</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>SlavePit</defName>
+		<!--Name of Def -->
+		<label>SlavePit</label>
+		<!--Lable of Def -->
+		<desc>A pit where Slaves go to sleep.</desc>
+		<!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>2</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/ForcedWorkCamps</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>Farmland</defName>
+		<!--Name of Def -->
+		<label>Farmland</label>
+		<!--Lable of Def -->
+		<desc>A section of land dedicated to growing edible plants.</desc>
+		<!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Food_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/Farmland</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>AmmunitionMines</defName>
+		<!--Name of Def -->
+		<label>Ammunition Mines</label>
+		<!--Lable of Def -->
+		<desc>From flint for arrows to the materials for bullets and gunpowder, these mines take up space that could be used for other resource mining.</desc>
+		<!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionMultiplier</stat><value>1.15</value></li>
+			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>0.85</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/AmmoMines</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>TanningWorkshop</defName>
+		<!--Name of Def -->
+		<label>Tanning Workshop</label>
+		<!--Lable of Def -->
+		<desc>A workshop designed to turn animal hides into leather.</desc>
+		<!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>1.15</value></li>
+			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>0.85</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/Tanning</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>DrugDen</defName>
+		<!--Name of Def -->
+		<label>Psychedelic Drug Den</label>
+		<!--Lable of Def -->
+		<desc>It's amazing the discoveries people make while absurdly high. Sometimes those discoveries are even useful!</desc>
+		<!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>happinessGainedBase</stat><value>0.3</value></li>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.05</value></li>
+			<li><stat>RTD_Medicine_ProductionMultiplier</stat><value>0.95</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/DrugDen</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>HamsterWheel</defName>
+		<!--Name of Def -->
+		<label>Giant Hamster Wheel</label>
+		<!--Lable of Def -->
+		<desc>It's not much, but it's better than nothing!</desc>
+		<!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseOverMax</stat><value>-1</value></li>
+			<li><stat>RTD_Power_ProductionAdditive</stat><value>0.25</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/HamsterWheel</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>deforestationCamp</defName> <!--Name of Def -->
+		<label>Deforestation Camp</label> <!--Lable of Def -->
+		<desc>A camp that the local forests are stripped of all their resources and the life within.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseCost</stat><value>2</value></li>
+			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>1.25</value></li>
+			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>1.25</value></li>
+		</statModifiers>
+		<applicableBiomes> <!-- If the building requires it to be in a biome, put it here-->
+			<li>BorealForest</li>
+			<li>TemperateForest</li>
+			<li>TropicalRainforest</li>
+			<li>TemperateGuldenForest</li>
+		</applicableBiomes>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/DeforestationCamp</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
+		<defName>herbalMedicineFarm</defName> <!--Name of Def -->
+		<label>Herbal Medicine Farm</label> <!--Lable of Def -->
+		<desc>A small farm to grow herbal medicine.</desc> <!-- Description of trait -->
+		<cost>250</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.25</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/HerbalMedicineFarm</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+</Defs>

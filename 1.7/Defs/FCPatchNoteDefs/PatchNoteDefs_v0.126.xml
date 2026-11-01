@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_0</defName>
+		<label>Building Window Change</label>
+		<description>Lets the player optionally view buildings that they haven&apos;t yet unlocked through research.</description>
+		<releaseDate>2026-03-24</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>Augments the building window with a toggle to show buildings that are locked by research or tech level</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_1</defName>
+		<label>Event Bugfix</label>
+		<description>Fixes for Wanderlust and Settling Down events.</description>
+		<releaseDate>2026-03-24</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Fixes faction-level stat calculations to actually take faction-level events into account.</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_2</defName>
+		<label>XML Patches</label>
+		<description>Updates to DLC-gated XML.</description>
+		<releaseDate>2026-03-24</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Adds &apos;MayRequire&apos; guards for the Odyssey DLC on all defs/xml patches for space stuff</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_3</defName>
+		<label>ResourceTypeDef update</label>
+		<description>Small change to allow resources to be set as non-titheable, even if they aren&apos;t pool resources.</description>
+		<releaseDate>2026-03-24</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Adds a canTithe field to ResourceTypeDef. If false, the resource cannot be tithed.</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_4</defName>
+		<label>Cache Bugfix</label>
+		<description>Fixes a niche case where the static cache wouldn&apos;t be invalidated.</description>
+		<releaseDate>2026-03-24</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Adds a postfix onto Game.ClearCache to clear Empire&apos;s caches, in addition to the current Game.Dispose patch</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_5</defName>
+		<label>Minor tech level change</label>
+		<description>Small change to how the Empire faction&apos;s tech level is calculated.</description>
+		<releaseDate>2026-03-24</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Uses the player faction&apos;s tech level as a floor when determining the Empire faction&apos;s tech level. Meant to provide compatibility with techlevel-advancing mods.</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_7</defName>
+		<label>Minor changes</label>
+		<description>Minor backend changes.</description>
+		<releaseDate>2026-03-24</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Add a raidTargetingWeight field to WorldSettlementDef. Influences how likely settlements of that type are to be raided</li>
+		<li>Slight rewrite of the raid-targeting logic to include the above field and also make use of RandomElementByWeight</li>
+		<li>Add two functions to FCEventHandlerExtension to let events have dynamic odds of success</li>
+		<li>Add IsOptionAvailable to FCEventHandlerExtension to let events dynamically determine if an option is available</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_8</defName>
+		<label>Minor UI Update</label>
+		<description>Changes the main tab window to always show pool resources.</description>
+		<releaseDate>2026-03-25</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Always show pool resources on the main tab window, even if they are 0</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_9</defName>
+		<label>Faction Trait Fixes</label>
+		<description>The Innovative trait&apos;s functionality was lost in a recent refactor; this patch adds it back in.</description>
+		<releaseDate>2026-03-25</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Re-add Innovative&apos;s functionality</li>
+		<li>Actually implement the Lucky trait...</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_10</defName>
+		<label>Policy Description Fixes</label>
+		<description>Handful of minor fixes for policy descriptions.</description>
+		<releaseDate>2026-03-25</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Added displayDivisor field to FCStatDef</li>
+		<li>FCStatModifier descriptions will divide stat values by their displayDivisor if displayDivisor is non-zero</li>
+		<li>raidCooldownOffset and deadPawnCooldownOffset have 2500 displayDivisor (so they will show up in-game as hours instead of ticks)</li>
+		<li>Handful of grammar and clarity fixes</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_11</defName>
+		<label>Minor backend changes</label>
+		<description>Minor backend change to the static cache invalidation.</description>
+		<releaseDate>2026-03-25</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Publicizes the EmpireCacheUtil class and adds two functions for submods to &quot;register&quot; themselves, so that their global caches are automatically invalidated at the same time as Empire&apos;s</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_126_12</defName>
+		<label>Settle Colony fixes</label>
+		<description>Adds a couple of checks and validations for the settle colony event.</description>
+		<releaseDate>2026-03-25</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Wraps the settleNewColony portion of Process Events in a try/catch, so we can remove the target location from the caravans list if the event fails somehow</li>
+		<li>Adds new ValidateSettlementCaravansList function, firing daily to make sure that the settlementCaravansList has no orphaned locations</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

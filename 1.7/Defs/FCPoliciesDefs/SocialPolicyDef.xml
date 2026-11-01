@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>onePeopleUnited</defName>
+		<label>One People United</label>
+		<desc>A society united by common cause holds the strongest of wills for the hardest duties.</desc>
+		<category>Social</category>
+		<upkeepSilver>100</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+			<li><stat>taxBasePercentage</stat><value>-10</value></li>
+			<li><stat>happinessGainedMultiplier</stat><value>1.5</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>diversityWeEmbrace</defName>
+		<label>Diversity We Embrace</label>
+		<desc>A diverse society has no unfilled cracks that could collapse itself.</desc>
+		<category>Social</category>
+		<upkeepSilver>75</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>authoritarian</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>15</value></li>
+			<li><stat>prosperityGainedBase</stat><value>0.5</value></li>
+			<li><stat>unrestGainedMultiplier</stat><value>1.5</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>royalHeritage</defName>
+		<label>Royal Heritage</label>
+		<desc>A society under the command of a royal family is unified in its traditions.</desc>
+		<category>Social</category>
+		<upkeepSilver>125</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>egalitarian</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>taxBaseRandomModifier</stat><value>25</value></li>
+			<li><stat>createSettlementBaseCost</stat><value>-500</value></li>
+			<li><stat>createSettlementMultiplier</stat><value>0.9</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>companyUnion</defName>
+		<label>Company Union</label>
+		<desc>A corporation that has struck out to create their own self-sufficient trade empire.</desc>
+		<category>Social</category>
+		<upkeepSilver>100</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>authoritarian</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>workerBaseCost</stat><value>-2</value></li>
+			<li><stat>workerBaseMax</stat><value>1</value></li>
+			<li><stat>workerBaseOverMax</stat><value>2</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>tradersFederation</defName>
+		<label>Trader's Federation</label>
+		<desc>A society in which those of power are those with the wealth to spend.</desc>
+		<category>Social</category>
+		<upkeepSilver>100</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>isolationist</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>10</value></li>
+			<li><stat>taxBaseRandomModifier</stat><value>25</value></li>
+			<li><stat>workerBaseCost</stat><value>1</value></li>
+			<li><stat>titheValueMultiplier</stat><value>1.15</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>scienceFoundation</defName>
+		<label>Science Foundation</label>
+		<desc>A society that values knowledge and exploring the unknown.</desc>
+		<category>Social</category>
+		<upkeepSilver>100</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>feudal</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>-15</value></li>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.25</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+</Defs>

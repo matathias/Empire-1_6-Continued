@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_43_3</defName>
+			<label>SOS2 Support and updating Conflicting Textures</label>
+			<description>This is a hotfix to update SOS2 support and address conflicting textures.</description>
+			<releaseDate>2025-08-27</releaseDate>
+	
+			<patchNoteType>Hotfix</patchNoteType>
+	
+			<patchNoteLines>
+				<li>SOS2 support has been updated.</li>
+				<li>Be advised, make sure Vehicle Framework is up to date as this point of time as it's spewing errors.</li>
+				<li>Some building textures were removed and replaced with placeholders whilst we work on new textures.</li>
+			</patchNoteLines>
+	
+			<authors>
+				<li>Epistatic</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_43_2</defName>
+			<label>Building Menu Overhaul and Stability Fixes</label>
+			<description>Major improvements to the building menu system, expanded biome support, enhanced road functionality, and numerous critical bug fixes for improved stability.</description>
+			<releaseDate>2025-08-25</releaseDate>
+	
+			<patchNoteType>Patch</patchNoteType>
+	
+			<patchNoteLines>
+				<li>Building menu has had an overhaul, You can now resize and filter buildings</li>
+				<li>Alpha biomes support - Pecha</li>
+				<li>Neolithic Buildings - Pecha</li>
+				<li>Roads should be working much better now</li>
+				<li>New roads provide an alert when built</li>
+				<li>Fixed infinite loop crash in tax system with safety checks. Fixed PawnGen errors upon delivery + Safe delivery location coordinate error.</li>
+				<li>Fixed a stack overflow error when opening the Create Settlement screen caused by infinite recursion in IsInAnyShuttleRange</li>
+				<li>Fixed PawnGenerationRequest "incorrect constructor" errors in FCPawnGenerator</li>
+				<li>Fixed Critical XML Definition Errors - Policy System Repair</li>
+				<li>Fixed version tracking and red outline display issues</li>
+				<li>Enhanced patch notes window visual design</li>
+				<li>Improved code stability and asset loading</li>
+				<li>Better user experience with branded default imagery</li>
+			</patchNoteLines>
+	
+			<authors>
+				<li>Epistatic</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_43_1</defName>
+			<label>Fixing policy errors.</label>
+			<description>This is a quick patch to fix policy errors.</description>
+			<releaseDate>2025-08-21</releaseDate>
+	
+			<patchNoteType>Patch</patchNoteType>
+	
+			<patchNoteLines>
+				<li>Fixing policy errors.</li>
+			</patchNoteLines>
+	
+			<authors>
+				<li>Epistatic</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_43_0</defName>
+			<label>Initial Release for 1.6</label>
+			<description>We have released Empire for 1.6, this is an unstable release and may contain bugs and errors.</description>
+			<releaseDate>2025-08-19</releaseDate>
+	
+			<patchNoteType>Patch</patchNoteType>
+	
+			<patchNoteLines>
+				<li>Inital support for Odyssey.</li>
+			</patchNoteLines>
+	
+			<authors>
+				<li>Epistatic</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+</Defs>

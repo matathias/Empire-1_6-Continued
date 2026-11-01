@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>intergalacticMarket</defName> <!--Name of Def -->
+		<label>Intergalactic Market</label> <!--Lable of Def -->
+		<desc>From here, ships fly in and deposit their goods and replace their cargo before returning home.</desc> <!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>taxBaseRandomModifier</stat><value>40</value></li>
+			<li><stat>taxBasePercentage</stat><value>15</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/IntergalacticMarket</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>glitterworldResearchFacility</defName> <!--Name of Def -->
+		<label>Glitterworld Research Facility</label> <!--Lable of Def -->
+		<desc>From this building, researchers equipped with the highest-grade tools search for the answers of the universe.</desc> <!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Research_ProductionMultiplier</stat><value>1.5</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/GlitterworldResearchFacility</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>automatedDefenseSystems</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
+		<label>Automated Defense Systems</label> <!--Lable of Def -->
+		<desc>Androids roam the streets, keeping the colonists safe from external and internal harm.</desc> <!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>militaryBaseLevel</stat><value>2</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/AutomatedDefenseSystems</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>FoodReconstruction</defName>
+		<!--Name of Def -->
+		<label>Food Reconstruction</label>
+		<!--Lable of Def -->
+		<desc>Nobody likes nutrient paste, but with a little flavoring and cosmetic tweaks, it can look and taste like whatever you want it to!</desc>
+		<!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.5</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/TastyPaste</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>MechSalvage</defName>
+		<!--Name of Def -->
+		<label>Mechanoid Salvage Shop</label>
+		<!--Lable of Def -->
+		<desc>With the right tools, you can do more than shred dead mechanoids, you can salvage their tech to use against them.</desc>
+		<!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>militaryCombatEfficiency</stat><value>1.05</value></li>
+			<li><stat>RTD_Weapons_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/MechSalvage</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>ClothingPrinters</defName>
+		<!--Name of Def -->
+		<label>Clothing Printers</label>
+		<!--Lable of Def -->
+		<desc>Remove the human element altogether! Dump raw materials in and watch as each article of clothing is printed as a single, seamless piece!</desc>
+		<!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>1.5</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/Printer</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>SyntheticWoodFactory</defName>
+		<!--Name of Def -->
+		<label>Synthetic Wood Factory</label>
+		<!--Lable of Def -->
+		<desc>It's new! It's space-age! It's just as good as the real thing and it's definitely not vinyl, we swear!</desc>
+		<!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/Vinyl</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>AsteroidMagnet</defName>
+		<!--Name of Def -->
+		<label>Asteroid Magnet</label>
+		<!--Lable of Def -->
+		<desc>People may not like it, but it's hard to deny the amount of resources gathered when you just pull the metals you want out of the sky.</desc>
+		<!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>happinessLostBase</stat><value>0.5</value></li>
+			<li><stat>unrestGainedBase</stat><value>0.5</value></li>
+			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>1.2</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/Magnet</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>WorkerBots</defName>
+		<!--Name of Def -->
+		<label>Worker Bots</label>
+		<!--Lable of Def -->
+		<desc>Put robots to work doing the more mundane tasks around the settlement so the people can be put to work elsewhere.</desc>
+		<!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>10</value></li>
+			<li><stat>workerBaseOverMax</stat><value>7</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/WorkerBots</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>SubliminalMessageCenter</defName>
+		<!--Name of Def -->
+		<label>Subliminal Message Center</label>
+		<!--Lable of Def -->
+		<desc>Weave subliminal messaging into the settlement's local broadcasts.</desc>
+		<!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>loyaltyGainedBase</stat><value>0.5</value></li>
+			<li><stat>unrestLostBase</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/TheyLive</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>CloningLab</defName>
+		<!--Name of Def -->
+		<label>Cloning Lab</label>
+		<!--Lable of Def -->
+		<desc>Why breed or capture animals when you can just grow them in vats?</desc>
+		<!-- Description of trait -->
+		<cost>4000</cost>
+		<constructionDuration>300000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>1.2</value></li>
+			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.25</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/CloningLab</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>perpetualMotionGenerator</defName> <!--Name of Def -->
+		<label>Perpetual Motion Generator</label> <!--Lable of Def -->
+		<desc>An impossibility against the laws of physics, a generator that produces extra energy using the concept of perpetual motion.</desc> <!-- Description of trait -->
+		<cost>3000</cost>
+		<constructionDuration>300000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Power_ProductionMultiplier</stat><value>1.5</value></li>
+		</statModifiers>
+		<upkeep>80</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/PerpetualMotionGenerator</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
+		<defName>bionicsManufacturingPlant</defName> <!--Name of Def -->
+		<label>Bionics Manufacturing Plant</label> <!--Lable of Def -->
+		<desc>A factory dedicated to the development of new bionics.</desc> <!-- Description of trait -->
+		<cost>1500</cost>
+		<constructionDuration>300000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>militaryCombatEfficiency</stat><value>1.1</value></li>
+			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>40</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/BionicsManufacturingPlant</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+</Defs>

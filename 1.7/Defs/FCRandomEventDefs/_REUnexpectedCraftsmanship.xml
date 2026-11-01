@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>unexpectedCraftsmanship_0</defName>
+    <label>Unexpected Craftsmanship</label>
+    <desc>The craftsmen in your settlements have been working unusually well! How should their talents be directed?</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <cooldownTicks>900000</cooldownTicks>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>unexpectedCraftsmanship_1-1</li>
+      <li>unexpectedCraftsmanship_1-2</li>
+      <li>unexpectedCraftsmanship_1-3</li>
+      <li>missedSupplyDelivery_0</li>
+      <li>missedSupplyDelivery_1-1</li>
+      <li>missedSupplyDelivery_1-2</li>
+      <li>missedSupplyDelivery_1-3</li>
+    </incompatibleEvents>
+    <options>
+      <li>unexpectedCraftsmanship_0_1</li>
+      <li>unexpectedCraftsmanship_0_2</li>
+      <li>unexpectedCraftsmanship_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>unexpectedCraftsmanship_0_1</defName>
+    <label>Encourage them to keep up the good work across the board.</label>
+    <parentEvent>unexpectedCraftsmanship_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>unexpectedCraftsmanship_1-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>unexpectedCraftsmanship_0_2</defName>
+    <label>Direct the craftsmen to focus on weaponsmithing.</label>
+    <parentEvent>unexpectedCraftsmanship_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>unexpectedCraftsmanship_1-2</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>unexpectedCraftsmanship_0_3</defName>
+    <label>Direct the craftsmen to focus on tailoring and armorsmithing.</label>
+    <parentEvent>unexpectedCraftsmanship_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>unexpectedCraftsmanship_1-3</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>unexpectedCraftsmanship_1-1</defName>
+    <label>Unexpected Craftsmanship</label>
+    <desc>The craftsmen continue their excellent work across all disciplines. Their broad excellence boosts morale.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>unexpectedCraftsmanship_0</li>
+      <li>missedSupplyDelivery_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Weapons_ProductionAdditive</stat>
+        <value>0.5</value>
+      </li>
+      <li>
+        <stat>RTD_Apparel_ProductionAdditive</stat>
+        <value>0.5</value>
+      </li>
+      <li>
+        <stat>happinessGainedBase</stat>
+        <value>2</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>unexpectedCraftsmanship_1-2</defName>
+    <label>Unexpected Craftsmanship (Weapons Focus)</label>
+    <desc>The craftsmen focus their talents on weaponsmithing.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>unexpectedCraftsmanship_0</li>
+      <li>missedSupplyDelivery_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>unexpectedCraftsmanship_1-2_2</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>RTD_Weapons_ProductionAdditive</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>unexpectedCraftsmanship_1-3</defName>
+    <label>Unexpected Craftsmanship (Apparel Focus)</label>
+    <desc>The craftsmen focus their talents on tailoring and armorsmithing.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>unexpectedCraftsmanship_0</li>
+      <li>missedSupplyDelivery_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>unexpectedCraftsmanship_1-3_2</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>RTD_Apparel_ProductionAdditive</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>unexpectedCraftsmanship_1-2_2</defName>
+    <label>Unexpected Craftsmanship (Weapon)</label>
+    <desc>After a week of work, the craftsmen's focus has produced a fine weapon.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>unexpectedCraftsmanship_0</li>
+      <li>missedSupplyDelivery_0</li>
+    </incompatibleEvents>
+    <randomThingValue>500</randomThingValue>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>unexpectedCraftsmanship_1-3_2</defName>
+    <label>Unexpected Craftsmanship (Apparel Focus)</label>
+    <desc>After a week of work, the craftsmen's focus has produced a fine piece of armor.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>unexpectedCraftsmanship_0</li>
+      <li>missedSupplyDelivery_0</li>
+    </incompatibleEvents>
+    <randomThingValue>500</randomThingValue>
+    <randomThingRewardDef>RERD_Armor</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+</Defs>

@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <loadFolders>
+    <v1.7>
+        <li>/</li>
+        <li>1.7</li>
+        <li IfModActive="Ludeon.RimWorld.Odyssey">1.7/Odyssey</li>
+        <li IfModActive="erdelf.HumanoidAlienRaces">Compat/1.7/HumanoidAlienRaces</li>
+        <li IfModActive="CETeam.CombatExtended">Compat/1.7/CombatExtended</li>
+        <li IfModActive="Torann.RimWar">Compat/1.7/RimWar</li>
+        <li IfModActive="jaeger972.factionterritories">Compat/1.7/FactionTerritories</li>
+        <li IfModActive="TSA.WorldDominationExperimental">Compat/1.7/WorldDominationExperimental</li>
+        <li IfModActive="TSA.WorldDomination">Compat/1.7/WorldDomination</li>
+        <li IfModActive="OskarPotocki.VanillaFactionsExpanded.Core">Compat/1.7/KCSG</li>
+        <li IfModActive="Mlie.PawnkindRaceDiversification">Compat/1.7/PawnkindRaceDiversification</li>
+        <li IfModActive="SmashPhil.VehicleFramework">Compat/1.7/VehicleFramework</li>
+        <li IfModActive="VanillaExpanded.VPsycastsE">Compat/1.7/VPE</li>
+        <li IfModActive="MemeGoddess.GiddyUp">Compat/1.7/GiddyUp</li>
+        <li IfModActive="vanillaexpanded.gravship">Compat/1.7/VanillaGravshipsExpanded</li>
+    </v1.7>
     <v1.6>
         <li>/</li>
         <li>1.6</li>

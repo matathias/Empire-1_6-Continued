@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCEventDef>
+		<defName>settlingDown</defName>
+		<label>Settling Down</label>
+		<desc>The citizens of {FACTION} are currently reluctant to expand.</desc>
+		<category>EC_Settlement</category>
+
+		<timeTillTrigger>300000</timeTillTrigger>
+		<timeTillTriggerMax>420000</timeTillTriggerMax>
+
+		<statModifiers>
+			<li><stat>createSettlementMultiplier</stat><value>2</value></li>
+		</statModifiers>
+
+		<options>
+		</options>
+		<activateAtStart>false</activateAtStart>
+
+		<isRandomEvent>true</isRandomEvent>
+		<weight>25</weight>
+		<cooldownTicks>900000</cooldownTicks>
+		<minSettlements>2</minSettlements>
+		<incompatibleEvents>
+		<li>wanderlust</li>
+		</incompatibleEvents>
+
+	</FactionColonies.FCEventDef>
+
+</Defs>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+    <FactionColonies.CodexCategoryDef>
+        <defName>CodexCat_GettingStarted</defName>
+        <label>Getting Started</label>
+        <description>Onboarding topics: founding your faction, your first settlement, and the basics of running an empire.</description>
+        <color>(0.29, 0.64, 0.29)</color>
+        <displayOrder>5</displayOrder>
+        <modId>matathias.empire</modId>
+    </FactionColonies.CodexCategoryDef>
+
+    <FactionColonies.CodexCategoryDef>
+        <defName>CodexCat_Economy</defName>
+        <label>Economy</label>
+        <description>Economic mechanics: resource production, taxes, workers, prosperity, and difficulty settings.</description>
+        <color>(0.85, 0.65, 0.13)</color>
+        <displayOrder>10</displayOrder>
+        <modId>matathias.empire</modId>
+    </FactionColonies.CodexCategoryDef>
+
+    <FactionColonies.CodexCategoryDef>
+        <defName>CodexCat_Military</defName>
+        <label>Military</label>
+        <description>Military mechanics: threat level, battle simulation, cooldowns, targeting, and attack frequency.</description>
+        <color>(0.8, 0.27, 0.27)</color>
+        <displayOrder>20</displayOrder>
+        <modId>matathias.empire</modId>
+    </FactionColonies.CodexCategoryDef>
+
+    <FactionColonies.CodexCategoryDef>
+        <defName>CodexCat_Settlements</defName>
+        <label>Settlements</label>
+        <description>Settlement mechanics: social stats, upgrade costs, building slots, and settlement types.</description>
+        <color>(0.27, 0.27, 0.8)</color>
+        <displayOrder>30</displayOrder>
+        <modId>matathias.empire</modId>
+    </FactionColonies.CodexCategoryDef>
+
+</Defs>

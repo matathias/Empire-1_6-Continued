@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- Abstract building defs based on allowed settlementType -->
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Surface" Abstract="true">
+		<settlementTypeAllowList>
+			<li>WorldSettlementDef_Surface</li>
+		</settlementTypeAllowList>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Orbital" Abstract="true" MayRequire="Ludeon.RimWorld.Odyssey">
+		<settlementTypeAllowList>
+			<li>WorldSettlementDef_Orbital</li>
+		</settlementTypeAllowList>
+	</FactionColonies.BuildingFCDef>
+	
+
+	<!-- Abstract building defs based on techlevel, inherited from the Surface settlementtype restriction -->
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Surface_Undefined" ParentName="BuildingFCDef_Surface" Abstract="true">
+		<techLevel>Undefined</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Surface_Animal" ParentName="BuildingFCDef_Surface" Abstract="true">
+		<techLevel>Animal</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Surface_Neolithic" ParentName="BuildingFCDef_Surface" Abstract="true">
+		<techLevel>Neolithic</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Surface_Medieval" ParentName="BuildingFCDef_Surface" Abstract="true">
+		<techLevel>Medieval</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Surface_Industrial" ParentName="BuildingFCDef_Surface" Abstract="true">
+		<techLevel>Industrial</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Surface_Spacer" ParentName="BuildingFCDef_Surface" Abstract="true">
+		<techLevel>Spacer</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Surface_Ultra" ParentName="BuildingFCDef_Surface" Abstract="true">
+		<techLevel>Ultra</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Surface_Archotech" ParentName="BuildingFCDef_Surface" Abstract="true">
+		<techLevel>Archotech</techLevel>
+	</FactionColonies.BuildingFCDef>
+	<!-- Abstract building defs based on techlevel, inherited from the Orbital settlementtype restriction -->
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Orbital_Undefined" ParentName="BuildingFCDef_Orbital" Abstract="true" MayRequire="Ludeon.RimWorld.Odyssey">
+		<techLevel>Undefined</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Orbital_Animal" ParentName="BuildingFCDef_Orbital" Abstract="true" MayRequire="Ludeon.RimWorld.Odyssey">
+		<techLevel>Animal</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Orbital_Neolithic" ParentName="BuildingFCDef_Orbital" Abstract="true" MayRequire="Ludeon.RimWorld.Odyssey">
+		<techLevel>Neolithic</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Orbital_Medieval" ParentName="BuildingFCDef_Orbital" Abstract="true" MayRequire="Ludeon.RimWorld.Odyssey">
+		<techLevel>Medieval</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Orbital_Industrial" ParentName="BuildingFCDef_Orbital" Abstract="true" MayRequire="Ludeon.RimWorld.Odyssey">
+		<techLevel>Industrial</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Orbital_Spacer" ParentName="BuildingFCDef_Orbital" Abstract="true" MayRequire="Ludeon.RimWorld.Odyssey">
+		<techLevel>Spacer</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Orbital_Ultra" ParentName="BuildingFCDef_Orbital" Abstract="true" MayRequire="Ludeon.RimWorld.Odyssey">
+		<techLevel>Ultra</techLevel>
+	</FactionColonies.BuildingFCDef>
+	
+	<FactionColonies.BuildingFCDef Name="BuildingFCDef_Orbital_Archotech" ParentName="BuildingFCDef_Orbital" Abstract="true" MayRequire="Ludeon.RimWorld.Odyssey">
+		<techLevel>Archotech</techLevel>
+	</FactionColonies.BuildingFCDef>
+</Defs>

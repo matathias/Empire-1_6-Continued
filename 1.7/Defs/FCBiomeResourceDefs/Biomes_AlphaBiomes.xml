@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_FeraliskInfestedJungle</defName>
+		<label>Feralisk Infested Jungle</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>1.5</additive>
+				<multiplier>0.75</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>1.5</additive>
+				<multiplier>1.5</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>1.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<multiplier>0.5</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>1.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Power</resourceDef>
+				<multiplier>0.75</multiplier>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_MycoticJungle</defName>
+		<label>Mycotic Jungle</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0.75</additive>
+				<multiplier>0.5</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>1.5</additive>
+				<multiplier>1.5</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<multiplier>0.5</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Power</resourceDef>
+				<multiplier>0.75</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Medicine</resourceDef>
+				<additive>1.5</additive>
+				<multiplier>1.25</multiplier>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_OcularForest</defName>
+		<label>Ocular Forest</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0.25</additive>
+				<multiplier>0.25</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>1.5</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_GelatinousSuperorganism</defName>
+		<label>Gelatinous Superorganism</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>1.5</additive>
+				<multiplier>1.25</multiplier>
+			</li>
+			<li>
+				<resourceDef>RTD_Weapons</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Apparel</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>1.25</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>0</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_GallatrossGraveyard</defName>
+		<label>Gallatross Graveyard</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>0.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>1.25</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_MechanoidIntrusion</defName>
+		<label>Mechanoid Intrusion</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Weapons</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Apparel</resourceDef>
+				<additive>0.25</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>0</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Power</resourceDef>
+				<additive>1.25</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Medicine</resourceDef>
+				<additive>0</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_PropaneLakes</defName>
+		<label>Propane Lakes</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Weapons</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Apparel</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>0.1</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>0</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_TarPits</defName>
+		<label>Tar Pits</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>0.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>1.25</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_RockyCrags</defName>
+		<label>Forsaken Crags</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>0.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0.25</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>1.25</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Power</resourceDef>
+				<additive>0</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_IdyllicMeadows</defName>
+		<label>idyllic meadows</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Weapons</resourceDef>
+				<additive>0.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>1.25</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>1.25</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Medicine</resourceDef>
+				<additive>1.25</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_MiasmicMangrove</defName>
+		<label>miasmic mangrove</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Weapons</resourceDef>
+				<additive>0.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Apparel</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>1.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Power</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Medicine</resourceDef>
+				<additive>1.5</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+
+	<FactionColonies.BiomeResourceDef MayRequire="sarg.alphabiomes">
+		<defName>AB_PyroclasticConflagration</defName>
+		<label>pyroclastic conflagration</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0.2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Weapons</resourceDef>
+				<additive>0.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Apparel</resourceDef>
+				<additive>0.2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>0.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0.2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>1.25</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>1.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Power</resourceDef>
+				<additive>2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Medicine</resourceDef>
+				<additive>0.2</additive>
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+</Defs>

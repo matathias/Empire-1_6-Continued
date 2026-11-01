@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>drugTrade_0</defName>
+    <label>Drug Trade</label>
+    <desc>One of your settlements is reporting a massive spike in illegal drug use. The leadership suspects that a producer has taken up residence nearby. They request your word on the matter.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <cooldownTicks>1800000</cooldownTicks>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>10</weight>
+    <minDaysSinceFounded>5</minDaysSinceFounded>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>drugTrade-investigation_50</li>
+      <li>drugTrade-fin_hooked</li>
+      <li>drugTrade-investigation_success</li>
+      <li>drugTrade-investigation_failure</li>
+      <li>drugTrade_3-1</li>
+      <li>drugTrade_4-1</li>
+    </incompatibleEvents>
+    <options>
+      <li>drugTrade_0_1</li>
+      <li>drugTrade_0_2</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>drugTrade_0_1</defName>
+    <label>Find the source of this drug trade!</label>
+    <parentEvent>drugTrade_0</parentEvent>
+    <baseChanceOfSuccess>50</baseChanceOfSuccess>
+    <successEvent>drugTrade-investigation_50</successEvent>
+    <failEvent>drugTrade-investigation_50</failEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>drugTrade_0_2</defName>
+    <label>Are the drugs keeping my subjects content? Yes? Then leave it be.</label>
+    <parentEvent>drugTrade_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>drugTrade-fin_hooked</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>drugTrade_3-1</defName>
+    <label>Drug Trade</label>
+    <desc>The drug line has been incorporated into the settlement's official production. A random tithe of drugs will be delivered to you on a 5-day basis.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>drugTrade_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>drugTrade_4-1</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>taxBasePercentage</stat>
+        <value>-10</value>
+      </li>
+    </statModifiers>
+    <randomThingValue>500</randomThingValue>
+    <randomThingRewardDef>RERD_Drugs</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>drugTrade_4-1</defName>
+    <label>Drug Trade</label>
+    <desc>You have received a new tithe of drugs. Continue production or shut down the facility?</desc>
+    <category>EC_Economy</category>
+    <activateAtStart>true</activateAtStart>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>drugTrade_0</li>
+    </incompatibleEvents>
+    <options>
+      <li>drugTrade_4-1_1</li>
+      <li>drugTrade_4-1_2</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>drugTrade_4-1_1</defName>
+    <label>Continue production!</label>
+    <parentEvent>drugTrade_4-1</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>drugTrade_3-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>drugTrade_4-1_2</defName>
+    <label>Cancel Production.</label>
+    <parentEvent>drugTrade_4-1</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>drugTrade-investigation_50</defName>
+    <label>Drug Trade (Investigation)</label>
+    <desc>Investigating drug trade...</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>120000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>drugTrade_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>drugTrade-investigation_success</followingEvent>
+    <followingEvent2>drugTrade-investigation_failure</followingEvent2>
+    <splitEventFollows>true</splitEventFollows>
+    <statModifiers>
+      <li>
+        <stat>taxBasePercentage</stat>
+        <value>-10</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>drugTrade-investigation_75</defName>
+    <label>Drug Trade (Investigation)</label>
+    <desc>Investigating drug trade...</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>120000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>drugTrade_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>drugTrade-investigation_success</followingEvent>
+    <followingEvent2>drugTrade-investigation_failure</followingEvent2>
+    <splitEventFollows>true</splitEventFollows>
+    <splitEventChance>75</splitEventChance>
+    <statModifiers>
+      <li>
+        <stat>taxBasePercentage</stat>
+        <value>-10</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>drugTrade-fin_hooked</defName>
+    <label>Drug Trade</label>
+    <desc>Your settlement may be hooked on drugs, but they seem content with their reality. You doubt you'll hear any complaints anytime soon.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>600000</timeTillTrigger>
+    <timeTillTriggerMax>780000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>drugTrade_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>happinessGainedMultiplier</stat>
+        <value>1.25</value>
+      </li>
+      <li>
+        <stat>unrestGainedMultiplier</stat>
+        <value>.75</value>
+      </li>
+      <li>
+        <stat>taxBasePercentage</stat>
+        <value>-10</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>drugTrade-investigation_failure</defName>
+    <label>Drug Trade (Investigation Failure)</label>
+    <desc>The authorities you directed to find the source of the drug production have turned up nothing. Locals are unhappy with the upheaval. The investigators are going to have to lay back for a short while.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>120000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>drugTrade_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>drugTrade-investiation_continued</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>taxBasePercentage</stat>
+        <value>-10</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>drugTrade-investiation_continued</defName>
+    <label>Drug Trade (Continued Investigation)</label>
+    <desc>The locals have settled, and your investigators believe that they can get back to work finding the source of the drugs. In light of the unexpected difficulty, however, they are requesting an increased budget to help with the investigation.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>drugTrade_0</li>
+    </incompatibleEvents>
+    <options>
+      <li>drugTrade-investigation_cont-1</li>
+      <li>drugTrade-investigation_cont-2</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>drugTrade-investigation_cont-1</defName>
+    <label>Make do with what you have.</label>
+    <parentEvent>drugTrade-investiation_continued</parentEvent>
+    <successEvent>drugTrade-investigation_50</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>drugTrade-investigation_cont-2</defName>
+    <label>You'll have your extra budget.</label>
+    <parentEvent>drugTrade-investiation_continued</parentEvent>
+    <silverCost>200</silverCost>
+    <successEvent>drugTrade-investigation_75</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>drugTrade-investigation_success</defName>
+    <label>Drug Trade (Investigation Success)</label>
+    <desc>The authorities have returned with good news! They have found the drug production. The sneaky lads almost got away, but no one can match the strength of {FACTION}!
+
+However, they point out that a coin or two could be turned from taking over the production instead...</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>drugTrade_0</li>
+    </incompatibleEvents>
+    <options>
+      <li>drugTrade_2-1_1</li>
+      <li>drugTrade-investiation_continued</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>drugTrade_2-1_1</defName>
+    <label>I said, take down the facility! We do not require such a degenerate pleasure.</label>
+    <parentEvent>drugTrade-investigation_success</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>drugTrade-investiation_continued</defName>
+    <label>We could... incorporate it into our official production lines.</label>
+    <parentEvent>drugTrade-investigation_success</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>drugTrade_3-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+</Defs>

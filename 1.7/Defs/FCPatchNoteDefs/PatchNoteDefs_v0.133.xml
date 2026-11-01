@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_0</defName>
+		<label>Event Def Update</label>
+		<description>Updates the def for Empire events to provide greater control over event availability.</description>
+		<releaseDate>2026-03-28</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>Can restrict events based on tech level, cooldown, faction age, required policy</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_1</defName>
+		<label>Event updates</label>
+		<description>Update some events to use the new FCEventDef fields.</description>
+		<releaseDate>2026-03-28</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Drug Trade has a 30-day cooldown, and can only fire after the Empire faction is 5 days old</li>
+		<li>Independence Petitions has a 10-day cooldown, can only fire after the Empire faction is 5 days old, and requires at least 3 settlements in the faction</li>
+		<li>Moonlit Ritual has a 30-day cooldown, and can only fire after the Empire faction is 5 days old</li>
+		<li>Settling Down has a 15-day cooldown, and requires at least 2 settlements in the faction</li>
+		<li>Strange Discovery has a 30-day cooldown, and can only fire after the Empire faction is 5 days old</li>
+		<li>Wanderlust has a 15-day cooldown</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_2</defName>
+		<label>Variable-length Events</label>
+		<description>Add the ability to set a variable duration for Empire Events.</description>
+		<releaseDate>2026-03-28</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Adds timeTillTriggerMax field to FCEventDef. If set, and larger than timeTillTriger, then the event&apos;s duration will be randomly chosen from the range (timeTillTrigger, timeTillTriggerMax)</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_4</defName>
+		<label>Edict UI Update</label>
+		<description>Small change to the edicts UI to hopefully make things more clear.</description>
+		<releaseDate>2026-03-28</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>If an edict is currently being enacted (and thus isn&apos;t yet applying its bonuses), its bonus text in the menu is grayed out</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_5</defName>
+		<label>Minor Manual Battle Fixes</label>
+		<description>Adds some extra pawn-cleanup after manual battles.</description>
+		<releaseDate>2026-03-29</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>After a manual battle, all non-player pawns that were drafted are moved back to the Empire faction</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_6</defName>
+		<label>Linux Patch Fix</label>
+		<description>Attempts to fix an issue with the existing Linux patch.</description>
+		<releaseDate>2026-03-29</releaseDate>
+
+		<patchNoteType>Hotfix</patchNoteType>
+
+		<patchNoteLines>
+		<li>Bugfix: existing linux patch hadn&apos;t been updated for the new refactored code patterns</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_7</defName>
+		<label>Minor UI fixes</label>
+		<description>Couple of quick fixes for UI issues.</description>
+		<releaseDate>2026-03-30</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Building window filter buttons: truncate button label if it&apos;s too long</li>
+		<li>Event window: add scrollview for events with many options</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_8</defName>
+		<label>Minor fixes</label>
+		<description>Fix a couple of issues exposed by the test suite.</description>
+		<releaseDate>2026-03-30</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Fix the building count test to call the correct function after changing how bulding counts work</li>
+		<li>Fix titheValueMultiplier to actually apply to settlements</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_9</defName>
+		<label>Event Description Change</label>
+		<description>Changes event descriptions are assembled.</description>
+		<releaseDate>2026-03-30</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Instead of baking modifier readouts into event descriptions, they are dynamically generated</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_10</defName>
+		<label>More tests</label>
+		<description>A handful of changes to the test suite.</description>
+		<releaseDate>2026-03-30</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Updates a couple existing tests and adds a few new ones</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_11</defName>
+		<label>Settlement Window UI Update</label>
+		<description>Augments the settlement window UI.</description>
+		<releaseDate>2026-03-30</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Adds a tooltip to the Tax Base section of the settlement window UI, breaking down contributions to the tax base</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_12</defName>
+		<label>Orbital Building Fixes</label>
+		<description>Fixes stat modifiers on a couple of orbital buildings.</description>
+		<releaseDate>2026-03-30</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Space Distillery and Orbital Trade Hub&apos;s taxBasePercentage modifiers were too low</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_13</defName>
+		<label>Minor bill fixes</label>
+		<description>Handful of small fixes for bills.</description>
+		<releaseDate>2026-03-31</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Adds null guards and checks to a handful of bill code paths</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_14</defName>
+		<label>Minor extensibility fixes</label>
+		<description>A couple small changes to extensibility for resource modifiers.</description>
+		<releaseDate>2026-03-31</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Split IResourceProductionModifier.GetResourceModifierDesc into GetResourceAdditiveDesc and GetResourceMultiplierDesc</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_15</defName>
+		<label>Minor Event Update</label>
+		<description>Let Events specify a maximum number of times they can fire in a playthrough.</description>
+		<releaseDate>2026-03-31</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Adds a maxFireCount field to FCEventDef, specifying the maximum number of times the event can fire (default is -1, for unlimited)</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_133_16</defName>
+		<label>Patch notes backend change</label>
+		<description>Some backend changes to patch notes to take less space.</description>
+		<releaseDate>2026-03-31</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Removes redundant fields from the PatchNoteDef and sets up a parent with common info. Significant reduction in lines of xml dedicated to patch notes</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

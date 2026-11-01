@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Empire settlement trader. All sell-side stock (including silver) is generated
+     from the settlement's actual resource production via EmpireStockGenerator. -->
+<Defs>
+
+  <TraderKindDef>
+    <defName>FC_Base_Empire_Standard</defName>
+    <hideThingsNotWillingToTrade>false</hideThingsNotWillingToTrade>
+    <tradeCurrency>Silver</tradeCurrency>
+    <stockGenerators>
+
+      <!-- Production-based stock from the settlement's resources -->
+      <li Class="FactionColonies.EmpireStockGenerator" />
+
+      <!-- Buy generators; settlements will buy almost anything off the player -->
+      <li Class="StockGenerator_BuyExpensiveSimple" />
+      <li Class="StockGenerator_BuyTradeTag"><tag>Art</tag></li>
+      <li Class="StockGenerator_BuyTradeTag"><tag>MusicalInstrument</tag></li>
+      <li Class="StockGenerator_BuyTradeTag"><tag>UtilitySpecial</tag></li>
+
+    </stockGenerators>
+  </TraderKindDef>
+
+</Defs>

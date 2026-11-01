@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>heavyConscription</defName>
+		<label>Heavy Conscription</label>
+		<desc>A large number of the populace is conscripted into the settlement's military forces.</desc>
+		<category>Military</category>
+		<upkeepSilver>125</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>pacifist</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>happinessGainedMultiplier</stat><value>0.7</value></li>
+			<li><stat>unrestGainedMultiplier</stat><value>1.3</value></li>
+			<li><stat>militaryBaseLevel</stat><value>2</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>volunteerService</defName>
+		<label>Volunteer Service</label>
+		<desc>The military force of your settlements is by volunteers only.</desc>
+		<category>Military</category>
+		<upkeepSilver>100</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>slaver</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>militaryCombatEfficiency</stat><value>1.2</value></li>
+			<li><stat>unrestGainedMultiplier</stat><value>0.75</value></li>
+			<li><stat>workerBaseCost</stat><value>2</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>aFactionDisarmed</defName>
+		<label>A Faction Disarmed</label>
+		<desc>There is very little, if any trained military forces in the faction.</desc>
+		<category>Military</category>
+		<upkeepSilver>50</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>militaristic</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>militaryCombatEfficiency</stat><value>0.6</value></li>
+			<li><stat>taxBasePercentage</stat><value>20</value></li>
+			<li><stat>happinessGainedBase</stat><value>0.5</value></li>
+			<li><stat>unrestLostBase</stat><value>1</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+	<FactionColonies.FCPolicyDef>
+		<defName>slaveArmy</defName>
+		<label>Slave Army</label>
+		<desc>The majority of your settlements' military forces is comprised of slaves or those in forced servitude.</desc>
+		<category>Military</category>
+		<upkeepSilver>75</upkeepSilver>
+		<enactDuration>300000</enactDuration>
+		<incompatiblePolicies>
+			<li>egalitarian</li>
+		</incompatiblePolicies>
+		<statModifiers>
+			<li><stat>militaryCombatEfficiency</stat><value>0.8</value></li>
+			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+			<li><stat>workerBaseCost</stat><value>-2</value></li>
+			<li><stat>unrestGainedBase</stat><value>1</value></li>
+		</statModifiers>
+	</FactionColonies.FCPolicyDef>
+
+</Defs>

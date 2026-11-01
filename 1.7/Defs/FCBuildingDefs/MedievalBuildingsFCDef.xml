@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>slavePlantation</defName> <!--Name of Def -->
+		<label>Slave Plantation</label> <!--Lable of Def -->
+		<desc>Slaves work the fields here.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.2</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/SlavePlantation</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>adventurersGuild</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
+		<label>Adventurer's Guild</label> <!--Lable of Def -->
+		<desc>A place for traveling adventurers to meet up and spend a night.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>5</value></li>
+			<li><stat>militaryBaseLevel</stat><value>1</value></li>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>0.85</value></li>
+			<li><stat>RTD_Weapons_ProductionMultiplier</stat><value>0.85</value></li>
+			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>0.85</value></li>
+		</statModifiers>
+		<upkeep>50</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/AdventurersGuild</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>publicMarket</defName> <!--Name of Def -->
+		<label>Public Market</label> <!--Lable of Def -->
+		<desc>A public market to exchange goods.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>taxBaseRandomModifier</stat><value>15</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/PublicMarket</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>jailhouse</defName> <!--Name of Def -->
+		<label>Jailhouse</label> <!--Lable of Def -->
+		<desc>A place to store criminal scum.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>-5</value></li>
+			<li><stat>unrestGainedMultiplier</stat><value>0.75</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/JailHouse</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>wildernessGuild</defName> <!--Name of Def -->
+		<label>Wilderness Guild</label> <!--Lable of Def -->
+		<desc>A guild dedicated to taming the wilderness.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Animals_ProductionMultiplier</stat><value>1.5</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/WildernessGuild</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>apparelSweatshop</defName> <!--Name of Def -->
+		<label>Apparel Sweatshop</label> <!--Lable of Def -->
+		<desc>A place to work slaves and colonists alike!</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Apparel_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/ApparelSweatshop</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>loggingCamp</defName> <!--Name of Def -->
+		<label>Logging Camp</label> <!--Lable of Def -->
+		<desc>A camp dedicated to the logging industry. Includes a lumber mill and everything!</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Logging_ProductionAdditive</stat><value>0.5</value></li>
+		</statModifiers>
+		<iconPath>GUI/Buildings/LoggingCamp</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>RedlightDistrict</defName>
+		<!--Name of Def -->
+		<label>Redlight District</label>
+		<!--Lable of Def -->
+		<desc>A place for Merchant and common people to spend a night with questionable people.</desc>
+		<!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>30000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>taxBasePercentage</stat><value>5</value></li>
+			<li><stat>happinessGainedBase</stat><value>0.5</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/AdventurersGuild</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>Smithy</defName>
+		<!--Name of Def -->
+		<label>Smithy</label>
+		<!--Lable of Def -->
+		<desc>A sturdy forge and sturdier anvil. Perfect for shaping metal into weapons and tools alike.</desc>
+		<!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Weapons_ProductionAdditive</stat><value>0.5</value></li>
+			<li><stat>RTD_Mining_ProductionMultiplier</stat><value>0.95</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/Smithy</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>UndergroundMine</defName>
+		<!--Name of Def -->
+		<label>Subterranean Mine</label>
+		<!--Lable of Def -->
+		<desc>Dig down into the planet's surface in search of those really valuable materials. Don't forget to build supports!</desc>
+		<!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Mining_ProductionAdditive</stat><value>0.5</value></li>
+			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>0.95</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/UndergroundMine</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>Mills</defName>
+		<!--Name of Def -->
+		<label>Mills</label>
+		<!--Lable of Def -->
+		<desc>Mills! Wind or water, these are useful for a number of things!</desc>
+		<!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>RTD_Power_ProductionAdditive</stat><value>0.25</value></li>
+			<li><stat>RTD_Food_ProductionMultiplier</stat><value>1.05</value></li>
+			<li><stat>RTD_Weapons_ProductionMultiplier</stat><value>1.05</value></li>
+			<li><stat>RTD_Apparel_ProductionMultiplier</stat><value>1.05</value></li>
+			<li><stat>RTD_Logging_ProductionMultiplier</stat><value>1.05</value></li>
+		</statModifiers>
+		<upkeep>60</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/Mills</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>ServantHousing</defName>
+		<!--Name of Def -->
+		<label>Servant Housing</label>
+		<!--Lable of Def -->
+		<desc>Servants are a delight to have and more places to house them means you can hire more!</desc>
+		<!-- Description of trait -->
+		<cost>3000</cost>
+		<constructionDuration>60000</constructionDuration>
+		<!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>4</value></li>
+			<li><stat>workerBaseOverMax</stat><value>4</value></li>
+			<li><stat>workerBaseCost</stat><value>1</value></li>
+		</statModifiers>
+		<upkeep>50</upkeep>
+		<postRework>true</postRework>
+		<!-- cost per week for the building -->
+		<iconPath>GUI/Buildings/Servant</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
+		<defName>plagueCamp</defName> <!--Name of Def -->
+		<label>Plague Camp</label> <!--Lable of Def -->
+		<desc>A containment camp to keep the sick and the dying.</desc> <!-- Description of trait -->
+		<cost>500</cost>
+		<constructionDuration>120000</constructionDuration> <!-- Ticks it takes until construction is finished -->
+		<statModifiers>
+			<li><stat>workerBaseMax</stat><value>-3</value></li>
+			<li><stat>workerBaseOverMax</stat><value>-2</value></li>
+			<li><stat>RTD_Research_ProductionAdditive</stat><value>0.4</value></li>
+			<li><stat>RTD_Medicine_ProductionAdditive</stat><value>0.4</value></li>
+		</statModifiers>
+		<upkeep>0</upkeep> <!-- cost per week for the building -->
+		<postRework>true</postRework>
+		<iconPath>GUI/Buildings/PlagueCamps</iconPath>
+	</FactionColonies.BuildingFCDef>
+
+
+
+</Defs>

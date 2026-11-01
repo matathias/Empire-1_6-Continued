@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.FCEventDef>
+		<!-- Basic def stuff -->
+		<defName>randomEventExample</defName> <!-- make this a unique name -->
+		<label>An example event is happening!</label> <!-- This is what the player sees in the event menu -->
+		<desc>Your settlement is being attacked by blah blah blah.</desc> <!-- The description of the event. -->
+		<category>EC_Other</category>
+		
+		<!-- Basic event stuff -->
+		<timeTillTrigger>300000</timeTillTrigger> <!-- The time the event will last (or until it goes to the next stage) 300000 covers a whole tax period, so is recommended for events affecting production -->
+		<statModifiers> <!-- FCStatModifier entries that affect either faction or specific settlements -->
+		<!-- <li><stat>taxBonusFlat</stat><value>5</value></li> -->
+		</statModifiers>
+		
+		<options> <!-- If you want the player to have any clickable options, put the FCOptionDef name in here and it will prompt it-->
+			<!-- <li>exampleOptionDef</li> -->
+		</options>
+		<optionDescription>string</optionDescription> <!-- If options are presented, this is the description for the option. -->
+		<activateAtStart>false</activateAtStart> <!-- if this is set to true, options will be displayed at the start of the event, which basically means the actual event itself doesn't last anytime, it just leads to other events. If set to false, it will prompt at the end of the event after the timeTillTrigger ends. -->
+		
+		<isRandomEvent>false</isRandomEvent> <!-- Set to true if this def is a random event. Only use this for the FIRST event in a chain of events. -->
+		<weight>0</weight>  <!-- The amount of 'chances' an random event has to be selected. 1 for Extremely rare, 5 for rare, 15 for uncommon, 25 for common -->
+		<incompatibleEvents> <!-- Add any events that would be incompatible with this event here. Like a food produciton boost event and a food production minus event. Note: this is only needed for the base event if in a chain. -->
+			<!--<li>randomEventExample2</li>-->
+		</incompatibleEvents>
+		
+		<!-- Follow-up chaining: a follow-up fires if EITHER eventFollows OR splitEventFollows is true.
+		     Use eventFollows for a guaranteed follow-up; use splitEventFollows for a chance-based one.
+		     For a chance-based follow-up you set splitEventFollows true (eventFollows can stay false).
+		     splitEventChance is the % chance followingEvent fires; otherwise followingEvent2 fires
+		     (leave followingEvent2 empty to make the chain simply end on that roll). -->
+		<eventFollows>false</eventFollows> <!-- Set true for a guaranteed followingEvent after this one (no player input) -->
+		<followingEvent><!--first event--></followingEvent>
+
+		<splitEventFollows>false</splitEventFollows> <!-- Set true for a chance-based follow-up driven by splitEventChance -->
+		<splitEventChance>50</splitEventChance> <!-- % chance followingEvent fires (else followingEvent2, or nothing if it's empty). Only used when splitEventFollows is true -->
+		<followingEvent2><!--Second event (if random); leave empty so the chain ends on the 'else' roll--></followingEvent2>
+		
+		
+		
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected> <!-- The amount of settlements event can affect. Leave this out if you want it to affect the faction as a whole -->
+		<targetAllSettlements>false</targetAllSettlements> <!-- If true, deterministically targets every qualifying settlement (after biome/type/resource filters). Overrides rangeSettlementsAffected. -->
+		<settlementsCarryOver>true</settlementsCarryOver> <!-- If affecting settlements, use this for it to keep the same settlements selected. It's reccommended to leave this to true. -->
+		<prosperityLost>0</prosperityLost> <!-- amount of prosperity to deduct from current prosperity -->
+
+		<permanentStatModifiers> <!-- Like statModifiers, but these persist on the settlement permanently after the event expires. Use for lasting effects like "Ancient ruins discovered: +2 research forever". -->
+			<!-- <li><stat>RTD_Research_ProductionAdditive</stat><value>2</value></li> -->
+		</permanentStatModifiers>
+		
+		
+		<!-- Random Event Prerequisites -->
+		<requiredWealth>0</requiredWealth> <!-- The amount of "story" wealth required for an event to proc -->
+		
+		<minimumHappiness>0</minimumHappiness> <!-- The minimum happiness required for this event to proc -->
+		<maximumHappiness>100</maximumHappiness> <!-- The maximum happiness allowed for this event to proc -->
+		
+		<minimumLoyalty>0</minimumLoyalty> <!-- The minimum Loyalty required for this event to proc -->
+		<maximumLoyalty>100</maximumLoyalty> <!-- The maximum Loyalty allowed for this event to proc -->
+		
+		<minimumUnrest>0</minimumUnrest> <!-- The minimum Unrest required for this event to proc -->
+		<maximumUnrest>100</maximumUnrest> <!-- The maximum Unrest allowed for this event to proc -->
+		
+		<minimumProsperity>0</minimumProsperity> <!-- The minimum Prosperity required for this event to proc -->
+		<maximumProsperity>100</maximumProsperity> <!-- The maximum Prosperity allowed for this event to proc -->
+		
+		<requiredResource><!--ResourceTypeDef defName--></requiredResource> <!-- if you want an event to require that a specific resource is being produced, put the ResourceTypeDef defName in this tag. If you use this along with the rangeSettlementsAffected, the event will only occur in settlements that is producing that resource! -->
+		<!-- ResourceTypeDef defNames: RTD_Food, RTD_Weapons, RTD_Apparel, RTD_Animals, RTD_Logging, RTD_Mining, RTD_Research, RTD_Power, RTD_Medicine, RTD_Chemfuel -->
+
+		<applicableBiomes> <!-- If set, this event will only target settlements in these biomes. Uses BiomeDef defNames. If empty, all biomes are valid. -->
+			<!-- <li>BorealForest</li> -->
+		</applicableBiomes>
+		<restrictedBiomes> <!-- If set, this event will NOT target settlements in these biomes. Ignored if applicableBiomes is set. -->
+			<!-- <li>Desert</li> -->
+		</restrictedBiomes>
+
+		<randomThingRewardDef>RERD_Food</randomThingRewardDef> <!-- if you want the event to give the player a random item when the event completes (Or at the end of the 'step' in a chain of events) put the ResourceEventRewardDef defName here. Note, if you have <activateAtStart>true</activateAtStart>, this will not generate an item to give to the player. -->
+		<!-- ResourceEventRewardDef defNames: RERD_Food, RERD_Weapons, RERD_Apparel, RERD_Armor, RERD_Animals, RERD_Logging, RERD_Mining, RERD_Drugs -->
+		<randomThingValue>0</randomThingValue> <!-- The 'MarketValue' of the object being generated. -->
+	</FactionColonies.FCEventDef>
+	
+	
+	
+	
+	<!-- Base Event without all the comments -->
+	<FactionColonies.FCEventDef>
+		<!-- Basic def stuff -->
+		<defName>randomEventExample2</defName>
+		<label>An example event is happening!</label>
+		<desc>Your settlement is being attacked by blah blah blah.</desc>
+		<category>EC_Other</category>
+		
+		<!-- Basic event stuff -->
+		<timeTillTrigger>300000</timeTillTrigger> 
+		<statModifiers>
+		</statModifiers>
+		
+		<options> 
+		</options>
+		<activateAtStart>false</activateAtStart> 
+		
+		<isRandomEvent>false</isRandomEvent> 
+		<weight>0</weight>  <!-- The amount of 'chances' an random event has to be selected. 1 for Extremely rare, 5 for rare, 15 for uncommon, 25 for common -->
+		<incompatibleEvents>
+		</incompatibleEvents>
+		
+		
+		<rangeSettlementsAffected>1~3</rangeSettlementsAffected> 
+		<settlementsCarryOver>true</settlementsCarryOver> 
+		<prosperityLost>0</prosperityLost> 
+		
+		
+		<!-- Random Event Prerequisites -->
+		<requiredWealth>0</requiredWealth>
+		
+		<minimumHappiness>0</minimumHappiness>
+		<maximumHappiness>100</maximumHappiness>
+		
+		<minimumLoyalty>0</minimumLoyalty> 
+		<maximumLoyalty>100</maximumLoyalty>
+		
+		<minimumUnrest>0</minimumUnrest> 
+		<maximumUnrest>100</maximumUnrest> 
+		
+		<minimumProsperity>0</minimumProsperity>
+		<maximumProsperity>100</maximumProsperity>
+		
+		<requiredResource><!--ResourceTypeDef defName--></requiredResource>
+		<!-- ResourceTypeDef defNames: RTD_Food, RTD_Weapons, RTD_Apparel, RTD_Animals, RTD_Logging, RTD_Mining, RTD_Research, RTD_Power, RTD_Medicine, RTD_Chemfuel -->
+
+		<applicableBiomes>
+		</applicableBiomes>
+		<restrictedBiomes>
+		</restrictedBiomes>
+
+		<randomThingRewardDef>RERD_Food</randomThingRewardDef>
+		<!-- ResourceEventRewardDef defNames: RERD_Food, RERD_Weapons, RERD_Apparel, RERD_Armor, RERD_Animals, RERD_Logging, RERD_Mining, RERD_Drugs -->
+		<randomThingValue>0</randomThingValue>
+		
+	</FactionColonies.FCEventDef>
+	
+
+
+	
+	
+	
+	
+</Defs>

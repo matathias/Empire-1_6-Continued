@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_121_0</defName>
+			<label>New edicts</label>
+			<description>Adds a handful of new edicts, plus a new category.</description>
+			<releaseDate>2026-03-22</releaseDate>
+	
+			<patchNoteType>Minor</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Adds &quot;Doctrine&quot; edicts, unlocked at faction level 3, that influence how Empire defense is handled. Largest impact on auto-battle mode</li>
+			<li>Adds a couple of new Tax edicts</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_121_1</defName>
+		<label>Minor patch note changes</label>
+		<description>Minor changes to how patch notes are handled.</description>
+		<releaseDate>2026-03-22</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Store patch notes in individual files based on minor version, rather than 1 monolithic file</li>
+		<li>Sort patch notes in-game based on version number, rather than date</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_121_2</defName>
+		<label>Code Cleanup</label>
+		<description>Just some behind-the-scenes code cleanup. Nothing player-facing.</description>
+		<releaseDate>2026-03-22</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Did some code cleanup and file reorg</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_121_3</defName>
+		<label>Medicine Resource Tweaks</label>
+		<description>Tweaks the medicine resource to be a bit more sensible.</description>
+		<releaseDate>2026-03-23</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Removes organic organs from the Medicine resource. Where did they all come from, anyways...?</li>
+		<li>Adds drugs to the Medicine resource</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

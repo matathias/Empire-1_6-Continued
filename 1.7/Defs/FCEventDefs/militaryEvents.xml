@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.FCEventDef>
+		<defName>raidEnemySettlement</defName>
+		<label>Raid Enemy Settlement</label>
+		<timeTillTrigger>0</timeTillTrigger>
+		<desc>-Replace Description-</desc>
+
+		<isMilitaryEvent>true</isMilitaryEvent>
+		<category>EC_Military</category>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>enslaveEnemySettlement</defName>
+		<label>Enslave Enemy Settlement</label>
+		<timeTillTrigger>0</timeTillTrigger>
+		<desc>-Replace Description-</desc>
+
+		<isMilitaryEvent>true</isMilitaryEvent>
+		<category>EC_Military</category>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>captureEnemySettlement</defName>
+		<label>Capture Enemy Settlement</label>
+		<timeTillTrigger>0</timeTillTrigger>
+		<desc>-Replace Description-</desc>
+
+		<isMilitaryEvent>true</isMilitaryEvent>
+		<category>EC_Military</category>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>razeEnemySettlement</defName>
+		<label>Raze Enemy Settlement</label>
+		<timeTillTrigger>0</timeTillTrigger>
+		<desc>-Replace Description-</desc>
+
+		<isMilitaryEvent>true</isMilitaryEvent>
+		<category>EC_Military</category>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>cooldownMilitary</defName>
+		<label>Military Cooldown</label>
+		<timeTillTrigger>0</timeTillTrigger>
+		<desc>-Replace Description-</desc>
+
+		<isMilitaryEvent>true</isMilitaryEvent>
+		<category>EC_Military</category>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>settlementBeingAttacked</defName>
+		<label>Settlement is under attack</label>
+		<timeTillTrigger>0</timeTillTrigger>
+		<desc>-Replace Description-</desc>
+
+		<isMilitaryEvent>true</isMilitaryEvent>
+		<category>EC_Military</category>
+	</FactionColonies.FCEventDef>
+
+	<FactionColonies.FCEventDef>
+		<defName>autoResolveBattleRound</defName>
+		<label>Battle in Progress</label>
+		<timeTillTrigger>0</timeTillTrigger>
+		<desc>A battle is being resolved one round per hour. Click to watch the battle unfold.</desc>
+
+		<isMilitaryEvent>true</isMilitaryEvent>
+		<category>EC_Military</category>
+	</FactionColonies.FCEventDef>
+
+</Defs>

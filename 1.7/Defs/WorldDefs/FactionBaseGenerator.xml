@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <WorldObjectDef>
+        <defName>FactionBaseGenerator</defName>
+        <label>ColonyBase</label>
+        <worldObjectClass>FactionColonies.WorldSettlementFC</worldObjectClass>
+        <mapGenerator>Empire_Base</mapGenerator>
+        <texture>World/WorldObjects/DefaultSettlement</texture>
+        <expandingIcon>true</expandingIcon>
+        <expandMore>true</expandMore>
+        <expandingIconPriority>1</expandingIconPriority>
+    </WorldObjectDef>
+    
+    <!-- Custom Orbital Platform Definition -->
+    <WorldObjectDef MayRequire="Ludeon.RimWorld.Odyssey">
+        <defName>FCOrbitalPlatform</defName>
+        <label>orbital platform</label>
+        <description>A player-built orbital platform in space.</description>
+        <worldObjectClass>FactionColonies.WorldSettlementFC</worldObjectClass>
+        <texture>World/WorldObjects/Expanding/SettlementPlatform</texture>
+        <expandingIcon>true</expandingIcon>
+        <expandingIconTexture>World/WorldObjects/Expanding/SettlementPlatform</expandingIconTexture>
+        <expandingIconPriority>60</expandingIconPriority>
+        <expandingIconDrawSize>1.1</expandingIconDrawSize>
+        <expandingIconColor>(203,162,114,255)</expandingIconColor>
+        <fullyExpandedInSpace>true</fullyExpandedInSpace>
+        <canBePlayerHome>true</canBePlayerHome>
+        <mapGenerator>Encounter</mapGenerator>
+        <useDynamicDrawer>true</useDynamicDrawer>
+        <neverMultiSelect>false</neverMultiSelect>
+    </WorldObjectDef>
+</Defs>

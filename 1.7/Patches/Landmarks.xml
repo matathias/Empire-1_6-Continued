@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Per-landmark resource bonuses. Attaches TileLandmarkResourceExtension to Odyssey
+     LandmarkDefs so settlements founded on those tiles get per-resource modifiers. -->
+<Patch>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="Ruins"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="Ruins"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Mining</resource><multiplier>1.1</multiplier></li>
+              <li><resource>RTD_Research</resource><multiplier>1.15</multiplier></li>
+              <li><resource>RTD_Food</resource><multiplier>0.9</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="FrozenRuins"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="FrozenRuins"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Research</resource><multiplier>1.15</multiplier></li>
+              <li><resource>RTD_Mining</resource><multiplier>1.05</multiplier></li>
+              <li><resource>RTD_Food</resource><multiplier>0.8</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AncientQuarry"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AncientQuarry"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Mining</resource><multiplier>1.25</multiplier></li>
+              <li><resource>RTD_Logging</resource><multiplier>0.9</multiplier></li>
+              <li><resource>RTD_Research</resource><multiplier>1.05</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="Harbor"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="Harbor"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Food</resource><multiplier>1.15</multiplier></li>
+              <li><resource>RTD_Weapons</resource><multiplier>1.05</multiplier></li>
+              <li><resource>RTD_Apparel</resource><multiplier>1.05</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <!-- Ancient vents (BaseAncientVent family) -->
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AncientSmokeVent"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AncientSmokeVent"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Research</resource><multiplier>1.1</multiplier></li>
+              <li><resource>RTD_Food</resource><multiplier>0.9</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AncientToxVent"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AncientToxVent"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Mining</resource><multiplier>1.15</multiplier></li>
+              <li><resource>RTD_Food</resource><multiplier>0.7</multiplier></li>
+              <li><resource>RTD_Medicine</resource><multiplier>0.75</multiplier></li>
+              <li><resource>RTD_Animals</resource><multiplier>0.8</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AncientHeatVent"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AncientHeatVent"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Power</resource><multiplier>1.2</multiplier></li>
+              <li><resource>RTD_Food</resource><multiplier>0.9</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <!-- Abandoned colonies (AbandonedColonyLandmarkBase family) -->
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AbandonedColonyTribal"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AbandonedColonyTribal"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Apparel</resource><multiplier>1.1</multiplier></li>
+              <li><resource>RTD_Logging</resource><multiplier>1.05</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AbandonedColonyOutlander"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AbandonedColonyOutlander"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Weapons</resource><multiplier>1.1</multiplier></li>
+              <li><resource>RTD_Apparel</resource><multiplier>1.1</multiplier></li>
+              <li><resource>RTD_Medicine</resource><multiplier>1.05</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <!-- Ancient structures (AncientStructureBase family) -->
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AncientLaunchSite"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AncientLaunchSite"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Gravtech</resource><multiplier>1.15</multiplier></li>
+              <li><resource>RTD_Research</resource><multiplier>1.1</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AncientGarrison"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AncientGarrison"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Weapons</resource><multiplier>1.2</multiplier></li>
+              <li><resource>RTD_Apparel</resource><multiplier>1.05</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AncientWarehouse"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AncientWarehouse"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Apparel</resource><multiplier>1.1</multiplier></li>
+              <li><resource>RTD_Chemfuel</resource><multiplier>1.1</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AncientChemfuelRefinery"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AncientChemfuelRefinery"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Chemfuel</resource><multiplier>1.25</multiplier></li>
+              <li><resource>RTD_Food</resource><multiplier>0.9</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationConditional" MayRequire="Ludeon.RimWorld.Odyssey">
+    <xpath>Defs/LandmarkDef[defName="AncientInfestedSettlement"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/LandmarkDef[defName="AncientInfestedSettlement"]</xpath>
+      <value>
+        <modExtensions>
+          <li Class="FactionColonies.TileLandmarkResourceExtension">
+            <bonuses>
+              <li><resource>RTD_Research</resource><multiplier>1.15</multiplier></li>
+              <li><resource>RTD_Animals</resource><multiplier>0.7</multiplier></li>
+            </bonuses>
+          </li>
+        </modExtensions>
+      </value>
+    </match>
+  </Operation>
+
+</Patch>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+    <!-- Applied to battle pawns when settlement combat efficiency > 1.0 -->
+    <!-- Severity = dampedDelta = (efficiency - 1.0) * efficiencyDamping -->
+    <!-- ScaleFactor(baseFactor, severity) = 1 - (1 - baseFactor) * severity -->
+    <HediffDef>
+        <defName>FC_CombatEfficiency_Buff</defName>
+        <label>well-trained</label>
+        <description>This combatant benefits from superior training and coordination provided by their settlement's military infrastructure.
+        
+----------
+        
+The buffs applied by this hediff are scaled by the military efficiency of the defending/home settlement (for player Empire pawns) or by the military efficiency of their faction (for enemy NPC pawns).</description>
+        <overrideTooltip>This combatant benefits from superior training and coordination provided by their settlement's military infrastructure.</overrideTooltip>
+        <hediffClass>FactionColonies.Hediff_CombatEfficiency</hediffClass>
+        <isBad>false</isBad>
+        <makesAlert>false</makesAlert>
+        <scenarioCanAdd>false</scenarioCanAdd>
+        <initialSeverity>0.01</initialSeverity>
+        <maxSeverity>5</maxSeverity>
+        <stages>
+            <li>
+                <multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity>
+                <statFactors>
+                    <!-- weight 1.0: ScaleFactor(2.0, s) = 1 + s -->
+                    <ShootingAccuracyPawn>2.0</ShootingAccuracyPawn>
+                    <MeleeHitChance>2.0</MeleeHitChance>
+                    <!-- weight 0.5: ScaleFactor(1.5, s) = 1 + 0.5s -->
+                    <MeleeDodgeChance>1.5</MeleeDodgeChance>
+                    <!-- weight -0.5 (inverted): ScaleFactor(0.5, s) = 1 - 0.5s (faster aiming) -->
+                    <AimingDelayFactor>0.5</AimingDelayFactor>
+                    <!-- weight 0.3: ScaleFactor(1.3, s) = 1 + 0.3s -->
+                    <MoveSpeed>1.3</MoveSpeed>
+                </statFactors>
+            </li>
+        </stages>
+    </HediffDef>
+
+    <!-- Applied to battle pawns when settlement combat efficiency < 1.0 -->
+    <HediffDef>
+        <defName>FC_CombatEfficiency_Debuff</defName>
+        <label>poorly trained</label>
+        <description>This combatant suffers from inadequate training and poor coordination due to their settlement's weak military infrastructure.
+
+----------
+
+The penalties applied by this hediff are scaled by the military efficiency of the defending/home settlement (for player Empire pawns) or by the military efficiency of their faction (for enemy NPC pawns).</description>
+        <overrideTooltip>This combatant suffers from inadequate training and poor coordination due to their settlement's weak military infrastructure.</overrideTooltip>
+        <hediffClass>FactionColonies.Hediff_CombatEfficiency</hediffClass>
+        <isBad>true</isBad>
+        <makesAlert>false</makesAlert>
+        <scenarioCanAdd>false</scenarioCanAdd>
+        <initialSeverity>0.01</initialSeverity>
+        <maxSeverity>5</maxSeverity>
+        <stages>
+            <li>
+                <multiplyStatChangesBySeverity>true</multiplyStatChangesBySeverity>
+                <statFactors>
+                    <!-- weight 1.0: ScaleFactor(0.0, s) = 1 - s -->
+                    <ShootingAccuracyPawn>0.0</ShootingAccuracyPawn>
+                    <MeleeHitChance>0.0</MeleeHitChance>
+                    <!-- weight 0.5: ScaleFactor(0.5, s) = 1 - 0.5s -->
+                    <MeleeDodgeChance>0.5</MeleeDodgeChance>
+                    <!-- weight -0.5 (inverted): ScaleFactor(1.5, s) = 1 + 0.5s (slower aiming) -->
+                    <AimingDelayFactor>1.5</AimingDelayFactor>
+                    <!-- weight 0.3: ScaleFactor(0.7, s) = 1 - 0.3s -->
+                    <MoveSpeed>0.7</MoveSpeed>
+                </statFactors>
+            </li>
+        </stages>
+    </HediffDef>
+
+</Defs>

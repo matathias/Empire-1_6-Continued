@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.BiomeResourceDef MayRequire="sunsetmoderteam.sunsettechnology3">
+		<defName>SCMBiome_cy</defName>
+		<label>SCM Otherworld</label>
+		<canSettle>true</canSettle>
+		<resources>
+
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0.6</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Weapons</resourceDef>
+				<additive>0.8</additive>
+			</li>	
+			<li>
+				<resourceDef>RTD_Apparel</resourceDef>
+				<additive>0.8</additive>
+			</li>						
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>0.8</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>1.8</additive>		
+			</li>	
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>2</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Power</resourceDef>
+				<additive>2</additive>
+			</li>			
+		</resources>
+	</FactionColonies.BiomeResourceDef>	
+</Defs>

@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Food</defName>
+	<label>farming</label>
+	<description>A resource category for farmed crops: food, textiles, and other non-food plant harvests.</description>
+	<iconPath>GUI/ProductionFood</iconPath>
+	<color>(0.45, 0.75, 0.35)</color>
+	<uiPriority>100</uiPriority>
+	<isDefaultResource>true</isDefaultResource>
+	<productionAdditiveStat>RTD_Food_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Food_ProductionMultiplier</productionMultiplierStat>
+	<thingAllowList>
+		<li>
+			<thingDef>Hay</thingDef>
+		</li>
+		<li>
+			<thingDef>Kibble</thingDef>
+		</li>
+		<!-- Beer is a drug by category but is a brewed agricultural product; it belongs to farming, not medicine -->
+		<li>
+			<thingDef>Beer</thingDef>
+		</li>
+	</thingAllowList>
+	<thingCategoryAllowList>
+		<li>
+			<thingCategoryDef>Foods</thingCategoryDef>
+		</li>
+	</thingCategoryAllowList>
+	<thingCategoryBlockList>
+		<li>MeatRaw</li>
+		<li>AnimalProductRaw</li>
+	</thingCategoryBlockList>
+	<thingBlockList>
+		<!-- Hemogen packs are in the vanilla Foods category but belong to the medicine resource -->
+		<li MayRequire="Ludeon.RimWorld.Biotech">HemogenPack</li>
+	</thingBlockList>
+	<associatedSkills>
+		<li>Plants</li>
+		<li>Cooking</li>
+	</associatedSkills>
+	<titheMinCount>1</titheMinCount>
+	<titheMaxCountBase>5</titheMaxCountBase>
+	<titheMaxCountScaler>1</titheMaxCountScaler>
+	<modExtensions>
+		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
+			<resourceHilliness>
+				<li>
+					<hilliness>Flat</hilliness>
+					<multiplier>1.1</multiplier>
+				</li>
+				<li>
+					<hilliness>Mountainous</hilliness>
+					<multiplier>0.5</multiplier>
+				</li>
+			</resourceHilliness>
+		</li>
+		<li Class="FactionColonies.ResourceProductionExtension_TileField">
+			<extName>TileField</extName>
+			<extDesc>Tile environment</extDesc>
+			<multipliers>
+				<li>
+					<field>BiomePlantDensity</field>
+					<defaultValue>0.5</defaultValue>
+					<curve>
+						<points>
+							<li>(0.0, 0.4)</li>
+							<li>(0.2, 0.8)</li>
+							<li>(0.4, 1.1)</li>
+							<li>(0.7, 0.95)</li>
+							<li>(1.0, 0.85)</li>
+						</points>
+					</curve>
+				</li>
+				<li>
+					<field>Temperature</field>
+					<defaultValue>20</defaultValue>
+					<curve>
+						<points>
+							<li>(-20, 0.4)</li>
+							<li>(0, 0.75)</li>
+							<li>(15, 1.0)</li>
+							<li>(25, 1.1)</li>
+							<li>(35, 0.85)</li>
+							<li>(45, 0.6)</li>
+						</points>
+					</curve>
+				</li>
+				<li>
+					<field>Rainfall</field>
+					<defaultValue>800</defaultValue>
+					<curve>
+						<points>
+							<li>(0, 0.7)</li>
+							<li>(400, 0.9)</li>
+							<li>(1000, 1.0)</li>
+							<li>(2500, 1.05)</li>
+							<li>(5000, 0.95)</li>
+						</points>
+					</curve>
+				</li>
+				<li>
+					<field>Pollution</field>
+					<defaultValue>0</defaultValue>
+					<curve>
+						<points>
+							<li>(0.0, 1.0)</li>
+							<li>(0.5, 0.75)</li>
+							<li>(1.0, 0.0)</li>
+						</points>
+					</curve>
+				</li>
+				<li>
+					<field>HasAnyRiver</field>
+					<defaultValue>0</defaultValue>
+					<curve>
+						<points>
+							<li>(0, 1.0)</li>
+							<li>(1, 1.1)</li>
+						</points>
+					</curve>
+				</li>
+			</multipliers>
+		</li>
+		<!-- Adds the harvested output of any sowable non-tree crop, except outputs in the blocked categories (owned by the medicine resource). Kept last so translation index mappings for the extensions above stay stable. -->
+		<li Class="FactionColonies.ResourceFilterExtension_Crops">
+			<blockedCategories>
+				<li>Medicine</li>
+				<li>Drugs</li>
+			</blockedCategories>
+		</li>
+	</modExtensions>
+  </FactionColonies.ResourceTypeDef>
+
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Weapons</defName>
+	<label>weapons</label>
+	<description>A resource category for weapons.</description>
+	<iconPath>GUI/ProductionWeapons</iconPath>
+	<color>(0.75, 0.35, 0.35)</color>
+	<uiPriority>200</uiPriority>
+	<isDefaultResource>true</isDefaultResource>
+	<productionAdditiveStat>RTD_Weapons_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Weapons_ProductionMultiplier</productionMultiplierStat>
+	<thingCategoryAllowList>
+		<li>
+			<thingCategoryDef>Weapons</thingCategoryDef>
+		</li>
+		<li>
+			<thingCategoryDef>MortarShells</thingCategoryDef>
+		</li>
+	</thingCategoryAllowList>
+	<thingCategoryBlockList>
+		<li>WeaponsUnique</li>
+	</thingCategoryBlockList>
+	<associatedSkills>
+		<li>Crafting</li>
+	</associatedSkills>
+	<titheMinCount>1</titheMinCount>
+	<titheMaxCountBase>4</titheMaxCountBase>
+	<titheMaxCountScaler>2</titheMaxCountScaler>
+	<defenseWeight>1.0</defenseWeight>
+	<modExtensions>
+		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
+			<resourceHilliness>
+				<li>
+					<hilliness>Mountainous</hilliness>
+					<multiplier>1.1</multiplier>
+				</li>
+			</resourceHilliness>
+		</li>
+	</modExtensions>
+  </FactionColonies.ResourceTypeDef>
+  
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Apparel</defName>
+	<label>apparel</label>
+	<description>A resource category for apparel.</description>
+	<iconPath>GUI/ProductionApparel</iconPath>
+	<color>(0.55, 0.45, 0.75)</color>
+	<uiPriority>300</uiPriority>
+	<isDefaultResource>true</isDefaultResource>
+	<productionAdditiveStat>RTD_Apparel_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Apparel_ProductionMultiplier</productionMultiplierStat>
+	<thingAllowList>
+		<!-- Cloth and devilstrand are crop harvests, produced by the farming resource. Synthread/hyperweave are crafted spacer fabrics and stay here. Manufactured leathers/wools (e.g. patchleather) are added dynamically via ResourceFilterExtension_ManufacturedTextiles below. -->
+		<li>
+			<thingDef>Synthread</thingDef>
+			<minTechLevel>Ultra</minTechLevel>
+		</li>
+		<li>
+			<thingDef>Hyperweave</thingDef>
+			<minTechLevel>Ultra</minTechLevel>
+		</li>
+	</thingAllowList>
+	<thingCategoryAllowList>
+		<li>
+			<thingCategoryDef>Apparel</thingCategoryDef>
+		</li>
+	</thingCategoryAllowList>
+	<associatedSkills>
+		<li>Crafting</li>
+	</associatedSkills>
+	<titheMinCount>1</titheMinCount>
+	<titheMaxCountBase>5</titheMaxCountBase>
+	<titheMaxCountScaler>1</titheMaxCountScaler>
+	<modExtensions>
+		<!-- Adds manufactured leathers/wools (Leathers/Wools category members not produced directly by an organism, e.g. patchleather). Animal-derived leathers/wools stay with the animal resource. -->
+		<li Class="FactionColonies.ResourceFilterExtension_ManufacturedTextiles">
+			<categories>
+				<li>Leathers</li>
+				<li>Wools</li>
+			</categories>
+		</li>
+		<!-- Adds fabric textiles crafted by a recipe rather than harvested from a crop (e.g. cloth spun at a workbench), gated behind that recipe's research. Fabrics with no recipe (e.g. devilstrand cloth, or vanilla cloth as a plain cotton harvest) are left to the farming resource's crop extension. -->
+		<li Class="FactionColonies.ResourceFilterExtension_CraftedTextiles">
+			<categories>
+				<li>Textiles</li>
+			</categories>
+		</li>
+	</modExtensions>
+  </FactionColonies.ResourceTypeDef>
+
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Animals</defName>
+	<label>animals</label>
+	<description>A resource category for livestock and animal products.</description>
+	<iconPath>GUI/ProductionAnimals</iconPath>
+	<color>(0.75, 0.60, 0.35)</color>
+	<uiPriority>400</uiPriority>
+	<isDefaultResource>true</isDefaultResource>
+	<productionAdditiveStat>RTD_Animals_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Animals_ProductionMultiplier</productionMultiplierStat>
+	<thingCategoryAllowList>
+		<li>
+			<thingCategoryDef>MeatRaw</thingCategoryDef>
+		</li>
+		<li>
+			<thingCategoryDef>AnimalProductRaw</thingCategoryDef>
+		</li>
+		<li>
+			<thingCategoryDef>Leathers</thingCategoryDef>
+		</li>
+		<li>
+			<thingCategoryDef>Wools</thingCategoryDef>
+		</li>
+	</thingCategoryAllowList>
+	<thingBlockList>
+		<li>Meat_Human</li>
+		<li>Leather_Human</li>
+	</thingBlockList>
+	<associatedSkills>
+		<li>Animals</li>
+	</associatedSkills>
+	<titheMinCount>1</titheMinCount>
+	<titheMaxCountBase>3</titheMaxCountBase>
+	<titheMaxCountScaler>1</titheMaxCountScaler>
+	<modExtensions>
+		<li Class="FactionColonies.ResourceFilterExtension_Animals">
+			<blacklistedTradeTags>
+				<li>AnimalDryad</li>
+				<li>AnimalMonster</li>
+				<li>AnimalGenetic</li>
+			</blacklistedTradeTags>
+			<!-- Restrict the Leathers/Wools categories to animal-derived products; blocks manufactured leathers (e.g. patchleather) from the animal resource. -->
+			<animalTextileCategories>
+				<li>Leathers</li>
+				<li>Wools</li>
+			</animalTextileCategories>
+		</li>
+		<li Class="FactionColonies.ResourceProductionExtension_TileField">
+			<extName>TileField</extName>
+			<extDesc>Tile environment</extDesc>
+			<multipliers>
+				<li>
+					<field>AnimalDensity</field>
+					<defaultValue>3.0</defaultValue>
+					<curve>
+						<points>
+							<li>(0.0, 0.5)</li>
+							<li>(1.0, 0.8)</li>
+							<li>(3.0, 1.0)</li>
+							<li>(4.0, 1.1)</li>
+							<li>(7.0, 1.3)</li>
+						</points>
+					</curve>
+				</li>
+			</multipliers>
+		</li>
+	</modExtensions>
+  </FactionColonies.ResourceTypeDef>
+
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Logging</defName>
+	<label>logging</label>
+	<description>A resource category for logging.</description>
+	<iconPath>GUI/ProductionLogging</iconPath>
+	<color>(0.55, 0.40, 0.25)</color>
+	<uiPriority>500</uiPriority>
+	<isDefaultResource>true</isDefaultResource>
+	<productionAdditiveStat>RTD_Logging_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Logging_ProductionMultiplier</productionMultiplierStat>
+	<thingAllowList>
+		<li>
+			<thingDef>WoodLog</thingDef>
+		</li>
+	</thingAllowList>
+	<stuffCategoryAllowList>
+		<li>Woody</li>
+	</stuffCategoryAllowList>
+	<associatedSkills>
+		<li>Plants</li>
+	</associatedSkills>
+	<titheMinCount>1</titheMinCount>
+	<titheMaxCountBase>0</titheMaxCountBase>
+	<titheMaxCountScaler>5</titheMaxCountScaler>
+	<modExtensions>
+		<li Class="FactionColonies.ResourceProductionExtension_TileField">
+			<extName>TileField</extName>
+			<extDesc>Tile environment</extDesc>
+			<multipliers>
+				<li>
+					<field>BiomePlantDensity</field>
+					<defaultValue>0.5</defaultValue>
+					<curve>
+						<points>
+							<li>(0.0, 0.2)</li>
+							<li>(0.2, 0.5)</li>
+							<li>(0.5, 0.85)</li>
+							<li>(0.65, 1.0)</li>
+							<li>(1.0, 1.2)</li>
+						</points>
+					</curve>
+				</li>
+				<li>
+					<field>Swampiness</field>
+					<defaultValue>0</defaultValue>
+					<curve>
+						<points>
+							<li>(0.0, 1.0)</li>
+							<li>(0.5, 0.9)</li>
+							<li>(1.0, 0.75)</li>
+						</points>
+					</curve>
+				</li>
+				<li>
+					<field>Pollution</field>
+					<defaultValue>0</defaultValue>
+					<curve>
+						<points>
+							<li>(0.0, 1.0)</li>
+							<li>(0.5, 0.9)</li>
+							<li>(1.0, 0.7)</li>
+						</points>
+					</curve>
+				</li>
+			</multipliers>
+		</li>
+	</modExtensions>
+  </FactionColonies.ResourceTypeDef>
+
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Mining</defName>
+	<label>mining</label>
+	<description>A resource category for mining materials.</description>
+	<iconPath>GUI/ProductionMining</iconPath>
+	<color>(0.50, 0.55, 0.60)</color>
+	<uiPriority>600</uiPriority>
+	<isDefaultResource>true</isDefaultResource>
+	<productionAdditiveStat>RTD_Mining_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Mining_ProductionMultiplier</productionMultiplierStat>
+	<thingAllowList>
+		<li>
+			<thingDef>ComponentIndustrial</thingDef>
+		</li>
+	</thingAllowList>
+	<thingBlockList>
+		<li>Silver</li>
+		<li MayRequire="Ludeon.RimWorld.Odyssey">BlocksVacstone</li>
+	</thingBlockList>
+	<thingCategoryAllowList>
+		<li>
+			<thingCategoryDef>StoneBlocks</thingCategoryDef>
+		</li>
+	</thingCategoryAllowList>
+	<stuffCategoryAllowList>
+		<li>Metallic</li>
+		<li>Stony</li>
+	</stuffCategoryAllowList>
+	<associatedSkills>
+		<li>Mining</li>
+	</associatedSkills>
+	<titheMinCount>1</titheMinCount>
+	<titheMaxCountBase>0</titheMaxCountBase>
+	<titheMaxCountScaler>2</titheMaxCountScaler>
+	<modExtensions>
+		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
+			<resourceHilliness>
+				<li>
+					<hilliness>SmallHills</hilliness>
+					<multiplier>1.1</multiplier>
+				</li>
+				<li>
+					<hilliness>LargeHills</hilliness>
+					<multiplier>1.1</multiplier>
+				</li>
+				<li>
+					<hilliness>Mountainous</hilliness>
+					<multiplier>1.25</multiplier>
+				</li>
+			</resourceHilliness>
+		</li>
+		<li Class="FactionColonies.ResourceProductionExtension_TileField">
+			<extName>TileField</extName>
+			<extDesc>Tile environment</extDesc>
+			<multipliers>
+				<li>
+					<field>Swampiness</field>
+					<defaultValue>0</defaultValue>
+					<curve>
+						<points>
+							<li>(0.0, 1.0)</li>
+							<li>(0.5, 0.9)</li>
+							<li>(1.0, 0.8)</li>
+						</points>
+					</curve>
+				</li>
+			</multipliers>
+		</li>
+		<li Class="FactionColonies.ResourceFilterExtension_NaturalSource">
+			<!-- Gate stone products to the tile's natural rock types; obsidian only in lava biomes. -->
+			<checkRockTypes>true</checkRockTypes>
+			<biomeAllowList>
+				<li MayRequire="Ludeon.RimWorld.Odyssey">
+					<thing>Obsidian</thing>
+					<biomes>
+						<li>LavaField</li>
+					</biomes>
+				</li>
+			</biomeAllowList>
+		</li>
+	</modExtensions>
+  </FactionColonies.ResourceTypeDef>
+
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Medicine</defName>
+	<label>medicine</label>
+	<description>A resource category for medicine.</description>
+	<iconPath>GUI/ProductionMedicine</iconPath>
+	<color>(0.35, 0.70, 0.70)</color>
+	<uiPriority>700</uiPriority>
+	<isDefaultResource>true</isDefaultResource>
+	<productionAdditiveStat>RTD_Medicine_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Medicine_ProductionMultiplier</productionMultiplierStat>
+	<thingAllowList>
+		<li>
+			<thingDef>Neutroamine</thingDef>
+			<researchProjectDefs>
+				<li>MedicineProduction</li>
+			</researchProjectDefs>
+		</li>
+		<li MayRequire="Ludeon.RimWorld.Biotech">
+			<thingDef>HemogenPack</thingDef>
+		</li>
+		<li MayRequire="Ludeon.RimWorld.Biotech">
+			<thingDef>DeathrestCapacitySerum</thingDef>
+			<researchProjectDefs>
+				<li>Deathrest</li>
+			</researchProjectDefs>
+		</li>
+		<li MayRequire="Ludeon.RimWorld.Odyssey">
+			<thingDef>SentienceCatalyst</thingDef>
+			<minTechLevel>Spacer</minTechLevel>
+		</li>
+	</thingAllowList>
+	<thingCategoryAllowList>
+		<li>
+			<thingCategoryDef>Medicine</thingCategoryDef>
+		</li>
+		<li>
+			<thingCategoryDef>Drugs</thingCategoryDef>
+		</li>
+		<li>
+			<thingCategoryDef>BodyPartsProsthetic</thingCategoryDef>
+			<minTechLevel>Industrial</minTechLevel>
+		</li>
+		<li>
+			<thingCategoryDef>BodyPartsBionic</thingCategoryDef>
+			<minTechLevel>Industrial</minTechLevel>
+		</li>
+		<li>
+			<thingCategoryDef>BodyPartsUltra</thingCategoryDef>
+			<minTechLevel>Ultra</minTechLevel>
+		</li>
+	</thingCategoryAllowList>
+	<thingBlockList>
+		<!-- Beer is in the Drugs category but is a brewed agricultural product; it belongs to the farming resource -->
+		<li>Beer</li>
+	</thingBlockList>
+	<associatedSkills>
+		<li>Medicine</li>
+	</associatedSkills>
+	<titheMinCount>1</titheMinCount>
+	<titheMaxCountBase>0</titheMaxCountBase>
+	<titheMaxCountScaler>2</titheMaxCountScaler>
+	<modExtensions>
+		<li Class="FactionColonies.ResourceProductionExtension_TileField">
+			<extName>TileField</extName>
+			<extDesc>Tile environment</extDesc>
+			<multipliers>
+				<li>
+					<field>BiomePlantDensity</field>
+					<defaultValue>0.5</defaultValue>
+					<curve>
+						<points>
+							<li>(0.0, 0.5)</li>
+							<li>(0.2, 0.75)</li>
+							<li>(0.5, 0.9)</li>
+							<li>(0.7, 1.0)</li>
+							<li>(1.0, 1.1)</li>
+						</points>
+					</curve>
+				</li>
+				<li>
+					<field>HasAnyRiver</field>
+					<defaultValue>0</defaultValue>
+					<curve>
+						<points>
+							<li>(0, 1.0)</li>
+							<li>(1, 1.1)</li>
+						</points>
+					</curve>
+				</li>
+			</multipliers>
+		</li>
+	</modExtensions>
+  </FactionColonies.ResourceTypeDef>
+
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Research</defName>
+	<label>research</label>
+	<description>A resource category for research.</description>
+	<iconPath>GUI/ProductionResearch</iconPath>
+	<color>(0.35, 0.50, 0.80)</color>
+	<uiPriority>800</uiPriority>
+	<isDefaultResource>true</isDefaultResource>
+	<isPoolResource>true</isPoolResource>
+	<productionAdditiveStat>RTD_Research_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Research_ProductionMultiplier</productionMultiplierStat>
+	<associatedSkills>
+		<li>Intellectual</li>
+	</associatedSkills>
+	<modExtensions>
+		<li Class="FactionColonies.ResourcePoolExt_Research" />
+		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
+			<resourceHilliness>
+				<li>
+					<hilliness>LargeHills</hilliness>
+					<multiplier>1.1</multiplier>
+				</li>
+			</resourceHilliness>
+		</li>
+		<li Class="FactionColonies.ResourceProductionExtension_TileField">
+			<extName>TileField</extName>
+			<extDesc>Tile environment</extDesc>
+			<multipliers>
+				<li>
+					<field>RoadCount</field>
+					<defaultValue>0</defaultValue>
+					<curve>
+						<points>
+							<li>(0, 1.0)</li>
+							<li>(1, 1.05)</li>
+							<li>(2, 1.1)</li>
+							<li>(3, 1.12)</li>
+						</points>
+					</curve>
+				</li>
+			</multipliers>
+		</li>
+	</modExtensions>
+  </FactionColonies.ResourceTypeDef>
+
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Power</defName>
+	<label>power</label>
+	<description>A resource category for power.</description>
+	<iconPath>GUI/ProductionPower</iconPath>
+	<color>(0.80, 0.75, 0.30)</color>
+	<uiPriority>900</uiPriority>
+	<isDefaultResource>true</isDefaultResource>
+	<isPoolResource>true</isPoolResource>
+	<productionAdditiveStat>RTD_Power_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Power_ProductionMultiplier</productionMultiplierStat>
+	<associatedSkills>
+		<li>Construction</li>
+	</associatedSkills>
+	<researchProjectDefs>
+		<li>Electricity</li>
+	</researchProjectDefs>
+	<modExtensions>
+		<li Class="FactionColonies.ResourcePoolExt_Power" />
+		<li Class="FactionColonies.ResourceProductionExtension_Hilliness">
+			<extName>Hilliness</extName>
+			<extDesc>Tile hilliness</extDesc>
+			<resourceHilliness>
+				<li>
+					<hilliness>LargeHills</hilliness>
+					<multiplier>0.9</multiplier>
+				</li>
+				<li>
+					<hilliness>Mountainous</hilliness>
+					<multiplier>0.8</multiplier>
+				</li>
+			</resourceHilliness>
+		</li>
+	</modExtensions>
+  </FactionColonies.ResourceTypeDef>
+  
+  <FactionColonies.ResourceTypeDef>
+	<defName>RTD_Chemfuel</defName>
+	<label>chemfuel</label>
+	<description>A resource category for chemfuel.</description>
+	<iconPath>GUI/ProductionChemfuel</iconPath>
+	<color>(0.70, 0.45, 0.60)</color>
+	<uiPriority>1000</uiPriority>
+	<productionAdditiveStat>RTD_Chemfuel_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Chemfuel_ProductionMultiplier</productionMultiplierStat>
+	<thingAllowList>
+		<li>
+			<thingDef>Chemfuel</thingDef>
+		</li>
+	</thingAllowList>
+	<researchProjectDefs>
+		<li>BiofuelRefining</li>
+	</researchProjectDefs>
+	<associatedSkills>
+		<li>Crafting</li>
+	</associatedSkills>
+	<titheMinCount>1</titheMinCount>
+	<titheMaxCountBase>0</titheMaxCountBase>
+	<titheMaxCountScaler>4</titheMaxCountScaler>
+  </FactionColonies.ResourceTypeDef>
+  
+  <FactionColonies.ResourceTypeDef MayRequire="Ludeon.RimWorld.Odyssey">
+	<defName>RTD_Gravtech</defName>
+	<label>gravtech</label>
+	<description>A resource category for gravtech resources.</description>
+	<iconPath>GUI/ProductionGravtech</iconPath>
+	<color>(0.55, 0.75, 0.80)</color>
+	<uiPriority>1100</uiPriority>
+	<productionAdditiveStat>RTD_Gravtech_ProductionAdditive</productionAdditiveStat>
+	<productionMultiplierStat>RTD_Gravtech_ProductionMultiplier</productionMultiplierStat>
+	<thingAllowList>
+		<li>
+			<thingDef>GravlitePanel</thingDef>
+			<researchProjectDefs>
+				<li>AdvancedGravtech</li>
+			</researchProjectDefs>
+		</li>
+		<li>
+			<thingDef>BlocksVacstone</thingDef>
+		</li>
+	</thingAllowList>
+	<researchProjectDefs>
+		<li>BasicGravtech</li>
+	</researchProjectDefs>
+	<associatedSkills>
+		<li>Intellectual</li>
+		<li>Crafting</li>
+		<li>Mining</li>
+	</associatedSkills>
+	<titheMinCount>1</titheMinCount>
+	<titheMaxCountBase>0</titheMaxCountBase>
+	<titheMaxCountScaler>3</titheMaxCountScaler>
+  </FactionColonies.ResourceTypeDef>
+
+</Defs>

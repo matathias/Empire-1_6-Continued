@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>woundedAnimal_0</defName>
+    <label>Wounded Animal</label>
+    <desc>A farmer of one of your settlements has brought a wounded animal to your capital. He states that it entered their town and would refuse to leave. The animal looks sickly and on edge. It looks like it could snap at any moment...</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>10</weight>
+    <cooldownTicks>600000</cooldownTicks>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <requiredResource>RTD_Animals</requiredResource>
+    <incompatibleEvents>
+      <li>woundedAnimal_1-1</li>
+      <li>woundedAnimal_1-2</li>
+      <li>woundedAnimal_1-3s</li>
+      <li>woundedAnimal_1-3f</li>
+    </incompatibleEvents>
+    <options>
+      <li>woundedAnimal_0_1</li>
+      <li>woundedAnimal_0_2</li>
+      <li>woundedAnimal_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>woundedAnimal_0_1</defName>
+    <label>Get that THING out of my court!</label>
+    <parentEvent>woundedAnimal_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>woundedAnimal_0_2</defName>
+    <label>We shall take care of it. Surely it cannot be of harm to us.</label>
+    <parentEvent>woundedAnimal_0</parentEvent>
+    <baseChanceOfSuccess>70</baseChanceOfSuccess>
+    <successEvent>woundedAnimal_1-1</successEvent>
+    <failEvent>woundedAnimal_1-2</failEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>woundedAnimal_0_3</defName>
+    <label>Send for a trained handler to approach it carefully.</label>
+    <parentEvent>woundedAnimal_0</parentEvent>
+    <baseChanceOfSuccess>80</baseChanceOfSuccess>
+    <silverCost>200</silverCost>
+    <successEvent>woundedAnimal_1-3s</successEvent>
+    <failEvent>woundedAnimal_1-3f</failEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>woundedAnimal_1-1</defName>
+    <label>Wounded Animal</label>
+    <desc>The animal remains calm. Your colonists guide it in without issue.</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <incompatibleEvents>
+      <li>woundedAnimal_0</li>
+    </incompatibleEvents>
+    <randomThingValue>700</randomThingValue>
+    <randomThingRewardDef>RERD_Animals</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>woundedAnimal_1-2</defName>
+    <label>Wounded Animal</label>
+    <desc>As the animal is guided in, it starts to fight against the settlers delivering it. It quickly becomes more and more aggressive and all attempts to calm it start to fail. Several settlers are heavily injured or die. Unfortunately, this will affect production for a period of time.</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>woundedAnimal_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>workerBaseMax</stat>
+        <value>-3</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>woundedAnimal_1-3s</defName>
+    <label>Wounded Animal</label>
+    <desc>The trained handler approaches the animal with care and expertise. It calms down and allows itself to be guided in safely.</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <incompatibleEvents>
+      <li>woundedAnimal_0</li>
+    </incompatibleEvents>
+    <randomThingValue>500</randomThingValue>
+    <randomThingRewardDef>RERD_Animals</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>woundedAnimal_1-3f</defName>
+    <label>Wounded Animal</label>
+    <desc>Despite the handler's best efforts, the animal lashes out. The handler manages to contain the situation, but sustains injuries in the process.</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>woundedAnimal_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>workerBaseMax</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

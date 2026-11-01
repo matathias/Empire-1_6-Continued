@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>blacksmithInspiration_0</defName>
+    <label>Blacksmith Inspiration</label>
+    <desc>A blacksmith in a nearby settlement has received a great inspiration and is seeking patrons for what she claims will be a work of unparalleled quality! She plans to give it to her patron as a token of her loyalty.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>10</weight>
+    <cooldownTicks>600000</cooldownTicks>
+    <requiredResource>RTD_Weapons</requiredResource>
+    <incompatibleEvents>
+      <li>blacksmithInspiration-working_good</li>
+      <li>blacksmithInspiration-fin_masterwork</li>
+      <li>blacksmithInspiration-fin_disappointing</li>
+      <li>blacksmithInspiration-working_materials</li>
+    </incompatibleEvents>
+    <options>
+      <li>blacksmithInspiration_0_1</li>
+      <li>blacksmithInspiration_0_2</li>
+      <li>blacksmithInspiration_0_3</li>
+      <li>blacksmithInspiration_0_4</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>blacksmithInspiration_0_1</defName>
+    <label>I cannot spare the funds for such an endeavor.</label>
+    <parentEvent>blacksmithInspiration_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>blacksmithInspiration_0_2</defName>
+    <label>A modest bag of silver for a modest commission.</label>
+    <parentEvent>blacksmithInspiration_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <silverCost>250</silverCost>
+    <successEvent>blacksmithInspiration-working_good</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>blacksmithInspiration_0_3</defName>
+    <label>Fund the masterwork! Spare no expense.</label>
+    <parentEvent>blacksmithInspiration_0</parentEvent>
+    <baseChanceOfSuccess>60</baseChanceOfSuccess>
+    <silverCost>1500</silverCost>
+    <successEvent>blacksmithInspiration-working_masterwork</successEvent>
+    <failEvent>blacksmithInspiration-working_disappointing</failEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>blacksmithInspiration_0_4</defName>
+    <label>I'll provide workshop materials from our settlement stores.</label>
+    <parentEvent>blacksmithInspiration_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>blacksmithInspiration-working_materials</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>blacksmithInspiration-working_good</defName>
+    <label>Blacksmith Inspiration (Working)</label>
+    <desc>The blacksmith is working on your commission...</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>blacksmithInspiration_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>blacksmithInspiration-fin_good</followingEvent>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>blacksmithInspiration-fin_good</defName>
+    <label>Blacksmith Inspiration (Good)</label>
+    <desc>After a few days of work, the blacksmith completes her commissioned piece. While "unparalleled quality" may have been an overstatement, the resulting weapon is nonetheless quite acceptable.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>blacksmithInspiration_0</li>
+    </incompatibleEvents>
+    <randomThingValue>700</randomThingValue>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>blacksmithInspiration-working_disappointing</defName>
+    <label>Blacksmith Inspiration (Working)</label>
+    <desc>The blacksmith is working on your commission...</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>blacksmithInspiration_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>blacksmithInspiration-fin_disappointing</followingEvent>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>blacksmithInspiration-working_masterwork</defName>
+    <label>Blacksmith Inspiration (Working)</label>
+    <desc>The blacksmith is working on your commission...</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>240000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>blacksmithInspiration_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>blacksmithInspiration-fin_masterwork</followingEvent>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>blacksmithInspiration-fin_masterwork</defName>
+    <label>Blacksmith Inspiration (Masterwork)</label>
+    <desc>The blacksmith's inspiration has produced a true masterwork! The result exceeds all expectations.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>blacksmithInspiration_0</li>
+    </incompatibleEvents>
+    <randomThingValue>2800</randomThingValue>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>blacksmithInspiration-working_materials</defName>
+    <label>Blacksmith Inspiration (Workshop Materials)</label>
+    <desc>The blacksmith works with materials diverted from your settlement's production lines. The diversion slows weapons output, but the blacksmith's work proceeds well.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>blacksmithInspiration_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>blacksmithInspiration-fin_respectable</followingEvent>
+    <statModifiers>
+      <li>
+        <stat>RTD_Weapons_ProductionAdditive</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>blacksmithInspiration-fin_respectable</defName>
+    <label>Blacksmith Inspiration (Respectable)</label>
+    <desc>After several days of work, the blacksmith completes her commissioned piece. While no masterwork, the final product is nonetheless quite respectable.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>blacksmithInspiration_0</li>
+    </incompatibleEvents>
+    <randomThingValue>1000</randomThingValue>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>blacksmithInspiration-fin_disappointing</defName>
+    <label>Blacksmith Inspiration (Disappointing)</label>
+    <desc>The blacksmith's ambition outpaced her skill. The result is serviceable, but far from the masterwork promised.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>blacksmithInspiration_0</li>
+    </incompatibleEvents>
+    <randomThingValue>400</randomThingValue>
+    <randomThingRewardDef>RERD_Weapons</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+</Defs>

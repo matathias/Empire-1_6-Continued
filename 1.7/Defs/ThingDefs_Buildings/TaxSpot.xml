@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<ThingDef ParentName="BuildingBase">
+    <defName>TaxSpot</defName>
+    <label>tax spot</label>
+    <description>Designates a spot to receive taxes and tithes. Can be set as the active tax delivery location for your entire empire.</description>
+    <thingClass>FactionColonies.Building_TaxSpot</thingClass>
+    <graphicData>
+      <texPath>Things/Building/Misc/PartySpot</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <altitudeLayer>FloorEmplacement</altitudeLayer>
+    <statBases>
+      <WorkToBuild>0</WorkToBuild>
+    </statBases>
+    <rotatable>false</rotatable>
+    <scatterableOnMapGen>false</scatterableOnMapGen>
+    <useHitPoints>False</useHitPoints>
+    <designationCategory>Empire</designationCategory>
+    <passability>Standable</passability>
+    <building>
+      <sowTag>SupportPlantsOnly</sowTag>
+      <canPlaceOverImpassablePlant>false</canPlaceOverImpassablePlant>
+      <ai_chillDestination>false</ai_chillDestination>
+    </building>
+    <designationHotKey>Misc11</designationHotKey>
+  </ThingDef>
+  
+ </Defs>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.BiomeResourceDef MayRequire="dankpyon.medieval.overhaul">
+		<defName>DankPyon_AncientForest</defName>
+		<label>Ancient Forest</label>
+		<canSettle>true</canSettle>
+		<resources>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>1.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>1.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>1.3</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>0.8</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>1.1</additive>
+			
+			</li>
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+	
+	<FactionColonies.BiomeResourceDef MayRequire="dankpyon.medieval.overhaul">
+		<defName>DankPyon_DarkForest</defName>
+		<label>Dark Forest</label>
+		<canSettle>true</canSettle>
+		<resources>
+
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>1.3</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Weapons</resourceDef>
+				<additive>0.9</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Apparel</resourceDef>
+				<additive>0.9</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>0.8</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>1.6</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>1.2</additive>
+			
+			</li>
+			<li>
+				<resourceDef>RTD_Power</resourceDef>
+				<additive>0.75</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Medicine</resourceDef>
+				<additive>1.2</additive>
+			</li>
+			
+		</resources>
+	</FactionColonies.BiomeResourceDef>
+</Defs>

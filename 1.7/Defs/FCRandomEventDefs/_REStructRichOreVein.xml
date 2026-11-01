@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>struckRichOreVein_0</defName>
+    <label>Struck Rich Ore Vein</label>
+    <desc>Some of your settlements have managed to strike veins of rich ore in their mines! How should they proceed?</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <cooldownTicks>900000</cooldownTicks>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <requiredResource>RTD_Mining</requiredResource>
+    <incompatibleEvents>
+      <li>struckRichOreVein_1-1</li>
+      <li>struckRichOreVein_1-2</li>
+      <li>struckRichOreVein_1-3</li>
+      <li>emptyMines_0</li>
+      <li>emptyMines-wait</li>
+      <li>emptyMines-search_fail</li>
+      <li>emptyMines-construction</li>
+    </incompatibleEvents>
+    <options>
+      <li>struckRichOreVein_0_1</li>
+      <li>struckRichOreVein_0_2</li>
+      <li>struckRichOreVein_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>struckRichOreVein_0_1</defName>
+    <label>Mine the vein at a steady, sustainable pace.</label>
+    <parentEvent>struckRichOreVein_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>struckRichOreVein_1-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>struckRichOreVein_0_2</defName>
+    <label>Rush the extraction — push the miners hard.</label>
+    <parentEvent>struckRichOreVein_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>struckRichOreVein_1-2</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>struckRichOreVein_0_3</defName>
+    <label>Sell the mining rights to outside interests.</label>
+    <parentEvent>struckRichOreVein_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>struckRichOreVein_1-3</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>struckRichOreVein_1-1</defName>
+    <label>Rich Ore Vein</label>
+    <desc>The miners extract ore at a steady pace.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>struckRichOreVein_0</li>
+      <li>emptyMines_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Mining_ProductionAdditive</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>struckRichOreVein_1-2</defName>
+    <label>Rich Ore Vein (Rush Extraction)</label>
+    <desc>The miners are pushed hard to extract as much ore as possible, but the overwork takes its toll.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>360000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>struckRichOreVein_0</li>
+      <li>emptyMines_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Mining_ProductionAdditive</stat>
+        <value>2.5</value>
+      </li>
+      <li>
+        <stat>happinessLostBase</stat>
+        <value>3</value>
+      </li>
+      <li>
+        <stat>workerBaseMax</stat>
+        <value>-1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>struckRichOreVein_1-3</defName>
+    <label>Rich Ore Vein (Rights Sold)</label>
+    <desc>The mining rights are sold to outside interests for immediate profit.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>60000</timeTillTrigger>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>struckRichOreVein_0</li>
+      <li>emptyMines_0</li>
+    </incompatibleEvents>
+    <randomThingValue>1400</randomThingValue>
+    <randomThingRewardDef>RERD_Silver</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+</Defs>

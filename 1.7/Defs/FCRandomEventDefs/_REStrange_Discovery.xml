@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>strangeDiscovery_0</defName>
+    <label>Strange Discovery</label>
+    <desc>Deep in the mines, a strange presence has been felt and the miners have stopped working to investigate it.</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <cooldownTicks>1800000</cooldownTicks>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>10</weight>
+    <minDaysSinceFounded>5</minDaysSinceFounded>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <requiredResource>RTD_Mining</requiredResource>
+    <incompatibleEvents>
+      <li>strangeDiscovery-military_good</li>
+      <li>strangeDiscovery-nomil_good</li>
+      <li>strangeDiscovery-military_bad</li>
+      <li>strangeDiscovery-nomil_bad</li>
+      <li>strangeDiscovery-military_good-fin</li>
+      <li>strangeDiscovery-nomil_good-fin</li>
+      <li>strangeDiscovery-military_bad-fin</li>
+      <li>strangeDiscovery-nomil_bad-fin</li>
+    </incompatibleEvents>
+    <options>
+      <li>strangeDiscovery_0_1</li>
+      <li>strangeDiscovery_0_2</li>
+      <li>strangeDiscovery_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>strangeDiscovery_0_1</defName>
+    <label>What are you doing? Keep digging!</label>
+    <parentEvent>strangeDiscovery_0</parentEvent>
+    <baseChanceOfSuccess>45</baseChanceOfSuccess>
+    <successEvent>strangeDiscovery-nomil_good</successEvent>
+    <failEvent>strangeDiscovery-nomil_bad</failEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>strangeDiscovery_0_2</defName>
+    <label>Send in the military to escort the miners.</label>
+    <parentEvent>strangeDiscovery_0</parentEvent>
+    <baseChanceOfSuccess>70</baseChanceOfSuccess>
+    <silverCost>300</silverCost>
+    <successEvent>strangeDiscovery-military_good</successEvent>
+    <failEvent>strangeDiscovery-military_bad</failEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>strangeDiscovery_0_3</defName>
+    <label>Avoid it! Continue mining elsewhere.</label>
+    <parentEvent>strangeDiscovery_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>strangeDiscovery-military_good</defName>
+    <label>Strange Discovery</label>
+    <desc>Your miners start to investigate under military escort...</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>120000</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>strangeDiscovery_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>strangeDiscovery-military_good-fin</followingEvent>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>strangeDiscovery-nomil_good</defName>
+    <label>Strange Discovery</label>
+    <desc>Your miners press deeper into the unknown...</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>60000</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>strangeDiscovery_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>strangeDiscovery-nomil_good-fin</followingEvent>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>strangeDiscovery-military_bad</defName>
+    <label>Strange Discovery</label>
+    <desc>Your miners start to investigate under military escort...</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>120000</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>strangeDiscovery_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>strangeDiscovery-military_bad-fin</followingEvent>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>strangeDiscovery-nomil_bad</defName>
+    <label>Strange Discovery</label>
+    <desc>Your miners start to investigate...</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>60000</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>strangeDiscovery_0</li>
+    </incompatibleEvents>
+    <eventFollows>true</eventFollows>
+    <followingEvent>strangeDiscovery-nomil_bad-fin</followingEvent>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>strangeDiscovery-military_good-fin</defName>
+    <label>Strange Discovery</label>
+    <desc>After investigating, the miners found several veins of ore all clumped together! Someone must have wanted us to find this.
+
+You will receive a small group of ores that the miners dug up.</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>strangeDiscovery_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Mining_ProductionAdditive</stat>
+        <value>0.25</value>
+      </li>
+    </statModifiers>
+    <randomThingValue>175</randomThingValue>
+    <randomThingRewardDef>RERD_Mining</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>strangeDiscovery-nomil_good-fin</defName>
+    <label>Strange Discovery</label>
+    <desc>The miners struck an exceptionally rich vein near the disturbance! Someone must have wanted us to find this.
+
+You will receive a haul of ores that the miners dug up.</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>strangeDiscovery_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Mining_ProductionAdditive</stat>
+        <value>0.5</value>
+      </li>
+    </statModifiers>
+    <randomThingValue>300</randomThingValue>
+    <randomThingRewardDef>RERD_Mining</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>strangeDiscovery-military_bad-fin</defName>
+    <label>Strange Discovery</label>
+    <desc>When your miners investigated, a large insectoid attacked! Luckily, the security force sent with the miners fought off the creature with no casualties. A report of the event has been sent up for investigation.</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>2500</timeTillTrigger>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>strangeDiscovery_0</li>
+    </incompatibleEvents>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>strangeDiscovery-nomil_bad-fin</defName>
+    <label>Strange Discovery</label>
+    <desc>When your miners investigated, a large insectoid attacked! A few of the miners were killed before the creature was slain. Due to this, a number of workers have decided to stay home after the traumatic event.</desc>
+    <category>EC_Other</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>480000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>strangeDiscovery_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>workerBaseMax</stat>
+        <value>-3</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

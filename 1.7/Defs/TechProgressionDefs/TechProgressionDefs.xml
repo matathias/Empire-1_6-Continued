@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <FactionColonies.TechProgressionDef>
+    <defName>DefaultTechProgression</defName>
+    <barriers>
+      <li>
+        <techLevel>Neolithic</techLevel>
+        <!-- No projects required; Neolithic is the starting floor. -->
+        <researchProjects />
+        <mode>All</mode>
+      </li>
+      <li>
+        <techLevel>Medieval</techLevel>
+        <researchProjects>
+          <li>Smithing</li>
+        </researchProjects>
+        <mode>All</mode>
+      </li>
+      <li>
+        <techLevel>Industrial</techLevel>
+        <researchProjects>
+          <li>Electricity</li>
+        </researchProjects>
+        <mode>All</mode>
+      </li>
+      <li>
+        <techLevel>Spacer</techLevel>
+        <researchProjects>
+          <li>Fabrication</li>
+        </researchProjects>
+        <mode>All</mode>
+      </li>
+      <li>
+        <techLevel>Ultra</techLevel>
+        <researchProjects>
+          <li>ShipBasics</li>
+        </researchProjects>
+        <mode>All</mode>
+      </li>
+      <li>
+        <techLevel>Archotech</techLevel>
+        <!-- No vanilla project gates Archotech; Any mode with an empty list means unreachable by default.
+             Mods can append projects here with PatchOperationAdd. -->
+        <researchProjects />
+        <mode>Any</mode>
+      </li>
+    </barriers>
+  </FactionColonies.TechProgressionDef>
+</Defs>

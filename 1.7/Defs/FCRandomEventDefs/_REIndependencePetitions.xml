@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>independencePetitions_0</defName>
+    <label>Independence Petitions</label>
+    <desc>Due to widespread unrest in {FACTION}, a growing number of settlements are beginning to entertain ideas of secession and independence.
+
+How will you address the dissent?</desc>
+    <category>EC_Social</category>
+    <isNegative>true</isNegative>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <cooldownTicks>600000</cooldownTicks>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <minimumUnrest>20</minimumUnrest>
+    <minSettlements>3</minSettlements>
+    <minDaysSinceFounded>15</minDaysSinceFounded>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>independencePetitions_1-1</li>
+      <li>independencePetitions_1-2</li>
+      <li>independencePetitions_1-3</li>
+    </incompatibleEvents>
+    <options>
+      <li>independencePetitions_0_1</li>
+      <li>independencePetitions_0_2</li>
+      <li>independencePetitions_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>independencePetitions_0_1</defName>
+    <label>Let them petition. We are a just nation.</label>
+    <parentEvent>independencePetitions_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>independencePetitions_1-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>independencePetitions_0_2</defName>
+    <label>Address their grievances — distribute aid to the discontented.</label>
+    <parentEvent>independencePetitions_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <silverCost>800</silverCost>
+    <successEvent>independencePetitions_1-2</successEvent>
+    <modExtensions>
+      <li Class="FactionColonies.FCDynamicCostExtension">
+        <costPerEmpireIncomeUnit>0.05</costPerEmpireIncomeUnit>
+      </li>
+    </modExtensions>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>independencePetitions_0_3</defName>
+    <label>Suppress the movement with force.</label>
+    <parentEvent>independencePetitions_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>independencePetitions_1-3</successEvent>
+    <requiredPolicies>
+      <li>authoritarian</li>
+    </requiredPolicies>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>independencePetitions_1-1</defName>
+    <label>Independence Petitions</label>
+    <desc>The petitions continue unopposed. The movement grows as more settlements consider independence.</desc>
+    <category>EC_Social</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>independencePetitions_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>loyaltyLostBase</stat>
+        <value>5</value>
+      </li>
+      <li>
+        <stat>unrestGainedBase</stat>
+        <value>1</value>
+      </li>
+      <li>
+        <stat>prosperityLostBase</stat>
+        <value>5</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>independencePetitions_1-2</defName>
+    <label>Independence Petitions (Grievances Addressed)</label>
+    <desc>Aid is distributed to the discontented settlements. The gesture helps, but the underlying tensions remain.</desc>
+    <category>EC_Social</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>independencePetitions_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>loyaltyLostBase</stat>
+        <value>3</value>
+      </li>
+      <li>
+        <stat>prosperityLostBase</stat>
+        <value>3</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>independencePetitions_1-3</defName>
+    <label>Independence Petitions (Suppressed)</label>
+    <desc>The independence movement is crushed by force. The dissidents are silenced, but the heavy-handed response breeds further resentment.</desc>
+    <category>EC_Social</category>
+    <timeTillTrigger>180000</timeTillTrigger>
+    <timeTillTriggerMax>300000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>independencePetitions_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>loyaltyLostBase</stat>
+        <value>1</value>
+      </li>
+      <li>
+        <stat>unrestGainedBase</stat>
+        <value>3</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>

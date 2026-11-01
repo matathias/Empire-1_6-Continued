@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_122_0</defName>
+		<label>Combat Update</label>
+		<description>Updates manual battles to actually take advantage of the combat efficiency stat.</description>
+		<releaseDate>2026-03-23</releaseDate>
+
+		<patchNoteType>Minor</patchNoteType>
+
+		<patchNoteLines>
+		<li>Adds two hediffs (a buff and a debuff) that impact a pawn&apos;s shooting accuracy, melee hit chance, melee dodge change, aiming dely factor, and move speed based on their combat efficiency</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_122_1</defName>
+		<label>Event Rewards Fix</label>
+		<description>Fixes events that grant animal rewards.</description>
+		<releaseDate>2026-03-23</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Fixes the animal event reward to properly include all animals in its filter</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>0_122_2</defName>
+		<label>Pawn generation fixes</label>
+		<description>Changes Empire-generated pawns to not generate pawn relations.</description>
+		<releaseDate>2026-03-23</releaseDate>
+
+		<patchNoteType>Patch</patchNoteType>
+
+		<patchNoteLines>
+		<li>Disables pawn relation generation for Empire-generated pawns</li>
+		</patchNoteLines>
+
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

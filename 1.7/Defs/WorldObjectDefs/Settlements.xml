@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  
+  <FactionColonies.WorldSettlementDef Name="WorldSettlementDefBase" ParentName="StaticWorldObjectBase" Abstract="True">
+    <label>empire settlement</label>
+    <description>A base of the Empire player faction</description>
+    <worldObjectClass>FactionColonies.WorldSettlementFC</worldObjectClass>
+    <mapGenerator>Empire_Base</mapGenerator>
+    <fullyExpandedInSpace>true</fullyExpandedInSpace>
+    <expandingIcon>true</expandingIcon>
+    <expandingIconPriority>10</expandingIconPriority>
+    <canBePlayerHome>false</canBePlayerHome>
+  </FactionColonies.WorldSettlementDef>
+  
+  <FactionColonies.WorldSettlementDef Name="WorldSettlementDef_Surface" ParentName="WorldSettlementDefBase">
+    <defName>WorldSettlementDef_Surface</defName>
+	<defaultResources>true</defaultResources>
+	<planetLayers>
+		<li>Surface</li>
+	</planetLayers>
+    <comps>
+      <li Class="WorldObjectCompProperties_TradeRequest" />
+	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementOpenWindow" />
+	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementMilitary" />
+	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementBuildings" />
+	  <li Class="FactionColonies.WorldObjectCompProperties_FormCaravanFC" />
+	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementPrisoners" />
+      <li Class="FactionColonies.WorldObjectCompProperties_Situations" />
+    </comps>
+	<modExtensions>
+		<li Class="FactionColonies.SettlementTypeExtension" />
+	</modExtensions>
+  </FactionColonies.WorldSettlementDef>
+  
+  <!-- Orbital Settlements -->
+  <FactionColonies.WorldSettlementDef Name="WorldSettlementDef_Orbital" ParentName="WorldSettlementDefBase" MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>WorldSettlementDef_Orbital</defName>
+    <label>basic orbital station</label>
+    <description>A general-purpose orbital station. Produces all standard resources plus chemfuel and gravtech. Only raidable by spacer-tech factions. Battles auto-resolve only.</description>
+	<titleKey>Orbital</titleKey>
+	<descriptionKey>Orbital</descriptionKey>
+	<accentColor>(0.50, 0.50, 0.50)</accentColor>
+	<defaultResources>true</defaultResources>
+	<supportsManualBattle>false</supportsManualBattle>
+	<resources>
+		<li>
+			<resourceDef>RTD_Chemfuel</resourceDef>
+		</li>
+		<li>
+			<resourceDef>RTD_Gravtech</resourceDef>
+		</li>
+	</resources>
+	<biomeResourceOverride>OrbitalSpace</biomeResourceOverride>
+	<researchProjects>
+		<li>OrbitalConstruction</li>
+	</researchProjects>
+	<planetLayers>
+		<li>Orbit</li>
+	</planetLayers>
+    <comps>
+	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementOpenWindow" />
+	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementMilitary" />
+	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementBuildings" />
+	  <li Class="FactionColonies.WorldObjectCompProperties_SettlementPrisoners" />
+      <li Class="FactionColonies.WorldObjectCompProperties_Situations" />
+    </comps>
+	<modExtensions>
+		<li Class="FactionColonies.SettlementTypeExtension_Orbital">
+			<constructionDays>8</constructionDays>
+		</li>
+	</modExtensions>
+  </FactionColonies.WorldSettlementDef>
+  
+  <FactionColonies.WorldSettlementDef ParentName="WorldSettlementDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>WorldSettlementDef_Orbital_Logistics</defName>
+    <label>logistics orbital station</label>
+    <description>A trade-focused orbital station. Unlocks exclusive buildings that increase tax rate and tithe value.</description>
+	<baseSettlementType>WorldSettlementDef_Orbital</baseSettlementType>
+	<researchProjects>
+		<li>OrbitalLogistics</li>
+	</researchProjects>
+  </FactionColonies.WorldSettlementDef>
+
+  <FactionColonies.WorldSettlementDef ParentName="WorldSettlementDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>WorldSettlementDef_Orbital_Advanced</defName>
+    <label>advanced orbital station</label>
+    <description>An industrial orbital station. Unlocks exclusive buildings that reduce construction time and boost animal and mining production.</description>
+	<baseSettlementType>WorldSettlementDef_Orbital</baseSettlementType>
+	<researchProjects>
+		<li>AdvancedOrbitalEngineering</li>
+	</researchProjects>
+  </FactionColonies.WorldSettlementDef>
+
+  <FactionColonies.WorldSettlementDef ParentName="WorldSettlementDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>WorldSettlementDef_Orbital_Glitter</defName>
+    <label>glitterworld orbital station</label>
+    <description>A high-tech orbital station. Unlocks exclusive buildings that enhance research output and military effectiveness.</description>
+	<baseSettlementType>WorldSettlementDef_Orbital</baseSettlementType>
+	<researchProjects>
+		<li>GlitterworldOrbitalSettlements</li>
+	</researchProjects>
+  </FactionColonies.WorldSettlementDef>
+
+</Defs>

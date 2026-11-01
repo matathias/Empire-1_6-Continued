@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.BiomeResourceDef MayRequire="regrowth.botr.aspenforest">
+		<defName>RG_AspenForest</defName>
+		<label>aspen forest</label>
+		<canSettle>true</canSettle>
+		<resources>
+
+			<li>
+				<resourceDef>RTD_Animals</resourceDef>
+				<additive>1.2</additive>
+			</li>			
+			<li>
+				<resourceDef>RTD_Logging</resourceDef>
+				<additive>1.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Mining</resourceDef>
+				<additive>0.8</additive>		
+			</li>	
+			<li>
+				<resourceDef>RTD_Research</resourceDef>
+				<additive>1.5</additive>
+			</li>
+			<li>
+				<resourceDef>RTD_Food</resourceDef>
+				<additive>0.8</additive>
+			</li>			
+		</resources>
+	</FactionColonies.BiomeResourceDef>	
+</Defs>

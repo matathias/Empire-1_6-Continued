@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_106_3</defName>
+			<label>Minor UI API change</label>
+			<description>Adds a new button in UIUtil.</description>
+			<releaseDate>2026-03-18</releaseDate>
+	
+			<patchNoteType>Patch</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Adds a new button &quot;ButtonFlatIcon&quot; to UIUtil</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_106_2</defName>
+			<label>Minor fix</label>
+			<description>Fix an issue with the minimum days between events calculation.</description>
+			<releaseDate>2026-03-18</releaseDate>
+	
+			<patchNoteType>Patch</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Fixes an issue with how the minimum time between events is calculated.</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_106_1</defName>
+			<label>Minor change</label>
+			<description>Change the frequency of the RoadTick</description>
+			<releaseDate>2026-03-17</releaseDate>
+	
+			<patchNoteType>Patch</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Change the RoadTick frequency from every 20 ticks to every 250</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+			<defName>0_106_0</defName>
+			<label>Event biome restriction</label>
+			<description>Updates event handling to take biomes into account.</description>
+			<releaseDate>2026-03-17</releaseDate>
+	
+			<patchNoteType>Minor</patchNoteType>
+	
+			<patchNoteLines>
+			<li>Update FCEventDef to include a restrictedBiomes field</li>
+			<li>Events now respect their allowed or restricted biomes</li>
+			<li>Added restricted biomes to a handful of events</li>
+			</patchNoteLines>
+	
+			<authors>
+			<li>Matathias</li>
+			</authors>
+		</FactionColonies.PatchNoteDef>
+</Defs>

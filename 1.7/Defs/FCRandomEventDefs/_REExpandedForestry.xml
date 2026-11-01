@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionColonies.FCEventDef>
+    <defName>expandedForestry_0</defName>
+    <label>Expanded Forestry</label>
+    <desc>Some of your settlements have expanded their forestry production this week. How should the extra timber be used?</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>0</timeTillTrigger>
+    <activateAtStart>true</activateAtStart>
+    <isRandomEvent>true</isRandomEvent>
+    <weight>25</weight>
+    <cooldownTicks>900000</cooldownTicks>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <restrictedBiomes>
+      <li>Desert</li>
+      <li>ExtremeDesert</li>
+      <li>IceSheet</li>
+      <li>SeaIce</li>
+    </restrictedBiomes>
+    <requiredResource>RTD_Logging</requiredResource>
+    <incompatibleEvents>
+      <li>expandedForestry_1-1</li>
+      <li>expandedForestry_1-2</li>
+      <li>expandedForestry_1-3</li>
+      <li>forestFire_0</li>
+      <li>forestFire_1-1</li>
+      <li>forestFire_1-2s</li>
+      <li>forestFire_1-2f</li>
+      <li>forestFire_1-3</li>
+    </incompatibleEvents>
+    <options>
+      <li>expandedForestry_0_1</li>
+      <li>expandedForestry_0_2</li>
+      <li>expandedForestry_0_3</li>
+    </options>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>expandedForestry_0_1</defName>
+    <label>Keep the expanded logging operations running.</label>
+    <parentEvent>expandedForestry_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>expandedForestry_1-1</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>expandedForestry_0_2</defName>
+    <label>Sell the extra timber to passing traders.</label>
+    <parentEvent>expandedForestry_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>expandedForestry_1-2</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>expandedForestry_0_3</defName>
+    <label>Stockpile the lumber for settlement construction.</label>
+    <parentEvent>expandedForestry_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>expandedForestry_1-3</successEvent>
+    <requiredPolicies>
+      <li>industrious</li>
+    </requiredPolicies>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>expandedForestry_1-1</defName>
+    <label>Expanded Forestry</label>
+    <desc>The expanded logging operations continue.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>expandedForestry_0</li>
+      <li>forestFire_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Logging_ProductionAdditive</stat>
+        <value>1</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>expandedForestry_1-2</defName>
+    <label>Expanded Forestry (Sold)</label>
+    <desc>The extra timber is sold to passing traders for a tidy profit.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>60000</timeTillTrigger>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>expandedForestry_0</li>
+      <li>forestFire_0</li>
+    </incompatibleEvents>
+    <randomThingValue>1200</randomThingValue>
+    <randomThingRewardDef>RERD_Silver</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>expandedForestry_1-3</defName>
+    <label>Expanded Forestry (Construction Stockpile)</label>
+    <desc>Lumber is stockpiled for construction projects, and construction speeds up.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>300000</timeTillTrigger>
+    <timeTillTriggerMax>420000</timeTillTriggerMax>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>expandedForestry_0</li>
+      <li>forestFire_0</li>
+    </incompatibleEvents>
+    <statModifiers>
+      <li>
+        <stat>RTD_Logging_ProductionAdditive</stat>
+        <value>0.5</value>
+      </li>
+      <li>
+        <stat>buildTimeMultiplier</stat>
+        <value>0.75</value>
+      </li>
+    </statModifiers>
+  </FactionColonies.FCEventDef>
+
+</Defs>
