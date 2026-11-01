@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using FactionColonies.util;
 using HarmonyLib;
 using RimWorld;
@@ -92,26 +91,34 @@ namespace FactionColonies
     [HarmonyPatch(typeof(SettlementDefeatUtility), nameof(SettlementDefeatUtility.CheckDefeated))]
     public static class SettlementDefeatUtility_CheckDefeated_Patch
     {
+        // Runs for EVERY world settlement on every TickInterval (each 15 ticks, or every tick while
+        // the world view is open), and almost none of them have a map. Order the checks so the
+        // common case exits after a single Map lookup, and resolve Map only once (it's a linear
+        // Game.FindMap scan, which vanilla repeats after us anyway).
         public static bool Prefix(Settlement factionBase)
         {
+            if (factionBase is null) return true;
+            if (factionBase is WorldSettlementFC) return true;
+
+            Map map = factionBase.Map;
+
             // An Empire manual offensive battle owns this tile -> Empire's EndOffense / ApplyResult
             // resolves the settlement's fate. Do not pop the raze/capture dialog on the same
             // garrison-cleared event (a double resolution). This guard also lets the offense
             // suppression win regardless of Harmony prefix ordering.
-            if (OffenseGuardUtil.OffenseActiveAt(factionBase)) return false;
+            if (OffenseGuardUtil.OffenseActiveAt(factionBase, map)) return false;
+            if (map is null) return true;
             if (!FCSettings.enableSettlementCapture) return true;
-            if (factionBase is null) return true;
 
             Faction fac = factionBase.Faction;
             if (fac is null || fac.IsPlayer) return true;
-            if (factionBase is WorldSettlementFC) return true;
             if (FindFC.IsEmpireFaction(fac)) return true;
 
-            Map map = factionBase.Map;
-            if (map is null) return true;
-            if (!SettlementDefeatUtility.IsDefeated(map, fac)) return true;
             // Only prompt for a base the player actually raided (their colonists are on the map).
-            if (!map.mapPawns.FreeColonistsSpawned.Any()) return true;
+            // Checked before IsDefeated: it early-outs without rebuilding a pawn list, while
+            // IsDefeated runs a threat test per enemy pawn.
+            if (!AnyFreeColonistSpawned(map)) return true;
+            if (!SettlementDefeatUtility.IsDefeated(map, fac)) return true;
 
             PlanetTile tile = factionBase.Tile;
 
@@ -125,6 +132,20 @@ namespace FactionColonies
 
             SettlementCaptureTracker.awaitingDecision.Add(tile);
             SettlementCaptureTracker.PromptRazeOrCapture(factionBase);
+            return false;
+        }
+
+        // Equivalent to map.mapPawns.FreeColonistsSpawned.Any() (same filter as vanilla's
+        // FreeHumanlikesSpawnedOfFaction), minus the list rebuild, and stops at the first match.
+        private static bool AnyFreeColonistSpawned(Map map)
+        {
+            List<Pawn> pawns = map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer);
+            for (int i = 0; i < pawns.Count; i++)
+            {
+                Pawn p = pawns[i];
+                if (p.HostFaction is null && p.RaceProps.Humanlike && (!ModsConfig.AnomalyActive || !p.IsSubhuman))
+                    return true;
+            }
             return false;
         }
     }

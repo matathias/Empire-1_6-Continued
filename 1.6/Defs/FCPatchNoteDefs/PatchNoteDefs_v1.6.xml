@@ -562,4 +562,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_36</defName>
+		<label>Minor perf fix</label>
+		<description>A small change to a harmony patch to slightly improve performance while the world map is open.</description>
+		<releaseDate>2026-11-01</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Small change to a harmony patch to slightly improve performance while the world map is open</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

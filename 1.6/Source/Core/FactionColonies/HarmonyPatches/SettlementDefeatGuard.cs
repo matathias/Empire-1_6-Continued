@@ -20,13 +20,22 @@ namespace FactionColonies
         public static bool OffenseActiveAt(Settlement s)
         {
             if (s is null || s is WorldSettlementFC) return false;
+            return OffenseActiveAt(s, s.Map);
+        }
+
+        /// <summary>
+        /// Overload for hot callers that already resolved <paramref name="map"/> (= <c>s.Map</c>):
+        /// MapParent.Map is a linear Game.FindMap scan, so don't repeat it. Caller has already
+        /// excluded null and WorldSettlementFC.
+        /// </summary>
+        public static bool OffenseActiveAt(Settlement s, Map map)
+        {
             MilitaryOperationManager mgr = FindFC.MilitaryManager;
             if (mgr is null) return false;
             // Primary: durable per-map marker. Keyed on the Map instance, it spans the whole map
             // lifetime -- unlike the per-tile battlefield dict entry, which is torn down on op detach
             // (op.Resolve -> Unregister -> Detach -> RemoveBattlefield) while the vanilla-parented map
             // is still alive.
-            Map map = s.Map;
             if (map is object && mgr.IsEmpireBattleMap(map)) return true;
             // Secondary net: the flag-based test (also covers a mid-battle save/reload, where the
             // battlefield/isOffense/map are scribed). Skip the PlanetTile hash + dict probe when no
