@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-        <TargetFramework>net48</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+        <GenerateDependencyFile>false</GenerateDependencyFile>
         <OutputPath>..\..\Compat\1.7\RimWar\Assemblies</OutputPath>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <BaseOutputPath>..\..\Compat\1.7\RimWar\Assemblies</BaseOutputPath>
@@ -14,9 +15,8 @@
     </PropertyGroup>
     <ItemGroup>
         <!-- Rimworld -->
-        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.*-*" />
-        <PackageReference Include="Lib.Harmony" Version="2.3.6" />
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
+        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.*-*" />
+        <PackageReference Include="Lib.Harmony.Ref" Version="3.0.0-rc.3" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Core\Empire.csproj">
@@ -24,36 +24,9 @@
       </ProjectReference>
     </ItemGroup>
     <ItemGroup>
-        <Reference Include="Assembly-CSharp">
-            <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
         <Reference Include="RimWar">
           <HintPath>..\..\Common\References\RimWar.dll</HintPath>
           <Private>False</Private>
-        </Reference>
-        <Reference Include="UnityEngine">
-            <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="UnityEngine.CoreModule">
-            <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-    </ItemGroup>
-    <ItemGroup>
-        <Reference Update="mscorlib">
-            <Private>False</Private>
-        </Reference>
-    </ItemGroup>
-    <ItemGroup>
-        <Reference Update="System">
-            <Private>False</Private>
-        </Reference>
-    </ItemGroup>
-    <ItemGroup>
-        <Reference Update="System.Core">
-            <Private>False</Private>
         </Reference>
     </ItemGroup>
 </Project>

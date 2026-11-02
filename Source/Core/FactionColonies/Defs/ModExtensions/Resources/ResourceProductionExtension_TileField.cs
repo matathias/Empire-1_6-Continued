@@ -29,7 +29,7 @@ namespace FactionColonies
         public float defaultValue = 0f;
         public string label;
 
-        public string Label => label.NullOrEmpty() ? DefaultLabel(field) : label;
+        public string Label => label.NullOrEmpty() ? DefaultLabel(this.field) : label;
 
         private static string DefaultLabel(TileField f)
         {
