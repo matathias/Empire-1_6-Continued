@@ -114,7 +114,7 @@ public class FCPolicyBehavior_Mercantile : FCPolicyBehavior
                 /* Build the same PawnGroupMakerParms the real call path uses
                    (IncidentWorker_NeutralGroup.SpawnPawns -> GetDefaultPawnGroupMakerParms)
                    so the reported minPoints matches what CanGenerateFrom actually sees. */
-                PawnGroupMakerParms pgmp = parms is object
+                PawnGroupMakerParms pgmp = parms is not null
                     ? IncidentParmsUtility.GetDefaultPawnGroupMakerParms(PawnGroupKindDefOf.Trader, parms, ensureCanGenerateAtLeastOnePawn: true)
                     : null;
                 sb.Append(" | trader.minPoints=").Append(trader.MinPointsToGenerateAnything(def, pgmp));
@@ -125,7 +125,7 @@ public class FCPolicyBehavior_Mercantile : FCPolicyBehavior
                 BiomeDef biome = tile.Valid ? Find.WorldGrid[tile].PrimaryBiome : null;
                 sb.Append(" biome=").Append(biome?.defName ?? "null");
 
-                if (biome is object && trader.carriers is object)
+                if (biome is not null && trader.carriers is not null)
                 {
                     int pass = 0;
                     List<string> passNames = new List<string>(5);

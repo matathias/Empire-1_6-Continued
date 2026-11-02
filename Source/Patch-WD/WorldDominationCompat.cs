@@ -79,7 +79,7 @@ public class WDStrengthSettlementModifier : SettlementPowerModifierBase
     {
         level = 0;
         CompViralSpread comp = settlement.GetComponent<CompViralSpread>();
-        if (comp == null || comp.strength <= 0f) return false;
+        if (comp is null || comp.strength <= 0f) return false;
 
         level = comp.strength / SCALE_FACTOR;
         return true;
@@ -96,7 +96,7 @@ public static class Patch_TryChangeAllegiances
 {
     private static void Postfix()
     {
-        if (FindFC.EmpireFaction != null)
+        if (FindFC.EmpireFaction is not null)
         {
             RelationsUtilFC.ResetPlayerColonyRelations();
         }
@@ -108,7 +108,7 @@ public static class Patch_FormAntiLeaderCoalition
 {
     private static void Postfix()
     {
-        if (FindFC.EmpireFaction != null)
+        if (FindFC.EmpireFaction is not null)
         {
             RelationsUtilFC.ResetPlayerColonyRelations();
         }
@@ -128,9 +128,9 @@ public static class Patch_GetWorldPowerStats
 {
     private static void Postfix(SpreadLogEntry.GlobalWorldStats __result)
     {
-        if (__result == null) return;
+        if (__result is null) return;
 
-        if (FindFC.EmpireFaction == null) return;
+        if (FindFC.EmpireFaction is null) return;
 
         SpreadLogEntry.FactionStat removed = null;
         for (int i = 0; i < __result.FactionStats.Count; i++)
@@ -143,7 +143,7 @@ public static class Patch_GetWorldPowerStats
             }
         }
 
-        if (removed != null)
+        if (removed is not null)
         {
             __result.GlobalTotalStr -= removed.TotalStr;
         }

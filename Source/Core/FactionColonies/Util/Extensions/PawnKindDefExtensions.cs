@@ -9,12 +9,12 @@ static class PawnKindDefExtensions
 
     public static bool IsHumanlikeWithLabelRace(this PawnKindDef pawnKindDef)
     {
-        return pawnKindDef?.race?.label != null && pawnKindDef.IsHumanLikeRace();
+        return pawnKindDef?.race?.label is not null && pawnKindDef.IsHumanLikeRace();
     }
 
     public static bool IsXenotypeWithLabel(this XenotypeDef xenotypeDef)
     {
-        return xenotypeDef?.label != null;
+        return xenotypeDef?.label is not null;
     }
 
     private static ResourceFilterExtension_Animals _animalFilterConfig;
@@ -64,7 +64,7 @@ static class PawnKindDefExtensions
         return pawnKindDef.race.race.Animal
             && pawnKindDef.RaceProps.IsFlesh
             && pawnKindDef.race.race.animalType != AnimalType.Dryad
-            && (!config.requireTradeTags || pawnKindDef.race.tradeTags != null)
+            && (!config.requireTradeTags || pawnKindDef.race.tradeTags is not null)
             && !BlacklistedDefNames.Contains(pawnKindDef.race.defName)
             && (pawnKindDef.race.tradeTags.NullOrEmpty() || config.blacklistedTradeTags.NullOrEmpty()
                 || !pawnKindDef.race.tradeTags.Any(tag => config.blacklistedTradeTags.Contains(tag)));
@@ -75,7 +75,7 @@ static class PawnKindDefExtensions
     public static bool IsCombatAnimal(this PawnKindDef pawnKindDef)
     {
         return pawnKindDef.IsAnimalAndAllowed()
-               && pawnKindDef.RaceProps.trainability is object
+               && pawnKindDef.RaceProps.trainability is not null
                && pawnKindDef.RaceProps.trainability.intelligenceOrder >= TrainabilityDefOf.Intermediate.intelligenceOrder
                && pawnKindDef.combatPower >= 50f;
     }

@@ -71,7 +71,7 @@ public class DesignUnitsWindow : MilitaryWindow
         float contentLeft = sidebarRect.xMax + 10f;
         Rect gearRect = new Rect(contentLeft, gearTop, GearWidth, 305f);
 
-        if (selectedUnit != null)
+        if (selectedUnit is not null)
         {
             Rect headerRect = new Rect(contentLeft, contentTop,
                 rightEdge - contentLeft, 85f);
@@ -177,7 +177,7 @@ public class DesignUnitsWindow : MilitaryWindow
                 FactionColoniesMilitary.SavedUnits.ToList()));
         }
 
-        if (selectedUnit != null)
+        if (selectedUnit is not null)
         {
             if (UIUtil.ClampedButtonText(deleteBtn, "FCDeleteUnitButton".Translate()))
             {
@@ -345,11 +345,11 @@ public class DesignUnitsWindow : MilitaryWindow
         Text.Anchor = anchorBefore;
 
         // --- Unit-selected content ---
-        if (selectedUnit == null) return;
+        if (selectedUnit is null) return;
 
         // Draw Pawn Preview
         Pawn preview = selectedUnit.PreviewPawn;
-        if (preview != null)
+        if (preview is not null)
         {
             UIUtil.DrawPawnPortrait(unitIcon, preview, 1.2f);
         }
@@ -384,7 +384,7 @@ public class DesignUnitsWindow : MilitaryWindow
         }
 
         // Mount icon
-        if (showMount && selectedUnit.mount != null)
+        if (showMount && selectedUnit.mount is not null)
         {
             Widgets.ButtonImage(MountSlot, selectedUnit.mount.race.uiIcon);
         }
@@ -432,7 +432,7 @@ public class DesignUnitsWindow : MilitaryWindow
         Rect content;
         // Only show the Psycasts tab when a psycast system is actually available
         // (Royalty, VPE, or another provider) — otherwise it's an empty, useless tab.
-        bool showPsycasts = PsycastSystemRegistry.Active != null;
+        bool showPsycasts = PsycastSystemRegistry.Active is not null;
         // Mechs tab requires Biotech (mechanitors/mechlinks).
         bool showMechs = ModsConfig.BiotechActive;
         activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includePsycasts: showPsycasts, includeMechs: showMechs);

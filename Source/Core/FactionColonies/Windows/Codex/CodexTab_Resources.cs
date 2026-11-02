@@ -73,7 +73,7 @@ public class CodexTab_Resources : ICodexTab
     public void SelectDef(ResourceTypeDef def)
     {
         EnsureBuilt();
-        if (def is object && resourceDefs.Contains(def))
+        if (def is not null && resourceDefs.Contains(def))
         {
             selectedResource = def;
             centerScroll = Vector2.zero;
@@ -149,7 +149,7 @@ public class CodexTab_Resources : ICodexTab
 
         /* Title with icon */
         float titleTextX = 0f;
-        if (selectedResource.Icon is object)
+        if (selectedResource.Icon is not null)
         {
             float titleIconSize = 28f;
             Rect iconBgRect = new Rect(0f, curY, titleIconSize, titleIconSize);
@@ -212,7 +212,7 @@ public class CodexTab_Resources : ICodexTab
         float contentWidth = viewRect.width;
         float curY = 0f;
 
-        if (selectedResource is object)
+        if (selectedResource is not null)
         {
             Color accent = GetAccent(selectedResource);
 
@@ -340,7 +340,7 @@ public class CodexTab_Resources : ICodexTab
         int count = 0;
         foreach (BiomeResourceDef biomeDef in DefDatabase<BiomeResourceDef>.AllDefsListForReading)
         {
-            if (biomeDef.GetBiomeResource(selectedResource) is object)
+            if (biomeDef.GetBiomeResource(selectedResource) is not null)
                 count++;
         }
         return count;
@@ -382,7 +382,7 @@ public class CodexTab_Resources : ICodexTab
             if (restrictions.TryGetValue(thing, out info))
             {
                 entry.minTechLevel = info.minTechLevel;
-                if (info.researchProjects is object && info.researchProjects.Count > 0)
+                if (info.researchProjects is not null && info.researchProjects.Count > 0)
                 {
                     entry.researchLabels = new List<string>();
                     foreach (ResearchProjectDef rp in info.researchProjects)
@@ -391,12 +391,12 @@ public class CodexTab_Resources : ICodexTab
             }
 
             // Also check recipe-level research prerequisites (not from our restriction, but from the ThingDef itself)
-            if ((entry.researchLabels is null || entry.researchLabels.Count == 0) && thing.recipeMaker is object)
+            if ((entry.researchLabels is null || entry.researchLabels.Count == 0) && thing.recipeMaker is not null)
             {
                 List<string> recipeResearch = new List<string>();
-                if (thing.recipeMaker.researchPrerequisite is object)
+                if (thing.recipeMaker.researchPrerequisite is not null)
                     recipeResearch.Add(thing.recipeMaker.researchPrerequisite.LabelCap);
-                if (thing.recipeMaker.researchPrerequisites is object)
+                if (thing.recipeMaker.researchPrerequisites is not null)
                 {
                     foreach (ResearchProjectDef rp in thing.recipeMaker.researchPrerequisites)
                         recipeResearch.Add(rp.LabelCap);
@@ -472,7 +472,7 @@ public class CodexTab_Resources : ICodexTab
 
             // Icon
             Texture2D icon = entry.thingDef.uiIcon;
-            if (icon is object)
+            if (icon is not null)
             {
                 Rect iconRect = new Rect(rowX, curY + (StatRowHeight - IconSmall) * 0.5f, IconSmall, IconSmall);
                 GUI.color = entry.thingDef.uiIconColor;
@@ -490,7 +490,7 @@ public class CodexTab_Resources : ICodexTab
             if (entry.minTechLevel != TechLevel.Undefined)
                 label += $" ({entry.minTechLevel.ToStringHuman()})".Colorize(Color.gray);
 
-            if (entry.researchLabels is object && entry.researchLabels.Count > 0)
+            if (entry.researchLabels is not null && entry.researchLabels.Count > 0)
             {
                 string allResearch = string.Join(", ", entry.researchLabels.ToArray());
                 label += $" {"FCCodexResourceRequiresResearch".Translate(allResearch)}".Colorize(Color.gray);
@@ -633,9 +633,9 @@ public class CodexTab_Resources : ICodexTab
     {
         float total = 0f;
 
-        if (selectedResource is object)
+        if (selectedResource is not null)
         {
-            if (UIUtil.GetModBanner(selectedResource.modContentPack) is object)
+            if (UIUtil.GetModBanner(selectedResource.modContentPack) is not null)
                 total += BannerHeight + SmallMargin;
             string modName = selectedResource.modContentPack?.ModMetaData?.Name ?? "";
             if (!modName.NullOrEmpty())

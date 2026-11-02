@@ -155,7 +155,7 @@ public static class PrisonerUtil
 
         // Portrait
         Rect portraitRect = new Rect(contentStartX + pad, box.y + 6f, portraitW, 78f);
-        if (prisoner.prisoner is object)
+        if (prisoner.prisoner is not null)
         {
             UIUtil.DrawPawnPortrait(portraitRect, prisoner.prisoner, 1.2f);
         }
@@ -183,7 +183,7 @@ public static class PrisonerUtil
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(nameRect, BuildNameWithTitle(prisoner.prisoner));
 
-        if (prisoner.prisoner is object)
+        if (prisoner.prisoner is not null)
         {
             UIUtil.InfoCardThing(infoRect, prisoner.prisoner);
         }
@@ -269,7 +269,7 @@ public static class PrisonerUtil
         // Portrait — vertically centered in the row
         float portraitY = box.y + (box.height - compactPortraitSz) / 2f;
         Rect portraitRect = new Rect(contentStartX + pad, portraitY, compactPortraitSz, compactPortraitSz);
-        if (prisoner.prisoner is object)
+        if (prisoner.prisoner is not null)
         {
             UIUtil.DrawPawnPortrait(portraitRect, prisoner.prisoner, 1.2f);
         }
@@ -316,7 +316,7 @@ public static class PrisonerUtil
 
         Faction homeFaction = prisoner.prisoner?.Faction;
         string factionName = BuildFactionLabel(prisoner.prisoner);
-        Texture2D factionIcon = (homeFaction is object && !homeFaction.Hidden) ? homeFaction.def?.FactionIcon : null;
+        Texture2D factionIcon = (homeFaction is not null && !homeFaction.Hidden) ? homeFaction.def?.FactionIcon : null;
         string subtitlePrefix = BuildSubtitlePrefix(prisoner.prisoner);
         // Only append the " of " connector when a faction segment will actually follow.
         if (!string.IsNullOrEmpty(subtitlePrefix) && !string.IsNullOrEmpty(factionName))
@@ -352,7 +352,7 @@ public static class PrisonerUtil
 
         // Left of center: info button + name+title
         Rect infoRect = new Rect(centerX, topY + (topRowH - infoBtnSz) / 2f, infoBtnSz, infoBtnSz);
-        if (prisoner.prisoner is object)
+        if (prisoner.prisoner is not null)
         {
             UIUtil.InfoCardThing(infoRect, prisoner.prisoner);
         }
@@ -392,7 +392,7 @@ public static class PrisonerUtil
         /* Optional "Downed: No Work" badge between health text and trend. The badge
          * eats some of the health text's right edge when present, but never overlaps
          * the trend label. */
-        bool downed = prisoner.prisoner is object && prisoner.prisoner.Downed;
+        bool downed = prisoner.prisoner is not null && prisoner.prisoner.Downed;
         const float badgeW = 110f;
         const float badgeGap = 6f;
         float healthRightEdge = trendRect.x - 4f;

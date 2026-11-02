@@ -402,7 +402,7 @@ public partial class XenotypeFilter : IExposable
             return false;
         }
         bool needsViolence = request.MustBeCapableOfViolence
-            || (request.KindDef.weaponTags != null && request.KindDef.weaponTags.Count > 0)
+            || (request.KindDef.weaponTags is not null && request.KindDef.weaponTags.Count > 0)
             || (request.KindDef.requiredWorkTags & WorkTags.Violent) != WorkTags.None;
         if (needsViolence && FactionCache.CustomXenotypeIsNonViolent(xenotypeName))
         {
@@ -451,7 +451,7 @@ public partial class XenotypeFilter : IExposable
     public static bool CanGeneListDoRequiredWork(WorkTags requiredTags, List<GeneDef> genes)
     {
         bool canDoWork = true;
-        if (requiredTags != WorkTags.None && genes != null && genes.Count > 0)
+        if (requiredTags != WorkTags.None && genes is not null && genes.Count > 0)
         {
             WorkTags geneListDisabledTags = WorkTags.None;
             foreach (GeneDef gene in genes)
@@ -543,7 +543,7 @@ public partial class XenotypeFilter : IExposable
             List<XenotypeDef> associatedXenotypes = new List<XenotypeDef>();
             foreach (PawnKindDef pawnKind in FactionCache.AllPawnKindDefs)
             {
-                if (pawnKind.race != race || pawnKind.xenotypeSet == null) continue;
+                if (pawnKind.race != race || pawnKind.xenotypeSet is null) continue;
                 for (int i = 0; i < pawnKind.xenotypeSet.Count; i++)
                 {
                     if (pawnKind.xenotypeSet[i].chance > 0)
@@ -641,7 +641,7 @@ public partial class XenotypeFilter : IExposable
             List<PawnGenOption> carriers = faction.pawnGroupMakers[1].carriers;
             if (carriers is null || !carriers.Any()) return; // empty case already reported above
 
-            Map colony = (Find.CurrentMap is object && Find.CurrentMap.IsPlayerHome)
+            Map colony = (Find.CurrentMap is not null && Find.CurrentMap.IsPlayerHome)
                 ? Find.CurrentMap
                 : Find.AnyPlayerHomeMap;
             if (colony is null) return; // no active colony loaded; nothing to check
@@ -650,7 +650,7 @@ public partial class XenotypeFilter : IExposable
             if (biome is null) return;
 
             bool anyValid = carriers.Any(c =>
-                c.kind is object && c.kind.race is object && biome.IsPackAnimalAllowed(c.kind.race));
+                c.kind is not null && c.kind.race is not null && biome.IsPackAnimalAllowed(c.kind.race));
 
             if (!anyValid)
                 LogUtil.Warning("RefreshPawnGroupMakers: none of the trader carriers are allowed in the "
@@ -770,7 +770,7 @@ public partial class XenotypeFilter : IExposable
 
     private void RefreshMercenaryPawnGenOptions()
     {
-        if (militaryFC?.mercenarySquads == null || militaryFC?.mercenarySquads.Count == 0) return;
+        if (militaryFC?.mercenarySquads is null || militaryFC?.mercenarySquads.Count == 0) return;
 
         foreach (MercenarySquadFC mercenarySquadFc in militaryFC.mercenarySquads)
         {
@@ -807,7 +807,7 @@ public partial class XenotypeFilter : IExposable
                 if (IsValidCustomXenotypeForRequest(request, allowedXenotype))
                 {
                     chosenCustomXenotype = FactionCache.GetCustomXenotype(allowedXenotype);
-                    if (chosenCustomXenotype is object)
+                    if (chosenCustomXenotype is not null)
                     {
                         break;
                     }
@@ -923,7 +923,7 @@ public partial class XenotypeFilter : IExposable
                 if (xenoRand < thisChance)
                 {
                     chosenCustomXenotype = FactionCache.GetCustomXenotype(allowedXenotype);
-                    if (chosenCustomXenotype is object)
+                    if (chosenCustomXenotype is not null)
                     {
                         break;
                     }

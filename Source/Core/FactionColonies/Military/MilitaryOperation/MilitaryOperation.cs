@@ -63,13 +63,13 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
     public bool HasMapPresence => battlefieldRef.Valid;
 
     /// <summary>True when the player's empire is on the defending side (settlement under attack).</summary>
-    public bool IsDefensive => defender?.faction is object
-                            && FindFC.EmpireFaction is object
+    public bool IsDefensive => defender?.faction is not null
+                            && FindFC.EmpireFaction is not null
                             && defender.faction == FindFC.EmpireFaction;
 
     /// <summary>True when the player's empire is on the aggressor side (offensive op).</summary>
-    public bool IsOffensive => aggressor?.faction is object
-                            && FindFC.EmpireFaction is object
+    public bool IsOffensive => aggressor?.faction is not null
+                            && FindFC.EmpireFaction is not null
                             && aggressor.faction == FindFC.EmpireFaction;
 
     /// <summary>True while this op still holds a pending (Queued) wake-up event in
@@ -194,13 +194,13 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // Lazily create defender force when an offensive op fights a non-Empire faction:
         // CreateOffensiveOp leaves it unset because the enemy is faction-level, not settlement-level.
         // ResolveDefenderForceForOp samples + applies battle modifiers in one shot.
-        if (defender.force is null && defender.faction is object && !IsDefensive)
+        if (defender.force is null && defender.faction is not null && !IsDefensive)
         {
             defender.force = enemyPower?.ResolveDefenderForceForOp(this, ctx);
             if (defender.force is null)
                 LogUtil.Warning($"BeginEngagement: defender force could not be resolved for op id={id} (faction={defender.faction?.Name}). Battle will run with a null defender force.");
         }
-        else if (defender.force is object)
+        else if (defender.force is not null)
         {
             // Refresh from current state for defensive ops with a player-controlled
             // defender, so post-warning changes (new buildings, policy shifts, event
@@ -210,23 +210,23 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
             if (IsDefensive && externalDefenderSource is null)
             {
                 MilitaryForce refreshed = null;
-                if (defender.squad is object)
+                if (defender.squad is not null)
                     refreshed = MilitaryForce.CreateMilitaryForceFromSquad(defender.squad, isAttacking: false);
-                else if (defender.homeSettlement is object)
+                else if (defender.homeSettlement is not null)
                     refreshed = MilitaryForce.CreateMilitaryForceFromUnstaffedBillet(defender.homeSettlement);
-                if (refreshed is object)
+                if (refreshed is not null)
                     defender.force = refreshed;
             }
 
             enemyPower?.ApplyBattleModifiers(ctx, defender.force, isAttacker: false);
         }
 
-        if (aggressor.force is object)
+        if (aggressor.force is not null)
         {
             enemyPower?.ApplyBattleModifiers(ctx, aggressor.force, isAttacker: true);
         }
 
-        if (externalDefenderSource is object)
+        if (externalDefenderSource is not null)
         {
             IAutoDefender def = AutoDefenderRegistry.FindByWorldObject(externalDefenderSource);
             def?.OnDefenseStarted(targetObject);
@@ -256,7 +256,7 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
 
         if (aggressor?.force is null || defender?.force is null)
         {
-            LogUtil.Error($"BeginAutoResolveProgress: missing force on op id={id} (aggressor={(aggressor?.force is object)}, defender={(defender?.force is object)}).");
+            LogUtil.Error($"BeginAutoResolveProgress: missing force on op id={id} (aggressor={(aggressor?.force is not null)}, defender={(defender?.force is not null)}).");
             CompleteBattle(new BattleResult { winner = BattleWinner.Error });
             return;
         }
@@ -353,8 +353,8 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
 
         this.result = battleResult;
         bool victory = IsDefensive
-            ? battleResult is object && battleResult.DefenderVictory
-            : battleResult is object && battleResult.AttackerVictory;
+            ? battleResult is not null && battleResult.DefenderVictory
+            : battleResult is not null && battleResult.AttackerVictory;
 
         // Outcome side effects via handler. Offensive handlers apply loot/prisoners/capture;
         // MilitaryJobHandler_Defend applies settlement-side effects (loyalty/happiness/buildings).
@@ -372,10 +372,10 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // damage on the map, so they're skipped via wasManualBattle. Both aggressor
         // and defender squads are processed — one or both may be empty (offensive ops
         // have no defender squad; pure-defensive ops have no aggressor squad).
-        if (battleResult is object && !battleResult.wasManualBattle
+        if (battleResult is not null && !battleResult.wasManualBattle
             && battleResult.winner != BattleWinner.Error)
         {
-            if (aggressor?.squad is object)
+            if (aggressor?.squad is not null)
             {
                 BattleCasualtyApplicator.ApplyCasualtiesToSquad(
                     aggressor.squad,
@@ -383,7 +383,7 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
                     battleResult.attackerForceRemaining,
                     aggressor.homeSettlement);
             }
-            if (defender?.squad is object && defender.squad != aggressor?.squad)
+            if (defender?.squad is not null && defender.squad != aggressor?.squad)
             {
                 BattleCasualtyApplicator.ApplyCasualtiesToSquad(
                     defender.squad,
@@ -397,10 +397,10 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // observers see post-battle injury counts. Pawn deaths are already reflected in
         // squad.dead via the Pawn.Kill harmony patch — this call records the wound list.
         MilitaryFC mfc = FindFC.Military;
-        if (mfc is object)
+        if (mfc is not null)
         {
-            if (aggressor?.squad is object) mfc.RegisterSquadInjuries(aggressor.squad);
-            if (defender?.squad is object && defender.squad != aggressor?.squad)
+            if (aggressor?.squad is not null) mfc.RegisterSquadInjuries(aggressor.squad);
+            if (defender?.squad is not null && defender.squad != aggressor?.squad)
                 mfc.RegisterSquadInjuries(defender.squad);
         }
 
@@ -409,11 +409,11 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // used, and refill it. This is the case for manual battles AND deployments (call-ins to a
         // player map) — the latter resolve as a non-battle (wasManualBattle == false), so they're
         // matched on kind instead. Auto-resolved battles never touch pawn inventory and get no charge.
-        if (battleResult is object && battleResult.winner != BattleWinner.Error
+        if (battleResult is not null && battleResult.winner != BattleWinner.Error
             && (battleResult.wasManualBattle || kind == MilitaryJobDefOf.Deploy))
         {
-            if (aggressor?.squad is object) SquadRestockUtil.ReconcileAndBill(aggressor.squad);
-            if (defender?.squad is object && defender.squad != aggressor?.squad)
+            if (aggressor?.squad is not null) SquadRestockUtil.ReconcileAndBill(aggressor.squad);
+            if (defender?.squad is not null && defender.squad != aggressor?.squad)
                 SquadRestockUtil.ReconcileAndBill(defender.squad);
         }
 
@@ -424,18 +424,18 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // manual-battle map are skipped inside TryAutoReplaceSquad and instead handled when that
         // map tears down (WorldSettlementFC.Notify_MyMapAboutToBeRemoved); the tax-tick sweep is
         // the final backstop.
-        if (mfc is object)
+        if (mfc is not null)
         {
             int autoReplaceSpent = 0;
-            if (aggressor?.squad is object) autoReplaceSpent += mfc.TryAutoReplaceSquad(aggressor.squad);
-            if (defender?.squad is object && defender.squad != aggressor?.squad)
+            if (aggressor?.squad is not null) autoReplaceSpent += mfc.TryAutoReplaceSquad(aggressor.squad);
+            if (defender?.squad is not null && defender.squad != aggressor?.squad)
                 autoReplaceSpent += mfc.TryAutoReplaceSquad(defender.squad);
             if (autoReplaceSpent > 0)
                 Messages.Message("FCSquadAutoReplacedBattle".Translate(autoReplaceSpent),
                     MessageTypeDefOf.PositiveEvent);
         }
 
-        if (externalDefenderSource is object)
+        if (externalDefenderSource is not null)
         {
             IAutoDefender def = AutoDefenderRegistry.FindByWorldObject(externalDefenderSource);
             def?.OnDefenseComplete(victory, battleResult);
@@ -450,14 +450,14 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // finally so a throwing third-party handler can't leave the target permanently excluded;
         // win/loss notification is skipped on an Error result (no real battle happened), matching
         // the handler and threat-adaptation paths.
-        if (targetObject is object)
+        if (targetObject is not null)
         {
             IRaidTarget raidTarget = RaidTargetRegistry.FindByWorldObject(targetObject);
-            if (raidTarget is object)
+            if (raidTarget is not null)
             {
                 try
                 {
-                    if (battleResult is object && battleResult.winner != BattleWinner.Error)
+                    if (battleResult is not null && battleResult.winner != BattleWinner.Error)
                     {
                         if (victory) raidTarget.OnRaidWon(battleResult);
                         else raidTarget.OnRaidLost(battleResult);
@@ -477,10 +477,10 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // Drive EmpireThreatAdaptation from every battle the empire participates in
         // (offensive and defensive), so raid outcomes tune the threat curve alongside
         // defensive ones. Skip on Error results — the battle didn't really happen.
-        if (battleResult is object && battleResult.winner != BattleWinner.Error)
+        if (battleResult is not null && battleResult.winner != BattleWinner.Error)
         {
             EmpireThreatAdaptation adapt = FindFC.ThreatAdaptation;
-            if (adapt is object)
+            if (adapt is not null)
             {
                 if (victory) adapt.Notify_BattleWon();
                 else adapt.Notify_BattleLost();
@@ -529,8 +529,8 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // Mirror onto nextPhaseTick so the busy-status display (which reads
         // op.nextPhaseTick) shows the travel countdown rather than 0.0 d.
         nextPhaseTick = wakeTick;
-        if (aggressor?.squad is object) aggressor.squad.nextAvailableTick = wakeTick;
-        if (defender?.squad is object && defender.squad != aggressor?.squad)
+        if (aggressor?.squad is not null) aggressor.squad.nextAvailableTick = wakeTick;
+        if (defender?.squad is not null && defender.squad != aggressor?.squad)
             defender.squad.nextAvailableTick = wakeTick;
 
         // squad.dead is no longer consumed by the cooldown system but the field stays
@@ -558,7 +558,7 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
          * movement (offensive return, foreign defense return, deploy). The one non-travel case
          * is a real-squad home defense — squad fought at its own billet, no return trip. */
         bool homeDefense = IsDefensive
-                        && defender?.squad?.settlement is object
+                        && defender?.squad?.settlement is not null
                         && defender.squad.settlement == defender.homeSettlement;
         bool isTraveling = !homeDefense;
 
@@ -587,7 +587,7 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // march-home window without forcing a per-defense travel calc.
         if (IsDefensive)
         {
-            bool homeDefense = defender?.squad?.settlement is object
+            bool homeDefense = defender?.squad?.settlement is not null
                             && defender.squad.settlement == defender.homeSettlement;
             return homeDefense ? 0 : GenDate.TicksPerDay;
         }
@@ -614,7 +614,7 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // neither fires and the IAutoDefender is left pledged forever (its WorldObject stuck "defending").
         // Release it here so the pledge is always terminated. Post-battle teardown (CooldownPending+)
         // already fired OnDefenseComplete, so the phase guard skips it to avoid a double terminal callback.
-        if (phase < MilitaryOperationPhase.CooldownPending && externalDefenderSource is object)
+        if (phase < MilitaryOperationPhase.CooldownPending && externalDefenderSource is not null)
         {
             IAutoDefender def = AutoDefenderRegistry.FindByWorldObject(externalDefenderSource);
             def?.OnDefenseReplaced();
@@ -628,10 +628,10 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         // (post-cooldown), pawns are off-map and any wounds carried back are catchable here.
         // HashSet.Add is idempotent, so this is a no-op for already-tracked mercs.
         MilitaryFC mfc = FindFC.Military;
-        if (mfc is object)
+        if (mfc is not null)
         {
-            if (aggressor?.squad is object) mfc.RegisterSquadInjuries(aggressor.squad);
-            if (defender?.squad is object && defender.squad != aggressor?.squad)
+            if (aggressor?.squad is not null) mfc.RegisterSquadInjuries(aggressor.squad);
+            if (defender?.squad is not null && defender.squad != aggressor?.squad)
                 mfc.RegisterSquadInjuries(defender.squad);
         }
 
@@ -685,7 +685,7 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
             BeginEngagement();
 
             MilitaryJobHandler handler = kind?.Handler;
-            if (handler is object)
+            if (handler is not null)
             {
                 // Handler-driven op (offensive raid/capture/enslave OR defensive defend-own-
                 // settlement). Manual handlers own when CompleteBattle fires.

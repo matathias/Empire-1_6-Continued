@@ -30,12 +30,12 @@ public static class SettlementLifecycleDestructiveTests
 
         TestAssert.IsFalse(f.settlements.Contains(s), "Removed settlement should be gone from faction.settlements");
         TestAssert.IsFalse(Find.WorldObjects.Contains(s), "Removed settlement should be gone from world objects");
-        if (FindFC.TaxLedger?.Bills != null)
+        if (FindFC.TaxLedger?.Bills is not null)
             TestAssert.IsFalse(FindFC.TaxLedger.Bills.Any(b => b?.settlement == s),
                 "No tax bill should reference the removed settlement");
-        if (FindFC.MilitaryManager?.Active != null)
+        if (FindFC.MilitaryManager?.Active is not null)
             TestAssert.IsFalse(FindFC.MilitaryManager.Active.Any(op =>
-                    op != null && (op.aggressor?.homeSettlement == s || op.defender?.homeSettlement == s || op.targetObject == s)),
+                    op is not null && (op.aggressor?.homeSettlement == s || op.defender?.homeSettlement == s || op.targetObject == s)),
                 "No active op should reference the removed settlement");
         DestructiveTestUtil.AssertEmpireInvariants(f, "Remove_TransientSettlement");
     }

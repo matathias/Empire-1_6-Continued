@@ -56,9 +56,9 @@ public class FCWindow_VPEPsycastEditor : Window
         get
         {
             int s = sessionStatPoints;
-            if (hediff != null) s += hediff.unlockedPaths.Count + hediff.unlockedMeditationFoci.Count;
-            if (compAbilities != null)
-                s += compAbilities.LearnedAbilities.Count(a => a.def != null && a.def.Psycast() != null);
+            if (hediff is not null) s += hediff.unlockedPaths.Count + hediff.unlockedMeditationFoci.Count;
+            if (compAbilities is not null)
+                s += compAbilities.LearnedAbilities.Count(a => a.def is not null && a.def.Psycast() is not null);
             return s;
         }
     }
@@ -104,7 +104,7 @@ public class FCWindow_VPEPsycastEditor : Window
             if (sessionPawn is null) { setupFailed = true; return; }
 
             Faction empire = FindFC.EmpireFaction;
-            if (sessionPawn.Faction is null && empire != null)
+            if (sessionPawn.Faction is null && empire is not null)
                 sessionPawn.SetFaction(empire);
 
             new VPEPsycastProvider().ApplyPsylink(sessionPawn, unit.psylinkLevel);
@@ -136,7 +136,7 @@ public class FCWindow_VPEPsycastEditor : Window
                 AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(saved.psycastDef);
                 if (def is null || compAbilities.HasAbility(def)) continue;
                 AbilityExtension_Psycast psycast = def.Psycast();
-                if (psycast != null && psycast.path != null && !hediff.unlockedPaths.Contains(psycast.path))
+                if (psycast is not null && psycast.path is not null && !hediff.unlockedPaths.Contains(psycast.path))
                     hediff.UnlockPath(psycast.path);
                 compAbilities.GiveAbility(def);
             }

@@ -79,7 +79,7 @@ public class WeightedSet<TKey>
                 toRemove.Add(kvp.Key);
             }
         }
-        if (toRemove is object)
+        if (toRemove is not null)
         {
             for (int i = 0; i < toRemove.Count; i++) Remove(toRemove[i]);
         }

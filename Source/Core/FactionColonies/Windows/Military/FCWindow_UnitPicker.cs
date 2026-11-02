@@ -74,9 +74,9 @@ public class FCWindow_UnitPicker : Window
                 costRect.x - iconRect.xMax - (margin * 2), RowHeight);
 
             // Icon: weapon icon if available, else race icon
-            if (unit.HasWeapon && unit.weapons[0].thing != null)
+            if (unit.HasWeapon && unit.weapons[0].thing is not null)
                 Widgets.ThingIcon(iconRect, unit.weapons[0].thing);
-            else if (unit.pawnKind?.race != null)
+            else if (unit.pawnKind?.race is not null)
                 Widgets.ThingIcon(iconRect, unit.pawnKind.race);
 
             Text.Font = GameFont.Small;
@@ -114,9 +114,9 @@ public class FCWindow_UnitPicker : Window
 
         // Confirm (left of cancel)
         Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
-        if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: selectedUnit != null))
+        if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: selectedUnit is not null))
         {
-            if (selectedUnit != null)
+            if (selectedUnit is not null)
             {
                 onSelect(selectedUnit);
                 Close();

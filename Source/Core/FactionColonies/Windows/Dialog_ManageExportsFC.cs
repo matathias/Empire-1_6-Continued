@@ -64,7 +64,7 @@ public abstract class Dialog_ManageExportsFC : Window
             {
                 GUI.color = Color.red;
                 string tooltip = GetDegradedTooltip(name);
-                if (tooltip != null)
+                if (tooltip is not null)
                     TooltipHandler.TipRegion(elemRect, tooltip);
                 displayName = $"{name} ({"FCDegraded".Translate()})";
             }
@@ -128,7 +128,7 @@ public class Dialog_ManageSquadExportsFC : Dialog_ManageExportsFC
             window => window is FCWindow_Military fcw &&
                       fcw.GetMilitaryWindow().Slot == MilitaryWindowSlot.Squads);
 
-        if (milWindow != null)
+        if (milWindow is not null)
         {
             milWindow.SetActive(squad);
         }
@@ -149,13 +149,13 @@ public class Dialog_ManageSquadExportsFC : Dialog_ManageExportsFC
     protected override bool IsEntryDegraded(string name)
     {
         SavedSquadFC squad = squads.FirstOrDefault(s => s.name == name);
-        return squad != null && squad.IsDegraded;
+        return squad is not null && squad.IsDegraded;
     }
 
     protected override string GetDegradedTooltip(string name)
     {
         SavedSquadFC squad = squads.FirstOrDefault(s => s.name == name);
-        if (squad == null || !squad.IsDegraded) return null;
+        if (squad is null || !squad.IsDegraded) return null;
         List<string> allMissing = squad.unitTemplates
             .Where(u => u.isDegraded)
             .SelectMany(u => u.missingDefs)
@@ -193,7 +193,7 @@ public class Dialog_ManageUnitExportsFC : Dialog_ManageExportsFC
             window => window is FCWindow_Military fcw &&
                       fcw.GetMilitaryWindow().Slot == MilitaryWindowSlot.Units);
 
-        if (milWindow != null)
+        if (milWindow is not null)
         {
             milWindow.SetActive(unit);
         }
@@ -214,13 +214,13 @@ public class Dialog_ManageUnitExportsFC : Dialog_ManageExportsFC
     protected override bool IsEntryDegraded(string name)
     {
         SavedUnitFC unit = units.FirstOrDefault(u => u.name == name);
-        return unit != null && unit.isDegraded;
+        return unit is not null && unit.isDegraded;
     }
 
     protected override string GetDegradedTooltip(string name)
     {
         SavedUnitFC unit = units.FirstOrDefault(u => u.name == name);
-        if (unit == null || !unit.isDegraded) return null;
+        if (unit is null || !unit.isDegraded) return null;
         return "This template references defs from unloaded mods: "
             + string.Join(", ", unit.missingDefs)
             + ".\nImporting will substitute defaults for missing items.";
@@ -255,7 +255,7 @@ public class Dialog_ManageFireSupportExportsFC : Dialog_ManageExportsFC
             window => window is FCWindow_Military fcw &&
                       fcw.GetMilitaryWindow().Slot == MilitaryWindowSlot.FireSupport);
 
-        if (milWindow is object)
+        if (milWindow is not null)
         {
             milWindow.SetActive(fs);
         }
@@ -278,7 +278,7 @@ public class Dialog_ManageFireSupportExportsFC : Dialog_ManageExportsFC
     protected override bool IsEntryDegraded(string name)
     {
         SavedFireSupportFC fs = fireSupports.FirstOrDefault(f => f.name == name);
-        return fs is object && fs.isDegraded;
+        return fs is not null && fs.isDegraded;
     }
 
     protected override string GetDegradedTooltip(string name)

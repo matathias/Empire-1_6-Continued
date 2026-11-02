@@ -31,13 +31,13 @@ internal static class OffenseGuardUtil
         // lifetime -- unlike the per-tile battlefield dict entry, which is torn down on op detach
         // (op.Resolve -> Unregister -> Detach -> RemoveBattlefield) while the vanilla-parented map
         // is still alive.
-        if (map is object && mgr.IsEmpireBattleMap(map)) return true;
+        if (map is not null && mgr.IsEmpireBattleMap(map)) return true;
         // Secondary net: the flag-based test (also covers a mid-battle save/reload, where the
         // battlefield/isOffense/map are scribed). Skip the PlanetTile hash + dict probe when no
         // battlefield exists at all (the common case: no active Empire offense).
         if (mgr.battlefields is null || mgr.battlefields.Count == 0) return false;
         BattlefieldContext bf = mgr.GetBattlefield(s.Tile);
-        return bf is object && bf.HasOffenseAt();
+        return bf is not null && bf.HasOffenseAt();
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ internal static class OffenseGuardUtil
         MilitaryOperationManager mgr = FindFC.MilitaryManager;
         if (mgr?.battlefields is null || mgr.battlefields.Count == 0) return false;
         BattlefieldContext bf = mgr.GetBattlefield(s.Tile);
-        return bf is object && bf.HasOffenseAt() && !bf.awaitingPlayerExit;
+        return bf is not null && bf.HasOffenseAt() && !bf.awaitingPlayerExit;
     }
 }
 
@@ -72,7 +72,7 @@ public static class SettlementDefeatUtility_IsDefeated_OffenseGuard
     public static bool Prefix(Map map, ref bool __result)
     {
         MilitaryOperationManager mgr = FindFC.MilitaryManager;
-        if (mgr is object && mgr.IsEmpireBattleMap(map))
+        if (mgr is not null && mgr.IsEmpireBattleMap(map))
         {
             __result = false;
             return false;

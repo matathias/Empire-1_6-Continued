@@ -54,7 +54,7 @@ public class FCSituationDef : Def
 
     /// <summary>True if this def has a condition extension appropriate to its scope.</summary>
     public bool HasCondition =>
-        scope == FCSituationScope.Settlement ? SettlementCondition != null : FactionCondition != null;
+        scope == FCSituationScope.Settlement ? SettlementCondition is not null : FactionCondition is not null;
 
     /// <summary>The stage the bar is in at the given progress: the highest stage whose threshold
     /// is &lt;= progress, or null when below the first stage. Assumes <see cref="stages"/> is
@@ -62,10 +62,10 @@ public class FCSituationDef : Def
     public FCSituationStageDef StageAt(float progress)
     {
         FCSituationStageDef result = null;
-        if (stages == null) return null;
+        if (stages is null) return null;
         for (int i = 0; i < stages.Count; i++)
         {
-            if (stages[i] == null) continue;
+            if (stages[i] is null) continue;
             if (stages[i].threshold <= progress) result = stages[i];
             else break;
         }
@@ -82,28 +82,28 @@ public class FCSituationDef : Def
         if (startProgress < 0f || startProgress > maxProgress)
             yield return $"FCSituationDef {defName}: startProgress {startProgress} outside [0, {maxProgress}].";
 
-        if (approaches == null || approaches.Count == 0)
+        if (approaches is null || approaches.Count == 0)
             yield return $"FCSituationDef {defName}: must define at least one approach.";
 
-        if (defaultApproach == null)
+        if (defaultApproach is null)
             yield return $"FCSituationDef {defName}: defaultApproach is not set.";
         else
         {
-            if (approaches == null || !approaches.Contains(defaultApproach))
+            if (approaches is null || !approaches.Contains(defaultApproach))
                 yield return $"FCSituationDef {defName}: defaultApproach '{defaultApproach.defName}' is not a member of approaches.";
             if (defaultApproach.upkeepSilver != 0)
                 yield return $"FCSituationDef {defName}: defaultApproach '{defaultApproach.defName}' should be free (upkeepSilver is {defaultApproach.upkeepSilver}).";
-            if ((defaultApproach.requiredPolicies != null && defaultApproach.requiredPolicies.Count > 0)
-                || (defaultApproach.requiredResearch != null && defaultApproach.requiredResearch.Count > 0))
+            if ((defaultApproach.requiredPolicies is not null && defaultApproach.requiredPolicies.Count > 0)
+                || (defaultApproach.requiredResearch is not null && defaultApproach.requiredResearch.Count > 0))
                 yield return $"FCSituationDef {defName}: defaultApproach '{defaultApproach.defName}' should be ungated.";
         }
 
-        if (stages != null)
+        if (stages is not null)
         {
             float prev = float.NegativeInfinity;
             foreach (FCSituationStageDef stage in stages)
             {
-                if (stage == null) continue;
+                if (stage is null) continue;
                 if (stage.threshold < prev)
                     yield return $"FCSituationDef {defName}: stage thresholds must be ascending (stage '{stage.defName}' at {stage.threshold} follows {prev}).";
                 if (stage.threshold < 0f || stage.threshold > maxProgress)
@@ -112,11 +112,11 @@ public class FCSituationDef : Def
             }
         }
 
-        if (topBehavior == FCSituationEndpointBehavior.Terminal && topResolutionEvent == null)
+        if (topBehavior == FCSituationEndpointBehavior.Terminal && topResolutionEvent is null)
             yield return $"FCSituationDef {defName}: topBehavior is Terminal but topResolutionEvent is unset.";
-        if (bottomBehavior == FCSituationEndpointBehavior.Terminal && bottomResolutionEvent == null)
+        if (bottomBehavior == FCSituationEndpointBehavior.Terminal && bottomResolutionEvent is null)
             yield return $"FCSituationDef {defName}: bottomBehavior is Terminal but bottomResolutionEvent is unset.";
-        if ((topBehavior == FCSituationEndpointBehavior.Loop || bottomBehavior == FCSituationEndpointBehavior.Loop) && loopEvent == null)
+        if ((topBehavior == FCSituationEndpointBehavior.Loop || bottomBehavior == FCSituationEndpointBehavior.Loop) && loopEvent is null)
             yield return $"FCSituationDef {defName}: a Loop endpoint is set but loopEvent is unset.";
 
         if (blocksSettlementRemoval && scope != FCSituationScope.Settlement)

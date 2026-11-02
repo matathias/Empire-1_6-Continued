@@ -126,7 +126,7 @@ public static class CodexUIUtil
     {
         float curY = startY;
 
-        if (banner is object)
+        if (banner is not null)
         {
             Rect bannerRect = new Rect(0f, curY, width, BannerHeight);
             GUI.DrawTexture(bannerRect, banner, ScaleMode.ScaleToFit);
@@ -212,7 +212,7 @@ public static class CodexUIUtil
         Widgets.DrawBoxSolid(new Rect(entryRect.x, entryRect.y, barWidth, entryRect.height), barColor);
 
         float textX = entryRect.x + textInset;
-        if (icon is object)
+        if (icon is not null)
         {
             Rect iconRect = new Rect(entryRect.x + iconInset, entryRect.y + (entryRect.height - EntryIconSize) * 0.5f,
                 EntryIconSize, EntryIconSize);

@@ -43,7 +43,7 @@ public class WorldSettlementDef : WorldObjectDef
     {
         get
         {
-            if (planetLayers == null || planetLayers.Count == 0)
+            if (planetLayers is null || planetLayers.Count == 0)
                 return "FCCodexLayerSurface".Translate().RawText;
             List<string> labels = new List<string>(planetLayers.Count);
             foreach (PlanetLayerDef layer in planetLayers)
@@ -59,7 +59,7 @@ public class WorldSettlementDef : WorldObjectDef
     /// must be excluded from per-biome foundability listings.
     /// </summary>
     public bool CanFoundOnSurface =>
-        planetLayers == null || planetLayers.Count == 0 || planetLayers.Contains(PlanetLayerDefOf.Surface);
+        planetLayers is null || planetLayers.Count == 0 || planetLayers.Contains(PlanetLayerDefOf.Surface);
 
     /// <summary>
     /// True if this settlement type can be founded on the given tile's planet layer. Empty
@@ -68,7 +68,7 @@ public class WorldSettlementDef : WorldObjectDef
     /// </summary>
     public bool AllowsTileLayer(PlanetTile tile)
     {
-        if (planetLayers == null || planetLayers.Count == 0)
+        if (planetLayers is null || planetLayers.Count == 0)
             return tile.Layer == Find.WorldGrid.Surface;
         return planetLayers.Contains(tile.Layer.Def);
     }
@@ -146,7 +146,7 @@ public class WorldSettlementDef : WorldObjectDef
     public List<ResourceTypeDef> GetResourceDefs()
     {
         List<ResourceTypeDef> list = new List<ResourceTypeDef>();
-        if (resources != null)
+        if (resources is not null)
         {
             foreach (ResourceAvailability rb in resources)
             {
@@ -158,7 +158,7 @@ public class WorldSettlementDef : WorldObjectDef
     public List<string> GetResourceDefNames()
     {
         List<string> list = new List<string>();
-        if (resources != null)
+        if (resources is not null)
         {
             foreach (ResourceAvailability rb in resources)
             {
@@ -169,7 +169,7 @@ public class WorldSettlementDef : WorldObjectDef
     }
     public SettlementTypeExtension GetSettlementTypeExtension()
     {
-        if (modExtensions == null) return null;
+        if (modExtensions is null) return null;
         SettlementTypeExtension result = null;
         for (int i = 0; i < modExtensions.Count; i++)
         {
@@ -268,7 +268,7 @@ public class WorldSettlementDef : WorldObjectDef
         {
             return true;
         }
-        else if (!(baseSettlementType is null))
+        else if (baseSettlementType is not null)
         {
             return baseSettlementType.IsInList(deflist);
         }
@@ -282,9 +282,9 @@ public class WorldSettlementDef : WorldObjectDef
     /// </summary>
     public int DepthInList(List<WorldSettlementDef> deflist)
     {
-        if (deflist == null || deflist.Count == 0) return -1;
+        if (deflist is null || deflist.Count == 0) return -1;
         if (deflist.Contains(this)) return 0;
-        if (baseSettlementType != null)
+        if (baseSettlementType is not null)
         {
             int parentDepth = baseSettlementType.DepthInList(deflist);
             return parentDepth >= 0 ? parentDepth + 1 : -1;
@@ -317,7 +317,7 @@ public class WorldSettlementDef : WorldObjectDef
     public override IEnumerable<string> ConfigErrors()
     {
         IEnumerable<string> errors = base.ConfigErrors();
-        if (errors != null)
+        if (errors is not null)
         {
             foreach (string error in errors)
             {
@@ -325,7 +325,7 @@ public class WorldSettlementDef : WorldObjectDef
             }
         }
 
-        if (resources != null)
+        if (resources is not null)
         {
             foreach (ResourceAvailability rb in resources)
             {
@@ -339,15 +339,15 @@ public class WorldSettlementDef : WorldObjectDef
         {
             yield return "WorldSettlementDef " + defName + "specifies both blocked Biomes and allowed Biomes. Only one list should be specified";
         }
-        if (GetSettlementTypeExtension() == null)
+        if (GetSettlementTypeExtension() is null)
         {
             yield return "WorldSettlementDef " + defName + " does not specify a SettlementTypeExtension_Base";
         }
-        if (baseSettlementType != null)
+        if (baseSettlementType is not null)
         {
             HashSet<WorldSettlementDef> visited = new HashSet<WorldSettlementDef> { this };
             WorldSettlementDef current = baseSettlementType;
-            while (current != null)
+            while (current is not null)
             {
                 if (!visited.Add(current))
                 {

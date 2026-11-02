@@ -22,13 +22,13 @@ public static class Patch_ConvertSettlement
 {
     private static bool Prefix(Settlement worldSettlement, int points)
     {
-        if (!(worldSettlement is WorldSettlementFC))
+        if (worldSettlement is not WorldSettlementFC)
         {
             return true; // run original for non-Empire settlements
         }
 
         RimWarSettlementComp rwsc = worldSettlement.GetComponent<RimWarSettlementComp>();
-        if (rwsc is object)
+        if (rwsc is not null)
         {
             rwsc.PointDamage += points / 2;
             rwsc.AttackingUnits.Clear();

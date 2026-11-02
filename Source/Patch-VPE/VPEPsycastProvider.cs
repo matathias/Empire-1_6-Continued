@@ -25,7 +25,7 @@ public class VPEPsycastProvider : IPsycastSystemProvider
     public string Label => "Vanilla Psycasts Expanded";
     public bool IsActive => FactionCompat.VPEActive;
     public int Priority => 100;
-    public int MaxPsylinkLevel => PsycastsMod.Settings != null ? PsycastsMod.Settings.maxLevel : 30;
+    public int MaxPsylinkLevel => PsycastsMod.Settings is not null ? PsycastsMod.Settings.maxLevel : 30;
     public bool SupportsExplicitSelection => true;
 
     public void OpenEditor(MilUnitFC unit, Action onClosed)
@@ -79,7 +79,7 @@ public class VPEPsycastProvider : IPsycastSystemProvider
     internal static PsycastPickEntry ToEntry(AbilityDef def)
     {
         AbilityExtension_Psycast psycast = def.Psycast();
-        int level = psycast != null ? psycast.level : 0;
+        int level = psycast is not null ? psycast.level : 0;
         return new PsycastPickEntry
         {
             defName = def.defName,
@@ -108,7 +108,7 @@ public class VPEPsycastProvider : IPsycastSystemProvider
             psylink = pawn.GetMainPsylinkSource();
         }
 
-        int current = psylink != null ? psylink.level : 0;
+        int current = psylink is not null ? psylink.level : 0;
         int target = Math.Min(level, MaxPsylinkLevel);
         if (target > current)
             pawn.ChangePsylinkLevel(target - current, false);
@@ -131,7 +131,7 @@ public class VPEPsycastProvider : IPsycastSystemProvider
         {
             int n = entry.count > 0 ? entry.count : 1;
             Hediff_PsycastAbilities statTracker = pawn.Psycasts();
-            if (statTracker != null) statTracker.ImproveStats(n);
+            if (statTracker is not null) statTracker.ImproveStats(n);
             return;
         }
 
@@ -141,7 +141,7 @@ public class VPEPsycastProvider : IPsycastSystemProvider
             MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(entry.psycastDef);
             if (focus is null) return;
             Hediff_PsycastAbilities fociTracker = pawn.Psycasts();
-            if (fociTracker != null && !fociTracker.unlockedMeditationFoci.Contains(focus))
+            if (fociTracker is not null && !fociTracker.unlockedMeditationFoci.Contains(focus))
                 fociTracker.UnlockMeditationFocus(focus);
             return;
         }
@@ -160,7 +160,7 @@ public class VPEPsycastProvider : IPsycastSystemProvider
         // choose, and the chosen set already includes every prereq in order.
         AbilityExtension_Psycast psycast = def.Psycast();
         Hediff_PsycastAbilities tracker = pawn.Psycasts();
-        if (psycast != null && tracker != null && psycast.path != null && !tracker.unlockedPaths.Contains(psycast.path))
+        if (psycast is not null && tracker is not null && psycast.path is not null && !tracker.unlockedPaths.Contains(psycast.path))
             tracker.UnlockPath(psycast.path);
         comp.GiveAbility(def);
     }
@@ -206,19 +206,19 @@ public class VPEPsycastProvider : IPsycastSystemProvider
     private static void Wipe(Pawn pawn)
     {
         Hediff_PsycastAbilities tracker = pawn.Psycasts();
-        if (tracker != null)
+        if (tracker is not null)
         {
             tracker.Reset();
             pawn.health.RemoveHediff(tracker);
         }
 
-        if (pawn.abilities != null)
+        if (pawn.abilities is not null)
         {
             foreach (RimWorld.Ability a in pawn.abilities.abilities.Where(a => a.def.IsPsycast).ToList())
                 pawn.abilities.RemoveAbility(a.def);
         }
 
         Hediff_Psylink ps = pawn.GetMainPsylinkSource();
-        if (ps != null) pawn.health.RemoveHediff(ps);
+        if (ps is not null) pawn.health.RemoveHediff(ps);
     }
 }

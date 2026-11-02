@@ -16,7 +16,7 @@ public static class BattleSimDestructiveTests
     private static Faction AnyOtherFaction()
     {
         return Find.FactionManager?.AllFactionsListForReading
-            .FirstOrDefault(fac => fac != null && !fac.IsPlayer && fac != FindFC.EmpireFaction);
+            .FirstOrDefault(fac => fac is not null && !fac.IsPlayer && fac != FindFC.EmpireFaction);
     }
 
     [EmpireDestructiveTest("Destructive.Battle")]
@@ -34,7 +34,7 @@ public static class BattleSimDestructiveTests
         FindFC.Military.Assign(squad, home, true); // CreateOffensiveOp requires source.settlement
 
         Settlement enemy = Find.WorldObjects.Settlements
-            .FirstOrDefault(s => s.Faction != null && s.Faction.HostileTo(FindFC.EmpireFaction));
+            .FirstOrDefault(s => s.Faction is not null && s.Faction.HostileTo(FindFC.EmpireFaction));
         if (enemy is null) TestAssert.Skip("No hostile settlement to raid");
 
         MilitaryOperation op = null;
@@ -108,7 +108,7 @@ public static class BattleSimDestructiveTests
         MilitaryOperation op = null;
         TestAssert.DoesNotThrow(() => op = FindFC.MilitaryManager.CreateDefensiveOp(settlement, attackerForce, attacker),
             "CreateDefensiveOp threw");
-        if (op != null)
+        if (op is not null)
         {
             TestAssert.IsTrue(FindFC.MilitaryManager.Active.Contains(op), "Defensive op should be registered");
             DestructiveTestUtil.ResolveAndSweepOp(op);

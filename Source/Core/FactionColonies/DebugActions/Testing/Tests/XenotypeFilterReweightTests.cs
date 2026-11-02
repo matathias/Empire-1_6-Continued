@@ -16,7 +16,7 @@ public static class XenotypeFilterReweightTests
     public static void PawnGroupMakers_NoSharedOptionInstanceAcrossLists()
     {
         FactionDef def = FindFC.EmpireFactionDef;
-        if (def?.pawnGroupMakers == null || def.pawnGroupMakers.Count < 4)
+        if (def?.pawnGroupMakers is null || def.pawnGroupMakers.Count < 4)
             TestAssert.Skip("Empire faction pawnGroupMakers not populated");
 
         // The lists SetPawnGroupMakers populates and later reweights per-list.
@@ -35,7 +35,7 @@ public static class XenotypeFilterReweightTests
         int total = 0;
         foreach (List<PawnGenOption> list in lists)
         {
-            if (list == null) continue;
+            if (list is null) continue;
             foreach (PawnGenOption op in list)
             {
                 total++;

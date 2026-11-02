@@ -24,7 +24,7 @@ public class FCSituation : IExposable, ILoadReferenceable
 
     /// <summary>Bar fill fraction in [0, 1], for the progress widget.</summary>
     public float Progress01 =>
-        def != null && def.maxProgress > 0f ? Mathf.Clamp01(progress / def.maxProgress) : 0f;
+        def is not null && def.maxProgress > 0f ? Mathf.Clamp01(progress / def.maxProgress) : 0f;
 
     public string StageSourceId => "situation_" + loadID + "_stage";
     public string ApproachSourceId => "situation_" + loadID + "_approach";
@@ -34,7 +34,7 @@ public class FCSituation : IExposable, ILoadReferenceable
     public float NetDailyRateGiven(bool advancing)
     {
         float baseDelta = advancing ? def.baseRatePerDay : def.decayRatePerDay;
-        return baseDelta + (activeApproach != null ? activeApproach.ratePerDay : 0f);
+        return baseDelta + (activeApproach is not null ? activeApproach.ratePerDay : 0f);
     }
 
     public static string LatchKey(FCSituationStageDef stage, string slot) => stage.defName + "|" + slot;
@@ -53,7 +53,7 @@ public class FCSituation : IExposable, ILoadReferenceable
         Scribe_Values.Look(ref loadID, "loadID", -1);
         Scribe_Values.Look(ref tickStarted, "tickStarted", -1);
 
-        if (Scribe.mode == LoadSaveMode.PostLoadInit && firedStageLatches == null)
+        if (Scribe.mode == LoadSaveMode.PostLoadInit && firedStageLatches is null)
             firedStageLatches = new HashSet<string>();
     }
 }

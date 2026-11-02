@@ -161,7 +161,7 @@ public class BattleProgressWindow : Window
         if (br.IsComplete) return false;
 
         FCEvent evt = op.sourceEvents?.FirstOrDefault(
-            e => e is object && e.def == FCEventDefOf.autoResolveBattleRound);
+            e => e is not null && e.def == FCEventDefOf.autoResolveBattleRound);
         if (evt is null) return false;
 
         ticksRemaining = Mathf.Max(0, evt.timeTillTrigger - Find.TickManager.TicksGame);
@@ -222,7 +222,7 @@ public class BattleProgressWindow : Window
         float blockY = inner.y + titleH + 4f;
         const float iconSize = 40f;
         const float blockH = 44f;
-        bool drawIcon = faction is object;
+        bool drawIcon = faction is not null;
         Rect textBlockRect;
         if (drawIcon)
         {
@@ -300,7 +300,7 @@ public class BattleProgressWindow : Window
         if (isPlayerSide)
         {
             Faction player = FindFC.EmpireFaction;
-            Color baseColor = player is object
+            Color baseColor = player is not null
                 ? player.Color
                 : new Color(0.30f, 0.55f, 0.75f);
             return ColorUtil.Transform(baseColor, 0.5f, 0.55f);
@@ -314,7 +314,7 @@ public class BattleProgressWindow : Window
        against the player's defender-blue (or vice versa) regardless of POV. */
     private static Color ResolveFactionHeaderTint(Faction faction, bool isAttacker)
     {
-        if (faction is object)
+        if (faction is not null)
         {
             return ColorUtil.TransformRGB(faction.Color, 0.5f);
         }

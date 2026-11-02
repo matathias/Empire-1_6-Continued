@@ -80,7 +80,7 @@ public class Dialog_SquadAssignment : Window
         if (fc is null || mfc is null) return;
 
         List<RowData> rows = new List<RowData>();
-        if (fc.settlements is object)
+        if (fc.settlements is not null)
         {
             foreach (WorldSettlementFC s in fc.settlements)
             {

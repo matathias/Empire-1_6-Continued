@@ -100,7 +100,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
 
         // Incoming attacker force line
         Text.Anchor = TextAnchor.MiddleCenter;
-        if (attackerForce is object)
+        if (attackerForce is not null)
         {
             float lineH = 22f;
             string forceLine = "FCDefenderPickerIncoming".Translate(
@@ -127,7 +127,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
     private string BuildCurrentDefenderLine()
     {
         if (op?.defender is null) return null;
-        if (op.externalDefenderSource is object)
+        if (op.externalDefenderSource is not null)
         {
             return "FCDefenderPickerCurrentExternal".Translate(op.externalDefenderSource.LabelCap,
                 Math.Round(op.defender.force?.DefensivePower ?? 0).ToString("0"));
@@ -147,7 +147,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
     protected override MercenarySquadFC CurrentSquadIndicator => op?.defender?.squad;
 
     protected override bool CanConfirm() =>
-        (selected is object && selected.IsAvailable) || selectedExternal is object;
+        (selected is not null && selected.IsAvailable) || selectedExternal is not null;
 
     protected override void OnRowSelected(MercenarySquadFC squad)
     {
@@ -158,13 +158,13 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
     protected override void Confirm()
     {
         if (op is null || evt is null) { Close(); return; }
-        if (selectedExternal is object)
+        if (selectedExternal is not null)
         {
             MilitaryOperationsUtil.ChangeDefendingToExternalForce(evt, selectedExternal);
             Close();
             return;
         }
-        if (selected is object && selected.IsAvailable)
+        if (selected is not null && selected.IsAvailable)
         {
             MilitaryOperationsUtil.ChangeDefendingToSquad(evt, selected);
             Close();
@@ -196,7 +196,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
             // Filter by defense validators (e.g. road / range gates) for foreign squads.
             // Skip the gate entirely when there's no home settlement (target is an external
             // raid target like a VOE outpost) — validators are settlement-scoped today.
-            if (homeSettlement is object
+            if (homeSettlement is not null
                 && squad.settlement != homeSettlement
                 && !DefenseValidatorRegistry.CanDefend(squad.settlement, homeSettlement))
                 continue;
@@ -205,7 +205,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
 
             MilitaryForce defenderForce = MilitaryForce.CreateMilitaryForceFromSquad(squad);
 
-            bool hasDefenderForce = defenderForce is object;
+            bool hasDefenderForce = defenderForce is not null;
             double defenderPower = SquadPowerRegistry.Resolve(squad).militaryLevel;
             double defenderEff = defenderForce?.militaryEfficiency ?? 0;
 
@@ -286,7 +286,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
             if (distance > defender.Range) continue;
 
             MilitaryForce extForce = defender.CreateDefendingForce();
-            double extWc = extForce is object
+            double extWc = extForce is not null
                 ? SimulateBattleFc.CalculateDefenderWinChance(attackerForce, extForce)
                 : 0;
             externalRows.Add(new ExternalRow
@@ -294,7 +294,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
                 defender = defender,
                 distance = distance,
                 winChance = extWc,
-                hasForce = extForce is object,
+                hasForce = extForce is not null,
                 power = defender.MilitaryLevel,
                 efficiency = extForce?.militaryEfficiency ?? 0
             });

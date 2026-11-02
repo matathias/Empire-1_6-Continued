@@ -12,12 +12,12 @@ internal class RegistryList<T> where T : class
 
     public void Register(T item)
     {
-        if (item is object && !_items.Contains(item)) _items.Add(item);
+        if (item is not null && !_items.Contains(item)) _items.Add(item);
     }
 
     public void Unregister(T item)
     {
-        if (item is object) _items.Remove(item);
+        if (item is not null) _items.Remove(item);
     }
 
     public void ClearAll() => _items.Clear();

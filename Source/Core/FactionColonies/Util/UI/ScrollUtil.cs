@@ -16,7 +16,7 @@ public static class ScrollUtil
 
     private static void EnsureStyles()
     {
-        if (trackStyle is object) return;
+        if (trackStyle is not null) return;
 
         trackStyle = new GUIStyle(GUI.skin.verticalScrollbar);
         trackStyle.normal.background = TexLoad.scrollTrack;

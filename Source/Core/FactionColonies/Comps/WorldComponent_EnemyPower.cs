@@ -49,12 +49,12 @@ public class WorldComponent_EnemyPower : WorldComponent
          * PostLoadInit prune below stays as a backstop for already-saved games. */
         if (Scribe.mode == LoadSaveMode.Saving)
         {
-            if (settlementPowers is object)
+            if (settlementPowers is not null)
             {
                 List<Settlement> staleSettlements = settlementPowers.Where(kv => kv.Key is null || kv.Key.Destroyed).Select(kv => kv.Key).ToList();
                 foreach (Settlement k in staleSettlements) settlementPowers.Remove(k);
             }
-            if (factionPowers is object)
+            if (factionPowers is not null)
             {
                 List<Faction> staleFactions = factionPowers.Where(kv => kv.Key is null).Select(kv => kv.Key).ToList();
                 foreach (Faction k in staleFactions) factionPowers.Remove(k);
@@ -210,7 +210,7 @@ public class WorldComponent_EnemyPower : WorldComponent
         if (target is null && op.targetTile.Valid)
             target = Find.WorldObjects.SettlementAt(op.targetTile);
 
-        EnemyPower entry = target is object
+        EnemyPower entry = target is not null
             ? GetOrCompute(target)
             : GetOrCompute(op.defender.faction);
         if (entry is null) return null;
@@ -272,7 +272,7 @@ public class WorldComponent_EnemyPower : WorldComponent
 
     private void BuildDefCachesIfNeeded()
     {
-        if (techDefCache is object) return;
+        if (techDefCache is not null) return;
         techDefCache = new Dictionary<TechLevel, EnemyPowerTechDef>();
         foreach (EnemyPowerTechDef d in DefDatabase<EnemyPowerTechDef>.AllDefsListForReading)
         {
@@ -322,7 +322,7 @@ public class WorldComponent_EnemyPower : WorldComponent
     {
         double level = 1.0, efficiency = 1.0, levelVariance = 2.0, efficiencyVariance = 0.0;
 
-        if (faction is object && faction.def is object)
+        if (faction is not null && faction.def is not null)
         {
             EnemyPowerTechDef techDef = GetTechDef(faction.def.techLevel);
             if (techDef is null)
@@ -338,7 +338,7 @@ public class WorldComponent_EnemyPower : WorldComponent
             }
 
             EnemyPowerFactionDef factionDef = GetFactionDef(faction.def);
-            if (factionDef is object)
+            if (factionDef is not null)
             {
                 if (factionDef.level.HasValue) level = factionDef.level.Value;
                 if (factionDef.efficiency.HasValue) efficiency = factionDef.efficiency.Value;

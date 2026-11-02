@@ -23,7 +23,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
     public override void SetFilter(ThingFilter filter, TechLevel techlevel, ResourceFC resource = null)
     {
         // A non-null resource signals the real production/tithe path; trade passes null.
-        bool applyResearchGate = resource is object;
+        bool applyResearchGate = resource is not null;
 
         foreach (KeyValuePair<ThingDef, List<List<ResearchProjectDef>>> fabric in CraftedFabrics)
         {
@@ -42,7 +42,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
 
             // Show a research requirement only when there is no ungated way to craft this fabric.
             List<ResearchProjectDef> requirement = MinimalRequirement(fabric.Value);
-            if (requirement != null)
+            if (requirement is not null)
             {
                 TitheRestrictionInfo info = new TitheRestrictionInfo();
                 info.researchProjects = requirement;
@@ -66,7 +66,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
         if (prereqs.NullOrEmpty()) return true;
         foreach (ResearchProjectDef proj in prereqs)
         {
-            if (proj is object && !proj.IsFinished) return false;
+            if (proj is not null && !proj.IsFinished) return false;
         }
         return true;
     }
@@ -96,7 +96,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
             if (category is null) continue;
             foreach (ThingDef child in category.childThingDefs)
             {
-                if (child is object) fabrics.Add(child);
+                if (child is not null) fabrics.Add(child);
             }
         }
 
@@ -112,7 +112,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
                 if (product?.thingDef is null || !fabrics.Contains(product.thingDef)) continue;
 
                 List<ResearchProjectDef> prereqs = new List<ResearchProjectDef>();
-                if (recipe.researchPrerequisite is object) prereqs.Add(recipe.researchPrerequisite);
+                if (recipe.researchPrerequisite is not null) prereqs.Add(recipe.researchPrerequisite);
                 if (!recipe.researchPrerequisites.NullOrEmpty()) prereqs.AddRange(recipe.researchPrerequisites);
 
                 List<List<ResearchProjectDef>> producers;

@@ -107,7 +107,7 @@ public class BuildingFCDef : Def
 
         IList<TileMutatorDef> mutators = tile.Tile?.Mutators;
 
-        if (hasBlock && mutators != null)
+        if (hasBlock && mutators is not null)
         {
             foreach (TileMutatorDef m in mutators)
             {
@@ -201,7 +201,7 @@ public class BuildingFCDef : Def
     /// </summary>
     private bool MeetsResourceRequirement(WorldSettlementDef settlement)
     {
-        if (resourceMatchCache == null)
+        if (resourceMatchCache is null)
             resourceMatchCache = new Dictionary<BuildingFCDef, Dictionary<WorldSettlementDef, bool>>();
 
         Dictionary<WorldSettlementDef, bool> inner;
@@ -216,16 +216,16 @@ public class BuildingFCDef : Def
             return cached;
 
         bool result = true;
-        if (statModifiers != null)
+        if (statModifiers is not null)
         {
             bool hasResourceStat = false;
             bool matchesAny = false;
             foreach (FCStatModifier mod in statModifiers)
             {
-                if (mod.stat != null && mod.stat.linkedResource != null && mod.IsBeneficial())
+                if (mod.stat is not null && mod.stat.linkedResource is not null && mod.IsBeneficial())
                 {
                     hasResourceStat = true;
-                    if (settlement.GetSettlementResource(mod.stat.linkedResource) != null)
+                    if (settlement.GetSettlementResource(mod.stat.linkedResource) is not null)
                     {
                         matchesAny = true;
                         break;
@@ -268,7 +268,7 @@ public class BuildingFCDef : Def
             BuildingFCDef current = stack.Pop();
             if (!visited.Add(current) && current == start) return true;
             List<BuildingFCDef> children = getChildren(current);
-            if (children == null) continue;
+            if (children is null) continue;
             foreach (BuildingFCDef child in children)
             {
                 if (child == start) return true;

@@ -105,9 +105,9 @@ public class FCWindow_ProjectilePicker : Window
 
         // Confirm (left of cancel)
         Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
-        if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: selectedProjectile != null))
+        if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: selectedProjectile is not null))
         {
-            if (selectedProjectile != null)
+            if (selectedProjectile is not null)
             {
                 onSelect(selectedProjectile);
                 Close();

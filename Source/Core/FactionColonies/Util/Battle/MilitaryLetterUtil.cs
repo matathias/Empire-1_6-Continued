@@ -47,11 +47,11 @@ internal static class MilitaryLetterUtil
 
     /// <summary>True when the player won and the winning side took zero casualties.</summary>
     public static bool IsOverwhelmingWin(BattleResult result, bool playerWon)
-        => playerWon && result is object && result.IsOverwhelmingVictory;
+        => playerWon && result is not null && result.IsOverwhelmingVictory;
 
     /// <summary>True when the player lost and inflicted zero casualties on the winner.</summary>
     public static bool IsCrushingLoss(BattleResult result, bool playerWon)
-        => !playerWon && result is object && result.IsOverwhelmingVictory;
+        => !playerWon && result is not null && result.IsOverwhelmingVictory;
 
     /// <summary>
     /// Applies the overwhelming-victory happiness/loyalty reward to <paramref name="home"/>

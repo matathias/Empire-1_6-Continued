@@ -329,7 +329,7 @@ public class CodexTab_Biomes : ICodexTab
         float contentWidth = viewRect.width;
         float curY = 0f;
 
-        if (selectedEntry is object)
+        if (selectedEntry is not null)
         {
             /* Banner */
             curY = CodexUIUtil.DrawRightPaneBannerHeader(curY, contentWidth,
@@ -424,7 +424,7 @@ public class CodexTab_Biomes : ICodexTab
         int count = 0;
         foreach (ResourceTypeDef res in FactionCache.SortedResourceTypeDefsForUI)
         {
-            if (selectedEntry.resourceDef.GetBiomeResource(res) is object)
+            if (selectedEntry.resourceDef.GetBiomeResource(res) is not null)
                 count++;
         }
         return count;
@@ -459,9 +459,9 @@ public class CodexTab_Biomes : ICodexTab
         foreach (WorldSettlementDef def in FactionCache.AvailableWorldSettlementDefs)
         {
             if (!def.CanFoundOnSurface) continue; // orbital/non-surface types aren't foundable in any (surface) biome
-            if (def.allowedBiomes != null && def.allowedBiomes.Count > 0 && !def.allowedBiomes.Contains(bd))
+            if (def.allowedBiomes is not null && def.allowedBiomes.Count > 0 && !def.allowedBiomes.Contains(bd))
                 continue;
-            if (def.blockedBiomes != null && def.blockedBiomes.Contains(bd))
+            if (def.blockedBiomes is not null && def.blockedBiomes.Contains(bd))
                 continue;
             result.Add(def);
         }
@@ -574,9 +574,9 @@ public class CodexTab_Biomes : ICodexTab
     {
         float total = 0f;
 
-        if (selectedEntry is object)
+        if (selectedEntry is not null)
         {
-            if (UIUtil.GetModBanner(selectedEntry.biomeDef.modContentPack) is object)
+            if (UIUtil.GetModBanner(selectedEntry.biomeDef.modContentPack) is not null)
                 total += BannerHeight + SmallMargin;
             string modName = selectedEntry.biomeDef.modContentPack?.ModMetaData?.Name ?? "";
             if (!modName.NullOrEmpty())

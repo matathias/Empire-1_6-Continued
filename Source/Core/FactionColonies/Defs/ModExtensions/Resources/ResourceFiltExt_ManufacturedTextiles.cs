@@ -45,10 +45,10 @@ public class ResourceFilterExtension_ManufacturedTextiles : ResourceFilterExtens
             // Any race (animal or humanlike) contributes its leather; shearable animals their wool.
             if (def.race is null) continue;
 
-            if (def.race.leatherDef is object) organismDerived.Add(def.race.leatherDef);
+            if (def.race.leatherDef is not null) organismDerived.Add(def.race.leatherDef);
 
             CompProperties_Shearable shearable = def.GetCompProperties<CompProperties_Shearable>();
-            if (shearable?.woolDef is object) organismDerived.Add(shearable.woolDef);
+            if (shearable?.woolDef is not null) organismDerived.Add(shearable.woolDef);
         }
         return organismDerived;
     }

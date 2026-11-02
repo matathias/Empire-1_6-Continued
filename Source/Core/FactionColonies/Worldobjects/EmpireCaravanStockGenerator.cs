@@ -133,7 +133,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
         List<ThingDef> itemCandidates = new List<ThingDef>();
         foreach (ThingDef td in candidates)
         {
-            if (td.race is object)
+            if (td.race is not null)
                 pawnCandidates.Add(td);
             else
                 itemCandidates.Add(td);
@@ -173,7 +173,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
             if (allowedCount > 0)
             {
                 PawnKindDef pawnKind = td.race.AnyPawnKind;
-                if (pawnKind is object)
+                if (pawnKind is not null)
                 {
                     plannedPawns.Add(new KeyValuePair<PawnKindDef, int>(pawnKind, allowedCount));
                     runningPawnTotal += allowedCount;
@@ -195,7 +195,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
             {
                 PawnGenerationRequest request = new PawnGenerationRequest(entry.Key, null, PawnGenerationContext.NonPlayer);
                 Pawn pawn = PawnGenerator.GeneratePawn(request);
-                if (pawn is object) yield return pawn;
+                if (pawn is not null) yield return pawn;
             }
         }
 
@@ -253,7 +253,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
             return false;
 
         return EmpireTradeFilterUtil.IsCommonEssential(thingDef)
-            || (resourceDef is object && resourceDef.AllowsForTrade(thingDef));
+            || (resourceDef is not null && resourceDef.AllowsForTrade(thingDef));
     }
 
     public override IEnumerable<string> ConfigErrors(TraderKindDef parentDef)

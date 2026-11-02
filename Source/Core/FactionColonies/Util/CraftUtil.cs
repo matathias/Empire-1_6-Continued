@@ -6,9 +6,9 @@ public static class CraftUtil
     {
         bool canCraft = true;
         if (WeaponBlockedForCrafting(thing)) return false;
-        if (thing.recipeMaker != null)
+        if (thing.recipeMaker is not null)
         {
-            if (thing.recipeMaker.researchPrerequisites != null)
+            if (thing.recipeMaker.researchPrerequisites is not null)
             {
                 foreach (ResearchProjectDef research in thing.recipeMaker.researchPrerequisites)
                 {
@@ -20,7 +20,7 @@ public static class CraftUtil
                 }
             }
 
-            if (thing.recipeMaker.researchPrerequisite != null)
+            if (thing.recipeMaker.researchPrerequisite is not null)
             {
                 if (!(Find.ResearchManager.GetProgress(thing.recipeMaker.researchPrerequisite) >=
                       thing.recipeMaker.researchPrerequisite.baseCost))
@@ -38,7 +38,7 @@ public static class CraftUtil
             }
         }
 
-        if (thing.thingSetMakerTags != null && thing.thingSetMakerTags.Contains("SingleUseWeapon") &&
+        if (thing.thingSetMakerTags is not null && thing.thingSetMakerTags.Contains("SingleUseWeapon") &&
             !includeSingleUse)
         {
             canCraft = false;
@@ -115,7 +115,7 @@ public static class CraftUtil
         }
         else
         {
-            if (stuff != null && ThingIsStuffable(thing))
+            if (stuff is not null && ThingIsStuffable(thing))
             {
                 value = StatWorker_MarketValue.CalculatedBaseMarketValue(thing, stuff);
             }

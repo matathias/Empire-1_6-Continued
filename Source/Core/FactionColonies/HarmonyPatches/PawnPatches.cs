@@ -19,10 +19,10 @@ class MercenaryDied
             var mfc = FindFC.Military;
             if (mfc is null) return true;
             MercenarySquadFC squad = mfc.ReturnSquadFromUnit(__instance);
-            if (squad != null)
+            if (squad is not null)
             {
                 Mercenary merc = mfc.ReturnMercenaryFromUnit(__instance, squad);
-                if (merc != null)
+                if (merc is not null)
                 {
                     // Fire death event so submods can react. Auto-replacement was removed by
                     // the strict-manual outfit refactor; the merc's slot is left as an empty
@@ -49,7 +49,7 @@ class MercenaryDied
                 // ReturnSquadFromUnit only matches on-map pawns; a sub-pawn can die off-map.
                 // Fall back to a global, map-independent sub-pawn lookup before warning.
                 Mercenary sub = mfc.FindSubPawnWrapper(__instance);
-                if (sub != null) NullDeadSubPawn(sub);
+                if (sub is not null) NullDeadSubPawn(sub);
                 else LogUtil.Warning("Mercenary Errored out. Did not find squad.");
             }
 
@@ -97,7 +97,7 @@ class MercenaryDied
     static void NullDeadSubPawn(Mercenary sub)
     {
         if (sub is null) return;
-        if (sub.subPawnType == Mercenary.SubPawnType.Mech && sub.handler?.pawn != null && sub.pawn != null)
+        if (sub.subPawnType == Mercenary.SubPawnType.Mech && sub.handler?.pawn is not null && sub.pawn is not null)
             MercenaryPawnFactory.UnbondMech(sub.handler.pawn, sub.pawn);
         sub.pawn = null;
         FindFC.Military?.RebuildMercenaryPawnSet();
@@ -121,7 +121,7 @@ class MercSubPawnsFollowFaction
         foreach (Mercenary sub in merc.SubPawns())
         {
             Pawn p = sub?.pawn;
-            if (p != null && !p.Dead && !p.Destroyed && p.Faction != newFaction)
+            if (p is not null && !p.Dead && !p.Destroyed && p.Faction != newFaction)
                 p.SetFaction(newFaction);
         }
     }

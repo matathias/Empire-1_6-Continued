@@ -14,7 +14,7 @@ public static class PrisonerReturnDestructiveTests
     [EmpireDestructiveTest("Destructive.Military")]
     public static void ReturnPrisonerToPlayer_NoHomeMap_RetainsPrisonerNoThrow()
     {
-        if (Find.AnyPlayerHomeMap is object)
+        if (Find.AnyPlayerHomeMap is not null)
             TestAssert.Skip("Player has a home map; the no-home-map guard is unreachable");
 
         FactionFC f = DestructiveTestUtil.RequireFaction();
@@ -40,8 +40,8 @@ public static class PrisonerReturnDestructiveTests
         }
         finally
         {
-            if (prisoner != null) comp.prisonerList.Remove(prisoner);
-            if (pawn != null && !pawn.Destroyed) pawn.Destroy();
+            if (prisoner is not null) comp.prisonerList.Remove(prisoner);
+            if (pawn is not null && !pawn.Destroyed) pawn.Destroy();
         }
 
         DestructiveTestUtil.AssertEmpireInvariants(f, "ReturnPrisonerToPlayer_NoHomeMap_RetainsPrisonerNoThrow");

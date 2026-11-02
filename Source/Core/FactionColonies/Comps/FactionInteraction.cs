@@ -39,13 +39,13 @@ public class WorldObjectComp_FactionInteraction : WorldObjectComp
         // settlement in person (vanilla caravan / quest site), and an Empire op would hijack that
         // map. Prevents opening an attack dialog that can only be rejected at launch.
         bool blockLaunch = (FindFC.MilitaryManager?.HasActiveOpAt(tile) ?? false)
-            || Current.Game.FindMap(tile) is object;
+            || Current.Game.FindMap(tile) is not null;
         if (!blockLaunch && FindFC.FactionComp.IsActionAllowed(FCActionType.DeployMilitary))
             yield return HostileAction(factionFC, faction, tile);
     }
 
     private bool HasValidFaction() =>
-        parent.Faction is object &&
+        parent.Faction is not null &&
         parent.Faction != FindFC.EmpireFaction &&
         parent.Faction != Find.FactionManager.OfPlayer;
 
@@ -67,7 +67,7 @@ public class WorldObjectComp_FactionInteraction : WorldObjectComp
 
                 List<MilitaryJobDef> jobs = FactionCache.HostileMilitaryJobs
                     .Where(j => FindFC.FactionComp.IsMilitaryJobAllowed(j))
-                    .Where(j => j.Handler == null || j.Handler.IsValidTarget(faction))
+                    .Where(j => j.Handler is null || j.Handler.IsValidTarget(faction))
                     .ToList();
                 if (jobs.Count == 0)
                 {

@@ -41,7 +41,7 @@ public class Building_CapitalSpot : Building
     private void SetAsEmpireCapital()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction != null && Map != null)
+        if (faction is not null && Map is not null)
         {
             PlanetTile newTile = Map.Parent.Tile;
             faction.capitalLocation = newTile;
@@ -54,14 +54,14 @@ public class Building_CapitalSpot : Building
         }
         else
         {
-            LogUtil.Error($"Capital Building: Failed to set capital - faction={faction != null}, Map={Map != null}");
+            LogUtil.Error($"Capital Building: Failed to set capital - faction={faction is not null}, Map={Map is not null}");
         }
     }
 
     // Check if the map tile has changed and update capital location accordingly
     private void UpdateCapitalLocationIfMoved()
     {
-        if (isActiveCapitalSpot && Map != null)
+        if (isActiveCapitalSpot && Map is not null)
         {
             PlanetTile currentTile = Map.Parent.Tile;
 
@@ -78,7 +78,7 @@ public class Building_CapitalSpot : Building
             {
                 // The gravship has moved! Update the capital location
                 FactionFC faction = FindFC.FactionComp;
-                if (faction != null)
+                if (faction is not null)
                 {
                     PlanetTile oldCapital = faction.capitalLocation;
                     faction.capitalLocation = currentTile;
@@ -114,7 +114,7 @@ public class Building_CapitalSpot : Building
         Scribe_Values.Look(ref lastKnownTile, "lastKnownTile", PlanetTile.Invalid);
 
         // After loading, if this is the active capital spot but lastKnownTile is uninitialized, set it
-        if (Scribe.mode == LoadSaveMode.PostLoadInit && isActiveCapitalSpot && !lastKnownTile.Valid && Map != null)
+        if (Scribe.mode == LoadSaveMode.PostLoadInit && isActiveCapitalSpot && !lastKnownTile.Valid && Map is not null)
         {
             lastKnownTile = Map.Parent.Tile;
         }
@@ -191,7 +191,7 @@ public class Building_CapitalSpot : Building
         if (isActiveCapitalSpot && mode != DestroyMode.WillReplace)
         {
             FactionFC faction = FindFC.FactionComp;
-            if (faction != null)
+            if (faction is not null)
             {
                 faction.capitalLocation = PlanetTile.Invalid;
                 Messages.Message(

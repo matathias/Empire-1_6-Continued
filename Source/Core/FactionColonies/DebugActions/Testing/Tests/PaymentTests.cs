@@ -257,7 +257,7 @@ public static class PaymentTests
     {
         ResourceEventRewardDef rewardDef = DefDatabase<ResourceEventRewardDef>.AllDefsListForReading
             .FirstOrDefault();
-        if (rewardDef == null) TestAssert.Skip("No ResourceEventRewardDef found");
+        if (rewardDef is null) TestAssert.Skip("No ResourceEventRewardDef found");
 
         List<Thing> result = PaymentUtil.GenerateRewardThings(500, rewardDef);
 

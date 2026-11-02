@@ -72,7 +72,7 @@ public class MainTabWindow_Squads : Window
         }
 
         // Auto-replace-fallen toggle — label + checkbox sitting left of the Hire Squads button.
-        if (mfc is object)
+        if (mfc is not null)
         {
             const float toggleW = 150f;
             Rect toggleRect = new Rect(hireBtnRect.x - toggleW - 8f, rect.y + Pad, toggleW, hireBtnH);

@@ -81,7 +81,7 @@ public sealed class SettlementWindowFc : Window
         foreach (WorldObjectComp comp in settlement.AllComps)
         {
             ISettlementWindowOverview overview = comp as ISettlementWindowOverview;
-            if (!(overview is null))
+            if (overview is not null)
             {
                 if (!overview.ShouldShowOverviewTab(settlement)) continue;
                 overview.PreOpenWindow(settlement);
@@ -127,7 +127,7 @@ public sealed class SettlementWindowFc : Window
 
     public SettlementWindowFc(WorldSettlementFC settlement)
     {
-        if (settlement == null)
+        if (settlement is null)
         {
             Close();
             return;
@@ -292,7 +292,7 @@ public sealed class SettlementWindowFc : Window
         Rect leftBox = new Rect(boundingBox.x, boundingBox.y, constructionBoxWidth, boundingBox.height);
         Rect rightBox = new Rect(leftBox.xMax, leftBox.y, buildingBoxWidth, boundingBox.height);
 
-        if (settlement.BuildingsComp == null)
+        if (settlement.BuildingsComp is null)
         {
             DrawFacilities(rightBox);
             return;
@@ -575,7 +575,7 @@ public sealed class SettlementWindowFc : Window
     private void UpdateTitheDictBuffers(ResourceFC res)
     {
         titheBuffers.Clear();
-        if (res != null)
+        if (res is not null)
         {
             foreach (TitheEntry e in res.Tithes)
             {
@@ -587,7 +587,7 @@ public sealed class SettlementWindowFc : Window
     }
     private void KeepTitheDictBuffersUpdated(ResourceFC res)
     {
-        if (res != null && currentDictSize != res.GetTitheListCount())
+        if (res is not null && currentDictSize != res.GetTitheListCount())
         {
             UpdateTitheDictBuffers(res);
         }
@@ -986,7 +986,7 @@ public sealed class SettlementWindowFc : Window
         // the explanation already covers the half-power rule. Name the actual power-source squad when present.
         MercenarySquadFC powerSource = settlement.GetPowerSourceSquad();
         string powerSourceLine;
-        if (powerSource is object)
+        if (powerSource is not null)
             powerSourceLine = "FCMilPowerSource".Translate(powerSource.DisplayName);
         else if (powStatus == SettlementPowerStatus.NoMilitary)
             powerSourceLine = "FCMilPowerTipNoMilitary".Translate();
@@ -1207,7 +1207,7 @@ public sealed class SettlementWindowFc : Window
         FindFC.PolicyManager.ForEachBehavior(b =>
         {
             var actions = b.GetSettlementActions(factionfc, settlement);
-            if (actions != null)
+            if (actions is not null)
                 list.AddRange(actions);
         });
 
@@ -1258,7 +1258,7 @@ public sealed class SettlementWindowFc : Window
             MilitaryOperation op = evt?.linkedOperation;
             MilitaryForce attackerForce = op?.aggressor?.force;
             MilitaryForce defenderForce = op?.defender?.force;
-            if (attackerForce is object && defenderForce is object)
+            if (attackerForce is not null && defenderForce is not null)
             {
                 double winChance = SimulateBattleFc.CalculateDefenderWinChance(attackerForce, defenderForce);
                 list.Add(new FloatMenuOption(
@@ -1270,7 +1270,7 @@ public sealed class SettlementWindowFc : Window
 
             FCEvent capturedEvt = evt;
             list.Add(new FloatMenuOption("FCChangeDefendingForce".Translate(),
-                capturedEvt is object
+                capturedEvt is not null
                     ? (Action)delegate { Find.WindowStack.Add(new Dialog_DefendSettlement(capturedEvt)); }
             : null));
         }

@@ -227,7 +227,7 @@ public class ResourceFC : IExposable
         get
         {
             double total = 0;
-            if (settlement is object)
+            if (settlement is not null)
             {
                 foreach (WorldObjectComp comp in settlement.AllComps)
                 {
@@ -246,7 +246,7 @@ public class ResourceFC : IExposable
         {
             if (iconLoaded != null) return iconLoaded;
 
-            if (def != null)
+            if (def is not null)
             {
                 iconLoaded = def.Icon;
             }
@@ -267,7 +267,7 @@ public class ResourceFC : IExposable
     {
         this.settlement = settlement;
         def = resourceDef;
-        if (resourceDef == null)
+        if (resourceDef is null)
         {
             /* This is a super bad case that should never happen. Find a way to make this a bigger error? */
             LogUtil.Error($"Created ResourceFC with NULL resourceDef!");
@@ -276,7 +276,7 @@ public class ResourceFC : IExposable
         randomTitheBudget = 0;
         productionAdditives.Clear();
         productionMultipliers.Clear();
-        if (settlement != null)
+        if (settlement is not null)
         {
             SetBaseResourceBonuses();
         }
@@ -302,7 +302,7 @@ public class ResourceFC : IExposable
                 // Legacy: read the old Dictionary<ThingQualityTuple,int> node "tithes" and seed the list.
                 Dictionary<ThingQualityTuple, int> legacy = null;
                 Scribe_Collections.Look(ref legacy, "tithes", LookMode.Deep, LookMode.Value);
-                if (legacy is object)
+                if (legacy is not null)
                     foreach (var kv in legacy)
                         tithes.Add(new TitheEntry(kv.Key, kv.Value)); // arbitrary order — player re-prioritizes
             }
@@ -335,10 +335,10 @@ public class ResourceFC : IExposable
     private double CalculateProductionBase()
     {
         double dictBase = ResourceFormulas.CalculateProductionBase(productionAdditives.Values.Select(p => p.value));
-        double statBase = (settlement != null && def.productionAdditiveStat != null)
+        double statBase = (settlement is not null && def.productionAdditiveStat is not null)
             ? settlement.GetStatValue(def.productionAdditiveStat) : 0;
         double compBase = 0;
-        if (settlement != null)
+        if (settlement is not null)
         {
             foreach (WorldObjectComp comp in settlement.AllComps)
             {
@@ -346,7 +346,7 @@ public class ResourceFC : IExposable
                     compBase += provider.GetResourceAdditiveModifier(this);
             }
         }
-        double workerBase = (settlement != null)
+        double workerBase = (settlement is not null)
             ? settlement.GetStatValue(FCStatDefOf.workerProductionBase) + FCSettings.workerProductionBaseBonus : 0;
         return dictBase + statBase + compBase + workerBase;
     }
@@ -361,10 +361,10 @@ public class ResourceFC : IExposable
     {
         double taxBonus = settlement?.GetSettlementTaxBonus() ?? 1;
         double dictMult = ResourceFormulas.CalculateProductionMult(productionMultipliers.Values.Select(p => p.value), 1.0);
-        double statMult = (settlement != null && def.productionMultiplierStat != null)
+        double statMult = (settlement is not null && def.productionMultiplierStat is not null)
             ? settlement.GetStatValue(def.productionMultiplierStat) : 1;
         double compMult = 1;
-        if (settlement != null)
+        if (settlement is not null)
         {
             foreach (WorldObjectComp comp in settlement.AllComps)
             {
@@ -372,8 +372,8 @@ public class ResourceFC : IExposable
                     compMult *= provider.GetResourceMultiplierModifier(this);
             }
         }
-        double prosperityMult = (settlement != null) ? (settlement.prosperity / 100.0) : 1.0;
-        double workerMult = (settlement != null)
+        double prosperityMult = (settlement is not null) ? (settlement.prosperity / 100.0) : 1.0;
+        double workerMult = (settlement is not null)
             ? settlement.GetStatValue(FCStatDefOf.workerProductionMultiplier) * FCSettings.workerProductionMultBonus : 1;
         return dictMult * statMult * compMult * taxBonus * prosperityMult * workerMult;
     }
@@ -546,13 +546,13 @@ public class ResourceFC : IExposable
     /// </summary>
     private void SetBaseResourceBonuses()
     {
-        if (settlement == null) return;
+        if (settlement is null) return;
 
         string settlementId = settlement.Name ?? "nullsettlement";
 
         // --- Biome bonuses ---
         ResourceAvailability biomeRes = settlement.biomeDef.GetBiomeResource(def);
-        if (biomeRes == null)
+        if (biomeRes is null)
         {
             LogUtil.Error($"Found NULL biomeBonus for resource {def} in settlement {settlement.Name}, despite the ResourceFC already existing");
         }
@@ -567,7 +567,7 @@ public class ResourceFC : IExposable
 
         // --- Settlement type bonuses ---
         ResourceAvailability settleRes = settlement.settlementDef.GetSettlementResource(def);
-        if (settleRes != null)
+        if (settleRes is not null)
         {
             string settleId = $"{def.defName}_settle_{settlement.settlementDef.defName}_{settlementId}";
             if (settleRes.additive != 0)
@@ -577,7 +577,7 @@ public class ResourceFC : IExposable
         }
 
         // --- ResourceProductionExtension bonuses ---
-        if (def?.modExtensions != null)
+        if (def?.modExtensions is not null)
         {
             foreach (ResourceProductionExtension ext in def.modExtensions.OfType<ResourceProductionExtension>())
             {
@@ -592,7 +592,7 @@ public class ResourceFC : IExposable
         // --- Tile landmark bonuses ---
         Landmark landmark = settlement.Tile.Tile?.Landmark;
         TileLandmarkResourceExtension lmExt = landmark?.def?.GetModExtension<TileLandmarkResourceExtension>();
-        if (lmExt?.bonuses != null)
+        if (lmExt?.bonuses is not null)
         {
             foreach (TileResourceBonus entry in lmExt.bonuses)
             {
@@ -608,7 +608,7 @@ public class ResourceFC : IExposable
 
         // --- Tile mutator bonuses ---
         IList<TileMutatorDef> tileMutators = settlement.Tile.Tile?.Mutators;
-        if (tileMutators != null && tileMutators.Count > 0)
+        if (tileMutators is not null && tileMutators.Count > 0)
         {
             foreach (TileMutatorDef mut in tileMutators)
             {
@@ -664,11 +664,11 @@ public class ResourceFC : IExposable
             {
                 desc += TextUtil.ColorizeAdditiveBonus(additive.value) + " - " + additive.desc + "\n";
             }
-            if (def.productionAdditiveStat != null && settlement != null)
+            if (def.productionAdditiveStat is not null && settlement is not null)
             {
                 desc += settlement.GetStatDesc(def.productionAdditiveStat);
             }
-            if (settlement != null)
+            if (settlement is not null)
             {
                 foreach (WorldObjectComp comp in settlement.AllComps)
                 {
@@ -680,7 +680,7 @@ public class ResourceFC : IExposable
                     }
                 }
             }
-            if (settlement != null)
+            if (settlement is not null)
             {
                 desc += settlement.GetStatDesc(FCStatDefOf.workerProductionBase);
             }
@@ -732,11 +732,11 @@ public class ResourceFC : IExposable
             {
                 desc += TextUtil.ColorizeMultiplierBonus(multiplier.value) + " - " + multiplier.desc + "\n";
             }
-            if (def.productionMultiplierStat != null && settlement != null)
+            if (def.productionMultiplierStat is not null && settlement is not null)
             {
                 desc += settlement.GetStatDesc(def.productionMultiplierStat);
             }
-            if (settlement != null)
+            if (settlement is not null)
             {
                 foreach (WorldObjectComp comp in settlement.AllComps)
                 {
@@ -748,7 +748,7 @@ public class ResourceFC : IExposable
                     }
                 }
             }
-            if (settlement != null)
+            if (settlement is not null)
             {
                 desc += settlement.GetStatDesc(FCStatDefOf.workerProductionMultiplier);
             }
@@ -759,7 +759,7 @@ public class ResourceFC : IExposable
             }
             desc += TextUtil.ColorizeMultiplierBonus(settlement?.GetSettlementTaxBonus() ?? 1) + " - " + "FCTaxBase".Translate();
 
-            if (settlement != null)
+            if (settlement is not null)
             {
                 double prosperityMult = settlement.prosperity / 100.0;
                 desc += "\n" + TextUtil.MultiplierBonusLine(prosperityMult,
@@ -779,7 +779,7 @@ public class ResourceFC : IExposable
     {
         FactionFC faction = FindFC.FactionComp;
 
-        if (def == null)
+        if (def is null)
             return;
 
         def.FilterResource(randomTitheFilter, faction.techLevel, this);
@@ -797,7 +797,7 @@ public class ResourceFC : IExposable
         }
         if (dirtyRandomTitheCache)
         {
-            if (randomTitheFilter == null)
+            if (randomTitheFilter is null)
             {
                 randomTitheFilter = new ThingFilter();
                 ResetThingFilter();
@@ -812,7 +812,7 @@ public class ResourceFC : IExposable
 
             TechLevel tmplevel = TechLevel.Undefined;
             ThingSetMaker tmp = def.GetModExtension<ResourceFilterExtension>()?.GetThingSetMaker(out tmplevel, this);
-            if (tmp != null)
+            if (tmp is not null)
             {
                 thingSetMaker = tmp;
                 param.techLevel = tmplevel;
@@ -831,7 +831,7 @@ public class ResourceFC : IExposable
     {
         if (dirtyFilteredRandomTitheCache)
         {
-            if (randomTitheFilter == null)
+            if (randomTitheFilter is null)
             {
                 randomTitheFilter = new ThingFilter();
                 ResetThingFilter();
@@ -854,7 +854,7 @@ public class ResourceFC : IExposable
     }
     public void ClearRandomTitheFilter()
     {
-        if (randomTitheFilter == null)
+        if (randomTitheFilter is null)
         {
             randomTitheFilter = new ThingFilter();
         }
@@ -864,7 +864,7 @@ public class ResourceFC : IExposable
     }
     public void SetAllRandomTitheFilter()
     {
-        if (randomTitheFilter == null)
+        if (randomTitheFilter is null)
         {
             randomTitheFilter = new ThingFilter();
         }
@@ -874,7 +874,7 @@ public class ResourceFC : IExposable
     }
     public void SetRandomTitheFilterAllow(ThingDef thing, bool allow)
     {
-        if (randomTitheFilter == null)
+        if (randomTitheFilter is null)
         {
             randomTitheFilter = new ThingFilter();
             ResetThingFilter();
@@ -1078,7 +1078,7 @@ public class ResourceFC : IExposable
         def.GetModExtension<ResourceTaxExtension>()?.OnPreTaxGeneration(this, settlement);
 
         // Prepare the tithe filter. I don't think it should ever be null here, but we'll account for that, just in case.
-        if (randomTitheFilter == null)
+        if (randomTitheFilter is null)
         {
             randomTitheFilter = new ThingFilter();
             ResetThingFilter();
@@ -1163,7 +1163,7 @@ public class ResourceFC : IExposable
 
                     TechLevel tmplevel = TechLevel.Undefined;
                     ThingSetMaker tmp = def.GetModExtension<ResourceFilterExtension>()?.GetThingSetMaker(out tmplevel, this);
-                    if (tmp != null)
+                    if (tmp is not null)
                     {
                         thingSetMaker = tmp;
                         param.techLevel = tmplevel;
@@ -1213,15 +1213,15 @@ public class ResourceFC : IExposable
 
     public int CompareForUI(ResourceFC compareDef)
     {
-        if (compareDef == null)
+        if (compareDef is null)
         {
             return -2;
         }
-        if (compareDef.def == null)
+        if (compareDef.def is null)
         {
             return -1;
         }
-        if (this.def == null)
+        if (this.def is null)
         {
             return 1;
         }

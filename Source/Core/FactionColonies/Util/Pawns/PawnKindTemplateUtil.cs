@@ -66,7 +66,7 @@ static class PawnKindTemplateUtil
 
         public override bool Equals(object obj)
         {
-            if (!(obj is RaceTechKey other)) return false;
+            if (obj is not RaceTechKey other) return false;
             return Equals(other);
         }
 
@@ -121,9 +121,9 @@ static class PawnKindTemplateUtil
             clone.useFactionXenotypes = false;
 
             // Copy tag lists so we can mutate them without affecting the template
-            if (template.weaponTags != null)
+            if (template.weaponTags is not null)
                 clone.weaponTags = new List<string>(template.weaponTags);
-            if (template.apparelTags != null)
+            if (template.apparelTags is not null)
                 clone.apparelTags = new List<string>(template.apparelTags);
 
             ApplyTechLevelScaling(clone, techLevel);
@@ -221,7 +221,7 @@ static class PawnKindTemplateUtil
 
     private static void ReplaceWeaponTags(PawnKindDef clone, List<string> newTags)
     {
-        if (clone.weaponTags == null)
+        if (clone.weaponTags is null)
             clone.weaponTags = new List<string>();
         else
             clone.weaponTags.Clear();
@@ -230,7 +230,7 @@ static class PawnKindTemplateUtil
 
     private static void ReplaceApparelTags(PawnKindDef clone, List<string> newTags)
     {
-        if (clone.apparelTags == null)
+        if (clone.apparelTags is null)
             clone.apparelTags = new List<string>();
         else
             clone.apparelTags.Clear();
@@ -239,7 +239,7 @@ static class PawnKindTemplateUtil
 
     private static void AddTagIfAbsent(List<string> tags, string tag)
     {
-        if (tags != null && !tags.Contains(tag))
+        if (tags is not null && !tags.Contains(tag))
         {
             tags.Add(tag);
         }
@@ -256,7 +256,7 @@ static class PawnKindTemplateUtil
         // Replace apparel tags with the race's own tags so PawnApparelGenerator can find matching apparel.
         // If no tags were found even after fallback, set to null so the generator skips tag filtering
         // entirely and lets HAR's race restrictions handle it.
-        if (gearData.apparelTags != null && gearData.apparelTags.Count > 0)
+        if (gearData.apparelTags is not null && gearData.apparelTags.Count > 0)
         {
             clone.apparelTags = new List<string>(gearData.apparelTags);
         }
@@ -266,7 +266,7 @@ static class PawnKindTemplateUtil
         }
 
         // Replace weapon tags only if the race defines its own; otherwise keep Empire's tags
-        if (gearData.weaponTags != null && gearData.weaponTags.Count > 0)
+        if (gearData.weaponTags is not null && gearData.weaponTags.Count > 0)
         {
             clone.weaponTags = new List<string>(gearData.weaponTags);
         }
@@ -318,7 +318,7 @@ static class PawnKindTemplateUtil
         if (result.apparelTags is null || result.apparelTags.Count == 0)
         {
             RaceGearData borrowed = NearestTierWithApparelTags(index, techLevel);
-            if (borrowed.apparelTags != null && borrowed.apparelTags.Count > 0)
+            if (borrowed.apparelTags is not null && borrowed.apparelTags.Count > 0)
             {
                 result.apparelTags = borrowed.apparelTags;
                 result.apparelMoney = new FloatRange(
@@ -364,20 +364,20 @@ static class PawnKindTemplateUtil
     private static RaceGearData MergeGearData(RaceGearData a, RaceGearData b)
     {
         List<string> apparelTags = null;
-        if (a.apparelTags != null || b.apparelTags != null)
+        if (a.apparelTags is not null || b.apparelTags is not null)
         {
             HashSet<string> set = new HashSet<string>();
-            if (a.apparelTags != null) set.AddRange(a.apparelTags);
-            if (b.apparelTags != null) set.AddRange(b.apparelTags);
+            if (a.apparelTags is not null) set.AddRange(a.apparelTags);
+            if (b.apparelTags is not null) set.AddRange(b.apparelTags);
             apparelTags = set.ToList();
         }
 
         List<string> weaponTags = null;
-        if (a.weaponTags != null || b.weaponTags != null)
+        if (a.weaponTags is not null || b.weaponTags is not null)
         {
             HashSet<string> set = new HashSet<string>();
-            if (a.weaponTags != null) set.AddRange(a.weaponTags);
-            if (b.weaponTags != null) set.AddRange(b.weaponTags);
+            if (a.weaponTags is not null) set.AddRange(a.weaponTags);
+            if (b.weaponTags is not null) set.AddRange(b.weaponTags);
             weaponTags = set.ToList();
         }
 
@@ -471,7 +471,7 @@ static class PawnKindTemplateUtil
 
             foreach (PawnKindDef def in kvp.Value)
             {
-                if (def.apparelTags != null)
+                if (def.apparelTags is not null)
                 {
                     // Skip dead tags (no loaded apparel carries them) — harvesting one would make
                     // PawnApparelGenerator's tag filter reject every candidate and spawn the pawn naked.
@@ -479,7 +479,7 @@ static class PawnKindTemplateUtil
                         if (ApparelTagsInUse.Contains(tag))
                             apparelTags.Add(tag);
                 }
-                if (def.weaponTags != null)
+                if (def.weaponTags is not null)
                 {
                     weaponTags.AddRange(def.weaponTags);
                 }
@@ -528,7 +528,7 @@ static class PawnKindTemplateUtil
         int templateIndex = GetTemplateIndex(pawnKind);
         if (templateIndex < 0) return false;
 
-        TechLevel techLevel = FindFC.FactionComp != null
+        TechLevel techLevel = FindFC.FactionComp is not null
             ? FindFC.FactionComp.techLevel
             : TechLevel.Industrial;
 
@@ -548,17 +548,17 @@ static class PawnKindTemplateUtil
     public static void FixupPawnKindDefs(FactionFC factionFc)
     {
         Faction empireFaction = FindFC.EmpireFaction;
-        if (empireFaction == null) return;
+        if (empireFaction is null) return;
 
         TechLevel techLevel = factionFc.techLevel;
         int fixedCount = 0;
 
         // Mercenaries (direct access — most important)
-        if (factionFc.military?.mercenarySquads != null)
+        if (factionFc.military?.mercenarySquads is not null)
         {
             foreach (MercenarySquadFC squad in factionFc.military.mercenarySquads)
             {
-                if (squad?.mercenaries == null) continue;
+                if (squad?.mercenaries is null) continue;
                 foreach (Mercenary merc in squad.mercenaries)
                 {
                     if (FixupPawn(merc?.pawn, techLevel)) fixedCount++;
@@ -570,11 +570,11 @@ static class PawnKindTemplateUtil
         if (FixupPawn(empireFaction.leader, techLevel)) fixedCount++;
 
         // World pawns
-        if (Find.WorldPawns != null)
+        if (Find.WorldPawns is not null)
         {
             foreach (Pawn pawn in Find.WorldPawns.AllPawnsAliveOrDead)
             {
-                if (pawn != null && pawn.Faction == empireFaction)
+                if (pawn is not null && pawn.Faction == empireFaction)
                 {
                     if (FixupPawn(pawn, techLevel)) fixedCount++;
                 }
@@ -582,14 +582,14 @@ static class PawnKindTemplateUtil
         }
 
         // Map pawns
-        if (Find.Maps != null)
+        if (Find.Maps is not null)
         {
             foreach (Map map in Find.Maps)
             {
-                if (map?.mapPawns == null) continue;
+                if (map?.mapPawns is null) continue;
                 foreach (Pawn pawn in map.mapPawns.AllPawns)
                 {
-                    if (pawn != null && pawn.Faction == empireFaction)
+                    if (pawn is not null && pawn.Faction == empireFaction)
                     {
                         if (FixupPawn(pawn, techLevel)) fixedCount++;
                     }
@@ -603,7 +603,7 @@ static class PawnKindTemplateUtil
 
     private static bool FixupPawn(Pawn pawn, TechLevel techLevel)
     {
-        if (pawn?.kindDef == null || pawn.def == null) return false;
+        if (pawn?.kindDef is null || pawn.def is null) return false;
         if (!pawn.kindDef.defName.StartsWith("PColony_")) return false;
 
         int templateIndex = GetTemplateIndex(pawn.kindDef);

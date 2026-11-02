@@ -10,7 +10,7 @@ public class FCPolicyBehavior_ScorchedEarth : FCPolicyBehavior
     {
         if (!victory) return;
         if (job != MilitaryJobDefOf.DefendFriendlySettlement) return;
-        if (settlement?.BuildingsComp == null) return;
+        if (settlement?.BuildingsComp is null) return;
 
         var ext = Ext<FCPolicyBehaviorExt_ScorchedEarth>();
         List<int> damaged = new List<int>();

@@ -31,7 +31,7 @@ public static class ImplantListWidget
         // Add button at the top-right — the tab labels the panel, no title needed.
         float btnY = rect.y;
 
-        if (opts.canEdit && opts.showHeaderButtons && displayUnit != null)
+        if (opts.canEdit && opts.showHeaderButtons && displayUnit is not null)
         {
             float addW = 120f;
             Rect addBtnRect = new Rect(rect.xMax - addW, btnY, addW, headerHeight);
@@ -61,11 +61,11 @@ public static class ImplantListWidget
             // Icon + info card (the implant item / self-install item)
             ThingDef iconThing = MilUnitFC.ImplantIconThing(item);
             Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
-            if (iconThing != null)
+            if (iconThing is not null)
                 Widgets.ThingIcon(iconRect, iconThing);
 
             Rect infoRect = new Rect(iconRect.xMax + 2f, row.y + 2f, IconSize - 2f, IconSize - 2f);
-            if (iconThing != null)
+            if (iconThing is not null)
                 Widgets.InfoCardButton(infoRect, iconThing);
 
             // Remove button
@@ -78,7 +78,7 @@ public static class ImplantListWidget
                 if (UIUtil.ClampedButtonText(removeRect, "X"))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.RemoveImplant(index);
+                    if (target is not null) target.RemoveImplant(index);
                 }
             }
 
@@ -91,11 +91,11 @@ public static class ImplantListWidget
 
             // Label: implant + body part
             string hediffLabel;
-            if (item.recipe is object)
+            if (item.recipe is not null)
                 hediffLabel = (item.recipe.addsHediff?.LabelCap ?? item.recipe.LabelCap).ToString();
             else
                 hediffLabel = item.selfInstallThing.LabelCap.ToString();
-            string label = item.bodyPart != null
+            string label = item.bodyPart is not null
                 ? hediffLabel + " (" + item.bodyPart.label + ")"
                 : hediffLabel;
             Rect labelRect = new Rect(infoRect.xMax + 6f, row.y, costRect.x - infoRect.xMax - 10f, rowHeight);

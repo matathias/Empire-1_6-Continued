@@ -28,7 +28,7 @@ public static class MilitaryDeploymentUtil
     /// deployment letter mentions the cost and payment deadline.</param>
     private static void SpawnSquad(WorldSettlementFC settlement, MercenarySquadFC squad, IntVec3 dropPosition, bool DropPod, BillFC bill)
     {
-        if (settlement.MilitaryComp == null)
+        if (settlement.MilitaryComp is null)
         {
             LogUtil.Warning($"SpawnSquad called on settlement {settlement.Name} with no MilitaryComp. Aborting.");
             return;
@@ -100,7 +100,7 @@ public static class MilitaryDeploymentUtil
         // Squad-first: name the deployed squad and its home settlement. When a deployment-cost
         // bill was created, also surface the cost and payment deadline; otherwise omit that
         // sentence (no bill when cost is 0% or godMode is on).
-        string deploymentDesc = bill is object
+        string deploymentDesc = bill is not null
             ? "FCDeploymentSuccessDesc".Translate(squad.DisplayName, squad.settlement?.Name, currentMap.Parent.LabelCap, squad.DeploymentCost(), FCSettings.deploymentBillLifespan_days)
             : "FCDeploymentSuccessDescNoBill".Translate(squad.DisplayName, squad.settlement?.Name, currentMap.Parent.LabelCap);
         Find.LetterStack.ReceiveLetter("FCDeploymentSuccessLabel".Translate(), deploymentDesc, LetterDefOf.NeutralEvent, new LookTargets(equippedPawns));
@@ -112,7 +112,7 @@ public static class MilitaryDeploymentUtil
         foreach (Mercenary sub in squad.AllSubPawns())
         {
             if (sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
-            if (sub.handler?.pawn is object && !mounts.ContainsKey(sub.handler.pawn))
+            if (sub.handler?.pawn is not null && !mounts.ContainsKey(sub.handler.pawn))
                 mounts.Add(sub.handler.pawn, sub.pawn);
         }
 
@@ -131,14 +131,14 @@ public static class MilitaryDeploymentUtil
             ?? settlement?.FirstAvailableStationedSquad
             ?? settlement?.PrimaryStationedSquad;
 
-        if (squad == null)
+        if (squad is null)
         {
             LogUtil.Warning($"Attempted to call in allied forces for settlement {settlement.Name} with NULL MilitaryComp. Skipping");
             return;
         }
 
         /* Morale lockout: refuse the deploy before positioning / any deployment-cost bill. */
-        if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+        if (settlement is not null && settlement.TryGetSquadDeploymentBlock(out string lockReason))
         {
             Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
             return;
@@ -183,18 +183,18 @@ public static class MilitaryDeploymentUtil
     {
         /* Morale lockout: refuse before creating the temp squad (CallinAlliedForces also gates,
          * but gating here avoids orphaning a freshly-created extra squad). */
-        if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+        if (settlement is not null && settlement.TryGetSquadDeploymentBlock(out string lockReason))
         {
             Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
             return;
         }
 
         MercenarySquadFC squad = FindFC.Military.CreateMercenarySquad(settlement, true);
-        if (squad == null) return;
+        if (squad is null) return;
         // Copy the outfit from the settlement's primary stationed squad (any squad with an
         // outfit will do — we just need a template to clone the gear from).
         MilSquadFC mainOutfit = settlement?.PrimaryStationedSquad?.outfit;
-        if (mainOutfit != null) squad.Equipment.OutfitSquad(mainOutfit);
+        if (mainOutfit is not null) squad.Equipment.OutfitSquad(mainOutfit);
         CallinAlliedForces(settlement, DropPod, squad);
     }
     public static void FireSupport(WorldSettlementFC settlement, MilitaryFireSupport support)
@@ -224,7 +224,7 @@ public static class MilitaryDeploymentUtil
                     FindFC.Military.fireSupport.Add(fireSupport);
 
                     Messages.Message("FCFireSupportNameWillBeFiredOnPosition".Translate(support.name), MessageTypeDefOf.ThreatSmall);
-                    if (settlement.MilitaryComp != null)
+                    if (settlement.MilitaryComp is not null)
                         settlement.MilitaryComp.artilleryTimer = Find.TickManager.TicksGame + (DebugSettings.godMode ? 1 : 60000);
                 }
                 else
@@ -273,7 +273,7 @@ public static class MilitaryDeploymentUtil
                 if (candidate.techLevel == tl) { d = candidate; break; }
             }
         }
-        if (d is object)
+        if (d is not null)
         {
             level = d.level;
             efficiency = d.efficiency;

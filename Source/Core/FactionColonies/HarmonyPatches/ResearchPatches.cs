@@ -8,7 +8,7 @@ class ResearchCompleted
     static void Postfix(ResearchProjectDef proj, bool doCompletionDialog = false, Pawn researcher = null)
     {
         FactionFC fc = FindFC.FactionComp;
-        if (fc is object)
+        if (fc is not null)
         {
             fc.DirtyTechLevelCache();
             fc.roadBuilder.CheckForTechChanges();

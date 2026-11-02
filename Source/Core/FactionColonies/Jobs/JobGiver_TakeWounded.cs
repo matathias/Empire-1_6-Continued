@@ -12,7 +12,7 @@ class JobGiver_TakeWounded : ThinkNode_JobGiver
         }
 
         Pawn wounded = ReachableWounded(searcher);
-        if (wounded == null)
+        if (wounded is null)
         {
             return null;
         }

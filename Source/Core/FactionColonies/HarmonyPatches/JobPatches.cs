@@ -18,7 +18,7 @@ public class Patch
     static bool Prefix(ref JobDriver_Goto __instance)
     {
         Pawn pawn = __instance.pawn;
-        if (!(pawn.Map?.Parent is WorldSettlementFC settlement))
+        if (pawn.Map?.Parent is not WorldSettlementFC settlement)
         {
             // Manual offensive battles run on a vanilla enemy Settlement. Undrafted Empire
             // attackers may freely walk off the edge to extract, but a pawn the player DRAFTED
@@ -26,17 +26,17 @@ public class Patch
             // player could march it off the map and keep it as a free colonist. EndOffense
             // restores drafted pawns to Empire on teardown, lifting this block.
             Settlement enemyBase = pawn.Map?.Parent as Settlement;
-            if (enemyBase is object)
+            if (enemyBase is not null)
             {
                 BattlefieldContext offBf = FindFC.MilitaryManager?.GetBattlefield(enemyBase.Tile);
-                if (offBf is object && offBf.HasOffenseAt() && offBf.draftedNPCs.Contains(pawn))
+                if (offBf is not null && offBf.HasOffenseAt() && offBf.draftedNPCs.Contains(pawn))
                     return false;
             }
             return true;
         }
 
         var military = settlement.MilitaryComp;
-        if (military == null || !military.isUnderAttack) return true;
+        if (military is null || !military.isUnderAttack) return true;
 
         // Player's own colonists who weren't drafted by us are volunteers (caravan / shuttle
         // joiners) and may leave at will — even though they're aggregated into

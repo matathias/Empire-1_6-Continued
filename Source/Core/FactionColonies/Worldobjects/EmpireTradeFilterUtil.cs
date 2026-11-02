@@ -31,7 +31,7 @@ public static class EmpireTradeFilterUtil
         if (thingDef.BaseMarketValue <= 0f)
             return true;
 
-        if (thingDef.thingCategories is object
+        if (thingDef.thingCategories is not null
             && (thingDef.thingCategories.Contains(ThingCategoryDefOf.Chunks)
                 || thingDef.thingCategories.Contains(ThingCategoryDefOf.StoneChunks)))
             return true;

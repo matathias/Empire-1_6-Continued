@@ -250,12 +250,12 @@ public class FactionCustomizeTraitsWindowFC : Window
         Widgets.DrawMenuSection(inRect);
 
         FCPolicyDef displayTrait = hoveredTrait;
-        if (displayTrait == null && selectedTraits.Count > 0)
+        if (displayTrait is null && selectedTraits.Count > 0)
         {
             displayTrait = selectedTraits[selectedTraits.Count - 1];
         }
 
-        if (displayTrait == null || displayTrait == FCPolicyDefOf.empty)
+        if (displayTrait is null || displayTrait == FCPolicyDefOf.empty)
         {
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;

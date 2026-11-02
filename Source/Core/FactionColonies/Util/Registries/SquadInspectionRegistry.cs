@@ -50,7 +50,7 @@ public static class SquadInspectionRegistry
     {
         get
         {
-            if (_sortedCache == null)
+            if (_sortedCache is null)
             {
                 List<Entry> copy = new List<Entry>(_entries);
                 copy.Sort((a, b) =>

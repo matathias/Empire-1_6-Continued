@@ -69,7 +69,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
     {
         get
         {
-            if (cachedWorldSettlementParent != null)
+            if (cachedWorldSettlementParent is not null)
             {
                 return cachedWorldSettlementParent;
             }
@@ -231,7 +231,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
     {
         SettlementBuildingComp comp = (SettlementBuildingComp)Activator.CreateInstance(compClass);
         comp.settlement = settlement;
-        if (settlement == null)
+        if (settlement is null)
         {
             LogUtil.Error($"Created new SettlementBuildingComp {compClass} with null SettlementFC");
         }
@@ -387,11 +387,11 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
         {
             foreach (BuildingFCExtension ext in buildings[buildingSlot].def.modExtensions.OfType<BuildingFCExtension>())
             {
-                if (ext.compClass != null)
+                if (ext.compClass is not null)
                 {
                     SettlementBuildingComp comp = GetComponent(ext.compClass);
 
-                    if (comp == null)
+                    if (comp is null)
                     {
                         comp = MakeSettlementBuildingComp(ext.compClass, WorldSettlement);
                         AddComp(comp);
@@ -457,11 +457,11 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
         {
             foreach (BuildingFCExtension ext in buildings[buildingSlot].def.modExtensions.OfType<BuildingFCExtension>())
             {
-                if (ext.compClass != null)
+                if (ext.compClass is not null)
                 {
                     SettlementBuildingComp comp = GetComponent(ext.compClass);
 
-                    if (comp == null)
+                    if (comp is null)
                     {
                         LogUtil.Error($"Found null comp for specificed compClass {ext.compClass} in OnDeconstruct. The comp should not be null yet.");
                     }
@@ -533,7 +533,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
     }
     public int GetBuildingUpkeep(BuildingFCDef building)
     {
-        if (building == null)
+        if (building is null)
             return 0;
 
         // building.Upkeep applies the legacy per-day divisor for non-postRework (external) defs.
@@ -618,7 +618,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
 
         desc += "\n" + building.AttributeDesc;
 
-        if (building.modExtensions != null)
+        if (building.modExtensions is not null)
         {
             foreach (IBuildingDetailSection section in building.modExtensions.OfType<IBuildingDetailSection>())
             {
@@ -662,25 +662,25 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
         filters.Add(new BuildingFilter("FCBuildingFilterAll".Translate(), null, _ => true));
 
         filters.Add(new BuildingFilter("FCBuildingFilterHappiness".Translate(), TexLoad.iconHappiness, b =>
-            b.statModifiers != null && b.statModifiers.Any(m =>
+            b.statModifiers is not null && b.statModifiers.Any(m =>
                 (m.stat == FCStatDefOf.happinessLostBase || m.stat == FCStatDefOf.happinessGainedBase ||
                  m.stat == FCStatDefOf.happinessLostMultiplier || m.stat == FCStatDefOf.happinessGainedMultiplier)
                 && m.IsBeneficial())));
 
         filters.Add(new BuildingFilter("FCBuildingFilterBasetax".Translate(), TexLoad.iconProsperity, b =>
-            b.statModifiers != null && b.statModifiers.Any(m =>
+            b.statModifiers is not null && b.statModifiers.Any(m =>
                 (m.stat == FCStatDefOf.taxBasePercentage || m.stat == FCStatDefOf.taxBaseRandomModifier)
                 && m.IsBeneficial())));
 
         filters.Add(new BuildingFilter("FCBuildingFilterWorkers".Translate(), null, b =>
-            b.statModifiers != null && b.statModifiers.Any(m =>
+            b.statModifiers is not null && b.statModifiers.Any(m =>
                 (m.stat == FCStatDefOf.workerBaseMax || m.stat == FCStatDefOf.workerBaseOverMax || m.stat == FCStatDefOf.workerBaseCost)
                 && m.IsBeneficial())));
 
-        if (WorldSettlement.MilitaryComp != null)
+        if (WorldSettlement.MilitaryComp is not null)
         {
             filters.Add(new BuildingFilter("FCBuildingFilterMilitary".Translate(), TexLoad.iconMilitary, b =>
-                b.statModifiers != null && b.statModifiers.Any(m =>
+                b.statModifiers is not null && b.statModifiers.Any(m =>
                     (m.stat == FCStatDefOf.militaryBaseLevel || m.stat == FCStatDefOf.militaryCombatEfficiency)
                     && m.IsBeneficial())));
         }
@@ -689,7 +689,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
         {
             ResourceTypeDef resDef = resource.def;
             filters.Add(new BuildingFilter(resource.label, resDef.Icon, b =>
-                b.statModifiers != null && b.statModifiers.Any(m => m.stat != null && m.stat.linkedResource == resDef && m.IsBeneficial())));
+                b.statModifiers is not null && b.statModifiers.Any(m => m.stat is not null && m.stat.linkedResource == resDef && m.IsBeneficial())));
         }
 
         foreach (BuildingFilter filter in BuildingFilterRegistry.Filters)
@@ -700,30 +700,30 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
 
     public int GetFilterSize()
     {
-        if (filters == null) RebuildFilters();
+        if (filters is null) RebuildFilters();
         return filters?.Count ?? 0;
     }
 
     public string GetLabelForFilter(int i)
     {
-        if (filters == null) RebuildFilters();
-        if (filters == null) return null;
+        if (filters is null) RebuildFilters();
+        if (filters is null) return null;
         if (i < 0 || i >= filters.Count) return null;
         return filters[i].label;
     }
 
     public Texture2D GetIconForFilter(int i)
     {
-        if (filters == null) RebuildFilters();
-        if (filters == null) return null;
+        if (filters is null) RebuildFilters();
+        if (filters is null) return null;
         if (i < 0 || i >= filters.Count) return null;
         return filters[i].icon;
     }
 
     public bool FilterBuilding(int i, BuildingFCDef building)
     {
-        if (filters == null) RebuildFilters();
-        if (filters == null) return true;
+        if (filters is null) RebuildFilters();
+        if (filters is null) return true;
         if (i < 0 || i >= filters.Count) return true;
         return filters[i].predicate(building);
     }
@@ -806,7 +806,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
             buildings = new List<BuildingFC>();
         if (settlementBuildingComps is null)
             settlementBuildingComps = new List<SettlementBuildingComp>();
-        settlementBuildingComps.RemoveAll(c => c == null);
+        settlementBuildingComps.RemoveAll(c => c is null);
         foreach (SettlementBuildingComp comp in settlementBuildingComps)
         {
             comp.RefreshBuildingSlotsWithErrorDetection();
@@ -820,7 +820,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
     public override IEnumerable<Gizmo> GetGizmos()
     {
         IEnumerable<Gizmo> gizmos = base.GetGizmos();
-        if (gizmos != null)
+        if (gizmos is not null)
         {
             foreach (Gizmo gizmo in gizmos)
             {
@@ -830,7 +830,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
         foreach (SettlementBuildingComp comp in settlementBuildingComps)
         {
             gizmos = comp.GetGizmos();
-            if (gizmos == null)
+            if (gizmos is null)
             {
                 continue;
             }

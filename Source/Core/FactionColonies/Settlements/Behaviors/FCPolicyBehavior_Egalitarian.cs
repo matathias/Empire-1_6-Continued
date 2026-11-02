@@ -6,7 +6,7 @@ public class FCPolicyBehavior_Egalitarian : FCPolicyBehavior
 
     public override double ModifyStat(FCStatDef stat, double currentValue, WorldSettlementFC settlement)
     {
-        if (settlement == null) return currentValue;
+        if (settlement is null) return currentValue;
         if (!IsOnTaxBreak(settlement.Tile)) return currentValue;
 
         var ext = Ext<FCPolicyBehaviorExt_Egalitarian>();
@@ -23,7 +23,7 @@ public class FCPolicyBehavior_Egalitarian : FCPolicyBehavior
 
     public override string GetStatDescription(FCStatDef stat, WorldSettlementFC settlement)
     {
-        if (settlement == null) return null;
+        if (settlement is null) return null;
         if (!IsOnTaxBreak(settlement.Tile)) return null;
 
         var ext = Ext<FCPolicyBehaviorExt_Egalitarian>();

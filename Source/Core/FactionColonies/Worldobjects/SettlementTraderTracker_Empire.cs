@@ -17,7 +17,7 @@ public class SettlementTraderTracker_Empire : Settlement_TraderTracker
         LogUtil.Message($"SettlementTraderTracker_Empire: Regenerating Stock");
 
         // Set settlement reference on each EmpireStockGenerator
-        if (worldSettlement is object && TraderKind is object)
+        if (worldSettlement is not null && TraderKind is not null)
         {
             foreach (StockGenerator gen in TraderKind.stockGenerators)
             {
@@ -29,7 +29,7 @@ public class SettlementTraderTracker_Empire : Settlement_TraderTracker
         base.RegenerateStock();
 
         // Clear settlement references to prevent serialization issues
-        if (TraderKind is object)
+        if (TraderKind is not null)
         {
             foreach (StockGenerator gen in TraderKind.stockGenerators)
             {

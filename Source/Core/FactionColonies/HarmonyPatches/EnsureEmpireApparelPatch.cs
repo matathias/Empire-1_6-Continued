@@ -51,7 +51,7 @@ class Patch_PawnApparelGenerator_EnsureEmpireApparel
         if (pick is null) return;
 
         ThingDef stuff = pick.MadeFromStuff ? GenStuff.DefaultStuffFor(pick) : null;
-        if (!(ThingMaker.MakeThing(pick, stuff) is Apparel ap)) return;
+        if (ThingMaker.MakeThing(pick, stuff) is not Apparel ap) return;
 
         // PostProcessApparel (which applies faction colour) has already run, so colour it here as
         // SquadEquipmentTracker.WearApparelItem does.
@@ -79,7 +79,7 @@ class Patch_PawnApparelGenerator_EnsureEmpireApparel
     {
         EnsureTorsoApparelList();
         List<string> tags = pawn.kindDef?.apparelTags;
-        bool hasTags = tags != null && tags.Count > 0;
+        bool hasTags = tags is not null && tags.Count > 0;
 
         ThingDef fallback = null;
         foreach (ThingDef def in torsoApparelCheapestFirst)
@@ -87,7 +87,7 @@ class Patch_PawnApparelGenerator_EnsureEmpireApparel
             if (!def.apparel.PawnCanWear(pawn)) continue;
             if (fallback is null) fallback = def;                 // cheapest wearable, tag-agnostic
             if (!hasTags) return def;                             // no tag preference -> cheapest wearable
-            if (def.apparel.tags != null && def.apparel.tags.Any(t => tags.Contains(t)))
+            if (def.apparel.tags is not null && def.apparel.tags.Any(t => tags.Contains(t)))
                 return def;                                       // cheapest tag-matching wearable
         }
         return fallback;
@@ -95,7 +95,7 @@ class Patch_PawnApparelGenerator_EnsureEmpireApparel
 
     private static void EnsureTorsoApparelList()
     {
-        if (torsoApparelCheapestFirst != null) return;
+        if (torsoApparelCheapestFirst is not null) return;
         torsoApparelCheapestFirst = DefDatabase<ThingDef>.AllDefsListForReading
             .Where(d => d.IsApparel && d.apparel.bodyPartGroups.Contains(BodyPartGroupDefOf.Torso))
             .OrderBy(d => d.BaseMarketValue)

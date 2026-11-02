@@ -63,7 +63,7 @@ public class ChoiceLetter_BattleReport : ChoiceLetter
         opt.action = delegate
         {
             WorldComponent_Archive archive = WorldComponent_Archive.Get();
-            if (archive is object && archive.TryGetBattleReport(id, out BattleResult result))
+            if (archive is not null && archive.TryGetBattleReport(id, out BattleResult result))
             {
                 Find.WindowStack.Add(new BattleProgressWindow(result, playerSide));
             }

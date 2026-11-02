@@ -16,7 +16,7 @@ public static class CodexTooltips
     {
         if (Widgets.ButtonImage(rect, TexButton.Info))
         {
-            Find.WindowStack.Add(preselect is object ? new CodexWindow(preselect) : new CodexWindow());
+            Find.WindowStack.Add(preselect is not null ? new CodexWindow(preselect) : new CodexWindow());
         }
         TooltipHandler.TipRegion(rect, "FCCodexTitle".Translate());
     }

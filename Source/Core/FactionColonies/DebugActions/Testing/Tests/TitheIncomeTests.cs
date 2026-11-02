@@ -9,7 +9,7 @@ public static class TitheIncomeTests
     private static WorldSettlementFC GetFirstSettlement()
     {
         var settlements = FindFC.Settlements;
-        if (settlements == null || settlements.Count == 0)
+        if (settlements is null || settlements.Count == 0)
             return null;
         return settlements[0];
     }
@@ -43,10 +43,10 @@ public static class TitheIncomeTests
     public static void TitheModifierPerWorker_MatchesStatPlusSetting()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource == null) TestAssert.Skip("No non-pool resource");
+        if (resource is null) TestAssert.Skip("No non-pool resource");
 
         double expected = settlement.GetStatValue(FCStatDefOf.taxBaseRandomModifier)
                         + FCSettings.productionTitheMod;
@@ -60,10 +60,10 @@ public static class TitheIncomeTests
     public static void TitheIncome_ZeroWorkers_EqualsBaseTimesMultiplier()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource == null) TestAssert.Skip("No non-pool resource");
+        if (resource is null) TestAssert.Skip("No non-pool resource");
 
         int savedWorkers = resource.assignedWorkers;
         try
@@ -89,10 +89,10 @@ public static class TitheIncomeTests
     public static void TitheIncome_FormulaConsistency()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource == null) TestAssert.Skip("No non-pool resource");
+        if (resource is null) TestAssert.Skip("No non-pool resource");
 
         // Manually compute using the same formula that GetTitheIncome should use
         double workerMod = resource.GetTitheModifierPerWorker() * resource.assignedWorkers;
@@ -108,10 +108,10 @@ public static class TitheIncomeTests
     public static void TitheIncome_MultForTotal_ChangesWithStat()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource == null) TestAssert.Skip("No non-pool resource");
+        if (resource is null) TestAssert.Skip("No non-pool resource");
         if (resource.assignedWorkers == 0) TestAssert.Skip("Resource has 0 workers");
 
         double incomeBefore = resource.GetTitheIncome();
@@ -139,10 +139,10 @@ public static class TitheIncomeTests
     public static void GetTitheValueMultiplier_MatchesStat()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource == null) TestAssert.Skip("No non-pool resource");
+        if (resource is null) TestAssert.Skip("No non-pool resource");
 
         double expected = FindFC.FactionComp.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
         double actual = resource.GetTitheValueMultiplier();
@@ -155,10 +155,10 @@ public static class TitheIncomeTests
     public static void TitheIncome_PostMultiplierComponents_Reconcile()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource == null) TestAssert.Skip("No non-pool resource");
+        if (resource is null) TestAssert.Skip("No non-pool resource");
 
         // Mirrors how the tithing screen header now displays its three numbers:
         // each shown post-multiplier, summing (with external budget) to the total tithe budget.
@@ -176,7 +176,7 @@ public static class TitheIncomeTests
     public static void TitheIncome_AllResources_NonNegative()
     {
         var faction = FindFC.FactionComp;
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         foreach (var settlement in faction.settlements)
@@ -196,9 +196,9 @@ public static class TitheIncomeTests
     public static void TitheList_AddAndReorder_PreservesOrder()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
         ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource == null) TestAssert.Skip("No non-pool resource");
+        if (resource is null) TestAssert.Skip("No non-pool resource");
 
         int before = resource.Tithes.Count;
         var a = new ThingQualityTuple { thingDef = RimWorld.ThingDefOf.MealSimple };
@@ -228,9 +228,9 @@ public static class TitheIncomeTests
     public static void TitheList_AllowsDuplicateEntries()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
         ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource == null) TestAssert.Skip("No non-pool resource");
+        if (resource is null) TestAssert.Skip("No non-pool resource");
 
         int before = resource.Tithes.Count;
         var a = new ThingQualityTuple { thingDef = RimWorld.ThingDefOf.MealSimple };

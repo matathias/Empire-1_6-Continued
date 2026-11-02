@@ -20,7 +20,7 @@ public class WorldObjectComp_OffenseControls : WorldObjectComp
     {
         if (parent is WorldSettlementFC) return null;   // never on Empire settlements
         BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(parent.Tile);
-        return (bf is object && bf.HasOffenseAt()) ? bf : null;
+        return (bf is not null && bf.HasOffenseAt()) ? bf : null;
     }
 
     /// <summary>Caravan-context controls: a "Join Attack" command shown when a player caravan is
@@ -88,7 +88,7 @@ public class WorldObjectComp_OffenseControls : WorldObjectComp
                 }
             };
 
-        if (bf.map is object)
+        if (bf.map is not null)
             yield return new Command_Action
             {
                 defaultLabel = "FCOffenseWatchBattle".Translate(),

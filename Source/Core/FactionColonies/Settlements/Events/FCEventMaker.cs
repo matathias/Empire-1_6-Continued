@@ -24,7 +24,7 @@ public static class FCEventMaker
             : null;
         FCEvent tempEvent = MakeRandomEvent(chosen, settlements);
 
-        if (tempEvent != null)
+        if (tempEvent is not null)
         {
             FindFC.EventManager.AddEvent(tempEvent);
 
@@ -46,7 +46,7 @@ public static class FCEventMaker
         // Any queued / in-flight chain event. Completed events are awaiting sweep — ignore.
         foreach (FCEvent e in faction.eventManager.Events)
         {
-            if (e?.def != null && !e.IsCompleted && members.Contains(e.def)) return true;
+            if (e?.def is not null && !e.IsCompleted && members.Contains(e.def)) return true;
         }
 
         return false;
@@ -75,10 +75,10 @@ public static class FCEventMaker
         }
 
         // Affected settlements
-        if (evt.settlementTraitLocations != null && evt.settlementTraitLocations.Count > 0)
+        if (evt.settlementTraitLocations is not null && evt.settlementTraitLocations.Count > 0)
         {
             string settlementString = evt.settlementTraitLocations
-                .Where(s => s != null)
+                .Where(s => s is not null)
                 .Join(s => " " + s.Name, "\n");
             if (!settlementString.NullOrEmpty())
             {
@@ -122,7 +122,7 @@ public static class FCEventMaker
         }
 
         // Required resource check
-        if (cEvent.requiredResource != null)
+        if (cEvent.requiredResource is not null)
         {
             bool hasResource = FindFC.FactionComp.ReturnResource(cEvent.requiredResource).amount > 0;
             if (!hasResource) return false;
@@ -133,7 +133,7 @@ public static class FCEventMaker
         // Settlement-specific events are allowed through — MakeRandomEvent handles per-settlement filtering.
         foreach (FCEvent evt in FindFC.Events)
         {
-            if (evt.def == null) continue;
+            if (evt.def is null) continue;
             if (cEvent == evt.def && noSettlementRequirement) return false;
 
             foreach (FCEventDef inEvt in evt.def.incompatibleEvents)
@@ -155,7 +155,7 @@ public static class FCEventMaker
         if (cEvent.minSettlements > 0 && tmp.settlements.Count < cEvent.minSettlements) return false;
 
         // Required policy/trait/edict
-        if (cEvent.requiredPolicy != null
+        if (cEvent.requiredPolicy is not null
             && !FindFC.PolicyManager.HasPolicy(cEvent.requiredPolicy)
             && !FindFC.PolicyManager.HasTrait(cEvent.requiredPolicy)
             && !FindFC.PolicyManager.HasEdict(cEvent.requiredPolicy)) return false;
@@ -192,7 +192,7 @@ public static class FCEventMaker
 
         // Allow active behaviors to request a single re-roll
         FactionFC faction = FindFC.FactionComp;
-        if (faction != null)
+        if (faction is not null)
         {
             bool reroll = false;
             FindFC.PolicyManager.ForEachBehavior(b =>
@@ -209,7 +209,7 @@ public static class FCEventMaker
 
     public static FCEvent MakeEvent(FCEventDef def)
     {
-        if (def == null)
+        if (def is null)
         {
             return null;
         }
@@ -258,7 +258,7 @@ public static class FCEventMaker
         try
         {
             // Carry over settlement locations from parent event, or pick new ones
-            if (SettlementTraitLocations != null && SettlementTraitLocations.Count > 0)
+            if (SettlementTraitLocations is not null && SettlementTraitLocations.Count > 0)
             {
                 tempEvent.settlementTraitLocations.AddRange(SettlementTraitLocations);
             }
@@ -268,7 +268,7 @@ public static class FCEventMaker
                 HashSet<WorldSettlementFC> excludedSettlements = new HashSet<WorldSettlementFC>();
                 foreach (FCEvent activeEvt in worldcomp.Events)
                 {
-                    if (activeEvt.def == null) continue;
+                    if (activeEvt.def is null) continue;
                     bool isSameDef = activeEvt.def == def;
                     bool isIncompatible = false;
                     if (!isSameDef)
@@ -282,7 +282,7 @@ public static class FCEventMaker
                     {
                         foreach (WorldSettlementFC s in activeEvt.settlementTraitLocations)
                         {
-                            if (s != null) excludedSettlements.Add(s);
+                            if (s is not null) excludedSettlements.Add(s);
                         }
                     }
                 }
@@ -292,7 +292,7 @@ public static class FCEventMaker
                     if (excludedSettlements.Contains(settlement)) continue;
                     if (!tempEvent.def.BiomeAllowed(settlement.biome)) continue;
                     if (!tempEvent.def.SettlementTypeAllowed(settlement.settlementDef)) continue;
-                    if (tempEvent.def.requiredResource != null)
+                    if (tempEvent.def.requiredResource is not null)
                     {
                         ResourceFC res = settlement.GetResource(tempEvent.def.requiredResource);
                         // null always fails theta comparisons, so this check is safe
@@ -326,7 +326,7 @@ public static class FCEventMaker
                 HashSet<WorldSettlementFC> excludedSettlements = new HashSet<WorldSettlementFC>();
                 foreach (FCEvent activeEvt in worldcomp.Events)
                 {
-                    if (activeEvt.def == null) continue;
+                    if (activeEvt.def is null) continue;
                     bool isSameDef = activeEvt.def == def;
                     bool isIncompatible = false;
                     if (!isSameDef)
@@ -340,7 +340,7 @@ public static class FCEventMaker
                     {
                         foreach (WorldSettlementFC s in activeEvt.settlementTraitLocations)
                         {
-                            if (s != null) excludedSettlements.Add(s);
+                            if (s is not null) excludedSettlements.Add(s);
                         }
                     }
                 }
@@ -350,10 +350,10 @@ public static class FCEventMaker
                     if (excludedSettlements.Contains(settlement)) continue;
                     if (!tempEvent.def.BiomeAllowed(settlement.biome)) continue;
                     if (!tempEvent.def.SettlementTypeAllowed(settlement.settlementDef)) continue;
-                    if (tempEvent.def.requiredResource != null)
+                    if (tempEvent.def.requiredResource is not null)
                     {
                         ResourceFC res = settlement.GetResource(tempEvent.def.requiredResource);
-                        if (res != null && res.InstantaneousProduction > 0)
+                        if (res is not null && res.InstantaneousProduction > 0)
                         {
                             // Settlements that produce more of a resource should have a higher weight
                             for (int i = 0; i < Math.Max(0, res.InstantaneousProduction); i++)
@@ -402,7 +402,7 @@ public static class FCEventMaker
                 if (tempEvent.settlementTraitLocations.Count == 0)
                 {
                     LogUtil.Warning($"Random event '{def.defName}' found no valid settlements"
-                                    + (def.requiredResource != null ? $" (requires {def.requiredResource.defName} production)" : "")
+                                    + (def.requiredResource is not null ? $" (requires {def.requiredResource.defName} production)" : "")
                                     + (def.applicableBiomes.Count > 0 ? $" (biomes: {string.Join(", ", def.applicableBiomes)})" : "")
                                     + (def.restrictedBiomes.Count > 0 ? $" (excluded biomes: {string.Join(", ", def.restrictedBiomes)})" : ""));
                     return null;
@@ -481,11 +481,11 @@ public static class FCEventMaker
                 // Defer the cooldown to the last chain step: re-stamp the chain root's cooldown each
                 // time any member of its chain fires.
                 FCEventDef cooldownRoot = FactionCache.ChainCooldownRootOf(evt.def);
-                if (cooldownRoot != null)
+                if (cooldownRoot is not null)
                 {
                     faction.RecordEventCooldown(cooldownRoot);
                 }
-                else if (evt.def != null && evt.def.cooldownTicks > 0)
+                else if (evt.def is not null && evt.def.cooldownTicks > 0)
                 {
                     faction.RecordEventCooldown(evt.def);
                 }
@@ -496,7 +496,7 @@ public static class FCEventMaker
                     faction.RecordEventFired(evt.def);
                 }
 
-                if (evt.def == null)
+                if (evt.def is null)
                 {
                     LogUtil.Warning($"Purging event with null def (loadID={evt.loadID}). Likely corrupted save data.");
                     evt.phase = FCEventPhase.Completed; // let the end-of-pass sweep remove it
@@ -508,7 +508,7 @@ public static class FCEventMaker
                 LogUtil.Message($"Processing event {evt.def.defName}");
 
                 FCEventHandlerExtension handler = evt.def.GetModExtension<FCEventHandlerExtension>();
-                bool handled = handler != null && handler.ResolveEvent(evt, faction);
+                bool handled = handler is not null && handler.ResolveEvent(evt, faction);
 
                 if (!handled)
                 {
@@ -571,7 +571,7 @@ public static class FCEventMaker
                             case "constructBuilding":
                                 //Create building
                                 settlement = faction.ReturnSettlementByLocation(evt.source);
-                                if (settlement != null)
+                                if (settlement is not null)
                                 {
                                     settlement.ConstructBuilding(evt.building, evt.buildingSlot);
                                     Messages.Message("FCBuildingEventCompletedMsg".Translate(evt.building.LabelCap, settlement.Name), MessageTypeDefOf.PositiveEvent);
@@ -583,7 +583,7 @@ public static class FCEventMaker
                                 break;
                             case "upgradeSettlement":
                                 {
-                                    if (faction.ReturnSettlementByLocation(evt.location) != null)
+                                    if (faction.ReturnSettlementByLocation(evt.location) is not null)
                                     {
                                         //if settlement is not null
                                         settlement = faction.ReturnSettlementByLocation(evt.location);
@@ -598,7 +598,7 @@ public static class FCEventMaker
                             default:
                                 {
                                     // Undefined event: optionally awards a random thing reward.
-                                    if (evt.def.randomThingValue > 0 && evt.def.randomThingRewardDef != null)
+                                    if (evt.def.randomThingValue > 0 && evt.def.randomThingRewardDef is not null)
                                     {
                                         /* Scale reward value by the number of affected settlements so multi-target events
                                          * deliver reward magnitude proportional to their scope. Matches FCOptionCostUtil's
@@ -648,7 +648,7 @@ public static class FCEventMaker
                  * FCEventManager.Remove / RemoveWhere when the event leaves the queue). */
 
                 //if have options
-                if (evt.def != null && evt.def.options.Count > 0 && evt.def.activateAtStart == false)
+                if (evt.def is not null && evt.def.options.Count > 0 && evt.def.activateAtStart == false)
                 {
                     Find.WindowStack.Add(new FCOptionWindow(evt.def, evt));
                 }
@@ -684,7 +684,7 @@ public static class FCEventMaker
                             : null;
                         FCEvent tempEvent = MakeRandomEvent(target, settlements);
 
-                        if (tempEvent != null)
+                        if (tempEvent is not null)
                         {
                             faction.eventManager.AddEvent(tempEvent);
 
@@ -724,7 +724,7 @@ public static class FCEventMaker
             if (evt.def == FCEventDefOf.constructBuilding)
             {
                 WorldSettlementFC settlement = faction.ReturnSettlementByLocation(evt.source);
-                if (settlement is object && evt.building is object && evt.buildingSlot >= 0)
+                if (settlement is not null && evt.building is not null && evt.buildingSlot >= 0)
                 {
                     settlement.ConstructBuilding(evt.building, evt.buildingSlot);
                     LogUtil.Warning($"Recovered orphaned construction: {evt.building.defName} at {settlement.Name} slot {evt.buildingSlot}");
@@ -733,7 +733,7 @@ public static class FCEventMaker
             else if (evt.def == FCEventDefOf.upgradeSettlement)
             {
                 WorldSettlementFC settlement = faction.ReturnSettlementByLocation(evt.location);
-                if (settlement is object)
+                if (settlement is not null)
                 {
                     settlement.UpgradeSettlement(setFlags: true);
                     LogUtil.Warning($"Recovered orphaned upgrade at {settlement.Name}");
@@ -753,7 +753,7 @@ public static class FCEventMaker
         FCEvent tmp = MakeEvent(FCEventDefOf.taxColony);
         tmp.tickStarted = Find.TickManager.TicksGame;
 
-        if (bill.settlement != null && faction.settlements.Contains(bill.settlement))
+        if (bill.settlement is not null && faction.settlements.Contains(bill.settlement))
         {
             tmp.source = bill.settlement.Tile; //source location
             tmp.customDescription = "FCTaxesFromSettlementAreBeingDelivered".Translate(bill.settlement.Name);

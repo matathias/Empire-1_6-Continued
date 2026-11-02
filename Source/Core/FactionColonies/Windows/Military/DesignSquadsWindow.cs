@@ -63,7 +63,7 @@ public class DesignSquadsWindow : MilitaryWindow
         float contentLeft = sidebarRect.xMax + 10f;
         float contentWidth = rightEdge - contentLeft;
 
-        if (selectedSquad != null)
+        if (selectedSquad is not null)
         {
             // Header
             Rect headerRect = new Rect(contentLeft, contentTop, contentWidth, 60f);
@@ -175,7 +175,7 @@ public class DesignSquadsWindow : MilitaryWindow
                 FactionColoniesMilitary.SavedSquads.ToList()));
         }
 
-        if (selectedSquad != null)
+        if (selectedSquad is not null)
         {
             if (UIUtil.ClampedButtonText(deleteBtn, "FCDeleteSquadButton".Translate()))
             {
@@ -241,7 +241,7 @@ public class DesignSquadsWindow : MilitaryWindow
         Text.Anchor = TextAnchor.MiddleLeft;
         float costY = highlightBar.yMax + margin;
 
-        string equipLabel = settlementPointReference != null
+        string equipLabel = settlementPointReference is not null
             ? (string)"FCTotalSquadEquipmentCost".Translate(
                 selectedSquad.GetEquipmentTotalCost(),
                 MilitaryFC.CalculateSquadBudget(settlementPointReference.settlementMilitaryLevel))
@@ -312,7 +312,7 @@ public class DesignSquadsWindow : MilitaryWindow
         // Pawn preview icon
         Rect pawnRect = new Rect(x, row.y + 2f, UnitRowHeight - 4f, UnitRowHeight - 4f);
         Pawn preview = unit.PreviewPawn;
-        if (preview != null)
+        if (preview is not null)
         {
             UIUtil.DrawPawnPortrait(pawnRect, preview);
         }
@@ -320,7 +320,7 @@ public class DesignSquadsWindow : MilitaryWindow
         {
             // Fallback icon when there's no preview pawn: prefer the mount, else the first companion.
             PawnKindDef animalIcon = unit.mount ?? unit.animals.FirstOrDefault().kind;
-            if (animalIcon != null)
+            if (animalIcon is not null)
                 Widgets.ButtonImage(pawnRect, animalIcon.race.uiIcon);
         }
         x = pawnRect.xMax + 4f;

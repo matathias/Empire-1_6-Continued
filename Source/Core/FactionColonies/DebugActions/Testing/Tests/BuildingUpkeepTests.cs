@@ -5,8 +5,8 @@ public static class BuildingUpkeepTests
     private static WorldSettlementFC GetSettlement()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null || faction.settlements.Count == 0) return null;
-        return faction.settlements.FirstOrDefault(s => s.BuildingsComp != null);
+        if (faction is null || faction.settlements.Count == 0) return null;
+        return faction.settlements.FirstOrDefault(s => s.BuildingsComp is not null);
     }
 
     // ============================
@@ -35,7 +35,7 @@ public static class BuildingUpkeepTests
     public static void AllBuildingUpkeep_IsSaneMagnitude()
     {
         WorldSettlementFC settlement = GetSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement with BuildingsComp");
+        if (settlement is null) TestAssert.Skip("No settlement with BuildingsComp");
 
         var comp = settlement.BuildingsComp;
         for (int i = 0; i < comp.NumBuildingSlots; i++)
@@ -52,7 +52,7 @@ public static class BuildingUpkeepTests
     public static void TotalUpkeep_MatchesSumOfSlots()
     {
         WorldSettlementFC settlement = GetSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement with BuildingsComp");
+        if (settlement is null) TestAssert.Skip("No settlement with BuildingsComp");
 
         var comp = settlement.BuildingsComp;
         int sum = 0;
@@ -69,7 +69,7 @@ public static class BuildingUpkeepTests
     public static void TotalUpkeep_IsNonNegative()
     {
         WorldSettlementFC settlement = GetSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement with BuildingsComp");
+        if (settlement is null) TestAssert.Skip("No settlement with BuildingsComp");
 
         int total = settlement.BuildingsComp.TotalUpkeep();
         TestAssert.IsTrue(total >= 0,
@@ -84,7 +84,7 @@ public static class BuildingUpkeepTests
     public static void IsBuildingRequiredByOther_EmptyBuilding_ReturnsFalse()
     {
         WorldSettlementFC settlement = GetSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement with BuildingsComp");
+        if (settlement is null) TestAssert.Skip("No settlement with BuildingsComp");
 
         TestAssert.IsFalse(settlement.BuildingsComp.IsBuildingRequiredByOther(BuildingFCDefOf.Empty),
             "Empty building should never be required by another building");
@@ -94,7 +94,7 @@ public static class BuildingUpkeepTests
     public static void GetBuildingsDependingOn_EmptyBuilding_ReturnsEmpty()
     {
         WorldSettlementFC settlement = GetSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement with BuildingsComp");
+        if (settlement is null) TestAssert.Skip("No settlement with BuildingsComp");
 
         var dependents = settlement.BuildingsComp.GetBuildingsDependingOn(BuildingFCDefOf.Empty);
         TestAssert.IsEmpty(dependents,
@@ -105,7 +105,7 @@ public static class BuildingUpkeepTests
     public static void NumBuildingSlots_IsPositive()
     {
         WorldSettlementFC settlement = GetSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement with BuildingsComp");
+        if (settlement is null) TestAssert.Skip("No settlement with BuildingsComp");
 
         TestAssert.IsTrue(settlement.BuildingsComp.NumBuildingSlots >= 0,
             "Settlement should have non-negative building slots");

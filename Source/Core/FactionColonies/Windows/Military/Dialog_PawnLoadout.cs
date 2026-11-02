@@ -68,10 +68,10 @@ public class Dialog_PawnLoadout : Window
     {
         if (merc is null) return null;
         dirty = true;
-        if (workingLoadout != null) return workingLoadout;
+        if (workingLoadout is not null) return workingLoadout;
 
         MilUnitFC source = merc.loadout ?? merc.currentLoadout;
-        if (source != null)
+        if (source is not null)
         {
             workingLoadout = source.Clone();
         }
@@ -102,7 +102,7 @@ public class Dialog_PawnLoadout : Window
 
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        string title = merc.pawn != null
+        string title = merc.pawn is not null
             ? (string)"FCDialogPawnLoadoutTitle".Translate(merc.pawn.LabelShortCap)
             : (string)"FCDialogPawnLoadoutTitleEmpty".Translate();
         UIUtil.ClampedLabel(new Rect(headerBar.x + 5f, headerBar.y, headerBar.width - 10f, headerBar.height), title);
@@ -110,7 +110,7 @@ public class Dialog_PawnLoadout : Window
         // Subtitle: template association state (based on the working buffer)
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleLeft;
-        string sub = workingLoadout != null
+        string sub = workingLoadout is not null
             ? (string)"FCDialogPawnLoadoutDivergedSubtitle".Translate()
             : (string)"FCDialogPawnLoadoutInheritedSubtitle".Translate(merc.loadout?.name ?? (string)"FCNone".Translate());
         UIUtil.ClampedLabel(new Rect(inRect.x, headerBar.yMax + 4f, inRect.width, 18f), sub);
@@ -132,7 +132,7 @@ public class Dialog_PawnLoadout : Window
         UIUtil.ClampedLabel(new Rect(inRect.x, headerBar.yMax + 26f, inRect.width, 20f), infoLine);
 
         // Total equipment cost (read-only — Upgrade pays cost diff on equip)
-        float totalCost = current != null ? (float)current.getTotalCost : 0f;
+        float totalCost = current is not null ? (float)current.getTotalCost : 0f;
         UIUtil.ClampedLabel(new Rect(inRect.x, headerBar.yMax + 48f, inRect.width, 20f),
             "FCTotalEquipmentCostLabel".Translate() + totalCost.ToString("F0"));
 
@@ -163,7 +163,7 @@ public class Dialog_PawnLoadout : Window
 
         // Reset: clear workingLoadout so DisplayLoadout falls back to the squad
         // template (loadout). Buffered — only Apply commits.
-        bool canReset = workingLoadout != null && merc.loadout != null;
+        bool canReset = workingLoadout is not null && merc.loadout is not null;
         Color colorBefore = GUI.color;
         if (!canReset) GUI.color = Color.gray;
         Rect resetRect = new Rect(pickRect.xMax + gap, bottomRect.y, resetW, bottomRect.height);
@@ -217,7 +217,7 @@ public class Dialog_PawnLoadout : Window
         const float gap = 14f;
 
         Rect portraitRect = new Rect(rect.x + (rect.width - 100f) / 2f, rect.y, 100f, portraitH);
-        if (previewPawn != null)
+        if (previewPawn is not null)
             UIUtil.DrawPawnPortrait(portraitRect, previewPawn);
         else
             Widgets.DrawMenuSection(portraitRect);
@@ -253,7 +253,7 @@ public class Dialog_PawnLoadout : Window
         // Use non-interactive draws so ButtonInvisible below handles all clicks.
         if (current?.HasWeapon == true)
             Widgets.DrawTextureFitted(weaponSlot, current.weapons[0].thing.uiIcon, 1f);
-        if (showMount && current?.mount != null)
+        if (showMount && current?.mount is not null)
             Widgets.DrawTextureFitted(mountSlot, current.mount.race.uiIcon, 1f);
 
         if (Widgets.ButtonInvisible(weaponSlot))
@@ -278,7 +278,7 @@ public class Dialog_PawnLoadout : Window
         // Show the Psycasts tab only when a psycast system is available (Royalty / VPE / other),
         // matching the unit designer. Edits buffer into workingLoadout like every other tab; the
         // live pawn is reconciled later by the squad inspection's per-pawn Upgrade.
-        bool showPsycasts = PsycastSystemRegistry.Active != null;
+        bool showPsycasts = PsycastSystemRegistry.Active is not null;
         bool showMechs = ModsConfig.BiotechActive;
         activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includePsycasts: showPsycasts, includeMechs: showMechs);
         content = content.ContractedBy(4f);
@@ -368,12 +368,12 @@ public class Dialog_PawnLoadout : Window
             onConfirm: (item, stuff, quality) =>
             {
                 MilUnitFC target = EnsureWorkingLoadout();
-                if (target != null) target.SetWeapon(item, stuff, quality);
+                if (target is not null) target.SetWeapon(item, stuff, quality);
             },
             onUnequip: () =>
             {
                 MilUnitFC target = EnsureWorkingLoadout();
-                if (target != null) target.ClearWeapon();
+                if (target is not null) target.ClearWeapon();
             },
             titleKey: "fcPickWeapon",
             initialItem: currentWeapon?.thing,
@@ -438,11 +438,11 @@ public class Dialog_PawnLoadout : Window
      * in PostClose. */
     private void EnsurePreviewPawn()
     {
-        if (previewPawn != null) return;
+        if (previewPawn is not null) return;
         if (merc?.pawn is null) return;
 
         int savedDuplicateOf = int.MinValue;
-        bool hadDup = ModsConfig.AnomalyActive && merc.pawn.duplicate != null;
+        bool hadDup = ModsConfig.AnomalyActive && merc.pawn.duplicate is not null;
         if (hadDup) savedDuplicateOf = merc.pawn.duplicate.duplicateOf;
 
         try

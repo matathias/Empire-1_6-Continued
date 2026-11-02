@@ -109,7 +109,7 @@ public class EmpireStockGenerator : StockGenerator
 
                 int stackCount = Mathf.Max(1, Mathf.RoundToInt(randomizedBudget / marketValue));
 
-                if (td.race is object && td.race.Animal)
+                if (td.race is not null && td.race.Animal)
                 {
                     for (int i = 0; i < stackCount; i++)
                     {
@@ -117,7 +117,7 @@ public class EmpireStockGenerator : StockGenerator
                         if (pawnKind is null) continue;
                         PawnGenerationRequest request = new PawnGenerationRequest(pawnKind, null, PawnGenerationContext.NonPlayer);
                         Pawn pawn = PawnGenerator.GeneratePawn(request);
-                        if (pawn is object) yield return pawn;
+                        if (pawn is not null) yield return pawn;
                     }
                 }
                 else
@@ -175,7 +175,7 @@ public class EmpireStockGenerator : StockGenerator
         float extraScale = BaseExtraScale;
 
         FactionFC faction = FindFC.FactionComp;
-        if (faction is object)
+        if (faction is not null)
         {
             // Also scale by tech level
             switch (faction.techLevel)

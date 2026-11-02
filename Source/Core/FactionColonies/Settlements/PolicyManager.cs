@@ -57,9 +57,9 @@ public class PolicyManager : IExposable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (policies == null) policies = new List<FCPolicy>();
-            if (factionTraits == null) factionTraits = SeedDefaultTraits();
-            if (edicts == null) edicts = new Dictionary<FCPolicyCategory, FCPolicy>();
+            if (policies is null) policies = new List<FCPolicy>();
+            if (factionTraits is null) factionTraits = SeedDefaultTraits();
+            if (edicts is null) edicts = new Dictionary<FCPolicyCategory, FCPolicy>();
             pendingEdictActivations = new HashSet<FCPolicyCategory>();
             ScrubDeadPolicies();
         }
@@ -74,7 +74,7 @@ public class PolicyManager : IExposable
     internal void ScrubDeadPolicies()
     {
         policies?.RemoveAll(p => p?.def is null);
-        if (edicts != null)
+        if (edicts is not null)
         {
             List<FCPolicyCategory> deadEdicts = null;
             foreach (KeyValuePair<FCPolicyCategory, FCPolicy> kv in edicts)
@@ -82,7 +82,7 @@ public class PolicyManager : IExposable
                 if (kv.Value?.def is null)
                     (deadEdicts ?? (deadEdicts = new List<FCPolicyCategory>())).Add(kv.Key);
             }
-            if (deadEdicts != null)
+            if (deadEdicts is not null)
                 foreach (FCPolicyCategory cat in deadEdicts)
                     edicts.Remove(cat);
         }
@@ -93,9 +93,9 @@ public class PolicyManager : IExposable
         List<FCPolicy> legacyTraits,
         Dictionary<FCPolicyCategory, FCPolicy> legacyEdicts)
     {
-        if (legacyPolicies != null) policies = legacyPolicies;
-        if (legacyTraits != null) factionTraits = legacyTraits;
-        if (legacyEdicts != null) edicts = legacyEdicts;
+        if (legacyPolicies is not null) policies = legacyPolicies;
+        if (legacyTraits is not null) factionTraits = legacyTraits;
+        if (legacyEdicts is not null) edicts = legacyEdicts;
     }
 
     private static List<FCPolicy> SeedDefaultTraits() => new List<FCPolicy>
@@ -120,18 +120,18 @@ public class PolicyManager : IExposable
         _cachedBehaviors = new List<FCPolicyBehavior>();
         foreach (FCPolicy p in policies)
         {
-            if (p?.behavior != null)
+            if (p?.behavior is not null)
                 _cachedBehaviors.Add(p.behavior);
         }
         foreach (FCPolicy p in factionTraits)
         {
             if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
-            if (p.behavior != null)
+            if (p.behavior is not null)
                 _cachedBehaviors.Add(p.behavior);
         }
         foreach (FCPolicy edict in edicts.Values)
         {
-            if (edict?.behavior != null)
+            if (edict?.behavior is not null)
                 _cachedBehaviors.Add(edict.behavior);
         }
 
@@ -158,26 +158,26 @@ public class PolicyManager : IExposable
         foreach (FCPolicy p in policies)
         {
             if (p?.def is null) continue;
-            if (p.def.blockedActions != null) foreach (var a in p.def.blockedActions) _cachedBlockedActions.Add(a);
-            if (p.def.enabledActions != null) foreach (var a in p.def.enabledActions) _cachedEnabledActions.Add(a);
-            if (p.def.blockedMilitaryJobs != null) foreach (var j in p.def.blockedMilitaryJobs) _cachedBlockedJobs.Add(j);
-            if (p.def.enabledMilitaryJobs != null) foreach (var j in p.def.enabledMilitaryJobs) _cachedEnabledJobs.Add(j);
+            if (p.def.blockedActions is not null) foreach (var a in p.def.blockedActions) _cachedBlockedActions.Add(a);
+            if (p.def.enabledActions is not null) foreach (var a in p.def.enabledActions) _cachedEnabledActions.Add(a);
+            if (p.def.blockedMilitaryJobs is not null) foreach (var j in p.def.blockedMilitaryJobs) _cachedBlockedJobs.Add(j);
+            if (p.def.enabledMilitaryJobs is not null) foreach (var j in p.def.enabledMilitaryJobs) _cachedEnabledJobs.Add(j);
         }
         foreach (FCPolicy p in factionTraits)
         {
             if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
-            if (p.def.blockedActions != null) foreach (var a in p.def.blockedActions) _cachedBlockedActions.Add(a);
-            if (p.def.enabledActions != null) foreach (var a in p.def.enabledActions) _cachedEnabledActions.Add(a);
-            if (p.def.blockedMilitaryJobs != null) foreach (var j in p.def.blockedMilitaryJobs) _cachedBlockedJobs.Add(j);
-            if (p.def.enabledMilitaryJobs != null) foreach (var j in p.def.enabledMilitaryJobs) _cachedEnabledJobs.Add(j);
+            if (p.def.blockedActions is not null) foreach (var a in p.def.blockedActions) _cachedBlockedActions.Add(a);
+            if (p.def.enabledActions is not null) foreach (var a in p.def.enabledActions) _cachedEnabledActions.Add(a);
+            if (p.def.blockedMilitaryJobs is not null) foreach (var j in p.def.blockedMilitaryJobs) _cachedBlockedJobs.Add(j);
+            if (p.def.enabledMilitaryJobs is not null) foreach (var j in p.def.enabledMilitaryJobs) _cachedEnabledJobs.Add(j);
         }
         foreach (FCPolicy edict in edicts.Values)
         {
             if (edict?.def is null || !edict.IsFullyActive) continue;
-            if (edict.def.blockedActions != null) foreach (var a in edict.def.blockedActions) _cachedBlockedActions.Add(a);
-            if (edict.def.enabledActions != null) foreach (var a in edict.def.enabledActions) _cachedEnabledActions.Add(a);
-            if (edict.def.blockedMilitaryJobs != null) foreach (var j in edict.def.blockedMilitaryJobs) _cachedBlockedJobs.Add(j);
-            if (edict.def.enabledMilitaryJobs != null) foreach (var j in edict.def.enabledMilitaryJobs) _cachedEnabledJobs.Add(j);
+            if (edict.def.blockedActions is not null) foreach (var a in edict.def.blockedActions) _cachedBlockedActions.Add(a);
+            if (edict.def.enabledActions is not null) foreach (var a in edict.def.enabledActions) _cachedEnabledActions.Add(a);
+            if (edict.def.blockedMilitaryJobs is not null) foreach (var j in edict.def.blockedMilitaryJobs) _cachedBlockedJobs.Add(j);
+            if (edict.def.enabledMilitaryJobs is not null) foreach (var j in edict.def.enabledMilitaryJobs) _cachedEnabledJobs.Add(j);
         }
         _cachedEnabledActions.ExceptWith(_cachedBlockedActions);
         _cachedEnabledJobs.ExceptWith(_cachedBlockedJobs);
@@ -243,7 +243,7 @@ public class PolicyManager : IExposable
         FactionFC faction = Faction;
         foreach (FCPolicy p in policyList)
         {
-            if (p?.behavior != null)
+            if (p?.behavior is not null)
             {
                 try { p.behavior.OnRemoved(faction); }
                 catch (Exception e) { LogUtil.Error($"FCPolicyBehavior.OnRemoved error for '{p.def?.defName}': {e}"); }
@@ -361,7 +361,7 @@ public class PolicyManager : IExposable
         if (!edicts.TryGetValue(category, out FCPolicy edict)) return;
 
         FactionFC faction = Faction;
-        if (edict.behavior != null)
+        if (edict.behavior is not null)
         {
             try { edict.behavior.OnRemoved(faction); }
             catch (Exception e) { LogUtil.Error($"Edict behavior OnRemoved error for '{edict.def?.defName}': {e}"); }
@@ -377,7 +377,7 @@ public class PolicyManager : IExposable
             Messages.Message("FCEdictRevoked".Translate(label), MessageTypeDefOf.NeutralEvent);
 
         // Cascade: revoke any active edicts that depended on the one just removed
-        if (revokedDef != null)
+        if (revokedDef is not null)
         {
             List<FCPolicyCategory> toRevoke = new List<FCPolicyCategory>();
             foreach (KeyValuePair<FCPolicyCategory, FCPolicy> kvp in edicts)
@@ -465,9 +465,9 @@ public class PolicyManager : IExposable
     /// </summary>
     public bool IsMilitaryJobAllowed(MilitaryJobDef job)
     {
-        if (_cachedBlockedJobs != null && _cachedBlockedJobs.Contains(job)) return false;
+        if (_cachedBlockedJobs is not null && _cachedBlockedJobs.Contains(job)) return false;
         if (!job.defaultEnabled)
-            return _cachedEnabledJobs != null && _cachedEnabledJobs.Contains(job);
+            return _cachedEnabledJobs is not null && _cachedEnabledJobs.Contains(job);
         return true;
     }
 
@@ -478,7 +478,7 @@ public class PolicyManager : IExposable
     {
         foreach (FCPolicy p in policies)
         {
-            if (p?.def != null && p.def.preventBuildingDestruction)
+            if (p?.def is not null && p.def.preventBuildingDestruction)
                 return true;
         }
         foreach (FCPolicy p in factionTraits)
@@ -489,7 +489,7 @@ public class PolicyManager : IExposable
         }
         foreach (FCPolicy edict in edicts.Values)
         {
-            if (edict?.def != null && edict.IsFullyActive && edict.def.preventBuildingDestruction)
+            if (edict?.def is not null && edict.IsFullyActive && edict.def.preventBuildingDestruction)
                 return true;
         }
         return false;
@@ -502,7 +502,7 @@ public class PolicyManager : IExposable
     {
         foreach (FCPolicy p in policies)
         {
-            if (p?.def != null && p.def.suppressMemberDeathPenalty)
+            if (p?.def is not null && p.def.suppressMemberDeathPenalty)
                 return true;
         }
         foreach (FCPolicy p in factionTraits)
@@ -513,7 +513,7 @@ public class PolicyManager : IExposable
         }
         foreach (FCPolicy edict in edicts.Values)
         {
-            if (edict?.def != null && edict.IsFullyActive && edict.def.suppressMemberDeathPenalty)
+            if (edict?.def is not null && edict.IsFullyActive && edict.def.suppressMemberDeathPenalty)
                 return true;
         }
         return false;

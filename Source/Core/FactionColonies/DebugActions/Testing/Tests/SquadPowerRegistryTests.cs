@@ -63,7 +63,7 @@ public static class SquadPowerRegistryTests
         {
             foreach (MercenarySquadFC squad in s.StationedSquads)
             {
-                if (squad?.settlement is object) return squad;
+                if (squad?.settlement is not null) return squad;
             }
         }
         return null;

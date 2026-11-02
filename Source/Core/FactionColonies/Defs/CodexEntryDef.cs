@@ -82,7 +82,7 @@ public class CodexEntryDef : Def
                     foreach (string path in imagePaths)
                     {
                         Texture2D tex = ContentFinder<Texture2D>.Get(path, false);
-                        if (tex is object)
+                        if (tex is not null)
                             imagesCached.Add(tex);
                     }
                 }
@@ -105,7 +105,7 @@ public class CodexEntryDef : Def
     {
         get
         {
-            if (providerInstance is null && dynamicProvider is object)
+            if (providerInstance is null && dynamicProvider is not null)
             {
                 providerInstance = (ICodexDynamicProvider)Activator.CreateInstance(dynamicProvider);
             }
@@ -128,7 +128,7 @@ public class CodexEntryDef : Def
 
         if (category is null)
             yield return "category is null. Must reference a CodexCategoryDef";
-        if (dynamicProvider is object && !typeof(ICodexDynamicProvider).IsAssignableFrom(dynamicProvider))
+        if (dynamicProvider is not null && !typeof(ICodexDynamicProvider).IsAssignableFrom(dynamicProvider))
             yield return $"dynamicProvider type '{dynamicProvider.FullName}' does not implement ICodexDynamicProvider";
 
         // Unknown seeAlso entries are reported by the cross-reference loader (the

@@ -26,7 +26,7 @@ public class FCPolicyBehavior_Militaristic : FCPolicyBehavior
     private void TryPlaceBuilding(WorldSettlementFC settlement)
     {
         WorldObjectComp_SettlementBuildings buildingsComp = settlement.BuildingsComp;
-        if (buildingsComp == null) return;
+        if (buildingsComp is null) return;
 
         BuildingFCDef building = Ext<FCPolicyBehaviorExt_Militaristic>().autoPlaceBuilding;
         if (building is null) return;
@@ -63,7 +63,7 @@ public class FCPolicyBehavior_Militaristic : FCPolicyBehavior
         // Use any stationed squad's outfit as the cost basis for the extra squad — the
         // copy uses CallinExtraForces which itself reads the primary stationed squad.
         MilSquadFC referenceOutfit = settlement?.PrimaryStationedSquad?.outfit;
-        if (referenceOutfit == null)
+        if (referenceOutfit is null)
             yield break;
 
         var ext = Ext<FCPolicyBehaviorExt_Militaristic>();

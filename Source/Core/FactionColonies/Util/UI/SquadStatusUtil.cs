@@ -31,14 +31,14 @@ public static class SquadStatusUtil
 
         int now = Find.TickManager.TicksGame;
         MilitaryOperation op = squad.Operation;
-        if (op is object && op.kind != MilitaryJobDefOf.Cooldown
+        if (op is not null && op.kind != MilitaryJobDefOf.Cooldown
             && op.phase != MilitaryOperationPhase.CooldownPending)
         {
             int ticksLeft = Math.Max(0, op.nextPhaseTick - now);
             // Prefer the short status verb ("Defending", "Raiding") over the verbose
             // op.kind.label ("defend friendly settlement") so the badge stays one line.
             // Mirrors AccentUtil.GetMilitaryStatusLabel's statusLabelKey fallback.
-            string opLabel = op.kind?.statusLabelKey != null
+            string opLabel = op.kind?.statusLabelKey is not null
                 ? (string)op.kind.statusLabelKey.Translate()
                 : (op.kind?.label ?? "?");
             label = "FCSquadStatusBusyOp".Translate(opLabel, ticksLeft.ToTimeString());
@@ -98,7 +98,7 @@ public static class SquadStatusUtil
 
         int now = Find.TickManager.TicksGame;
         MilitaryOperation op = squad.Operation;
-        if (op is object && op.kind != MilitaryJobDefOf.Cooldown
+        if (op is not null && op.kind != MilitaryJobDefOf.Cooldown
             && op.phase != MilitaryOperationPhase.CooldownPending)
         {
             reasons.Add(BusyReason(squad));
@@ -107,7 +107,7 @@ public static class SquadStatusUtil
         {
             reasons.Add("FCSquadUnavailTraveling".Translate((squad.nextAvailableTick - now).ToTimeString()));
         }
-        if (squad.IsUnderfunded && squad.settlement is object
+        if (squad.IsUnderfunded && squad.settlement is not null
             && MilitaryFC.SquadExceedsSettlementBudget(squad, squad.settlement, out int squadDeploy, out int maxDeploy))
         {
             reasons.Add(OverBudgetReason(squadDeploy, maxDeploy, squad.settlement.Name));
@@ -123,7 +123,7 @@ public static class SquadStatusUtil
         MilitaryOperation op = squad?.Operation;
         if (op is null) return "FCSquadUnavailBusy".Translate("?", 0.ToTimeString());
         int ticksLeft = Math.Max(0, op.nextPhaseTick - Find.TickManager.TicksGame);
-        string opLabel = op.kind?.statusLabelKey != null
+        string opLabel = op.kind?.statusLabelKey is not null
             ? (string)op.kind.statusLabelKey.Translate()
             : (op.kind?.label ?? "?");
         return "FCSquadUnavailBusy".Translate(opLabel, ticksLeft.ToTimeString());

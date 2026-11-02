@@ -18,7 +18,7 @@ static class MapCellAndTileExtensions
             if (thing is IActiveTransporter || thing is Skyfaller || thing.def.category == ThingCategory.Building || thing.def.category == ThingCategory.Item) return true;
 
             PlantProperties plant = thing.def.plant;
-            if (plant != null && plant.IsTree) return true;
+            if (plant is not null && plant.IsTree) return true;
         }
 
         return false;

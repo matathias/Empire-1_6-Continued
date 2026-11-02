@@ -111,10 +111,10 @@ public class CodexWindow : Window
     /// </summary>
     public CodexWindow(CodexEntryDef preselect) : this()
     {
-        if (preselect is object)
+        if (preselect is not null)
         {
             CodexTab_Info infoTab = tabs.OfType<CodexTab_Info>().FirstOrDefault();
-            if (infoTab is object)
+            if (infoTab is not null)
                 infoTab.SelectEntry(preselect);
         }
     }

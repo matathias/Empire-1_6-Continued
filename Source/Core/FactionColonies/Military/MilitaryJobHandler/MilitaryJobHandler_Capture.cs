@@ -86,7 +86,7 @@ public class MilitaryJobHandler_Capture : MilitaryJobHandler_Offensive
 
         WorldSettlementFC worldsettlement = ColonyUtil.SetupCapturedSettlement(capturedTile, tmpName, tech);
 
-        bool defeated = !Find.WorldObjects.Settlements.Any(settlement => settlement.Faction != null
+        bool defeated = !Find.WorldObjects.Settlements.Any(settlement => settlement.Faction is not null
             && settlement.Faction == tempFactionLink);
 
         if (defeated)
@@ -124,7 +124,7 @@ public class MilitaryJobHandler_Capture : MilitaryJobHandler_Offensive
         faction.AddExperienceToFactionLevel(5f);
 
         BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(capturedTile);
-        if (bf is object)
+        if (bf is not null)
             bf.RegisterPendingCapture(tmpName, tech);
         else
             LogUtil.Warning($"DeferManualCapture: no battlefield at {capturedTile}; deferred capture will not complete.");

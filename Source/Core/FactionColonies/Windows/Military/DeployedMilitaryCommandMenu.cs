@@ -28,7 +28,7 @@ public class DeployedMilitaryCommandMenu : Window
 
         // Use the op-driven source so the freshly-deployed squad is visible immediately,
         // even while its pawns are still inside drop pods (pawn.Map is null pre-pod-open).
-        selectedSquad = faction.military.SquadsInDeployOp.Where(squad => squad.getSettlement != null).RandomElementWithFallback();
+        selectedSquad = faction.military.SquadsInDeployOp.Where(squad => squad.getSettlement is not null).RandomElementWithFallback();
     }
 
     public override Vector2 InitialSize => new Vector2(216f, 300f);
@@ -48,7 +48,7 @@ public class DeployedMilitaryCommandMenu : Window
         List<FloatMenuOption> list = new List<FloatMenuOption>();
         foreach (MercenarySquadFC squad in faction.military.SquadsInDeployOp)
         {
-            if (squad.getSettlement != null)
+            if (squad.getSettlement is not null)
             {
                 list.Add(new FloatMenuOption("FCSelectedDeployedSquad".Translate(squad.getSettlement.Name, squad.DisplayName), () => selectedSquad = squad));
             }
@@ -69,7 +69,7 @@ public class DeployedMilitaryCommandMenu : Window
     /// </summary>
     private void DoAttackCommand()
     {
-        if (selectedSquad != null)
+        if (selectedSquad is not null)
         {
             selectedSquad.Deployment.MilitaryOrder = MilitaryOrder.Hunt;
             Messages.Message("FCAttackSuccess".Translate(selectedSquad.DisplayName), MessageTypeDefOf.NeutralEvent);
@@ -81,7 +81,7 @@ public class DeployedMilitaryCommandMenu : Window
     /// </summary>
     private void DoMoveCommand()
     {
-        if (selectedSquad != null)
+        if (selectedSquad is not null)
         {
             DebugTool tool;
             IntVec3 Position;
@@ -104,7 +104,7 @@ public class DeployedMilitaryCommandMenu : Window
     /// </summary>
     private void DoLeaveCommand()
     {
-        if (selectedSquad != null)
+        if (selectedSquad is not null)
         {
             selectedSquad.Deployment.MilitaryOrder = MilitaryOrder.RecoverWoundedAndLeave;
             Messages.Message("FCCommandLeave".Translate(selectedSquad.DisplayName, selectedSquad.dead), MessageTypeDefOf.NeutralEvent);
@@ -126,7 +126,7 @@ public class DeployedMilitaryCommandMenu : Window
     {
         foreach (Mercenary merc in squad.mercenaries.Concat(squad.AllSubPawns()))
         {
-            if (merc?.pawn?.Map != null)
+            if (merc?.pawn?.Map is not null)
             {
                 merc.pawn.Destroy();
             }
@@ -147,7 +147,7 @@ public class DeployedMilitaryCommandMenu : Window
         // Resolve the squad's op directly. Skip cooldown — debug action wants the squad
         // immediately freed.
         MilitaryOperation op = squad.Operation;
-        if (op is object) FindFC.MilitaryManager?.Unregister(op);
+        if (op is not null) FindFC.MilitaryManager?.Unregister(op);
         FindFC.Military?.RegisterSquadInjuries(squad);
     }
 
@@ -226,7 +226,7 @@ public class DeployedMilitaryCommandMenu : Window
         Widgets.DrawBoxSolid(new Rect(rect.x + 4f, lineY, contentWidth - 8f, accentLineThickness), AccentUtil.Military);
         curY += separatorGap;
 
-        if (selectedSquad != null)
+        if (selectedSquad is not null)
         {
             // --- Settlement name (dimmer, smaller font, clickable) ---
             Text.Font = GameFont.Tiny;
@@ -247,7 +247,7 @@ public class DeployedMilitaryCommandMenu : Window
                 TooltipHandler.TipRegion(settlementRect, settlementFullName);
             }
 
-            if (selectedSquad.getSettlement is object && Widgets.ButtonInvisible(settlementRect))
+            if (selectedSquad.getSettlement is not null && Widgets.ButtonInvisible(settlementRect))
             {
                 SoundDefOf.Click.PlayOneShotOnCamera();
                 Find.WindowStack.Add(new SettlementWindowFc(selectedSquad.getSettlement));
@@ -276,7 +276,7 @@ public class DeployedMilitaryCommandMenu : Window
             {
                 SoundDefOf.Click.PlayOneShotOnCamera();
                 Pawn pawn = selectedSquad.DeployedMercenaries.FirstOrDefault()?.pawn;
-                if (pawn != null)
+                if (pawn is not null)
                 {
                     CameraJumper.TryJump(new GlobalTargetInfo(pawn));
                 }

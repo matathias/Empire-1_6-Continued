@@ -52,7 +52,7 @@ public static class AnimalBiomeUtil
     {
         // 1. Active tax spot (where tithes/caravans are actually delivered)
         Map taxSpotMap = ActiveTaxSpotMap();
-        if (taxSpotMap is object) return taxSpotMap.Biome;
+        if (taxSpotMap is not null) return taxSpotMap.Biome;
 
         // 2. Capital location - tile-based, so it works even when the capital's map isn't loaded
         PlanetTile capital = FindFC.CapitalLocation;
@@ -83,7 +83,7 @@ public static class AnimalBiomeUtil
     public static bool SelectionCoversBiome(AnimalFilter filter, BiomeDef biome)
     {
         if (biome is null || filter is null) return true; // can't determine -> don't warn
-        return filter.AllowedPackAnimals.Any(k => k?.race is object && biome.IsPackAnimalAllowed(k.race));
+        return filter.AllowedPackAnimals.Any(k => k?.race is not null && biome.IsPackAnimalAllowed(k.race));
     }
 
     /// <summary>

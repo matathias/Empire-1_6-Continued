@@ -55,7 +55,7 @@ class GoodwillPatchFunctionsGoodwillAffect
             if (goodwillChange < 0)
             {
                 FactionRelation relation = __instance.RelationWith(other, allowNull: true);
-                int current = relation is object ? relation.baseGoodwill : __instance.PlayerGoodwill;
+                int current = relation is not null ? relation.baseGoodwill : __instance.PlayerGoodwill;
                 if (current + goodwillChange < EmpirePlayerGoodwillFloor)
                 {
                     int clamped = EmpirePlayerGoodwillFloor - current;
@@ -80,7 +80,7 @@ class GoodwillPatchFunctionsMemberDied
     static bool Prefix(ref Faction __instance, Pawn member, DamageInfo? dinfo, bool wasWorldPawn, Map map)
     {
         if (member.Faction == FindFC.EmpireFaction && !wasWorldPawn &&
-            !PawnGenerator.IsBeingGenerated(member) && map != null &&
+            !PawnGenerator.IsBeingGenerated(member) && map is not null &&
             (map.IsPlayerHome || map.Parent is WorldSettlementFC) &&
             !__instance.HostileTo(Faction.OfPlayer))
         {
@@ -95,7 +95,7 @@ class GoodwillPatchFunctionsMemberDied
 
             // Returning false blocks vanilla Notify_MemberDied, so replicate the two vanilla side
             // effects unrelated to goodwill: ideo member-count refresh and picking a new leader.
-            if (__instance.ideos != null) __instance.ideos.Notify_MemberGainedOrLost();
+            if (__instance.ideos is not null) __instance.ideos.Notify_MemberGainedOrLost();
             if (member == __instance.leader) __instance.Notify_LeaderDied();
 
             return false;
@@ -222,7 +222,7 @@ class MirrorGoodwillToEmpire
         if (!__result) return;
 
         Faction pcFaction = FindFC.EmpireFaction;
-        if (pcFaction == null) return;
+        if (pcFaction is null) return;
 
         Faction player = Find.FactionManager?.OfPlayer;
         if (player is null) return;
@@ -329,7 +329,7 @@ class MirrorRelationDirectToEmpire
     static void Postfix(Faction __instance, Faction other, FactionRelationKind kind)
     {
         Faction pcFaction = FindFC.EmpireFaction;
-        if (pcFaction == null) return;
+        if (pcFaction is null) return;
 
         Faction player = Find.FactionManager.OfPlayer;
 

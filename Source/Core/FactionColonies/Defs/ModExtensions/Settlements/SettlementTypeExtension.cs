@@ -65,7 +65,7 @@ public class SettlementTypeExtension : DefModExtension
     {
         // If the tile is impassable but has a qualifying mutator, bypass TileFinder
         // (which unconditionally rejects impassable tiles) and use our own validation.
-        bool impassableOverride = tile.Tile is object
+        bool impassableOverride = tile.Tile is not null
             && tile.Tile.hilliness == Hilliness.Impassable
             && TileHasImpassableOverride(tile.Tile);
 
@@ -139,7 +139,7 @@ public class SettlementTypeExtension : DefModExtension
     public virtual string GetSettlementName(string fallback = "Settlement")
     {
         Faction pfaction = FindFC.EmpireFaction;
-        if (pfaction?.def.settlementNameMaker == null)
+        if (pfaction?.def.settlementNameMaker is null)
         {
             return fallback;
         }
@@ -174,7 +174,7 @@ public class SettlementTypeExtension : DefModExtension
     /// <returns>The cost of a new settlement.</returns>
     public virtual int GetCreationCost()
     {
-        if (faction == null)
+        if (faction is null)
         {
             return (int)FCSettings.silverToCreateSettlement;
         }
@@ -241,7 +241,7 @@ public class SettlementTypeExtension : DefModExtension
         }
 
         string descKey = parentDef?.descriptionKey;
-        if (descKey is object)
+        if (descKey is not null)
         {
             string typeSpecificKey = "FCTownLevel_" + descKey + "_" + compressed;
             if (typeSpecificKey.CanTranslate())

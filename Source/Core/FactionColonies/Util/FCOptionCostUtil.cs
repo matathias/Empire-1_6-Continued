@@ -63,7 +63,7 @@ public static class FCOptionCostUtil
         int affected = FCEventScalingUtil.CountAffectedSettlements(evt);
 
         double total = (double)baseCost * affected;
-        if (lines != null)
+        if (lines is not null)
         {
             lines.Add("FCOptionCostBase".Translate(baseCost.ToString("N0")));
             if (affected > 1)
@@ -73,14 +73,14 @@ public static class FCOptionCostUtil
         }
 
         FCDynamicCostExtension ext = opt.GetModExtension<FCDynamicCostExtension>();
-        if (ext is object)
+        if (ext is not null)
         {
             if (ext.costPerEmpireIncomeUnit != 0f)
             {
                 double income = ComputeIncome(evt, ext.incomeScope);
                 double contribution = income * ext.costPerEmpireIncomeUnit;
                 total += contribution;
-                if (lines != null && contribution > 0)
+                if (lines is not null && contribution > 0)
                 {
                     lines.Add("FCOptionCostIncome".Translate(
                         (ext.costPerEmpireIncomeUnit * 100f).ToString("0.#"),
@@ -89,7 +89,7 @@ public static class FCOptionCostUtil
                 }
             }
 
-            if (ext.costPerResourceDelta is object)
+            if (ext.costPerResourceDelta is not null)
             {
                 foreach (ResourceProductionDeltaCost pair in ext.costPerResourceDelta)
                 {
@@ -98,7 +98,7 @@ public static class FCOptionCostUtil
                     // coefficient is a fraction of the resource's silver-per-unit value.
                     double contribution = delta * FCSettings.silverPerResource * pair.coefficient;
                     total += contribution;
-                    if (lines != null && contribution > 0)
+                    if (lines is not null && contribution > 0)
                     {
                         string key = pair.framing == FCResourceCostFraming.Added
                             ? "FCOptionCostResourceAdded"
@@ -122,13 +122,13 @@ public static class FCOptionCostUtil
             double sum = 0;
             foreach (WorldSettlementFC s in evt.settlementTraitLocations)
             {
-                if (s is object) sum += s.totalIncome;
+                if (s is not null) sum += s.totalIncome;
             }
             return sum;
         }
         // FactionWide (or AffectedSettlements with no live targets) → faction-wide income.
         FactionFC faction = FindFC.FactionComp;
-        return faction is object ? faction.income : 0;
+        return faction is not null ? faction.income : 0;
     }
 
     /* Marginal production the option changes for one resource. A change of additiveDelta in the
@@ -175,7 +175,7 @@ public static class FCOptionCostUtil
         if (evt.settlementTraitLocations is null) return false;
         foreach (WorldSettlementFC s in evt.settlementTraitLocations)
         {
-            if (s is object) return true;
+            if (s is not null) return true;
         }
         return false;
     }

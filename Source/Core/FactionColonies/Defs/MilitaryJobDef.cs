@@ -17,7 +17,7 @@ public class MilitaryJobDef : Def
     {
         get
         {
-            if (cachedHandler == null && handlerClass != null)
+            if (cachedHandler is null && handlerClass is not null)
             {
                 cachedHandler = (MilitaryJobHandler)Activator.CreateInstance(handlerClass);
                 cachedHandler.def = this;
@@ -33,7 +33,7 @@ public class MilitaryJobDef : Def
 
         // handlerClass is legitimately null for isState defs (Undefined, Cooldown, ...);
         // only validate that, when set, it can actually be cast to MilitaryJobHandler.
-        if (handlerClass is object && !typeof(MilitaryJobHandler).IsAssignableFrom(handlerClass))
+        if (handlerClass is not null && !typeof(MilitaryJobHandler).IsAssignableFrom(handlerClass))
             yield return $"MilitaryJobDef {defName}: handlerClass '{handlerClass.FullName}' does not derive from MilitaryJobHandler";
     }
 }

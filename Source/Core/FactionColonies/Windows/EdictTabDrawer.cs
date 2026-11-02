@@ -141,7 +141,7 @@ public static class EdictTabDrawer
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
 
-        if (activeEdict != null)
+        if (activeEdict is not null)
         {
             string statusText = "FCEdictActive".Translate() + ": " + activeEdict.def.LabelCap;
             UIUtil.ClampedLabel(statusRect, statusText);
@@ -260,12 +260,12 @@ public static class EdictTabDrawer
 
     private static void DrawEdictRow(Rect rect, FCPolicyDef def, FactionFC faction, FCPolicy activeEdict)
     {
-        bool isActive = activeEdict != null && activeEdict.def == def;
+        bool isActive = activeEdict is not null && activeEdict.def == def;
         bool meetsLevel = def.factionLevelRequirement <= 0 || faction.factionLevel >= def.factionLevelRequirement;
         FCPolicyDef blocker = GetBlockingPolicy(def, faction);
         string prereqFailReason;
         bool meetsPrereqs = def.MeetsPolicyRequirements(faction, out prereqFailReason);
-        bool available = meetsLevel && blocker == null && meetsPrereqs;
+        bool available = meetsLevel && blocker is null && meetsPrereqs;
 
         // Row background
         if (isActive)
@@ -317,7 +317,7 @@ public static class EdictTabDrawer
         // Whole-row click handling
         if (available && !isActive && Widgets.ButtonInvisible(rect))
         {
-            if (activeEdict != null)
+            if (activeEdict is not null)
             {
                 // Swapping — confirm first
                 float enactDays = def.enactDuration / 60000f;
@@ -338,7 +338,7 @@ public static class EdictTabDrawer
         string tooltip = def.PolicyText();
         if (!meetsLevel)
             tooltip += "\n\n" + "FCEdictLevelRequired".Translate(def.factionLevelRequirement);
-        if (blocker != null)
+        if (blocker is not null)
             tooltip += "\n\n" + "FCEdictIncompatible".Translate(def.LabelCap, blocker.LabelCap);
         if (!meetsPrereqs)
             tooltip += "\n\n" + prereqFailReason;

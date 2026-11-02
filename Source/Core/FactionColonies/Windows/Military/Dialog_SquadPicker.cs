@@ -85,7 +85,7 @@ public abstract class Dialog_SquadPicker : Window
     /* Virtual seams — defaults are correct for the squad-only attack picker; defend picker
      * overrides to also accept external IAutoDefender selections and to render an extra
      * "External defenders" section under the squad cards. */
-    protected virtual bool CanConfirm() => selected is object && selected.IsAvailable;
+    protected virtual bool CanConfirm() => selected is not null && selected.IsAvailable;
     protected virtual float ExtraRowsHeight => 0f;
     protected virtual void DrawExtraRows(Rect viewRect, ref float runningY) { }
 
@@ -332,7 +332,7 @@ public abstract class Dialog_SquadPicker : Window
         // (already-assigned squad in this picker's context) renders as a green row highlight
         // so it stays visible whether or not the row is also the user's row-click selection.
         bool isSelected = selected == squad;
-        bool isCurrentCard = CurrentSquadIndicator is object && squad == CurrentSquadIndicator;
+        bool isCurrentCard = CurrentSquadIndicator is not null && squad == CurrentSquadIndicator;
         if (isSelected)
         {
             Widgets.DrawHighlightSelected(cardRect);

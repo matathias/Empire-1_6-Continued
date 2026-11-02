@@ -291,7 +291,7 @@ public class WorldSettlementFC : Settlement
         CheckRemoveMapNow();
 
         // Settlement.TickInterval: trader restock/tick.
-        if (trader != null)
+        if (trader is not null)
         {
             trader.TraderTrackerTick();
         }
@@ -446,7 +446,7 @@ public class WorldSettlementFC : Settlement
             {
                 cachedMilitaryComp = GetComponent<WorldObjectComp_SettlementMilitary>();
                 checkedMilitaryComp = true;
-                if (cachedMilitaryComp == null)
+                if (cachedMilitaryComp is null)
                 {
                     LogUtil.Warning($"Attempted to access settlement {Name}'s MilitaryComp, but it doesn't have one");
                 }
@@ -463,7 +463,7 @@ public class WorldSettlementFC : Settlement
             {
                 cachedPrisonerComp = GetComponent<WorldObjectComp_SettlementPrisoners>();
                 checkedPrisonerComp = true;
-                if (cachedPrisonerComp == null)
+                if (cachedPrisonerComp is null)
                 {
                     LogUtil.Warning($"Attempted to access settlement {Name}'s PrisonerComp, but it doesn't have one");
                 }
@@ -485,7 +485,7 @@ public class WorldSettlementFC : Settlement
             for (int i = 0; i < pool.Count; i++)
             {
                 MercenarySquadFC s = pool[i];
-                if (s is object && s.settlement == this) result.Add(s);
+                if (s is not null && s.settlement == this) result.Add(s);
             }
             return result;
         }
@@ -504,7 +504,7 @@ public class WorldSettlementFC : Settlement
             for (int i = 0; i < pool.Count; i++)
             {
                 MercenarySquadFC s = pool[i];
-                if (s is object && s.settlement == this) return s;
+                if (s is not null && s.settlement == this) return s;
             }
             return null;
         }
@@ -522,7 +522,7 @@ public class WorldSettlementFC : Settlement
             for (int i = 0; i < pool.Count; i++)
             {
                 MercenarySquadFC s = pool[i];
-                if (s is object && s.settlement == this && s.IsAvailable) return s;
+                if (s is not null && s.settlement == this && s.IsAvailable) return s;
             }
             return null;
         }
@@ -572,7 +572,7 @@ public class WorldSettlementFC : Settlement
             double ghostLevel = Math.Max(1, settlementMilitaryLevel) * 0.5;
             double ghostEff = 1.0;
             FactionFC fc = FindFC.FactionComp;
-            if (fc is object) ghostEff = fc.GetStatValue(FCStatDefOf.militaryCombatEfficiency, this);
+            if (fc is not null) ghostEff = fc.GetStatValue(FCStatDefOf.militaryCombatEfficiency, this);
             SettlementPowerStatus emptyStatus;
             if (underAttack) emptyStatus = SettlementPowerStatus.UnderAttack;
             else if (StationedSquads.Count == 0) emptyStatus = SettlementPowerStatus.Ghost;
@@ -629,7 +629,7 @@ public class WorldSettlementFC : Settlement
             {
                 cachedBuildingsComp = GetComponent<WorldObjectComp_SettlementBuildings>();
                 checkedBuildingsComp = true;
-                if (cachedBuildingsComp == null)
+                if (cachedBuildingsComp is null)
                 {
                     LogUtil.Warning($"Attempted to access settlement {Name}'s BuildingsComp, but it doesn't have one");
                 }
@@ -647,7 +647,7 @@ public class WorldSettlementFC : Settlement
         }
         set
         {
-            if (!(MilitaryComp is null))
+            if (MilitaryComp is not null)
             {
                 MilitaryComp.settlementMilitaryLevel = value;
             }
@@ -794,7 +794,7 @@ public class WorldSettlementFC : Settlement
     {
         foreach (ResourceAvailability rtd in settlementDef.resources)
         {
-            bool resourceAllowed = biomeDef.GetBiomeResource(rtd.resourceDef) != null && rtd.resourceDef.ResourceTypeAllowedByTech(techlevel);
+            bool resourceAllowed = biomeDef.GetBiomeResource(rtd.resourceDef) is not null && rtd.resourceDef.ResourceTypeAllowedByTech(techlevel);
             ResourceFC res = resources.Find((ResourceFC rfc) => rfc.def == rtd.resourceDef);
             if (res is null && resourceAllowed)
             {
@@ -802,7 +802,7 @@ public class WorldSettlementFC : Settlement
                 /* ResourceFC initialization takes care of biome bonuses, so no need to handle that up here */
                 resources.Add(new ResourceFC(rtd.resourceDef, this));
             }
-            else if (!(res is null) && !resourceAllowed)
+            else if (res is not null && !resourceAllowed)
             {
                 LogUtil.Message($"Removing resource {rtd.resourceDef.label} from settlement {Name}");
                 resources.Remove(res);
@@ -820,7 +820,7 @@ public class WorldSettlementFC : Settlement
     {
         trader = new SettlementTraderTracker_Empire(this);
 
-        if (!(def is WorldSettlementDef))
+        if (def is not WorldSettlementDef)
         {
             LogUtil.Error($"Created settlement {name} with an invalid def: {def}! Panic! Defaulting to base def!");
             def = WorldSettlementDefOf.WorldSettlementDef_Surface;
@@ -851,7 +851,7 @@ public class WorldSettlementFC : Settlement
         biome = Tile.Tile.PrimaryBiome.defName;
         bool useTileBiome = true;
 
-        if (settlementDef.biomeResourceOverride != null)
+        if (settlementDef.biomeResourceOverride is not null)
         {
             LogUtil.Message($"Using biome {settlementDef.biomeResourceOverride.defName} as override for settlement {Name} of type {settlementDef}");
             useTileBiome = false;
@@ -871,7 +871,7 @@ public class WorldSettlementFC : Settlement
         }
 
         // Bake biome stat modifiers as permanent modifiers
-        if (biomeDef.statModifiers != null && biomeDef.statModifiers.Count > 0)
+        if (biomeDef.statModifiers is not null && biomeDef.statModifiers.Count > 0)
         {
             AddPermanentModifiers(biomeDef.statModifiers, "biome_" + biomeDef.defName, biomeDef.LabelCap);
         }
@@ -886,24 +886,24 @@ public class WorldSettlementFC : Settlement
 
         /* Bake tile mutator and landmark stat modifiers as permanent modifiers. */
         Tile worldTile = tile.Tile;
-        if (worldTile != null)
+        if (worldTile is not null)
         {
             IList<TileMutatorDef> mutators = worldTile.Mutators;
-            if (mutators != null)
+            if (mutators is not null)
             {
                 foreach (TileMutatorDef mut in mutators)
                 {
                     TileMutatorResourceExtension mutExt = mut?.GetModExtension<TileMutatorResourceExtension>();
-                    if (mutExt?.statModifiers == null || mutExt.statModifiers.Count == 0) continue;
+                    if (mutExt?.statModifiers is null || mutExt.statModifiers.Count == 0) continue;
                     AddPermanentModifiers(mutExt.statModifiers, "tile_mutator_" + mut.defName, mut.LabelCap);
                 }
             }
 
             Landmark landmark = worldTile.Landmark;
-            if (landmark?.def != null)
+            if (landmark?.def is not null)
             {
                 TileLandmarkResourceExtension lmExt = landmark.def.GetModExtension<TileLandmarkResourceExtension>();
-                if (lmExt?.statModifiers != null && lmExt.statModifiers.Count > 0)
+                if (lmExt?.statModifiers is not null && lmExt.statModifiers.Count > 0)
                 {
                     AddPermanentModifiers(lmExt.statModifiers, "tile_landmark_" + landmark.def.defName, landmark.def.LabelCap);
                 }
@@ -993,7 +993,7 @@ public class WorldSettlementFC : Settlement
         }
 
         // Safety net: if trader is null or wrong type (e.g., loading old save), recreate it
-        if (!(trader is SettlementTraderTracker_Empire))
+        if (trader is not SettlementTraderTracker_Empire)
             trader = new SettlementTraderTracker_Empire(this);
 
         // Rebuild stat modifiers from buildings and settlement type before calculating stats.
@@ -1010,7 +1010,7 @@ public class WorldSettlementFC : Settlement
         // (FactionFC migrates any legacy save events into eventManager during
         // ResolvingCrossRefs, before this PostLoadInit runs. See FactionFC.ExposeData.)
         FactionFC factionComp = FindFC.FactionComp;
-        if (factionComp != null)
+        if (factionComp is not null)
         {
             foreach (FCEvent evt in factionComp.Events)
                 EventStatModifierApplier.ApplyForSettlement(evt, this);
@@ -1026,10 +1026,10 @@ public class WorldSettlementFC : Settlement
 
         // Migration: drain legacy <prisonerList> key into PrisonerComp.prisonerList.
         // Old saves stored the prisoner list on this settlement; it now lives on the comp.
-        if (_legacyPrisonerList != null && _legacyPrisonerList.Count > 0)
+        if (_legacyPrisonerList is not null && _legacyPrisonerList.Count > 0)
         {
             WorldObjectComp_SettlementPrisoners pComp = PrisonerComp;
-            if (pComp is object)
+            if (pComp is not null)
             {
                 if (pComp.prisonerList is null) pComp.prisonerList = new List<FCPrisoner>();
                 foreach (FCPrisoner p in _legacyPrisonerList)
@@ -1186,7 +1186,7 @@ public class WorldSettlementFC : Settlement
         // gravship or grav anchor, or those buildings would be destroyed.
         if (map.AnyBuildingBlockingMapRemoval) return false;
         if (MilitaryComp?.isUnderAttack == true) return false;
-        if (MilitaryComp is object && (MilitaryComp.defenders.Any() || MilitaryComp.attackers.Any())) return false;
+        if (MilitaryComp is not null && (MilitaryComp.defenders.Any() || MilitaryComp.attackers.Any())) return false;
         // A defense shuttle mid-landing holds its pawns in an unspawned TransportShip that
         // AnyPawnBlockingMapRemoval can't see. DeleteMap keeps the map for this state; mirror that
         // here so the map isn't torn down (destroying the shuttle) while the landing zone is chosen.
@@ -1281,7 +1281,7 @@ public class WorldSettlementFC : Settlement
         RemoveStatModifiersBySource("settlementType");
 
         // --- Deconstruct invalid buildings (before def swap, using new def for validation) ---
-        if (BuildingsComp != null)
+        if (BuildingsComp is not null)
         {
             for (int i = BuildingsComp.Buildings.Count - 1; i >= 0; i--)
             {
@@ -1979,7 +1979,7 @@ public class WorldSettlementFC : Settlement
     /// </summary>
     public void AddStatModifiers(List<FCStatModifier> mods, string sourceId, string sourceLabel = null)
     {
-        if (mods != null)
+        if (mods is not null)
         {
             foreach (FCStatModifier mod in mods)
                 statModifiers.Add(new TaggedStatModifier { sourceId = sourceId, sourceLabel = sourceLabel ?? sourceId, mod = mod });
@@ -1994,7 +1994,7 @@ public class WorldSettlementFC : Settlement
     /// </summary>
     public void RemoveStatModifiers(List<FCStatModifier> mods, string sourceId)
     {
-        if (mods != null)
+        if (mods is not null)
         {
             foreach (FCStatModifier mod in mods)
             {
@@ -2356,7 +2356,7 @@ public class WorldSettlementFC : Settlement
                 if (res.canTithe)
                 {
                     List<ThingDef> resList = res.GenerateThingDefList();
-                    if (resList != null && resList.Count > 0)
+                    if (resList is not null && resList.Count > 0)
                     {
                         grandThingList.AddRange(resList);
                     }
@@ -2406,7 +2406,7 @@ public class WorldSettlementFC : Settlement
         //Select Settlement Tile
         Find.WorldSelector.ClearSelection();
         Find.WorldSelector.Select(Find.WorldObjects.MapParentAt(Tile));
-        if (Find.MainButtonsRoot.tabs.OpenTab != null)
+        if (Find.MainButtonsRoot.tabs.OpenTab is not null)
         {
             Find.MainButtonsRoot.tabs.OpenTab.TabWindow.Close();
         }
@@ -2514,7 +2514,7 @@ public class WorldSettlementFC : Settlement
             if (resource.canTithe && !resource.tithesPaused)
             {
                 List<Thing> resTitheThings = resource.GenerateTithe(out int resExtraSilver);
-                if (resTitheThings is object && resTitheThings.Count > 0)
+                if (resTitheThings is not null && resTitheThings.Count > 0)
                 {
                     titheThings.AddRange(resTitheThings);
                     foreach (Thing t in resTitheThings)

@@ -20,7 +20,7 @@ class CaravanFormingUtility_AllReachableColonyItems_Patch
     {
         if (__result is null || __result.Count == 0) return;
         if (!FCSettings.restrictDefenseMapLoot) return;
-        if (!(map?.Parent is WorldSettlementFC)) return;
+        if (map?.Parent is not WorldSettlementFC) return;
 
         BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(map.Tile);
         if (bf is null) return;
@@ -57,10 +57,10 @@ class CompForbiddable_set_Forbidden_Patch
 
         Thing parent = __instance.parent;
         if (parent is null) return true;
-        if (!(parent.MapHeld?.Parent is WorldSettlementFC)) return true;
+        if (parent.MapHeld?.Parent is not WorldSettlementFC) return true;
 
         BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(parent.MapHeld.Tile);
-        if (bf is object && bf.IsSettlementLoot(parent)) return false;   // veto the un-forbid
+        if (bf is not null && bf.IsSettlementLoot(parent)) return false;   // veto the un-forbid
         return true;
     }
 }

@@ -105,7 +105,7 @@ public class CodexTab_Info : ICodexTab
         centerScroll = Vector2.zero;
         rightScroll = Vector2.zero;
 
-        if (entry.category is object)
+        if (entry.category is not null)
         {
             expandedMods.Add(entry.category.modId);
             expandedCategories.Add(CatKey(entry.category.modId, entry.category.defName));
@@ -286,7 +286,7 @@ public class CodexTab_Info : ICodexTab
 
         /* Title with icon */
         float titleTextX = 0f;
-        if (selectedEntry.Icon is object)
+        if (selectedEntry.Icon is not null)
         {
             Rect iconBgRect = new Rect(0f, curY, TitleIconSize, TitleIconSize);
             Widgets.DrawBoxSolid(iconBgRect, ColorUtil.TransformA(catColor, 0.25f));
@@ -304,7 +304,7 @@ public class CodexTab_Info : ICodexTab
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.UpperLeft;
         string meta = selectedEntry.category.LabelCap + "  \u2022  " + selectedEntry.category.ModName;
-        float metaY = curY + (selectedEntry.Icon is object ? 26f : 30f);
+        float metaY = curY + (selectedEntry.Icon is not null ? 26f : 30f);
         UIUtil.DrawColoredLabel(new Rect(titleTextX, metaY, contentWidth - titleTextX, 20f), meta, Color.gray);
         CodexUIUtil.ResetText();
         curY = metaY + 22f;
@@ -460,20 +460,20 @@ public class CodexTab_Info : ICodexTab
         float curY = 0f;
 
         /* Banner */
-        if (selectedEntry is object && selectedEntry.category is object)
+        if (selectedEntry is not null && selectedEntry.category is not null)
         {
             curY = CodexUIUtil.DrawRightPaneBannerHeader(curY, contentWidth,
                 selectedEntry.category.BannerImage, selectedEntry.category.ModName);
         }
 
         /* Dynamic content */
-        if (selectedEntry is object)
+        if (selectedEntry is not null)
         {
             ICodexDynamicProvider provider = selectedEntry.DynamicProvider;
-            if (provider is object)
+            if (provider is not null)
             {
                 FactionFC faction = FindFC.FactionComp;
-                if (faction is object)
+                if (faction is not null)
                 {
                     string dynamic = null;
                     try
@@ -537,15 +537,15 @@ public class CodexTab_Info : ICodexTab
     {
         float total = 0f;
 
-        if (selectedEntry is object && selectedEntry.category is object)
+        if (selectedEntry is not null && selectedEntry.category is not null)
         {
-            if (selectedEntry.category.BannerImage is object)
+            if (selectedEntry.category.BannerImage is not null)
                 total += BannerHeight + 4f;
             float nameHeight = CodexUIUtil.HeaderHeightFor(selectedEntry.category.ModName, width, 20f, 0f);
             total += nameHeight + 4f + Margin; // mod name (may wrap) + divider
         }
 
-        if (selectedEntry is object && selectedEntry.DynamicProvider is object)
+        if (selectedEntry is not null && selectedEntry.DynamicProvider is not null)
         {
             total += DynamicHeaderHeight;
             if (dynamicSectionExpanded)

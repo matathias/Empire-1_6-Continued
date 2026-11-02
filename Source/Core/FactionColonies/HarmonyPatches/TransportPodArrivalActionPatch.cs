@@ -13,7 +13,7 @@ class WorldSettlementTransportersArrivePatch
         List<ActiveTransporterInfo> transporters)
     {
         pendingPawns = null;
-        if (!(Traverse.Create(__instance).Field("mapParent").GetValue() is WorldSettlementFC))
+        if (Traverse.Create(__instance).Field("mapParent").GetValue() is not WorldSettlementFC)
             return;
 
         List<Pawn> pawns = new List<Pawn>();

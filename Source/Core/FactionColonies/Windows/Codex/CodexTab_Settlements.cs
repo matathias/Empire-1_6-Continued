@@ -281,7 +281,7 @@ public class CodexTab_Settlements : ICodexTab
         float curY = 0f;
 
         /* Banner */
-        if (selectedDef is object)
+        if (selectedDef is not null)
         {
             curY = CodexUIUtil.DrawRightPaneBannerHeader(curY, contentWidth,
                 UIUtil.GetModBanner(selectedDef.modContentPack),
@@ -289,7 +289,7 @@ public class CodexTab_Settlements : ICodexTab
         }
 
         /* Available Resources */
-        if (selectedDef is object && selectedDef.resources.Count > 0)
+        if (selectedDef is not null && selectedDef.resources.Count > 0)
         {
             Color accent = GetAccent(selectedDef);
             curY = CodexUIUtil.DrawSection(curY, contentWidth, "FCCodexSettlementResources".Translate(), accent, DrawResources);
@@ -492,7 +492,7 @@ public class CodexTab_Settlements : ICodexTab
             BiomeResourceDef brd = DefDatabase<BiomeResourceDef>.GetNamedSilentFail(b.defName);
             Rect rowRect = new Rect(indentX, curY, textW - 12f, StatRowHeight);
 
-            bool isLink = brd is object;
+            bool isLink = brd is not null;
             bool isHover = isLink && Mouse.IsOver(rowRect);
 
             Text.Font = GameFont.Small;
@@ -582,9 +582,9 @@ public class CodexTab_Settlements : ICodexTab
     {
         float total = 0f;
 
-        if (selectedDef is object)
+        if (selectedDef is not null)
         {
-            if (UIUtil.GetModBanner(selectedDef.modContentPack) is object)
+            if (UIUtil.GetModBanner(selectedDef.modContentPack) is not null)
                 total += BannerHeight + SmallMargin;
             string modName = selectedDef.modContentPack?.ModMetaData?.Name ?? "";
             if (!modName.NullOrEmpty())

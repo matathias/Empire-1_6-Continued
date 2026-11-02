@@ -14,11 +14,11 @@ public static class FCEventScalingUtil
     {
         if (evt is null) return 1;
         int count = 0;
-        if (evt.settlementTraitLocations is object)
+        if (evt.settlementTraitLocations is not null)
         {
             foreach (WorldSettlementFC s in evt.settlementTraitLocations)
             {
-                if (s is object) count++;
+                if (s is not null) count++;
             }
         }
         return Math.Max(1, count);

@@ -20,14 +20,14 @@ internal static class EventStatModifierApplier
          * exactly this set. Recorded even for prosperity-only events (which have no
          * stat/permanent modifiers) so Remove's prosperityLost hits only the cohort. */
         List<WorldSettlementFC> cohort = evt.settlementTraitLocations.Count > 0
-            ? evt.settlementTraitLocations.Where(s => s != null).ToList()
-            : faction.settlements.Where(s => s != null).ToList();
+            ? evt.settlementTraitLocations.Where(s => s is not null).ToList()
+            : faction.settlements.Where(s => s is not null).ToList();
         evt.appliedStatSettlements = cohort;
 
         string sourceId = SourceId(evt);
         string label = evt.def.label;
-        bool hasStats = evt.def.statModifiers != null && evt.def.statModifiers.Count > 0;
-        bool hasPermanent = evt.def.permanentStatModifiers != null && evt.def.permanentStatModifiers.Count > 0;
+        bool hasStats = evt.def.statModifiers is not null && evt.def.statModifiers.Count > 0;
+        bool hasPermanent = evt.def.permanentStatModifiers is not null && evt.def.permanentStatModifiers.Count > 0;
         if (!hasStats && !hasPermanent) return;
 
         foreach (WorldSettlementFC settlement in cohort)
@@ -47,7 +47,7 @@ internal static class EventStatModifierApplier
         if (evt?.def is null || faction is null) return;
 
         string sourceId = SourceId(evt);
-        bool hasStats = evt.def.statModifiers != null && evt.def.statModifiers.Count > 0;
+        bool hasStats = evt.def.statModifiers is not null && evt.def.statModifiers.Count > 0;
         double prosperityLost = evt.def.prosperityLost;
 
         /* Reverse exactly the cohort Apply recorded. Legacy in-flight events (recorded
@@ -69,7 +69,7 @@ internal static class EventStatModifierApplier
     /// when recorded, else the legacy targeted-or-all fallback. Pure seam for testing.</summary>
     internal static List<WorldSettlementFC> ResolveRemovalCohort(FCEvent evt, FactionFC faction)
     {
-        if (evt.appliedStatSettlements != null) return evt.appliedStatSettlements;
+        if (evt.appliedStatSettlements is not null) return evt.appliedStatSettlements;
         if (evt.settlementTraitLocations.Count > 0) return evt.settlementTraitLocations;
         return faction?.settlements;
     }
@@ -82,7 +82,7 @@ internal static class EventStatModifierApplier
         if (settlement is null) return;
         /* Reapply only to the recorded cohort so reload matches the original apply set.
          * Legacy events (no cohort) fall back to the targeted-or-all gate. */
-        if (evt.appliedStatSettlements != null)
+        if (evt.appliedStatSettlements is not null)
         {
             if (!evt.appliedStatSettlements.Contains(settlement)) return;
         }

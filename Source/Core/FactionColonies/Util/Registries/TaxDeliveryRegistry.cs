@@ -50,7 +50,7 @@ public static class TaxDeliveryRegistry
         ITaxDeliveryInterceptor winner = RegistryDispatch.First(_list.Items,
             interceptor => interceptor.TryDeliverGoods(context),
             nameof(ITaxDeliveryInterceptor.TryDeliverGoods));
-        if (winner is object)
+        if (winner is not null)
         {
             context.Delivered = true;
             return true;

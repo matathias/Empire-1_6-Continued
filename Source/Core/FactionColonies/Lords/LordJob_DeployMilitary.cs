@@ -120,7 +120,7 @@ public class LordJob_DeployMilitary : LordJob
         // (and the command window) open. Finalize once every top-level merc has physically left
         // the map, OR after a short grace (covers the case where a merc itself is the straggler).
         // FinalizeDeployment DeSpawns whatever remains (alive/redeployable) and completes the op.
-        bool leaving = squad is object
+        bool leaving = squad is not null
                        && squad.Deployment.MilitaryOrder == MilitaryOrder.RecoverWoundedAndLeave;
         if (leaving)
         {
@@ -160,7 +160,7 @@ public class LordJob_DeployMilitary : LordJob
 
         foreach (KeyValuePair<Pawn, Pawn> pair in mounts)
         {
-            if (pair.Key is object && pair.Value is object && pair.Key.Spawned && pair.Value.Spawned)
+            if (pair.Key is not null && pair.Value is not null && pair.Key.Spawned && pair.Value.Spawned)
                 GiddyUpUtil.Mount(pair.Key, pair.Value);
         }
         mountsApplied = true;
@@ -169,7 +169,7 @@ public class LordJob_DeployMilitary : LordJob
     public override void Notify_AddedToLord()
     {
         base.Notify_AddedToLord();
-        if (squad is object)
+        if (squad is not null)
         {
             squad.Deployment.Lord = lord;
         }
@@ -225,17 +225,17 @@ public class LordJob_DeployMilitary : LordJob
         foreach (Pawn p in lord.ownedPawns)
         {
             if (p is null) continue;
-            if (p.mindState is object) p.mindState.nextMoveOrderIsWait = false;
-            if (p.jobs?.curJob is object) p.jobs.EndCurrentJob(JobCondition.InterruptForced);
+            if (p.mindState is not null) p.mindState.nextMoveOrderIsWait = false;
+            if (p.jobs?.curJob is not null) p.jobs.EndCurrentJob(JobCondition.InterruptForced);
         }
 
         // Re-mount any rider the order change dismounted (GiddyUpUtil.Mount is idempotent, so
         // already-mounted riders are untouched).
-        if (mounts is object)
+        if (mounts is not null)
         {
             foreach (KeyValuePair<Pawn, Pawn> pair in mounts)
             {
-                if (pair.Key is object && pair.Value is object && pair.Key.Spawned && pair.Value.Spawned)
+                if (pair.Key is not null && pair.Value is not null && pair.Key.Spawned && pair.Value.Spawned)
                     GiddyUpUtil.Mount(pair.Key, pair.Value);
             }
         }
@@ -257,7 +257,7 @@ public class LordJob_DeployMilitary : LordJob
                 {
                     new TransitionAction_Custom(delegate()
                     {
-                        if (squad is object) squad.Deployment.MilitaryOrder = MilitaryOrder.RecoverWoundedAndLeave;
+                        if (squad is not null) squad.Deployment.MilitaryOrder = MilitaryOrder.RecoverWoundedAndLeave;
                         Messages.Message("FCMilitaryPawnsLeavingTimeOut".Translate(), lord.ownedPawns, MessageTypeDefOf.NeutralEvent);
                     })
                 }
@@ -284,7 +284,7 @@ public class LordJob_DeployMilitary : LordJob
                 {
                     triggers = new List<Trigger>(1)
                     {
-                        new Trigger_Custom((TriggerSignal _) => squad is object && squad.Deployment.MilitaryOrder == (MilitaryOrder)k + 1 && ReadyForCommands)
+                        new Trigger_Custom((TriggerSignal _) => squad is not null && squad.Deployment.MilitaryOrder == (MilitaryOrder)k + 1 && ReadyForCommands)
                     },
                     preActions = new List<TransitionAction>(1)
                     {
@@ -315,7 +315,7 @@ public class LordJob_DeployMilitary : LordJob
                 {
                     if (squad is null) return false;
                     MilitaryOperation op = squad.Operation;
-                    return op is object
+                    return op is not null
                         && op.kind == MilitaryJobDefOf.Deploy
                         && op.phase == MilitaryOperationPhase.Engaged
                         && squad.Deployment.OrderLocation != currentOrderPosition;
@@ -360,7 +360,7 @@ public class LordJob_DeployMilitary : LordJob
         if (finalized) return;
         finalized = true;
 
-        if (squad is object)
+        if (squad is not null)
         {
             // Clear the player-issued order so it can't carry into the next deployment.
             // MilitaryOrder is persistent squad state; a stale RecoverWoundedAndLeave would
@@ -371,7 +371,7 @@ public class LordJob_DeployMilitary : LordJob
             // to the op (which on fire transitions the op to Resolved and unregisters it),
             // and fires LifecycleRegistry.OnBattleResolved -> OnOperationResolved.
             MilitaryOperation op = squad.Operation;
-            if (op is object && op.kind == MilitaryJobDefOf.Deploy
+            if (op is not null && op.kind == MilitaryJobDefOf.Deploy
                 && op.phase == MilitaryOperationPhase.Engaged)
             {
                 // Deploy isn't a battle — synthesize a result so CompleteBattle's
@@ -381,11 +381,11 @@ public class LordJob_DeployMilitary : LordJob
             }
 
             // Despawn orphaned downed/stuck mercs still on the map
-            if (currentMap is object)
+            if (currentMap is not null)
             {
                 foreach (Mercenary merc in squad.mercenaries.Concat(squad.AllSubPawns()))
                 {
-                    if (merc?.pawn is object && merc.pawn.Spawned && merc.pawn.Map == currentMap)
+                    if (merc?.pawn is not null && merc.pawn.Spawned && merc.pawn.Map == currentMap)
                         merc.pawn.DeSpawn();
                 }
             }
@@ -395,7 +395,7 @@ public class LordJob_DeployMilitary : LordJob
     public override void Notify_PawnLost(Pawn pawn, PawnLostCondition condition)
     {
         base.Notify_PawnLost(pawn, condition);
-        if (condition == PawnLostCondition.Killed && squad is object)
+        if (condition == PawnLostCondition.Killed && squad is not null)
             squad.dead++;
     }
 

@@ -42,7 +42,7 @@ public class Dialog_HireSquadsPool : Window
     {
         this.targetSettlement = targetSettlement;
         mfc = FindFC.Military;
-        if (targetSettlement is object)
+        if (targetSettlement is not null)
         {
             double budget = MilitaryFC.CalculateSquadBudget(targetSettlement.settlementMilitaryLevel);
             maxDeployCost = MilitaryDeploymentUtil.CalculateDeploymentCost(budget);
@@ -65,7 +65,7 @@ public class Dialog_HireSquadsPool : Window
         // Title — "Hire & assign to X" in the assign flow, plain "Hire Squads" for the pool.
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        string title = targetSettlement is object
+        string title = targetSettlement is not null
             ? (string)"FCHireSquadsPoolHeaderAssign".Translate(targetSettlement.Name)
             : (string)"FCHireSquadsPoolHeader".Translate();
         UIUtil.ClampedLabel(new Rect(0f, 0f, inRect.width, TitleH), title);
@@ -76,7 +76,7 @@ public class Dialog_HireSquadsPool : Window
         // assign-squad picker. A settlement can host SquadCap squads at once; when it's full
         // hiring is blocked, and the window auto-closes once the last free slot is filled.
         bool settlementFull = false;
-        if (targetSettlement is object)
+        if (targetSettlement is not null)
         {
             int stationed = targetSettlement.StationedSquads?.Count ?? 0;
             int cap = targetSettlement.SquadCap;
@@ -184,7 +184,7 @@ public class Dialog_HireSquadsPool : Window
         // derived from the design's equipment cost — a fresh hire fills every slot, so this
         // matches what the squad's DeploymentCost() will be once hired.
         int deployCost = MilitaryDeploymentUtil.CalculateDeploymentCost(template.GetEquipmentTotalCost());
-        bool overDeploy = targetSettlement is object && deployCost > maxDeployCost;
+        bool overDeploy = targetSettlement is not null && deployCost > maxDeployCost;
         // settlementFull blocks hiring once every slot is occupied (defensive — the window
         // normally auto-closes the moment the last slot fills).
         bool canHire = affordable && !overDeploy && !settlementFull;
@@ -214,7 +214,7 @@ public class Dialog_HireSquadsPool : Window
                 disabled: !canHire, highlighted: isHighlighted))
         {
             MercenarySquadFC hired = mfc?.HireSquad(captured);
-            if (hired is object && targetSettlement is object)
+            if (hired is not null && targetSettlement is not null)
             {
                 bool assigned = mfc.AttemptToAssign(hired, targetSettlement);
                 // Close once the settlement is full (single-slot: after the one hire);
@@ -260,13 +260,13 @@ public class Dialog_HireSquadsPool : Window
         Text.Anchor = TextAnchor.MiddleLeft;
 
         double power = SquadPowerRegistry.LevelFromCost(template.GetEquipmentTotalCost());
-        int unitCount = template.Units != null ? template.Units.Count : 0;
+        int unitCount = template.Units is not null ? template.Units.Count : 0;
 
         string powerLbl = (string)"FCSquadColPower".Translate() + ": " + power.ToString("0.0");
         string unitsLbl = "FCHireSquadsPoolUnits".Translate(unitCount);
         // Assign mode shows deploy cost (the gating value); pool mode shows the hire cost.
         // The Hire button already carries the hire cost, so deploy cost isn't redundant here.
-        string costLbl = targetSettlement is object
+        string costLbl = targetSettlement is not null
             ? (string)"FCSquadColDeploymentCost".Translate() + ": $" + deployCost
             : (string)"FCSquadColCost".Translate() + ": $" + cost;
 
@@ -293,7 +293,7 @@ public class Dialog_HireSquadsPool : Window
         FCWindow_Military milWindow = (FCWindow_Military)Find.WindowStack.Windows.FirstOrDefault(
             w => w is FCWindow_Military fcw && fcw.GetMilitaryWindow().Slot == MilitaryWindowSlot.Squads);
 
-        if (milWindow != null)
+        if (milWindow is not null)
         {
             milWindow.SetActive(template);
         }

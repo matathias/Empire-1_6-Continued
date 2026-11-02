@@ -55,7 +55,7 @@ public class MilitaryFC : IExposable
     {
         if (pawn is null) return false;
         if (mercenaryPawnSet.Contains(pawn)) return true;
-        if (FindMercByPawn(pawn) is object || FindSubPawnWrapper(pawn) is object)
+        if (FindMercByPawn(pawn) is not null || FindSubPawnWrapper(pawn) is not null)
         {
             mercenaryPawnSet.Add(pawn); // self-heal: keep repeat lookups O(1)
             return true;
@@ -70,12 +70,12 @@ public class MilitaryFC : IExposable
         {
             foreach (Mercenary merc in squad.mercenaries)
             {
-                if (merc?.pawn != null)
+                if (merc?.pawn is not null)
                     mercenaryPawnSet.Add(merc.pawn);
             }
             foreach (Mercenary sub in squad.AllSubPawns())
             {
-                if (sub?.pawn != null)
+                if (sub?.pawn is not null)
                     mercenaryPawnSet.Add(sub.pawn);
             }
         }
@@ -84,32 +84,32 @@ public class MilitaryFC : IExposable
     public MilitaryFC()
     {
         //set load stuff here
-        if (units == null)
+        if (units is null)
         {
             units = new List<MilUnitFC>();
         }
 
-        if (squads == null)
+        if (squads is null)
         {
             squads = new List<MilSquadFC>();
         }
 
-        if (blankUnit == null)
+        if (blankUnit is null)
         {
             //blankUnit = new MilUnitFC(true);
         }
 
-        if (mercenarySquads == null)
+        if (mercenarySquads is null)
         {
             mercenarySquads = new List<MercenarySquadFC>();
         }
 
-        if (deadPawns == null)
+        if (deadPawns is null)
         {
             deadPawns = new List<Mercenary>();
         }
 
-        if (fireSupportDefs == null)
+        if (fireSupportDefs is null)
         {
             fireSupportDefs = new List<MilitaryFireSupport>();
         }
@@ -142,7 +142,7 @@ public class MilitaryFC : IExposable
 
             for (int count = 0; count < MilSquadFC.MaxSquadSize && count < squad.Units.Count; count++)
             {
-                if (squad.Units[count] != null &&
+                if (squad.Units[count] is not null &&
                     (units.Contains(squad.Units[count]) || squad.Units[count] == blankUnit)) continue;
                 squad.SetUnit(count, blankUnit);
             }
@@ -239,10 +239,10 @@ public class MilitaryFC : IExposable
 
             // On-map (currently deployed) — skip this tick but stay tracked so healing
             // resumes automatically once the pawn returns to base.
-            if (pawn.Map != null) continue;
+            if (pawn.Map is not null) continue;
 
             WorldSettlementFC settlement = merc.settlement ?? merc.squad?.getSettlement;
-            bool isMech = pawn.RaceProps != null && pawn.RaceProps.IsMechanoid;
+            bool isMech = pawn.RaceProps is not null && pawn.RaceProps.IsMechanoid;
             try
             {
                 if (isMech)
@@ -262,7 +262,7 @@ public class MilitaryFC : IExposable
                     // value it had at despawn — possibly Starving. Top it up; pawns at base are
                     // abstracted as eating in the mess hall.
                     Need_Food food = pawn.needs?.food;
-                    if (food != null) food.CurLevel = food.MaxLevel;
+                    if (food is not null) food.CurLevel = food.MaxLevel;
 
                     if (pawn.health.HasHediffsNeedingTend())
                         MercTendingUtil.TendOnce(merc, settlement);
@@ -283,7 +283,7 @@ public class MilitaryFC : IExposable
                 toRemove.Add(pawn);
             }
         }
-        if (toRemove != null)
+        if (toRemove is not null)
         {
             foreach (Pawn p in toRemove) injuredMercsByPawn.Remove(p);
         }
@@ -324,7 +324,7 @@ public class MilitaryFC : IExposable
         foreach (Mercenary sub in squad.AllSubPawns())
         {
             if (sub?.pawn is null || sub.pawn.Dead || sub.pawn.Destroyed) continue;
-            bool needs = sub.pawn.RaceProps != null && sub.pawn.RaceProps.IsMechanoid
+            bool needs = sub.pawn.RaceProps is not null && sub.pawn.RaceProps.IsMechanoid
                 ? MechRepairUtility.CanRepair(sub.pawn)
                 : HasInjuries(sub.pawn);
             if (needs)
@@ -346,7 +346,7 @@ public class MilitaryFC : IExposable
     private static bool HasInjuries(Pawn pawn)
     {
         List<Hediff> hediffs = pawn.health?.hediffSet?.hediffs;
-        if (hediffs == null) return false;
+        if (hediffs is null) return false;
         for (int i = 0; i < hediffs.Count; i++)
         {
             if (hediffs[i] is Hediff_Injury injury && !injury.IsPermanent()) return true;
@@ -360,12 +360,12 @@ public class MilitaryFC : IExposable
         {
             foreach (var merc in squad.mercenaries)
             {
-                if (merc?.pawn?.Map != null && merc.pawn == unit)
+                if (merc?.pawn?.Map is not null && merc.pawn == unit)
                     return squad;
             }
             foreach (var sub in squad.AllSubPawns())
             {
-                if (sub?.pawn?.Map != null && sub.pawn == unit)
+                if (sub?.pawn?.Map is not null && sub.pawn == unit)
                     return squad;
             }
         }
@@ -425,7 +425,7 @@ public class MilitaryFC : IExposable
             foreach (MercenarySquadFC squad in mercenarySquads)
             {
                 MilitaryOperation op = squad?.Operation;
-                if (op is object
+                if (op is not null
                     && op.kind == MilitaryJobDefOf.Deploy
                     && op.phase == MilitaryOperationPhase.Engaged)
                 {
@@ -440,7 +440,7 @@ public class MilitaryFC : IExposable
     {
         if (squad is null) return false;
         MilitaryOperation op = squad.Operation;
-        return op is object
+        return op is not null
             && op.kind == MilitaryJobDefOf.Deploy
             && op.phase == MilitaryOperationPhase.Engaged;
     }
@@ -527,7 +527,7 @@ public class MilitaryFC : IExposable
             return;
         }
         MercenarySquadFC hired = HireSquad(template);
-        if (hired is object) AttemptToAssign(hired, settlement);
+        if (hired is not null) AttemptToAssign(hired, settlement);
     }
 
     /// <summary>Hires a fresh squad from <paramref name="template"/>: pays the hire cost,
@@ -621,14 +621,14 @@ public class MilitaryFC : IExposable
             Messages.Message("FCSquadSwapBusyReject".Translate(incoming.DisplayName), MessageTypeDefOf.RejectInput, false);
             return false;
         }
-        if (displace is object && displace.IsBusy)
+        if (displace is not null && displace.IsBusy)
         {
             Messages.Message("FCSquadSwapBusyReject".Translate(displace.DisplayName), MessageTypeDefOf.RejectInput, false);
             return false;
         }
 
         // Detach the displaced squad first so the cap validator sees the slot as free.
-        if (displace is object && displace.settlement == target)
+        if (displace is not null && displace.settlement == target)
         {
             Unassign(displace, true);
         }
@@ -636,7 +636,7 @@ public class MilitaryFC : IExposable
         if (!AttemptToAssign(incoming, target))
         {
             // Best-effort restore: AttemptToAssign already logged its rejection message.
-            if (displace is object) Assign(displace, target, true);
+            if (displace is not null) Assign(displace, target, true);
             return false;
         }
         return true;
@@ -694,7 +694,7 @@ public class MilitaryFC : IExposable
 
     public bool SquadExists(WorldSettlementFC settlement)
     {
-        return settlement?.PrimaryStationedSquad != null;
+        return settlement?.PrimaryStationedSquad is not null;
     }
 
     /// <summary>If auto-replace is on and the squad isn't physically on a map, refill its

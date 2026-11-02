@@ -18,7 +18,7 @@ public static class Patch_IsValidSettlement
     private static void Postfix(WorldObject wo, ref bool __result)
     {
         if (__result) return;
-        if (wo is WorldSettlementFC settlement && !settlement.Destroyed && settlement.Faction is object)
+        if (wo is WorldSettlementFC settlement && !settlement.Destroyed && settlement.Faction is not null)
         {
             __result = true;
         }

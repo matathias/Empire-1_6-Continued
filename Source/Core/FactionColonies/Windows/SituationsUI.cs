@@ -19,11 +19,11 @@ public static class SituationsUI
     public static float RowHeight(FCSituation sit, bool includeActions)
     {
         float h = BaseRowHeight;
-        if (includeActions && sit.def.Handler != null)
+        if (includeActions && sit.def.Handler is not null)
         {
             foreach (SituationAction a in sit.def.Handler.GetCustomActions(sit))
             {
-                if (a != null) h += ActionRowHeight;
+                if (a is not null) h += ActionRowHeight;
             }
         }
         return h;
@@ -34,7 +34,7 @@ public static class SituationsUI
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
 
-        Color accent = sit.def.category != null ? sit.def.category.color : new Color(0.65f, 0.65f, 0.65f);
+        Color accent = sit.def.category is not null ? sit.def.category.color : new Color(0.65f, 0.65f, 0.65f);
         Widgets.DrawBoxSolid(new Rect(rowRect.x, rowRect.y, AccentW, rowRect.height), accent);
 
         float x = rowRect.x + AccentW + Pad;
@@ -48,7 +48,7 @@ public static class SituationsUI
         if (showTarget)
         {
             Text.Anchor = TextAnchor.MiddleRight;
-            string target = sit.targetSettlement != null
+            string target = sit.targetSettlement is not null
                 ? sit.targetSettlement.Name
                 : (string)"FCSituationFactionWide".Translate();
             UIUtil.DrawColoredLabel(new Rect(x + w * 0.6f, y, w * 0.4f, 20f), target, Color.gray);
@@ -66,7 +66,7 @@ public static class SituationsUI
 
         bool advancing = FCSituationMaker.IsAdvancing(sit, faction);
         float rate = sit.NetDailyRateGiven(advancing);
-        string stageLabel = sit.currentStage != null ? sit.currentStage.LabelCap.Resolve() : (string)"FCSituationNoStage".Translate();
+        string stageLabel = sit.currentStage is not null ? sit.currentStage.LabelCap.Resolve() : (string)"FCSituationNoStage".Translate();
         string rateText = (rate >= 0f ? "+" : "") + rate.ToString("0.##") + (string)"FCSituationPerDay".Translate();
         Color rateColor = rate >= 0f ? new Color(0.6f, 0.85f, 0.6f) : new Color(0.85f, 0.6f, 0.6f);
         Text.Font = GameFont.Small;
@@ -83,12 +83,12 @@ public static class SituationsUI
         Text.Anchor = anchorBefore;
 
         // Optional custom-action rows (settlement panel)
-        if (includeActions && sit.def.Handler != null)
+        if (includeActions && sit.def.Handler is not null)
         {
             float ay = rowRect.y + BaseRowHeight;
             foreach (SituationAction action in sit.def.Handler.GetCustomActions(sit))
             {
-                if (action == null) continue;
+                if (action is null) continue;
                 Rect aRect = new Rect(x, ay, Mathf.Min(280f, w), ActionRowHeight - 2f);
                 bool enabled = action.DisabledReason.NullOrEmpty();
                 if (UIUtil.ClampedButtonText(aRect, action.Label, active: enabled))
@@ -107,10 +107,10 @@ public static class SituationsUI
 
     private static void DrawStageTicks(Rect barRect, FCSituationDef def)
     {
-        if (def.stages == null) return;
+        if (def.stages is null) return;
         foreach (FCSituationStageDef stage in def.stages)
         {
-            if (stage == null || def.maxProgress <= 0f) continue;
+            if (stage is null || def.maxProgress <= 0f) continue;
             float frac = Mathf.Clamp01(stage.threshold / def.maxProgress);
             float tx = barRect.x + barRect.width * frac;
             Widgets.DrawBoxSolid(new Rect(tx, barRect.y, 1f, barRect.height), new Color(1f, 1f, 1f, 0.5f));
@@ -120,18 +120,18 @@ public static class SituationsUI
     private static void DrawApproachSelector(Rect rect, FCSituation sit, FactionFC faction)
     {
         FCSituationApproachDef active = sit.activeApproach;
-        string label = active != null
+        string label = active is not null
             ? (string)"FCSituationApproachLabel".Translate(active.LabelCap)
             : (string)"FCSituationNoApproach".Translate();
 
         if (UIUtil.ClampedButtonText(rect, label))
         {
             List<FloatMenuOption> options = new List<FloatMenuOption>();
-            if (sit.def.approaches != null)
+            if (sit.def.approaches is not null)
             {
                 foreach (FCSituationApproachDef approach in sit.def.approaches)
                 {
-                    if (approach == null) continue;
+                    if (approach is null) continue;
                     options.Add(BuildApproachOption(sit, faction, approach));
                 }
             }
@@ -143,7 +143,7 @@ public static class SituationsUI
     {
         // Static gate (policies + research), then runtime handler override.
         bool available = approach.MeetsStaticRequirements(out string reason);
-        if (available && sit.def.Handler != null)
+        if (available && sit.def.Handler is not null)
             available = sit.def.Handler.IsApproachAvailable(approach, sit, out reason);
 
         string dynLabel = sit.def.Handler?.GetDynamicApproachLabel(approach, sit);

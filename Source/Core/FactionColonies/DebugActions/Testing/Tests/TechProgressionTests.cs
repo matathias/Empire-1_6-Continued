@@ -39,7 +39,7 @@ public static class TechProgressionTests
     [EmpireTest("TechProgression")]
     public static void Barrier_KnowledgeCostProject_NotSatisfiedWhileUnresearched()
     {
-        if (Current.Game == null || Find.ResearchManager == null)
+        if (Current.Game is null || Find.ResearchManager is null)
             TestAssert.Skip("No ResearchManager (no active game)");
         if (ModsConfig.AnomalyActive)
             TestAssert.Skip("Anomaly active — skipped to avoid mutating live anomalyKnowledge");
@@ -69,7 +69,7 @@ public static class TechProgressionTests
     [EmpireTest("TechProgression")]
     public static void Barrier_ZeroCostProject_IsSatisfied()
     {
-        if (Current.Game == null || Find.ResearchManager == null)
+        if (Current.Game is null || Find.ResearchManager is null)
             TestAssert.Skip("No ResearchManager (no active game)");
 
         var proj = new ResearchProjectDef

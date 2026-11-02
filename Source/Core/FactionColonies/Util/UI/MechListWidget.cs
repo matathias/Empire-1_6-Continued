@@ -59,7 +59,7 @@ public static class MechListWidget
             if (newIsMech != isMech)
             {
                 MilUnitFC t = opts.getEditTarget?.Invoke();
-                if (t != null) t.SetMechanitor(newIsMech);
+                if (t is not null) t.SetMechanitor(newIsMech);
             }
         }
         else
@@ -90,7 +90,7 @@ public static class MechListWidget
         GUI.color = Color.white;
 
         // --- Grouped mech list ---
-        int groupCount = displayUnit != null ? Mathf.Max(1, displayUnit.MechGroupCount) : 1;
+        int groupCount = displayUnit is not null ? Mathf.Max(1, displayUnit.MechGroupCount) : 1;
         List<SavedMech> items = displayUnit?.mechs ?? new List<SavedMech>();
 
         // Bucket mech indices by their (clamped) control group.
@@ -152,7 +152,7 @@ public static class MechListWidget
                         modeOpts.Add(new FloatMenuOption(mode.LabelCap, delegate
                         {
                             MilUnitFC t = opts.getEditTarget?.Invoke();
-                            if (t != null) t.SetGroupWorkMode(capturedGroup, captured);
+                            if (t is not null) t.SetGroupWorkMode(capturedGroup, captured);
                         }));
                     }
                     if (modeOpts.Count > 0) Find.WindowStack.Add(new FloatMenu(modeOpts));
@@ -196,7 +196,7 @@ public static class MechListWidget
                     if (UIUtil.ClampedButtonText(removeRect, "X"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target != null) target.RemoveMech(index);
+                        if (target is not null) target.RemoveMech(index);
                     }
                     cursorRight = removeRect.x - 6f;
                 }
@@ -212,13 +212,13 @@ public static class MechListWidget
                     if (UIUtil.ClampedButtonText(minusRect, "-"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target != null) target.DecrementMech(index);
+                        if (target is not null) target.DecrementMech(index);
                     }
                     UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
                     if (UIUtil.ClampedButtonText(plusRect, "+"))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target != null) target.AddMech(item.kind, item.group);   // hard-blocks on bandwidth
+                        if (target is not null) target.AddMech(item.kind, item.group);   // hard-blocks on bandwidth
                     }
                     cursorRight = minusRect.x - 6f;
                 }
@@ -247,7 +247,7 @@ public static class MechListWidget
                             grpOpts.Add(new FloatMenuOption("fcMechGroup".Translate(dest + 1), delegate
                             {
                                 MilUnitFC t = opts.getEditTarget?.Invoke();
-                                if (t != null) t.SetMechGroup(index, capturedDest);
+                                if (t is not null) t.SetMechGroup(index, capturedDest);
                             }));
                         }
                         if (grpOpts.Count > 0) Find.WindowStack.Add(new FloatMenu(grpOpts));

@@ -27,7 +27,7 @@ public class GenStep_Colony : GenStep_Scatterer
         }
 
         Settlement = LookupSettlement(map);
-        if (Settlement == null) return false;
+        if (Settlement is null) return false;
 
         int min = 36 + Settlement.settlementLevel * 2 - 2;
         return new CellRect(c.x - min / 2, c.z - min / 2, min, min).FullyContainedWithin(map.BoundsRect(12));

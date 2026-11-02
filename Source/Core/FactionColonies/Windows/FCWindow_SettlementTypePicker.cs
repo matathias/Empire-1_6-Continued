@@ -149,7 +149,7 @@ public class FCWindow_SettlementTypePicker : Window
         GUI.color = Color.white;
 
         // Lock reason (drawn in red, after resetting GUI.color)
-        if (!unlocked && lockedReason != null)
+        if (!unlocked && lockedReason is not null)
         {
             float cardHeight = SettlementCardDrawer.GetCardHeight(def, rect.width);
             float xOffset = rect.x + SettlementCardDrawer.AccentBarWidth + SettlementCardDrawer.margin;

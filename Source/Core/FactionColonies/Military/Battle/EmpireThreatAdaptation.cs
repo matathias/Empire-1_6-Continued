@@ -23,7 +23,7 @@ public class EmpireThreatAdaptation : IExposable
         get
         {
             StorytellerDef def = Find.Storyteller.def;
-            if (def.pointsFactorFromAdaptDays == null) return 1.0;
+            if (def.pointsFactorFromAdaptDays is null) return 1.0;
 
             float raw = def.pointsFactorFromAdaptDays.Evaluate(adaptDays);
             float effectFactor = Find.Storyteller.difficulty.adaptationEffectFactor;
@@ -40,7 +40,7 @@ public class EmpireThreatAdaptation : IExposable
         if (Find.TickManager.TicksGame % AdaptationUpdateInterval != 0) return;
 
         StorytellerDef def = Find.Storyteller.def;
-        if (def.adaptDaysGrowthRateCurve == null) return;
+        if (def.adaptDaysGrowthRateCurve is null) return;
 
         float growth = 0.5f * def.adaptDaysGrowthRateCurve.Evaluate(adaptDays) * GrowthMultiplier;
         if (adaptDays > 0f)
@@ -62,7 +62,7 @@ public class EmpireThreatAdaptation : IExposable
     public void Notify_BattleLost()
     {
         StorytellerDef def = Find.Storyteller.def;
-        if (def.adaptDaysLossFromColonistLostByPostPopulation == null) return;
+        if (def.adaptDaysLossFromColonistLostByPostPopulation is null) return;
 
         int count = FindFC.Settlements.Count;
         float loss = def.adaptDaysLossFromColonistLostByPostPopulation.Evaluate(count);

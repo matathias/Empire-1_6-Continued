@@ -296,7 +296,7 @@ class FCBuildingWindow : Window
             }
         }
 
-        if (selectedBuilding != null && !filteredBuildingList.Contains(selectedBuilding)
+        if (selectedBuilding is not null && !filteredBuildingList.Contains(selectedBuilding)
             && !slotUpgradeList.Any(e => e.def == selectedBuilding))
         {
             selectedBuilding = null;
@@ -654,7 +654,7 @@ class FCBuildingWindow : Window
 
     private void DrawSelectedBuildingDetail(Rect rect)
     {
-        if (selectedBuilding == null)
+        if (selectedBuilding is null)
         {
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
@@ -794,7 +794,7 @@ class FCBuildingWindow : Window
 
     private float CalculateDetailContentHeight(float width)
     {
-        if (selectedBuilding == null) return 0;
+        if (selectedBuilding is null) return 0;
 
         float h = 0;
         // Name
@@ -880,7 +880,7 @@ class FCBuildingWindow : Window
 
     private float DrawExtensionSections(float x, float curY, float width)
     {
-        if (selectedBuilding.modExtensions == null) return curY;
+        if (selectedBuilding.modExtensions is null) return curY;
         foreach (IBuildingDetailSection section in selectedBuilding.modExtensions.OfType<IBuildingDetailSection>())
         {
             float contentWidth = width - (smallMargin * 2);
@@ -912,7 +912,7 @@ class FCBuildingWindow : Window
 
     private float CalculateExtensionSectionsHeight(float width)
     {
-        if (selectedBuilding.modExtensions == null) return 0;
+        if (selectedBuilding.modExtensions is null) return 0;
         float h = 0;
         float contentWidth = width - (smallMargin * 2);
         foreach (IBuildingDetailSection section in selectedBuilding.modExtensions.OfType<IBuildingDetailSection>())
@@ -930,19 +930,19 @@ class FCBuildingWindow : Window
 
     private float DrawSettlementImpact(float x, float curY, float width)
     {
-        if (selectedBuilding.statModifiers == null || !selectedBuilding.statModifiers.Any(m => m.stat != null && m.stat.linkedResource != null)) return curY;
+        if (selectedBuilding.statModifiers is null || !selectedBuilding.statModifiers.Any(m => m.stat is not null && m.stat.linkedResource is not null)) return curY;
 
         // Gather all affected resources from both old and new building
         HashSet<ResourceTypeDef> affectedResources = new HashSet<ResourceTypeDef>();
         foreach (FCStatModifier mod in selectedBuilding.statModifiers)
-            if (mod.stat != null && mod.stat.linkedResource != null)
+            if (mod.stat is not null && mod.stat.linkedResource is not null)
                 affectedResources.Add(mod.stat.linkedResource);
 
         bool isReplacing = buildingDef != BuildingFCDefOf.Empty && buildingDef != BuildingFCDefOf.Construction;
-        if (isReplacing && buildingDef.statModifiers != null)
+        if (isReplacing && buildingDef.statModifiers is not null)
         {
             foreach (FCStatModifier mod in buildingDef.statModifiers)
-                if (mod.stat != null && mod.stat.linkedResource != null)
+                if (mod.stat is not null && mod.stat.linkedResource is not null)
                     affectedResources.Add(mod.stat.linkedResource);
         }
 
@@ -971,18 +971,18 @@ class FCBuildingWindow : Window
         foreach (ResourceTypeDef resDef in affectedResources)
         {
             ResourceFC resource = settlement.GetResource(resDef);
-            if (resource == null) continue;
+            if (resource is null) continue;
 
             double currentProd = resource.production;
             double projectedBase = resource.productionBase;
             double projectedMult = resource.productionMult;
 
             // Subtract old building contributions
-            if (isReplacing && buildingDef.statModifiers != null)
+            if (isReplacing && buildingDef.statModifiers is not null)
             {
                 foreach (FCStatModifier mod in buildingDef.statModifiers)
                 {
-                    if (mod.stat == null || mod.stat.linkedResource != resDef) continue;
+                    if (mod.stat is null || mod.stat.linkedResource != resDef) continue;
                     if (mod.stat.aggregation == FCStatAggregation.Additive)
                         projectedBase -= mod.value;
                     else if (mod.value != 0)
@@ -993,7 +993,7 @@ class FCBuildingWindow : Window
             // Add new building contributions
             foreach (FCStatModifier mod in selectedBuilding.statModifiers)
             {
-                if (mod.stat == null || mod.stat.linkedResource != resDef) continue;
+                if (mod.stat is null || mod.stat.linkedResource != resDef) continue;
                 if (mod.stat.aggregation == FCStatAggregation.Additive)
                     projectedBase += mod.value;
                 else
@@ -1042,17 +1042,17 @@ class FCBuildingWindow : Window
 
     private float CalculateImpactHeight()
     {
-        if (selectedBuilding?.statModifiers == null || !selectedBuilding.statModifiers.Any(m => m.stat != null && m.stat.linkedResource != null)) return 0;
+        if (selectedBuilding?.statModifiers is null || !selectedBuilding.statModifiers.Any(m => m.stat is not null && m.stat.linkedResource is not null)) return 0;
 
         HashSet<ResourceTypeDef> affected = new HashSet<ResourceTypeDef>();
         foreach (FCStatModifier mod in selectedBuilding.statModifiers)
-            if (mod.stat != null && mod.stat.linkedResource != null)
+            if (mod.stat is not null && mod.stat.linkedResource is not null)
                 affected.Add(mod.stat.linkedResource);
 
         bool isReplacing = buildingDef != BuildingFCDefOf.Empty && buildingDef != BuildingFCDefOf.Construction;
-        if (isReplacing && buildingDef.statModifiers != null)
+        if (isReplacing && buildingDef.statModifiers is not null)
             foreach (FCStatModifier mod in buildingDef.statModifiers)
-                if (mod.stat != null && mod.stat.linkedResource != null)
+                if (mod.stat is not null && mod.stat.linkedResource is not null)
                     affected.Add(mod.stat.linkedResource);
 
         if (affected.Count == 0) return 0;
@@ -1125,7 +1125,7 @@ class FCBuildingWindow : Window
 
     private float CalculateUpgradesHeight(float width)
     {
-        if (selectedBuilding == null) return 0;
+        if (selectedBuilding is null) return 0;
         if (!FactionCache.UpgradeTrees.TryGetValue(selectedBuilding, out List<BuildingUpgradeEntry> tree) || tree.Count == 0)
             return 0;
 
@@ -1218,7 +1218,7 @@ class FCBuildingWindow : Window
 
     private float CalculateRequiredByHeight(float width)
     {
-        if (selectedBuilding == null) return 0;
+        if (selectedBuilding is null) return 0;
         if (!FactionCache.RequiredByBuildingMap.TryGetValue(selectedBuilding, out List<BuildingFCDef> requiredBy) || requiredBy.Count == 0)
             return 0;
 
@@ -1289,7 +1289,7 @@ class FCBuildingWindow : Window
 
     private void ExecuteBuild()
     {
-        if (selectedBuilding == null) return;
+        if (selectedBuilding is null) return;
         if (settlement.BuildingsComp?.ValidConstructBuilding(selectedBuilding, buildingSlot) != true) return;
 
         // Pay first (atomic). ValidConstructBuilding already validated affordability and showed
@@ -1370,7 +1370,7 @@ class FCBuildingWindow : Window
         filteredBuildingList.AddRange(buildingList);
 
         // Populate slot upgrade list
-        if (buildingDef != null && buildingDef != BuildingFCDefOf.Empty
+        if (buildingDef is not null && buildingDef != BuildingFCDefOf.Empty
             && buildingDef != BuildingFCDefOf.Construction)
         {
             if (FactionCache.UpgradeTrees.TryGetValue(buildingDef, out List<BuildingUpgradeEntry> tree))
@@ -1389,7 +1389,7 @@ class FCBuildingWindow : Window
         preventCameraMotion = false;
         resizeable = true;
 
-        if (buildingDef == BuildingFCDefOf.Construction && settlement.BuildingsComp != null)
+        if (buildingDef == BuildingFCDefOf.Construction && settlement.BuildingsComp is not null)
         {
             buildingDesc = "Empire_BuildingWindow_ConstructionDesc".Translate(settlement.BuildingsComp.Buildings[buildingSlot].underConstructionDef.label);
         }

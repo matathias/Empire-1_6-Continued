@@ -131,7 +131,7 @@ public static class LaborerHireUtil
         // The lookup needs a real Empire settlement (its settlementDef supplies the mode).
         bool anyShuttlePort = FindFC.Settlements.Any(s => s.BuildingsComp?.HasBuilding(BuildingFCDefOf.shuttlePort) ?? false);
         WorldSettlementFC source = FindFC.Settlements.FirstOrDefault();
-        TaxDeliveryMode mode = source != null
+        TaxDeliveryMode mode = source is not null
             ? DeliveryLogistics.TaxDeliveryModeForSettlement(anyShuttlePort, source.Tile)
             : TaxDeliveryMode.Caravan;
 
@@ -144,7 +144,7 @@ public static class LaborerHireUtil
         slate.Set("laborerSkillBonus", SkillBonus());
 
         QuestScriptDef script;
-        if (mode == TaxDeliveryMode.Shuttle && EmpireQuestScriptDefOf.Empire_HireLaborers_Shuttle is object)
+        if (mode == TaxDeliveryMode.Shuttle && EmpireQuestScriptDefOf.Empire_HireLaborers_Shuttle is not null)
         {
             script = EmpireQuestScriptDefOf.Empire_HireLaborers_Shuttle;
             slate.Set("landingCell", DropCellFinder.GetBestShuttleLandingSpot(map, Faction.OfPlayer));
@@ -162,7 +162,7 @@ public static class LaborerHireUtil
         Quest quest = QuestUtility.GenerateQuestAndMakeAvailable(script, slate);
         // Give the (hidden) quest a friendly name so the laborers' "work disabled by quest" tooltip
         // reads nicely instead of the defName (hidden quests otherwise resolve their name to defName).
-        if (quest != null) quest.name = "FCLaborersQuestName".Translate();
+        if (quest is not null) quest.name = "FCLaborersQuestName".Translate();
 
         // Anchor the cooldown to the laborers' scheduled departure (hire + contract length), so the
         // rest period only begins once they leave and re-hiring stays blocked while they're deployed.
@@ -184,7 +184,7 @@ public static class LaborerHireUtil
         {
             Quest q = quests[i];
             if (q is null || q.State != QuestState.Ongoing) continue;
-            if (q.root == ground || (shuttle is object && q.root == shuttle))
+            if (q.root == ground || (shuttle is not null && q.root == shuttle))
             {
                 quest = q;
                 return true;
@@ -216,7 +216,7 @@ public static class LaborerHireUtil
         quest.End(QuestEndOutcome.Success, sendLetter: false);
 
         FactionFC faction = FindFC.FactionComp;
-        if (faction?.laborerCooldown is object)
+        if (faction?.laborerCooldown is not null)
         {
             faction.laborerCooldown.SetCooldown(FCSettings.laborerCooldownDays * GenDate.TicksPerDay);
             faction.laborerCooldown.SetEndTick(Find.TickManager.TicksGame);
@@ -231,7 +231,7 @@ public static class LaborerHireUtil
     private static int SkillBonus()
     {
         var settlements = FindFC.Settlements;
-        double avgLevel = (settlements != null && settlements.Any())
+        double avgLevel = (settlements is not null && settlements.Any())
             ? settlements.Average(s => s.settlementLevel)
             : 1.0;
         int raw = Mathf.RoundToInt((float)(avgLevel - 1.0) * FCSettings.laborerSkillBonusPerLevel);

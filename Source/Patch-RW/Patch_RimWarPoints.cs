@@ -21,7 +21,7 @@ public static class Patch_RimWarPoints
 {
     private static bool Prefix(RimWarSettlementComp __instance, ref int __result)
     {
-        if (!(__instance.parent is WorldSettlementFC settlement))
+        if (__instance.parent is not WorldSettlementFC settlement)
         {
             return true; // run original for non-Empire settlements
         }

@@ -8,6 +8,6 @@ class MercenaryPassToWorld
     static bool Prefix(Pawn pawn, PawnDiscardDecideMode discardMode = PawnDiscardDecideMode.Decide)
     {
         FactionFC faction = FindFC.FactionComp;
-        return faction?.military == null || !faction.military.IsMercenaryPawn(pawn);
+        return faction?.military is null || !faction.military.IsMercenaryPawn(pawn);
     }
 }

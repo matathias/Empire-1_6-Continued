@@ -5,7 +5,7 @@ public static class BuildingUpkeepRescaleTests
     private static WorldSettlementFC GetFirstSettlement()
     {
         var s = FindFC.Settlements;
-        return (s == null || s.Count == 0) ? null : s[0];
+        return (s is null || s.Count == 0) ? null : s[0];
     }
 
     // Skips when live upkeep stats/policies/difficulty perturb the base->result transform away from

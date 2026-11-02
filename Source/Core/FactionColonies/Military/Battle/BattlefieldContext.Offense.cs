@@ -22,7 +22,7 @@ public partial class BattlefieldContext
     private const int OffenseLingerCheckInterval = 250;
 
     /// <summary>An active offense battle owns this tile (offense flag set and a live map).</summary>
-    public bool HasOffenseAt() => isOffense && map is object;
+    public bool HasOffenseAt() => isOffense && map is not null;
 
     /// <summary>An offense is live AND still fightable -- not in the endingBattle resolving
     /// window. The post-win loot linger (awaitingPlayerExit) is intentionally still joinable so
@@ -63,7 +63,7 @@ public partial class BattlefieldContext
         // A map already exists at this tile but isn't ours (the player attacked in person
         // after launch, a quest spawned a site map, ...): never hijack it -- resolve
         // abstractly instead. The launch gate makes this rare; this is the backstop.
-        if (map is null && Current.Game.FindMap(tile) is object)
+        if (map is null && Current.Game.FindMap(tile) is not null)
         {
             LogUtil.Warning($"StartOffense: foreign map already present at tile {tile}; auto-resolving op id={op.id}.");
             op.BeginAutoResolveProgress();
@@ -122,7 +122,7 @@ public partial class BattlefieldContext
         // MapGeneratorDef and the world's initial map size -- the same call vanilla's
         // SettlementUtility.Attack makes when a caravan attacks an enemy base.
         map = GetOrGenerateMapUtility.GetOrGenerateMap(tile, null);
-        if (map is object)
+        if (map is not null)
         {
             // Mark the map before StripNativeGarrison / isOffense=true: the enemy Settlement is
             // this map's parent, so vanilla's per-tick SettlementDefeatUtility.CheckDefeated /
@@ -189,7 +189,7 @@ public partial class BattlefieldContext
         }
 
         squad.CheckInitialization();
-        if (op.aggressor?.homeSettlement is object)
+        if (op.aggressor?.homeSettlement is not null)
             squad.UpdateSquadStats(op.aggressor.homeSettlement.settlementMilitaryLevel);
         SquadHealthUtil.ResetNeeds(squad);
 
@@ -240,7 +240,7 @@ public partial class BattlefieldContext
     {
         RimWorld.SoundDefOf.Tick_High.PlayOneShotOnCamera();
         Pawn firstAttacker = attackerPawns.FirstOrDefault();
-        GlobalTargetInfo jump = firstAttacker is object
+        GlobalTargetInfo jump = firstAttacker is not null
             ? new GlobalTargetInfo(firstAttacker)
             : new GlobalTargetInfo(map.Center, map);
         Find.LetterStack.ReceiveLetter(
@@ -269,7 +269,7 @@ public partial class BattlefieldContext
             return;
         }
 
-        MilitaryOperation op = activeOps?.FirstOrDefault(o => o?.aggressor is object);
+        MilitaryOperation op = activeOps?.FirstOrDefault(o => o?.aggressor is not null);
         List<Pawn> pawns = caravan.pawns.InnerListForReading.ListFullCopy();
 
         // Release the pawns from the caravan container before spawning them (mirrors the defense
@@ -285,7 +285,7 @@ public partial class BattlefieldContext
             map.mapPawns.RegisterPawn(pawn);
         }
 
-        if (op?.aggressor?.pawns is object)
+        if (op?.aggressor?.pawns is not null)
         {
             // Track only fighting colonists as attackers: a surviving pack animal or a
             // caravan prisoner must not hold the squad-wiped loss condition open.
@@ -355,7 +355,7 @@ public partial class BattlefieldContext
     /// No lord is assigned; these are the player's own colonists.</summary>
     private void CaptureUntrackedAttackers()
     {
-        MilitaryOperation op = activeOps?.FirstOrDefault(o => o?.aggressor?.pawns is object);
+        MilitaryOperation op = activeOps?.FirstOrDefault(o => o?.aggressor?.pawns is not null);
         if (op is null) return;
         HashSet<Pawn> tracked = new HashSet<Pawn>(attackerPawns);
         foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
@@ -386,19 +386,19 @@ public partial class BattlefieldContext
         // Restore faction on Empire attackers the player drafted, before resolving -- so the
         // squad reconcile in CompleteBattle sees Empire pawns and drafted mercs rejoin Empire.
         foreach (Pawn npc in draftedNPCs)
-            if (npc is object && !npc.Dead && !npc.Destroyed && npc.Faction == Faction.OfPlayer)
+            if (npc is not null && !npc.Dead && !npc.Destroyed && npc.Faction == Faction.OfPlayer)
                 npc.SetFaction(empire);
         draftedNPCs.Clear();
 
         // Strip combat-efficiency hediffs from every surviving combatant (both sides).
         foreach (Pawn p in attackerPawns.Concat(defenderPawns).ToList())
-            if (p is object && !p.Dead && !p.Destroyed)
+            if (p is not null && !p.Dead && !p.Destroyed)
                 MilitaryEfficiencyUtil.RemoveCombatEfficiencyHediff(p);
 
         // Resolve each active op through the normal abstract outcome path (ApplyResult runs
         // loot / enslave delivery + letter + archive + cooldown). A manual Capture win defers
         // its settlement->colony swap to teardown via RegisterPendingCapture.
-        List<MilitaryOperation> ops = activeOps is object
+        List<MilitaryOperation> ops = activeOps is not null
             ? activeOps.ToList() : new List<MilitaryOperation>();
         foreach (MilitaryOperation op in ops)
         {
@@ -562,7 +562,7 @@ public partial class BattlefieldContext
     /// (with stale battleMapInitialized/offenseWon flags) leaks in the battlefields dict.</summary>
     private void ReleaseBattlefieldIfOrphaned()
     {
-        if (activeOps is object && activeOps.Count > 0) return;
+        if (activeOps is not null && activeOps.Count > 0) return;
         FindFC.MilitaryManager?.RemoveBattlefield(tile);
     }
 
@@ -585,13 +585,13 @@ public partial class BattlefieldContext
 
         Map homeMap = Find.AnyPlayerHomeMap;
         CameraJumper.TryJump(tile);
-        if (Find.CurrentMap == map && homeMap is object) Current.Game.CurrentMap = homeMap;
+        if (Find.CurrentMap == map && homeMap is not null) Current.Game.CurrentMap = homeMap;
         // Clear the marker before removal, then remove defensively: if vanilla (or another mod)
         // already removed the map, DeinitAndRemoveMap would Log.Error "map ... not here" -- warn
         // and skip so the rest of teardown (CompletePendingSettlementFate) still runs.
         Map toRemove = map;
         FindFC.MilitaryManager?.UnregisterBattleMap(toRemove);
-        if (toRemove is object && Current.Game.Maps.Contains(toRemove))
+        if (toRemove is not null && Current.Game.Maps.Contains(toRemove))
             Current.Game.DeinitAndRemoveMap(toRemove, false);
         else
             LogUtil.Warning($"CloseOffenseMap: offense map at tile {tile} already gone before teardown; skipping DeinitAndRemoveMap.");
@@ -631,13 +631,13 @@ public partial class BattlefieldContext
 
         Settlement enemy = Find.WorldObjects.SettlementAt(tile);
         Faction enemyFaction = enemy?.Faction;
-        if (enemy is object && !enemy.Destroyed)
+        if (enemy is not null && !enemy.Destroyed)
             enemy.Destroy();
 
         // Mark the faction defeated if it has no settlements left (mirrors ApplyCaptureSuccess /
         // ApplyRazeSuccess).
-        if (enemyFaction is object &&
-            !Find.WorldObjects.Settlements.Any(s => s.Faction != null && s.Faction == enemyFaction))
+        if (enemyFaction is not null &&
+            !Find.WorldObjects.Settlements.Any(s => s.Faction is not null && s.Faction == enemyFaction))
             enemyFaction.defeated = true;
 
         if (capture)

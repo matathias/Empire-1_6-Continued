@@ -5,7 +5,7 @@ public static class LazyCacheTests
     private static WorldSettlementFC GetFirstSettlement()
     {
         var settlements = FindFC.Settlements;
-        if (settlements == null || settlements.Count == 0)
+        if (settlements is null || settlements.Count == 0)
             return null;
         return settlements.First();
     }
@@ -21,7 +21,7 @@ public static class LazyCacheTests
     public static void Settlement_DirtyStats_RecomputesWorkersMax()
     {
         var s = GetFirstSettlement();
-        if (s == null) TestAssert.Skip("No settlements");
+        if (s is null) TestAssert.Skip("No settlements");
 
         double first = s.workersMax;
         s.DirtyStatsCache();
@@ -36,7 +36,7 @@ public static class LazyCacheTests
     public static void Settlement_DirtyProfit_RecomputesIncome()
     {
         var s = GetFirstSettlement();
-        if (s == null) TestAssert.Skip("No settlements");
+        if (s is null) TestAssert.Skip("No settlements");
 
         double first = s.totalIncome;
         s.DirtyProfitCache();
@@ -51,7 +51,7 @@ public static class LazyCacheTests
     public static void Settlement_DirtyStats_CascadesToProfit()
     {
         var s = GetFirstSettlement();
-        if (s == null) TestAssert.Skip("No settlements");
+        if (s is null) TestAssert.Skip("No settlements");
 
         double first = s.totalProfit;
         s.DirtyStatsCache();
@@ -66,7 +66,7 @@ public static class LazyCacheTests
     public static void Settlement_DirtyDescription_Recomputes()
     {
         var s = GetFirstSettlement();
-        if (s == null) TestAssert.Skip("No settlements");
+        if (s is null) TestAssert.Skip("No settlements");
 
         string first = s.description;
         s.DirtyDescriptionCache();
@@ -82,7 +82,7 @@ public static class LazyCacheTests
     public static void Settlement_ProfitEqualsIncomeMinusUpkeep()
     {
         var s = GetFirstSettlement();
-        if (s == null) TestAssert.Skip("No settlements");
+        if (s is null) TestAssert.Skip("No settlements");
 
         double expected = s.totalIncome - s.totalUpkeep;
         TestAssert.AreEqual(expected, s.totalProfit, tolerance: 0.01,
@@ -93,7 +93,7 @@ public static class LazyCacheTests
     public static void Settlement_Workers_NotExceedUltraMax()
     {
         var s = GetFirstSettlement();
-        if (s == null) TestAssert.Skip("No settlements");
+        if (s is null) TestAssert.Skip("No settlements");
 
         TestAssert.LessThanOrEqual(s.workers, s.workersUltraMax, $"workers ({s.workers}) should not exceed workersUltraMax ({s.workersUltraMax})");
     }
@@ -102,7 +102,7 @@ public static class LazyCacheTests
     public static void Settlement_WorkersMax_LessOrEqualUltraMax()
     {
         var s = GetFirstSettlement();
-        if (s == null) TestAssert.Skip("No settlements");
+        if (s is null) TestAssert.Skip("No settlements");
 
         TestAssert.LessThanOrEqual(s.workersMax, s.workersUltraMax, $"workersMax ({s.workersMax}) should not exceed workersUltraMax ({s.workersUltraMax})");
     }
@@ -113,7 +113,7 @@ public static class LazyCacheTests
     public static void Faction_DirtyProfit_RecomputesIncome()
     {
         var fc = GetFaction();
-        if (fc == null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
+        if (fc is null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
 
         double first = fc.income;
         fc.DirtyFactionProfitCache();
@@ -128,7 +128,7 @@ public static class LazyCacheTests
     public static void Faction_DirtyAverages_RecomputesHappiness()
     {
         var fc = GetFaction();
-        if (fc == null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
+        if (fc is null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
 
         double first = fc.averageHappiness;
         fc.DirtyAveragesCache();
@@ -143,7 +143,7 @@ public static class LazyCacheTests
     public static void Faction_ProfitEqualsIncomeMinusUpkeep()
     {
         var fc = GetFaction();
-        if (fc == null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
+        if (fc is null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
 
         double expected = fc.income - fc.upkeep;
         TestAssert.AreEqual(expected, fc.profit, tolerance: 0.01, message: $"profit ({fc.profit}) should equal income - upkeep ({expected})");
@@ -153,7 +153,7 @@ public static class LazyCacheTests
     public static void Faction_IncomeMatchesSettlementSum()
     {
         var fc = GetFaction();
-        if (fc == null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
+        if (fc is null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
 
         double sum = fc.settlements.Sum(s => s.totalIncome);
         TestAssert.AreEqual(sum, fc.income, tolerance: 1.0, message: $"faction income ({fc.income}) should match settlement sum ({sum})");
@@ -163,7 +163,7 @@ public static class LazyCacheTests
     public static void Faction_UpkeepMatchesSettlementSum()
     {
         var fc = GetFaction();
-        if (fc == null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
+        if (fc is null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
 
         double sum = fc.settlements.Sum(s => s.totalUpkeep);
         TestAssert.AreEqual(sum, fc.upkeep, tolerance: 1.0, message: $"faction upkeep ({fc.upkeep}) should match settlement sum ({sum})");
@@ -173,7 +173,7 @@ public static class LazyCacheTests
     public static void Faction_AveragesMatchSettlementMeans()
     {
         var fc = GetFaction();
-        if (fc == null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
+        if (fc is null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
 
         int count = fc.settlements.Count;
         double sumH = 0, sumL = 0, sumU = 0, sumP = 0;
@@ -199,7 +199,7 @@ public static class LazyCacheTests
     public static void Faction_TechLevel_IsNotUndefined()
     {
         var fc = GetFaction();
-        if (fc == null) TestAssert.Skip("No faction");
+        if (fc is null) TestAssert.Skip("No faction");
 
         TestAssert.IsTrue(fc.techLevel != TechLevel.Undefined, $"techLevel should not be Undefined, got {fc.techLevel}");
     }
@@ -208,7 +208,7 @@ public static class LazyCacheTests
     public static void Faction_InvalidateAllSettlementStatCaches_RecomputesCorrectly()
     {
         var fc = GetFaction();
-        if (fc == null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
+        if (fc is null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
 
         FCStatDef stat = FCStatDefOf.happinessGainedBase;
         double[] before = new double[fc.settlements.Count];
@@ -231,7 +231,7 @@ public static class LazyCacheTests
     public static void Settlement_DirtyProfit_CascadesToFaction()
     {
         var fc = GetFaction();
-        if (fc == null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
+        if (fc is null || fc.settlements.Count == 0) TestAssert.Skip("No faction/settlements");
         var s = fc.settlements.First();
 
         double first = fc.income;

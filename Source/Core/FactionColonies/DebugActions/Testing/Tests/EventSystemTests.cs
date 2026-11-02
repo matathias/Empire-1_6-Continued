@@ -49,8 +49,8 @@ public static class EventSystemTests
     {
         foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)
         {
-            if (def.statModifiers == null && def.permanentStatModifiers == null) continue;
-            if (def.statModifiers != null)
+            if (def.statModifiers is null && def.permanentStatModifiers is null) continue;
+            if (def.statModifiers is not null)
             {
                 for (int i = 0; i < def.statModifiers.Count; i++)
                 {
@@ -58,7 +58,7 @@ public static class EventSystemTests
                         $"{def.defName}: statModifiers[{i}] has null stat");
                 }
             }
-            if (def.permanentStatModifiers != null)
+            if (def.permanentStatModifiers is not null)
             {
                 for (int i = 0; i < def.permanentStatModifiers.Count; i++)
                 {
@@ -74,7 +74,7 @@ public static class EventSystemTests
     {
         foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)
         {
-            if (def.options == null) continue;
+            if (def.options is null) continue;
             for (int i = 0; i < def.options.Count; i++)
             {
                 TestAssert.IsNotNull(def.options[i],
@@ -92,7 +92,7 @@ public static class EventSystemTests
     {
         FCEventDef nonRandom = DefDatabase<FCEventDef>.AllDefsListForReading
             .FirstOrDefault(d => !d.isRandomEvent);
-        if (nonRandom == null) TestAssert.Skip("All events are random events");
+        if (nonRandom is null) TestAssert.Skip("All events are random events");
 
         TestAssert.IsFalse(FCEventMaker.IsValidRandomEvent(nonRandom),
             $"{nonRandom.defName}: non-random event should be rejected");
@@ -106,7 +106,7 @@ public static class EventSystemTests
     public static void ReturnRandomEvent_DoesNotThrow()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         TestAssert.DoesNotThrow(() => FCEventMaker.ReturnRandomEvent());
     }
@@ -115,10 +115,10 @@ public static class EventSystemTests
     public static void ReturnRandomEvent_Result_IsValidOrNull()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         FCEventDef result = FCEventMaker.ReturnRandomEvent();
-        if (result == null) return; // null is valid (no eligible events)
+        if (result is null) return; // null is valid (no eligible events)
         TestAssert.IsTrue(result.isRandomEvent,
             $"Returned event {result.defName} should have isRandomEvent=true");
     }
@@ -160,7 +160,7 @@ public static class EventSystemTests
     {
         FCEventDef def = DefDatabase<FCEventDef>.AllDefsListForReading
             .FirstOrDefault(d => d.timeTillTrigger > 0);
-        if (def == null) TestAssert.Skip("No event def with positive timeTillTrigger");
+        if (def is null) TestAssert.Skip("No event def with positive timeTillTrigger");
 
         FCEvent evt = FCEventMaker.MakeEvent(def);
 

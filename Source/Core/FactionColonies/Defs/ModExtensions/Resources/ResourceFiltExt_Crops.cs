@@ -35,7 +35,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
     public override void SetFilter(ThingFilter filter, TechLevel techlevel, ResourceFC resource = null)
     {
         // A non-null resource signals the real production/tithe path; trade passes null.
-        bool applyResearchGate = resource is object;
+        bool applyResearchGate = resource is not null;
 
         foreach (KeyValuePair<ThingDef, List<List<ResearchProjectDef>>> crop in CropOutputs)
         {
@@ -52,7 +52,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
 
             // Show a research requirement only when there is no ungated way to grow this output.
             List<ResearchProjectDef> requirement = MinimalRequirement(crop.Value);
-            if (requirement != null)
+            if (requirement is not null)
             {
                 TitheRestrictionInfo info = new TitheRestrictionInfo();
                 info.researchProjects = requirement;
@@ -76,7 +76,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
         if (prereqs.NullOrEmpty()) return true;
         foreach (ResearchProjectDef proj in prereqs)
         {
-            if (proj is object && !proj.IsFinished) return false;
+            if (proj is not null && !proj.IsFinished) return false;
         }
         return true;
     }
@@ -118,8 +118,8 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
             // (Command_SetPlantToGrow / PlantUtility.CanSowOnGrower + IsPlantAvailable), which
             // can't be called directly here because those need a concrete grower/Map and Empire
             // settlements are abstract world objects.
-            bool ground = plant.sowTags != null && plant.sowTags.Contains("Ground");   // field crop
-            bool hydro = plant.sowTags != null && plant.sowTags.Contains("Hydroponic"); // hydroponics crop
+            bool ground = plant.sowTags is not null && plant.sowTags.Contains("Ground");   // field crop
+            bool hydro = plant.sowTags is not null && plant.sowTags.Contains("Hydroponic"); // hydroponics crop
             if (!ground && !hydro) continue;             // not sowable in a zone or basin
             if (plant.IsTree) continue;                  // wood belongs to the logging resource
             if (plant.mustBeWildToSow) continue;         // can't be deliberately sown

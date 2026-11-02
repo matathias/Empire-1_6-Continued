@@ -17,9 +17,9 @@ class PawnGenerationPatches
 
     public static void Prefix(ref PawnGenerationRequest request)
     {
-        if (!(request.Faction is null) && request.Faction == FindFC.EmpireFaction && request.KindDef?.IsHumanLikeRace() == true)
+        if (request.Faction is not null && request.Faction == FindFC.EmpireFaction && request.KindDef?.IsHumanLikeRace() == true)
         {
-            if (!(request.ForcedXenotype is null) || !(request.ForcedCustomXenotype is null))
+            if (request.ForcedXenotype is not null || request.ForcedCustomXenotype is not null)
             {
                 // If our own code explicitly set the forced xenotype (e.g. designed military units),
                 // respect it and skip the filter.
@@ -50,12 +50,12 @@ class PawnGenerationPatches
             filter.GetRandomXenotypeForRequest(request, out chosenXenotype, out chosenCustomXenotype);
 
             /* Modify the request to force our chosen xenotype */
-            if (!(chosenXenotype is null))
+            if (chosenXenotype is not null)
             {
                 request.ForcedXenotype = chosenXenotype;
                 LogUtil.Message($"GeneratePawn patch forced xenotype: {chosenXenotype.defName} for pawnKind: {request.KindDef.defName}");
             }
-            else if (!(chosenCustomXenotype is null))
+            else if (chosenCustomXenotype is not null)
             {
                 request.ForcedCustomXenotype = chosenCustomXenotype;
                 LogUtil.Message($"GeneratePawn patch forced custom xenotype: {chosenCustomXenotype.name} for pawnKind: {request.KindDef.defName}");

@@ -26,7 +26,7 @@ public class CombatExtendedBridge : ICombatExtendedBridge
 {
     public void UpdateInventory(Pawn pawn)
     {
-        if (pawn == null) return;
+        if (pawn is null) return;
 
         try
         {
@@ -43,10 +43,10 @@ public class CombatExtendedBridge : ICombatExtendedBridge
         try
         {
             ThingDef projectileDef = ResolveAmmoProjectile(ammoDef);
-            if (projectileDef == null) return false;
+            if (projectileDef is null) return false;
 
             var ceProps = projectileDef.projectile as ProjectilePropertiesCE;
-            if (ceProps == null) return false;
+            if (ceProps is null) return false;
 
             // Match CE's TravelingShell pattern: off-map artillery arriving from altitude
             float shotHeight = 200f;
@@ -66,7 +66,7 @@ public class CombatExtendedBridge : ICombatExtendedBridge
             float shotAngle = ceProps.TrajectoryWorker.ShotAngle(ceProps, source3D, target3D, shotSpeed);
 
             var projectile = (ProjectileCE)GenSpawn.Spawn(projectileDef, source, map);
-            if (projectile == null) return false;
+            if (projectile is null) return false;
             projectile.canTargetSelf = false;
 
             projectile.Launch(
@@ -94,10 +94,10 @@ FindFC.EmpireFaction?.leader,
     public bool IsIndirectFireAmmo(ThingDef ammoDef)
     {
         // Non-CE ammo (vanilla shells) — always allowed
-        if (!(ammoDef is AmmoDef ceAmmo)) return true;
+        if (ammoDef is not AmmoDef ceAmmo) return true;
         // CE ammo — only allow if it belongs to a mortar ammo set
         var ammoSets = ceAmmo.AmmoSetDefs;
-        return ammoSets != null && ammoSets.Any(set => set.isMortarAmmoSet);
+        return ammoSets is not null && ammoSets.Any(set => set.isMortarAmmoSet);
     }
 
     /// <summary>
@@ -108,10 +108,10 @@ FindFC.EmpireFaction?.leader,
     /// </summary>
     private static ThingDef ResolveAmmoProjectile(ThingDef ammoDef)
     {
-        if (!(ammoDef is AmmoDef ceAmmo)) return null;
+        if (ammoDef is not AmmoDef ceAmmo) return null;
 
         var ammoSetDefs = ceAmmo.AmmoSetDefs;
-        if (ammoSetDefs == null || ammoSetDefs.Count == 0) return null;
+        if (ammoSetDefs is null || ammoSetDefs.Count == 0) return null;
 
         // Prefer mortar ammo sets with flyOverhead projectiles (indirect fire)
         foreach (AmmoSetDef ammoSet in ammoSetDefs)

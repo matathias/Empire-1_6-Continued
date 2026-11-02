@@ -82,14 +82,14 @@ public class FCWindow_ImplantPicker : Window
 
             ThingDef iconThing = opt.IconThing;
             Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
-            if (iconThing != null)
+            if (iconThing is not null)
                 Widgets.ThingIcon(iconRect, iconThing);
 
             Rect infoRect = new Rect(iconRect.xMax, row.y + 2f, RowHeight - 4f, RowHeight - 4f);
-            if (iconThing != null)
+            if (iconThing is not null)
                 Widgets.InfoCardButton(infoRect, iconThing);
 
-            float optCost = opt.recipe is object
+            float optCost = opt.recipe is not null
                 ? MilUnitFC.ImplantCost(opt.recipe)
                 : (opt.selfInstallThing?.BaseMarketValue ?? 0f);
             Rect costRect = new Rect(row.xMax - margin - 65f, row.y, 60f, RowHeight);
@@ -105,11 +105,11 @@ public class FCWindow_ImplantPicker : Window
             if (Widgets.ButtonInvisible(row))
             {
                 MilUnitFC target = getEditTarget?.Invoke();
-                if (target != null)
+                if (target is not null)
                 {
-                    if (opt.recipe is object)
+                    if (opt.recipe is not null)
                         target.AddImplant(opt.recipe, opt.bodyPartDef, opt.bodyPartIndex);
-                    else if (opt.selfInstallThing is object)
+                    else if (opt.selfInstallThing is not null)
                         target.AddImplant(opt.selfInstallThing, opt.bodyPartDef, opt.bodyPartIndex);
                     builtForVersion = int.MinValue; // force rebuild against the updated preview
                 }
@@ -143,7 +143,7 @@ public class FCWindow_ImplantPicker : Window
     private static List<Option> BuildOptions(Pawn pawn)
     {
         List<Option> result = new List<Option>();
-        if (pawn == null || pawn.health == null) return result;
+        if (pawn is null || pawn.health is null) return result;
 
         foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefs)
         {
@@ -151,9 +151,9 @@ public class FCWindow_ImplantPicker : Window
             // Both derive from Recipe_Surgery but not from each other, so an explicit pair of
             // checks is needed. Natural-organ transplants (Recipe_InstallNaturalBodyPart) are
             // intentionally excluded — harvested organs aren't installable augmentations here.
-            if (!(recipe.Worker is Recipe_InstallImplant) &&
-                !(recipe.Worker is Recipe_InstallArtificialBodyPart)) continue;
-            if (recipe.addsHediff == null) continue;
+            if (recipe.Worker is not Recipe_InstallImplant &&
+                recipe.Worker is not Recipe_InstallArtificialBodyPart) continue;
+            if (recipe.addsHediff is null) continue;
             // The death acidifier is auto-applied to all mercs (see
             // MercenaryPawnFactory.TryApplyDeathAcidifier), so it isn't manually selectable here.
             if (recipe == FCRecipeDefOf.InstallDeathAcidifier) continue;
@@ -176,7 +176,7 @@ public class FCWindow_ImplantPicker : Window
                 if (!recipe.Worker.AvailableOnNow(pawn, wholeBody)) continue;
                 Option o = new Option();
                 o.recipe = recipe;
-                o.bodyPartDef = wholeBody != null ? wholeBody.def : null;
+                o.bodyPartDef = wholeBody is not null ? wholeBody.def : null;
                 o.bodyPartIndex = 0;
                 o.label = recipe.Worker.GetLabelWhenUsedOn(pawn, wholeBody).CapitalizeFirst();
                 result.Add(o);
@@ -189,13 +189,13 @@ public class FCWindow_ImplantPicker : Window
                 if (!recipe.Worker.AvailableOnNow(pawn, part)) continue;
                 Option o = new Option();
                 o.recipe = recipe;
-                o.bodyPartDef = part != null ? part.def : null;
+                o.bodyPartDef = part is not null ? part.def : null;
                 // Store the STABLE occurrence index in body.AllParts (not the filtered-list
                 // index), so the implant resolves to the same part on any pawn of this body
                 // regardless of its current health state. See MilUnitFC.TryResolveImplant.
                 o.bodyPartIndex = MilUnitFC.BodyPartOccurrenceIndex(pawn, part);
                 string lbl = recipe.Worker.GetLabelWhenUsedOn(pawn, part).CapitalizeFirst();
-                if (part != null && !recipe.hideBodyPartNames)
+                if (part is not null && !recipe.hideBodyPartNames)
                     lbl = lbl + " (" + part.Label + ")";
                 o.label = lbl;
                 result.Add(o);
@@ -232,10 +232,10 @@ public class FCWindow_ImplantPicker : Window
 
             // Item may require the pawn to already have a hediff (e.g. control sublink needs a mechlink).
             CompProperties_Usable usable = thing.GetCompProperties<CompProperties_Usable>();
-            if (usable?.userMustHaveHediff != null && !pawn.health.hediffSet.HasHediff(usable.userMustHaveHediff))
+            if (usable?.userMustHaveHediff is not null && !pawn.health.hediffSet.HasHediff(usable.userMustHaveHediff))
                 continue;
 
-            if (inst.requiresPsychicallySensitive && pawn.psychicEntropy != null && !pawn.psychicEntropy.IsPsychicallySensitive)
+            if (inst.requiresPsychicallySensitive && pawn.psychicEntropy is not null && !pawn.psychicEntropy.IsPsychicallySensitive)
                 continue;
 
             BodyPartRecord part = pawn.RaceProps.body.GetPartsWithDef(inst.bodyPart).FirstOrFallback();
@@ -244,11 +244,11 @@ public class FCWindow_ImplantPicker : Window
             // Leveled-install limits, mirroring CanBeUsedBy against the current preview state.
             Hediff existing = pawn.health.hediffSet.GetFirstHediffOfDef(inst.hediffDef);
             if (inst.requiresExistingHediff && existing is null) continue;
-            if (existing is object)
+            if (existing is not null)
             {
                 if (!inst.canUpgrade) continue;
                 Hediff_Level lvl = existing as Hediff_Level;
-                if (lvl != null)
+                if (lvl is not null)
                 {
                     if (lvl.level >= lvl.def.maxSeverity) continue;
                     if (inst.maxSeverity <= lvl.level) continue;
@@ -269,8 +269,8 @@ public class FCWindow_ImplantPicker : Window
     {
         RecipeMakerProperties rm = thing.recipeMaker;
         if (rm is null) return false; // not craftable — not normally obtainable
-        if (rm.researchPrerequisite != null && !rm.researchPrerequisite.IsFinished) return false;
-        if (rm.researchPrerequisites != null && rm.researchPrerequisites.Any(r => !r.IsFinished)) return false;
+        if (rm.researchPrerequisite is not null && !rm.researchPrerequisite.IsFinished) return false;
+        if (rm.researchPrerequisites is not null && rm.researchPrerequisites.Any(r => !r.IsFinished)) return false;
         return true;
     }
 }

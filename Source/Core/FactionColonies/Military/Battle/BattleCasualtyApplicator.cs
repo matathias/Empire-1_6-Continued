@@ -76,7 +76,7 @@ public static class BattleCasualtyApplicator
             {
                 // Per-unit death-chance scope: scale the squad-wide chance by this soldier's own modifiers.
                 double victimDeathChance = deathChance;
-                if (faction is object)
+                if (faction is not null)
                 {
                     double unitMult = faction.GetUnitStatValue(FCStatDefOf.mercenaryDeathChanceMultiplier, FindMercForPawn(squad, victim));
                     victimDeathChance *= (unitMult > 0 ? unitMult : 1.0);
@@ -95,10 +95,10 @@ public static class BattleCasualtyApplicator
     /// <summary>Finds the Mercenary owning <paramref name="pawn"/> within the squad (mercs or animals), or null.</summary>
     private static Mercenary FindMercForPawn(MercenarySquadFC squad, Pawn pawn)
     {
-        if (squad?.mercenaries != null)
+        if (squad?.mercenaries is not null)
             foreach (Mercenary m in squad.mercenaries)
                 if (m?.pawn == pawn) return m;
-        if (squad != null)
+        if (squad is not null)
             foreach (Mercenary m in squad.AllSubPawns())
                 if (m?.pawn == pawn) return m;
         return null;
@@ -124,7 +124,7 @@ public static class BattleCasualtyApplicator
 
         FactionFC faction = FindFC.FactionComp;
         // squad context folds per-squad casualty-rate modifiers on top of faction/settlement
-        double rateMult = faction is object
+        double rateMult = faction is not null
             ? faction.GetStatValue(FCStatDefOf.mercenaryCasualtyRateMultiplier, statsContext, squad)
             : 1.0;
         double finalRate = rawRate * (rateMult > 0 ? rateMult : 1.0);
@@ -155,7 +155,7 @@ public static class BattleCasualtyApplicator
         FactionFC faction = FindFC.FactionComp;
         // squad context folds per-squad death-chance modifiers; per-unit modifiers are applied per-victim
         // in ApplyCasualtiesToSquad (so individual soldiers can differ).
-        double deathMult = faction is object
+        double deathMult = faction is not null
             ? faction.GetStatValue(FCStatDefOf.mercenaryDeathChanceMultiplier, statsContext, squad)
             : 1.0;
         deathChance *= (deathMult > 0 ? deathMult : 1.0);
@@ -172,18 +172,18 @@ public static class BattleCasualtyApplicator
     public static List<Pawn> GatherCasualtyCandidates(MercenarySquadFC squad)
     {
         List<Pawn> candidates = new List<Pawn>();
-        if (squad?.mercenaries != null)
+        if (squad?.mercenaries is not null)
         {
             foreach (Mercenary m in squad.mercenaries)
             {
-                if (m?.pawn is object && !m.pawn.Dead) candidates.Add(m.pawn);
+                if (m?.pawn is not null && !m.pawn.Dead) candidates.Add(m.pawn);
             }
         }
-        if (squad != null)
+        if (squad is not null)
         {
             foreach (Mercenary m in squad.AllSubPawns())
             {
-                if (m?.pawn is object && !m.pawn.Dead) candidates.Add(m.pawn);
+                if (m?.pawn is not null && !m.pawn.Dead) candidates.Add(m.pawn);
             }
         }
         return candidates;
@@ -284,7 +284,7 @@ public static class BattleCasualtyApplicator
         List<BodyPartRecord> all = new List<BodyPartRecord>();
         foreach (BodyPartRecord p in pawn.health.hediffSet.GetNotMissingParts())
         {
-            if (p?.def?.tags != null && p.def.tags.Contains(BodyPartTagDefOf.ConsciousnessSource)) continue;
+            if (p?.def?.tags is not null && p.def.tags.Contains(BodyPartTagDefOf.ConsciousnessSource)) continue;
             all.Add(p);
         }
         return all.Count == 0 ? null : all.RandomElement();

@@ -114,9 +114,9 @@ public static class LifecycleRegistry
         WorldSettlementFC settlement = op.aggressor?.homeSettlement ?? op.defender?.homeSettlement;
         RegistryDispatch.EachInvalidating(_militaryOp.Items,
             p => p.OnOperationCreated(op),
-            () => { if (settlement is object) settlement.InvalidateStatCache(); },
+            () => { if (settlement is not null) settlement.InvalidateStatCache(); },
             nameof(IMilitaryOperationListener.OnOperationCreated));
-        if (settlement is object) settlement.InvalidateStatCache();
+        if (settlement is not null) settlement.InvalidateStatCache();
     }
 
     public static void InvokeOnOperationResolved(MilitaryOperation op)
@@ -125,9 +125,9 @@ public static class LifecycleRegistry
         WorldSettlementFC settlement = op.aggressor?.homeSettlement ?? op.defender?.homeSettlement;
         RegistryDispatch.EachInvalidating(_militaryOp.Items,
             p => p.OnOperationResolved(op),
-            () => { if (settlement is object) settlement.InvalidateStatCache(); },
+            () => { if (settlement is not null) settlement.InvalidateStatCache(); },
             nameof(IMilitaryOperationListener.OnOperationResolved));
-        if (settlement is object) settlement.InvalidateStatCache();
+        if (settlement is not null) settlement.InvalidateStatCache();
     }
 
     public static void InvokeOnBattleResolved(MilitaryOperation op, bool victory, BattleResult result)
@@ -136,9 +136,9 @@ public static class LifecycleRegistry
         WorldSettlementFC settlement = op.aggressor?.homeSettlement ?? op.defender?.homeSettlement;
         RegistryDispatch.EachInvalidating(_militaryOp.Items,
             p => p.OnBattleResolved(op, victory, result),
-            () => { if (settlement is object) settlement.InvalidateStatCache(); },
+            () => { if (settlement is not null) settlement.InvalidateStatCache(); },
             nameof(IMilitaryOperationListener.OnBattleResolved));
-        if (settlement is object) settlement.InvalidateStatCache();
+        if (settlement is not null) settlement.InvalidateStatCache();
     }
 
     /* Mercenary */

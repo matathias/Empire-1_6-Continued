@@ -11,7 +11,7 @@ public class CompPowerEmpire : CompPowerPlant
         get
         {
             FactionFC faction = FindFC.FactionComp;
-            if (faction.powerOutput == null || faction.powerOutput.DestroyedOrNull() || faction.powerOutput == this.parent)
+            if (faction.powerOutput is null || faction.powerOutput.DestroyedOrNull() || faction.powerOutput == this.parent)
             {
                 faction.powerOutput = this.parent;
                 return (float)faction.GetResourcePoolValue(ResourceTypeDefOf.RTD_Power);

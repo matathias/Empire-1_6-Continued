@@ -12,7 +12,7 @@ public class SquadDeploymentState : IExposable
     protected MercenarySquadFC squad;
 
     public Lord Lord;
-    public bool HasLord => Lord is object;
+    public bool HasLord => Lord is not null;
     public Map Map;
     /// <summary>Player-issued behavior order for the squad's deployment lord.
     /// <see cref="MilitaryOrder.Undefined"/> until the player issues a command (Attack /
@@ -44,7 +44,7 @@ public class SquadDeploymentState : IExposable
     /// </summary>
     public bool IsPhysicallyDeployed()
     {
-        return squad?.mercenaries?.Any(m => m?.pawn?.Map != null) ?? false;
+        return squad?.mercenaries?.Any(m => m?.pawn?.Map is not null) ?? false;
     }
 
     /// <summary>Migration drain — adopts legacy top-level deployment fields from a pre-refactor

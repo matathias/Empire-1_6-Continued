@@ -63,7 +63,7 @@ public class ResourceEventRewardDef : Def
     /// <returns>Configured ThingSetMakerParams.</returns>
     public ThingSetMakerParams BuildParams(double valueBase, out ThingSetMaker thingSetMaker)
     {
-        if (thingSetMakerClass != null)
+        if (thingSetMakerClass is not null)
         {
             thingSetMaker = (ThingSetMaker)Activator.CreateInstance(thingSetMakerClass);
         }
@@ -121,7 +121,7 @@ public class ResourceEventRewardDef : Def
             param.filter.SetAllow(stuff, false);
         }
 
-        if (modExtensions != null)
+        if (modExtensions is not null)
         {
             foreach (ResourceFilterExtension ext in modExtensions.OfType<ResourceFilterExtension>())
             {
@@ -150,11 +150,11 @@ public class ResourceEventRewardDef : Def
         {
             yield return item;
         }
-        if (thingSetMakerClass != null && !typeof(ThingSetMaker).IsAssignableFrom(thingSetMakerClass))
+        if (thingSetMakerClass is not null && !typeof(ThingSetMaker).IsAssignableFrom(thingSetMakerClass))
         {
             yield return $"thingSetMakerClass {thingSetMakerClass.Name} is not a subclass of ThingSetMaker for ResourceEventRewardDef {defName}";
         }
-        if (thingCategoryAllowList.Count == 0 && thingAllowList.Count == 0 && stuffCategoryAllowList.Count == 0 && thingSetMakerClass == null)
+        if (thingCategoryAllowList.Count == 0 && thingAllowList.Count == 0 && stuffCategoryAllowList.Count == 0 && thingSetMakerClass is null)
         {
             yield return $"ResourceEventRewardDef {defName} has no allow lists and no custom thingSetMakerClass";
         }

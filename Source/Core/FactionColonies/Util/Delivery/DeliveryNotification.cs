@@ -47,7 +47,7 @@ public static class DeliveryNotification
 
             if (showLetter)
             {
-                if (evt.let != null)
+                if (evt.let is not null)
                 {
                     evt.let.lookTargets = evt.goods;
                     Find.LetterStack.ReceiveLetter(evt.let);
@@ -59,7 +59,7 @@ public static class DeliveryNotification
                 }
             }
 
-            if (showMessage && evt.msg != null)
+            if (showMessage && evt.msg is not null)
             {
                 evt.msg.lookTargets = evt.goods;
                 Messages.Message(evt.msg);

@@ -7,13 +7,13 @@ namespace FactionColonies;
 public static class EmpireThreatAdaptationTests
 {
     private static bool HasStoryteller =>
-        Find.Storyteller is object && Find.Storyteller.def is object;
+        Find.Storyteller is not null && Find.Storyteller.def is not null;
 
     private static bool HasAdaptationCurve =>
-        HasStoryteller && Find.Storyteller.def.pointsFactorFromAdaptDays is object;
+        HasStoryteller && Find.Storyteller.def.pointsFactorFromAdaptDays is not null;
 
     private static bool HasLossCurve =>
-        HasStoryteller && Find.Storyteller.def.adaptDaysLossFromColonistLostByPostPopulation is object;
+        HasStoryteller && Find.Storyteller.def.adaptDaysLossFromColonistLostByPostPopulation is not null;
 
     // -*- ThreatFactor -*-
 

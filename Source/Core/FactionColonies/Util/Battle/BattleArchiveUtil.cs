@@ -33,13 +33,13 @@ internal static class BattleArchiveUtil
         // and the result here built by the comp from on-map outcome — no labels yet.
         // wasManualBattle is the discriminator the report viewer uses to decide whether
         // to render the per-round detail or the "no per-round detail" placeholder.
-        bool isAutoResolve = op?.battleResult is object;
+        bool isAutoResolve = op?.battleResult is not null;
         if (!isAutoResolve)
         {
             result.wasManualBattle = true;
         }
 
-        if (op is object)
+        if (op is not null)
         {
             FillContextFromOpIfMissing(result, op);
         }

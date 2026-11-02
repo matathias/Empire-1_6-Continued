@@ -82,15 +82,15 @@ public static class MilitaryForceTests
     private static WorldSettlementFC GetSettlement()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null || faction.settlements.Count == 0) return null;
-        return faction.settlements.FirstOrDefault(s => s.MilitaryComp != null);
+        if (faction is null || faction.settlements.Count == 0) return null;
+        return faction.settlements.FirstOrDefault(s => s.MilitaryComp is not null);
     }
 
     [EmpireTest("MilitaryForce")]
     public static void CreateFromSettlement_IsFiniteAndPositive()
     {
         WorldSettlementFC settlement = GetSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement with MilitaryComp");
+        if (settlement is null) TestAssert.Skip("No settlement with MilitaryComp");
 
         MilitaryForce force = MilitaryForce.CreateMilitaryForceFromSettlement(settlement);
 
@@ -105,7 +105,7 @@ public static class MilitaryForceTests
     public static void CreateFromSettlement_AttackingVsDefending_DifferByStats()
     {
         WorldSettlementFC settlement = GetSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement with MilitaryComp");
+        if (settlement is null) TestAssert.Skip("No settlement with MilitaryComp");
 
         MilitaryForce attacking = MilitaryForce.CreateMilitaryForceFromSettlement(settlement, isAttacking: true);
         MilitaryForce defending = MilitaryForce.CreateMilitaryForceFromSettlement(settlement, isAttacking: false);
@@ -131,9 +131,9 @@ public static class MilitaryForceTests
         {
             foreach (MercenarySquadFC stationed in s.StationedSquads)
             {
-                if (stationed?.settlement is object) { squad = stationed; break; }
+                if (stationed?.settlement is not null) { squad = stationed; break; }
             }
-            if (squad is object) break;
+            if (squad is not null) break;
         }
         if (squad is null) TestAssert.Skip("No stationed squad available");
 
@@ -156,13 +156,13 @@ public static class MilitaryForceTests
     public static void EnemyPower_BaselineReflectsTechLevel()
     {
         Settlement enemy = Find.WorldObjects.Settlements
-            .FirstOrDefault(s => !(s is WorldSettlementFC)
-                && s.Faction != null && s.Faction != Faction.OfPlayer
+            .FirstOrDefault(s => s is not WorldSettlementFC
+                && s.Faction is not null && s.Faction != Faction.OfPlayer
                 && s.Faction != FindFC.EmpireFaction);
-        if (enemy == null) TestAssert.Skip("No enemy settlement on world map");
+        if (enemy is null) TestAssert.Skip("No enemy settlement on world map");
 
         WorldComponent_EnemyPower registry = FindFC.EnemyPower;
-        if (registry == null) TestAssert.Skip("EnemyPower registry not available");
+        if (registry is null) TestAssert.Skip("EnemyPower registry not available");
 
         EnemyPower entry = registry.GetOrCompute(enemy);
         TestAssert.IsNotNull(entry, "Registry should produce an entry for an enemy settlement");
@@ -178,9 +178,9 @@ public static class MilitaryForceTests
         MilitaryDeploymentUtil.GetTechLevelBaseline(enemy.Faction.def.techLevel,
             out double _, out double _, out double techLvlVar, out double techEffVar);
         EnemyPowerFactionDef factionDef = registry.GetFactionDef(enemy.Faction.def);
-        double expectedLvlVar = (factionDef is object && factionDef.levelVariance.HasValue)
+        double expectedLvlVar = (factionDef is not null && factionDef.levelVariance.HasValue)
             ? factionDef.levelVariance.Value : techLvlVar;
-        double expectedEffVar = (factionDef is object && factionDef.efficiencyVariance.HasValue)
+        double expectedEffVar = (factionDef is not null && factionDef.efficiencyVariance.HasValue)
             ? factionDef.efficiencyVariance.Value : techEffVar;
         TestAssert.AreEqual(expectedLvlVar, entry.levelVariance,
             "Level variance from def applied");
@@ -195,22 +195,22 @@ public static class MilitaryForceTests
     public static void EnemyPower_NoEntryForPlayerOrEmpire()
     {
         WorldComponent_EnemyPower registry = FindFC.EnemyPower;
-        if (registry == null) TestAssert.Skip("EnemyPower registry not available");
+        if (registry is null) TestAssert.Skip("EnemyPower registry not available");
 
         // The player and the allied empire faction must never get an enemy estimate; the
         // world-map inspect line keys off this null to stay off player/empire settlements.
         TestAssert.IsNull(registry.GetOrCompute(Faction.OfPlayer),
             "Player faction must not have an EnemyPower entry");
 
-        if (FindFC.EmpireFaction is object)
+        if (FindFC.EmpireFaction is not null)
         {
             TestAssert.IsNull(registry.GetOrCompute(FindFC.EmpireFaction),
                 "Empire faction must not have an EnemyPower entry");
         }
 
         Settlement playerColony = Find.WorldObjects.Settlements
-            .FirstOrDefault(s => !(s is WorldSettlementFC) && s.Faction == Faction.OfPlayer);
-        if (playerColony is object)
+            .FirstOrDefault(s => s is not WorldSettlementFC && s.Faction == Faction.OfPlayer);
+        if (playerColony is not null)
         {
             TestAssert.IsNull(registry.GetOrCompute(playerColony),
                 "Player colony must not have an EnemyPower entry");

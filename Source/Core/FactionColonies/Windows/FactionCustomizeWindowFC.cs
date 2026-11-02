@@ -67,7 +67,7 @@ public class FactionCustomizeWindowFc : Window
         faction.hasFactionColorSecondary = tempHasSecondaryColor;
 
         Faction fact = FindFC.EmpireFaction;
-        if (fact != null)
+        if (fact is not null)
         {
             fact.Name = tempName;
             faction.UpdateFactionIcon(ref fact, "FactionIcons/" + tempFactionIconPath);
@@ -82,7 +82,7 @@ public class FactionCustomizeWindowFc : Window
             LogUtil.Error("PlayerColonyFaction is null - cannot sync faction name/icon!");
         }
 
-        if (faction.military?.units != null)
+        if (faction.military?.units is not null)
         {
             foreach (MilUnitFC unit in faction.military.units)
                 unit.MarkEquipmentDirty();

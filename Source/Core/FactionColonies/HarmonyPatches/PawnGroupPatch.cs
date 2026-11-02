@@ -23,8 +23,8 @@ static class Patch_GetOptions_FilterZeroCost
                 LogUtil.Warning("GetOptions culled zero-cost option: kind="
                     + (culled.Option.kind?.defName ?? "[null kind]")
                     + " combatPower=" + (culled.Option.kind?.combatPower.ToString() ?? "?")
-                    + " xenotype=" + (culled.Xenotype != null ? culled.Xenotype.defName : "null")
-                    + " xenotypeCombatPowerFactor=" + (culled.Xenotype != null ? culled.Xenotype.combatPowerFactor.ToString() : "N/A")
+                    + " xenotype=" + (culled.Xenotype is not null ? culled.Xenotype.defName : "null")
+                    + " xenotypeCombatPowerFactor=" + (culled.Xenotype is not null ? culled.Xenotype.combatPowerFactor.ToString() : "N/A")
                     + " effectiveCost=" + culled.Cost);
                 __result.RemoveAt(i);
                 culledCount++;

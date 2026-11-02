@@ -79,7 +79,7 @@ public class AnimalFilter : IExposable
         HashSet<PawnKindDef> valid = new HashSet<PawnKindDef>(FactionCache.AllAnimalKindDefs);
         foreach (PawnKindDef def in defaults)
         {
-            if (def is object && valid.Contains(def))
+            if (def is not null && valid.Contains(def))
                 allowedAnimals.Add(def);
         }
         InvalidateCache();

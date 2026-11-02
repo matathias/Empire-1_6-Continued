@@ -10,7 +10,7 @@ class JobDriver_FollowCloseAndCarry : JobDriver_Follow
 
         toils.ForEach(toil => toil.AddFailCondition(delegate
         {
-            return ((Pawn)job.GetTarget(TargetIndex.A).Thing).carryTracker.CarriedThing == null;
+            return ((Pawn)job.GetTarget(TargetIndex.A).Thing).carryTracker.CarriedThing is null;
         }));
 
         return toils;

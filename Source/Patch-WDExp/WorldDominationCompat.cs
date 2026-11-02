@@ -129,7 +129,7 @@ public class WDStrengthSettlementModifier : SettlementPowerModifierBase
     {
         level = 0;
         CompViralSpread comp = settlement.GetComponent<CompViralSpread>();
-        if (comp == null) return false;
+        if (comp is null) return false;
 
         float totalDefense = comp.GetTotalLocalDefensePower();
         if (totalDefense <= 0f) return false;
@@ -149,7 +149,7 @@ public static class Patch_TryChangeAllegiances
 {
     private static void Postfix()
     {
-        if (FindFC.EmpireFaction != null)
+        if (FindFC.EmpireFaction is not null)
         {
             RelationsUtilFC.ResetPlayerColonyRelations();
         }
@@ -161,7 +161,7 @@ public static class Patch_FormAntiLeaderCoalition
 {
     private static void Postfix()
     {
-        if (FindFC.EmpireFaction != null)
+        if (FindFC.EmpireFaction is not null)
         {
             RelationsUtilFC.ResetPlayerColonyRelations();
         }
@@ -181,9 +181,9 @@ public static class Patch_GetWorldPowerStats
 {
     private static void Postfix(SpreadLogEntry.GlobalWorldStats __result)
     {
-        if (__result == null) return;
+        if (__result is null) return;
 
-        if (FindFC.EmpireFaction == null) return;
+        if (FindFC.EmpireFaction is null) return;
 
         SpreadLogEntry.FactionStat removed = null;
         for (int i = 0; i < __result.FactionStats.Count; i++)
@@ -196,7 +196,7 @@ public static class Patch_GetWorldPowerStats
             }
         }
 
-        if (removed != null)
+        if (removed is not null)
         {
             __result.GlobalTotalStr -= removed.TotalStr;
             for (int t = 1; t <= 4; t++)
@@ -222,6 +222,6 @@ public static class Fix_WD_InterceptDefeat
     [HarmonyPriority(Priority.First)]
     private static bool Prefix(Settlement factionBase)
     {
-        return !(factionBase is WorldSettlementFC);
+        return factionBase is not WorldSettlementFC;
     }
 }

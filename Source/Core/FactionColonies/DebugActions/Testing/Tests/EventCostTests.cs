@@ -50,7 +50,7 @@ public static class EventCostTests
     public static void CountAffected_CountsNonNullEntries()
     {
         var settlements = FindFC.Settlements;
-        if (settlements == null || settlements.Count < 2) TestAssert.Skip("Need >= 2 settlements");
+        if (settlements is null || settlements.Count < 2) TestAssert.Skip("Need >= 2 settlements");
 
         var list = new List<WorldSettlementFC> { settlements[0], null, settlements[1] };
         var evt = new FCEvent { settlementTraitLocations = list };
@@ -120,7 +120,7 @@ public static class EventCostTests
         if (settlements is null || settlements.Count < 1) TestAssert.Skip("Need >= 1 settlement");
         var list = new List<WorldSettlementFC>();
         foreach (WorldSettlementFC s in settlements)
-            if (s is object) list.Add(s);
+            if (s is not null) list.Add(s);
         if (list.Count == 0) TestAssert.Skip("No usable settlements");
         return list;
     }
@@ -212,8 +212,8 @@ public static class EventCostTests
         {
             string added = FCOptionCostUtil.BuildCostBreakdown(DeltaOption(food, 0.5f, 0.5f, FCResourceCostFraming.Added), evt);
             string mit = FCOptionCostUtil.BuildCostBreakdown(DeltaOption(food, 0.5f, 0.5f, FCResourceCostFraming.Mitigated), evt);
-            TestAssert.IsTrue(added != null && added.ToLowerInvariant().Contains("added"), "Added framing should read 'added'");
-            TestAssert.IsTrue(mit != null && mit.ToLowerInvariant().Contains("mitigated"), "Mitigated framing should read 'mitigated'");
+            TestAssert.IsTrue(added is not null && added.ToLowerInvariant().Contains("added"), "Added framing should read 'added'");
+            TestAssert.IsTrue(mit is not null && mit.ToLowerInvariant().Contains("mitigated"), "Mitigated framing should read 'mitigated'");
         });
     }
 

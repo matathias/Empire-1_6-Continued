@@ -13,13 +13,13 @@ class JobGiver_GotoAndDrop : ThinkNode_JobGiver
             return null;
         }
 
-        if (pawn.carryTracker.CarriedThing == null)
+        if (pawn.carryTracker.CarriedThing is null)
         {
             pawn.GetLord()?.Notify_ReachedDutyLocation(pawn);
             return null;
         }
 
-        if (targetInfo.Pawn is Pawn target && target.carryTracker.CarriedThing != null)
+        if (targetInfo.Pawn is Pawn target && target.carryTracker.CarriedThing is not null)
         {
             return new Job(DefDatabase<JobDef>.GetNamed("FCFollowCloseAndCarry"), targetInfo)
             {

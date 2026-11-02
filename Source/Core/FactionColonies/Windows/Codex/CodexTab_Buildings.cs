@@ -309,7 +309,7 @@ public class CodexTab_Buildings : ICodexTab
 
         /* Title with icon */
         float titleTextX = 0f;
-        if (selectedBuilding.Icon is object)
+        if (selectedBuilding.Icon is not null)
         {
             Rect iconBgRect = new Rect(0f, curY, TitleIconSize, TitleIconSize);
             Widgets.DrawBoxSolid(iconBgRect, ColorUtil.TransformA(accent, 0.25f));
@@ -376,7 +376,7 @@ public class CodexTab_Buildings : ICodexTab
         float contentWidth = viewRect.width;
         float curY = 0f;
 
-        if (selectedBuilding is object)
+        if (selectedBuilding is not null)
         {
             Color accent = GetTechColor(selectedBuilding.techLevel);
 
@@ -485,7 +485,7 @@ public class CodexTab_Buildings : ICodexTab
         Rect rowRect = new Rect(x, curY, width - x - Margin, UpgradeRowHeight);
         float textX = x;
 
-        if (building.Icon is object)
+        if (building.Icon is not null)
         {
             Rect iconRect = new Rect(x, curY + (UpgradeRowHeight - IconSmall) * 0.5f, IconSmall, IconSmall);
             GUI.DrawTexture(iconRect, building.Icon);
@@ -566,7 +566,7 @@ public class CodexTab_Buildings : ICodexTab
         float textX = x;
         bool isCurrent = building == selectedBuilding;
 
-        if (building.Icon is object)
+        if (building.Icon is not null)
         {
             Rect iconRect = new Rect(x, curY + (UpgradeRowHeight - IconSmall) * 0.5f, IconSmall, IconSmall);
             GUI.DrawTexture(iconRect, building.Icon);
@@ -666,7 +666,7 @@ public class CodexTab_Buildings : ICodexTab
         int count = 0;
         foreach (string biomeName in selectedBuilding.applicableBiomes)
         {
-            if (DefDatabase<BiomeDef>.GetNamedSilentFail(biomeName) is object)
+            if (DefDatabase<BiomeDef>.GetNamedSilentFail(biomeName) is not null)
                 count++;
         }
         return count;
@@ -703,7 +703,7 @@ public class CodexTab_Buildings : ICodexTab
         }
 
         // Extension sections
-        if (selectedBuilding.modExtensions is object)
+        if (selectedBuilding.modExtensions is not null)
         {
             foreach (IBuildingDetailSection section in selectedBuilding.modExtensions.OfType<IBuildingDetailSection>())
             {
@@ -730,10 +730,10 @@ public class CodexTab_Buildings : ICodexTab
     {
         float total = 0f;
 
-        if (selectedBuilding is object)
+        if (selectedBuilding is not null)
         {
             // Banner + mod name
-            if (UIUtil.GetModBanner(selectedBuilding.modContentPack) is object)
+            if (UIUtil.GetModBanner(selectedBuilding.modContentPack) is not null)
                 total += BannerHeight + SmallMargin;
             string modName = selectedBuilding.modContentPack?.ModMetaData?.Name ?? "";
             if (!modName.NullOrEmpty())

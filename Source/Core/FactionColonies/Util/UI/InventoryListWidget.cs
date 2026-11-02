@@ -28,7 +28,7 @@ public static class InventoryListWidget
 
         // Top row: mass usage (left) + Add button (right). No title — the tab labels the panel.
         float btnY = rect.y;
-        if (displayUnit != null)
+        if (displayUnit is not null)
         {
             float cur = displayUnit.CurrentInventoryMass;
             float cap = displayUnit.CarryCapacity;
@@ -58,7 +58,7 @@ public static class InventoryListWidget
         List<SavedThing> items = displayUnit?.inventory ?? new List<SavedThing>();
 
         int weaponRows = 0;
-        foreach (SavedThing w in weapons) if (w.thing != null) weaponRows++;
+        foreach (SavedThing w in weapons) if (w.thing is not null) weaponRows++;
 
         float viewHeight = (weaponRows + items.Count) * rowHeight;
         Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref scrollPos, viewHeight);
@@ -69,7 +69,7 @@ public static class InventoryListWidget
         // read-only (managed via the weapon slot, not editable from this list).
         foreach (SavedThing w in weapons)
         {
-            if (w.thing == null) continue;
+            if (w.thing is null) continue;
             Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + drawn * rowHeight, scrollViewRect.width, rowHeight);
             Widgets.DrawHighlightSelected(row);
             DrawItemRowCommon(row, w, "fcInventoryWeaponSuffix".Translate());
@@ -80,7 +80,7 @@ public static class InventoryListWidget
         for (int i = 0; i < items.Count; i++)
         {
             SavedThing item = items[i];
-            if (item.thing == null) continue;
+            if (item.thing is null) continue;
             int index = i;
             Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + drawn * rowHeight, scrollViewRect.width, rowHeight);
             if (drawn % 2 == 0) Widgets.DrawHighlight(row);
@@ -96,7 +96,7 @@ public static class InventoryListWidget
                 if (UIUtil.ClampedButtonText(removeRect, "X"))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.RemoveInventory(index);
+                    if (target is not null) target.RemoveInventory(index);
                 }
             }
 
@@ -111,7 +111,7 @@ public static class InventoryListWidget
                 if (UIUtil.ClampedButtonText(minus, "-"))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.SetInventoryCount(index, Mathf.Max(0, item.count - 1));
+                    if (target is not null) target.SetInventoryCount(index, Mathf.Max(0, item.count - 1));
                 }
                 Rect num = new Rect(countArea.x + 22f, countArea.y, 40f, rowHeight);
                 Text.Anchor = TextAnchor.MiddleCenter;
@@ -120,7 +120,7 @@ public static class InventoryListWidget
                 if (UIUtil.ClampedButtonText(plus, "+"))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.SetInventoryCount(index, item.count + 1);
+                    if (target is not null) target.SetInventoryCount(index, item.count + 1);
                 }
             }
             else
@@ -159,7 +159,7 @@ public static class InventoryListWidget
         Rect labelRect = new Rect(infoRect.xMax + 4f, row.y, valueRect.x - infoRect.xMax - 8f, row.height);
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleLeft;
-        string label = item.stuff != null
+        string label = item.stuff is not null
             ? (string)(item.thing.LabelCap + " (" + item.stuff.LabelCap + ")")
             : item.thing.LabelCap.ToString();
         if (item.quality.HasValue)
@@ -184,7 +184,7 @@ public static class InventoryListWidget
             onConfirmWithCount: (item, stuff, count, quality) =>
             {
                 MilUnitFC target = opts.getEditTarget?.Invoke();
-                if (target != null) target.AddInventory(item, stuff, count, quality);
+                if (target is not null) target.AddInventory(item, stuff, count, quality);
             }
         ));
     }

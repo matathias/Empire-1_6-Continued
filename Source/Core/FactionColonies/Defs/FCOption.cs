@@ -43,7 +43,7 @@ public class FCOptionDef : Def
     public int GetEffectiveSilverCost(FCEvent evt)
     {
         if (evt is null) return EffectiveSilverCost;
-        if (evt.optionCostSnapshots is object
+        if (evt.optionCostSnapshots is not null
             && evt.optionCostSnapshots.TryGetValue(this.defName, out int snapped))
             return snapped;
         return FCOptionCostUtil.ComputeScaledCost(this, evt);
@@ -56,7 +56,7 @@ public class FCOptionDef : Def
 
         /* Validate meme defNames only when Ideology is active. Without the DLC the MemeDefs
          * legitimately don't exist, so an unresolved name is expected, not an error. */
-        if (ModsConfig.IdeologyActive && requiredMemes != null)
+        if (ModsConfig.IdeologyActive && requiredMemes is not null)
         {
             foreach (string memeName in requiredMemes)
             {
@@ -137,7 +137,7 @@ public class FCOptionWindow : Window
         if (!ModsConfig.IdeologyActive)
         {
             this.options = evt.options
-                .Where(o => o.requiredMemes == null || o.requiredMemes.Count == 0)
+                .Where(o => o.requiredMemes is null || o.requiredMemes.Count == 0)
                 .ToList();
         }
         else
@@ -160,7 +160,7 @@ public class FCOptionWindow : Window
         this.parentEvent = parentEvent;
 
         // Category color
-        if (parentEvent != null)
+        if (parentEvent is not null)
         {
             this.categoryColor = AccentUtil.GetEventCategoryColor(parentEvent);
         }
@@ -172,11 +172,11 @@ public class FCOptionWindow : Window
 
         // Affected settlements
         this.affectedSettlements = new List<WorldSettlementFC>();
-        if (parentEvent != null && parentEvent.settlementTraitLocations != null)
+        if (parentEvent is not null && parentEvent.settlementTraitLocations is not null)
         {
             foreach (WorldSettlementFC s in parentEvent.settlementTraitLocations)
             {
-                if (s != null)
+                if (s is not null)
                 {
                     affectedSettlements.Add(s);
                 }
@@ -186,7 +186,7 @@ public class FCOptionWindow : Window
         /* Snapshot per-option scaled costs onto the parent FCEvent the first time the window
          * opens. Locks the price shown == price paid, survives save/reload. Subsequent reopens
          * reuse the snapshot. Must happen before MeasureLayout — cost width feeds layout. */
-        if (parentEvent != null && parentEvent.optionCostSnapshots is null && this.options != null)
+        if (parentEvent is not null && parentEvent.optionCostSnapshots is null && this.options is not null)
         {
             parentEvent.optionCostSnapshots = new Dictionary<string, int>();
             foreach (FCOptionDef opt in this.options)
@@ -218,10 +218,10 @@ public class FCOptionWindow : Window
         for (int i = 0; i < options.Count; i++)
         {
             string measureLabel = options[i].label;
-            if (handler != null)
+            if (handler is not null)
             {
                 string dynLabel = handler.GetDynamicOptionLabel(options[i], parentEvent);
-                if (dynLabel != null) measureLabel = dynLabel;
+                if (dynLabel is not null) measureLabel = dynLabel;
             }
             cachedOptionLabelHeights[i] = Text.CalcHeight(measureLabel.Format(), labelWidth);
         }
@@ -232,7 +232,7 @@ public class FCOptionWindow : Window
         for (int i = 0; i < options.Count; i++)
         {
             cachedEffectPreviews[i] = GetEffectPreview(options[i], parentEvent);
-            if (cachedEffectPreviews[i] != null)
+            if (cachedEffectPreviews[i] is not null)
             {
                 cachedEffectPreviewHeights[i] = Text.CalcHeight(cachedEffectPreviews[i], labelWidth);
             }
@@ -263,7 +263,7 @@ public class FCOptionWindow : Window
         {
             if (i > 0) optH += OptionSpacing;
             float cardH = OptionInnerPadding + cachedOptionLabelHeights[i] + 6f + MetadataRowHeight + OptionInnerPadding;
-            if (cachedEffectPreviews[i] != null)
+            if (cachedEffectPreviews[i] is not null)
             {
                 cardH += EffectPreviewSpacing + cachedEffectPreviewHeights[i];
             }
@@ -408,15 +408,15 @@ public class FCOptionWindow : Window
             bool meetsRequirements = meetsPolicy && meetsMeme;
             string requirementFailReason = policyFail ?? memeFail;
             string handlerUnavailableReason = null;
-            bool handlerAvailable = optHandler == null ||
+            bool handlerAvailable = optHandler is null ||
                 optHandler.IsOptionAvailable(opt, parentEvent, out handlerUnavailableReason);
             bool available = affordable && meetsRequirements && handlerAvailable && OptionsEnabled;
-            if (!handlerAvailable && requirementFailReason == null)
+            if (!handlerAvailable && requirementFailReason is null)
                 requirementFailReason = handlerUnavailableReason;
 
             // Card height
             float cardH = OptionInnerPadding + cachedOptionLabelHeights[i] + 6f + MetadataRowHeight + OptionInnerPadding;
-            if (cachedEffectPreviews[i] != null)
+            if (cachedEffectPreviews[i] is not null)
             {
                 cardH += EffectPreviewSpacing + cachedEffectPreviewHeights[i];
             }
@@ -441,10 +441,10 @@ public class FCOptionWindow : Window
 
             // Option label text
             string displayLabel = opt.label;
-            if (optHandler != null)
+            if (optHandler is not null)
             {
                 string dynLabel = optHandler.GetDynamicOptionLabel(opt, parentEvent);
-                if (dynLabel != null) displayLabel = dynLabel;
+                if (dynLabel is not null) displayLabel = dynLabel;
             }
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
@@ -460,7 +460,7 @@ public class FCOptionWindow : Window
             string successLabel;
             Color successColor;
             float displayChance = opt.baseChanceOfSuccess;
-            if (optHandler != null)
+            if (optHandler is not null)
             {
                 float dynChance = optHandler.GetDynamicOptionSuccessChance(opt, parentEvent);
                 if (dynChance >= 0f) displayChance = dynChance;
@@ -470,8 +470,8 @@ public class FCOptionWindow : Window
             UIUtil.DrawColoredLabel(new Rect(metaRect.x, metaRect.y, metaRect.width * 0.6f, metaRect.height), successLabel, successColor);
 
             // Requirement tag (policy and/or meme; always visible)
-            bool hasPolicyReq = opt.requiredPolicies != null && opt.requiredPolicies.Count > 0;
-            bool hasMemeReq = opt.requiredMemes != null && opt.requiredMemes.Count > 0;
+            bool hasPolicyReq = opt.requiredPolicies is not null && opt.requiredPolicies.Count > 0;
+            bool hasMemeReq = opt.requiredMemes is not null && opt.requiredMemes.Count > 0;
             if (hasPolicyReq || hasMemeReq)
             {
                 List<string> tagParts = new List<string>();
@@ -543,7 +543,7 @@ public class FCOptionWindow : Window
                  * (multi-settlement multiplier or extension axes). BuildCostBreakdown returns
                  * null for the unscaled base-only case, so this is a no-op then. */
                 string costBreakdown = FCOptionCostUtil.BuildCostBreakdown(opt, parentEvent);
-                if (costBreakdown != null)
+                if (costBreakdown is not null)
                 {
                     Rect costAreaRect = new Rect(iconRect.x, metaRect.y, costTextRect.xMax - iconRect.x, metaRect.height);
                     TooltipHandler.TipRegion(costAreaRect, costBreakdown);
@@ -561,7 +561,7 @@ public class FCOptionWindow : Window
             }
 
             // Effect preview (guaranteed options only)
-            if (cachedEffectPreviews[i] != null)
+            if (cachedEffectPreviews[i] is not null)
             {
                 innerY += MetadataRowHeight + EffectPreviewSpacing;
                 Text.Font = GameFont.Tiny;
@@ -618,13 +618,13 @@ public class FCOptionWindow : Window
         if (opt.baseChanceOfSuccess < 100f) return null;
 
         FCEventDef resultEvent = opt.successEvent;
-        if (resultEvent == null) return null;
+        if (resultEvent is null) return null;
 
         List<string> tempParts = new List<string>();
         List<string> permParts = new List<string>();
 
         // Temporary stat modifiers
-        if (resultEvent.statModifiers != null && resultEvent.statModifiers.Count > 0)
+        if (resultEvent.statModifiers is not null && resultEvent.statModifiers.Count > 0)
         {
             TaggedString statDesc = FCStatModifier.GetDescription(resultEvent.statModifiers);
             if (!statDesc.NullOrEmpty())
@@ -639,7 +639,7 @@ public class FCOptionWindow : Window
         }
 
         // Permanent stat modifiers
-        if (resultEvent.permanentStatModifiers != null && resultEvent.permanentStatModifiers.Count > 0)
+        if (resultEvent.permanentStatModifiers is not null && resultEvent.permanentStatModifiers.Count > 0)
         {
             TaggedString permDesc = FCStatModifier.GetDescription(resultEvent.permanentStatModifiers);
             if (!permDesc.NullOrEmpty())
@@ -656,10 +656,10 @@ public class FCOptionWindow : Window
         // Item rewards (delivered, not permanent). When the success event will inherit the
         // parent's settlement targets, show the scaled value the player will actually receive;
         // otherwise we can't know the future event's target count and fall back to the base.
-        if (resultEvent.randomThingValue > 0 && resultEvent.randomThingRewardDef != null)
+        if (resultEvent.randomThingValue > 0 && resultEvent.randomThingRewardDef is not null)
         {
             int previewValue = resultEvent.randomThingValue;
-            if (resultEvent.settlementsCarryOver && parentEvent != null)
+            if (resultEvent.settlementsCarryOver && parentEvent is not null)
             {
                 previewValue *= FCEventScalingUtil.CountAffectedSettlements(parentEvent);
             }
@@ -708,8 +708,8 @@ public class FCOptionWindow : Window
         // certain covers both unsplit and split-with-both-branches-defined.
         if (resultEvent.HasFollowUp)
         {
-            bool hasBranch1 = resultEvent.followingEvent is object;
-            bool hasBranch2 = resultEvent.followingEvent2 is object;
+            bool hasBranch1 = resultEvent.followingEvent is not null;
+            bool hasBranch2 = resultEvent.followingEvent2 is not null;
             if (resultEvent.splitEventFollows && (!hasBranch1 || !hasBranch2))
             {
                 if (hasBranch1 || hasBranch2)
@@ -768,7 +768,7 @@ public class FCOptionWindow : Window
     private static bool MeetsPolicyRequirements(FCOptionDef opt, out string failReason)
     {
         failReason = null;
-        if (opt.requiredPolicies == null || opt.requiredPolicies.Count == 0)
+        if (opt.requiredPolicies is null || opt.requiredPolicies.Count == 0)
             return true;
 
         FactionFC faction = FindFC.FactionComp;
@@ -807,7 +807,7 @@ public class FCOptionWindow : Window
     private static bool MeetsMemeRequirements(FCOptionDef opt, out string failReason)
     {
         failReason = null;
-        if (opt.requiredMemes == null || opt.requiredMemes.Count == 0)
+        if (opt.requiredMemes is null || opt.requiredMemes.Count == 0)
             return true;
 
         if (opt.memeRequirementMode == FCRequirementMode.Any)

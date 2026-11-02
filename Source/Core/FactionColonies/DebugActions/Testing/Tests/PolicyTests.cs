@@ -24,7 +24,7 @@ public static class PolicyTestHelper
 
         for (int i = 0; i < FindFC.PolicyManager.factionTraits.Count; i++)
         {
-            if (FindFC.PolicyManager.factionTraits[i]?.behavior != null)
+            if (FindFC.PolicyManager.factionTraits[i]?.behavior is not null)
             {
                 try { FindFC.PolicyManager.factionTraits[i].behavior.OnRemoved(faction); }
                 catch (Exception ex) { LogUtil.Warning($"OnRemoved threw during test cleanup: {ex}"); }
@@ -53,7 +53,7 @@ public static class PolicyTestHelper
     /// </summary>
     public static FCPolicy SetTrait(FactionFC faction, FCPolicyDef def, int slot)
     {
-        if (FindFC.PolicyManager.factionTraits[slot]?.behavior != null)
+        if (FindFC.PolicyManager.factionTraits[slot]?.behavior is not null)
         {
             try { FindFC.PolicyManager.factionTraits[slot].behavior.OnRemoved(faction); }
             catch (Exception ex) { LogUtil.Warning($"OnRemoved threw during test cleanup: {ex}"); }
@@ -72,7 +72,7 @@ public static class PolicyTestHelper
         FindFC.PolicyManager.RemoveAllPolicies(FindFC.PolicyManager.policies);
         for (int i = 0; i < FindFC.PolicyManager.factionTraits.Count; i++)
         {
-            if (FindFC.PolicyManager.factionTraits[i]?.behavior != null)
+            if (FindFC.PolicyManager.factionTraits[i]?.behavior is not null)
             {
                 try { FindFC.PolicyManager.factionTraits[i].behavior.OnRemoved(faction); }
                 catch (Exception ex) { LogUtil.Warning($"OnRemoved threw during test cleanup: {ex}"); }
@@ -98,7 +98,7 @@ public static class PolicyTests
     public static void StatAggregation_AdditiveDefault_IsZero()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -118,7 +118,7 @@ public static class PolicyTests
     public static void StatAggregation_MultiplicativeDefault_IsOne()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -144,7 +144,7 @@ public static class PolicyTests
     public static void StatAggregation_PolicyModifiers_Applied()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -191,7 +191,7 @@ public static class PolicyTests
     public static void StatAggregation_MultiplePolicies_Stack()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -238,7 +238,7 @@ public static class PolicyTests
     public static void BehaviorCache_RebuildAfterPolicyAdd()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -262,7 +262,7 @@ public static class PolicyTests
     public static void BehaviorCache_RebuildAfterClear()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -284,7 +284,7 @@ public static class PolicyTests
     public static void BehaviorCache_OrderPoliciesBeforeTraits()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -371,7 +371,7 @@ public static class PolicyTests
     public static void Egalitarian_WorkerProductionMultiplier_10Pct()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
@@ -395,7 +395,7 @@ public static class PolicyTests
     public static void Expansionist_SettlementCost_Discount()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -421,7 +421,7 @@ public static class PolicyTests
     public static void Militaristic_BuildingUpkeep_Discount()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
         if (!faction.settlements.Any()) TestAssert.Skip("Need settlements");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
@@ -439,7 +439,7 @@ public static class PolicyTests
             BuildingFCDef milBuilding = DefDatabase<BuildingFCDef>.AllDefsListForReading
                 .FirstOrDefault(b => b.isMilitary && b.Upkeep > 0);
 
-            if (milBuilding == null)
+            if (milBuilding is null)
                 TestAssert.Skip("No military buildings with upkeep found");
 
             TestAssert.AreEqual(Math.Max(milBuilding.Upkeep - 10, 0.0),
@@ -451,7 +451,7 @@ public static class PolicyTests
                 .FirstOrDefault(b => !b.isMilitary && b.Upkeep > 0
                     && b != BuildingFCDefOf.Empty && b != BuildingFCDefOf.Construction);
 
-            if (civBuilding != null)
+            if (civBuilding is not null)
             {
                 TestAssert.AreEqual(civBuilding.Upkeep,
                     settlement.BuildingsComp.GetBuildingUpkeep(civBuilding), 0.001,
@@ -474,7 +474,7 @@ public static class PolicyTests
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
         {
             FCPolicyBehaviorExtension ext = def.BehaviorExtension;
-            if (ext != null)
+            if (ext is not null)
             {
                 TestAssert.IsNotNull(ext.behaviorClass,
                     $"{def.defName}: behavior extension has null behaviorClass");
@@ -501,7 +501,7 @@ public static class PolicyTests
     public static void AllPolicies_StatValues_AreFinite()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try

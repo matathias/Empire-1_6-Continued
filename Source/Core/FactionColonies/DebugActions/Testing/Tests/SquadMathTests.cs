@@ -15,9 +15,9 @@ public static class SquadMathTests
     public static void PawnEffectiveness_LivePawn_InValidRange()
     {
         Map map = Find.CurrentMap;
-        if (map == null) TestAssert.Skip("No current map");
+        if (map is null) TestAssert.Skip("No current map");
         Pawn pawn = map.mapPawns?.FreeColonists?.FirstOrDefault();
-        if (pawn == null) TestAssert.Skip("No colonist available");
+        if (pawn is null) TestAssert.Skip("No colonist available");
 
         double eff = SquadEffectivenessUtil.PawnEffectiveness(pawn);
         TestAssert.IsTrue(eff >= 0.0 && eff <= 1.0, $"Effectiveness must be in [0,1], got {eff}");

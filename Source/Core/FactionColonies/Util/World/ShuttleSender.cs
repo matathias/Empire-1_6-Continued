@@ -29,7 +29,7 @@ class ShuttleSender
     {
         Thing shuttle = ThingMaker.MakeThing(ThingDefOf.Shuttle);
         CompShuttle compShuttle = shuttle.TryGetComp<CompShuttle>();
-        if (compShuttle is object)
+        if (compShuttle is not null)
         {
             compShuttle.permitShuttle = true;
         }
@@ -44,7 +44,7 @@ class ShuttleSender
             ShipJobDefOf.FlyAway
         });
 
-        if (comp != null)
+        if (comp is not null)
         {
             comp.shuttleUsesRemaining -= cost;
         }

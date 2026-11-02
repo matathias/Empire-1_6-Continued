@@ -175,7 +175,7 @@ public class Dialog_SquadInspection : Window
         int currentValue = (int)Math.Round(squad.GetCurrentLoadoutCost());
         int deployCost = squad.DeploymentCost();
         double power = SquadPowerRegistry.Resolve(squad).militaryLevel;
-        int filled = (squad.mercenaries?.Count(m => m?.pawn != null)) ?? 0;
+        int filled = (squad.mercenaries?.Count(m => m?.pawn is not null)) ?? 0;
         int max = (squad.mercenaries?.Count) ?? 0;
 
         DrawStatsCell(new Rect(rect.x + colW * 0, rect.y, colW, rect.height),
@@ -241,7 +241,7 @@ public class Dialog_SquadInspection : Window
         /* Value — promoted to Small. Dimmed when unassigned. */
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        bool hasSettlement = squad.settlement != null;
+        bool hasSettlement = squad.settlement is not null;
         string settlementName = hasSettlement
             ? squad.settlement.Name
             : (string)"FCSquadInspectionContextSettlementUnassigned".Translate();
@@ -296,7 +296,7 @@ public class Dialog_SquadInspection : Window
         /* Value — promoted to Small. Dimmed when no template. */
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        bool hasTemplate = squad.outfit != null;
+        bool hasTemplate = squad.outfit is not null;
         string templateName = hasTemplate
             ? (squad.outfit.name ?? "(?)")
             : (string)"FCSquadInspectionContextTemplateNone".Translate();
@@ -335,7 +335,7 @@ public class Dialog_SquadInspection : Window
         /* Gate on HasUpgradeWork, not cost: a same-price-or-cheaper re-equip (or a
            reassignment after a template swap) is real work that nets zero silver. */
         bool hasUpgradeWork = SquadUpgradeUtil.HasUpgradeWork(squad);
-        bool canUpgradeAll = squad.outfit != null && !squad.IsBusy && hasUpgradeWork;
+        bool canUpgradeAll = squad.outfit is not null && !squad.IsBusy && hasUpgradeWork;
 
         float gap = 8f;
         float btnW = (rect.width - gap * 2f) / 3f;
@@ -367,7 +367,7 @@ public class Dialog_SquadInspection : Window
         {
             TooltipHandler.TipRegion(upgradeRect, "FCSquadCannotModifyBusyTip".Translate());
         }
-        else if (squad.outfit != null && hasUpgradeWork)
+        else if (squad.outfit is not null && hasUpgradeWork)
         {
             string tooltip = "FCSquadInspectionUpgradeAllTooltip".Translate(upgrade, hire, upgradeNet);
             TooltipHandler.TipRegion(upgradeRect, tooltip);
@@ -376,8 +376,8 @@ public class Dialog_SquadInspection : Window
 
         /* Add unit: pick from saved blueprints, fill an empty slot, break template association. */
         MilitaryFC mfc = FindFC.Military;
-        bool hasBlueprints = mfc?.units != null && mfc.units.Any(u => u != null && !u.isBlank);
-        bool hasFreeSlot = squad.mercenaries != null && squad.mercenaries.Any(m => m != null && m.pawn is null);
+        bool hasBlueprints = mfc?.units is not null && mfc.units.Any(u => u is not null && !u.isBlank);
+        bool hasFreeSlot = squad.mercenaries is not null && squad.mercenaries.Any(m => m is not null && m.pawn is null);
         bool canAddUnit = !squad.IsBusy && hasBlueprints && hasFreeSlot;
 
         Rect addRect = new Rect(bx, rect.y, btnW, rect.height);
@@ -401,7 +401,7 @@ public class Dialog_SquadInspection : Window
         /* Filter out the blank-loadout placeholder slots created by InitiateSquad
            when the template has fewer real units than MilSquadFC.MaxSquadSize. */
         List<Mercenary> mercs = (squad.mercenaries ?? new List<Mercenary>())
-            .Where(m => m != null && m.EffectiveLoadout != null && !m.EffectiveLoadout.isBlank)
+            .Where(m => m is not null && m.EffectiveLoadout is not null && !m.EffectiveLoadout.isBlank)
             .ToList();
 
         float contentH = 0f;
@@ -434,7 +434,7 @@ public class Dialog_SquadInspection : Window
         return n == 0 ? 0f : n * (SubRowHeight + SubRowGap);
     }
 
-    private bool IsExpanded(Mercenary merc) => merc != null && expandedMercs.Contains(merc.loadID);
+    private bool IsExpanded(Mercenary merc) => merc is not null && expandedMercs.Contains(merc.loadID);
 
     private void ToggleExpanded(Mercenary merc)
     {
@@ -461,7 +461,7 @@ public class Dialog_SquadInspection : Window
         float portraitX = leftx + AccentBarWidth + CardOuterPad;
         float portraitY = cardRect.y + (cardRect.height - PortraitSize) / 2f;
         Rect portraitRect = new Rect(portraitX, portraitY, PortraitSize, PortraitSize);
-        if (merc?.pawn != null)
+        if (merc?.pawn is not null)
         {
             UIUtil.DrawPawnPortrait(portraitRect, merc.pawn);
         }
@@ -479,7 +479,7 @@ public class Dialog_SquadInspection : Window
         /* Whole-card click toggles the sub-pawn list. Drawn LAST so the action buttons,
            info-card, and rename pencil (all in DrawCardContent) consume their clicks first;
            only clicks that land on inert card area reach this. */
-        if (merc != null && merc.SubPawns().Any())
+        if (merc is not null && merc.SubPawns().Any())
         {
             if (Widgets.ButtonInvisible(cardRect, doMouseoverSound: false)) ToggleExpanded(merc);
         }
@@ -497,17 +497,17 @@ public class Dialog_SquadInspection : Window
         // merc.animals holds companions (subPawnType == Animal) and the single mount (== Mount).
         // Split them into separate segments so the mount is reported as "1 mount", not an animal.
         List<Mercenary> companions = merc.animals?
-            .Where(x => x != null && x.subPawnType == Mercenary.SubPawnType.Animal).ToList();
+            .Where(x => x is not null && x.subPawnType == Mercenary.SubPawnType.Animal).ToList();
         List<Mercenary> mounts = merc.animals?
-            .Where(x => x != null && x.subPawnType == Mercenary.SubPawnType.Mount).ToList();
+            .Where(x => x is not null && x.subPawnType == Mercenary.SubPawnType.Mount).ToList();
         string a = SubTypeBadgeSegment(companions, "FCSubPawnBadgeAnimal", "FCSubPawnBadgeAnimals");
         string mt = SubTypeBadgeSegment(mounts, "FCSubPawnBadgeMount", "FCSubPawnBadgeMounts");
         string m = SubTypeBadgeSegment(merc.mechs, "FCSubPawnBadgeMech", "FCSubPawnBadgeMechs");
 
         List<string> parts = new List<string>(3);
-        if (a != null) parts.Add(a);
-        if (mt != null) parts.Add(mt);
-        if (m != null) parts.Add(m);
+        if (a is not null) parts.Add(a);
+        if (mt is not null) parts.Add(mt);
+        if (m is not null) parts.Add(m);
         if (parts.Count == 0) return null;
         return string.Join(" · ", parts);
     }
@@ -545,11 +545,11 @@ public class Dialog_SquadInspection : Window
     private static Color SubPawnBadgeColor(Mercenary merc)
     {
         Color worst = AccentUtil.MilReady;
-        if (merc != null)
+        if (merc is not null)
         {
             foreach (Mercenary sub in merc.SubPawns())
             {
-                Color c = sub != null && sub.IsMissingSubPawn ? AccentUtil.MilUnderAttack : GetPawnAccent(sub);
+                Color c = sub is not null && sub.IsMissingSubPawn ? AccentUtil.MilUnderAttack : GetPawnAccent(sub);
                 if (AccentRank(c) > AccentRank(worst)) worst = c;
             }
         }
@@ -565,18 +565,18 @@ public class Dialog_SquadInspection : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         string slotLabel = "FCSquadInspectionSlotLabel".Translate(slotIndex + 1);
-        string pawnName = merc?.pawn != null
+        string pawnName = merc?.pawn is not null
             ? merc.pawn.LabelShortCap
             : (string)"FCSquadInspectionEmptyPawn".Translate();
         // Don't include "Slot #" in the header, not here. The slot number might still be useful to show somewhere, though...
         string headerText = pawnName; //slotLabel + " - " + pawnName;
-        float iconAreaW = (merc?.pawn != null) ? (InfoCardSize + IconButtonSize + 8f) : 0f;
+        float iconAreaW = (merc?.pawn is not null) ? (InfoCardSize + IconButtonSize + 8f) : 0f;
         float headerH = 22f;
 
         /* Expand/collapse arrow — only when this merc has sub-pawns (animals/mechs). Visual
            only; the whole card is the click target (see DrawPawnCard). */
         float headerX = rect.x;
-        bool hasSubPawns = merc != null && merc.SubPawns().Any();
+        bool hasSubPawns = merc is not null && merc.SubPawns().Any();
         if (hasSubPawns)
         {
             Rect arrowRect = new Rect(rect.x, y, ExpandArrowSize, headerH);
@@ -597,7 +597,7 @@ public class Dialog_SquadInspection : Window
         if (hasSubPawns)
         {
             string badge = BuildSubPawnBadge(merc);
-            if (badge != null)
+            if (badge is not null)
             {
                 Text.Font = GameFont.Tiny;
                 float badgePad = 5f;
@@ -618,7 +618,7 @@ public class Dialog_SquadInspection : Window
             }
         }
 
-        if (merc?.pawn != null)
+        if (merc?.pawn is not null)
         {
             float iconY = y + (headerH - InfoCardSize) / 2f;
             float ix = rect.xMax - iconAreaW + 4f;
@@ -643,11 +643,11 @@ public class Dialog_SquadInspection : Window
         /* Loadout line */
         Text.Font = GameFont.Tiny;
         string loadoutName = merc?.EffectiveLoadout?.name ?? (string)"FCNone".Translate();
-        if (merc?.ownedLoadout != null) loadoutName = "* " + loadoutName;
+        if (merc?.ownedLoadout is not null) loadoutName = "* " + loadoutName;
         string loadoutText = "FCSquadInspectionLoadoutLabel".Translate(loadoutName);
         Rect loadoutRect = new Rect(rect.x, y, rect.width, lineH);
         UIUtil.ClampedLabel(loadoutRect, loadoutText);
-        if (merc?.ownedLoadout != null)
+        if (merc?.ownedLoadout is not null)
         {
             TooltipHandler.TipRegion(loadoutRect, "FCSquadInspectionDivergedTip".Translate());
         }
@@ -676,10 +676,10 @@ public class Dialog_SquadInspection : Window
         float btnH = rect.height;
         float bx = rect.x;
 
-        if (merc != null && merc.IsEmptySlot)
+        if (merc is not null && merc.IsEmptySlot)
         {
             MilUnitFC blueprint = merc.BlueprintLoadout;
-            bool canFill = blueprint != null && !blueprint.isBlank;
+            bool canFill = blueprint is not null && !blueprint.isBlank;
             int slotFillCost = canFill
                 ? (int)Math.Round(blueprint.getTotalCost * FCSettings.squadHireCostMultiplier)
                 : 0;
@@ -705,7 +705,7 @@ public class Dialog_SquadInspection : Window
                 ? "FCSquadCannotModifyBusyTip".Translate()
                 : "FCSquadInspectionPerSlotRemoveTip".Translate());
         }
-        else if (merc?.pawn != null)
+        else if (merc?.pawn is not null)
         {
             /* Edit Loadout */
             Rect editRect = new Rect(bx, rect.y, btnW, btnH);
@@ -722,7 +722,7 @@ public class Dialog_SquadInspection : Window
                whenever the assigned loadout differs from the equipped one,
                including same-cost or cheaper changes (which charge zero silver). */
             int slotUpgradeCost = ComputePerPawnUpgradeCost(merc);
-            bool canUpgrade = PerPawnUpgradeNeeded(merc) && !squad.IsBusy && merc.pawn != null;
+            bool canUpgrade = PerPawnUpgradeNeeded(merc) && !squad.IsBusy && merc.pawn is not null;
             Rect upgRect = new Rect(bx, rect.y, btnW, btnH);
             if (UIUtil.ButtonFlat(upgRect,
                 "FCSquadInspectionPerSlotUpgrade".Translate(slotUpgradeCost), disabled: !canUpgrade))
@@ -772,13 +772,13 @@ public class Dialog_SquadInspection : Window
     private static Color GetSlotAccent(Mercenary merc)
     {
         Color worst = GetPawnAccent(merc);
-        if (merc != null)
+        if (merc is not null)
         {
             foreach (Mercenary sub in merc.SubPawns())
             {
                 // Surface a missing/dead sub-pawn as red (its own row stays gray), so the merc
                 // card flags it even though "gone" is otherwise a low-key gray.
-                Color c = sub != null && sub.IsMissingSubPawn ? AccentUtil.MilUnderAttack : GetPawnAccent(sub);
+                Color c = sub is not null && sub.IsMissingSubPawn ? AccentUtil.MilUnderAttack : GetPawnAccent(sub);
                 if (AccentRank(c) > AccentRank(worst)) worst = c;
             }
         }
@@ -832,12 +832,12 @@ public class Dialog_SquadInspection : Window
         Color accent = GetPawnAccent(sub);
         Widgets.DrawBoxSolid(new Rect(row.x, row.y, AccentBarWidth, row.height), accent);
 
-        bool missing = sub != null && sub.IsMissingSubPawn;
-        bool hasLivePawn = sub?.pawn != null && !missing;
+        bool missing = sub is not null && sub.IsMissingSubPawn;
+        bool hasLivePawn = sub?.pawn is not null && !missing;
         // Offer replacement whenever a sub-pawn isn't at full readiness — missing, downed, or
         // injured. Sub-pawns are expendable, so the player can pay full cost to skip the heal wait.
         bool fullHealth = hasLivePawn && !sub.pawn.Downed && SquadHealthUtil.CountActiveInjuries(sub.pawn) == 0;
-        bool showReplace = sub != null && sub.subPawnType != Mercenary.SubPawnType.None && !fullHealth;
+        bool showReplace = sub is not null && sub.subPawnType != Mercenary.SubPawnType.None && !fullHealth;
         bool showInfo = hasLivePawn;
 
         float px = row.x + AccentBarWidth + CardOuterPad;
@@ -883,7 +883,7 @@ public class Dialog_SquadInspection : Window
         if (showReplace)
         {
             int cost = SquadCostExtensions.SubPawnReplaceCost(sub);
-            bool ownerAlive = sub.handler is null || sub.handler.pawn != null;
+            bool ownerAlive = sub.handler is null || sub.handler.pawn is not null;
             bool canReplace = !squad.IsBusy && ownerAlive;
             if (UIUtil.ButtonFlat(replaceRect, "FCSubPawnReplace".Translate(cost), disabled: !canReplace))
             {
@@ -976,7 +976,7 @@ public class Dialog_SquadInspection : Window
         }
         Mercenary slot = merc;
         MercenaryPawnFactory.CreateNewPawn(squad, ref slot, blueprint.pawnKind, blueprint.xenotype, blueprint.customXenotypeName, blueprint);
-        if (slot.pawn != null) squad.Equipment.EquipPawn(slot, blueprint);
+        if (slot.pawn is not null) squad.Equipment.EquipPawn(slot, blueprint);
         slot.currentLoadout = blueprint.Clone();
         FindFC.Military?.RebuildMercenaryPawnSet();
     }
@@ -1031,13 +1031,13 @@ public class Dialog_SquadInspection : Window
         if (squad.IsBusy) return;
 
         Mercenary target = null;
-        if (squad.mercenaries != null)
+        if (squad.mercenaries is not null)
         {
             target = squad.mercenaries.FirstOrDefault(m =>
-                m != null && m.pawn is null &&
+                m is not null && m.pawn is null &&
                 (m.BlueprintLoadout is null || m.BlueprintLoadout.isBlank));
             if (target is null)
-                target = squad.mercenaries.FirstOrDefault(m => m != null && m.pawn is null);
+                target = squad.mercenaries.FirstOrDefault(m => m is not null && m.pawn is null);
         }
         if (target is null)
         {
@@ -1057,10 +1057,10 @@ public class Dialog_SquadInspection : Window
         target.ownedLoadout = null;
         Mercenary slot = target;
         MercenaryPawnFactory.CreateNewPawn(squad, ref slot, blueprint.pawnKind, blueprint.xenotype, blueprint.customXenotypeName, blueprint);
-        if (slot.pawn != null) squad.Equipment.EquipPawn(slot, blueprint);
+        if (slot.pawn is not null) squad.Equipment.EquipPawn(slot, blueprint);
         slot.currentLoadout = blueprint.Clone();
 
-        if (squad.outfit != null) SquadUpgradeUtil.SwapTemplate(squad, null);
+        if (squad.outfit is not null) SquadUpgradeUtil.SwapTemplate(squad, null);
         FindFC.Military?.RebuildMercenaryPawnSet();
     }
 

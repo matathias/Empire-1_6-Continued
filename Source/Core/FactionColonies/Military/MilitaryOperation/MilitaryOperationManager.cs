@@ -96,7 +96,7 @@ public class MilitaryOperationManager : IExposable
             ctx?.Detach(op);
         }
         IndexRemove(op);
-        if (active is object) active.Remove(op);
+        if (active is not null) active.Remove(op);
     }
 
     /// <summary>
@@ -211,7 +211,7 @@ public class MilitaryOperationManager : IExposable
         op.aggressor.force = attackerForce;
 
         op.defender.faction = FindFC.EmpireFaction;
-        if (targetSettlement is object)
+        if (targetSettlement is not null)
         {
             // Squad-first defense: pick the strongest available squad billeted at the target,
             // and project its squad-derived force. Empty billets still defend at half-power so
@@ -222,7 +222,7 @@ public class MilitaryOperationManager : IExposable
             // changes (new buildings, policy shifts, event stat modifiers) apply to the fight.
             op.defender.homeSettlement = targetSettlement;
             op.defender.squad = PickPrimaryDefendingSquad(targetSettlement);
-            op.defender.force = op.defender.squad is object
+            op.defender.force = op.defender.squad is not null
                 ? MilitaryForce.CreateMilitaryForceFromSquad(op.defender.squad)
                 : MilitaryForce.CreateMilitaryForceFromUnstaffedBillet(targetSettlement);
         }
@@ -252,13 +252,13 @@ public class MilitaryOperationManager : IExposable
         // BattlefieldContext.StartDefense needs — no need to mirror anything onto the event.
         FCEvent warningEvent = op.ScheduleEvent(
             FCEventDefOf.settlementBeingAttacked, target.Tile, GenDate.TicksPerDay);
-        if (warningEvent is object)
+        if (warningEvent is not null)
         {
             warningEvent.hasDestination = true;
 
             // Description + win-chance forecast (mirrors old AttackPlayerSettlement letter).
             string desc = "FCSettlementAboutToBeAttacked".Translate(target.Label, attackerFaction?.Name ?? "").ToString();
-            if (op.aggressor.force is object && op.defender.force is object)
+            if (op.aggressor.force is not null && op.defender.force is not null)
             {
                 double winChance = SimulateBattleFc.CalculateDefenderWinChance(op.aggressor.force, op.defender.force);
                 desc += "\n\n" + "FCBattleForecast".Translate(
@@ -268,7 +268,7 @@ public class MilitaryOperationManager : IExposable
                     op.defender.force.militaryEfficiency.ToString("0.##"),
                     (winChance * 100).ToString("F0"));
             }
-            if (op.externalDefenderSource is object)
+            if (op.externalDefenderSource is not null)
             {
                 desc += "\n\n" + "FCExternalDefenderAutoAssigned".Translate(op.externalDefenderSource.LabelCap);
             }
@@ -316,7 +316,7 @@ public class MilitaryOperationManager : IExposable
             if (candidate == targetSettlement) continue;
             if (candidate.MilitaryComp is null) continue;
             if (candidate.MilitaryComp.isUnderAttack) continue;
-            if (targetSettlement is object && !DefenseValidatorRegistry.CanDefend(candidate, targetSettlement)) continue;
+            if (targetSettlement is not null && !DefenseValidatorRegistry.CanDefend(candidate, targetSettlement)) continue;
             foreach (MercenarySquadFC squad in candidate.StationedSquads)
             {
                 if (squad is null || !squad.autoDefend) continue;
@@ -338,7 +338,7 @@ public class MilitaryOperationManager : IExposable
         // projected. Comparing the foreign squad's raw loadout level against the target's
         // already-bonused level was an apples-to-oranges asymmetry that made small foreign
         // squads lose to empty-billet synthetic forces of equal level.
-        MilitaryForce foreignProjected = bestForeignSquad is object
+        MilitaryForce foreignProjected = bestForeignSquad is not null
             ? MilitaryForce.CreateMilitaryForceFromSquad(bestForeignSquad, isAttacking: false)
             : null;
 
@@ -349,12 +349,12 @@ public class MilitaryOperationManager : IExposable
         // When the target has no real stationed squad, op.defender.force is the half-power
         // unstaffed-billet synthetic — it shouldn't gate a real foreign squad the user opted
         // into via autoDefend. Override unconditionally in that case; otherwise compare power.
-        bool targetHasOwnSquad = op.defender.squad is object;
+        bool targetHasOwnSquad = op.defender.squad is not null;
 
         // Foreign squad wins if either (a) target has no own squad to project — any real
         // foreign squad beats a synthetic billet — or (b) it beats the target's level outright.
         // In both branches it must also be at least as strong as the external option.
-        if (bestForeignSquad is object
+        if (bestForeignSquad is not null
             && (!targetHasOwnSquad || foreignLevel > targetLevel)
             && foreignLevel >= externalLevel)
         {
@@ -368,7 +368,7 @@ public class MilitaryOperationManager : IExposable
         // External wins if it beats the target's level (and the foreign was not stronger).
         // Same "no own squad" override applies — synthetic billet shouldn't gate a real
         // external defender either.
-        if (bestExternal is object && (!targetHasOwnSquad || externalLevel > targetLevel))
+        if (bestExternal is not null && (!targetHasOwnSquad || externalLevel > targetLevel))
         {
             op.defender.homeSettlement = null;
             op.defender.squad = null;
@@ -422,7 +422,7 @@ public class MilitaryOperationManager : IExposable
 
         /* Morale lockout backstop (see CreateOffensiveOp). Deploys are gated too; the deploy
          * entry (CallinAlliedForces) checks first so no bill is charged. */
-        if (source.settlement is object && source.settlement.SquadDeploymentLocked)
+        if (source.settlement is not null && source.settlement.SquadDeploymentLocked)
         {
             LogUtil.Warning($"CreateDeployOp: settlement {source.settlement.Name} is morale-locked; rejecting deploy op.");
             return null;
@@ -467,7 +467,7 @@ public class MilitaryOperationManager : IExposable
     /// Does not clean up its map / pawns — that's the context's job during <c>Detach</c>.</summary>
     internal void RemoveBattlefield(PlanetTile tile)
     {
-        if (battlefields is object) battlefields.Remove(tile);
+        if (battlefields is not null) battlefields.Remove(tile);
     }
 
     /* -*-*-*-*- Empire battle-map marker -*-*-*-*- */
@@ -475,13 +475,13 @@ public class MilitaryOperationManager : IExposable
     /// <summary>Marks <paramref name="map"/> as a live Empire-owned battle map so vanilla settlement
     /// defeat/removal stays suppressed for its entire lifetime (see <c>OffenseGuardUtil</c>). Set
     /// when the map is generated, cleared immediately before Empire removes it.</summary>
-    public void RegisterBattleMap(Map map) { if (map is object) empireBattleMaps.Add(map); }
+    public void RegisterBattleMap(Map map) { if (map is not null) empireBattleMaps.Add(map); }
 
     /// <summary>Clears the Empire battle-map marker for <paramref name="map"/>.</summary>
-    public void UnregisterBattleMap(Map map) { if (map is object) empireBattleMaps.Remove(map); }
+    public void UnregisterBattleMap(Map map) { if (map is not null) empireBattleMaps.Remove(map); }
 
     /// <summary>True while <paramref name="map"/> is a live Empire-owned battle map.</summary>
-    public bool IsEmpireBattleMap(Map map) => map is object && empireBattleMaps.Contains(map);
+    public bool IsEmpireBattleMap(Map map) => map is not null && empireBattleMaps.Contains(map);
 
     /* -*-*-*-*- Queries -*-*-*-*- */
 
@@ -514,7 +514,7 @@ public class MilitaryOperationManager : IExposable
             rejectReason = "FCTargetAlreadyBeingAttacked".Translate();
             return false;
         }
-        if (Current.Game.FindMap(tile) is object)
+        if (Current.Game.FindMap(tile) is not null)
         {
             rejectReason = "FCTargetHasPlayerMap".Translate();
             return false;
@@ -569,7 +569,7 @@ public class MilitaryOperationManager : IExposable
         return Array.Empty<MilitaryOperation>();
     }
 
-    public bool HasDefenseAt(WorldSettlementFC settlement) => GetDefensiveOpAt(settlement) is object;
+    public bool HasDefenseAt(WorldSettlementFC settlement) => GetDefensiveOpAt(settlement) is not null;
 
     /// <summary>Returns the live defensive op targeting <paramref name="settlement"/>, or null.
     /// This is the source of truth for "under attack" — the warning event may already be gone
@@ -656,7 +656,7 @@ public class MilitaryOperationManager : IExposable
         if (battlefields is null) return 0;
         int count = 0;
         foreach (BattlefieldContext ctx in battlefields.Values)
-            if (ctx is object && ctx.map is object) count++;
+            if (ctx is not null && ctx.map is not null) count++;
         return count;
     }
 

@@ -55,10 +55,10 @@ public class Mercenary : IExposable, ILoadReferenceable
     /// <summary>Live and placeholder sub-pawn wrappers owned by this merc (animals first, then mechs).</summary>
     public IEnumerable<Mercenary> SubPawns()
     {
-        if (animals != null)
-            foreach (Mercenary a in animals) if (a is object) yield return a;
-        if (mechs != null)
-            foreach (Mercenary m in mechs) if (m is object) yield return m;
+        if (animals is not null)
+            foreach (Mercenary a in animals) if (a is not null) yield return a;
+        if (mechs is not null)
+            foreach (Mercenary m in mechs) if (m is not null) yield return m;
     }
 
     /// <summary>Source tag for design modifiers copied from the loadout template.</summary>
@@ -82,7 +82,7 @@ public class Mercenary : IExposable, ILoadReferenceable
         if (source is null) return;
         if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
         statModifiers.RemoveAll(m => m.sourceId == DesignModifierSource);
-        if (source.statModifiers != null)
+        if (source.statModifiers is not null)
         {
             foreach (PermanentStatModifier m in source.statModifiers)
             {
@@ -102,7 +102,7 @@ public class Mercenary : IExposable, ILoadReferenceable
         get
         {
             MilUnitFC blank = FindFC.Military?.blankUnit;
-            return blank != null && loadout != null && loadout != blank;
+            return blank is not null && loadout is not null && loadout != blank;
         }
     }
 
@@ -141,17 +141,17 @@ public class Mercenary : IExposable, ILoadReferenceable
         // Defensive: FindFC.Military can be null if this is constructed mid-load before
         // FactionFC's legacy-military migration has populated it. Fall back to 0 rather than NRE.
         MilitaryFC mil = FindFC.Military;
-        loadID = mil is object ? mil.NextMercenaryId() : 0;
+        loadID = mil is not null ? mil.NextMercenaryId() : 0;
     }
 
     public void ExposeData()
     {
         if (Scribe.mode == LoadSaveMode.Saving)
         {
-            isExternallyOwned = pawn is object &&
-                (pawn.Map is object
+            isExternallyOwned = pawn is not null &&
+                (pawn.Map is not null
                  || pawn.SpawnedOrAnyParentSpawned
-                 || (Find.WorldPawns is object && Find.WorldPawns.Contains(pawn)));
+                 || (Find.WorldPawns is not null && Find.WorldPawns.Contains(pawn)));
         }
 
         Scribe_Values.Look(ref isExternallyOwned, "isOnMap", false);
@@ -185,7 +185,7 @@ public class Mercenary : IExposable, ILoadReferenceable
         // Custom data — only expose if non-empty (backwards compatible with older saves)
         if (Scribe.mode == LoadSaveMode.Saving)
         {
-            bool hasData = customData != null && customData.Count > 0;
+            bool hasData = customData is not null && customData.Count > 0;
             Scribe_Values.Look(ref hasData, "hasCustomData", false);
             if (hasData)
                 Scribe_Collections.Look(ref customData, "customData", LookMode.Value, LookMode.Deep);
@@ -198,7 +198,7 @@ public class Mercenary : IExposable, ILoadReferenceable
                 Scribe_Collections.Look(ref customData, "customData", LookMode.Value, LookMode.Deep);
         }
 
-        if (Scribe.mode == LoadSaveMode.PostLoadInit && pawn != null && pawn.kindDef == null)
+        if (Scribe.mode == LoadSaveMode.PostLoadInit && pawn is not null && pawn.kindDef is null)
         {
             pawn.kindDef = PawnKindDefOf.Colonist;
             LogUtil.Warning($"Mercenary pawn {pawn.LabelShort} had null kindDef on load, reset to Colonist.");
@@ -214,10 +214,10 @@ public class Mercenary : IExposable, ILoadReferenceable
              * sub-pawn type that ever shipped is the companion animal, so any pre-existing wrapper
              * with a handler is an animal; capture its kind so it can survive a future death as a
              * placeholder. (Mechanitor handling never went live, so there are no legacy mechs.) */
-            if (subPawnType == SubPawnType.None && handler is object)
+            if (subPawnType == SubPawnType.None && handler is not null)
             {
                 subPawnType = SubPawnType.Animal;
-                if (subPawnKind is null && pawn is object) subPawnKind = pawn.kindDef;
+                if (subPawnKind is null && pawn is not null) subPawnKind = pawn.kindDef;
             }
             /* currentLoadout migration. Three save shapes:
              *   1. Pre-refactor saves: only loadout (ref) populated.
@@ -228,9 +228,9 @@ public class Mercenary : IExposable, ILoadReferenceable
              * stay null (empty slot or fresh-created). */
             if (currentLoadout is null)
             {
-                if (ownedLoadout != null)
+                if (ownedLoadout is not null)
                     currentLoadout = ownedLoadout;
-                else if (loadout != null)
+                else if (loadout is not null)
                     currentLoadout = loadout.Clone();
             }
         }
@@ -238,7 +238,7 @@ public class Mercenary : IExposable, ILoadReferenceable
 
     public T GetCustomData<T>(string key) where T : class, IExposable
     {
-        if (customData != null && customData.TryGetValue(key, out IExposable val))
+        if (customData is not null && customData.TryGetValue(key, out IExposable val))
             return val as T;
         return null;
     }

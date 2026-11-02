@@ -41,7 +41,7 @@ public class ResourceFilterExtension_NaturalSource : ResourceFilterExtension
             GateRockProducts(filter, tile);
         }
 
-        if (biomeAllowList is object && biomeAllowList.Count > 0)
+        if (biomeAllowList is not null && biomeAllowList.Count > 0)
         {
             BiomeDef biome = tile.Tile.PrimaryBiome;
             foreach (BiomeThingRestriction entry in biomeAllowList)
@@ -55,18 +55,18 @@ public class ResourceFilterExtension_NaturalSource : ResourceFilterExtension
         }
 
         // Unconditional exceptions last, so they win over the checks above.
-        if (forceBlock is object)
+        if (forceBlock is not null)
         {
             foreach (ThingDef t in forceBlock)
             {
-                if (t is object) filter.SetAllow(t, false);
+                if (t is not null) filter.SetAllow(t, false);
             }
         }
-        if (forceAllow is object)
+        if (forceAllow is not null)
         {
             foreach (ThingDef t in forceAllow)
             {
-                if (t is object) filter.SetAllow(t, true);
+                if (t is not null) filter.SetAllow(t, true);
             }
         }
     }

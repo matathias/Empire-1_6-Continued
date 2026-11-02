@@ -28,7 +28,7 @@ public static class MilitaryOperationsUtil
         // Manager handles op creation, auto-defender selection, warning event scheduling
         // (with linkedOperation back-reference), and the "settlement in danger" letter.
         MilitaryOperation op = manager.CreateDefensiveOp(settlement, attackingForce, enemyFaction);
-        return op is object;
+        return op is not null;
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ public static class MilitaryOperationsUtil
         }
 
         MilitaryOperation op = manager.CreateDefensiveOp(target.WorldObject, attackingForce, enemyFaction);
-        if (op is object)
+        if (op is not null)
         {
             target.IsUnderAttack = true;
         }
@@ -188,7 +188,7 @@ public static class MilitaryOperationsUtil
             return;
         }
 
-        if (op.externalDefenderSource is object && op.externalDefenderSource == defender.WorldObject)
+        if (op.externalDefenderSource is not null && op.externalDefenderSource == defender.WorldObject)
         {
             Messages.Message("FCMilitaryAlreadyDefendingSettlement".Translate(), MessageTypeDefOf.RejectInput);
             return;
@@ -225,7 +225,7 @@ public static class MilitaryOperationsUtil
     /// </summary>
     private static void ReleaseCurrentDefender(MilitaryOperation op)
     {
-        if (op.externalDefenderSource is object)
+        if (op.externalDefenderSource is not null)
         {
             IAutoDefender old = AutoDefenderRegistry.FindByWorldObject(op.externalDefenderSource);
             old?.OnDefenseReplaced();

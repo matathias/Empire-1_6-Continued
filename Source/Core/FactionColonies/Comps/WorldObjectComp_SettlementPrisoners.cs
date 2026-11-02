@@ -91,7 +91,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
             }
         }
 
-        if (dead != null)
+        if (dead is not null)
         {
             string sName = WorldSettlement?.Name ?? "";
             Faction player = Find.FactionManager.OfPlayer;
@@ -200,7 +200,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
         // already has it (e.g., redressed by PawnGenerator, passed via LeaveMap,
         // dropped from a caravan), pull it out so save doesn't double-scribe.
         // The conditional Scribe in FCPrisoner.ExposeData defends on-map cases.
-        if (Find.WorldPawns is object && Find.WorldPawns.Contains(pawn))
+        if (Find.WorldPawns is not null && Find.WorldPawns.Contains(pawn))
         {
             Find.WorldPawns.RemovePawn(pawn);
         }
@@ -275,7 +275,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
     {
         if (items is null || items.Count == 0) return;
 
-        if (caravan is object && caravan.PawnsListForReading.Count > 0)
+        if (caravan is not null && caravan.PawnsListForReading.Count > 0)
         {
             for (int i = 0; i < items.Count; i++)
                 CaravanInventoryUtility.GiveThing(caravan, items[i]);
@@ -446,7 +446,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
     public override FloatMenuAcceptanceReport CanReceive
         => FindFC.FactionComp?.IsActionAllowed(FCActionType.SendPrisoner) ?? false;
 
-    public override bool AcceptsPawn(Pawn pawn) => pawn is object && pawn.IsPrisonerOfColony;
+    public override bool AcceptsPawn(Pawn pawn) => pawn is not null && pawn.IsPrisonerOfColony;
 
     public override string ArrivalMenuLabel => "FCAddPrisonersToSettlement".Translate(parent.Label);
 

@@ -52,7 +52,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         {
             FactionFC comp = FindFC.FactionComp;
             Map map = null;
-            if (comp is object)
+            if (comp is not null)
             {
                 map = Find.WorldObjects.SettlementAt(comp.capitalLocation)?.Map;
             }
@@ -60,7 +60,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
             if (map is null)
             {
                 Map currentMap = Find.CurrentMap;
-                if (currentMap is object && currentMap.IsPlayerHome)
+                if (currentMap is not null && currentMap.IsPlayerHome)
                 {
                     map = currentMap;
                 }
@@ -69,7 +69,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
                     map = Find.AnyPlayerHomeMap;
                 }
 
-                if (map is object)
+                if (map is not null)
                 {
                     LogUtil.MessageForce(
                         "Unable to find a player-set tax map or a valid location for the capital. Please open the faction main menu tab and set the capital and tax map. Taxes were sent to the following random PlayerHomeMap " +
@@ -412,7 +412,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
         //Threat adaptation
         Scribe_Deep.Look(ref threatAdaptation, "threatAdaptation");
-        if (threatAdaptation == null) threatAdaptation = new EmpireThreatAdaptation();
+        if (threatAdaptation is null) threatAdaptation = new EmpireThreatAdaptation();
 
         //Pending player-colony settlement captures (deferred conversion)
         Scribe_Collections.Look(ref pendingCaptures, "pendingCaptures", LookMode.Deep);
@@ -494,7 +494,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs)
         {
             // events → eventManager
-            if (events != null && events.Count > 0)
+            if (events is not null && events.Count > 0)
             {
                 eventManager.SeedFromLegacy(events);
                 events = null;
@@ -503,7 +503,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
             // Legacy tax fields → taxLedger
             if (taxLedger.IsEmpty
-                && (legacyBills != null || legacyOldBills != null
+                && (legacyBills is not null || legacyOldBills is not null
                     || legacyTaxTimeDue != -1 || legacyAutoResolve
                     || legacyNextTaxId != -1 || legacyNextBillId != -1))
             {
@@ -538,7 +538,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
              * and seeding the ID counters here — before any PostLoadInit consumer reads them —
              * keeps FindFC.Military non-null and hands clones non-colliding loadIDs. */
             // Pre-1.5 military rename swap + new-instance fallback.
-            if (military is null && _legacyMilitary is object) military = _legacyMilitary;
+            if (military is null && _legacyMilitary is not null) military = _legacyMilitary;
             if (military is null) military = new MilitaryFC();
             _legacyMilitary = null;
 
@@ -565,7 +565,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
             // Pre-manager policy/trait/edict lists → policyManager
-            if (legacyPolicies != null || legacyFactionTraits != null || legacyEdicts != null)
+            if (legacyPolicies is not null || legacyFactionTraits is not null || legacyEdicts is not null)
             {
                 policyManager.SeedFromLegacy(legacyPolicies, legacyFactionTraits, legacyEdicts);
                 legacyPolicies = null;
@@ -657,7 +657,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     {
         if (_techLevel <= TechLevel.Undefined) return;
         Faction playerColonyfaction = FindFC.EmpireFaction;
-        if (playerColonyfaction != null && playerColonyfaction.def.techLevel < _techLevel)
+        if (playerColonyfaction is not null && playerColonyfaction.def.techLevel < _techLevel)
         {
             UpdateFactionDef(_techLevel, ref playerColonyfaction);
         }
@@ -728,7 +728,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         // Drain pre-refactor military operation state into the new MilitaryOperationManager.
         // Idempotent: only runs when the manager is empty AND legacy state is present in the
         // loaded save (post-refactor saves write the manager directly and skip migration).
-        if (militaryOperationManager is object && militaryOperationManager.IsEmpty
+        if (militaryOperationManager is not null && militaryOperationManager.IsEmpty
             && MilitaryMigrationUtil.AnyLegacyStatePresent(this))
         {
             MilitaryMigrationUtil.Migrate(this);
@@ -765,7 +765,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         policyManager.pendingEdictActivations.Clear();
         foreach (var kvp in policyManager.edicts)
         {
-            if (kvp.Value != null && !kvp.Value.IsFullyActive)
+            if (kvp.Value is not null && !kvp.Value.IsFullyActive)
                 policyManager.pendingEdictActivations.Add(kvp.Key);
         }
     }
@@ -816,7 +816,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         laborerCooldown.cooldownMessageKey = "FCHireLaborersCooldown";
         laborerCooldown.SetCooldown(FCSettings.laborerCooldownDays * GenDate.TicksPerDay);
 
-        if (!(faction is null))
+        if (faction is not null)
         {
             _ = techLevel;
             if (TexLoad.factionIcons.Any())
@@ -868,7 +868,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         if (!startingLongLatCaptured)
         {
             Map playerHome = Find.AnyPlayerHomeMap;
-            if (playerHome is object)
+            if (playerHome is not null)
             {
                 startingLongLat = Find.WorldGrid.LongLatOf(playerHome.Tile);
                 startingLongLatCaptured = true;
@@ -897,7 +897,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         // The FireSupportTick governs when artillery shells enter the map, which requires tick precision.
         // The function will early-return if there are no active fire supports, so the overhead in the no-active-support case is hopefully minimal
         FireSupportTick();
-        if (faction is object)
+        if (faction is not null)
         {
             // TickActions dispatches the tick to interfaces and registries, so it has to run every tick.
             TickActions();
@@ -914,7 +914,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
             taxLedger.ProcessBills();
             if (policyManager.pendingEdictActivations.Count > 0)
                 policyManager.CheckEdictActivations();
-            if (faction is object)
+            if (faction is not null)
                 roadBuilder.RoadTick();
         }
 
@@ -925,7 +925,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         }
 
         // Daily tick
-        if (ticksGame % GenDate.TicksPerDay == 0 && !(faction is null))
+        if (ticksGame % GenDate.TicksPerDay == 0 && faction is not null)
         {
             ValidateSettlementCaravansList();
             RecoverOrphanedConstructions(ticksGame);
@@ -963,7 +963,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     {
         if (Find.TickManager.TicksGame >= militaryTimeDue)
         {
-            if (faction != null &&
+            if (faction is not null &&
                 !FCSettings.disableHostileMilitaryActions &&
                 Find.TickManager.TicksGame > (timeStart + GenDate.TicksPerSeason))
             {
@@ -977,11 +977,11 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
                     // forever. Clear the flag on any registered target with no live op attacking
                     // it, so it re-enters raid selection this same tick.
                     MilitaryOperationManager opManager = FindFC.MilitaryManager;
-                    if (opManager is object)
+                    if (opManager is not null)
                     {
                         foreach (IRaidTarget rt in RaidTargetRegistry.Targets)
                         {
-                            if (rt is object && rt.IsUnderAttack && !opManager.HasActiveOpTargeting(rt.WorldObject))
+                            if (rt is not null && rt.IsUnderAttack && !opManager.HasActiveOpTargeting(rt.WorldObject))
                             {
                                 LogUtil.Warning($"Clearing orphaned IsUnderAttack flag on raid target '{rt.Name}' " +
                                     "(no live operation targeting it).");
@@ -1000,7 +1000,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
                     if (validSettlements.Any() || validExternalTargets.Any())
                     {
                         Faction enemy = ThreatScalingUtil.PickWeightedEnemyFaction(this);
-                        if (enemy != null)
+                        if (enemy is not null)
                         {
                             List<WorldSettlementFC> raidableSettlements = validSettlements
                                 .Where(s => s.settlementDef.GetSettlementTypeExtension()?.CanBeRaidedByFaction(enemy) != false)
@@ -1016,7 +1016,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
                             EnemyPower attackerEntry = FindFC.EnemyPower?.GetOrCompute(enemy);
                             MilitaryForce attackingForce = attackerEntry?.SampleBattleForce(enemy, handicap: true);
                             // Extra NPC offensive levels boost the raid force (on top of the early-game grace cap).
-                            if (attackingForce is object && FCSettings.extraNPCOffensiveLevels > 0)
+                            if (attackingForce is not null && FCSettings.extraNPCOffensiveLevels > 0)
                             {
                                 attackingForce = new MilitaryForce(
                                     attackingForce.militaryLevel + FCSettings.extraNPCOffensiveLevels,
@@ -1324,11 +1324,11 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
         // Scope chain: faction (cached) -> settlement (cached) -> squad-instance -> unit-instance.
         // Each scope folds in only if the stat opts into it and context is supplied.
-        if (settlement != null && stat.appliesToSettlements)
+        if (settlement is not null && stat.appliesToSettlements)
             value = CombineScoped(value, settlement.GetSettlementStatValue(stat), stat);
-        if (squad != null && stat.appliesToSquads)
+        if (squad is not null && stat.appliesToSquads)
             value = CombineScoped(value, AccumulatePermanentModifiers(stat.IdentityValue, stat, squad.statModifiers), stat);
-        if (unit != null && stat.appliesToUnits)
+        if (unit is not null && stat.appliesToUnits)
             value = CombineScoped(value, AccumulatePermanentModifiers(stat.IdentityValue, stat, unit.statModifiers), stat);
 
         // Apply runtime-dependent behavior modifiers (uncached — may depend on settlement state)
@@ -1354,7 +1354,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     /// <summary>Folds a per-entity PermanentStatModifier list (squad/unit scope) into a running value.</summary>
     private double AccumulatePermanentModifiers(double value, FCStatDef stat, List<PermanentStatModifier> mods)
     {
-        if (mods == null) return value;
+        if (mods is null) return value;
         foreach (PermanentStatModifier mod in mods)
             if (mod.stat == stat)
                 value = CombineScoped(value, mod.value, stat);
@@ -1368,7 +1368,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     /// a squad-scoped delta onto a value that already carries the faction/settlement contribution elsewhere.
     /// </summary>
     public double GetSquadStatValue(FCStatDef stat, MercenarySquadFC squad) =>
-        (squad != null && stat.appliesToSquads)
+        (squad is not null && stat.appliesToSquads)
             ? AccumulatePermanentModifiers(stat.IdentityValue, stat, squad.statModifiers)
             : stat.IdentityValue;
 
@@ -1378,7 +1378,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     /// into unit scope.
     /// </summary>
     public double GetUnitStatValue(FCStatDef stat, Mercenary unit) =>
-        (unit != null && stat.appliesToUnits)
+        (unit is not null && stat.appliesToUnits)
             ? AccumulatePermanentModifiers(stat.IdentityValue, stat, unit.statModifiers)
             : stat.IdentityValue;
 
@@ -1633,12 +1633,12 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         // commitment need both notifications.
         WorldSettlementFC aggressorHome = op.aggressor?.homeSettlement;
         WorldSettlementFC defenderHome = op.defender?.homeSettlement;
-        if (aggressorHome is object)
+        if (aggressorHome is not null)
         {
             bool isExtra = op.aggressor?.squad?.isExtraSquad ?? false;
             policyManager.ForEachBehavior(b => b.OnSquadDeployed(this, op, aggressorHome, isExtra));
         }
-        if (defenderHome is object && defenderHome != aggressorHome)
+        if (defenderHome is not null && defenderHome != aggressorHome)
         {
             bool isExtra = op.defender?.squad?.isExtraSquad ?? false;
             policyManager.ForEachBehavior(b => b.OnSquadDeployed(this, op, defenderHome, isExtra));
@@ -1655,9 +1655,9 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         // Symmetric with OnOperationCreated: recall both sides when they're distinct settlements.
         WorldSettlementFC aggressorHome = op.aggressor?.homeSettlement;
         WorldSettlementFC defenderHome = op.defender?.homeSettlement;
-        if (aggressorHome is object)
+        if (aggressorHome is not null)
             policyManager.ForEachBehavior(b => b.OnSquadRecalled(this, op, aggressorHome));
-        if (defenderHome is object && defenderHome != aggressorHome)
+        if (defenderHome is not null && defenderHome != aggressorHome)
             policyManager.ForEachBehavior(b => b.OnSquadRecalled(this, op, defenderHome));
     }
 
@@ -1789,7 +1789,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         if (CanMakeRandomEventNow())
         {
             FCEventDef picked = FCEventMaker.ReturnRandomEvent();
-            if (picked != null)
+            if (picked is not null)
             {
                 // A random event is being raised this cycle. Reset the timer now, before dispatch:
                 // roots with options + activateAtStart open their option window and return null, so
@@ -1798,7 +1798,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
                 randomEventLastAdded = 0f;
 
                 FCEvent tmpEvt = FCEventMaker.MakeRandomEvent(picked, null);
-                if (tmpEvt != null)
+                if (tmpEvt is not null)
                 {
                     eventManager.AddEvent(tmpEvt);
 
@@ -1855,7 +1855,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         pool.pool = pool.resource.PreAddToGlobalPool(pool.pool);
 
         ResourcePool rpool = resourcePools.Find((ResourcePool p) => p.resource == pool.resource);
-        if (rpool != null)
+        if (rpool is not null)
         {
             rpool.pool += pool.pool;
         }
@@ -1888,7 +1888,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         foreach (ResourcePool pool in resourcePools)
         {
             IEnumerable<FloatMenuOption> options = pool.resource.GetFactionMenuFloatMenuOptions(pool);
-            if (options != null)
+            if (options is not null)
             {
                 foreach (FloatMenuOption option in options)
                 {
@@ -1921,7 +1921,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     public ResourceDisplay ReturnResource(ResourceTypeDef resourceTypeDef)
     {
         ResourceDisplay res = factionResources.Find((ResourceDisplay rfc) => rfc.resourceDef == resourceTypeDef);
-        if (res == null)
+        if (res is null)
         {
             /* This should never happen! */
             LogUtil.Error($"Requested resource {resourceTypeDef.defName} is not in the list of faction resources!");
@@ -1932,7 +1932,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     public void SetDirtyResourceDisplayCache(ResourceTypeDef rdef)
     {
         ResourceDisplay rdisplay = factionResources.Find((ResourceDisplay rd) => rd.resourceDef == rdef);
-        if (rdisplay != null)
+        if (rdisplay is not null)
         {
             rdisplay.SetDirtyCache();
         }
@@ -2003,13 +2003,13 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     {
         // Check if there's an active capital spot first
         Building_CapitalSpot activeCapitalSpot = GetActiveCapitalSpot();
-        if (activeCapitalSpot != null)
+        if (activeCapitalSpot is not null)
         {
             Messages.Message("FCCapitalAlreadyEstablished".Translate(activeCapitalSpot.Map.Parent.LabelCap, FindFC.EmpireTitle.CapitalizeFirst()), MessageTypeDefOf.RejectInput);
             return;
         }
 
-        if (Find.CurrentMap != null && Find.CurrentMap.IsPlayerHome)
+        if (Find.CurrentMap is not null && Find.CurrentMap.IsPlayerHome)
         {
             capitalLocation = Find.CurrentMap.Parent.Tile;
 
@@ -2023,7 +2023,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
     public bool HasActiveCapitalSpot()
     {
-        return !(GetActiveCapitalSpot() is null);
+        return GetActiveCapitalSpot() is not null;
     }
 
     public Building_CapitalSpot GetActiveCapitalSpot()
@@ -2072,7 +2072,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     {
         // Primary = outer/armor layers (Middle, Shell)
         // Secondary = base clothing + accessories (OnSkin, Belt, Overhead, EyeCover)
-        bool isPrimarySlot = apparelDef != null
+        bool isPrimarySlot = apparelDef is not null
             && apparelDef.IsApparel
             && (apparelDef.apparel.layers.Contains(ApparelLayerDefOf.Middle)
                 || apparelDef.apparel.layers.Contains(ApparelLayerDefOf.Shell));
@@ -2093,23 +2093,23 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     public void UpdateFactionIcon(ref Faction faction, string iconPath)
     {
         LogUtil.Message("Updated Icon - " + iconPath);
-        if (faction?.def != null)
+        if (faction?.def is not null)
         {
             faction.def.factionIconPath = iconPath;
             factionDefIconCache?.SetValue(faction.def, null);
         }
-        if (settlements.Any() && settlements[0]?.def != null && UnityData.IsInMainThread)
+        if (settlements.Any() && settlements[0]?.def is not null && UnityData.IsInMainThread)
         {
             WorldSettlementFC.traitCachedIcon.SetValue(settlements[0].def, ContentFinder<Texture2D>.Get(iconPath));
         }
 
         foreach (WorldSettlementFC settlement in settlements)
         {
-            if (settlement?.def != null)
+            if (settlement?.def is not null)
             {
                 settlement.def.expandingIconTexture = iconPath;
             }
-            if (settlement?.Faction?.def != null)
+            if (settlement?.Faction?.def is not null)
             {
                 settlement.Faction.def.factionIconPath = iconPath;
                 factionDefIconCache?.SetValue(settlement.Faction.def, null);
@@ -2148,15 +2148,15 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
                 replacingDef = DefDatabase<FactionDef>.GetNamedSilentFail("TribeCivil");
                 break;
         }
-        if (replacingDef.backstoryFilters != null && replacingDef.backstoryFilters.Count != 0)
+        if (replacingDef.backstoryFilters is not null && replacingDef.backstoryFilters.Count != 0)
             def.backstoryFilters = replacingDef.backstoryFilters;
         def.techLevel = tech;
         def.basicMemberKind = replacingDef.basicMemberKind;
-        if (replacingDef.apparelStuffFilter != null)
+        if (replacingDef.apparelStuffFilter is not null)
             def.apparelStuffFilter = replacingDef.apparelStuffFilter;
 
 
-        if (tech >= TechLevel.Spacer && def.apparelStuffFilter != null)
+        if (tech >= TechLevel.Spacer && def.apparelStuffFilter is not null)
         {
             def.apparelStuffFilter.SetAllow(DefDatabase<StuffCategoryDef>.GetNamedSilentFail("Synthread"), true);
             def.apparelStuffFilter.SetAllow(DefDatabase<StuffCategoryDef>.GetNamedSilentFail("Hyperweave"), true);
@@ -2254,7 +2254,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
                 resolved = DefDatabase<TraderKindDef>.GetNamedSilentFail("FC_Caravan_Empire_" + suffix);
             }
 
-            if (resolved is object)
+            if (resolved is not null)
                 result.Add(resolved);
         }
 
@@ -2401,7 +2401,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     /// </summary>
     private void SyncGoodwillWithAverages()
     {
-        if (settlements.Any() && FindFC.EmpireFaction != null)
+        if (settlements.Any() && FindFC.EmpireFaction is not null)
         {
             FindFC.EmpireFaction.TryAffectGoodwillWith(Find.FactionManager.OfPlayer,
                 (Convert.ToInt32(averageHappiness) - FindFC.EmpireFaction.PlayerGoodwill));
@@ -2435,7 +2435,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         {
             // FCEventMaker.ProcessEvents already warns and skips null-def events;
             // skip them here too to avoid an NRE that would abort daily validation.
-            if (evt.def == null) continue;
+            if (evt.def is null) continue;
             if (evt.def.defName == "settleNewColony")
             {
                 if (settlementCaravansList.Contains(evt.location))
@@ -2489,7 +2489,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         foreach (WorldSettlementFC settlement in settlements)
         {
             // Check for orphaned construction slots
-            if (settlement.BuildingsComp is object)
+            if (settlement.BuildingsComp is not null)
             {
                 List<BuildingFC> buildings = settlement.BuildingsComp.Buildings;
                 for (int slot = 0; slot < buildings.Count; slot++)
@@ -2564,9 +2564,9 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
                 Pawn p = spawned[i];
                 if (p is null || p.Dead || p.Destroyed) continue;
                 if (!(p.RaceProps?.Animal ?? false)) continue;      // animals only
-                if (p.GetLord() is object) continue;                // active caravan/delivery member
-                if (mil is object && mil.IsMercenaryPawn(p)) continue; // merc animals / bonded mounts
-                if (p.IsPrisoner || p.HostFaction is object) continue; // under player custody
+                if (p.GetLord() is not null) continue;                // active caravan/delivery member
+                if (mil is not null && mil.IsMercenaryPawn(p)) continue; // merc animals / bonded mounts
+                if (p.IsPrisoner || p.HostFaction is not null) continue; // under player custody
 
                 if (toEvict is null) toEvict = new List<Pawn>();
                 toEvict.Add(p);

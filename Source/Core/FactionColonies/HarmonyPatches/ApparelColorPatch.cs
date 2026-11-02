@@ -18,7 +18,7 @@ class Patch_PawnApparelGenerator_PostProcessApparel
         if (pawn is null) return;
         if (pawn.Faction != FindFC.EmpireFaction) return;
         FactionFC factionComp = FindFC.FactionComp;
-        if (factionComp == null) return;
+        if (factionComp is null) return;
         if (!factionComp.hasFactionColor && !factionComp.hasFactionColorSecondary) return;
         Color resolved = factionComp.ResolveApparelColor(apparel.def);
         apparel.SetColor(resolved, reportFailure: false);

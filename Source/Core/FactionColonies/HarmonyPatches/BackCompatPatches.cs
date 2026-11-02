@@ -24,7 +24,7 @@ static class BackCompatibleDefName_Patch
     static void Postfix(Type defType, ref string __result)
     {
         if (defType != typeof(PawnKindDef)) return;
-        if (DefDatabase<PawnKindDef>.GetNamedSilentFail(__result) != null) return;
+        if (DefDatabase<PawnKindDef>.GetNamedSilentFail(__result) is not null) return;
 
         foreach (string template in TemplateNames)
         {

@@ -27,7 +27,7 @@ public static class Patch_CaravanDefend_Vehicle
 {
     public static bool Prefix(WorldObjectComp_SettlementMilitary __instance, Caravan caravan)
     {
-        if (!(caravan is VehicleCaravan vehicleCaravan))
+        if (caravan is not VehicleCaravan vehicleCaravan)
             return true;
 
         VehicleCaravanDefend(__instance, vehicleCaravan);

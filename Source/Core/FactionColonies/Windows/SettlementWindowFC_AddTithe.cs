@@ -58,7 +58,7 @@ public class SettlementWindowFC_AddTithe : Window
         bool thingHasQuality = false;
         bool thingIsStuffable = false;
         float selectionPanelHeight = 0;
-        if (selectedThing != null)
+        if (selectedThing is not null)
         {
             thingHasQuality = CraftUtil.ThingHasQuality(selectedThing);
             thingIsStuffable = CraftUtil.ThingIsStuffable(selectedThing);
@@ -134,7 +134,7 @@ public class SettlementWindowFC_AddTithe : Window
             DrawRightPanel(rightPanel);
         }
 
-        if (selectedThing != null)
+        if (selectedThing is not null)
         {
             Rect selectionPanel = new Rect(boundingBox.x, boundingBox.yMax - selectionPanelHeight, boundingBox.width, selectionPanelHeight);
 
@@ -171,9 +171,9 @@ public class SettlementWindowFC_AddTithe : Window
             Rect selectedLabel = new Rect(selectionPanel.x + margin, panelY, selectionPanel.width - (margin * 2), choiceBox);
             Widgets.DrawHighlight(selectedLabel);
             string stuffStr = selectedStuff is null ? "" : $"{selectedStuff.LabelCap} ";
-            string qualityStr = (thingHasQuality && !(selectedQuality is null)) ? $" ({TextUtil.GetQualityLabelCap(selectedQuality)})" : "";
+            string qualityStr = (thingHasQuality && selectedQuality is not null) ? $" ({TextUtil.GetQualityLabelCap(selectedQuality)})" : "";
             string totalCost;
-            if (!(selectedThing is null) && (!thingIsStuffable || !(selectedStuff is null)) && (!thingHasQuality || !(selectedQuality is null)))
+            if (selectedThing is not null && (!thingIsStuffable || selectedStuff is not null) && (!thingHasQuality || selectedQuality is not null))
             {
                 totalCost = $"${Math.Round(resource.TitheThingValue(selectedThing, selectedStuff, selectedQuality ?? QualityCategory.Normal))}";
             }
@@ -198,7 +198,7 @@ public class SettlementWindowFC_AddTithe : Window
             bool canConfirm = true;
             string confirmTooltip = "";
 
-            if (thingIsStuffable && selectedStuff == null)
+            if (thingIsStuffable && selectedStuff is null)
             {
                 canConfirm = false;
                 confirmTooltip = "FCMustSelectStuff".Translate();
@@ -331,13 +331,13 @@ public class SettlementWindowFC_AddTithe : Window
                 }
 
                 // Keep selectedStuff if it's still valid for the new item
-                if (selectedStuff != null && (currentStuffs.Count == 0 || !currentStuffs.Contains(selectedStuff)))
+                if (selectedStuff is not null && (currentStuffs.Count == 0 || !currentStuffs.Contains(selectedStuff)))
                 {
                     selectedStuff = null;
                 }
                 if (CraftUtil.ThingHasQuality(iThing))
                 {
-                    if (selectedQuality == null)
+                    if (selectedQuality is null)
                     {
                         selectedQuality = QualityCategory.Normal;
                     }
@@ -460,11 +460,11 @@ public class SettlementWindowFC_AddTithe : Window
             case 1: // Name Z-A
                 return list.OrderByDescending(t => t.label, StringComparer.OrdinalIgnoreCase).ToList();
             case 2: // Price Low-High
-                if (isStuffList && selectedThing != null)
+                if (isStuffList && selectedThing is not null)
                     return list.OrderBy(t => CraftUtil.ThingValue(selectedThing, t, SelectedQuality)).ToList();
                 return list.OrderBy(t => t.BaseMarketValue).ToList();
             case 3: // Price High-Low
-                if (isStuffList && selectedThing != null)
+                if (isStuffList && selectedThing is not null)
                     return list.OrderByDescending(t => CraftUtil.ThingValue(selectedThing, t, SelectedQuality)).ToList();
                 return list.OrderByDescending(t => t.BaseMarketValue).ToList();
             default: // 0: Name A-Z

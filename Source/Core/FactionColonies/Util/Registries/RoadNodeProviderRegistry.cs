@@ -25,7 +25,7 @@ public static class RoadNodeProviderRegistry
         {
             foreach (PlanetTile tile in provider.GetRoadNodeTiles())
             {
-                if (tile.Valid && tile.Layer != null && tile.Layer.IsRootSurface)
+                if (tile.Valid && tile.Layer is not null && tile.Layer.IsRootSurface)
                     tileSet.Add(tile.tileId);
             }
         }, nameof(IRoadNodeProvider.GetRoadNodeTiles));

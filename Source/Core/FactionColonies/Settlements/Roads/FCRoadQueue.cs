@@ -183,7 +183,7 @@ public class FCRoadQueue : IExposable
         Scribe_Values.Look(ref nextRoadTick, "nextRoadTick");
         Scribe_Values.Look(ref daysBetweenTicks, "daysBetweenTicks");
         Scribe_Collections.Look(ref roadPaths, "roadPaths", LookMode.Deep);
-        if (roadPaths == null)
+        if (roadPaths is null)
             roadPaths = new List<FCRoadPath>();
 
         // Edge cost cache persistence. Wire format remains Dictionary<long, float>
@@ -619,13 +619,13 @@ public class FCRoadQueue : IExposable
             return true;
 
         // Background thread just completed — merge new edges into the live cache
-        if (pendingNewEdges is object)
+        if (pendingNewEdges is not null)
         {
             foreach (var kvp in pendingNewEdges)
                 edgeCostCache[kvp.Key] = kvp.Value;
             pendingNewEdges = null;
 
-            if (pendingLogMessage is object)
+            if (pendingLogMessage is not null)
             {
                 LogUtil.Message(pendingLogMessage);
                 pendingLogMessage = null;

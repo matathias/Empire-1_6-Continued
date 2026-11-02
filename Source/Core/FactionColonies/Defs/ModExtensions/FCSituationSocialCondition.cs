@@ -36,15 +36,15 @@ public class FCSocialConditionSet
 
     public bool Satisfied(Func<SocialStatType, double> read)
     {
-        if (clauses == null || clauses.Count == 0) return true;
+        if (clauses is null || clauses.Count == 0) return true;
         if (mode == FCRequirementMode.Any)
         {
             foreach (FCSocialClause c in clauses)
-                if (c != null && c.Satisfied(read(c.stat))) return true;
+                if (c is not null && c.Satisfied(read(c.stat))) return true;
             return false;
         }
         foreach (FCSocialClause c in clauses)
-            if (c != null && !c.Satisfied(read(c.stat))) return false;
+            if (c is not null && !c.Satisfied(read(c.stat))) return false;
         return true;
     }
 }
@@ -72,7 +72,7 @@ public class FCSituationSocialFactionCondition : FCSituationFactionCondition
     }
 
     public override bool ShouldSpawn(FactionFC faction) =>
-        spawnWhen != null && spawnWhen.Satisfied(s => Read(faction, s));
+        spawnWhen is not null && spawnWhen.Satisfied(s => Read(faction, s));
 
     public override bool ShouldAdvance(FactionFC faction) =>
         (advanceWhen ?? spawnWhen).Satisfied(s => Read(faction, s));
@@ -100,8 +100,8 @@ public class FCSituationSocialSettlementCondition : FCSituationSettlementConditi
     }
 
     public override bool ShouldSpawn(FactionFC faction, WorldSettlementFC settlement) =>
-        settlement != null && spawnWhen != null && spawnWhen.Satisfied(s => Read(settlement, s));
+        settlement is not null && spawnWhen is not null && spawnWhen.Satisfied(s => Read(settlement, s));
 
     public override bool ShouldAdvance(FactionFC faction, WorldSettlementFC settlement) =>
-        settlement != null && (advanceWhen ?? spawnWhen).Satisfied(s => Read(settlement, s));
+        settlement is not null && (advanceWhen ?? spawnWhen).Satisfied(s => Read(settlement, s));
 }

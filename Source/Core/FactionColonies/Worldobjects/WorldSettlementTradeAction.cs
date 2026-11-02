@@ -19,7 +19,7 @@ public class WorldSettlementTradeAction : CaravanArrivalAction
         FloatMenuAcceptanceReport acceptanceReport = base.StillValid(caravan, destinationTile);
         if (!acceptanceReport)
             return acceptanceReport;
-        return settlement != null && settlement.Tile != destinationTile
+        return settlement is not null && settlement.Tile != destinationTile
           ? (FloatMenuAcceptanceReport)false
           : CanTradeWith(caravan, settlement);
     }
@@ -41,7 +41,7 @@ public class WorldSettlementTradeAction : CaravanArrivalAction
       Caravan caravan,
       WorldSettlementFC settlement)
     {
-        return settlement != null && settlement.Spawned && (!settlement.HasMap) &&
+        return settlement is not null && settlement.Spawned && (!settlement.HasMap) &&
                (settlement.CanTradeNow) && HasNegotiator(caravan, settlement);
     }
 
@@ -49,7 +49,7 @@ public class WorldSettlementTradeAction : CaravanArrivalAction
     {
         Pawn bestNegotiator =
           BestCaravanPawnUtility.FindBestNegotiator(caravan, settlement.Faction, settlement.TraderKind);
-        return bestNegotiator != null && !bestNegotiator.skills.GetSkill(SkillDefOf.Social).TotallyDisabled;
+        return bestNegotiator is not null && !bestNegotiator.skills.GetSkill(SkillDefOf.Social).TotallyDisabled;
     }
 
     private static FloatMenuAcceptanceReport CheckSettlementAndNegotiator(WorldSettlementFC worldSettlementFC, Pawn bestNegotiator)

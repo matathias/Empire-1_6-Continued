@@ -43,7 +43,7 @@ public class PatchNotesDisplayWindow : Window
 
     private static List<PatchNoteDef> GetPatchNoteDefs()
     {
-        if (cachedPatchNoteDefs == null)
+        if (cachedPatchNoteDefs is null)
         {
             cachedPatchNoteDefs = DefDatabase<PatchNoteDef>.AllDefsListForReading.ListFullCopy();
             cachedPatchNoteDefs.SortByDescending(def => def.VersionSortKey);
@@ -118,7 +118,7 @@ public class PatchNotesDisplayWindow : Window
             PatchNoteDef def = sortedDefs[i];
             if (def.Major != currentMajor || def.Minor != currentMinor)
             {
-                if (current != null) result.Add(current);
+                if (current is not null) result.Add(current);
                 currentMajor = def.Major;
                 currentMinor = def.Minor;
                 current = new PatchNoteGroup
@@ -138,7 +138,7 @@ public class PatchNotesDisplayWindow : Window
             if (def.IsNewerThan(lsMajor, lsMinor, lsPatch))
                 current.hasNewEntries = true;
         }
-        if (current != null) result.Add(current);
+        if (current is not null) result.Add(current);
 
         // Compute date ranges
         foreach (PatchNoteGroup g in result)

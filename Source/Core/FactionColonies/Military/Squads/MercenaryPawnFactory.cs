@@ -46,7 +46,7 @@ public static class MercenaryPawnFactory
         if (mech is null) return;
 
         Faction empireFaction = FindFC.EmpireFaction;
-        if (empireFaction != null && mech.Faction != empireFaction)
+        if (empireFaction is not null && mech.Faction != empireFaction)
             mech.SetFaction(empireFaction);
 
         // Mechanoids aren't flesh, so PawnComponentsUtility only creates a relations tracker for a mech
@@ -124,7 +124,7 @@ public static class MercenaryPawnFactory
     {
         if (mech is null) return;
         Lord lord = mech.GetLord();
-        if (lord?.CurLordToil != null && lord.CurLordToil.AssignsDuties && mech.mindState?.duty is null)
+        if (lord?.CurLordToil is not null && lord.CurLordToil.AssignsDuties && mech.mindState?.duty is null)
             lord.CurLordToil.UpdateAllDuties();
     }
 
@@ -145,7 +145,7 @@ public static class MercenaryPawnFactory
             // A destroyed mech has a null relations tracker; TryRemoveDirectRelation dereferences
             // otherPawn.relations and would NRE, so strip the relation directly from the overseer's
             // list. For a live mech, use the proper API (handles the reverse link + caches).
-            if (mech.relations != null)
+            if (mech.relations is not null)
             {
                 rel.TryRemoveDirectRelation(PawnRelationDefOf.Overseer, mech);
             }
@@ -155,7 +155,7 @@ public static class MercenaryPawnFactory
                 for (int i = rels.Count - 1; i >= 0; i--)
                 {
                     DirectPawnRelation r = rels[i];
-                    if (r != null && r.def == PawnRelationDefOf.Overseer && r.otherPawn == mech)
+                    if (r is not null && r.def == PawnRelationDefOf.Overseer && r.otherPawn == mech)
                         rels.RemoveAt(i);
                 }
             }
@@ -195,9 +195,9 @@ public static class MercenaryPawnFactory
                 // Test the relation on the OVERSEER's side (authoritative) rather than m.GetOverseer()
                 // (the mech's reflexive entry can be out of sync after a faction swap), so we never
                 // re-add an existing relation — that logs "Tried to add the same relation twice".
-                bool relationExists = overseer.relations != null
+                bool relationExists = overseer.relations is not null
                     && overseer.relations.DirectRelationExists(PawnRelationDefOf.Overseer, m);
-                if (!relationExists && overseer.relations != null && m.relations != null)
+                if (!relationExists && overseer.relations is not null && m.relations is not null)
                 {
                     // For a player-faction overseer, AddDirectRelation -> OnRelationCreated already
                     // assigns a control group, so the GetControlGroup check below short-circuits.
@@ -232,22 +232,22 @@ public static class MercenaryPawnFactory
     /// </summary>
     public static void TryAssignSecurityGuard(MercenarySquadFC squad, Mercenary merc)
     {
-        if (squad is null || merc?.pawn?.genes == null) return;
+        if (squad is null || merc?.pawn?.genes is null) return;
         // Don't overwrite a manually-assigned animal
-        if (merc.animals != null && merc.animals.Any()) return;
+        if (merc.animals is not null && merc.animals.Any()) return;
 
         FactionFC factionFc = FindFC.FactionComp;
-        if (factionFc?.xenotypeFilter == null) return;
+        if (factionFc?.xenotypeFilter is null) return;
 
         XenotypeFilter xenoFilter = factionFc.xenotypeFilter;
         List<PawnKindDef> guardOptions = null;
 
         XenotypeDef mercXenotype = merc.pawn.genes.Xenotype;
-        if (mercXenotype != null && FactionCache.XenotypeIsNonViolent(mercXenotype))
+        if (mercXenotype is not null && FactionCache.XenotypeIsNonViolent(mercXenotype))
         {
             guardOptions = xenoFilter.GetSecurityGuardsForXenotype(mercXenotype);
         }
-        else if (merc.pawn.genes.CustomXenotype != null)
+        else if (merc.pawn.genes.CustomXenotype is not null)
         {
             string customName = merc.pawn.genes.CustomXenotype.name;
             if (FactionCache.CustomXenotypeIsNonViolent(customName))
@@ -256,7 +256,7 @@ public static class MercenaryPawnFactory
             }
         }
 
-        if (guardOptions != null && guardOptions.Any())
+        if (guardOptions is not null && guardOptions.Any())
         {
             PawnKindDef guardKind = guardOptions.RandomElement();
             Mercenary guardAnimal = new Mercenary(true);
@@ -277,7 +277,7 @@ public static class MercenaryPawnFactory
         // Fall back to Human only when no race was requested. Race weight controls
         // random race selection (e.g. for default fighters); designed loadouts are
         // explicit player choices and must be respected even at weight 0.
-        if (race == null)
+        if (race is null)
         {
             raceChoice = PawnKindTemplateUtil.GetFighterForRace(ThingDefOf.Human);
         }
@@ -287,12 +287,12 @@ public static class MercenaryPawnFactory
         try
         {
             PawnGenerationRequest request;
-            if (_customXenotypeName != null)
+            if (_customXenotypeName is not null)
             {
                 CustomXenotype custom = null;
                 FactionCache.CustomXenotypesDecoder?.TryGetValue(_customXenotypeName, out custom);
 
-                if (custom != null)
+                if (custom is not null)
                     request = FCPawnGenerator.WorkerOrMilitaryRequest(raceChoice, custom, fixedGender);
                 else
                 {
@@ -307,10 +307,10 @@ public static class MercenaryPawnFactory
             newPawn = FCPawnGenerator.GenerateWithForcedXenotype(request);
 
             // Set faction after generation (since we generate without faction to avoid xenotype forcing)
-            if (newPawn != null && newPawn.Faction == null)
+            if (newPawn is not null && newPawn.Faction is null)
             {
                 var empireFaction = FindFC.EmpireFaction;
-                if (empireFaction != null)
+                if (empireFaction is not null)
                 {
                     newPawn.SetFaction(empireFaction);
                 }
@@ -322,7 +322,7 @@ public static class MercenaryPawnFactory
         }
 
         // Fallback 1: Try with Baseliner xenotype and NO faction (avoids faction xenotype forcing)
-        if (newPawn == null)
+        if (newPawn is null)
         {
             LogUtil.Warning($"Pawn generation failed for {raceChoice?.defName}. Trying Baseliner fallback without faction.");
             try
@@ -347,10 +347,10 @@ public static class MercenaryPawnFactory
                 newPawn = PawnGenerator.GeneratePawn(simpleRequest);
 
                 // Set the faction after generation
-                if (newPawn != null)
+                if (newPawn is not null)
                 {
                     var empireFaction = FindFC.EmpireFaction;
-                    if (empireFaction != null)
+                    if (empireFaction is not null)
                     {
                         newPawn.SetFaction(empireFaction);
                     }
@@ -363,7 +363,7 @@ public static class MercenaryPawnFactory
         }
 
         // Fallback 2: Absolute minimal request - no faction, no xenotype, no violence requirement
-        if (newPawn == null)
+        if (newPawn is null)
         {
             LogUtil.Warning("All standard generation failed. Trying minimal fallback.");
             try
@@ -387,10 +387,10 @@ public static class MercenaryPawnFactory
                 newPawn = PawnGenerator.GeneratePawn(fallbackRequest);
 
                 // Set the faction after generation
-                if (newPawn != null)
+                if (newPawn is not null)
                 {
                     var empireFaction = FindFC.EmpireFaction;
-                    if (empireFaction != null)
+                    if (empireFaction is not null)
                     {
                         newPawn.SetFaction(empireFaction);
                     }
@@ -403,13 +403,13 @@ public static class MercenaryPawnFactory
         }
 
         // Final check - if still null, we cannot proceed
-        if (newPawn == null)
+        if (newPawn is null)
         {
             LogUtil.Error("Critical error - could not generate any pawn for mercenary squad. Skipping this mercenary.");
             return;
         }
 
-        if (newPawn.kindDef == null)
+        if (newPawn.kindDef is null)
         {
             newPawn.kindDef = raceChoice ?? PawnKindDefOf.Colonist;
             LogUtil.Warning($"MercenaryPawnFactory.CreateNewPawn: detected null kindDef, setting to default");
@@ -420,7 +420,7 @@ public static class MercenaryPawnFactory
 
         // Install the designed implants (bionics/prosthetics/etc.) before the pawn is used.
         // Skipped on the degraded fallbacks only if the loadout is absent.
-        if (loadout != null)
+        if (loadout is not null)
         {
             MilUnitFC.ApplyImplantsToPawn(newPawn, loadout);
             MilUnitFC.ApplyPsycastsToPawn(newPawn, loadout);

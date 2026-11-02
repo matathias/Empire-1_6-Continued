@@ -29,7 +29,7 @@ public class MilitaryJobHandler_Defend : MilitaryJobHandler
     {
         // Settlement targets go through BattlefieldContext.StartDefense, which decides auto vs
         // manual internally. External IRaidTarget objects have no map, so always auto-resolve.
-        return op?.targetObject is WorldSettlementFC s && s.MilitaryComp is object;
+        return op?.targetObject is WorldSettlementFC s && s.MilitaryComp is not null;
     }
 
     public override void OnManualResolve(MilitaryOperation op)
@@ -57,7 +57,7 @@ public class MilitaryJobHandler_Defend : MilitaryJobHandler
         if (op is null || result is null) return;
         if (result.winner == BattleWinner.Error) return;
 
-        if (!(op.targetObject is WorldSettlementFC target)) return;
+        if (op.targetObject is not WorldSettlementFC target) return;
         // Guard: don't apply Empire-style settlement effects to a settlement that isn't
         // tracked by Empire (no military comp).
         if (target.MilitaryComp is null) return;
@@ -113,7 +113,7 @@ internal static class DefensiveBattleEffects
         faction.AddExperienceToFactionLevel(5f);
         // Threat adaptation runs in MilitaryOperation.CompleteBattle for every Empire battle.
 
-        bool overwhelming = result is object && result.IsOverwhelmingVictory;
+        bool overwhelming = result is not null && result.IsOverwhelmingVictory;
         // Overwhelming-victory reward credits the squad's home settlement (matches the old
         // CompleteBattle behavior); falls back to the defended settlement for ghost defenses.
         WorldSettlementFC rewardHome = op?.defender?.homeSettlement ?? settlement;
@@ -121,7 +121,7 @@ internal static class DefensiveBattleEffects
 
         string attackerName = AttackerName(op, result);
 
-        if (activeAccumulator is object)
+        if (activeAccumulator is not null)
         {
             double hap = 0.0, loy = 0.0;
             if (overwhelming)
@@ -173,7 +173,7 @@ internal static class DefensiveBattleEffects
         // multiplies the settlement-side penalty set. Mirrors the OV cooldown skip on the
         // winning side. Applied before the destruction-chance threshold is computed so the
         // boosted destruction stat also drives the level-demotion roll below.
-        bool isCrushingDefeat = result is object && result.IsCrushingDefeatForDefender;
+        bool isCrushingDefeat = result is not null && result.IsCrushingDefeatForDefender;
         if (isCrushingDefeat)
         {
             float pm = FCSettings.crushingDefeatPenaltyMultiplier;
@@ -205,7 +205,7 @@ internal static class DefensiveBattleEffects
         if (displayHappiness > 0) fragment += "\n  - " + "FCDefenseFailureHappinessLoss".Translate(displayHappiness);
         if (displayLoyalty > 0) fragment += "\n  - " + "FCDefenseFailureLoyaltyLoss".Translate(displayLoyalty);
 
-        if (canDestroyBuildings && settlement?.BuildingsComp != null)
+        if (canDestroyBuildings && settlement?.BuildingsComp is not null)
         {
             List<int> candidates = new List<int>();
             for (int k = 0; k < settlement.BuildingsComp.NumBuildingSlots; k++)
@@ -257,7 +257,7 @@ internal static class DefensiveBattleEffects
         int reportId = BattleArchiveUtil.ArchiveAndGetId(op, op?.result, BattleOperationKind.Defense);
         string attackerName = AttackerName(op, result);
 
-        if (activeAccumulator is object)
+        if (activeAccumulator is not null)
         {
             activeAccumulator.AddLoss(op, isCrushingDefeat, reportId, attackerName, fragment);
             return;
@@ -360,7 +360,7 @@ internal static class DefensiveBattleEffects
         string deliveryMsg = BattlefieldFor(settlement)?.pendingDeliveryMessage;
         if (!string.IsNullOrEmpty(deliveryMsg))
             body += "\n\n" + deliveryMsg;
-        if (settlement.Map != null)
+        if (settlement.Map is not null)
             body += "\n\n" + "FCDefenseBattleOverLeaveMap".Translate();
     }
 

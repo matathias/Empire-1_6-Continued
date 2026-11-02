@@ -172,7 +172,7 @@ public class FCWindow_ColorPicker : Window
         List<Ideo> ideos = null;
         try
         {
-            if (Find.IdeoManager != null)
+            if (Find.IdeoManager is not null)
                 ideos = Find.IdeoManager.IdeosListForReading;
         }
         catch (Exception ex)
@@ -180,7 +180,7 @@ public class FCWindow_ColorPicker : Window
             LogUtil.Warning("IdeoManager not available for color picker: " + ex);
         }
 
-        if (ideos == null || ideos.Count == 0)
+        if (ideos is null || ideos.Count == 0)
             return y;
 
         int visibleCount = 0;

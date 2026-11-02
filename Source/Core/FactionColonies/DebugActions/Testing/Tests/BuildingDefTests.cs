@@ -11,9 +11,9 @@ public static class BuildingDefTests
     {
         // Find a building with empty allow and block lists
         BuildingFCDef building = DefDatabase<BuildingFCDef>.AllDefsListForReading
-            .FirstOrDefault(b => (b.settlementTypeAllowList == null || b.settlementTypeAllowList.Count == 0)
-                && (b.settlementTypeBlockList == null || b.settlementTypeBlockList.Count == 0));
-        if (building == null) TestAssert.Skip("No building with empty allow/block lists");
+            .FirstOrDefault(b => (b.settlementTypeAllowList is null || b.settlementTypeAllowList.Count == 0)
+                && (b.settlementTypeBlockList is null || b.settlementTypeBlockList.Count == 0));
+        if (building is null) TestAssert.Skip("No building with empty allow/block lists");
 
         WorldSettlementDef settlementDef = WorldSettlementDefOf.WorldSettlementDef_Surface;
         TestAssert.IsTrue(building.CanBeBuiltForSettlementType(settlementDef),
@@ -25,8 +25,8 @@ public static class BuildingDefTests
     {
         WorldSettlementDef settlementDef = WorldSettlementDefOf.WorldSettlementDef_Surface;
         BuildingFCDef building = DefDatabase<BuildingFCDef>.AllDefsListForReading
-            .FirstOrDefault(b => b.settlementTypeBlockList != null && b.settlementTypeBlockList.Contains(settlementDef));
-        if (building == null) TestAssert.Skip("No building blocks Surface settlement type");
+            .FirstOrDefault(b => b.settlementTypeBlockList is not null && b.settlementTypeBlockList.Contains(settlementDef));
+        if (building is null) TestAssert.Skip("No building blocks Surface settlement type");
 
         TestAssert.IsFalse(building.CanBeBuiltForSettlementType(settlementDef),
             $"{building.defName} should be blocked for Surface");
@@ -37,8 +37,8 @@ public static class BuildingDefTests
     {
         WorldSettlementDef settlementDef = WorldSettlementDefOf.WorldSettlementDef_Surface;
         BuildingFCDef building = DefDatabase<BuildingFCDef>.AllDefsListForReading
-            .FirstOrDefault(b => b.settlementTypeAllowList != null && b.settlementTypeAllowList.Contains(settlementDef));
-        if (building == null) TestAssert.Skip("No building has Surface in allow list");
+            .FirstOrDefault(b => b.settlementTypeAllowList is not null && b.settlementTypeAllowList.Contains(settlementDef));
+        if (building is null) TestAssert.Skip("No building has Surface in allow list");
 
         TestAssert.IsTrue(building.CanBeBuiltForSettlementType(settlementDef),
             $"{building.defName} should be allowed for Surface");
@@ -49,12 +49,12 @@ public static class BuildingDefTests
     {
         // Find a building with a non-empty allow list, then test with a settlement type NOT in it
         BuildingFCDef building = DefDatabase<BuildingFCDef>.AllDefsListForReading
-            .FirstOrDefault(b => b.settlementTypeAllowList != null && b.settlementTypeAllowList.Count > 0);
-        if (building == null) TestAssert.Skip("No building has an allow list");
+            .FirstOrDefault(b => b.settlementTypeAllowList is not null && b.settlementTypeAllowList.Count > 0);
+        if (building is null) TestAssert.Skip("No building has an allow list");
 
         WorldSettlementDef excluded = DefDatabase<WorldSettlementDef>.AllDefsListForReading
             .FirstOrDefault(sd => !building.settlementTypeAllowList.Contains(sd));
-        if (excluded == null) TestAssert.Skip("All settlement types are in the allow list");
+        if (excluded is null) TestAssert.Skip("All settlement types are in the allow list");
 
         TestAssert.IsFalse(building.CanBeBuiltForSettlementType(excluded),
             $"{building.defName} should NOT be buildable for {excluded.defName} (not in allow list)");
@@ -65,11 +65,11 @@ public static class BuildingDefTests
     {
         foreach (BuildingFCDef building in DefDatabase<BuildingFCDef>.AllDefsListForReading)
         {
-            if (building.settlementTypeAllowList == null || building.settlementTypeAllowList.Count == 0) continue;
+            if (building.settlementTypeAllowList is null || building.settlementTypeAllowList.Count == 0) continue;
 
             foreach (WorldSettlementDef allowed in building.settlementTypeAllowList)
             {
-                if (allowed.baseSettlementType == null) continue;
+                if (allowed.baseSettlementType is null) continue;
                 // allowed is a subtype — verify sibling subtypes are excluded
                 foreach (WorldSettlementDef sibling in DefDatabase<WorldSettlementDef>.AllDefsListForReading)
                 {
@@ -90,7 +90,7 @@ public static class BuildingDefTests
     {
         foreach (BuildingFCDef def in DefDatabase<BuildingFCDef>.AllDefsListForReading)
         {
-            if (def.upgrades == null) continue;
+            if (def.upgrades is null) continue;
             for (int i = 0; i < def.upgrades.Count; i++)
             {
                 TestAssert.IsNotNull(def.upgrades[i],
@@ -104,7 +104,7 @@ public static class BuildingDefTests
     {
         foreach (BuildingFCDef def in DefDatabase<BuildingFCDef>.AllDefsListForReading)
         {
-            if (def.requiredBuildings == null) continue;
+            if (def.requiredBuildings is null) continue;
             for (int i = 0; i < def.requiredBuildings.Count; i++)
             {
                 TestAssert.IsNotNull(def.requiredBuildings[i],

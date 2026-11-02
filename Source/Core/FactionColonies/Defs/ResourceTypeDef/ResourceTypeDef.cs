@@ -205,7 +205,7 @@ public class ResourceTypeDef : Def
         /* ConfigErrors already checked that ResourcePoolExtensions exists if isPoolResource is set, so
          * we won't bother with null-checking here. */
         IEnumerable<FloatMenuOption> options = GetModExtension<ResourcePoolExtension>().GetFactionMenuFloatMenuOptions(pool);
-        if (options != null)
+        if (options is not null)
         {
             foreach (FloatMenuOption option in options)
             {
@@ -541,7 +541,7 @@ public class ResourceTypeDef : Def
         }
 
         /* Check for any ResourceExtensions, and process them now. */
-        if (modExtensions != null)
+        if (modExtensions is not null)
         {
             foreach (ResourceFilterExtension ext in modExtensions.OfType<ResourceFilterExtension>())
             {
@@ -608,7 +608,7 @@ public class ResourceTypeDef : Def
         // Run filter extensions so dynamically-allowed items (e.g. crop outputs, animal races)
         // appear in the codex reference list regardless of research state, and so extensions can
         // record per-item research/tech requirements for display.
-        if (modExtensions != null)
+        if (modExtensions is not null)
         {
             foreach (ResourceFilterExtension ext in modExtensions.OfType<ResourceFilterExtension>())
             {
@@ -653,7 +653,7 @@ public class ResourceTypeDef : Def
 
         /* Run extensions at max tech level so they don't gate either. Pass a null ResourceFC
          * because there's no settlement context for an empire-wide buy filter. */
-        if (modExtensions != null)
+        if (modExtensions is not null)
         {
             foreach (ResourceFilterExtension ext in modExtensions.OfType<ResourceFilterExtension>())
             {
@@ -668,11 +668,11 @@ public class ResourceTypeDef : Def
     }
     public static int SortForUI(ResourceTypeDef a, ResourceTypeDef b)
     {
-        if (a == null)
+        if (a is null)
         {
             return 1;
         }
-        if (b == null)
+        if (b is null)
         {
             return -1;
         }
@@ -701,7 +701,7 @@ public class ResourceTypeDef : Def
                 {
                     yield return "maxTechLevel " + thingDefRestriction.maxTechLevel + " is earlier than minTechLevel " + thingDefRestriction.minTechLevel;
                 }
-                if (thingBlockList != null && thingBlockList.Contains(thingDefRestriction.thingDef))
+                if (thingBlockList is not null && thingBlockList.Contains(thingDefRestriction.thingDef))
                 {
                     yield return "thingDefRestriction " + thingDefRestriction.thingDef.defName + " appears in both thingAllowList and thingBlockList for ResourceTypeDef " + this.defName;
                 }
@@ -715,7 +715,7 @@ public class ResourceTypeDef : Def
                 {
                     yield return "maxTechLevel " + thingCategoryDefRestriction.maxTechLevel + " is earlier than minTechLevel " + thingCategoryDefRestriction.minTechLevel;
                 }
-                if (thingCategoryBlockList != null)
+                if (thingCategoryBlockList is not null)
                 {
                     if (thingCategoryBlockList.Contains(thingCategoryDefRestriction.thingCategoryDef))
                     {
@@ -740,7 +740,7 @@ public class ResourceTypeDef : Def
         }
         foreach (SkillDef skillDef in associatedSkills)
         {
-            if (skillDef == null)
+            if (skillDef is null)
             {
                 yield return "associatedSkills contains an unresolved SkillDef entry in ResourceTypeDef " + this.defName;
             }
@@ -800,7 +800,7 @@ public class ResourceTypeDef : Def
                 yield return "isPoolResource is TRUE but there is no ResourcePoolExtension in defModExtensions for ResourceTypeDef " + this.defName;
             }
         }
-        if (productionAdditiveStat == null)
+        if (productionAdditiveStat is null)
         {
             yield return "productionAdditiveStat is not set for ResourceTypeDef " + this.defName;
         }
@@ -808,7 +808,7 @@ public class ResourceTypeDef : Def
         {
             yield return "productionAdditiveStat must have Additive aggregation for ResourceTypeDef " + this.defName;
         }
-        if (productionMultiplierStat == null)
+        if (productionMultiplierStat is null)
         {
             yield return "productionMultiplierStat is not set for ResourceTypeDef " + this.defName;
         }

@@ -82,7 +82,7 @@ public static class FactionCache
             return fieldInfo;
         }
         fieldInfo = typ.GetField(field);
-        if (fieldInfo == null)
+        if (fieldInfo is null)
         {
             LogUtil.Warning($"FactionCache.GetFieldCacheValue: field '{field}' not found on type '{typ.FullName}'");
         }
@@ -100,7 +100,7 @@ public static class FactionCache
             {
                 _cachedFactionConditionedSituationDefs = new List<FCSituationDef>();
                 foreach (FCSituationDef def in DefDatabase<FCSituationDef>.AllDefsListForReading)
-                    if (def.scope == FCSituationScope.Faction && def.FactionCondition != null)
+                    if (def.scope == FCSituationScope.Faction && def.FactionCondition is not null)
                         _cachedFactionConditionedSituationDefs.Add(def);
             }
             return _cachedFactionConditionedSituationDefs;
@@ -116,7 +116,7 @@ public static class FactionCache
             {
                 _cachedSettlementConditionedSituationDefs = new List<FCSituationDef>();
                 foreach (FCSituationDef def in DefDatabase<FCSituationDef>.AllDefsListForReading)
-                    if (def.scope == FCSituationScope.Settlement && def.SettlementCondition != null)
+                    if (def.scope == FCSituationScope.Settlement && def.SettlementCondition is not null)
                         _cachedSettlementConditionedSituationDefs.Add(def);
             }
             return _cachedSettlementConditionedSituationDefs;
@@ -128,7 +128,7 @@ public static class FactionCache
     {
         get
         {
-            if (_cachedCustomXenotypeList != null)
+            if (_cachedCustomXenotypeList is not null)
                 return _cachedCustomXenotypeList;
 
             List<CustomXenotype> list = BuildMergedCustomXenotypeList();
@@ -150,11 +150,11 @@ public static class FactionCache
         var seenNames = new HashSet<string>();
 
         // Per-save entries first (preferred)
-        if (perSave != null)
+        if (perSave is not null)
         {
             foreach (CustomXenotype x in perSave)
             {
-                if (x?.name != null && seenNames.Add(x.name))
+                if (x?.name is not null && seenNames.Add(x.name))
                     merged.Add(x);
             }
         }
@@ -168,11 +168,11 @@ public static class FactionCache
             try
             {
                 List<CustomXenotype> disk = CharacterCardUtility.CustomXenotypesForReading;
-                if (disk != null)
+                if (disk is not null)
                 {
                     foreach (CustomXenotype x in disk)
                     {
-                        if (x?.name != null && seenNames.Add(x.name))
+                        if (x?.name is not null && seenNames.Add(x.name))
                             merged.Add(x);
                     }
                 }
@@ -217,7 +217,7 @@ public static class FactionCache
             {
                 Dictionary<string, CustomXenotype> decoder = new Dictionary<string, CustomXenotype>();
                 List<CustomXenotype> xenos = CustomXenotypes;
-                if (xenos != null)
+                if (xenos is not null)
                 {
                     foreach (CustomXenotype xenotype in xenos)
                     {
@@ -246,12 +246,12 @@ public static class FactionCache
     {
         get
         {
-            if (_cachedRaceList == null)
+            if (_cachedRaceList is null)
             {
                 _cachedRaceList = new List<ThingDef>();
                 foreach (PawnKindDef pawnKind in AllPawnKindDefs)
                 {
-                    if (pawnKind.race != null && !_cachedRaceList.Any(r => r.defName == pawnKind.race.defName) && (pawnKind.race == ThingDefOf.Human || pawnKind.IsHumanLikeRace()))
+                    if (pawnKind.race is not null && !_cachedRaceList.Any(r => r.defName == pawnKind.race.defName) && (pawnKind.race == ThingDefOf.Human || pawnKind.IsHumanLikeRace()))
                     {
                         _cachedRaceList.Add(pawnKind.race);
                     }
@@ -274,10 +274,10 @@ public static class FactionCache
     public static List<PawnKindDef> AllControllableMechKinds => _cachedControllableMechKinds ??
         (_cachedControllableMechKinds = (!ModsConfig.BiotechActive
             ? new List<PawnKindDef>()
-            : AllPawnKindDefs.Where(kind => kind?.race?.race != null
+            : AllPawnKindDefs.Where(kind => kind?.race?.race is not null
                     && kind.race.race.IsMechanoid
-                    && kind.race.GetCompProperties<CompProperties_OverseerSubject>() != null
-                    && kind.race.statBases != null
+                    && kind.race.GetCompProperties<CompProperties_OverseerSubject>() is not null
+                    && kind.race.statBases is not null
                     && kind.race.statBases.Any(s => s.stat == StatDefOf.BandwidthCost))
                 .ToList()));
 
@@ -314,8 +314,8 @@ public static class FactionCache
             return false; // no gestation recipe — the player can't build this mech at all
         foreach (RecipeDef r in recipes)
         {
-            if (r.researchPrerequisite != null && !r.researchPrerequisite.IsFinished) continue;
-            if (r.researchPrerequisites != null && r.researchPrerequisites.Any(p => !p.IsFinished)) continue;
+            if (r.researchPrerequisite is not null && !r.researchPrerequisite.IsFinished) continue;
+            if (r.researchPrerequisites is not null && r.researchPrerequisites.Any(p => !p.IsFinished)) continue;
             return true;
         }
         return false;
@@ -454,7 +454,7 @@ public static class FactionCache
     {
         get
         {
-            if (_cachedViolentCustomXenotypeList != null)
+            if (_cachedViolentCustomXenotypeList is not null)
                 return _cachedViolentCustomXenotypeList;
 
             List<CustomXenotype> list = CustomXenotypes.Where(x => !CustomXenotypeIsNonViolent(x)).ToList();
@@ -593,7 +593,7 @@ public static class FactionCache
                 _cachedRequiredByMap = new Dictionary<BuildingFCDef, List<BuildingFCDef>>();
                 foreach (BuildingFCDef building in DefDatabase<BuildingFCDef>.AllDefsListForReading)
                 {
-                    if (building.requiredBuildings == null) continue;
+                    if (building.requiredBuildings is null) continue;
                     foreach (BuildingFCDef req in building.requiredBuildings)
                     {
                         if (!_cachedRequiredByMap.TryGetValue(req, out List<BuildingFCDef> list))
@@ -642,7 +642,7 @@ public static class FactionCache
                 _cachedHostileMilitaryJobs = new List<MilitaryJobDef>();
                 foreach (MilitaryJobDef job in DefDatabase<MilitaryJobDef>.AllDefsListForReading)
                 {
-                    if (job.floatMenuLabelKey != null)
+                    if (job.floatMenuLabelKey is not null)
                         _cachedHostileMilitaryJobs.Add(job);
                 }
             }
@@ -774,17 +774,17 @@ public static class FactionCache
                 _cachedEventFollowUpDefNames = new HashSet<string>();
                 foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)
                 {
-                    if (def.followingEvent != null) _cachedEventFollowUpDefNames.Add(def.followingEvent.defName);
-                    if (def.followingEvent2 != null) _cachedEventFollowUpDefNames.Add(def.followingEvent2.defName);
+                    if (def.followingEvent is not null) _cachedEventFollowUpDefNames.Add(def.followingEvent.defName);
+                    if (def.followingEvent2 is not null) _cachedEventFollowUpDefNames.Add(def.followingEvent2.defName);
 
                     // Option success/fail targets are also continuations, not independent triggers,
                     // so they must be excluded from the settings list just like followingEvents.
-                    if (def.options != null)
+                    if (def.options is not null)
                     {
                         foreach (FCOptionDef opt in def.options)
                         {
-                            if (opt?.successEvent != null) _cachedEventFollowUpDefNames.Add(opt.successEvent.defName);
-                            if (opt?.failEvent != null) _cachedEventFollowUpDefNames.Add(opt.failEvent.defName);
+                            if (opt?.successEvent is not null) _cachedEventFollowUpDefNames.Add(opt.successEvent.defName);
+                            if (opt?.failEvent is not null) _cachedEventFollowUpDefNames.Add(opt.failEvent.defName);
                         }
                     }
                 }
@@ -865,7 +865,7 @@ public static class FactionCache
     private static bool ChainHasOptions(FCEventDef def, HashSet<FCEventDef> visited)
     {
         if (def is null || !visited.Add(def)) return false;
-        if (def.options is object && def.options.Count > 0) return true;
+        if (def.options is not null && def.options.Count > 0) return true;
         if (!def.HasFollowUp) return false;
         if (ChainHasOptions(def.followingEvent, visited)) return true;
         if (def.splitEventFollows && ChainHasOptions(def.followingEvent2, visited)) return true;
@@ -900,12 +900,12 @@ public static class FactionCache
     // with a success/fail event). An options-only event with no follow-up does not count.
     private static bool LeadsToFollowUp(FCEventDef def)
     {
-        if (def.HasFollowUp && (def.followingEvent != null ||
-            (def.splitEventFollows && def.followingEvent2 != null))) return true;
-        if (def.options != null)
+        if (def.HasFollowUp && (def.followingEvent is not null ||
+            (def.splitEventFollows && def.followingEvent2 is not null))) return true;
+        if (def.options is not null)
         {
             foreach (FCOptionDef opt in def.options)
-                if (opt.successEvent != null || opt.failEvent != null) return true;
+                if (opt.successEvent is not null || opt.failEvent is not null) return true;
         }
         return false;
     }
@@ -920,7 +920,7 @@ public static class FactionCache
             CollectChainMembers(def.followingEvent, acc);
             if (def.splitEventFollows) CollectChainMembers(def.followingEvent2, acc);
         }
-        if (def.options != null)
+        if (def.options is not null)
         {
             foreach (FCOptionDef opt in def.options)
             {

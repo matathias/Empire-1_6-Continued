@@ -36,7 +36,7 @@ public static class PaymentUtil
         {
             LogUtil.Warning("PaymentUtil.PlaceThing: no tax map available; thing not placed: "
                 + (thing?.LabelCap ?? "<null>"));
-            if (thing is object && !thing.Destroyed) thing.Destroy();
+            if (thing is not null && !thing.Destroyed) thing.Destroy();
             return;
         }
 
@@ -254,7 +254,7 @@ public static class PaymentUtil
 
     public static List<Thing> GenerateRewardThings(double valueBase, ResourceEventRewardDef rewardDef)
     {
-        if (rewardDef == null)
+        if (rewardDef is null)
         {
             LogUtil.Error("GenerateRewardThings called with null rewardDef");
             return new List<Thing>();

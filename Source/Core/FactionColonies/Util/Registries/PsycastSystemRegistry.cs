@@ -18,12 +18,12 @@ public static class PsycastSystemRegistry
 
     public static void Register(IPsycastSystemProvider provider)
     {
-        if (provider is object && !_providers.Contains(provider)) _providers.Add(provider);
+        if (provider is not null && !_providers.Contains(provider)) _providers.Add(provider);
     }
 
     public static void Unregister(IPsycastSystemProvider provider)
     {
-        if (provider is object) _providers.Remove(provider);
+        if (provider is not null) _providers.Remove(provider);
     }
 
     public static IReadOnlyList<IPsycastSystemProvider> Providers => _providers;

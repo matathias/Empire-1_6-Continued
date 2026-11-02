@@ -14,16 +14,16 @@ public class SituationUpkeepDailyCharger : IDailyAccrualParticipant
     public void PostDailyAccrual(FactionFC faction)
     {
         FCSituationManager manager = faction?.situationManager;
-        if (manager == null) return;
+        if (manager is null) return;
 
         // Snapshot — an auto-revert switches approach but does not mutate the list.
         foreach (FCSituation sit in new List<FCSituation>(manager.Situations))
         {
             FCSituationApproachDef approach = sit.activeApproach;
-            if (approach == null || approach.upkeepSilver <= 0) continue;
+            if (approach is null || approach.upkeepSilver <= 0) continue;
 
             bool paid = PaymentUtil.TryPaySilver(approach.upkeepSilver, UpkeepReason, sit.targetSettlement);
-            if (!paid && sit.def.defaultApproach != null && approach != sit.def.defaultApproach)
+            if (!paid && sit.def.defaultApproach is not null && approach != sit.def.defaultApproach)
             {
                 manager.SwitchApproach(sit, sit.def.defaultApproach);
                 Messages.Message(

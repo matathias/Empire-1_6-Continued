@@ -21,7 +21,7 @@ public class CodexProvider_PoliciesEdicts : ICodexDynamicProvider
 
     private static string FormatList(List<FCPolicy> list)
     {
-        if (list == null) return "  " + "FCCodexPolicyNone".Translate();
+        if (list is null) return "  " + "FCCodexPolicyNone".Translate();
         string s = "";
         foreach (FCPolicy p in list)
         {

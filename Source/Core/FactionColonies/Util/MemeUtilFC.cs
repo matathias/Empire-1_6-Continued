@@ -31,6 +31,6 @@ public static class MemeUtilFC
     {
         if (memeDefName.NullOrEmpty()) return memeDefName;
         MemeDef meme = DefDatabase<MemeDef>.GetNamedSilentFail(memeDefName);
-        return meme is object ? meme.LabelCap.ToString() : memeDefName;
+        return meme is not null ? meme.LabelCap.ToString() : memeDefName;
     }
 }

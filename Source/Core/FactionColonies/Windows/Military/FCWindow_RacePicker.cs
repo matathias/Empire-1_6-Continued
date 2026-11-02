@@ -118,7 +118,7 @@ public class FCWindow_RacePicker : Window
             Close();
         }
 
-        bool canConfirm = selectedDef != null;
+        bool canConfirm = selectedDef is not null;
         Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
         {
@@ -126,10 +126,10 @@ public class FCWindow_RacePicker : Window
             {
                 unit.pawnKind = selectedDef;
                 // Custom xenotypes only apply to humans
-                if (selectedDef?.race != ThingDefOf.Human && unit.customXenotypeName != null)
+                if (selectedDef?.race != ThingDefOf.Human && unit.customXenotypeName is not null)
                 {
                     unit.customXenotypeName = null;
-                    if (unit.xenotype == null)
+                    if (unit.xenotype is null)
                         unit.xenotype = XenotypeDefOf.Baseliner;
                 }
                 unit.RerollPreviewPawn();

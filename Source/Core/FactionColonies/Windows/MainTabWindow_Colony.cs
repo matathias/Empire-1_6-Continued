@@ -66,7 +66,7 @@ public class MainTabWindow_Colony : MainTabWindow
     {
         base.PreOpen();
         faction = FindFC.FactionComp;
-        if (faction == null)
+        if (faction is null)
         {
             LogUtil.Error("WorldComp FactionFC is null - Something is wrong!");
             return;
@@ -137,7 +137,7 @@ public class MainTabWindow_Colony : MainTabWindow
         TextAnchor anchorBefore = Text.Anchor;
 
         Faction gfaction = FindFC.EmpireFaction;
-        if (gfaction == null)
+        if (gfaction is null)
         {
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Medium;
@@ -146,14 +146,14 @@ public class MainTabWindow_Colony : MainTabWindow
             {
                 ColonyUtil.CreatePlayerColonyFaction();
                 faction = FindFC.FactionComp;
-                if (faction != null)
+                if (faction is not null)
                 {
                     faction.factionCreated = true;
                     Find.WindowStack.Add(new FactionCustomizeWindowFc(faction));
-                    if (Find.CurrentMap.Parent != null)
+                    if (Find.CurrentMap.Parent is not null)
                     {
                         WorldSettlementFC wsfc = Find.WorldObjects.WorldObjectAt<WorldSettlementFC>(Find.CurrentMap.Parent.Tile);
-                        if (wsfc is object)
+                        if (wsfc is not null)
                         {
                             Messages.Message(
                                 "FCSetAsFactionCapital".Translate(wsfc.Name),
@@ -257,7 +257,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
         if (Widgets.ButtonImage(customizeBtn, TexLoad.iconCustomize))
         {
-            if (FindFC.EmpireFaction != null)
+            if (FindFC.EmpireFaction is not null)
                 Find.WindowStack.Add(new FactionCustomizeWindowFc(faction));
         }
     }
@@ -358,7 +358,7 @@ public class MainTabWindow_Colony : MainTabWindow
                 // null; ButtonImage(null) spams Unity errors. Fall back to an invisible button so
                 // the customize action still works.
                 Texture2D policyIcon = FindFC.PolicyManager.policies[i].def.IconLight;
-                bool policyClicked = policyIcon is object
+                bool policyClicked = policyIcon is not null
                     ? Widgets.ButtonImage(policyBox, policyIcon)
                     : Widgets.ButtonInvisible(policyBox);
                 if (policyClicked)
@@ -473,7 +473,7 @@ public class MainTabWindow_Colony : MainTabWindow
         FindFC.PolicyManager.ForEachBehavior(b =>
         {
             var buttons = b.GetMainTabActionButtons(faction);
-            if (buttons != null)
+            if (buttons is not null)
                 foreach (var btn in buttons)
                     actionButtons.Add(btn);
         });
@@ -625,7 +625,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
                 bool changedGui = false;
                 IEnumerable<FloatMenuOption> options = pool.GetFactionMenuFloatMenuOptions();
-                if (options == null || options.Count() == 0)
+                if (options is null || options.Count() == 0)
                 {
                     GUI.color = Color.gray;
                     changedGui = true;
@@ -1094,7 +1094,7 @@ public class MainTabWindow_Colony : MainTabWindow
             float lineH = rowH / 2f;
 
             // Top-left: Settlement name + bill kind (clickable, colored by bill type)
-            string settleName = bill.settlement != null ? bill.settlement.Name : "Null";
+            string settleName = bill.settlement is not null ? bill.settlement.Name : "Null";
             string kindLabel = string.IsNullOrEmpty(bill.label) ? "" : bill.label;
             string headerLabel = settleName + " - " + kindLabel;
             fontBefore = Text.Font;
@@ -1106,7 +1106,7 @@ public class MainTabWindow_Colony : MainTabWindow
             UIUtil.DrawColoredLabel(nameRect, headerLabel, accent);
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
-            if (Widgets.ButtonInvisible(nameRect) && bill.settlement != null)
+            if (Widgets.ButtonInvisible(nameRect) && bill.settlement is not null)
                 Find.WindowStack.Add(new SettlementWindowFc(bill.settlement));
             if (Mouse.IsOver(nameRect))
                 Widgets.DrawHighlight(nameRect);
@@ -1201,7 +1201,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
     private void DrawEventFilterBar(Rect barRect)
     {
-        if (cachedSortedCategories == null)
+        if (cachedSortedCategories is null)
         {
             cachedSortedCategories = FactionCache.FCEventCategoryDefs.OrderBy(c => c.displayOrder).ToList();
         }
@@ -1298,7 +1298,7 @@ public class MainTabWindow_Colony : MainTabWindow
     {
         // With no active situations the tab renders plainly, exactly as before. Once a situation
         // is active, split into Events/Situations subtabs (mirrors the military tab's subtab row).
-        bool hasSituations = faction.situationManager is object
+        bool hasSituations = faction.situationManager is not null
             && faction.situationManager.Situations.Count > 0;
         if (!hasSituations)
         {
@@ -1451,7 +1451,7 @@ public class MainTabWindow_Colony : MainTabWindow
             string locLabel = GetEventLocationLabel(evt);
             bool hasLocRect = false;
             Rect locRect = default(Rect);
-            if (locLabel != null)
+            if (locLabel is not null)
             {
                 fontBefore = Text.Font;
                 anchorBefore = Text.Anchor;
@@ -1524,8 +1524,8 @@ public class MainTabWindow_Colony : MainTabWindow
             // label opens the live battle window. The location label keeps its own
             // "open settlement window" behavior.
             if (evt.def == FCEventDefOf.autoResolveBattleRound
-                && evt.linkedOperation is object
-                && evt.linkedOperation.battleResult is object)
+                && evt.linkedOperation is not null
+                && evt.linkedOperation.battleResult is not null)
             {
                 bool overLoc = hasLocRect && Mouse.IsOver(locRect);
                 if (!overLoc && Mouse.IsOver(rowRect))
@@ -1563,12 +1563,12 @@ public class MainTabWindow_Colony : MainTabWindow
         if (evt.location != -1)
         {
             WorldSettlementFC settlement = faction.ReturnSettlementByLocation(evt.location);
-            if (settlement != null) return settlement.Name;
+            if (settlement is not null) return settlement.Name;
         }
         if (evt.source != -1)
         {
             WorldSettlementFC settlement = faction.ReturnSettlementByLocation(evt.source);
-            if (settlement != null) return settlement.Name;
+            if (settlement is not null) return settlement.Name;
         }
         return null;
     }
@@ -1596,7 +1596,7 @@ public class MainTabWindow_Colony : MainTabWindow
             List<FloatMenuOption> list = new List<FloatMenuOption>();
             foreach (WorldSettlementFC settlement in evt.settlementTraitLocations)
             {
-                if (settlement != null)
+                if (settlement is not null)
                 {
                     WorldSettlementFC cap = settlement;
                     list.Add(new FloatMenuOption(settlement.Name, delegate
@@ -1608,7 +1608,7 @@ public class MainTabWindow_Colony : MainTabWindow
             if (list.Count == 0)
                 list.Add(new FloatMenuOption("FCNone".Translate(), null));
 
-            if (list.Count == 1 && list[0].action != null)
+            if (list.Count == 1 && list[0].action is not null)
                 list[0].action();
             else
                 Find.WindowStack.Add(new FloatMenu(list));
@@ -1623,9 +1623,9 @@ public class MainTabWindow_Colony : MainTabWindow
             WorldSettlementFC fallback = null;
             if (evt.location != -1)
                 fallback = faction.ReturnSettlementByLocation(evt.location);
-            if (fallback == null && evt.source != -1)
+            if (fallback is null && evt.source != -1)
                 fallback = faction.ReturnSettlementByLocation(evt.source);
-            if (fallback != null)
+            if (fallback is not null)
                 Find.WindowStack.Add(new SettlementWindowFc(fallback));
         }
     }
@@ -1737,7 +1737,7 @@ public class MainTabWindow_Colony : MainTabWindow
         float innerW = tableRect.width - pad * 2f;
 
         // Build list of settlements with military comps
-        List<WorldSettlementFC> settlements = faction.settlements.Where(s => s.MilitaryComp != null).ToList();
+        List<WorldSettlementFC> settlements = faction.settlements.Where(s => s.MilitaryComp is not null).ToList();
 
         // Summary header — left: count
         GameFont fontBefore = Text.Font;
@@ -2095,7 +2095,7 @@ public class MainTabWindow_Colony : MainTabWindow
         Text.Anchor = TextAnchor.MiddleLeft;
         int underSquadDeploy = 0;
         int underMaxDeploy = 0;
-        bool slotUnderfunded = squad is object
+        bool slotUnderfunded = squad is not null
             && MilitaryFC.SquadExceedsSettlementBudget(
                 squad, settlement, out underSquadDeploy, out underMaxDeploy);
         UIUtil.DrawColoredLabel(squadNameLabel, squadName,
@@ -2110,7 +2110,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Left-aligned (anchor still MiddleLeft from the name); clamped with ellipsis + tooltip when
         // it doesn't fit. Mirrors the status shown in the Squads subtab.
         Rect statusRect = new Rect(squadNameLabel.xMax + margin, rect.y, statusW, rect.height);
-        if (squad is object)
+        if (squad is not null)
         {
             SquadStatusUtil.Resolve(squad, out string statusLabel, out Color statusColor, out _);
             string statusShown = Text.ClampTextWithEllipsis(statusRect, statusLabel);
@@ -2121,7 +2121,7 @@ public class MainTabWindow_Colony : MainTabWindow
         Text.Anchor = TextAnchor.MiddleCenter;
         Rect powerLabel = new Rect(statusRect.xMax + margin, rect.y, powW, rect.height);
         Rect depCostLabel = new Rect(powerLabel.xMax + margin, rect.y, depCostW, rect.height);
-        if (squad is object)
+        if (squad is not null)
         {
             double powerLevel = SquadPowerRegistry.Resolve(squad).militaryLevel;
             string powerLbl = (string)"FCSquadColPower".Translate() + ": " + powerLevel.ToString("0.0");
@@ -2136,7 +2136,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Set / Change squad — disabled when no hired squads exist (templates alone aren't
         // enough; the menu lists the live pool, not templates), or when the slot's squad is busy.
         bool noSquads = (militaryFC.mercenarySquads?.Count ?? 0) == 0;
-        bool slotBusy = squad != null && squad.IsBusy;
+        bool slotBusy = squad is not null && squad.IsBusy;
         Rect setRect = new Rect(bx, btnY, btnW, btnH);
         string setLabel = squad is null
             ? (string)"FCMilitaryTableSetSquad".Translate()
@@ -2152,7 +2152,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
         // Inspect (per-squad) — opens Dialog_SquadInspection on this slot's squad.
         // Always available even when busy so the player can read pawn state.
-        bool canInspect = squad != null;
+        bool canInspect = squad is not null;
         Rect inspectRect = new Rect(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(inspectRect, "FCMilitaryTableInspect".Translate(), disabled: !canInspect, highlighted: isHighlighted))
         {
@@ -2165,11 +2165,11 @@ public class MainTabWindow_Colony : MainTabWindow
         // Gated on IsAvailable (not just IsBusy) so underfunded squads and cooling-down
         // squads can't deploy. The squad-name tooltip explains the underfunded state.
         bool deployDisabled = squad is null || !squad.IsAvailable
-            || (squad.outfit is null && (squad.mercenaries?.Any(m => m?.pawn != null) != true));
+            || (squad.outfit is null && (squad.mercenaries?.Any(m => m?.pawn is not null) != true));
         Rect deployRect = new Rect(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(deployRect, "FCDeploy".Translate(), disabled: deployDisabled, highlighted: isHighlighted))
         {
-            if (squad != null)
+            if (squad is not null)
             {
                 Find.WindowStack.Add(new FloatMenu(SquadDeploymentOptions(settlement, squad)));
             }
@@ -2177,13 +2177,13 @@ public class MainTabWindow_Colony : MainTabWindow
         string deployTip;
         if (slotBusy) deployTip = "FCSquadCannotModifyBusyTip".Translate();
         else if (slotUnderfunded) deployTip = "FCMilSlotUnderfundedTip".Translate(settlement.Name, underSquadDeploy, underMaxDeploy);
-        else if (squad is object && squad.DeploymentCost() > 0) deployTip = "FCMilBtnDeployTipWithCost".Translate(squad.DeploymentCost(), FCSettings.deploymentBillLifespan_days);
+        else if (squad is not null && squad.DeploymentCost() > 0) deployTip = "FCMilBtnDeployTipWithCost".Translate(squad.DeploymentCost(), FCSettings.deploymentBillLifespan_days);
         else deployTip = "FCMilBtnDeployTip".Translate();
         TooltipHandler.TipRegion(deployRect, deployTip);
         bx += btnW + btnGap;
 
         // Auto-Defend toggle (per-squad)
-        bool canToggle = squad != null && !slotBusy;
+        bool canToggle = squad is not null && !slotBusy;
         bool autoDefendOn = squad?.autoDefend ?? false;
         Rect autoDefRect = new Rect(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(autoDefRect, "FCMilAutoDefend".Translate(),
@@ -2191,7 +2191,7 @@ public class MainTabWindow_Colony : MainTabWindow
             labelColor: autoDefendOn ? AccentUtil.MilReady : (Color?)null,
             highlighted: isHighlighted))
         {
-            if (squad != null) squad.autoDefend = !squad.autoDefend;
+            if (squad is not null) squad.autoDefend = !squad.autoDefend;
         }
         TooltipHandler.TipRegion(autoDefRect, slotBusy
             ? "FCSquadCannotModifyBusyTip".Translate()
@@ -2213,7 +2213,7 @@ public class MainTabWindow_Colony : MainTabWindow
             FindFC.PolicyManager.ForEachBehavior(b =>
             {
                 var options = b.GetExtraDeploymentOptions(faction, settlement, milComp);
-                if (options != null) extraOptions.AddRange(options);
+                if (options is not null) extraOptions.AddRange(options);
             });
             if (extraOptions.Any())
                 Find.WindowStack.Add(new FloatMenu(extraOptions));
@@ -2230,7 +2230,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
         foreach (MilitaryFireSupport support in militaryFC.fireSupportDefs)
         {
-            if (support.projectiles == null || support.projectiles.Count == 0)
+            if (support.projectiles is null || support.projectiles.Count == 0)
                 continue;
 
             float cost = support.ReturnTotalCost(settlement);
@@ -2284,7 +2284,7 @@ public class MainTabWindow_Colony : MainTabWindow
     private List<FloatMenuOption> DeploymentOptions(WorldSettlementFC settlement)
     {
         /* Morale lockout: present a single disabled option explaining why deploys are blocked. */
-        if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+        if (settlement is not null && settlement.TryGetSquadDeploymentBlock(out string lockReason))
             return new List<FloatMenuOption> { new FloatMenuOption(lockReason, null) };
 
         MercenarySquadFC primary = settlement?.FirstAvailableStationedSquad
@@ -2307,7 +2307,7 @@ public class MainTabWindow_Colony : MainTabWindow
     private List<FloatMenuOption> SquadDeploymentOptions(WorldSettlementFC settlement, MercenarySquadFC squad)
     {
         /* Morale lockout: present a single disabled option explaining why deploys are blocked. */
-        if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+        if (settlement is not null && settlement.TryGetSquadDeploymentBlock(out string lockReason))
             return new List<FloatMenuOption> { new FloatMenuOption(lockReason, null) };
 
         int cost = squad.DeploymentCost();
@@ -2363,7 +2363,7 @@ public class MainTabWindow_Colony : MainTabWindow
             w => w is FCWindow_Military existing &&
                  existing.GetMilitaryWindow().GetType() == content.GetType());
 
-        if (toRemove != null)
+        if (toRemove is not null)
         {
             toRemove.Close();
         }
@@ -2565,7 +2565,7 @@ public class MainTabWindow_Colony : MainTabWindow
             /* Settlement-level workload buttons inline in the section header - section is
              * only drawn when sList.Count > 0, so bulk-set is always meaningful. */
             WorldObjectComp_SettlementPrisoners sComp = s.PrisonerComp;
-            if (sComp is object)
+            if (sComp is not null)
             {
                 string sDefLabel = sComp.hasDefaultWorkloadOverride
                     ? "FCSetDefaultWorkloadShort".Translate() + ": " + PrisonerUtil.WorkloadLabel(sComp.defaultWorkloadOverride)

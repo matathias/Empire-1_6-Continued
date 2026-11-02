@@ -156,10 +156,10 @@ public class FCRoadPath : IExposable
 
     public static bool IsNewRoadBetter(RoadDef oldRoad, RoadDef newRoad)
     {
-        if (newRoad == null)
+        if (newRoad is null)
             return false;
 
-        if (oldRoad == null)
+        if (oldRoad is null)
             return true;
 
         return newRoad.priority > oldRoad.priority;

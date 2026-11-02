@@ -13,7 +13,7 @@ class TagEmpireCaravanHome
     static void Postfix(Faction faction, LordJob lordJob, Lord __result, IEnumerable<Pawn> startingPawns)
     {
         if (__result is null || faction != FindFC.EmpireFaction) return;
-        if (!(lordJob is LordJob_TradeWithColony)) return;
+        if (lordJob is not LordJob_TradeWithColony) return;
 
         FactionFC fc = FindFC.FactionComp;
         if (fc is null || startingPawns is null) return;
@@ -21,7 +21,7 @@ class TagEmpireCaravanHome
         TraderKindDef tk = null;
         foreach (Pawn p in startingPawns)
         {
-            if (p?.TraderKind != null)
+            if (p?.TraderKind is not null)
             {
                 tk = p.TraderKind;
                 break;
@@ -29,7 +29,7 @@ class TagEmpireCaravanHome
         }
 
         WorldSettlementFC home = EmpireDeathPenaltyUtil.ResolveCaravanHome(tk);
-        if (home is object)
+        if (home is not null)
             fc.RegisterCaravanHome(__result.loadID, home);
     }
 }

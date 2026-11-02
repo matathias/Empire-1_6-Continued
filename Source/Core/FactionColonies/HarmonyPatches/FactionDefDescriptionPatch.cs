@@ -34,18 +34,18 @@ class FactionDefDescriptionPatch
         }
 
         FactionFC factionComp = FindFC.FactionComp;
-        if (factionComp == null)
+        if (factionComp is null)
         {
             return;
         }
 
         XenotypeFilter filter = factionComp.xenotypeFilter;
-        if (filter == null)
+        if (filter is null)
         {
             return;
         }
 
-        if (!dirty && cachedDescription != null)
+        if (!dirty && cachedDescription is not null)
         {
             __result = cachedDescription;
             return;

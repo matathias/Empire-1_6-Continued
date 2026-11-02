@@ -30,7 +30,7 @@ public static class FoundingScreenHooks
 
     public static FoundingButtonOverride GetSettleButtonOverride(PlanetTile tile, WorldSettlementDef type)
     {
-        return SettleButtonOverride is object ? SettleButtonOverride(tile, type) : null;
+        return SettleButtonOverride is not null ? SettleButtonOverride(tile, type) : null;
     }
 
     public static void NotifySelectionChanged(PlanetTile tile, WorldSettlementDef type)

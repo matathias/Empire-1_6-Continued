@@ -73,7 +73,7 @@ public class FCEvent : IExposable, ILoadReferenceable
     /// </summary>
     public MilitaryOperation linkedOperation;
 
-    public bool HasLinkedOperation => linkedOperation is object;
+    public bool HasLinkedOperation => linkedOperation is not null;
 
     /// <summary>Lifecycle phase.
     /// <para> - Queued: in queue, awaiting timer.</para>
@@ -142,7 +142,7 @@ public class FCEvent : IExposable, ILoadReferenceable
         Scribe_Collections.Look(ref settlementTraitLocations, "settlementTraitLocations", LookMode.Reference);
         Scribe_Collections.Look(ref appliedStatSettlements, "appliedStatSettlements", LookMode.Reference);
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
-            appliedStatSettlements?.RemoveAll(s => s == null);
+            appliedStatSettlements?.RemoveAll(s => s is null);
         Scribe_Collections.Look(ref optionCostSnapshots, "optionCostSnapshots", LookMode.Value, LookMode.Value);
         Scribe_Collections.Look(ref goods, "goods", LookMode.Deep);
         Scribe_Values.Look(ref loadID, "loadID");

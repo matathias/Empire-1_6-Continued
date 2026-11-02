@@ -1359,7 +1359,7 @@ public class FCSettings : ModSettings
         var grouped = new Dictionary<string, List<FCEventDef>>();
         foreach (FCEventDef def in rootEvents)
         {
-            string catLabel = def.category != null ? def.category.LabelCap.ToString() : "FCOther".Translate().ToString();
+            string catLabel = def.category is not null ? def.category.LabelCap.ToString() : "FCOther".Translate().ToString();
             if (!grouped.ContainsKey(catLabel))
                 grouped[catLabel] = new List<FCEventDef>();
             grouped[catLabel].Add(def);
@@ -1685,7 +1685,7 @@ public class FCSettings : ModSettings
 
         ls.Gap(12f);
         FCRoadQueue queue = FindFC.RoadBuilder?.roadQueue;
-        if (queue is object && ls.ButtonText("FCSettingFlushRoadCache".Translate()))
+        if (queue is not null && ls.ButtonText("FCSettingFlushRoadCache".Translate()))
         {
             queue.FlushCache();
         }

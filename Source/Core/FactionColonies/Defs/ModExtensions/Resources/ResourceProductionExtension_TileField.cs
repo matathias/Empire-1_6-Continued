@@ -80,21 +80,21 @@ public class TileFieldCurve
             case TileField.RiverDistance:
                 {
                     SurfaceTile st = t as SurfaceTile;
-                    return st is object ? st.riverDist : defaultValue;
+                    return st is not null ? st.riverDist : defaultValue;
                 }
             case TileField.RoadCount:
                 {
                     SurfaceTile st = t as SurfaceTile;
                     if (st is null) return 0f;
                     List<SurfaceTile.RoadLink> roads = st.Roads;
-                    return roads is object ? roads.Count : 0f;
+                    return roads is not null ? roads.Count : 0f;
                 }
             case TileField.HasAnyRiver:
                 {
                     SurfaceTile st = t as SurfaceTile;
                     if (st is null) return 0f;
                     List<SurfaceTile.RiverLink> rivers = st.Rivers;
-                    return (rivers is object && rivers.Count > 0) ? 1f : 0f;
+                    return (rivers is not null && rivers.Count > 0) ? 1f : 0f;
                 }
             default:
                 return defaultValue;
@@ -164,7 +164,7 @@ public class ResourceProductionExtension_TileField : ResourceProductionExtension
     {
         if (!AppliesToTile(tile)) return;
 
-        if (additives != null)
+        if (additives is not null)
         {
             foreach (TileFieldCurve c in additives)
             {
@@ -172,7 +172,7 @@ public class ResourceProductionExtension_TileField : ResourceProductionExtension
                 if (v != 0) addAdditive($"tilefield_{c.field}", v, c.Label);
             }
         }
-        if (multipliers != null)
+        if (multipliers is not null)
         {
             foreach (TileFieldCurve c in multipliers)
             {

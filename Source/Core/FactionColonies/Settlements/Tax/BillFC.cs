@@ -88,7 +88,7 @@ public class BillFC : ILoadReferenceable, IExposable
     public void SetUniqueLoadID()
     {
         FactionFC comp = FindFC.FactionComp;
-        if (comp is object)
+        if (comp is not null)
         {
             loadID = comp.taxLedger.NextBillId();
         }

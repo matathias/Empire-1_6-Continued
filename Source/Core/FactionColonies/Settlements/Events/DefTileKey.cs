@@ -30,7 +30,7 @@ public struct DefTileKey : IEquatable<DefTileKey>
 
     public override int GetHashCode()
     {
-        int h1 = def is object ? def.GetHashCode() : 0;
+        int h1 = def is not null ? def.GetHashCode() : 0;
         int h2 = tile.GetHashCode();
         return (h1 * 397) ^ h2;
     }

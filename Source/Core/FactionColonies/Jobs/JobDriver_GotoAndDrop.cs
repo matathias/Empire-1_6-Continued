@@ -20,7 +20,7 @@ class JobDriver_GotoAndDrop : JobDriver_Goto
         {
             toil.AddFailCondition(delegate ()
             {
-                if (pawn.carryTracker.CarriedThing == null) return true;
+                if (pawn.carryTracker.CarriedThing is null) return true;
 
                 bool flag = pawn.Map.dangerWatcher.DangerRating == RimWorld.StoryDanger.High;
                 if (flag) pawn.carryTracker.TryDropCarriedThing(pawn.Position, ThingPlaceMode.Direct, out Thing thing);

@@ -22,7 +22,7 @@ public static class MercAutoTendRegistry
         RegistryDispatch.First(_list.Items, t =>
         {
             Pawn d = t.ProvideTendingDoctor(patient, settlement);
-            if (d is object) { doctor = d; return true; }
+            if (d is not null) { doctor = d; return true; }
             return false;
         }, nameof(IMercAutoTendProvider.ProvideTendingDoctor));
         return doctor;

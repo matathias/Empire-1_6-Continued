@@ -49,7 +49,7 @@ public static class ActionTypeTests
     public static void IsActionAllowed_OptOutAction_AllowedByDefault()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -68,7 +68,7 @@ public static class ActionTypeTests
     public static void IsActionAllowed_OptInAction_DisabledByDefault()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -95,7 +95,7 @@ public static class ActionTypeTests
     public static void IsActionAllowed_BlockedAction_Blocked()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -117,7 +117,7 @@ public static class ActionTypeTests
     public static void IsActionAllowed_EnabledAction_Enabled()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -139,7 +139,7 @@ public static class ActionTypeTests
     public static void IsActionAllowed_BlockTakesPrecedence()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         // Find an opt-in action that one policy enables and another blocks.
         // Militaristic enables DeployExtraSquad; if we can find another that blocks it, test precedence.
@@ -175,7 +175,7 @@ public static class ActionTypeTests
     public static void ActionCache_RebuildOnPolicyChange()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -211,7 +211,7 @@ public static class ActionTypeTests
     {
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
         {
-            if (def.blockedActions != null && def.blockedActions.Count > 0)
+            if (def.blockedActions is not null && def.blockedActions.Count > 0)
             {
                 var seen = new HashSet<FCActionType>();
                 foreach (FCActionType action in def.blockedActions)
@@ -221,7 +221,7 @@ public static class ActionTypeTests
                 }
             }
 
-            if (def.enabledActions != null && def.enabledActions.Count > 0)
+            if (def.enabledActions is not null && def.enabledActions.Count > 0)
             {
                 var seen = new HashSet<FCActionType>();
                 foreach (FCActionType action in def.enabledActions)
@@ -239,7 +239,7 @@ public static class ActionTypeTests
         // Blocking an opt-in action is meaningless — it's already disabled by default.
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
         {
-            if (def.blockedActions == null) continue;
+            if (def.blockedActions is null) continue;
             foreach (FCActionType action in def.blockedActions)
             {
                 TestAssert.IsFalse(FCActionTypeUtil.RequiresEnable(action),

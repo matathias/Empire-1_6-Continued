@@ -44,7 +44,7 @@ public class TransportersArrivalAction_AddToSettlementFC : TransportersArrivalAc
         if (!report) return report;
         if (settlement is null || !settlement.Spawned || settlement.Tile != destinationTile)
             return false;
-        return ResolveComp(settlement, arrivalCompType) is object;
+        return ResolveComp(settlement, arrivalCompType) is not null;
     }
 
     public override void Arrived(List<ActiveTransporterInfo> transporters, PlanetTile tile)
@@ -59,7 +59,7 @@ public class TransportersArrivalAction_AddToSettlementFC : TransportersArrivalAc
             ThingOwner inner = transporter.innerContainer;
             for (int n = inner.Count - 1; n >= 0; n--)
             {
-                if (inner[n] is Pawn p && comp is object && comp.AcceptsPawn(p))
+                if (inner[n] is Pawn p && comp is not null && comp.AcceptsPawn(p))
                 {
                     accepted.Add(p);
                     inner.Remove(p);
@@ -67,7 +67,7 @@ public class TransportersArrivalAction_AddToSettlementFC : TransportersArrivalAc
             }
         }
 
-        if (comp is object && accepted.Count > 0)
+        if (comp is not null && accepted.Count > 0)
         {
             comp.ReceivePawns(accepted);
             Messages.Message(comp.ArrivalMessage(accepted), settlement, MessageTypeDefOf.TaskCompletion);

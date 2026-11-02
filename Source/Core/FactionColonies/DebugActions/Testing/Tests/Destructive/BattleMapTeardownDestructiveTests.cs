@@ -38,12 +38,12 @@ public static class BattleMapTeardownDestructiveTests
 
         TestAssert.IsFalse(pawn.Spawned, "Evacuated pawn should be despawned from the battle map");
         TestAssert.IsFalse(pawn.Destroyed, "Evacuated pawn must NOT be destroyed by teardown");
-        bool queuedHome = FindFC.EventManager != null
-            && FindFC.EventManager.Events.Any(e => e?.goods != null && e.goods.Contains(pawn));
+        bool queuedHome = FindFC.EventManager is not null
+            && FindFC.EventManager.Events.Any(e => e?.goods is not null && e.goods.Contains(pawn));
         TestAssert.IsTrue(queuedHome, "A delivery event should have been queued to send the pawn home");
 
         // Cleanup: drop the delivery event we created + destroy the pawn, then the map + settlement.
-        FindFC.FactionComp?.RemoveEventsWhere(e => e?.goods != null && e.goods.Contains(pawn));
+        FindFC.FactionComp?.RemoveEventsWhere(e => e?.goods is not null && e.goods.Contains(pawn));
         if (!pawn.Destroyed) pawn.Destroy();
         Teardown(f, settlement, ctx);
     }
@@ -95,7 +95,7 @@ public static class BattleMapTeardownDestructiveTests
 
         // Cleanup: destroy the transporter (and the pawn inside), then the map + settlement.
         TestAssert.DoesNotThrow(() => { if (!pod.Destroyed) pod.Destroy(); });
-        if (pawn is object && !pawn.Destroyed) pawn.Destroy();
+        if (pawn is not null && !pawn.Destroyed) pawn.Destroy();
         Teardown(f, settlement, ctx);
     }
 
@@ -119,7 +119,7 @@ public static class BattleMapTeardownDestructiveTests
             GenSpawn.Spawn(p, cell, map);
             pawn = p;
         });
-        return (pawn is object && pawn.Spawned) ? pawn : null;
+        return (pawn is not null && pawn.Spawned) ? pawn : null;
     }
 
     private static Thing TryLoadPawnIntoTransporter(Map map, Pawn pawn)
@@ -136,7 +136,7 @@ public static class BattleMapTeardownDestructiveTests
 
             CompTransporter tr = t.TryGetComp<CompTransporter>();
             if (pawn.Spawned) pawn.DeSpawn();
-            if (tr != null && tr.innerContainer.TryAddOrTransfer(pawn, false))
+            if (tr is not null && tr.innerContainer.TryAddOrTransfer(pawn, false))
                 pod = t;
             else if (!t.Destroyed)
                 t.Destroy();
@@ -148,15 +148,15 @@ public static class BattleMapTeardownDestructiveTests
     {
         TestAssert.DoesNotThrow(() =>
         {
-            if (ctx?.map is object && Find.Maps.Contains(ctx.map))
+            if (ctx?.map is not null && Find.Maps.Contains(ctx.map))
             {
                 Map m = ctx.map;
                 ctx.map = null;
                 Current.Game.DeinitAndRemoveMap(m, false);
             }
-            if (settlement is object) FindFC.MilitaryManager?.RemoveBattlefield(settlement.Tile);
+            if (settlement is not null) FindFC.MilitaryManager?.RemoveBattlefield(settlement.Tile);
         });
-        if (settlement is object) DestructiveTestUtil.SafeRemoveSettlement(settlement);
-        if (f is object) DestructiveTestUtil.AssertEmpireInvariants(f, "BattleMapTeardown test");
+        if (settlement is not null) DestructiveTestUtil.SafeRemoveSettlement(settlement);
+        if (f is not null) DestructiveTestUtil.AssertEmpireInvariants(f, "BattleMapTeardown test");
     }
 }

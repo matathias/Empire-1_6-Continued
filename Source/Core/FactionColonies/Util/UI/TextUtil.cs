@@ -224,7 +224,7 @@ public static class TextUtil
         }
 
         string titleKey = (settlement.def as WorldSettlementDef)?.titleKey;
-        if (titleKey != null)
+        if (titleKey is not null)
         {
             string typeSpecificKey = "FCTitle_" + titleKey + "_" + resourceKey + "_" + level;
             if (typeSpecificKey.CanTranslate())

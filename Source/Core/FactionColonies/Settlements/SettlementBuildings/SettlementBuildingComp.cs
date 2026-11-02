@@ -36,7 +36,7 @@ public abstract class SettlementBuildingComp : IExposable
             {
                 foreach (BuildingFCExtension ext in building.modExtensions.OfType<BuildingFCExtension>())
                 {
-                    if (ext.compClass != null)
+                    if (ext.compClass is not null)
                     {
                         SettlementBuildingComp comp = parentComp?.GetComponent(ext.compClass);
 

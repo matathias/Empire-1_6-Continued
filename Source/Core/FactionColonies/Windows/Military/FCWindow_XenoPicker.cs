@@ -44,7 +44,7 @@ public class FCWindow_XenoPicker : Window
         public Texture2D icon;
         public float costFactor;
 
-        public bool IsCustom => custom != null;
+        public bool IsCustom => custom is not null;
     }
 
     public override void DoWindowContents(Rect inRect)
@@ -78,10 +78,10 @@ public class FCWindow_XenoPicker : Window
         }
 
         // Custom xenotypes — only for Human race
-        if (unit.pawnKind == null || unit.pawnKind.race == ThingDefOf.Human)
+        if (unit.pawnKind is null || unit.pawnKind.race == ThingDefOf.Human)
         {
             List<CustomXenotype> violentCustom = FactionCache.ViolentCustomXenotypes;
-            if (violentCustom != null)
+            if (violentCustom is not null)
             {
                 foreach (CustomXenotype custom in violentCustom)
                 {
@@ -170,17 +170,17 @@ public class FCWindow_XenoPicker : Window
             Close();
         }
 
-        bool canConfirm = selectedDef != null || selectedCustomName != null;
+        bool canConfirm = selectedDef is not null || selectedCustomName is not null;
         Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
         {
             if (canConfirm)
             {
-                if (selectedCustomName != null)
+                if (selectedCustomName is not null)
                 {
                     var decoder = FactionCache.CustomXenotypesDecoder;
                     CustomXenotype custom;
-                    if (decoder != null && decoder.TryGetValue(selectedCustomName, out custom))
+                    if (decoder is not null && decoder.TryGetValue(selectedCustomName, out custom))
                         unit.SetCustomXenotype(custom);
                 }
                 else

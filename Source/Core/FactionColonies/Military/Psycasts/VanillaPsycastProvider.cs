@@ -44,7 +44,7 @@ public class VanillaPsycastProvider : IPsycastSystemProvider
             psylink = pawn.GetMainPsylinkSource();
         }
 
-        int current = psylink != null ? psylink.level : 0;
+        int current = psylink is not null ? psylink.level : 0;
         int target = Math.Min(level, MaxPsylinkLevel);
         if (target > current)
             pawn.ChangePsylinkLevel(target - current, false);
@@ -71,7 +71,7 @@ public class VanillaPsycastProvider : IPsycastSystemProvider
     {
         if (level <= 0) return 0;
         ThingDef neuroformer = DefDatabase<ThingDef>.GetNamedSilentFail("PsychicAmplifier");
-        double perLevel = neuroformer is object ? neuroformer.BaseMarketValue : 2600.0;
+        double perLevel = neuroformer is not null ? neuroformer.BaseMarketValue : 2600.0;
         return Math.Floor(perLevel * FCSettings.militaryPsylinkCostMultiplier * level);
     }
 
@@ -84,16 +84,16 @@ public class VanillaPsycastProvider : IPsycastSystemProvider
     public void ReconcilePsycasts(Pawn pawn, MilUnitFC desired)
     {
         if (pawn?.health is null) return;
-        int target = desired != null ? Math.Min(desired.psylinkLevel, MaxPsylinkLevel) : 0;
+        int target = desired is not null ? Math.Min(desired.psylinkLevel, MaxPsylinkLevel) : 0;
 
         Hediff_Psylink ps = pawn.GetMainPsylinkSource();
-        int current = ps != null ? ps.level : 0;
+        int current = ps is not null ? ps.level : 0;
         if (target == current) return;
 
         if (target <= 0)
         {
             StripPsycastsAboveLevel(pawn, 0);
-            if (ps != null) pawn.health.RemoveHediff(ps);
+            if (ps is not null) pawn.health.RemoveHediff(ps);
             return;
         }
 

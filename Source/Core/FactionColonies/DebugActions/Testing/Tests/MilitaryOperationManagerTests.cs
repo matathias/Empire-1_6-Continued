@@ -8,7 +8,7 @@ public static class MilitaryOperationManagerTests
     private static MilitaryOperation MakeOp(MilitaryJobDef kind, PlanetTile tile, WorldSettlementFC home = null, WorldSettlementFC target = null)
     {
         var op = new MilitaryOperation(-1, kind, tile, target);
-        if (home is object) op.aggressor.homeSettlement = home;
+        if (home is not null) op.aggressor.homeSettlement = home;
         return op;
     }
 

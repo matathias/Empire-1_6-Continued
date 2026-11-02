@@ -29,7 +29,7 @@ public class SettlementWindowFC_RandomTithe : Window
 
     public SettlementWindowFC_RandomTithe(WorldSettlementFC settlement, ResourceFC resource)
     {
-        if (resource == null || settlement == null)
+        if (resource is null || settlement is null)
         {
             Close();
         }

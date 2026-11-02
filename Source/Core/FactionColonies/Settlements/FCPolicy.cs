@@ -14,7 +14,7 @@ public class FCPolicy : IExposable
 
         // Create behavior instance if this policy has a behavior extension
         FCPolicyBehaviorExtension ext = def.BehaviorExtension;
-        if (ext != null)
+        if (ext is not null)
         {
             behavior = ext.CreateBehavior();
             behavior.policy = this;
@@ -48,14 +48,14 @@ public class FCPolicy : IExposable
         // as early as possible. WorldObjects load before WorldComponents in
         // World.ExposeComponents, so settlement comps' PostExposeData can
         // trigger behavior hooks before FactionFC reaches PostLoadInit.
-        if (Scribe.mode != LoadSaveMode.Saving && behavior != null)
+        if (Scribe.mode != LoadSaveMode.Saving && behavior is not null)
         {
             behavior.policy = this;
-            if (def?.BehaviorExtension != null)
+            if (def?.BehaviorExtension is not null)
                 behavior.extension = def.BehaviorExtension;
         }
 
-        if (Scribe.mode == LoadSaveMode.PostLoadInit && behavior != null)
+        if (Scribe.mode == LoadSaveMode.PostLoadInit && behavior is not null)
         {
             // If the def failed to resolve (removed content) the behavior's extension was
             // never wired; PostInitialize would deref a null extension. Drop the orphan so

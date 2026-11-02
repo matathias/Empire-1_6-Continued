@@ -28,7 +28,7 @@ public class FCPrisoner : ILoadReferenceable, IExposable
         health = (float)Math.Round(prisoner.health.summaryHealth.SummaryHealthPercent * 100);
         isReturning = false;
         FactionFC comp = FindFC.FactionComp;
-        if (comp is object)
+        if (comp is not null)
         {
             loadID = comp.GetNextPrisonerID();
         }
@@ -45,10 +45,10 @@ public class FCPrisoner : ILoadReferenceable, IExposable
     {
         if (Scribe.mode == LoadSaveMode.Saving)
         {
-            isExternallyOwned = prisoner is object &&
-                (prisoner.Map is object
+            isExternallyOwned = prisoner is not null &&
+                (prisoner.Map is not null
                  || prisoner.SpawnedOrAnyParentSpawned
-                 || (Find.WorldPawns is object && Find.WorldPawns.Contains(prisoner)));
+                 || (Find.WorldPawns is not null && Find.WorldPawns.Contains(prisoner)));
         }
 
         Scribe_Values.Look(ref isExternallyOwned, "isExternallyOwned", false);
@@ -76,7 +76,7 @@ public class FCPrisoner : ILoadReferenceable, IExposable
             // FCPrisoner.prisoner as an orphan dupe (different reference, same
             // thingIDNumber as the WorldPawns instance). Re-bind to the canonical
             // instance and pull it out so we own it cleanly going forward.
-            if (!isExternallyOwned && prisoner is object && Find.WorldPawns is object)
+            if (!isExternallyOwned && prisoner is not null && Find.WorldPawns is not null)
             {
                 if (Find.WorldPawns.Contains(prisoner))
                 {
@@ -85,8 +85,8 @@ public class FCPrisoner : ILoadReferenceable, IExposable
                 else
                 {
                     Pawn registered = Find.WorldPawns.AllPawnsAliveOrDead
-                        .FirstOrDefault(p => p != null && p.thingIDNumber == prisoner.thingIDNumber);
-                    if (registered is object && !ReferenceEquals(registered, prisoner))
+                        .FirstOrDefault(p => p is not null && p.thingIDNumber == prisoner.thingIDNumber);
+                    if (registered is not null && !ReferenceEquals(registered, prisoner))
                     {
                         prisoner = registered;
                         Find.WorldPawns.RemovePawn(prisoner);

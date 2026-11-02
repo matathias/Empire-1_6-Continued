@@ -63,12 +63,12 @@ public static class PsycastListWidget
             if (UIUtil.ClampedButtonText(minusRect, "-") && curLevel > 0)
             {
                 MilUnitFC t = opts.getEditTarget?.Invoke();
-                if (t != null) t.SetPsylinkLevel(curLevel - 1);
+                if (t is not null) t.SetPsylinkLevel(curLevel - 1);
             }
             if (UIUtil.ClampedButtonText(plusRect, "+") && curLevel < maxLevel)
             {
                 MilUnitFC t = opts.getEditTarget?.Invoke();
-                if (t != null) t.SetPsylinkLevel(curLevel + 1);
+                if (t is not null) t.SetPsylinkLevel(curLevel + 1);
             }
 
             // VPE: "Edit Psycasts" button (right-aligned). Base game: none.
@@ -82,7 +82,7 @@ public static class PsycastListWidget
                     if (UIUtil.ClampedButtonText(editBtnRect, "fcEditPsycasts".Translate()))
                     {
                         MilUnitFC t = opts.getEditTarget?.Invoke();
-                        if (t != null) active.OpenEditor(t, delegate { t.ChangeTick(); });
+                        if (t is not null) active.OpenEditor(t, delegate { t.ChangeTick(); });
                     }
                 }
                 else
@@ -130,7 +130,7 @@ public static class PsycastListWidget
             if (UIUtil.ClampedButtonText(clearRect, "fcClearPsycasts".Translate()))
             {
                 MilUnitFC t = opts.getEditTarget?.Invoke();
-                if (t != null) t.SetPsycastsForSystem(active.Key, new List<SavedPsycast>());
+                if (t is not null) t.SetPsycastsForSystem(active.Key, new List<SavedPsycast>());
             }
         }
 
@@ -146,7 +146,7 @@ public static class PsycastListWidget
             SavedPsycast item = items[i];
             IPsycastSystemProvider provider = PsycastSystemRegistry.ByKey(item.systemKey);
             PsycastPickEntry entry = null;
-            bool resolved = provider is object && provider.TryGetDisplay(item, out entry);
+            bool resolved = provider is not null && provider.TryGetDisplay(item, out entry);
             Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
             if (i % 2 == 0) Widgets.DrawHighlight(row);
 

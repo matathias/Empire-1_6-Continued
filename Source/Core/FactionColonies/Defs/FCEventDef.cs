@@ -143,13 +143,13 @@ public class FCEventDef : Def
             yield return $"{defName}: targetAllSettlements is true but rangeSettlementsAffected.max is {rangeSettlementsAffected.max}";
         foreach (string biome in applicableBiomes)
         {
-            if (DefDatabase<BiomeDef>.GetNamed(biome, false) == null)
+            if (DefDatabase<BiomeDef>.GetNamed(biome, false) is null)
                 yield return $"{defName}: applicableBiomes contains unknown biome '{biome}'";
         }
 
         foreach (string biome in restrictedBiomes)
         {
-            if (DefDatabase<BiomeDef>.GetNamed(biome, false) == null)
+            if (DefDatabase<BiomeDef>.GetNamed(biome, false) is null)
                 yield return $"{defName}: restrictedBiomes contains unknown biome '{biome}'";
         }
 
@@ -158,7 +158,7 @@ public class FCEventDef : Def
             yield return $"{defName}: minTechLevel ({minTechLevel}) > maxTechLevel ({maxTechLevel})";
         for (int i = 0; i < requiredResearch.Count; i++)
         {
-            if (requiredResearch[i] == null)
+            if (requiredResearch[i] is null)
                 yield return $"{defName}: requiredResearch contains a null entry at index {i} (bad defName?)";
         }
         if (cooldownTicks < 0)
@@ -185,13 +185,13 @@ public class FCEventDef : Def
             {
                 if (opt is null) continue;
                 if (opt.silverCost != 0) continue;
-                if (opt.requiredPolicies != null && opt.requiredPolicies.Count > 0) continue;
-                if (opt.requiredMemes != null && opt.requiredMemes.Count > 0) continue;
+                if (opt.requiredPolicies is not null && opt.requiredPolicies.Count > 0) continue;
+                if (opt.requiredMemes is not null && opt.requiredMemes.Count > 0) continue;
 
                 // A positive dynamic cost makes the option not truly free.
                 FCDynamicCostExtension dyn = opt.GetModExtension<FCDynamicCostExtension>();
-                if (dyn != null && (dyn.costPerEmpireIncomeUnit > 0f
-                    || (dyn.costPerResourceDelta != null && dyn.costPerResourceDelta.Count > 0)))
+                if (dyn is not null && (dyn.costPerEmpireIncomeUnit > 0f
+                    || (dyn.costPerResourceDelta is not null && dyn.costPerResourceDelta.Count > 0)))
                     continue;
 
                 hasFreeUngated = true;

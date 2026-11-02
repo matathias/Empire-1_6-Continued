@@ -22,7 +22,7 @@ public class ResourcePoolExt_Research : ResourcePoolExtension
     public override IEnumerable<FloatMenuOption> GetFactionMenuFloatMenuOptions(ResourcePool pool)
     {
         IEnumerable<FloatMenuOption> boptions = base.GetFactionMenuFloatMenuOptions(pool);
-        if (boptions != null)
+        if (boptions is not null)
         {
             foreach (FloatMenuOption option in boptions)
             {
@@ -60,11 +60,11 @@ public class ResourcePoolExt_Research : ResourcePoolExtension
     {
         double researchPointPool = pool.pool;
         //Research adding
-        if ((Find.ResearchManager.GetProject() == null) && researchPointPool != 0 && Find.ResearchManager.AnyProjectIsAvailable)
+        if ((Find.ResearchManager.GetProject() is null) && researchPointPool != 0 && Find.ResearchManager.AnyProjectIsAvailable)
         {
             Messages.Message("FCNoResearchExpended".Translate(Math.Round(researchPointPool)), MessageTypeDefOf.NeutralEvent);
         }
-        else if (researchPointPool != 0 && Find.ResearchManager.GetProject() != null)
+        else if (researchPointPool != 0 && Find.ResearchManager.GetProject() is not null)
         {
             float neededPoints;
             neededPoints = (float)Math.Ceiling(Find.ResearchManager.GetProject().CostApparent - Find.ResearchManager.GetProject().ProgressApparent);

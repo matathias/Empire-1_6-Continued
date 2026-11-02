@@ -15,21 +15,21 @@ internal static class SituationStatModifierApplier
 {
     private static IEnumerable<WorldSettlementFC> Targets(FCSituation sit, FactionFC faction)
     {
-        if (sit.targetSettlement != null)
+        if (sit.targetSettlement is not null)
         {
             yield return sit.targetSettlement;
         }
-        else if (faction != null)
+        else if (faction is not null)
         {
             foreach (WorldSettlementFC s in faction.settlements)
-                if (s != null) yield return s;
+                if (s is not null) yield return s;
         }
     }
 
     public static void ApplyStage(FCSituation sit, FactionFC faction, bool invalidate = true)
     {
         List<FCStatModifier> mods = sit?.currentStage?.statModifiers;
-        if (mods == null || mods.Count == 0) return;
+        if (mods is null || mods.Count == 0) return;
         foreach (WorldSettlementFC s in Targets(sit, faction))
             s.AddStatModifiers(mods, sit.StageSourceId, sit.def.label);
         if (invalidate) faction?.InvalidateFactionStatCache();
@@ -37,7 +37,7 @@ internal static class SituationStatModifierApplier
 
     public static void RemoveStage(FCSituation sit, FactionFC faction, bool invalidate = true)
     {
-        if (sit == null) return;
+        if (sit is null) return;
         foreach (WorldSettlementFC s in Targets(sit, faction))
             s.RemoveStatModifiersBySource(sit.StageSourceId);
         if (invalidate) faction?.InvalidateFactionStatCache();
@@ -46,7 +46,7 @@ internal static class SituationStatModifierApplier
     public static void ApplyApproach(FCSituation sit, FactionFC faction, bool invalidate = true)
     {
         List<FCStatModifier> mods = sit?.activeApproach?.statModifiers;
-        if (mods == null || mods.Count == 0) return;
+        if (mods is null || mods.Count == 0) return;
         foreach (WorldSettlementFC s in Targets(sit, faction))
             s.AddStatModifiers(mods, sit.ApproachSourceId, sit.def.label);
         if (invalidate) faction?.InvalidateFactionStatCache();
@@ -54,7 +54,7 @@ internal static class SituationStatModifierApplier
 
     public static void RemoveApproach(FCSituation sit, FactionFC faction, bool invalidate = true)
     {
-        if (sit == null) return;
+        if (sit is null) return;
         foreach (WorldSettlementFC s in Targets(sit, faction))
             s.RemoveStatModifiersBySource(sit.ApproachSourceId);
         if (invalidate) faction?.InvalidateFactionStatCache();
@@ -67,18 +67,18 @@ internal static class SituationStatModifierApplier
     /// faction stat cache; the load path owns its own cascade.</summary>
     public static void ApplyForSettlement(FCSituation sit, WorldSettlementFC settlement)
     {
-        if (sit == null || settlement == null) return;
-        if (sit.targetSettlement != null && sit.targetSettlement != settlement) return;
-        if (sit.currentStage?.statModifiers != null && sit.currentStage.statModifiers.Count > 0)
+        if (sit is null || settlement is null) return;
+        if (sit.targetSettlement is not null && sit.targetSettlement != settlement) return;
+        if (sit.currentStage?.statModifiers is not null && sit.currentStage.statModifiers.Count > 0)
             settlement.AddStatModifiers(sit.currentStage.statModifiers, sit.StageSourceId, sit.def.label);
-        if (sit.activeApproach?.statModifiers != null && sit.activeApproach.statModifiers.Count > 0)
+        if (sit.activeApproach?.statModifiers is not null && sit.activeApproach.statModifiers.Count > 0)
             settlement.AddStatModifiers(sit.activeApproach.statModifiers, sit.ApproachSourceId, sit.def.label);
     }
 
     /// <summary>Strips both source namespaces in one cache invalidation (situation teardown).</summary>
     public static void RemoveAll(FCSituation sit, FactionFC faction)
     {
-        if (sit == null) return;
+        if (sit is null) return;
         foreach (WorldSettlementFC s in Targets(sit, faction))
         {
             s.RemoveStatModifiersBySource(sit.StageSourceId);

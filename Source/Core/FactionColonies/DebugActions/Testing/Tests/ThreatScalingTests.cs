@@ -212,7 +212,7 @@ public static class ThreatScalingTests
     public static void ETL_WithSettlements_IsAtLeastOne()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
@@ -224,7 +224,7 @@ public static class ThreatScalingTests
     public static void ETL_WithSettlements_IsCappedByMaxThreatMultiplier()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
@@ -236,7 +236,7 @@ public static class ThreatScalingTests
     public static void ETL_IsFiniteNumber()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
@@ -248,7 +248,7 @@ public static class ThreatScalingTests
     public static void ETL_LoweredCap_ClampsProperly()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         float original = FCSettings.maxThreatMultiplier;
@@ -269,7 +269,7 @@ public static class ThreatScalingTests
     public static void ETL_RegistryAdditive_IncreasesETL()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         double baseline = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
@@ -291,7 +291,7 @@ public static class ThreatScalingTests
     public static void ETL_RegistryMultiplicative_IncreasesETL()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         double baseline = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
@@ -319,7 +319,7 @@ public static class ThreatScalingTests
     public static void HandicapCap_IsAtLeastTwo()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         double cap = ThreatScalingUtil.ComputeHandicapCap(faction);
@@ -331,7 +331,7 @@ public static class ThreatScalingTests
     public static void HandicapCap_IsFiniteNumber()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         double cap = ThreatScalingUtil.ComputeHandicapCap(faction);
@@ -347,7 +347,7 @@ public static class ThreatScalingTests
     public static void AttackInterval_RespectsMinBound()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         int interval = ThreatScalingUtil.ComputeScaledAttackInterval(faction);
@@ -359,7 +359,7 @@ public static class ThreatScalingTests
     public static void AttackInterval_RespectsMaxBound()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         int interval = ThreatScalingUtil.ComputeScaledAttackInterval(faction);
@@ -371,7 +371,7 @@ public static class ThreatScalingTests
     public static void AttackInterval_RunMultiple_AllWithinBounds()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         int min = FCSettings.minMaxDaysTillMilitaryAction.min;
@@ -395,7 +395,7 @@ public static class ThreatScalingTests
     public static void Adaptation_ThreatFactor_IsFinite()
     {
         var faction = GetFaction();
-        if (faction == null)
+        if (faction is null)
             TestAssert.Skip("No faction");
 
         double factor = faction.threatAdaptation.ThreatFactor;
@@ -407,7 +407,7 @@ public static class ThreatScalingTests
     public static void Adaptation_ThreatFactor_IsPositive()
     {
         var faction = GetFaction();
-        if (faction == null)
+        if (faction is null)
             TestAssert.Skip("No faction");
 
         double factor = faction.threatAdaptation.ThreatFactor;
@@ -419,7 +419,7 @@ public static class ThreatScalingTests
     public static void Adaptation_NotNull_OnFaction()
     {
         var faction = GetFaction();
-        if (faction == null)
+        if (faction is null)
             TestAssert.Skip("No faction");
 
         TestAssert.IsNotNull(faction.threatAdaptation,
@@ -495,7 +495,7 @@ public static class ThreatScalingTests
     public static void EarlyGameRaidCap_RespectsFloor()
     {
         var faction = GetFaction();
-        if (faction == null)
+        if (faction is null)
             TestAssert.Skip("No faction");
 
         double cap = ThreatScalingUtil.ComputeEarlyGameRaidCap(faction);
@@ -507,7 +507,7 @@ public static class ThreatScalingTests
     public static void EarlyGameRaidCap_IsFiniteNumber()
     {
         var faction = GetFaction();
-        if (faction == null)
+        if (faction is null)
             TestAssert.Skip("No faction");
 
         double cap = ThreatScalingUtil.ComputeEarlyGameRaidCap(faction);
@@ -519,7 +519,7 @@ public static class ThreatScalingTests
     public static void PickWeightedEnemyFaction_DoesNotThrow()
     {
         var faction = GetFaction();
-        if (faction == null)
+        if (faction is null)
             TestAssert.Skip("No faction");
 
         TestAssert.DoesNotThrow(() => ThreatScalingUtil.PickWeightedEnemyFaction(faction));
@@ -529,14 +529,14 @@ public static class ThreatScalingTests
     public static void PickWeightedEnemyFaction_ReturnsHostileOrNull()
     {
         var faction = GetFaction();
-        if (faction == null)
+        if (faction is null)
             TestAssert.Skip("No faction");
 
         Faction picked = ThreatScalingUtil.PickWeightedEnemyFaction(faction);
         bool anyEligible = Find.FactionManager.AllFactionsVisible
             .Any(f => f.HostileTo(Faction.OfPlayer) && !f.defeated && !f.Hidden);
 
-        if (picked == null)
+        if (picked is null)
         {
             TestAssert.IsFalse(anyEligible,
                 "Returned null but an eligible hostile faction exists");

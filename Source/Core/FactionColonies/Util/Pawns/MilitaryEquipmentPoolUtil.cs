@@ -20,7 +20,7 @@ public static class MilitaryEquipmentPoolUtil
     /// callers.</summary>
     public static List<ThingDef> WeaponPool()
     {
-        if (weaponPoolCache is object) return weaponPoolCache;
+        if (weaponPoolCache is not null) return weaponPoolCache;
 
         weaponPoolCache = DefDatabase<ThingDef>.AllDefs
             .Where(t => t.IsWeapon
@@ -36,7 +36,7 @@ public static class MilitaryEquipmentPoolUtil
     /// are applied live by callers.</summary>
     public static List<ThingDef> ApparelPool()
     {
-        if (apparelPoolCache is object) return apparelPoolCache;
+        if (apparelPoolCache is not null) return apparelPoolCache;
 
         apparelPoolCache = DefDatabase<ThingDef>.AllDefs
             .Where(t => t.IsApparel

@@ -141,7 +141,7 @@ public static class MilitaryDestructiveTests
             // Clean up the free-floating pawn we generated (destructive tests aren't auto-cleaned).
             TestAssert.DoesNotThrow(() =>
             {
-                if (merc?.pawn is object && !merc.pawn.Destroyed) merc.pawn.Destroy();
+                if (merc?.pawn is not null && !merc.pawn.Destroyed) merc.pawn.Destroy();
             });
         }
     }

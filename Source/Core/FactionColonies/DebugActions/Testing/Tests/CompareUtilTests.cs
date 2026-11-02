@@ -75,7 +75,7 @@ public static class CompareUtilTests
     private static List<WorldSettlementFC> GetSettlementsOrSkip()
     {
         var settlements = FindFC.Settlements;
-        if (settlements == null || settlements.Count < 2) TestAssert.Skip("Need >= 2 settlements");
+        if (settlements is null || settlements.Count < 2) TestAssert.Skip("Need >= 2 settlements");
         return new List<WorldSettlementFC>(settlements);
     }
 }

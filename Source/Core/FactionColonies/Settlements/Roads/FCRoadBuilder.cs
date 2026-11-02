@@ -64,7 +64,7 @@ public class FCRoadBuilder : IExposable
 
     public void RoadTick()
     {
-        if (roadDef == null)
+        if (roadDef is null)
         {
             wasRoadBuildingDisabled = true;
             return;
@@ -78,7 +78,7 @@ public class FCRoadBuilder : IExposable
 
         FactionFC faction = FindFC.FactionComp;
 
-        if (roadQueue == null)
+        if (roadQueue is null)
         {
             LogUtil.Message("RoadTick: No road queue found");
             return;
@@ -143,11 +143,11 @@ public class FCRoadBuilder : IExposable
         FactionFC fC = FindFC.FactionComp;
 
         // If faction exists and is either player or player has roadBuilders trait and the faction is an ally
-        if (settlement.Faction != null)
+        if (settlement.Faction is not null)
             if (settlement.Faction.IsPlayer || (FindFC.FactionComp.IsActionAllowed(FCActionType.BuildRoadsToAllies) && settlement.Faction.PlayerRelationKind == FactionRelationKind.Ally))
                 return true;
 
-        if (empireTileIds is object)
+        if (empireTileIds is not null)
             return empireTileIds.Contains(settlement.Tile.tileId);
 
         foreach (WorldSettlementFC settlementFC in fC.settlements)
@@ -161,7 +161,7 @@ public class FCRoadBuilder : IExposable
 
     public FCRoadQueue CreateRoadQueue(bool logFailure = true)
     {
-        if (roadQueue != null)
+        if (roadQueue is not null)
         {
             if (logFailure)
             {
@@ -201,7 +201,7 @@ public class FCRoadBuilder : IExposable
             LogUtil.Message($"Road type changed from {this.roadDef?.defName ?? "null"} to {def?.defName ?? "null"}");
             this.roadDef = def;
 
-            if (roadQueue is object)
+            if (roadQueue is not null)
             {
                 roadQueue.RoadDef = def;
                 FlagUpdateRoadQueues();
@@ -220,7 +220,7 @@ public class FCRoadBuilder : IExposable
     /// </summary>
     public void FlagUpdateRoadQueues()
     {
-        if (roadQueue != null)
+        if (roadQueue is not null)
         {
             roadQueue.shouldUpdateSettlementsToProcess = true;
             pathsFullyProcessed = false;

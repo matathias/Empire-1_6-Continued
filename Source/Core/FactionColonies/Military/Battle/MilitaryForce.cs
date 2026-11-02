@@ -63,7 +63,7 @@ public class MilitaryForce : IExposable
         double level = Math.Max(1, settlement.settlementMilitaryLevel) * 0.5;
         double efficiency = 1.0;
         FactionFC faction = FindFC.FactionComp;
-        if (faction is object)
+        if (faction is not null)
         {
             efficiency = faction.GetStatValue(FCStatDefOf.militaryCombatEfficiency, settlement);
         }
@@ -89,7 +89,7 @@ public class MilitaryForce : IExposable
         double combinedLevel = reinforcerLevel;
         double blendedEff = reinforcerEff;
 
-        if (faction is object)
+        if (faction is not null)
         {
             // squad context folds per-squad (design + accolade) bonuses on top of the faction values.
             // For defending, the anchor settlement also folds in (biome + governor/specialist

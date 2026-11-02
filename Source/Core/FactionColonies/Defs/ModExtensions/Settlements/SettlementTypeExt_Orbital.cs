@@ -11,7 +11,7 @@ public class SettlementTypeExtension_Orbital : SettlementTypeExtension
 
     private static string[] GetSpaceLocations()
     {
-        if (spaceLocations == null)
+        if (spaceLocations is null)
         {
             spaceLocations = new string[]
             {
@@ -29,7 +29,7 @@ public class SettlementTypeExtension_Orbital : SettlementTypeExtension
 
     private static string[] GetSpaceKeywords()
     {
-        if (spaceKeywords == null)
+        if (spaceKeywords is null)
         {
             spaceKeywords = new string[]
             {

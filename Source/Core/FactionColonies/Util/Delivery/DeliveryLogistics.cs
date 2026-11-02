@@ -29,7 +29,7 @@ public static class DeliveryLogistics
     public static TaxDeliveryMode TaxDeliveryModeForSettlement(bool canUseShuttle, PlanetTile sourceTile)
     {
         WorldSettlementFC settlement = FindFC.Settlements.FirstOrFallback((WorldSettlementFC s) => s.Tile == sourceTile);
-        if (settlement != null)
+        if (settlement is not null)
         {
             return settlement.settlementDef.GetTaxDeliveryMode(canUseShuttle, sourceTile);
         }
@@ -149,7 +149,7 @@ public static class DeliveryLogistics
                     var request = FCPawnGenerator.CivilianRequest();
 
                     deliveryPawn = PawnGenerator.GeneratePawn(request);
-                    if (deliveryPawn != null)
+                    if (deliveryPawn is not null)
                     {
                         LogUtil.Message($"Successfully generated delivery pawn with civilian request");
                     }
@@ -165,14 +165,14 @@ public static class DeliveryLogistics
                 }
 
                 // If no xenotype worked, try a simple delivery request
-                if (deliveryPawn == null)
+                if (deliveryPawn is null)
                 {
                     LogUtil.Warning("Failed to generate pawn with CivilianRequest, trying simple delivery request");
                     deliveryPawn = PawnGenerator.GeneratePawn(FCPawnGenerator.SimpleDeliveryRequest());
                 }
 
                 // If still no pawn, fall back to animals (like wolves)
-                if (deliveryPawn == null)
+                if (deliveryPawn is null)
                 {
                     LogUtil.Warning("Failed to generate human pawn, falling back to animals");
                     var combatPool = FindFC.FactionComp?.animalFilter?.AllowedCombatAnimals ?? FactionCache.AllCombatAnimalKindDefs;
@@ -188,7 +188,7 @@ public static class DeliveryLogistics
                     }
                 }
 
-                if (deliveryPawn == null)
+                if (deliveryPawn is null)
                 {
                     LogUtil.Error("Could not generate any pawn for delivery, placing item on tax spot");
                     Thing lostItem = evt.goods[0];
@@ -252,12 +252,12 @@ public static class DeliveryLogistics
                     extraPawn = PawnGenerator.GeneratePawn(request);
 
                     // Fallback to simple request
-                    if (extraPawn == null)
+                    if (extraPawn is null)
                     {
                         extraPawn = PawnGenerator.GeneratePawn(FCPawnGenerator.SimpleDeliveryRequest());
                     }
 
-                    if (extraPawn != null)
+                    if (extraPawn is not null)
                     {
                         pawns.Add(extraPawn);
                     }
@@ -292,7 +292,7 @@ public static class DeliveryLogistics
             try
             {
                 Pawn guard = PawnGenerator.GeneratePawn(FCPawnGenerator.AnimalRequest(guardAnimal));
-                if (guard is object)
+                if (guard is not null)
                 {
                     securityGuards.Add(guard);
                     guardsAdded++;
@@ -331,7 +331,7 @@ public static class DeliveryLogistics
         // Ensure all guard animals are properly assigned to the lord and will follow the caravan
         foreach (var guard in securityGuards)
         {
-            if (guard != null && guard.Map == playerHomeMap)
+            if (guard is not null && guard.Map == playerHomeMap)
             {
                 // Make sure the animal is assigned to the lord
                 if (guard.GetLord() != lord)
@@ -340,10 +340,10 @@ public static class DeliveryLogistics
                 }
 
                 // Ensure the animal will leave with the caravan by setting it to follow a human pawn
-                if (guard.mindState != null)
+                if (guard.mindState is not null)
                 {
                     var humanPawn = lord.ownedPawns.FirstOrDefault(p => !p.RaceProps.Animal);
-                    if (humanPawn != null)
+                    if (humanPawn is not null)
                     {
                         // let's make sure the guard animal stays close to the caravan
                         guard.mindState.duty = new PawnDuty(DutyDefOf.Follow, humanPawn, 3f); // 3 tile radius
@@ -381,7 +381,7 @@ public static class DeliveryLogistics
             if (intVec3.IsValid && intVec3.InBounds(map))
             {
                 if (CellFinder.TryFindRandomReachableNearbyCell(intVec3, map, i, traverseParms,
-                    cell => cell.IsValid && cell.InBounds(map) && map.thingGrid.ThingsAt(cell) != null,
+                    cell => cell.IsValid && cell.InBounds(map) && map.thingGrid.ThingsAt(cell) is not null,
                     null, out IntVec3 foundCell))
                 {
                     if (foundCell.IsValid)

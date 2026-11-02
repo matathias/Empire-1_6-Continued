@@ -28,7 +28,7 @@ internal static class TickOverrideUtil
         // Must be Method (inheritance-walking), not DeclaredMethod, so a C : B : A chain where B
         // overrides is still detected as ticking.
         MethodInfo m = AccessTools.Method(type, methodName, paramTypes);
-        result = m is object && m.DeclaringType != baseType;
+        result = m is not null && m.DeclaringType != baseType;
 
         cache[key] = result;
         return result;

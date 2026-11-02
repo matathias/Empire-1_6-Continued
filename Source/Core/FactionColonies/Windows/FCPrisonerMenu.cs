@@ -63,7 +63,7 @@ class FCPrisonerMenu : Window
         float buttonRowY = titleRect.yMax + dividerGap;
         float contentY = buttonRowY;
 
-        if (comp is object)
+        if (comp is not null)
         {
             Rect bulkRect = new Rect(inRect.xMax - btnW, buttonRowY, btnW, titleHeight);
             Rect defaultRect = new Rect(bulkRect.x - btnGap - btnW, buttonRowY, btnW, titleHeight);

@@ -90,13 +90,13 @@ public partial class BattlefieldContext : IExposable
 
     /// <summary>All attacker pawns across every active op at this tile (derived).</summary>
     public IEnumerable<Pawn> attackerPawns =>
-        activeOps == null
+        activeOps is null
             ? Enumerable.Empty<Pawn>()
             : activeOps.SelectMany(o => o?.aggressor?.pawns ?? Enumerable.Empty<Pawn>());
 
     /// <summary>All defender pawns across every active op at this tile (derived).</summary>
     public IEnumerable<Pawn> defenderPawns =>
-        activeOps == null
+        activeOps is null
             ? Enumerable.Empty<Pawn>()
             : activeOps.SelectMany(o => o?.defender?.pawns ?? Enumerable.Empty<Pawn>());
 
@@ -107,16 +107,16 @@ public partial class BattlefieldContext : IExposable
      * downed Empire merc, or a pawn added via RegisterPawnsAsDefenders(assignToLord:false)) is
      * otherwise never pruned on downing and would keep the battle alive until it actually dies. */
     public IEnumerable<Pawn> standingAttackerPawns =>
-        attackerPawns.Where(p => p != null && !p.Dead && !p.Downed && !IsPawnTrulyGone(p));
+        attackerPawns.Where(p => p is not null && !p.Dead && !p.Downed && !IsPawnTrulyGone(p));
 
     public IEnumerable<Pawn> standingDefenderPawns =>
-        defenderPawns.Where(p => p != null && !p.Dead && !p.Downed && !IsPawnTrulyGone(p));
+        defenderPawns.Where(p => p is not null && !p.Dead && !p.Downed && !IsPawnTrulyGone(p));
 
     /// <summary>Sum of every active op's defender <c>initialPawnCount</c>. Used by manual
     /// battle resolution to build the <see cref="BattleResult"/> (defender initial vs
     /// remaining drives overwhelming-victory detection in <c>op.CompleteBattle</c>).</summary>
     public int initialDefenderCount =>
-        activeOps == null ? 0 : activeOps.Sum(o => o?.defender?.initialPawnCount ?? 0);
+        activeOps is null ? 0 : activeOps.Sum(o => o?.defender?.initialPawnCount ?? 0);
 
     public BattlefieldContext() { }
 
@@ -157,7 +157,7 @@ public partial class BattlefieldContext : IExposable
             // vanilla settlement defeat/removal stays suppressed on the reloaded offense map (and
             // keeps the defense register/unregister pairing uniform). A live context only holds a
             // non-null map while its battle map exists.
-            if (map is object)
+            if (map is not null)
                 FindFC.MilitaryManager?.RegisterBattleMap(map);
         }
     }
@@ -239,7 +239,7 @@ public partial class BattlefieldContext : IExposable
         if (ticks % OrphanCheckTickInterval == 0 && map is null && !attackerPawns.Any() && !defenderPawns.Any())
         {
             MilitaryOperation defOp = FindFC.MilitaryManager?.GetDefensiveOpAt(settlement);
-            if (defOp is object && !defOp.HasPendingWakeup)
+            if (defOp is not null && !defOp.HasPendingWakeup)
             {
                 LogUtil.Warning($"Clearing orphaned isUnderAttack flag on {settlement.Name} " +
                     $"(defensive op has no pending event).");
@@ -249,7 +249,7 @@ public partial class BattlefieldContext : IExposable
         }
 
         if (ticks % 250 != 0) return;
-        if (map == null) return;
+        if (map is null) return;
 
         // Clean stale references: null (save/load), destroyed, or despawned-without-holder.
         // Pod-bound pawns in a descending Skyfaller are !Spawned but ParentHolder != null;
@@ -270,7 +270,7 @@ public partial class BattlefieldContext : IExposable
             if (!defenderSet.Contains(pawn))
             {
                 LogUtil.Warning($"Registering untracked player pawn {pawn.LabelShort} with defense at {settlement.Name}");
-                if (primaryDef?.defender?.pawns is object)
+                if (primaryDef?.defender?.pawns is not null)
                 {
                     primaryDef.defender.pawns.Add(pawn);
                     primaryDef.defender.initialPawnCount++;
@@ -282,8 +282,8 @@ public partial class BattlefieldContext : IExposable
             if (pawn.GetLord() is null)
             {
                 if (battleLord is null)
-                    battleLord = defenderPawns.FirstOrDefault(d => d.GetLord() != null)?.GetLord();
-                if (battleLord != null && !battleLord.ownedPawns.Contains(pawn))
+                    battleLord = defenderPawns.FirstOrDefault(d => d.GetLord() is not null)?.GetLord();
+                if (battleLord is not null && !battleLord.ownedPawns.Contains(pawn))
                     battleLord.AddPawn(pawn);
             }
         }
@@ -331,7 +331,7 @@ public partial class BattlefieldContext : IExposable
         if (p is null) return true;
         if (p.Destroyed) return true;
         if (p.Spawned) return false;
-        if (p.ParentHolder is object) return false;
+        if (p.ParentHolder is not null) return false;
         return true;
     }
 
@@ -369,7 +369,7 @@ public partial class BattlefieldContext : IExposable
     private static IThingHolder AsTransporterHolder(Thing thing)
     {
         CompTransporter transporter = thing.TryGetComp<CompTransporter>();
-        if (transporter is object) return transporter;
+        if (transporter is not null) return transporter;
         if (thing is IActiveTransporter || thing is PawnFlyer || thing is Building_Enterable)
             return thing as IThingHolder;
         return null;
@@ -382,7 +382,7 @@ public partial class BattlefieldContext : IExposable
     private static bool IsValidEdgeSpawnCell(IntVec3 x, Map map, Faction hostFaction)
     {
         if (!x.Standable(map) || x.Fogged(map)) return false;
-        if (hostFaction is object && map.reachability.CanReachFactionBase(x, hostFaction)) return true;
+        if (hostFaction is not null && map.reachability.CanReachFactionBase(x, hostFaction)) return true;
         return hostFaction is null && map.reachability.CanReachBiggestMapEdgeDistrict(x);
     }
 
@@ -418,7 +418,7 @@ public partial class BattlefieldContext : IExposable
             foreach (Pawn p in list)
             {
                 if (p is null || p.Destroyed || p.Dead) continue;
-                if (!p.Spawned && p.ParentHolder is object) return true;
+                if (!p.Spawned && p.ParentHolder is not null) return true;
             }
         }
         return false;
@@ -445,13 +445,13 @@ public partial class BattlefieldContext : IExposable
         if (op is null) return;
         activeOps?.Remove(op);
 
-        if (activeOps == null || activeOps.Count == 0)
+        if (activeOps is null || activeOps.Count == 0)
         {
             // Use AllPawnsSpawned + faction filter so VehiclePawns count as "player on map".
             // FreeColonistsSpawnedCount would miss a parked vehicle and prematurely
             // tear down the battlefield context while the player is still around.
             bool playerOnMap = false;
-            if (map is object && map.mapPawns is object)
+            if (map is not null && map.mapPawns is not null)
             {
                 foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
                 {
@@ -480,7 +480,7 @@ public partial class BattlefieldContext : IExposable
         if (side == ParticipantSide.Defender)
         {
             // Squad-based defender (foreign settlement reinforcement).
-            if (op.defender?.squad is object)
+            if (op.defender?.squad is not null)
             {
                 SpawnReinforcementsForOp(op);
                 return;
@@ -519,7 +519,7 @@ public partial class BattlefieldContext : IExposable
     /// <summary>Get-or-create the battle map at this tile. Idempotent.</summary>
     public Map GenerateMap()
     {
-        if (map is object) return map;
+        if (map is not null) return map;
         WorldSettlementFC settlement = ParentSettlement;
         if (settlement is null)
         {
@@ -638,7 +638,7 @@ public partial class BattlefieldContext : IExposable
 
     /// <summary>True if the thing was part of the settlement's loot at map generation
     /// (i.e. the Empire's own property), as opposed to battle spoils dropped during the fight.</summary>
-    public bool IsSettlementLoot(Thing t) => settlementLoot != null && settlementLoot.Contains(t);
+    public bool IsSettlementLoot(Thing t) => settlementLoot is not null && settlementLoot.Contains(t);
 
     /* -*-*-*-*- Battle entry: StartDefense -*-*-*-*-
      * Called from op.OnEventFired's defensive branch (or via comp.StartDefence's facade) once
@@ -658,7 +658,7 @@ public partial class BattlefieldContext : IExposable
         // Drop the op's warning event from the queue if it's still there. Op.OnEventFired
         // already strips it from sourceEvents; this removes it from the FactionFC event list.
         FactionFC factionFC = FindFC.FactionComp;
-        if (factionFC is object)
+        if (factionFC is not null)
         {
             foreach (FCEvent srcEvt in op.sourceEvents)
             {
@@ -678,7 +678,7 @@ public partial class BattlefieldContext : IExposable
         bool isUnderAttack = FindFC.MilitaryManager?.HasDefenseAt(settlement) ?? false;
 
         // Path 1: existing battle map active — add a new attacker group.
-        if (battleMapInitialized && map is object && isUnderAttack)
+        if (battleMapInitialized && map is not null && isUnderAttack)
         {
             LongEventHandler.QueueLongEvent(() =>
             {
@@ -741,7 +741,7 @@ public partial class BattlefieldContext : IExposable
         }
 
         // Path 2: post-battle map exists, player still on it — re-engage.
-        if (map is object && !isUnderAttack)
+        if (map is not null && !isUnderAttack)
         {
             battleMapInitialized = true;
 
@@ -773,7 +773,7 @@ public partial class BattlefieldContext : IExposable
 
         LongEventHandler.QueueLongEvent(() =>
         {
-            if (map == null)
+            if (map is null)
             {
                 GenerateMap();
                 StripLandmarkHostiles();
@@ -918,7 +918,7 @@ public partial class BattlefieldContext : IExposable
         initialPawnCount += spawned.Count;
 
         LordJob lordJob = lordFactory(spawned, parms.spawnCenter, parms.raidArrivalMode);
-        if (lordJob is object)
+        if (lordJob is not null)
             LordMaker.MakeNewLord(faction, lordJob, map, spawned);
         return spawned;
     }
@@ -1009,7 +1009,7 @@ public partial class BattlefieldContext : IExposable
 
         if (spawnedReinforcements.Any())
         {
-            if (defenseLord is object)
+            if (defenseLord is not null)
             {
                 foreach (Pawn pawn in spawnedReinforcements)
                     defenseLord.AddPawn(pawn);
@@ -1048,7 +1048,7 @@ public partial class BattlefieldContext : IExposable
         foreach (Pawn pawn in idleDefenders)
         {
             Lord lord = pawn.GetLord();
-            if (lord != null)
+            if (lord is not null)
                 lord.Notify_PawnLost(pawn, PawnLostCondition.LeftVoluntarily);
         }
 
@@ -1057,7 +1057,7 @@ public partial class BattlefieldContext : IExposable
             LordMaker.MakeNewLord(empireFaction,
                 new LordJob_DefendColony(settlement, new Dictionary<Pawn, Pawn>()),
                 map, idleDefenders);
-            if (op?.defender?.pawns is object)
+            if (op?.defender?.pawns is not null)
             {
                 op.defender.pawns.AddRange(idleDefenders);
                 op.defender.initialPawnCount += idleDefenders.Count;
@@ -1104,7 +1104,7 @@ public partial class BattlefieldContext : IExposable
 
         string enemyName = op.aggressor?.force?.homeFaction?.Name ?? op.aggressor?.faction?.Name ?? "Unknown";
         Pawn firstDefender = defenderPawns.FirstOrDefault();
-        GlobalTargetInfo jumpTarget = firstDefender is object
+        GlobalTargetInfo jumpTarget = firstDefender is not null
             ? new GlobalTargetInfo(firstDefender)
             : new GlobalTargetInfo(new IntVec3(map.Size.x / 2, 0, map.Size.z / 2), map);
         Find.LetterStack.ReceiveLetter(
@@ -1126,13 +1126,13 @@ public partial class BattlefieldContext : IExposable
         var riders = new Dictionary<Pawn, Pawn>();
 
         // Try external defender pawns (VOE outposts, etc.)
-        if (force.homeSettlement == null && op.externalDefenderSource != null)
+        if (force.homeSettlement is null && op.externalDefenderSource is not null)
         {
             IAutoDefender extDefender = AutoDefenderRegistry.FindByWorldObject(op.externalDefenderSource);
             friendlies = extDefender?.GetDefendingPawns();
         }
 
-        if (friendlies == null || friendlies.Count == 0)
+        if (friendlies is null || friendlies.Count == 0)
         {
             WorldSettlementFC homeSettlement = force.homeSettlement;
             // Use the squad recorded on the op, set at op creation by PickPrimaryDefendingSquad
@@ -1143,8 +1143,8 @@ public partial class BattlefieldContext : IExposable
             // through to the militia fallback below so a settlement with a defending force never
             // fields zero defenders (which would trip the stuck-battle guard into an instant loss).
             MercenarySquadFC squad = op?.defender?.squad;
-            bool hasSquad = squad != null
-                && squad.outfit != null
+            bool hasSquad = squad is not null
+                && squad.outfit is not null
                 && squad.mercenaries.Any()
                 && !squad.Deployment.IsPhysicallyDeployed();
 
@@ -1157,7 +1157,7 @@ public partial class BattlefieldContext : IExposable
             if (!hasSquad)
             {
                 MercenarySquadFC militia = TryBuildDesignMilitia(settlement, force);
-                if (militia != null) { squad = militia; hasSquad = true; }
+                if (militia is not null) { squad = militia; hasSquad = true; }
             }
 
             if (hasSquad)
@@ -1182,7 +1182,7 @@ public partial class BattlefieldContext : IExposable
                 foreach (var sub in squad.AllSubPawns())
                 {
                     if (sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
-                    if (sub.handler?.pawn is object)
+                    if (sub.handler?.pawn is not null)
                         riders.Add(sub.handler.pawn, sub.pawn);
                 }
             }
@@ -1254,7 +1254,7 @@ public partial class BattlefieldContext : IExposable
                     rider = pair.Key;
                 }
 
-                if (rider is object)
+                if (rider is not null)
                 {
                     // A mount: spawn it next to its rider so GU2 can mount them together.
                     CellFinder.TryFindRandomCellInsideWith(new CellRect((int)rider.DrawPos.x - 5,
@@ -1316,7 +1316,7 @@ public partial class BattlefieldContext : IExposable
 
         // Only designs the settlement can actually afford are eligible
         List<MilUnitFC> pool = mil.units
-            .Where(u => u is object && !u.isBlank && u.getTotalCost <= budget)
+            .Where(u => u is not null && !u.isBlank && u.getTotalCost <= budget)
             .ToList();
         if (pool.Count == 0) return null;
 
@@ -1347,7 +1347,7 @@ public partial class BattlefieldContext : IExposable
 
     private void RecruitMapInhabitants(MilitaryOperation op)
     {
-        if (map == null) return;
+        if (map is null) return;
         WorldSettlementFC settlement = ParentSettlement;
         if (settlement is null) return;
 
@@ -1408,13 +1408,13 @@ public partial class BattlefieldContext : IExposable
         foreach (Pawn inhabitant in inhabitants)
         {
             Lord existingLord = inhabitant.GetLord();
-            if (existingLord != null)
+            if (existingLord is not null)
                 existingLord.Notify_PawnLost(inhabitant, PawnLostCondition.LeftVoluntarily);
         }
 
         // With no existing defender lord the inhabitants ARE the defense: stand up a fresh
         // defense lord for them. Otherwise fold them into the existing defenders' lord.
-        if (defenseLord == null)
+        if (defenseLord is null)
         {
             if (inhabitants.Any())
                 defenseLord = LordMaker.MakeNewLord(empireFaction,
@@ -1429,7 +1429,7 @@ public partial class BattlefieldContext : IExposable
         foreach (Pawn inhabitant in inhabitants)
         {
             civilianPawns.Add(inhabitant);
-            if (op?.defender?.pawns is object)
+            if (op?.defender?.pawns is not null)
             {
                 op.defender.pawns.Add(inhabitant);
                 op.defender.initialPawnCount++;
@@ -1450,7 +1450,7 @@ public partial class BattlefieldContext : IExposable
         // dispatch are still owned by comp.EndBattle since they're settlement-specific.
         // BattlefieldContext just clears its own state after the comp finishes.
         WorldObjectComp_SettlementMilitary comp = ParentMilitaryComp;
-        if (comp is object)
+        if (comp is not null)
         {
             comp.EndBattle(won, remaining, battleResult);
         }
@@ -1469,7 +1469,7 @@ public partial class BattlefieldContext : IExposable
         bool won = remaining > 0 || attackersGone;
 
         // Return external defender pawns per op before map cleanup destroys them.
-        if (activeOps is object)
+        if (activeOps is not null)
         {
             foreach (MilitaryOperation op in activeOps)
             {
@@ -1480,7 +1480,7 @@ public partial class BattlefieldContext : IExposable
                 List<Pawn> survivingPawns = new List<Pawn>();
                 foreach (Pawn pawn in op.defender.pawns)
                 {
-                    if (pawn != null && !pawn.Dead && !pawn.Destroyed)
+                    if (pawn is not null && !pawn.Dead && !pawn.Destroyed)
                     {
                         if (pawn.Spawned) pawn.DeSpawn();
                         survivingPawns.Add(pawn);
@@ -1493,7 +1493,7 @@ public partial class BattlefieldContext : IExposable
         // Strip combat efficiency hediffs from surviving defenders
         foreach (Pawn defender in defendersSnapshot)
         {
-            if (defender != null && !defender.Dead && !defender.Destroyed)
+            if (defender is not null && !defender.Dead && !defender.Destroyed)
                 MilitaryEfficiencyUtil.RemoveCombatEfficiencyHediff(defender);
         }
 
@@ -1626,7 +1626,7 @@ public partial class BattlefieldContext : IExposable
                     }
                 }
 
-            if (playerHome is object)
+            if (playerHome is not null)
             {
                 string eventText = won
                     ? DeliveryNotification.ShuttleEventInjuredString
@@ -1652,10 +1652,10 @@ public partial class BattlefieldContext : IExposable
         }
 
         CameraJumper.TryJump(settlement.Tile);
-        if (playerHome is object) Current.Game.CurrentMap = playerHome;
+        if (playerHome is not null) Current.Game.CurrentMap = playerHome;
         Map toRemove = map;
         FindFC.MilitaryManager?.UnregisterBattleMap(toRemove);
-        if (toRemove is object && Current.Game.Maps.Contains(toRemove))
+        if (toRemove is not null && Current.Game.Maps.Contains(toRemove))
             Current.Game.DeinitAndRemoveMap(toRemove, false);
         else
             LogUtil.Warning($"DeleteMap: defense map at tile {tile} already gone before teardown; skipping DeinitAndRemoveMap.");
@@ -1682,7 +1682,7 @@ public partial class BattlefieldContext : IExposable
 
         // If battle is already in progress, register directly.
         bool isUnderAttack = FindFC.MilitaryManager?.HasDefenseAt(ParentSettlement) ?? false;
-        if (isUnderAttack && map != null)
+        if (isUnderAttack && map is not null)
         {
             RegisterPawnsAsDefenders(pawns, assignToLord);
             return;
@@ -1714,7 +1714,7 @@ public partial class BattlefieldContext : IExposable
         if (assignToLord)
         {
             Lord existingLord = defenderPawns.FirstOrDefault()?.GetLord();
-            if (existingLord != null)
+            if (existingLord is not null)
             {
                 foreach (var pawn in pawns)
                 {
@@ -1722,7 +1722,7 @@ public partial class BattlefieldContext : IExposable
                         existingLord.AddPawn(pawn);
                 }
             }
-            else if (map != null && settlement is object)
+            else if (map is not null && settlement is not null)
             {
                 var lordless = new List<Pawn>();
                 foreach (var pawn in pawns)
@@ -1761,7 +1761,7 @@ public partial class BattlefieldContext : IExposable
         for (int i = 0; i < activeOps.Count; i++)
         {
             MilitaryOperation op = activeOps[i];
-            if (op is object && op.IsDefensive) return op;
+            if (op is not null && op.IsDefensive) return op;
         }
         return null;
     }
@@ -1772,7 +1772,7 @@ public partial class BattlefieldContext : IExposable
 
         // Check for shuttle in caravan (Odyssey DLC passenger shuttle)
         var shuttle = caravan.Shuttle;
-        if (shuttle != null && map != null)
+        if (shuttle is not null && map is not null)
         {
             ShuttleCaravanDefend(caravan, pawns, shuttle);
             return;
@@ -1871,7 +1871,7 @@ public partial class BattlefieldContext : IExposable
         var enemyCells = new List<IntVec3>();
         foreach (var enemy in attackerPawns)
         {
-            if (enemy is object && enemy.Spawned)
+            if (enemy is not null && enemy.Spawned)
                 enemyCells.Add(enemy.Position);
         }
         if (enemyCells.Count == 0)

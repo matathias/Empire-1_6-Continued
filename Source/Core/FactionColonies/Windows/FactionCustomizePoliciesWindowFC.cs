@@ -175,7 +175,7 @@ public class FactionCustomizePoliciesWindowFC : Window
             {
                 DrawSingleCard(cardRect, selectedPolicies[i], i, false);
             }
-            else if (!usedPreview && hoveredPolicy != null && !selectedPolicies.Contains(hoveredPolicy))
+            else if (!usedPreview && hoveredPolicy is not null && !selectedPolicies.Contains(hoveredPolicy))
             {
                 DrawSingleCard(cardRect, hoveredPolicy, i, true);
                 usedPreview = true;

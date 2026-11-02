@@ -66,7 +66,7 @@ public class FCPolicyDef : Def
         }
     }
 
-    public bool HasBehavior => BehaviorExtension != null;
+    public bool HasBehavior => BehaviorExtension is not null;
 
     public Texture2D IconLight
     {
@@ -106,11 +106,11 @@ public class FCPolicyDef : Def
 
     public bool HasNegativeEffects()
     {
-        return negativeEffects != null && negativeEffects.Count > 0;
+        return negativeEffects is not null && negativeEffects.Count > 0;
     }
     public bool HasPositiveEffects()
     {
-        return positiveEffects != null && positiveEffects.Count > 0;
+        return positiveEffects is not null && positiveEffects.Count > 0;
     }
     public string PolicyText()
     {
@@ -216,7 +216,7 @@ public class FCPolicyDef : Def
         {
             for (int i = 0; i < requiredPolicies.Count; i++)
             {
-                if (requiredPolicies[i] == null)
+                if (requiredPolicies[i] is null)
                     yield return defName + ": requiredPolicies[" + i + "] is null (unresolved defName?)";
                 else if (requiredPolicies[i] == this)
                     yield return defName + ": requiredPolicies contains self-reference";

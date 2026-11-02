@@ -24,7 +24,7 @@ class LordJob_DeliverSupplies : LordJob
         Scribe_Values.Look(ref defendPosition, "defendPosition", default, false);
     }
 
-    private bool CanNotReach() => !lord.ownedPawns.NullOrEmpty() && lord.ownedPawns.All(pawn => pawn.carryTracker.CarriedThing == null) && lord.CurLordToil is LordToil_DeliverSupplies toil && !toil.LeavingModeEngaged && lord.ownedPawns[0].CurJob != null && lord.ownedPawns[0].CanReach(lord.ownedPawns[0].CurJob.targetA, PathEndMode.OnCell, PawnUtility.ResolveMaxDanger(lord.ownedPawns[0], Danger.Some), false, false, TraverseMode.ByPawn);
+    private bool CanNotReach() => !lord.ownedPawns.NullOrEmpty() && lord.ownedPawns.All(pawn => pawn.carryTracker.CarriedThing is null) && lord.CurLordToil is LordToil_DeliverSupplies toil && !toil.LeavingModeEngaged && lord.ownedPawns[0].CurJob is not null && lord.ownedPawns[0].CanReach(lord.ownedPawns[0].CurJob.targetA, PathEndMode.OnCell, PawnUtility.ResolveMaxDanger(lord.ownedPawns[0], Danger.Some), false, false, TraverseMode.ByPawn);
 
     /// <summary>
     /// This <c>Transition</c> switches the delivery <c>Pawns</c> from delivery mode to fighting mode. It drops their items if they carry any and notifies the player of what's about to happen 

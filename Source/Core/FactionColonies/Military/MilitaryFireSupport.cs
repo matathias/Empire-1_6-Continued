@@ -77,7 +77,7 @@ public class MilitaryFireSupport : IExposable, ILoadReferenceable
     public float ReturnTotalCost(WorldSettlementFC settlement = null)
     {
         totalCost = CalculateTotalCost(accuracy, projectiles.Select(def => def.BaseMarketValue));
-        if (settlement != null)
+        if (settlement is not null)
             totalCost *= (float)settlement.GetStatValue(FCStatDefOf.fireSupportCostMultiplier);
         return totalCost;
     }
@@ -104,7 +104,7 @@ public class MilitaryFireSupport : IExposable, ILoadReferenceable
         param.techLevel = FindFC.TechLevel;
 
         param.filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("MortarShells"), true);
-        if (DefDatabase<ThingCategoryDef>.GetNamedSilentFail("AmmoShells") != null)
+        if (DefDatabase<ThingCategoryDef>.GetNamedSilentFail("AmmoShells") is not null)
             param.filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("AmmoShells"), true);
         List<ThingDef> list = thingSetMaker.AllGeneratableThingsDebug(param).ToList();
 
@@ -139,7 +139,7 @@ public class MilitaryFireSupport : IExposable, ILoadReferenceable
             {
                 IntVec3 spawnCenter = SemiRandomSpawnCenter;
                 ThingDef ammoDef = ExpendProjectile();
-                if (ammoDef == null) return;
+                if (ammoDef is null) return;
 
                 if (CombatExtendedUtil.IsCELoaded)
                 {

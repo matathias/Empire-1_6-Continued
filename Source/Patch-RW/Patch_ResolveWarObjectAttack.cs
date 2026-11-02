@@ -22,7 +22,7 @@ public static class Patch_ResolveWarObjectAttack
 {
     private static bool Prefix(WarObject attacker, RimWarSettlementComp defender)
     {
-        if (!(defender.parent is WorldSettlementFC empireSettlement))
+        if (defender.parent is not WorldSettlementFC empireSettlement)
         {
             return true; // run original for non-Empire settlements
         }
@@ -39,7 +39,7 @@ public static class Patch_ResolveWarObjectAttack
         if (attackingForce is null)
         {
             double efficiency = 1.0;
-            if (attacker.Faction.def is object)
+            if (attacker.Faction.def is not null)
             {
                 MilitaryDeploymentUtil.GetTechLevelBaseline(attacker.Faction.def.techLevel, out double _, out efficiency);
             }

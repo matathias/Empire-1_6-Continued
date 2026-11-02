@@ -33,18 +33,18 @@ public class StatPart_EmpireMercHealRate : StatPart
     private static bool TryGetMercFactor(StatRequest req, out float factor)
     {
         factor = 1f;
-        if (!req.HasThing || !(req.Thing is Pawn pawn)) return false;
+        if (!req.HasThing || req.Thing is not Pawn pawn) return false;
 
         Mercenary merc = FindFC.Military?.GetRegisteredInjuredMerc(pawn);
         if (merc is null) return false;
 
         // On-map mercs follow vanilla healing — we only boost while abstracted at base.
-        if (pawn.Map != null) return false;
+        if (pawn.Map is not null) return false;
 
         WorldSettlementFC settlement = merc.settlement ?? merc.squad?.getSettlement;
         FactionFC faction = FindFC.FactionComp;
         // unit context (the merc) lets per-unit design/accolade heal-rate modifiers fold in for this soldier
-        double settlementMult = (faction is object)
+        double settlementMult = (faction is not null)
             ? faction.GetStatValue(FCStatDefOf.mercHealRateMultiplier, settlement, null, merc)
             : 1.0;
 

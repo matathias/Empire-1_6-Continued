@@ -38,7 +38,7 @@ public class WorldObjectComp_Situations : WorldObjectComp, ISettlementWindowOver
     {
         FactionFC faction = FindFC.FactionComp;
         WorldSettlementFC settlement = Settlement;
-        if (faction == null || settlement == null) return;
+        if (faction is null || settlement is null) return;
 
         List<FCSituation> sits = new List<FCSituation>(faction.situationManager.GetForSettlement(settlement));
         if (sits.Count == 0)

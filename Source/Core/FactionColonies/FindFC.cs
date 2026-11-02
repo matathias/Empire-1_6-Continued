@@ -38,7 +38,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedColonyFaction is object) return _cachedColonyFaction;
+            if (_cachedColonyFaction is not null) return _cachedColonyFaction;
             Faction faction = Find.FactionManager?.FirstFactionOfDef(EmpireFactionDef);
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedColonyFaction = faction;
             return faction;
@@ -49,7 +49,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedPlayerFaction is object) return _cachedPlayerFaction;
+            if (_cachedPlayerFaction is not null) return _cachedPlayerFaction;
             Faction faction = Find.FactionManager?.AllFactions?.FirstOrDefault(f => f.IsPlayer);
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedPlayerFaction = faction;
             return faction;
@@ -60,7 +60,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedFactionDef is object) return _cachedFactionDef;
+            if (_cachedFactionDef is not null) return _cachedFactionDef;
             FactionDef def = DefDatabase<FactionDef>.GetNamed("PColony");
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedFactionDef = def;
             return def;
@@ -88,7 +88,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedFactionWorldComp is object) return _cachedFactionWorldComp;
+            if (_cachedFactionWorldComp is not null) return _cachedFactionWorldComp;
             FactionFC comp = Find.World?.GetComponent<FactionFC>();
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedFactionWorldComp = comp;
             return comp;
@@ -99,7 +99,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedEnemyPower is object) return _cachedEnemyPower;
+            if (_cachedEnemyPower is not null) return _cachedEnemyPower;
             WorldComponent_EnemyPower comp = Find.World?.GetComponent<WorldComponent_EnemyPower>();
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedEnemyPower = comp;
             return comp;
@@ -110,7 +110,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedArchive is object) return _cachedArchive;
+            if (_cachedArchive is not null) return _cachedArchive;
             WorldComponent_Archive comp = Find.World?.GetComponent<WorldComponent_Archive>();
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedArchive = comp;
             return comp;
@@ -124,7 +124,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedMilitaryManager is object) return _cachedMilitaryManager;
+            if (_cachedMilitaryManager is not null) return _cachedMilitaryManager;
             MilitaryOperationManager val = FactionComp?.militaryOperationManager;
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedMilitaryManager = val;
             return val;
@@ -135,7 +135,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedEventManager is object) return _cachedEventManager;
+            if (_cachedEventManager is not null) return _cachedEventManager;
             FCEventManager val = FactionComp?.eventManager;
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedEventManager = val;
             return val;
@@ -146,7 +146,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedTaxledger is object) return _cachedTaxledger;
+            if (_cachedTaxledger is not null) return _cachedTaxledger;
             TaxLedger val = FactionComp?.taxLedger;
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedTaxledger = val;
             return val;
@@ -157,7 +157,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedPolicyManager is object) return _cachedPolicyManager;
+            if (_cachedPolicyManager is not null) return _cachedPolicyManager;
             PolicyManager val = FactionComp?.policyManager;
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedPolicyManager = val;
             return val;
@@ -168,7 +168,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedMilitary is object) return _cachedMilitary;
+            if (_cachedMilitary is not null) return _cachedMilitary;
             MilitaryFC val = FactionComp?.military;
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedMilitary = val;
             return val;
@@ -179,7 +179,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedRoadBuilder is object) return _cachedRoadBuilder;
+            if (_cachedRoadBuilder is not null) return _cachedRoadBuilder;
             FCRoadBuilder val = FactionComp?.roadBuilder;
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedRoadBuilder = val;
             return val;
@@ -190,7 +190,7 @@ public static class FindFC
     {
         get
         {
-            if (_cachedThreatAdaptation is object) return _cachedThreatAdaptation;
+            if (_cachedThreatAdaptation is not null) return _cachedThreatAdaptation;
             EmpireThreatAdaptation val = FactionComp?.threatAdaptation;
             if (Scribe.mode == LoadSaveMode.Inactive) _cachedThreatAdaptation = val;
             return val;
@@ -226,5 +226,5 @@ public static class FindFC
         _cachedRoadBuilder = null;
         _cachedThreatAdaptation = null;
     }
-    public static bool IsEmpireFaction(Faction f) => !(EmpireFaction is null) && f == EmpireFaction;
+    public static bool IsEmpireFaction(Faction f) => EmpireFaction is not null && f == EmpireFaction;
 }

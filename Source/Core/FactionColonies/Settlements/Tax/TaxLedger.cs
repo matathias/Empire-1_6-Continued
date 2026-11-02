@@ -162,7 +162,7 @@ public class TaxLedger : IExposable
             if (bill.dueTick >= currentTick) continue;
 
             /* taxes is null on a default-constructed BillFC; a bill with no taxes owes nothing. */
-            bool owedMoney = bill.taxes is object && bill.taxes.silverAmount < 0;
+            bool owedMoney = bill.taxes is not null && bill.taxes.silverAmount < 0;
             WorldSettlementFC settlement = bill.settlement;
 
             /* When the player has disabled late payments, owed-silver bills skip
@@ -173,7 +173,7 @@ public class TaxLedger : IExposable
 
             if (!skipAttempt && bill.AttemptResolve())
             {
-                if (owedMoney && settlement is object)
+                if (owedMoney && settlement is not null)
                 {
                     bill.ApplyLatePaidPenalties();
                     latePaidSettlements.Add(settlement);
@@ -390,8 +390,8 @@ public class TaxLedger : IExposable
         bool legacyAutoResolve, bool legacyAllowLate,
         int legacyTaxTimeDue, int legacyNextTaxId, int legacyNextBillId)
     {
-        if (legacyBills != null) bills = legacyBills;
-        if (legacyOldBills != null) oldBills = legacyOldBills;
+        if (legacyBills is not null) bills = legacyBills;
+        if (legacyOldBills is not null) oldBills = legacyOldBills;
         autoResolve = legacyAutoResolve;
         allowLatePayments = legacyAllowLate;
         if (legacyTaxTimeDue != -1) nextTaxDueTick = legacyTaxTimeDue;

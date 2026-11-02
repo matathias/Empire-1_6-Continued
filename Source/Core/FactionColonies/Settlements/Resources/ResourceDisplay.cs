@@ -49,15 +49,15 @@ public class ResourceDisplay : IExposable
     }
     public int CompareForUI(ResourceDisplay compareDef)
     {
-        if (compareDef == null)
+        if (compareDef is null)
         {
             return -2;
         }
-        if (compareDef.resourceDef == null)
+        if (compareDef.resourceDef is null)
         {
             return -1;
         }
-        if (this.resourceDef == null)
+        if (this.resourceDef is null)
         {
             return 1;
         }

@@ -26,7 +26,7 @@ public class FCSituationManager : IExposable
     /// <summary>Stable spawn-eligibility key. Settlement-scoped defs key on (defName, settlement.ID)
     /// so a per-settlement cooldown/cap never blocks a different settlement.</summary>
     public static string SpawnKey(FCSituationDef def, WorldSettlementFC target) =>
-        target != null ? def.defName + "@" + target.ID : def.defName;
+        target is not null ? def.defName + "@" + target.ID : def.defName;
 
     /* -*-*-*-*  Creation / removal  *-*-*-*- */
 
@@ -34,8 +34,8 @@ public class FCSituationManager : IExposable
     /// applies the starting stage + approach stat-modifiers, and fires the handler's OnStarted.</summary>
     public FCSituation StartSituation(FCSituationDef def, WorldSettlementFC target = null)
     {
-        if (def == null) return null;
-        if (def.scope == FCSituationScope.Settlement && target == null)
+        if (def is null) return null;
+        if (def.scope == FCSituationScope.Settlement && target is null)
         {
             LogUtil.Warning($"FCSituationManager.StartSituation: settlement-scoped def '{def.defName}' started with no target; ignoring.");
             return null;
@@ -68,7 +68,7 @@ public class FCSituationManager : IExposable
     /// resolution-event handler that the engine already removed).</summary>
     public bool Remove(FCSituation sit)
     {
-        if (sit == null || !situations.Contains(sit)) return false;
+        if (sit is null || !situations.Contains(sit)) return false;
         FactionFC faction = FindFC.FactionComp;
         SituationStatModifierApplier.RemoveAll(sit, faction);
         cooldowns[SpawnKey(sit.def, sit.targetSettlement)] = Find.TickManager.TicksGame;
@@ -81,7 +81,7 @@ public class FCSituationManager : IExposable
     /// stat-modifiers and bumps the UI version. No-op if already active.</summary>
     public void SwitchApproach(FCSituation sit, FCSituationApproachDef approach)
     {
-        if (sit == null || approach == null || sit.activeApproach == approach) return;
+        if (sit is null || approach is null || sit.activeApproach == approach) return;
         FactionFC faction = FindFC.FactionComp;
         SituationStatModifierApplier.RemoveApproach(sit, faction, invalidate: false);
         sit.activeApproach = approach;
@@ -94,7 +94,7 @@ public class FCSituationManager : IExposable
     /// processing as the daily advance pass.</summary>
     public void AddProgress(FCSituation sit, float delta)
     {
-        if (sit == null) return;
+        if (sit is null) return;
         FCSituationMaker.ApplyDelta(sit, FindFC.FactionComp, delta);
         Bump();
     }
@@ -127,7 +127,7 @@ public class FCSituationManager : IExposable
     /// <summary>Drops a removed settlement's situations and their stat-modifier sources. Idempotent.</summary>
     public void OnSettlementRemoved(WorldSettlementFC settlement)
     {
-        if (settlement == null) return;
+        if (settlement is null) return;
         FactionFC faction = FindFC.FactionComp;
         for (int i = situations.Count - 1; i >= 0; i--)
         {
@@ -144,12 +144,12 @@ public class FCSituationManager : IExposable
     public bool IsSettlementRemovalBlocked(WorldSettlementFC settlement, out string reason)
     {
         reason = null;
-        if (settlement == null) return false;
+        if (settlement is null) return false;
         foreach (FCSituation sit in situations)
         {
             if (sit.targetSettlement != settlement) continue;
             FCSituationHandlerExtension handler = sit.def.Handler;
-            if (handler != null)
+            if (handler is not null)
             {
                 if (handler.BlocksSettlementRemoval(sit, out reason)) return true;
             }
@@ -172,8 +172,8 @@ public class FCSituationManager : IExposable
 
     private void PruneOrphaned()
     {
-        int removed = situations.RemoveAll(s => s == null || s.def == null
-            || (s.def.scope == FCSituationScope.Settlement && s.targetSettlement == null));
+        int removed = situations.RemoveAll(s => s is null || s.def is null
+            || (s.def.scope == FCSituationScope.Settlement && s.targetSettlement is null));
         if (removed > 0)
         {
             LogUtil.Warning($"FCSituationManager: pruned {removed} orphaned situation(s) on load (missing def or target).");
@@ -184,9 +184,9 @@ public class FCSituationManager : IExposable
     public void ExposeData()
     {
         Scribe_Collections.Look(ref situations, "situations", LookMode.Deep);
-        if (situations == null) situations = new List<FCSituation>();
+        if (situations is null) situations = new List<FCSituation>();
         Scribe_Collections.Look(ref cooldowns, "cooldowns", LookMode.Value, LookMode.Value);
-        if (cooldowns == null) cooldowns = new Dictionary<string, int>();
+        if (cooldowns is null) cooldowns = new Dictionary<string, int>();
         Scribe_Values.Look(ref nextSituationId, "nextSituationId", 1);
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)

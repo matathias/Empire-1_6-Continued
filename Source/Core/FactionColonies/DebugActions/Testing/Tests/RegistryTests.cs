@@ -11,7 +11,7 @@ public static class RegistryTests
     private static WorldSettlementFC GetFirstSettlement()
     {
         var settlements = FindFC.Settlements;
-        if (settlements == null || settlements.Count == 0) return null;
+        if (settlements is null || settlements.Count == 0) return null;
         return settlements[0];
     }
 
@@ -69,7 +69,7 @@ public static class RegistryTests
         public void ModifyFactionPower(RimWorld.Faction faction, EnemyPower power)
         {
             InvokeCount++;
-            if (power is object) power.level += LevelBonus;
+            if (power is not null) power.level += LevelBonus;
         }
     }
 
@@ -85,7 +85,7 @@ public static class RegistryTests
         public void ModifySettlementPower(RimWorld.Planet.Settlement settlement, EnemyPower power)
         {
             InvokeCount++;
-            if (power is object) power.level += LevelBonus;
+            if (power is not null) power.level += LevelBonus;
         }
     }
 
@@ -181,7 +181,7 @@ public static class RegistryTests
     public static void Lifecycle_Register_InvokesSettlementCreated()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -197,7 +197,7 @@ public static class RegistryTests
     public static void Lifecycle_Register_InvokesSettlementRemoved()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -213,7 +213,7 @@ public static class RegistryTests
     public static void Lifecycle_Register_InvokesBuildingConstructed()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -229,7 +229,7 @@ public static class RegistryTests
     public static void Lifecycle_Register_InvokesBattleResolved()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -258,7 +258,7 @@ public static class RegistryTests
     public static void Lifecycle_Unregister_StopsInvocations()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -271,7 +271,7 @@ public static class RegistryTests
     public static void Lifecycle_DuplicateRegister_Ignored()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -288,7 +288,7 @@ public static class RegistryTests
     public static void Lifecycle_Exception_DoesNotCrash()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         var bad = new ThrowingLifecycleParticipant();
         LifecycleRegistry.Register(bad);
@@ -303,7 +303,7 @@ public static class RegistryTests
     public static void Lifecycle_MultipleParticipants_AllInvoked()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         var p1 = new TestLifecycleParticipant();
         var p2 = new TestLifecycleParticipant();
@@ -326,7 +326,7 @@ public static class RegistryTests
     public static void Lifecycle_ExceptionDoesNotBlockOthers()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         var bad = new ThrowingLifecycleParticipant();
         var good = new TestLifecycleParticipant();
@@ -1367,7 +1367,7 @@ public static class RegistryTests
     public static void EmpireRegistry_Register_RoutesToAllMatchingDomains()
     {
         WorldSettlementFC settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         MultiInterfaceParticipant p = new MultiInterfaceParticipant();
         EmpireRegistry.Register(p);
@@ -1392,7 +1392,7 @@ public static class RegistryTests
     public static void EmpireRegistry_Unregister_RemovesFromAllMatchingDomains()
     {
         WorldSettlementFC settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlements");
+        if (settlement is null) TestAssert.Skip("No settlements");
 
         MultiInterfaceParticipant p = new MultiInterfaceParticipant();
         EmpireRegistry.Register(p);
@@ -1418,7 +1418,7 @@ public static class RegistryTests
         // We can't easily enumerate every list, but we can verify that none of
         // p's hooks fire after ClearAll.
         WorldSettlementFC settlement = GetFirstSettlement();
-        if (settlement != null) LifecycleRegistry.InvokeOnSettlementCreated(settlement);
+        if (settlement is not null) LifecycleRegistry.InvokeOnSettlementCreated(settlement);
         TaxTickRegistry.InvokePreTaxResolution(null);
         DefenseValidatorRegistry.CanDefend(null, null);
 

@@ -35,11 +35,11 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
     {
         base.SetInitialSizeAndPosition();
         CreateColonyWindowFc createWindow = Find.WindowStack.WindowOfType<CreateColonyWindowFc>();
-        if (createWindow != null)
+        if (createWindow is not null)
         {
             lastTile = createWindow.currentTileSelected;
         }
-        if (cachedGroups != null && cachedGroups.Count > 0)
+        if (cachedGroups is not null && cachedGroups.Count > 0)
         {
             GameFont fontBefore = Text.Font;
             Text.Font = GameFont.Small;
@@ -121,7 +121,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
             if (existing is null)
                 Find.WindowStack.Add(new FCWindow_CreateColonyStatModifiers(groups));
         }
-        else if (existing is object)
+        else if (existing is not null)
         {
             existing.Close();
         }
@@ -134,7 +134,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
     public static void TryClose()
     {
         FCWindow_CreateColonyStatModifiers existing = Find.WindowStack.WindowOfType<FCWindow_CreateColonyStatModifiers>();
-        if (existing is object)
+        if (existing is not null)
             existing.Close();
     }
 
@@ -146,7 +146,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
         if (worldTile is null) return groups;
 
         // Biome stat modifiers
-        if (biome?.statModifiers != null)
+        if (biome?.statModifiers is not null)
         {
             List<FCStatModifier> filtered = FilterNonResourceLinked(biome.statModifiers);
             if (filtered.Count > 0)
@@ -154,7 +154,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
         }
 
         IList<TileMutatorDef> mutators = worldTile.Mutators;
-        if (mutators != null)
+        if (mutators is not null)
         {
             foreach (TileMutatorDef mut in mutators)
             {
@@ -167,7 +167,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
         }
 
         Landmark landmark = worldTile.Landmark;
-        if (landmark?.def != null)
+        if (landmark?.def is not null)
         {
             TileLandmarkResourceExtension ext = landmark.def.GetModExtension<TileLandmarkResourceExtension>();
             List<FCStatModifier> filtered = FilterNonResourceLinked(ext?.statModifiers);
@@ -185,7 +185,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
         foreach (FCStatModifier mod in src)
         {
             if (mod?.stat is null) continue;
-            if (mod.stat.linkedResource != null) continue;
+            if (mod.stat.linkedResource is not null) continue;
             result.Add(mod);
         }
         return result;

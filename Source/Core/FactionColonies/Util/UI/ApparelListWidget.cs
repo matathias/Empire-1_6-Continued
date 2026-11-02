@@ -44,7 +44,7 @@ public static class ApparelListWidget
                 OpenApparelPicker(displayUnit, opts);
             }
 
-            if (displayUnit != null && displayUnit.apparel.Any(a => a.thing != null))
+            if (displayUnit is not null && displayUnit.apparel.Any(a => a.thing is not null))
             {
                 btnX -= btnW + 2f;
                 Rect setAllBtn = new Rect(btnX, btnY, btnW, headerHeight);
@@ -55,7 +55,7 @@ public static class ApparelListWidget
                     OpenColorPicker(current, delegate (Color c)
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target != null) target.SetAllApparelColors(c);
+                        if (target is not null) target.SetAllApparelColors(c);
                     });
                 }
 
@@ -66,7 +66,7 @@ public static class ApparelListWidget
                     if (UIUtil.ClampedButtonText(clearBtn, "fcClearColors".Translate()))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target != null) target.ClearAllApparelColors();
+                        if (target is not null) target.ClearAllApparelColors();
                     }
                 }
             }
@@ -76,7 +76,7 @@ public static class ApparelListWidget
         Rect listOutRect = new Rect(rect.x, btnY + headerHeight + 2f, rect.width, rect.height - headerHeight - 4f);
 
         List<SavedThing> sortedApparel = displayUnit?.apparel
-            ?.Where(a => a.thing != null)
+            ?.Where(a => a.thing is not null)
             .OrderByDescending(a => a.thing.apparel.layers.Max(l => l.drawOrder))
             .ThenBy(a => a.thing.label)
             .ToList() ?? new List<SavedThing>();
@@ -113,7 +113,7 @@ public static class ApparelListWidget
                 {
                     ThingDef capturedThing = item.thing;
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.RemoveApparel(capturedThing);
+                    if (target is not null) target.RemoveApparel(capturedThing);
                 }
             }
 
@@ -121,7 +121,7 @@ public static class ApparelListWidget
             float swatchRightEdge = opts.canEdit ? removeRect.x - 4f : row.xMax - 4f;
             Rect swatchRect = new Rect(swatchRightEdge - swatchSize, row.y + (apparelRowHeight - swatchSize) / 2f, swatchSize, swatchSize);
             FactionFC factionComp = FindFC.FactionComp;
-            Color resolvedColor = factionComp != null ? factionComp.ResolveApparelColor(item) : Color.white;
+            Color resolvedColor = factionComp is not null ? factionComp.ResolveApparelColor(item) : Color.white;
             Color outlineColor = item.hasColor ? Color.white : new Color(0.5f, 0.5f, 0.5f);
             Widgets.DrawBoxSolidWithOutline(swatchRect, resolvedColor, outlineColor);
             if (opts.canEdit && Widgets.ButtonInvisible(swatchRect))
@@ -130,7 +130,7 @@ public static class ApparelListWidget
                 OpenColorPicker(resolvedColor, delegate (Color c)
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.SetApparelColor(capturedDef, c);
+                    if (target is not null) target.SetApparelColor(capturedDef, c);
                 });
             }
 
@@ -144,7 +144,7 @@ public static class ApparelListWidget
             Rect labelRect = new Rect(infoRect.xMax + 4f, row.y, costRect.x - infoRect.xMax - 8f, apparelRowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
-            string label = item.stuff != null
+            string label = item.stuff is not null
                 ? (string)(item.thing.LabelCap + " (" + item.stuff.LabelCap + ")")
                 : item.thing.LabelCap.ToString();
             if (item.quality.HasValue)
@@ -190,7 +190,7 @@ public static class ApparelListWidget
             onConfirm: (item, stuff, quality) =>
             {
                 MilUnitFC target = opts.getEditTarget?.Invoke();
-                if (target != null) target.SetApparel(item, stuff, quality);
+                if (target is not null) target.SetApparel(item, stuff, quality);
             },
             titleKey: "fcPickApparel",
             conflictTooltipFunc: t => GetConflictTooltip(currentApparel, t, body)
@@ -217,12 +217,12 @@ public static class ApparelListWidget
             onConfirm: (item, stuff, quality) =>
             {
                 MilUnitFC target = opts.getEditTarget?.Invoke();
-                if (target != null) target.SetApparel(item, stuff, quality);
+                if (target is not null) target.SetApparel(item, stuff, quality);
             },
             onUnequip: () =>
             {
                 MilUnitFC target = opts.getEditTarget?.Invoke();
-                if (target != null) target.RemoveApparel(current.thing);
+                if (target is not null) target.RemoveApparel(current.thing);
             },
             titleKey: "fcPickApparel",
             initialItem: current.thing,
@@ -247,7 +247,7 @@ public static class ApparelListWidget
     private static string GetConflictTooltip(List<SavedThing> worn, ThingDef candidate, BodyDef body)
     {
         List<string> conflicts = worn
-            .Where(a => a.thing != null && !ApparelUtility.CanWearTogether(a.thing, candidate, body))
+            .Where(a => a.thing is not null && !ApparelUtility.CanWearTogether(a.thing, candidate, body))
             .Select(a => a.thing.LabelCap.ToString())
             .ToList();
         if (conflicts.Count == 0) return null;

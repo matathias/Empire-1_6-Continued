@@ -199,7 +199,7 @@ public static class SituationsDestructiveTests
 
         TestAssert.IsFalse(mgr.AnyForSettlement(settlement),
             "Removing the settlement should clean up its situations");
-        if (sit is object)
+        if (sit is not null)
             TestAssert.IsFalse(mgr.Situations.Contains(sit),
                 "The settlement's situation should be gone after removal");
         DestructiveTestUtil.AssertEmpireInvariants(f, "SettlementScoped_LifecycleAndCleanup");

@@ -67,7 +67,7 @@ public class FCStatDef : Def
         foreach (string err in base.ConfigErrors())
             yield return err;
 
-        if (linkedResource != null)
+        if (linkedResource is not null)
         {
             if (linkedResource.productionAdditiveStat == this && aggregation != FCStatAggregation.Additive)
                 yield return defName + ": linked as productionAdditiveStat on " + linkedResource.defName + " but aggregation is not Additive";

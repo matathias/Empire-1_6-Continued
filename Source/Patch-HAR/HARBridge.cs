@@ -25,13 +25,13 @@ public class HARBridge : IHARBridge
 {
     public bool CanRaceWearApparel(ThingDef race, ThingDef apparel)
     {
-        if (race == null || apparel == null) return true;
+        if (race is null || apparel is null) return true;
         return RaceRestrictionSettings.CanWear(apparel, race);
     }
 
     public bool CanRaceUseWeapon(ThingDef race, ThingDef weapon)
     {
-        if (race == null || weapon == null) return true;
+        if (race is null || weapon is null) return true;
         return RaceRestrictionSettings.CanEquip(weapon, race);
     }
 }

@@ -17,11 +17,11 @@ public static class CrossSystemThrashDestructiveTests
 
         // 2. Hire + assign a squad (best effort)
         MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template != null)
+        if (template is not null)
         {
             MercenarySquadFC squad = null;
             TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), "HireSquad threw");
-            if (squad != null) FindFC.Military.Assign(squad, s, true);
+            if (squad is not null) FindFC.Military.Assign(squad, s, true);
         }
 
         // 3. Tax cycle
@@ -43,7 +43,7 @@ public static class CrossSystemThrashDestructiveTests
         // 5. Event
         FCEvent evt = null;
         TestAssert.DoesNotThrow(() => evt = FCEventMaker.MakeEvent(FCEventDefOf.cooldownMilitary), "MakeEvent threw");
-        if (evt != null)
+        if (evt is not null)
         {
             TestAssert.DoesNotThrow(() => FindFC.EventManager.AddEvent(evt), "AddEvent threw");
             TestAssert.DoesNotThrow(() => FindFC.EventManager.RemoveWhere(e => ReferenceEquals(e, evt)), "RemoveWhere threw");
@@ -57,7 +57,7 @@ public static class CrossSystemThrashDestructiveTests
         {
             FCPolicyDef edict = DefDatabase<FCPolicyDef>.AllDefsListForReading
                 .FirstOrDefault(d => d.IsEdict && !FindFC.PolicyManager.HasEdict(d));
-            if (edict != null) FindFC.PolicyManager.EnactEdict(edict);
+            if (edict is not null) FindFC.PolicyManager.EnactEdict(edict);
             FindFC.PolicyManager.RevokeAllEdicts();
         }, "Edict enact/revoke threw");
 
@@ -74,11 +74,11 @@ public static class CrossSystemThrashDestructiveTests
 
         // Best-effort: stand up a deploy op against the settlement so removal must cancel it.
         MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template != null)
+        if (template is not null)
         {
             MercenarySquadFC squad = null;
             TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), "HireSquad threw");
-            if (squad != null)
+            if (squad is not null)
             {
                 FindFC.Military.Assign(squad, s, true);
                 PlanetTile tile = s.Tile;
@@ -89,10 +89,10 @@ public static class CrossSystemThrashDestructiveTests
         // Remove the settlement out from under any op referencing it.
         DestructiveTestUtil.SafeRemoveSettlement(s);
 
-        if (FindFC.MilitaryManager?.Active != null)
+        if (FindFC.MilitaryManager?.Active is not null)
         {
             TestAssert.IsFalse(FindFC.MilitaryManager.Active.Any(o =>
-                    o != null && (o.aggressor?.homeSettlement == s || o.defender?.homeSettlement == s || o.targetObject == s)),
+                    o is not null && (o.aggressor?.homeSettlement == s || o.defender?.homeSettlement == s || o.targetObject == s)),
                 "No active op should still reference the removed settlement");
         }
         DestructiveTestUtil.AssertEmpireInvariants(f, "OrphanSweep_RemoveSettlementDuringOp");

@@ -8,7 +8,7 @@ public class FCPolicyBehavior_Innovative : FCPolicyBehavior
         if (profit <= 0.0) return;
 
         ResourcePool pool = faction.resourcePools.Find(p => p.resource == ResourceTypeDefOf.RTD_Research);
-        if (pool == null) return;
+        if (pool is null) return;
         double researchPoints = profit * Ext<FCPolicyBehaviorExt_Innovative>().profitToResearchRate;
         pool.pool += researchPoints;
 

@@ -80,7 +80,7 @@ internal static class RegistryDispatch
     {
         foreach (T item in Snapshot(items))
         {
-            try { if (selector(item) is object) return item; }
+            try { if (selector(item) is not null) return item; }
             catch (Exception e) { Log(item, call, e); }
         }
         return null;

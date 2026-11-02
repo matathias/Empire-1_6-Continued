@@ -59,7 +59,7 @@ public class FireSupportWindow : MilitaryWindow
         float contentLeft = sidebarRect.xMax + 10f;
         float contentWidth = rightEdge - contentLeft;
 
-        if (selectedSupport != null)
+        if (selectedSupport is not null)
         {
             // Header (name + cost + accuracy info + slider)
             float headerHeight = 120f;
@@ -168,7 +168,7 @@ public class FireSupportWindow : MilitaryWindow
                 FactionColoniesMilitary.SavedFireSupports.ToList()));
         }
 
-        if (selectedSupport is object)
+        if (selectedSupport is not null)
         {
             if (UIUtil.ClampedButtonText(deleteBtn, "FCDeleteFireSupportButton".Translate()))
             {
@@ -232,7 +232,7 @@ public class FireSupportWindow : MilitaryWindow
         float halfWidth = rect.width / 2f;
 
         Rect costRect = new Rect(rect.x, infoY, halfWidth, 20f);
-        if (settlementPointReference != null)
+        if (settlementPointReference is not null)
         {
             UIUtil.ClampedLabel(costRect, "FCFireSupportCostRefLabel".Translate(
                 selectedSupport.ReturnTotalCost(),

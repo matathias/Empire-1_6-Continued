@@ -15,7 +15,7 @@ public static class FCSituationMaker
     public static void ProcessSituations(FactionFC faction)
     {
         FCSituationManager manager = faction?.situationManager;
-        if (manager == null) return;
+        if (manager is null) return;
 
         SpawnPass(faction, manager);
 
@@ -33,7 +33,7 @@ public static class FCSituationMaker
         foreach (FCSituationDef def in FactionCache.FactionConditionedSituationDefs)
         {
             FCSituationFactionCondition cond = def.FactionCondition;
-            if (cond == null) continue;
+            if (cond is null) continue;
             if (!manager.IsEligibleToSpawn(def, null)) continue;
             if (cond.ShouldSpawn(faction)) manager.StartSituation(def, null);
         }
@@ -43,11 +43,11 @@ public static class FCSituationMaker
 
         foreach (WorldSettlementFC settlement in faction.settlements)
         {
-            if (settlement == null) continue;
+            if (settlement is null) continue;
             foreach (FCSituationDef def in settlementDefs)
             {
                 FCSituationSettlementCondition cond = def.SettlementCondition;
-                if (cond == null) continue;
+                if (cond is null) continue;
                 if (!manager.IsEligibleToSpawn(def, settlement)) continue;
                 if (cond.ShouldSpawn(faction, settlement)) manager.StartSituation(def, settlement);
             }
@@ -59,9 +59,9 @@ public static class FCSituationMaker
         FCSituationDef def = sit.def;
         bool advancing = IsAdvancing(sit, faction);
         float delta = (advancing ? def.baseRatePerDay : def.decayRatePerDay)
-                      + (sit.activeApproach != null ? sit.activeApproach.ratePerDay : 0f);
+                      + (sit.activeApproach is not null ? sit.activeApproach.ratePerDay : 0f);
 
-        if (def.Handler != null) delta = def.Handler.OnProgressTick(sit, delta);
+        if (def.Handler is not null) delta = def.Handler.OnProgressTick(sit, delta);
         if (delta == 0f) return;
 
         ApplyDelta(sit, faction, delta);
@@ -86,7 +86,7 @@ public static class FCSituationMaker
     /// event to the next processing pass rather than re-entering the event maker.</summary>
     public static void ApplyDelta(FCSituation sit, FactionFC faction, float delta)
     {
-        if (sit?.def == null || delta == 0f) return;
+        if (sit?.def is null || delta == 0f) return;
         FCSituationDef def = sit.def;
         float old = sit.progress;
         float raw = old + delta;
@@ -153,8 +153,8 @@ public static class FCSituationMaker
         if (newStage == oldStage) return;
 
         List<FCSituationStageDef> stages = def.stages;
-        int oldIdx = oldStage != null ? stages.IndexOf(oldStage) : -1;
-        int newIdx = newStage != null ? stages.IndexOf(newStage) : -1;
+        int oldIdx = oldStage is not null ? stages.IndexOf(oldStage) : -1;
+        int newIdx = newStage is not null ? stages.IndexOf(newStage) : -1;
         bool ascending = newProgress > oldProgress;
 
         if (ascending)
@@ -185,7 +185,7 @@ public static class FCSituationMaker
 
     private static void FireStageSlot(FCSituation sit, FactionFC faction, FCSituationStageDef stage, string slot, FCEventDef ev)
     {
-        if (ev == null) return;
+        if (ev is null) return;
         if (stage.fireEventsOnce)
         {
             string key = FCSituation.LatchKey(stage, slot);
@@ -199,10 +199,10 @@ public static class FCSituationMaker
     /// situation's settlement (faction-scoped situations fire untargeted events).</summary>
     private static void FireEvent(FCEventDef ev, FCSituation sit, FactionFC faction)
     {
-        if (ev == null || faction == null) return;
+        if (ev is null || faction is null) return;
         FCEvent evt = FCEventMaker.MakeEvent(ev);
-        if (evt == null) return;
-        if (sit.targetSettlement != null)
+        if (evt is null) return;
+        if (sit.targetSettlement is not null)
         {
             evt.settlementTraitLocations = new List<WorldSettlementFC> { sit.targetSettlement };
             evt.location = sit.targetSettlement.Tile;

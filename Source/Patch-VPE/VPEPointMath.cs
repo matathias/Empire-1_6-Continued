@@ -38,7 +38,7 @@ public static class VPEPointMath
             else
             {
                 PsycasterPathDef path = PathOf(s.psycastDef);
-                if (path != null && paths.Add(path)) spent += 1; // first ability of a path pays the path
+                if (path is not null && paths.Add(path)) spent += 1; // first ability of a path pays the path
                 spent += 1; // the ability itself
             }
         }
@@ -87,12 +87,12 @@ public static class VPEPointMath
             if (s.kind != VPEPsycastProvider.KindMeditationFocus)
             {
                 PsycasterPathDef path = PathOf(s.psycastDef);
-                if (path != null && !paths.Contains(path)) { cost += 1; pathToAdd = path; }
+                if (path is not null && !paths.Contains(path)) { cost += 1; pathToAdd = path; }
             }
 
             if (spent + cost > budget) break;
             spent += cost;
-            if (pathToAdd != null) paths.Add(pathToAdd);
+            if (pathToAdd is not null) paths.Add(pathToAdd);
             result.Add(s);
         }
 
@@ -105,6 +105,6 @@ public static class VPEPointMath
         AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(psycastDefName);
         if (def is null) return null;
         AbilityExtension_Psycast psycast = def.Psycast();
-        return psycast != null ? psycast.path : null;
+        return psycast is not null ? psycast.path : null;
     }
 }

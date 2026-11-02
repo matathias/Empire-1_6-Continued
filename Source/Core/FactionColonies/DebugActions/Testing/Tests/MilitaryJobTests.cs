@@ -17,7 +17,7 @@ public static class MilitaryJobTests
         // Non-state jobs with a handlerClass should produce a valid Handler instance
         foreach (MilitaryJobDef def in DefDatabase<MilitaryJobDef>.AllDefsListForReading)
         {
-            if (def.isState || def.handlerClass == null) continue;
+            if (def.isState || def.handlerClass is null) continue;
             TestAssert.IsNotNull(def.Handler,
                 $"{def.defName}: has handlerClass {def.handlerClass.Name} but Handler is null");
         }
@@ -157,7 +157,7 @@ public static class MilitaryJobTests
     public static void DefaultEnabledJob_AllowedByDefault()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -178,7 +178,7 @@ public static class MilitaryJobTests
     public static void DefaultDisabledJob_BlockedByDefault()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -197,7 +197,7 @@ public static class MilitaryJobTests
     public static void EnabledMilitaryJob_OverridesDefault()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -219,7 +219,7 @@ public static class MilitaryJobTests
     public static void BlockedMilitaryJob_Blocks()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -241,7 +241,7 @@ public static class MilitaryJobTests
     public static void BlockedOverridesEnabled_ForJobs()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         // Isolationist blocks Capture (a default-enabled job). Verify it stays blocked
         // even though Capture's defaultEnabled is true — the blockedMilitaryJobs list
@@ -279,7 +279,7 @@ public static class MilitaryJobTests
     public static void Pacifist_BlocksActionNotJobs()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -307,7 +307,7 @@ public static class MilitaryJobTests
     public static void Authoritarian_EnablesEnslave_JobLevel()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -334,7 +334,7 @@ public static class MilitaryJobTests
     {
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
         {
-            if (def.blockedMilitaryJobs != null)
+            if (def.blockedMilitaryJobs is not null)
             {
                 for (int i = 0; i < def.blockedMilitaryJobs.Count; i++)
                 {
@@ -342,7 +342,7 @@ public static class MilitaryJobTests
                         $"{def.defName}: blockedMilitaryJobs[{i}] resolved to null (bad defName in XML?)");
                 }
             }
-            if (def.enabledMilitaryJobs != null)
+            if (def.enabledMilitaryJobs is not null)
             {
                 for (int i = 0; i < def.enabledMilitaryJobs.Count; i++)
                 {

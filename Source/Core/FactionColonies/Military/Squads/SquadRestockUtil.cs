@@ -134,7 +134,7 @@ public static class SquadRestockUtil
             q.Enqueue(st);
         }
 
-        if (present != null)
+        if (present is not null)
         {
             foreach (PresentItem pi in present)
             {
@@ -148,7 +148,7 @@ public static class SquadRestockUtil
                 {
                     float fracLost = 1f - Mathf.Clamp01(pi.hitPoints / (float)pi.maxHitPoints);
                     result.value += st.MarketValue * fracLost;
-                    if (pi.handle != null) result.repairHandles.Add(pi.handle);
+                    if (pi.handle is not null) result.repairHandles.Add(pi.handle);
                 }
             }
         }
@@ -190,7 +190,7 @@ public static class SquadRestockUtil
             bool needsCeUpdate = false;
 
             // -- Carried inventory (ammo / meds / drugs): refill what was consumed. --
-            if (pawn.inventory?.innerContainer != null && design.inventory != null && design.inventory.Count > 0)
+            if (pawn.inventory?.innerContainer is not null && design.inventory is not null && design.inventory.Count > 0)
             {
                 // Count of each carried item the pawn still has (built once, read by the lambda).
                 Dictionary<ThingQualityTuple, int> have = new Dictionary<ThingQualityTuple, int>();
@@ -223,7 +223,7 @@ public static class SquadRestockUtil
             }
 
             // -- Worn apparel: repair damaged, re-equip destroyed/lost. --
-            if (pawn.apparel != null && design.apparel != null && design.apparel.Count > 0)
+            if (pawn.apparel is not null && design.apparel is not null && design.apparel.Count > 0)
             {
                 EquipmentRestockResult r = ComputeEquipmentRestock(design.apparel, BuildPresent(pawn.apparel.WornApparel));
                 totalValue += r.value;
@@ -234,7 +234,7 @@ public static class SquadRestockUtil
             }
 
             // -- Equipped weapons: repair damaged, re-equip destroyed/lost. --
-            if (pawn.equipment != null && design.weapons != null && design.weapons.Count > 0)
+            if (pawn.equipment is not null && design.weapons is not null && design.weapons.Count > 0)
             {
                 EquipmentRestockResult r = ComputeEquipmentRestock(design.weapons, BuildPresent(pawn.equipment.AllEquipmentListForReading));
                 totalValue += r.value;
@@ -252,7 +252,7 @@ public static class SquadRestockUtil
         if (cost <= 0) return 0;
 
         BillFC bill = FindFC.TaxLedger?.CreateRestockCostBill(squad, cost);
-        if (bill is object) NotifyRestock(squad, cost);
+        if (bill is not null) NotifyRestock(squad, cost);
         return cost;
     }
 
@@ -267,7 +267,7 @@ public static class SquadRestockUtil
         {
             if (t is null) continue;
             QualityCategory? q = t.TryGetQuality(out QualityCategory qc) ? qc : (QualityCategory?)null;
-            int maxHp = (t.def != null && t.def.useHitPoints) ? t.MaxHitPoints : 0;
+            int maxHp = (t.def is not null && t.def.useHitPoints) ? t.MaxHitPoints : 0;
             list.Add(new PresentItem
             {
                 thing = t.def,
@@ -287,7 +287,7 @@ public static class SquadRestockUtil
         if (handles is null) return;
         foreach (object h in handles)
         {
-            if (h is Thing t && !t.Destroyed && t.def != null && t.def.useHitPoints)
+            if (h is Thing t && !t.Destroyed && t.def is not null && t.def.useHitPoints)
                 t.HitPoints = t.MaxHitPoints;
         }
     }
@@ -306,14 +306,14 @@ public static class SquadRestockUtil
         bool showLetter = mode == TaxNotificationMode.All || mode == TaxNotificationMode.LetterOnly;
         bool showMessage = mode == TaxNotificationMode.All || mode == TaxNotificationMode.MessageOnly;
 
-        LookTargets target = squad?.settlement is object
+        LookTargets target = squad?.settlement is not null
             ? new LookTargets(squad.settlement)
             : null;
 
         if (showLetter)
         {
             TaggedString label = "FCRestockBillLetterLabel".Translate();
-            if (target is object)
+            if (target is not null)
                 Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent, target);
             else
                 Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent);
@@ -321,7 +321,7 @@ public static class SquadRestockUtil
 
         if (showMessage)
         {
-            if (target is object)
+            if (target is not null)
                 Messages.Message(text, target, MessageTypeDefOf.NeutralEvent);
             else
                 Messages.Message(text, MessageTypeDefOf.NeutralEvent);

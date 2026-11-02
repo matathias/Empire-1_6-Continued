@@ -134,7 +134,7 @@ public class FCWindow_CaravanTypePicker : Window
 
             // Icon
             Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
-            if (entry.icon is object)
+            if (entry.icon is not null)
                 GUI.DrawTexture(iconRect, entry.icon);
 
             // Checkbox

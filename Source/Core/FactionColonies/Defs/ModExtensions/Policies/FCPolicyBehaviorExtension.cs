@@ -29,7 +29,7 @@ public class FCPolicyBehaviorExtension : DefModExtension
         foreach (string err in base.ConfigErrors())
             yield return err;
 
-        if (behaviorClass == null)
+        if (behaviorClass is null)
             yield return "FCPolicyBehaviorExtension: behaviorClass is null";
         else if (!typeof(FCPolicyBehavior).IsAssignableFrom(behaviorClass))
             yield return "FCPolicyBehaviorExtension: behaviorClass " + behaviorClass.Name

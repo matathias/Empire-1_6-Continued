@@ -14,7 +14,7 @@ public class MainTabWindow_EmpireExtensions : MainTabWindow
     {
         base.PreOpen();
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         tabs.Clear();
         tabFuncs.Clear();
@@ -32,7 +32,7 @@ public class MainTabWindow_EmpireExtensions : MainTabWindow
                     itab.OnTabSwitch();
                 }, () => curTab == name));
                 tabFuncs.Add(name, itab.DrawOverviewTab);
-                if (curTab == null) curTab = name;
+                if (curTab is null) curTab = name;
             }
             catch (Exception e)
             {
@@ -43,7 +43,7 @@ public class MainTabWindow_EmpireExtensions : MainTabWindow
 
     public override void DoWindowContents(Rect inRect)
     {
-        if (tabs.Count == 0 || curTab == null) return;
+        if (tabs.Count == 0 || curTab is null) return;
 
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;

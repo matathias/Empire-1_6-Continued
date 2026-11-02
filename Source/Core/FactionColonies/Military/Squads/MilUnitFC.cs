@@ -34,7 +34,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     public List<SavedThing> apparel = new List<SavedThing>();
     public List<SavedThing> inventory = new List<SavedThing>();
     public List<SavedImplant> implants = new List<SavedImplant>();
-    public bool HasWeapon => weapons.Any(w => w.thing != null);
+    public bool HasWeapon => weapons.Any(w => w.thing is not null);
 
     // Psycast design (Psycasts tab). psylinkLevel gates which psycasts are pickable
     // and is applied the "neuroformer way" at spawn; psycasts carry their owning psycast-system
@@ -53,7 +53,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     /// <summary>True when this unit is a mechanitor design — flagged as one or carrying
     /// at least one assigned mech. Gates the mechlink apply, the mech spawn block, and cost.</summary>
     public bool IsMechanitorDesign =>
-        ModsConfig.BiotechActive && (isMechanitor || (mechs != null && mechs.Count > 0));
+        ModsConfig.BiotechActive && (isMechanitor || (mechs is not null && mechs.Count > 0));
 
     // Forced gender for spawned pawns (null = any).
     public Gender? forcedGender;
@@ -87,14 +87,14 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         // Defensive: FindFC.Military can be null if this is constructed mid-load before
         // FactionFC's legacy-military migration has populated it. Fall back to 0 rather than NRE.
         MilitaryFC mil = FindFC.Military;
-        loadID = mil is object ? mil.NextUnitId() : 0;
+        loadID = mil is not null ? mil.NextUnitId() : 0;
         isBlank = blank;
         equipmentTotalCost = 0;
 
         try
         {
             Faction playerFaction = FindFC.EmpireFaction;
-            if (playerFaction != null && playerFaction.def.pawnGroupMakers.Any() &&
+            if (playerFaction is not null && playerFaction.def.pawnGroupMakers.Any() &&
                 playerFaction.def.pawnGroupMakers.Any(pgm => pgm.options?.Any() == true))
             {
                 pawnKind = playerFaction.RandomPawnKind();
@@ -137,11 +137,11 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
     // --- Xenotype Helpers ---
 
-    public bool IsCustomXenotype => customXenotypeName != null;
+    public bool IsCustomXenotype => customXenotypeName is not null;
 
     public CustomXenotype ResolveCustomXenotype()
     {
-        if (customXenotypeName == null) return null;
+        if (customXenotypeName is null) return null;
         CustomXenotype result = null;
         FactionCache.CustomXenotypesDecoder?.TryGetValue(customXenotypeName, out result);
         return result;
@@ -149,24 +149,24 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
     public List<GeneDef> GetXenotypeGenes()
     {
-        if (xenotype != null) return xenotype.genes;
+        if (xenotype is not null) return xenotype.genes;
         CustomXenotype custom = ResolveCustomXenotype();
-        if (custom != null) return custom.genes;
+        if (custom is not null) return custom.genes;
         return null;
     }
 
     public string GetXenotypeLabel()
     {
-        if (xenotype != null) return xenotype.label.CapitalizeFirst();
-        if (customXenotypeName != null) return customXenotypeName.CapitalizeFirst();
+        if (xenotype is not null) return xenotype.label.CapitalizeFirst();
+        if (customXenotypeName is not null) return customXenotypeName.CapitalizeFirst();
         return "None";
     }
 
     public Texture2D GetXenotypeIcon()
     {
-        if (xenotype != null) return xenotype.Icon;
+        if (xenotype is not null) return xenotype.Icon;
         CustomXenotype custom = ResolveCustomXenotype();
-        if (custom != null) return custom.IconDef.Icon;
+        if (custom is not null) return custom.IconDef.Icon;
         return null;
     }
 
@@ -218,9 +218,9 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         // It was a companion (not a mount), so it migrates into the companions list.
         PawnKindDef legacyAnimal = null;
         Scribe_Defs.Look(ref legacyAnimal, "animal");
-        if (Scribe.mode == LoadSaveMode.LoadingVars && legacyAnimal != null)
+        if (Scribe.mode == LoadSaveMode.LoadingVars && legacyAnimal is not null)
         {
-            if (animals == null) animals = new List<SavedAnimal>();
+            if (animals is null) animals = new List<SavedAnimal>();
             if (animals.Count == 0) animals.Add(new SavedAnimal(legacyAnimal, 1));
         }
         Scribe_Defs.Look(ref xenotype, "xenotype");
@@ -257,17 +257,17 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (weapons == null) weapons = new List<SavedThing>();
-            if (apparel == null) apparel = new List<SavedThing>();
-            if (inventory == null) inventory = new List<SavedThing>();
-            if (implants == null) implants = new List<SavedImplant>();
-            if (psycasts == null) psycasts = new List<SavedPsycast>();
-            if (mechs == null) mechs = new List<SavedMech>();
-            if (mechGroupWorkModes == null) mechGroupWorkModes = new List<MechWorkModeDef>();
-            if (animals == null) animals = new List<SavedAnimal>();
-            if (statModifiers == null) statModifiers = new List<PermanentStatModifier>();
+            if (weapons is null) weapons = new List<SavedThing>();
+            if (apparel is null) apparel = new List<SavedThing>();
+            if (inventory is null) inventory = new List<SavedThing>();
+            if (implants is null) implants = new List<SavedImplant>();
+            if (psycasts is null) psycasts = new List<SavedPsycast>();
+            if (mechs is null) mechs = new List<SavedMech>();
+            if (mechGroupWorkModes is null) mechGroupWorkModes = new List<MechWorkModeDef>();
+            if (animals is null) animals = new List<SavedAnimal>();
+            if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
             // Mutual exclusivity: prefer XenotypeDef if both are set
-            if (xenotype != null && customXenotypeName != null)
+            if (xenotype is not null && customXenotypeName is not null)
                 customXenotypeName = null;
 
             RestoreClonedPawnKindIfRemapped();
@@ -296,7 +296,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     {
         get
         {
-            if (previewPawn == null || pawnIdentityDirty)
+            if (previewPawn is null || pawnIdentityDirty)
                 RebuildPreviewPawn();
             else if (pawnEquipmentDirty)
                 RefreshPreviewEquipment();
@@ -313,7 +313,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     {
         try
         {
-            if (previewPawn != null)
+            if (previewPawn is not null)
             {
                 previewPawn.apparel?.DestroyAll();
                 previewPawn.equipment?.DestroyAllEquipment();
@@ -322,17 +322,17 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
             previewPawn = FCPawnGenerator.GenerateWithForcedXenotype(FCPawnGenerator.WorkerOrMilitaryRequestForUnit(this));
 
-            if (previewPawn != null && previewPawn.Faction == null)
+            if (previewPawn is not null && previewPawn.Faction is null)
             {
                 Faction empireFaction = FindFC.EmpireFaction;
-                if (empireFaction != null)
+                if (empireFaction is not null)
                     previewPawn.SetFaction(empireFaction);
             }
 
             // Implants change the pawn's health/identity, so they are applied here at
             // generation time (not in RefreshPreviewEquipment, which runs on equipment-only
             // changes and would otherwise double-install).
-            if (previewPawn != null)
+            if (previewPawn is not null)
             {
                 ApplyImplantsToPawn(previewPawn, this);
                 ApplyPsycastsToPawn(previewPawn, this);
@@ -347,7 +347,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
         pawnIdentityDirty = false;
 
-        if (previewPawn == null)
+        if (previewPawn is null)
         {
             pawnEquipmentDirty = false;
             return;
@@ -359,7 +359,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
     protected virtual void RefreshPreviewEquipment()
     {
-        if (previewPawn == null) return;
+        if (previewPawn is null) return;
         ApplyEquipmentToPawn(previewPawn, this);
         pawnEquipmentDirty = false;
     }
@@ -375,21 +375,21 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         target.equipment?.DestroyAllEquipment();
 
         FactionFC factionComp = FindFC.FactionComp;
-        if (source.apparel != null && target.apparel != null)
+        if (source.apparel is not null && target.apparel is not null)
         {
             foreach (SavedThing a in source.apparel)
             {
                 Thing t = a.CreateThing();
                 if (t is Apparel ap)
                 {
-                    Color resolved = factionComp != null ? factionComp.ResolveApparelColor(a) : Color.white;
+                    Color resolved = factionComp is not null ? factionComp.ResolveApparelColor(a) : Color.white;
                     t.SetColor(resolved, reportFailure: false);
                     target.apparel.Wear(ap);
                 }
             }
         }
 
-        if (source.weapons != null && target.equipment != null)
+        if (source.weapons is not null && target.equipment is not null)
         {
             foreach (SavedThing w in source.weapons)
             {
@@ -417,13 +417,13 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         {
             try
             {
-                if (im.recipe is object)
+                if (im.recipe is not null)
                 {
                     BodyPartRecord part;
                     if (TryResolveImplant(target, im, out part))
                         im.recipe.Worker.ApplyOnPawn(target, part, null, null, null);
                 }
-                else if (im.selfInstallThing is object)
+                else if (im.selfInstallThing is not null)
                 {
                     ApplySelfInstallImplant(target, im.selfInstallThing);
                 }
@@ -447,7 +447,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         CompUseEffect_InstallImplant comp = item?.TryGetComp<CompUseEffect_InstallImplant>();
         if (comp is null)
         {
-            if (item is object && !item.Destroyed) item.Destroy();
+            if (item is not null && !item.Destroyed) item.Destroy();
             return;
         }
         try { comp.DoEffect(target); }
@@ -469,7 +469,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         if (source.psylinkLevel > 0)
         {
             IPsycastSystemProvider active = PsycastSystemRegistry.Active;
-            if (active is object)
+            if (active is not null)
             {
                 try { active.ApplyPsylink(target, source.psylinkLevel); }
                 catch (Exception ex)
@@ -615,7 +615,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
                 }
                 if (found is null) continue;
 
-                if (found.Part != null && im.recipe is object)
+                if (found.Part is not null && im.recipe is not null)
                     target.health.RestorePart(found.Part);
                 else
                     target.health.RemoveHediff(found);
@@ -636,8 +636,8 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     public static void ReconcileImplantsOnPawn(Pawn target, MilUnitFC desired, MilUnitFC previous)
     {
         if (target?.health is null || target.Dead || target.Destroyed) return;
-        if (previous != null) RemoveImplantsFromPawn(target, previous.implants);
-        if (desired != null) ApplyImplantsToPawn(target, desired);
+        if (previous is not null) RemoveImplantsFromPawn(target, previous.implants);
+        if (desired is not null) ApplyImplantsToPawn(target, desired);
     }
 
     /* Brings a live pawn's psylink + psycasts in line with the desired loadout WITHOUT regenerating
@@ -794,7 +794,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         get
         {
             Pawn p = PreviewPawn;
-            return p != null ? MassUtility.Capacity(p) * 0.7f : 0f;
+            return p is not null ? MassUtility.Capacity(p) * 0.7f : 0f;
         }
     }
 
@@ -865,8 +865,8 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     /// (follow + fight near the mechanitor) when none was chosen.</summary>
     public MechWorkModeDef GetGroupWorkMode(int group)
     {
-        if (mechGroupWorkModes != null && group >= 0 && group < mechGroupWorkModes.Count
-            && mechGroupWorkModes[group] != null)
+        if (mechGroupWorkModes is not null && group >= 0 && group < mechGroupWorkModes.Count
+            && mechGroupWorkModes[group] is not null)
             return mechGroupWorkModes[group];
         return MechWorkModeDefOf.Escort;
     }
@@ -917,7 +917,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         {
             if (!ModsConfig.BiotechActive) return 0f;
             Pawn p = PreviewPawn;
-            return p?.mechanitor != null ? p.GetStatValue(StatDefOf.MechBandwidth) : 0f;
+            return p?.mechanitor is not null ? p.GetStatValue(StatDefOf.MechBandwidth) : 0f;
         }
     }
 
@@ -929,7 +929,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
             float used = 0f;
             if (mechs is null) return used;
             foreach (SavedMech m in mechs)
-                if (m.kind?.race != null)
+                if (m.kind?.race is not null)
                     used += m.kind.race.GetStatValueAbstract(StatDefOf.BandwidthCost) * Mathf.Max(1, m.count);
             return used;
         }
@@ -1028,7 +1028,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     {
         get
         {
-            if (animals == null) return 0;
+            if (animals is null) return 0;
             int total = 0;
             foreach (SavedAnimal a in animals) total += Mathf.Max(1, a.count);
             return total;
@@ -1040,8 +1040,8 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     /// Unlike mechs, animals don't change the unit's own identity, so no MarkIdentityDirty.</summary>
     public bool AddAnimal(PawnKindDef kind, int count = 1)
     {
-        if (kind?.race == null || count <= 0) return false;
-        if (animals == null) animals = new List<SavedAnimal>();
+        if (kind?.race is null || count <= 0) return false;
+        if (animals is null) animals = new List<SavedAnimal>();
 
         if (TotalAnimalCount + count > FCSettings.maxAnimalSubpawns)
         {
@@ -1071,7 +1071,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
     public void RemoveAnimal(int index)
     {
-        if (animals == null || index < 0 || index >= animals.Count) return;
+        if (animals is null || index < 0 || index >= animals.Count) return;
         animals.RemoveAt(index);
         ChangeTick();
         MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -1080,7 +1080,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     /// <summary>Reduces a companion row's count by one, removing the row when it reaches zero.</summary>
     public void DecrementAnimal(int index)
     {
-        if (animals == null || index < 0 || index >= animals.Count) return;
+        if (animals is null || index < 0 || index >= animals.Count) return;
         SavedAnimal row = animals[index];
         if (row.count <= 1) { RemoveAnimal(index); return; }
         row.count -= 1;
@@ -1118,7 +1118,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         else
         {
             IPsycastSystemProvider active = PsycastSystemRegistry.Active;
-            if (active != null)
+            if (active is not null)
                 psycasts = active.ClampSelectionsToBudget(psycasts, psylinkLevel);
         }
         MarkIdentityDirty(); // psylink hediff changes pawn identity
@@ -1136,7 +1136,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     {
         if (string.IsNullOrEmpty(systemKey)) return;
         psycasts.RemoveAll(a => a.systemKey == systemKey);
-        if (entries is object)
+        if (entries is not null)
         {
             foreach (SavedPsycast e in entries)
             {
@@ -1171,7 +1171,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         {
             try
             {
-                if (im.recipe is object)
+                if (im.recipe is not null)
                 {
                     BodyPartRecord part;
                     if (!TryResolveImplant(testPawn, im, out part)) continue;
@@ -1180,7 +1180,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
                     im.recipe.Worker.ApplyOnPawn(testPawn, part, null, null, null);
                     kept.Add(im);
                 }
-                else if (im.selfInstallThing is object)
+                else if (im.selfInstallThing is not null)
                 {
                     // Self-install implants only need their target body part to still exist (the
                     // brain, for control sublinks). Apply cumulatively so leveled implants stack.
@@ -1311,9 +1311,9 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
         double totalCost = 0;
 
-        if (pawnKind?.race != null)
+        if (pawnKind?.race is not null)
         {
-            float xenoFactor = xenotype is object
+            float xenoFactor = xenotype is not null
                 ? GeneValuationUtil.XenotypeFactor(xenotype)
                 : GeneValuationUtil.XenotypeFactor(ResolveCustomXenotype());
             totalCost += Math.Floor(pawnKind.race.BaseMarketValue * FCSettings.militaryRaceCostMultiplier * xenoFactor);
@@ -1340,11 +1340,11 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         // Companion animals: each row's market value times its count. The mount (if any) reuses the
         // same multiplier. The spawned animal/mount pawns are never re-counted by squad cost/power
         // math, so their entire cost lives here on the design (mirrors the mech cost path below).
-        if (animals != null)
+        if (animals is not null)
             foreach (SavedAnimal a in animals)
-                if (a.kind?.race != null)
+                if (a.kind?.race is not null)
                     totalCost += Math.Floor(a.kind.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier) * Mathf.Max(1, a.count);
-        if (mount?.race != null)
+        if (mount?.race is not null)
             totalCost += Math.Floor(mount.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
 
         // Mechanitor cost: a flat surcharge for the mechlink itself, plus each bonded mech's
@@ -1353,9 +1353,9 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         if (ModsConfig.BiotechActive && IsMechanitorDesign)
         {
             totalCost += FCSettings.militaryMechlinkCost;
-            if (mechs != null)
+            if (mechs is not null)
                 foreach (SavedMech m in mechs)
-                    if (m.kind?.race != null)
+                    if (m.kind?.race is not null)
                         totalCost += Math.Floor(m.kind.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier) * Mathf.Max(1, m.count);
         }
 
@@ -1368,7 +1368,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     {
         IPsycastSystemProvider provider = PsycastSystemRegistry.ByKey(psycast.systemKey);
         PsycastPickEntry entry;
-        if (provider is object && provider.TryGetDisplay(psycast, out entry))
+        if (provider is not null && provider.TryGetDisplay(psycast, out entry))
             return entry.cost;
         return 0;
     }
@@ -1379,15 +1379,15 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     {
         if (recipe is null) return 0f;
         float cost = 0f;
-        if (recipe.ingredients != null)
+        if (recipe.ingredients is not null)
         {
             foreach (IngredientCount ing in recipe.ingredients)
             {
-                if (ing.IsFixedIngredient && ing.FixedIngredient != null)
+                if (ing.IsFixedIngredient && ing.FixedIngredient is not null)
                     cost += ing.FixedIngredient.BaseMarketValue * ing.GetBaseCount();
             }
         }
-        if (cost <= 0f && recipe.ProducedThingDef != null)
+        if (cost <= 0f && recipe.ProducedThingDef is not null)
             cost += recipe.ProducedThingDef.BaseMarketValue;
         return cost;
     }
@@ -1396,8 +1396,8 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     /// implants, or the item's market value for self-install implants (control sublinks etc.).</summary>
     public static float ImplantCost(SavedImplant im)
     {
-        if (im.recipe is object) return ImplantCost(im.recipe);
-        if (im.selfInstallThing is object) return im.selfInstallThing.BaseMarketValue;
+        if (im.recipe is not null) return ImplantCost(im.recipe);
+        if (im.selfInstallThing is not null) return im.selfInstallThing.BaseMarketValue;
         return 0f;
     }
 
@@ -1407,11 +1407,11 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     public static ThingDef ImplantIconThing(RecipeDef recipe)
     {
         if (recipe is null) return null;
-        if (recipe.UIIconThing != null) return recipe.UIIconThing;
-        if (recipe.ingredients != null)
+        if (recipe.UIIconThing is not null) return recipe.UIIconThing;
+        if (recipe.ingredients is not null)
         {
             foreach (IngredientCount ing in recipe.ingredients)
-                if (ing.IsFixedIngredient && ing.FixedIngredient != null)
+                if (ing.IsFixedIngredient && ing.FixedIngredient is not null)
                     return ing.FixedIngredient;
         }
         return null;
@@ -1419,7 +1419,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
     public static ThingDef ImplantIconThing(SavedImplant im)
     {
-        if (im.selfInstallThing is object) return im.selfInstallThing;
+        if (im.selfInstallThing is not null) return im.selfInstallThing;
         return ImplantIconThing(im.recipe);
     }
 

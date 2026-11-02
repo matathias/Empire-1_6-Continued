@@ -17,21 +17,21 @@ public class FCEventHandlerExtension_StartSituation : FCEventHandlerExtension
     public override void OnEventTriggered(FCEvent evt)
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         FCSituationManager manager = faction.situationManager;
-        if (manager == null) return;
+        if (manager is null) return;
 
         WorldSettlementFC target = evt?.settlementTraitLocations?.FirstOrDefault();
 
-        if (situationToResolve != null)
+        if (situationToResolve is not null)
         {
             FCSituation existing = manager.GetByDef(situationToResolve)
                 .FirstOrDefault(s => s.targetSettlement == target);
-            if (existing != null) manager.Remove(existing);
+            if (existing is not null) manager.Remove(existing);
         }
 
-        if (situationToStart != null)
+        if (situationToStart is not null)
             manager.StartSituation(situationToStart, target);
     }
 }

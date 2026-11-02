@@ -68,7 +68,7 @@ public static class DestructiveTestUtil
         if (op is null) return;
         try { op.Resolve(); }
         catch (Exception ex) { LogUtil.Warning($"ResolveAndSweepOp Resolve threw (ignored): {ex}"); }
-        if (op.sourceEvents != null)
+        if (op.sourceEvents is not null)
         {
             foreach (FCEvent e in op.sourceEvents.ToList())
             {
@@ -109,7 +109,7 @@ public static class DestructiveTestUtil
 
         // No null / duplicate settlements.
         List<WorldSettlementFC> settlements = f.settlements;
-        if (settlements != null)
+        if (settlements is not null)
         {
             TestAssert.IsFalse(settlements.Any(s => s is null),
                 $"{context}: faction.settlements contains a null entry");
@@ -117,7 +117,7 @@ public static class DestructiveTestUtil
                 $"{context}: faction.settlements contains duplicates");
 
             // No tax bill references a settlement that is no longer part of the faction.
-            if (FindFC.TaxLedger?.Bills != null)
+            if (FindFC.TaxLedger?.Bills is not null)
             {
                 foreach (BillFC bill in FindFC.TaxLedger.Bills)
                 {
@@ -130,7 +130,7 @@ public static class DestructiveTestUtil
             // No active military operation references a home settlement / squad that no longer exists.
             MilitaryOperationManager mgr = FindFC.MilitaryManager;
             List<MercenarySquadFC> squads = FindFC.Military?.mercenarySquads;
-            if (mgr?.Active != null)
+            if (mgr?.Active is not null)
             {
                 foreach (MilitaryOperation op in mgr.Active)
                 {

@@ -110,7 +110,7 @@ public static class SquadPowerRegistry
         double level = LevelFromCost(squad.GetEffectiveLoadoutCost());
         double efficiency = 1.0;
         FactionFC faction = FindFC.FactionComp;
-        if (faction is object && squad.settlement is object)
+        if (faction is not null && squad.settlement is not null)
         {
             // squad context lets per-squad (design + accolade) combat-efficiency modifiers fold in
             efficiency = faction.GetStatValue(FCStatDefOf.militaryCombatEfficiency, squad.settlement, squad);
@@ -123,7 +123,7 @@ public static class SquadPowerRegistry
 
     private static List<ISquadPowerModifier> GetSortedModifiers()
     {
-        if (_sortedCache != null) return _sortedCache;
+        if (_sortedCache is not null) return _sortedCache;
         List<ISquadPowerModifier> copy = new List<ISquadPowerModifier>(_modifiers);
         copy.Sort((a, b) => b.Priority.CompareTo(a.Priority)); // highest first
         _sortedCache = copy;

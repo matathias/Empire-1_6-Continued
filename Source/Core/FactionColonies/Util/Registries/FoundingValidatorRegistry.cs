@@ -24,7 +24,7 @@ public static class FoundingValidatorRegistry
         {
             if (!validator.CanFoundSettlement(tile, type, out string r, costMultiplier))
             {
-                if (reason != null && !r.NullOrEmpty())
+                if (reason is not null && !r.NullOrEmpty())
                 {
                     if (reason.Length > 0) reason.AppendLine();
                     reason.Append(r);

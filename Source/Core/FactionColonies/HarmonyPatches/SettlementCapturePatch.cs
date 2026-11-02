@@ -60,7 +60,7 @@ public static class SettlementCaptureTracker
         razeApproved.Add(tile);
         // Re-enter the (patched) CheckDefeated: the razeApproved flag makes the prefix fall through
         // to the vanilla teardown this time.
-        if (factionBase is object && !factionBase.Destroyed)
+        if (factionBase is not null && !factionBase.Destroyed)
             SettlementDefeatUtility.CheckDefeated(factionBase);
         razeApproved.Remove(tile);
     }
@@ -69,11 +69,11 @@ public static class SettlementCaptureTracker
     {
         awaitingDecision.Remove(tile);
         FactionFC fc = FindFC.FactionComp;
-        if (fc is object && !HasPendingCapture(tile))
+        if (fc is not null && !HasPendingCapture(tile))
             fc.pendingCaptures.Add(new PendingSettlementCapture(tile, name, tech));
         // Let vanilla create the DestroyedSettlement so the player can loot; the pending entry
         // makes the prefix fall through, and conversion happens when the map is removed.
-        if (factionBase is object && !factionBase.Destroyed)
+        if (factionBase is not null && !factionBase.Destroyed)
             SettlementDefeatUtility.CheckDefeated(factionBase);
     }
 }
@@ -173,7 +173,7 @@ public static class Game_DeinitAndRemoveMap_Patch
         // occupant. (CheckRemoveMapNow would destroy it right after us anyway; doing it here first
         // just avoids a momentary same-tile overlap — its guard skips an already-destroyed object.)
         DestroyedSettlement destroyed = Find.WorldObjects.DestroyedSettlementAt(tile);
-        if (destroyed is object && !destroyed.Destroyed)
+        if (destroyed is not null && !destroyed.Destroyed)
             destroyed.Destroy();
 
         ColonyUtil.SetupCapturedSettlement(tile, entry.name, entry.tech);

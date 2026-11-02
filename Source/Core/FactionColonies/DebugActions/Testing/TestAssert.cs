@@ -52,13 +52,13 @@ public static class TestAssert
 
     public static void IsNull(object obj, string message = null)
     {
-        if (obj != null)
+        if (obj is not null)
             throw new TestFailedException(message ?? $"Expected null, got {obj}");
     }
 
     public static void IsNotNull(object obj, string message = null)
     {
-        if (obj == null)
+        if (obj is null)
             throw new TestFailedException(message ?? "Expected non-null, got null");
     }
 
@@ -133,5 +133,5 @@ public static class TestAssert
     }
 
     private static string FormatMessage(string message) =>
-        message != null ? $" -- {message}" : "";
+        message is not null ? $" -- {message}" : "";
 }

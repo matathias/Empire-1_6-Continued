@@ -36,11 +36,11 @@ public class FCSituationApproachDef : Def
     {
         reason = null;
 
-        if (requiredResearch != null)
+        if (requiredResearch is not null)
         {
             foreach (ResearchProjectDef project in requiredResearch)
             {
-                if (project != null && !project.IsFinished)
+                if (project is not null && !project.IsFinished)
                 {
                     reason = "FCSituationApproachNeedsResearch".Translate(project.label);
                     return false;
@@ -48,7 +48,7 @@ public class FCSituationApproachDef : Def
             }
         }
 
-        if (requiredPolicies == null || requiredPolicies.Count == 0)
+        if (requiredPolicies is null || requiredPolicies.Count == 0)
             return true;
 
         if (requirementMode == FCRequirementMode.Any)
@@ -75,7 +75,7 @@ public class FCSituationApproachDef : Def
 
     private static bool HasPolicyOrTrait(FCPolicyDef def)
     {
-        if (def == null) return false;
+        if (def is null) return false;
         foreach (FCPolicy p in FindFC.PolicyManager.policies)
             if (p.def == def) return true;
         foreach (FCPolicy t in FindFC.PolicyManager.factionTraits)

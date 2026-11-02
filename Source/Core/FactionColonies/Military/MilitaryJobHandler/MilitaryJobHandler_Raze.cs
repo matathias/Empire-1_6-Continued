@@ -83,7 +83,7 @@ public class MilitaryJobHandler_Raze : MilitaryJobHandler_Offensive
         // (ApplyVictoryToTarget grants its own +5f).
         faction.AddExperienceToFactionLevel(5f);
 
-        bool defeated = !Find.WorldObjects.Settlements.Any(settlement => settlement.Faction != null
+        bool defeated = !Find.WorldObjects.Settlements.Any(settlement => settlement.Faction is not null
             && settlement.Faction == tempFactionLink);
 
         if (defeated)
@@ -120,7 +120,7 @@ public class MilitaryJobHandler_Raze : MilitaryJobHandler_Offensive
         faction.AddExperienceToFactionLevel(5f);
 
         BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(razedTile);
-        if (bf is object)
+        if (bf is not null)
             bf.RegisterPendingRaze();
         else
             LogUtil.Warning($"DeferManualRaze: no battlefield at {razedTile}; deferred raze will not complete.");

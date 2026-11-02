@@ -90,7 +90,7 @@ public static class AnimalListWidget
                 if (UIUtil.ClampedButtonText(removeRect, "X"))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.RemoveAnimal(index);
+                    if (target is not null) target.RemoveAnimal(index);
                 }
                 cursorRight = removeRect.x - 6f;
             }
@@ -106,13 +106,13 @@ public static class AnimalListWidget
                 if (UIUtil.ClampedButtonText(minusRect, "-"))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.DecrementAnimal(index);
+                    if (target is not null) target.DecrementAnimal(index);
                 }
                 UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
                 if (UIUtil.ClampedButtonText(plusRect, "+"))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.AddAnimal(item.kind);   // hard-blocks on cap
+                    if (target is not null) target.AddAnimal(item.kind);   // hard-blocks on cap
                 }
                 cursorRight = minusRect.x - 6f;
             }

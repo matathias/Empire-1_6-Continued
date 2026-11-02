@@ -14,7 +14,7 @@ public static class StatTests
     private static WorldSettlementFC GetFirstSettlement()
     {
         var settlements = FindFC.Settlements;
-        if (settlements == null || settlements.Count == 0)
+        if (settlements is null || settlements.Count == 0)
             return null;
         return settlements[0];
     }
@@ -62,7 +62,7 @@ public static class StatTests
             TestAssert.IsNotNull(rtd.productionMultiplierStat,
                 $"{rtd.defName}: productionMultiplierStat is null");
 
-            if (rtd.productionAdditiveStat != null)
+            if (rtd.productionAdditiveStat is not null)
             {
                 TestAssert.AreEqual((object)FCStatAggregation.Additive,
                     (object)rtd.productionAdditiveStat.aggregation,
@@ -70,7 +70,7 @@ public static class StatTests
                 TestAssert.AreEqual((object)rtd, (object)rtd.productionAdditiveStat.linkedResource,
                     $"{rtd.defName}: productionAdditiveStat.linkedResource should point back");
             }
-            if (rtd.productionMultiplierStat != null)
+            if (rtd.productionMultiplierStat is not null)
             {
                 TestAssert.AreEqual((object)FCStatAggregation.Multiplicative,
                     (object)rtd.productionMultiplierStat.aggregation,
@@ -86,7 +86,7 @@ public static class StatTests
     {
         foreach (FCStatDef stat in DefDatabase<FCStatDef>.AllDefsListForReading)
         {
-            if (stat.linkedResource == null) continue;
+            if (stat.linkedResource is null) continue;
 
             ResourceTypeDef rtd = stat.linkedResource;
             bool isAdditive = stat.aggregation == FCStatAggregation.Additive;
@@ -238,7 +238,7 @@ public static class StatTests
     {
         // Find a resource-linked stat (production additive for the first ResourceTypeDef)
         ResourceTypeDef rtd = DefDatabase<ResourceTypeDef>.AllDefsListForReading.FirstOrDefault();
-        if (rtd == null || rtd.productionAdditiveStat == null)
+        if (rtd is null || rtd.productionAdditiveStat is null)
             TestAssert.Skip("No ResourceTypeDef with productionAdditiveStat");
         var mods = new List<FCStatModifier>
         {
@@ -257,7 +257,7 @@ public static class StatTests
     public static void FactionStat_AllStats_AreFiniteNumbers()
     {
         var faction = GetFaction();
-        if (faction == null) TestAssert.Skip("No faction");
+        if (faction is null) TestAssert.Skip("No faction");
 
         foreach (FCStatDef stat in DefDatabase<FCStatDef>.AllDefsListForReading)
         {
@@ -273,7 +273,7 @@ public static class StatTests
     public static void CombinedStat_AllSettlementStats_AreFinite()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         foreach (WorldSettlementFC settlement in faction.settlements)
@@ -295,7 +295,7 @@ public static class StatTests
     {
         var faction = GetFaction();
         var settlement = GetFirstSettlement();
-        if (faction == null || settlement == null)
+        if (faction is null || settlement is null)
             TestAssert.Skip("No faction/settlement");
 
         foreach (FCStatDef stat in DefDatabase<FCStatDef>.AllDefsListForReading)
@@ -313,7 +313,7 @@ public static class StatTests
     {
         var faction = GetFaction();
         var settlement = GetFirstSettlement();
-        if (faction == null || settlement == null)
+        if (faction is null || settlement is null)
             TestAssert.Skip("No faction/settlement");
 
         // Use happinessGainedBase — additive, appliesToSettlements
@@ -343,7 +343,7 @@ public static class StatTests
     {
         var faction = GetFaction();
         var settlement = GetFirstSettlement();
-        if (faction == null || settlement == null)
+        if (faction is null || settlement is null)
             TestAssert.Skip("No faction/settlement");
 
         // Use happinessGainedMultiplier — multiplicative, appliesToSettlements
@@ -372,7 +372,7 @@ public static class StatTests
     public static void AddModifier_Additive_IncreasesStatValue()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         FCStatDef stat = FCStatDefOf.happinessGainedBase;
         double before = settlement.GetSettlementStatValue(stat);
@@ -389,7 +389,7 @@ public static class StatTests
     public static void AddModifier_Multiplicative_MultipliesStatValue()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         FCStatDef stat = FCStatDefOf.happinessGainedMultiplier;
         double before = settlement.GetSettlementStatValue(stat);
@@ -406,7 +406,7 @@ public static class StatTests
     public static void RemoveModifier_RestoresOriginalValue()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         FCStatDef stat = FCStatDefOf.happinessGainedBase;
         double before = settlement.GetSettlementStatValue(stat);
@@ -435,7 +435,7 @@ public static class StatTests
     public static void RemoveModifier_ByReference_OnlyRemovesMatchingObject()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         FCStatDef stat = FCStatDefOf.happinessGainedBase;
         double before = settlement.GetSettlementStatValue(stat);
@@ -476,7 +476,7 @@ public static class StatTests
     public static void RemoveModifiersBySource_RemovesCorrectEntries()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         FCStatDef stat = FCStatDefOf.happinessGainedBase;
         double before = settlement.GetSettlementStatValue(stat);
@@ -517,7 +517,7 @@ public static class StatTests
     public static void Cache_AddModifier_DirtiesSettlementCache()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         FCStatDef stat = FCStatDefOf.happinessGainedBase;
 
@@ -546,7 +546,7 @@ public static class StatTests
     public static void Resource_AllResources_HaveLinkedStats()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         foreach (WorldSettlementFC settlement in faction.settlements)
@@ -565,10 +565,10 @@ public static class StatTests
     public static void Resource_StatAdditive_AffectsProductionBase()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         ResourceFC resource = settlement.Resources.FirstOrDefault();
-        if (resource == null || resource.def.productionAdditiveStat == null)
+        if (resource is null || resource.def.productionAdditiveStat is null)
             TestAssert.Skip("No resource with productionAdditiveStat");
 
         double baseBefore = resource.productionBase;
@@ -589,10 +589,10 @@ public static class StatTests
     public static void Resource_StatMultiplier_AffectsProductionMult()
     {
         var settlement = GetFirstSettlement();
-        if (settlement == null) TestAssert.Skip("No settlement");
+        if (settlement is null) TestAssert.Skip("No settlement");
 
         ResourceFC resource = settlement.Resources.FirstOrDefault();
-        if (resource == null || resource.def.productionMultiplierStat == null)
+        if (resource is null || resource.def.productionMultiplierStat is null)
             TestAssert.Skip("No resource with productionMultiplierStat");
 
         double multBefore = resource.productionMult;
@@ -617,7 +617,7 @@ public static class StatTests
     public static void Behavior_AllBehaviors_ModifyStatDoesNotThrow()
     {
         var faction = GetFaction();
-        if (faction == null || faction.settlements.Count == 0)
+        if (faction is null || faction.settlements.Count == 0)
             TestAssert.Skip("No faction/settlements");
 
         // Test a representative sample of stats across all settlements
@@ -648,7 +648,7 @@ public static class StatTests
     {
         var faction = GetFaction();
         var settlement = GetFirstSettlement();
-        if (faction == null || settlement == null)
+        if (faction is null || settlement is null)
             TestAssert.Skip("No faction/settlement");
 
         bool egalitarianActive = FindFC.PolicyManager.policies.Any(p =>
@@ -676,7 +676,7 @@ public static class StatTests
     {
         var faction = GetFaction();
         var settlement = GetFirstSettlement();
-        if (faction == null || settlement == null)
+        if (faction is null || settlement is null)
             TestAssert.Skip("No faction/settlement");
 
         FCStatDef stat = FCStatDefOf.titheValueMultiplier;

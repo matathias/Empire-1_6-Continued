@@ -43,13 +43,13 @@ public static class BuildFactionMap_Patch
 {
     private static void Postfix(Dictionary<int, HashSet<int>> __result)
     {
-        if (__result == null || __result.Count == 0) return;
+        if (__result is null || __result.Count == 0) return;
 
         Faction pColony = FindFC.EmpireFaction;
-        if (pColony == null) return;
+        if (pColony is null) return;
 
         Faction player = Faction.OfPlayer;
-        if (player == null) return;
+        if (player is null) return;
 
         int pColonyId = pColony.loadID;
         int playerId = player.loadID;

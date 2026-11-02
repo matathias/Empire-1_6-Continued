@@ -8,7 +8,7 @@ static class PawnExtensions
     {
         try
         {
-            if (ModsConfig.IdeologyActive && pawn?.Ideo != null && !pawn.AnimalOrWildMan())
+            if (ModsConfig.IdeologyActive && pawn?.Ideo is not null && !pawn.AnimalOrWildMan())
             {
                 if (pawn.Ideo.HasPrecept(PreceptDefOf.AgeReversal_Demanded))
                 {
@@ -26,8 +26,8 @@ static class PawnExtensions
         }
         catch (Exception ex)
         {
-            string pawnName = (pawn?.Name != null) ? pawn.Name.ToString() : "pawn is null!";
-            LogUtil.Error("Required ritual wounds couldn't be applied to pawn: " + pawnName + ". Pawn Ideo == null: " + (pawn?.Ideo == null) + ". Exception: " + ex);
+            string pawnName = (pawn?.Name is not null) ? pawn.Name.ToString() : "pawn is null!";
+            LogUtil.Error("Required ritual wounds couldn't be applied to pawn: " + pawnName + ". Pawn Ideo == null: " + (pawn?.Ideo is null) + ". Exception: " + ex);
         }
     }
 
@@ -78,7 +78,7 @@ static class PawnExtensions
 
     public static bool DropItem(this Pawn pawn, IntVec3 DropLoc, ThingPlaceMode mode, out Thing resultingThing, Action<Thing, int> placedAction = null)
     {
-        if (pawn?.carryTracker?.CarriedThing != null)
+        if (pawn?.carryTracker?.CarriedThing is not null)
         {
             return pawn.carryTracker.TryDropCarriedThing(DropLoc, mode, out resultingThing, placedAction);
         }

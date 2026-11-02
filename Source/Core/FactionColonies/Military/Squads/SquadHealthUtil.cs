@@ -47,7 +47,7 @@ public static class SquadHealthUtil
     /// <summary>Resets a single merc's pawn health (clears injuries, illnesses, etc).</summary>
     public static void HealPawn(Mercenary merc)
     {
-        if (merc?.pawn?.health is object)
+        if (merc?.pawn?.health is not null)
         {
             merc.pawn.health.Reset();
         }
@@ -61,28 +61,28 @@ public static class SquadHealthUtil
         if (squad is null) return;
         foreach (Pawn merc in squad.AllEquippedMercenaryPawns)
         {
-            if (merc.health == null)
+            if (merc.health is null)
                 merc.health = new Pawn_HealthTracker(merc);
-            if (merc.needs == null)
+            if (merc.needs is null)
                 merc.needs = new Pawn_NeedsTracker(merc);
-            if (merc.needs.food == null)
+            if (merc.needs.food is null)
                 merc.needs.food = new Need_Food(merc);
-            if (merc.needs.rest == null)
+            if (merc.needs.rest is null)
                 merc.needs.rest = new Need_Rest(merc);
             if (merc.RaceProps is null)
             {
                 LogUtil.Warning($"ResetNeeds encountered merc ({merc.Name}) with null RaceProps. Skipping");
                 continue;
             }
-            if (merc.RaceProps.Humanlike && merc.needs.joy == null)
+            if (merc.RaceProps.Humanlike && merc.needs.joy is null)
                 merc.needs.joy = new Need_Joy(merc);
             merc.needs.food.CurLevel = merc.needs.food.MaxLevel;
             merc.needs.rest.CurLevel = merc.needs.rest.MaxLevel;
             if (merc.RaceProps.Humanlike)
             {
-                if (merc.needs.joy != null)
+                if (merc.needs.joy is not null)
                     merc.needs.joy.CurLevel = merc.needs.joy.MaxLevel;
-                if (merc.needs.mood?.thoughts?.memories != null)
+                if (merc.needs.mood?.thoughts?.memories is not null)
                     merc.needs.mood.thoughts.memories.TryGainMemory(DefDatabase<ThoughtDef>.GetNamed("FC_Mercenary"));
             }
         }

@@ -28,7 +28,7 @@ public class BiomeResourceDef : Def
             return null;
         }
         ResourceAvailability res = resources.Find((ResourceAvailability rb) => rb.resourceDef == resourceTypeDef);
-        if (res == null)
+        if (res is null)
         {
             /* If the resource isn't explicitly mentioned in the BiomeResourceDef, and it isn't on the blocklist (and this biome
              * isn't on that resource's biome blocklist -- handled by the resourceAllowedForBiome check), then we'll add the resource

@@ -33,7 +33,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
     {
         get
         {
-            if (cachedWorldSettlementParent != null)
+            if (cachedWorldSettlementParent is not null)
             {
                 return cachedWorldSettlementParent;
             }
@@ -78,7 +78,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
                 List<MercenarySquadFC> stationed = new List<MercenarySquadFC>(WorldSettlement.StationedSquads);
                 foreach (MercenarySquadFC s in stationed)
                 {
-                    if (s is object) s.settlement = null;
+                    if (s is not null) s.settlement = null;
                 }
                 return;
             }
@@ -86,7 +86,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
             List<MercenarySquadFC> existing = new List<MercenarySquadFC>(WorldSettlement.StationedSquads);
             foreach (MercenarySquadFC s in existing)
             {
-                if (s is object && s != value) s.settlement = null;
+                if (s is not null && s != value) s.settlement = null;
             }
             value.settlement = WorldSettlement;
         }
@@ -105,7 +105,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
             if (stationed is null) return false;
             for (int i = 0; i < stationed.Count; i++)
             {
-                if (stationed[i] != null && stationed[i].autoDefend) return true;
+                if (stationed[i] is not null && stationed[i].autoDefend) return true;
             }
             return false;
         }
@@ -115,7 +115,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
             if (stationed is null) return;
             for (int i = 0; i < stationed.Count; i++)
             {
-                if (stationed[i] != null) stationed[i].autoDefend = value;
+                if (stationed[i] is not null) stationed[i].autoDefend = value;
             }
         }
     }
@@ -240,7 +240,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
         get
         {
             MilitaryOperation op = FindFC.MilitaryManager?.GetDefensiveOpAt(WorldSettlement);
-            return op is object && op.phase != MilitaryOperationPhase.Engaged;
+            return op is not null && op.phase != MilitaryOperationPhase.Engaged;
         }
     }
 
@@ -334,7 +334,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
             Scribe_Deep.Look(ref legacyDefenderForce, "defenderForce");
 
             if (_legacyActiveWaves is null) _legacyActiveWaves = new List<DefenseWave>();
-            if (_legacyActiveWaves.Count == 0 && (legacyAttackerForce is object || legacyDefenderForce is object))
+            if (_legacyActiveWaves.Count == 0 && (legacyAttackerForce is not null || legacyDefenderForce is not null))
             {
                 _legacyActiveWaves.Add(new DefenseWave
                 {
@@ -381,7 +381,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
         // is in flight. Opens the live BattleProgressWindow for the linked op so the
         // player can watch rolls land hour by hour.
         MilitaryOperation activeBattle = FindActiveBattleProgressOp();
-        if (activeBattle is object)
+        if (activeBattle is not null)
         {
             yield return WatchBattleAction(activeBattle);
         }
@@ -623,7 +623,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
         // queries it. Each op fires its own LifecycleRegistry.OnBattleResolved and schedules
         // its own cooldown event linked back to itself.
         MilitaryOperationManager manager = FindFC.MilitaryManager;
-        if (manager is object)
+        if (manager is not null)
         {
             var opsAtTile = manager.GetOpsAt(WorldSettlement.Tile);
             if (opsAtTile.Count == 0)
@@ -711,7 +711,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
         // isUnderAttack is computed from manager state — battle pawn lists and flags live on
         // BattlefieldContext, so clear them through it.
         BattlefieldContext bf = Battlefield;
-        if (bf is object)
+        if (bf is not null)
         {
             bf.endingBattle = false;
             bf.battleMapInitialized = false;
@@ -724,12 +724,12 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
         // can't clear it while a stuck defensive op is still registered at this tile. So we
         // have to terminate the op by Resolving it.
         MilitaryOperationManager mgr = FindFC.MilitaryManager;
-        if (mgr is object && WorldSettlement is object)
+        if (mgr is not null && WorldSettlement is not null)
         {
             MilitaryOperation orphan;
             // Resolve() -> Unregister drops the op from the manager, so GetDefensiveOpAt
             // eventually returns null and the loop terminates.
-            while ((orphan = mgr.GetDefensiveOpAt(WorldSettlement)) is object)
+            while ((orphan = mgr.GetDefensiveOpAt(WorldSettlement)) is not null)
                 orphan.Resolve();
         }
     }
@@ -741,7 +741,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
         // by the absence of a settlementBeingAttacked event: that warning event is also gone
         // during a legitimate in-progress auto-resolve battle
         MilitaryOperation stuckDefOp = FindFC.MilitaryManager?.GetDefensiveOpAt(settlement);
-        if (stuckDefOp is object && !stuckDefOp.HasPendingWakeup
+        if (stuckDefOp is not null && !stuckDefOp.HasPendingWakeup
             && !attackers.Any() && !defenders.Any())
         {
             LogUtil.Warning($"Repairing stuck isUnderAttack flag on {settlement.Name} during load " +
@@ -768,7 +768,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
         if (militaryLocation == PlanetTile.Invalid) return true;
 
         // Active warning event for the target; defense is actually in progress.
-        if (MilitaryOperationsUtil.ReturnMilitaryEventByLocation(militaryLocation) is object) return false;
+        if (MilitaryOperationsUtil.ReturnMilitaryEventByLocation(militaryLocation) is not null) return false;
 
         // Target world object is gone (settlement destroyed, outpost despawned, etc.): stale.
         var targetComp = Find.WorldObjects.WorldObjectAt<WorldSettlementFC>(militaryLocation)?.MilitaryComp;
@@ -791,13 +791,13 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
         foreach (var pawn in caravan.pawns)
         {
             var lord = pawn.GetLord();
-            if (lord != null)
+            if (lord is not null)
                 lord.Notify_PawnLost(pawn, PawnLostCondition.LeftVoluntarily);
             // Routes through bf.RemoveDefender so per-op pawn lists stay in sync.
             bf?.RemoveDefender(pawn);
         }
 
-        if (Map is object)
+        if (Map is not null)
             foreach (var pawn in caravan.pawns)
                 Map.reservationManager.ReleaseAllClaimedBy(pawn);
 
@@ -814,14 +814,14 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
             return;
         }
         /* Morale lockout: refuse the raid before any deployment-cost bill is created. */
-        if (squad.settlement is object && squad.settlement.TryGetSquadDeploymentBlock(out string lockReason))
+        if (squad.settlement is not null && squad.settlement.TryGetSquadDeploymentBlock(out string lockReason))
         {
             Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
             return;
         }
         if (IsTargetOccupied(location)) return;
 
-        if (job?.Handler is object)
+        if (job?.Handler is not null)
         {
             MilitaryOperationManager manager = FindFC.MilitaryManager;
             if (manager is null)
@@ -865,12 +865,12 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
     private static WorldObject ResolveTargetWorldObject(PlanetTile tile)
     {
         WorldObject target = Find.WorldObjects.WorldObjectAt<WorldSettlementFC>(tile);
-        if (target is object) return target;
+        if (target is not null) return target;
         target = Find.WorldObjects.SettlementAt(tile);
-        if (target is object) return target;
+        if (target is not null) return target;
         foreach (IRaidTarget rt in RaidTargetRegistry.Targets)
         {
-            if (rt?.WorldObject is object && rt.Tile == tile) return rt.WorldObject;
+            if (rt?.WorldObject is not null && rt.Tile == tile) return rt.WorldObject;
         }
         return null;
     }
@@ -893,14 +893,14 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
 
         // Register injuries across every stationed squad so injured pawns get healed.
         MilitaryFC mfc = FindFC.Military;
-        if (mfc != null)
+        if (mfc is not null)
         {
             List<MercenarySquadFC> stationed = WorldSettlement?.StationedSquads;
-            if (stationed != null)
+            if (stationed is not null)
             {
                 for (int i = 0; i < stationed.Count; i++)
                 {
-                    if (stationed[i] != null) mfc.RegisterSquadInjuries(stationed[i]);
+                    if (stationed[i] is not null) mfc.RegisterSquadInjuries(stationed[i]);
                 }
             }
         }

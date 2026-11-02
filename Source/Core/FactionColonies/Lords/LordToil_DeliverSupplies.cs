@@ -25,7 +25,7 @@ class LordToil_DeliverSupplies : LordToil
 {
     public override bool AllowSatisfyLongNeeds => false;
 
-    private bool NoPawnCarries => lord.ownedPawns.All(pawn => pawn.carryTracker.CarriedThing == null);
+    private bool NoPawnCarries => lord.ownedPawns.All(pawn => pawn.carryTracker.CarriedThing is null);
 
     // State lives in LordToilData so it survives save/load — LordToil instances are rebuilt
     // fresh from CreateGraph on load; only their data field is restored.
@@ -53,7 +53,7 @@ class LordToil_DeliverSupplies : LordToil
 
             // Get fallback location from the lord job
             LordJob_DeliverSupplies deliveryJob = lord.LordJob as LordJob_DeliverSupplies;
-            IntVec3 fallbackPos = (deliveryJob != null && deliveryJob.fallbackLocation.IsValid)
+            IntVec3 fallbackPos = (deliveryJob is not null && deliveryJob.fallbackLocation.IsValid)
                 ? deliveryJob.fallbackLocation
                 : IntVec3.Invalid;
 
@@ -169,7 +169,7 @@ class LordToil_DeliverSupplies : LordToil
                     traverseParms.pawn = pawn;
                     pawn.mindState.duty = new PawnDuty(DefDatabase<DutyDef>.GetNamed("FCFollowAndDeliverItem"))
                     {
-                        focus = (lord.ownedPawns[0].carryTracker.CarriedThing == null) ? (LocalTargetInfo)Data.deliveryCell : lord.ownedPawns[0],
+                        focus = (lord.ownedPawns[0].carryTracker.CarriedThing is null) ? (LocalTargetInfo)Data.deliveryCell : lord.ownedPawns[0],
                     };
                 }
                 continue;

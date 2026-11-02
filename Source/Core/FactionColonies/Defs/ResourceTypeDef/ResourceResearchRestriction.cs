@@ -48,9 +48,9 @@ public abstract class ResourceResearchRestriction
     // Used to be part of CraftUtil.CanCraftItem. Now, we do this check as part of the overall filtering process
     public static bool ThingAllowedByRecipe(ThingDef thing)
     {
-        if (thing.recipeMaker != null)
+        if (thing.recipeMaker is not null)
         {
-            if (thing.recipeMaker.researchPrerequisites != null)
+            if (thing.recipeMaker.researchPrerequisites is not null)
             {
                 foreach (ResearchProjectDef research in thing.recipeMaker.researchPrerequisites)
                 {
@@ -62,7 +62,7 @@ public abstract class ResourceResearchRestriction
                 }
             }
 
-            if (thing.recipeMaker.researchPrerequisite != null)
+            if (thing.recipeMaker.researchPrerequisite is not null)
             {
                 if (!thing.recipeMaker.researchPrerequisite.IsFinished)
                 {

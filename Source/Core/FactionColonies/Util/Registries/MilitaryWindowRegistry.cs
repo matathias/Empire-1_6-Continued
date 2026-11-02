@@ -21,19 +21,19 @@ public static class MilitaryWindowRegistry
         switch (slot)
         {
             case MilitaryWindowSlot.Units:
-                if (_unitsFactory is object)
+                if (_unitsFactory is not null)
                     LogUtil.Warning($"MilitaryWindowRegistry: Units window already registered by '{_unitsRegistrant ?? "unknown"}', being overwritten by '{modName ?? "unknown"}'.");
                 _unitsFactory = factory;
                 _unitsRegistrant = modName;
                 break;
             case MilitaryWindowSlot.Squads:
-                if (_squadsFactory is object)
+                if (_squadsFactory is not null)
                     LogUtil.Warning($"MilitaryWindowRegistry: Squads window already registered by '{_squadsRegistrant ?? "unknown"}', being overwritten by '{modName ?? "unknown"}'.");
                 _squadsFactory = factory;
                 _squadsRegistrant = modName;
                 break;
             case MilitaryWindowSlot.FireSupport:
-                if (_fireSupportFactory is object)
+                if (_fireSupportFactory is not null)
                     LogUtil.Warning($"MilitaryWindowRegistry: FireSupport window already registered by '{_fireSupportRegistrant ?? "unknown"}', being overwritten by '{modName ?? "unknown"}'.");
                 _fireSupportFactory = factory;
                 _fireSupportRegistrant = modName;
@@ -81,15 +81,15 @@ public static class MilitaryWindowRegistry
         switch (slot)
         {
             case MilitaryWindowSlot.Units:
-                return _unitsFactory is object
+                return _unitsFactory is not null
                     ? _unitsFactory(mfc, faction)
                     : new DesignUnitsWindow(mfc, faction);
             case MilitaryWindowSlot.Squads:
-                return _squadsFactory is object
+                return _squadsFactory is not null
                     ? _squadsFactory(mfc, faction)
                     : new DesignSquadsWindow(mfc);
             case MilitaryWindowSlot.FireSupport:
-                return _fireSupportFactory is object
+                return _fireSupportFactory is not null
                     ? _fireSupportFactory(mfc, faction)
                     : new FireSupportWindow(mfc);
             default:

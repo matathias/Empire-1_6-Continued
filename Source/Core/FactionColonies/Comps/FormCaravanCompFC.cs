@@ -22,7 +22,7 @@ public class FormCaravanCompFC : FormCaravanComp
     public override IEnumerable<Gizmo> GetGizmos()
     {
         WorldObjectComp_SettlementMilitary mil = parent.GetComponent<WorldObjectComp_SettlementMilitary>();
-        bool battleStillActive = mil is object && mil.isUnderAttack;
+        bool battleStillActive = mil is not null && mil.isUnderAttack;
 
         foreach (Gizmo gizmo in base.GetGizmos())
         {

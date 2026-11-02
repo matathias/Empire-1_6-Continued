@@ -19,30 +19,30 @@ public static class MilitaryInventoryUtil
     /// all defs; categories/things force-allow back (allow wins over exclude).</summary>
     public static HashSet<ThingDef> AllowedItems()
     {
-        if (allowedCache != null) return allowedCache;
+        if (allowedCache is not null) return allowedCache;
 
         HashSet<ThingDef> excluded = new HashSet<ThingDef>();
         HashSet<ThingDef> forceAllow = new HashSet<ThingDef>();
         foreach (FCInventoryCategoryDef def in DefDatabase<FCInventoryCategoryDef>.AllDefs)
         {
-            if (def.excludeCategories != null)
+            if (def.excludeCategories is not null)
                 foreach (ThingCategoryDef cat in def.excludeCategories)
-                    if (cat is object)
+                    if (cat is not null)
                         foreach (ThingDef t in cat.DescendantThingDefs)
                             excluded.Add(t);
-            if (def.excludeThings != null)
+            if (def.excludeThings is not null)
                 foreach (ThingDef t in def.excludeThings)
-                    if (t is object)
+                    if (t is not null)
                         excluded.Add(t);
 
-            if (def.categories != null)
+            if (def.categories is not null)
                 foreach (ThingCategoryDef cat in def.categories)
-                    if (cat is object)
+                    if (cat is not null)
                         foreach (ThingDef t in cat.DescendantThingDefs)
                             forceAllow.Add(t);
-            if (def.things != null)
+            if (def.things is not null)
                 foreach (ThingDef t in def.things)
-                    if (t is object)
+                    if (t is not null)
                         forceAllow.Add(t);
         }
 
@@ -77,17 +77,17 @@ public static class MilitaryInventoryUtil
         HashSet<ThingDef> excludedSet = excluded as HashSet<ThingDef> ?? new HashSet<ThingDef>(excluded);
         HashSet<ThingDef> result = new HashSet<ThingDef>();
         foreach (ThingDef t in basePool)
-            if (t is object && !excludedSet.Contains(t))
+            if (t is not null && !excludedSet.Contains(t))
                 result.Add(t);
         foreach (ThingDef t in forceAllow)
-            if (t is object)
+            if (t is not null)
                 result.Add(t);
         return result;
     }
 
     /// <summary>Whether <paramref name="thing"/> is allowed in inventory at all (pool membership,
     /// before the research/availability gate).</summary>
-    public static bool IsAllowed(ThingDef thing) => thing != null && AllowedItems().Contains(thing);
+    public static bool IsAllowed(ThingDef thing) => thing is not null && AllowedItems().Contains(thing);
 
     /// <summary>Whitelisted items the player can currently carry: in the whitelist, haulable, and
     /// unlocked by research (same gate the apparel/weapon pickers use).</summary>

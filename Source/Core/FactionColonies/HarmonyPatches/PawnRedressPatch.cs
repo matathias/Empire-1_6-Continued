@@ -22,7 +22,7 @@ static class Patch_IsValidCandidateToRedress_ProtectEmpireWorldPawns
     {
         if (!__result || pawn is null) return;
         if (FindFC.IsEmpireFaction(pawn.Faction)
-            && Find.WorldPawns is object
+            && Find.WorldPawns is not null
             && Find.WorldPawns.ForcefullyKeptPawns.Contains(pawn))
         {
             __result = false;

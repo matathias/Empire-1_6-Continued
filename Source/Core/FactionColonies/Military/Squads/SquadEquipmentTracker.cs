@@ -47,7 +47,7 @@ public class SquadEquipmentTracker : IExposable
         {
             try
             {
-                if (loadout == null)
+                if (loadout is null)
                 {
                     count++;
                     continue;
@@ -58,7 +58,7 @@ public class SquadEquipmentTracker : IExposable
                 {
                     Mercenary newMerc = new Mercenary(true);
                     MercenaryPawnFactory.CreateNewPawn(squad, ref newMerc, loadout?.pawnKind, loadout?.xenotype, loadout?.customXenotypeName, loadout);
-                    if (newMerc?.pawn != null)
+                    if (newMerc?.pawn is not null)
                     {
                         squad.mercenaries.Add(newMerc);
                     }
@@ -70,7 +70,7 @@ public class SquadEquipmentTracker : IExposable
                 }
 
                 // Skip if we still don't have enough mercenaries
-                if (count >= squad.mercenaries.Count || squad.mercenaries[count]?.pawn == null)
+                if (count >= squad.mercenaries.Count || squad.mercenaries[count]?.pawn is null)
                 {
                     LogUtil.Warning($"Skipping outfit slot {count} - no valid mercenary available.");
                     count++;
@@ -82,7 +82,7 @@ public class SquadEquipmentTracker : IExposable
                     Mercenary pawn = new Mercenary(true);
                     MercenaryPawnFactory.CreateNewPawn(squad, ref pawn, loadout.pawnKind, loadout.xenotype, loadout.customXenotypeName, loadout);
                     // Only replace if new pawn was successfully created
-                    if (pawn?.pawn != null)
+                    if (pawn?.pawn is not null)
                     {
                         squad.mercenaries.Replace(squad.mercenaries[count], pawn);
                     }
@@ -93,14 +93,14 @@ public class SquadEquipmentTracker : IExposable
                 }
 
                 // Skip operations if pawn is null
-                if (squad.mercenaries[count]?.pawn == null)
+                if (squad.mercenaries[count]?.pawn is null)
                 {
                     count++;
                     continue;
                 }
 
                 StripPawn(squad.mercenaries[count]);
-                if (loadout != null)
+                if (loadout is not null)
                 {
                     EquipPawn(squad.mercenaries[count], loadout);
                     // Fresh outfit pass: clear any sub-pawns a reused merc still carries.
@@ -124,7 +124,7 @@ public class SquadEquipmentTracker : IExposable
                 LogUtil.Error($"Something went wrong when outfitting a squad (slot {count}): {e}");
                 if (!squad.mercenaries.NullOrEmpty())
                 {
-                    LogUtil.Error($"Number of Mercs: {squad.mercenaries.Count}, Any null pawn: {squad.mercenaries.Any(m => m?.pawn == null)}");
+                    LogUtil.Error($"Number of Mercs: {squad.mercenaries.Count}, Any null pawn: {squad.mercenaries.Any(m => m?.pawn is null)}");
                 }
             }
             count++;
@@ -137,14 +137,14 @@ public class SquadEquipmentTracker : IExposable
     /// so post-battle cleanup can identify and destroy dropped gear.</summary>
     public virtual void EquipPawn(Mercenary merc, MilUnitFC loadout)
     {
-        if (merc?.pawn == null || loadout == null) return;
+        if (merc?.pawn is null || loadout is null) return;
 
         // Ensure the snapshot lists exist even if this loadout has no apparel/weapons; the
         // per-item helpers below append the worn items as they go (see RemoveDroppedEquipment).
-        if (UsedWeaponList == null) UsedWeaponList = new List<ThingWithComps>();
-        if (UsedApparelList == null) UsedApparelList = new List<Apparel>();
+        if (UsedWeaponList is null) UsedWeaponList = new List<ThingWithComps>();
+        if (UsedApparelList is null) UsedApparelList = new List<Apparel>();
 
-        if (merc.pawn.apparel != null)
+        if (merc.pawn.apparel is not null)
         {
             foreach (SavedThing apparelDef in loadout.apparel)
                 WearApparelItem(merc, apparelDef);
@@ -152,13 +152,13 @@ public class SquadEquipmentTracker : IExposable
 
         // Carried inventory — the unit's player-chosen loadout (including any ammo). Counts
         // above the item's stack limit are split across multiple stacks.
-        if (merc.pawn.inventory?.innerContainer != null && loadout.inventory != null)
+        if (merc.pawn.inventory?.innerContainer is not null && loadout.inventory is not null)
         {
             foreach (SavedThing invDef in loadout.inventory)
                 AddInventoryThings(merc.pawn, invDef.thing, invDef.stuff, invDef.quality, invDef.count);
         }
 
-        if (merc.pawn.equipment != null)
+        if (merc.pawn.equipment is not null)
         {
             foreach (SavedThing weaponDef in loadout.weapons)
                 AddWeaponItem(merc, weaponDef);
@@ -175,9 +175,9 @@ public class SquadEquipmentTracker : IExposable
     /// apparel). No-op on a null pawn / apparel tracker or a non-apparel def.</summary>
     public void WearApparelItem(Mercenary merc, SavedThing apparelDef)
     {
-        if (merc?.pawn?.apparel == null) return;
+        if (merc?.pawn?.apparel is null) return;
         Thing thing = apparelDef.CreateThing();
-        if (!(thing is Apparel ap)) return;
+        if (thing is not Apparel ap) return;
 
         Color resolved = FindFC.FactionComp?.ResolveApparelColor(apparelDef) ?? Color.white;
         ap.SetColor(resolved, reportFailure: false);
@@ -187,7 +187,7 @@ public class SquadEquipmentTracker : IExposable
         if (FCSettings.antiExploit)
             ap.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
 
-        if (UsedApparelList == null) UsedApparelList = new List<Apparel>();
+        if (UsedApparelList is null) UsedApparelList = new List<Apparel>();
         UsedApparelList.Add(ap);
     }
 
@@ -198,14 +198,14 @@ public class SquadEquipmentTracker : IExposable
     /// null pawn / equipment tracker or a non-ThingWithComps def.</summary>
     public void AddWeaponItem(Mercenary merc, SavedThing weaponDef)
     {
-        if (merc?.pawn?.equipment == null) return;
+        if (merc?.pawn?.equipment is null) return;
         Thing weaponThing = weaponDef.CreateThing();
-        if (!(weaponThing is ThingWithComps twc)) return;
+        if (weaponThing is not ThingWithComps twc) return;
 
         // Free the primary slot if something else holds it (e.g. a weapon looted mid-battle, when
         // re-equipping the merc's destroyed issued weapon) so AddEquipment doesn't error. In the
         // EquipPawn path StripPawn already cleared equipment, so this is a no-op there.
-        if (twc.def.equipmentType == EquipmentType.Primary && merc.pawn.equipment.Primary is object)
+        if (twc.def.equipmentType == EquipmentType.Primary && merc.pawn.equipment.Primary is not null)
             merc.pawn.equipment.DestroyEquipment(merc.pawn.equipment.Primary);
 
         merc.pawn.equipment.AddEquipment(twc);
@@ -214,7 +214,7 @@ public class SquadEquipmentTracker : IExposable
         if (FCSettings.antiExploit)
             twc.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
 
-        if (UsedWeaponList == null) UsedWeaponList = new List<ThingWithComps>();
+        if (UsedWeaponList is null) UsedWeaponList = new List<ThingWithComps>();
         UsedWeaponList.Add(twc);
     }
 
@@ -225,14 +225,14 @@ public class SquadEquipmentTracker : IExposable
     /// pawn / inventory container or non-positive count.</summary>
     public static void AddInventoryThings(Pawn pawn, ThingDef thing, ThingDef stuff, QualityCategory? quality, int count)
     {
-        if (thing == null || pawn?.inventory?.innerContainer == null) return;
+        if (thing is null || pawn?.inventory?.innerContainer is null) return;
         int remaining = Mathf.Max(1, count);
         int stackLimit = Mathf.Max(1, thing.stackLimit);
         while (remaining > 0)
         {
             int take = Mathf.Min(remaining, stackLimit);
             Thing invThing = new SavedThing(thing, stuff, take, quality).CreateThing();
-            if (invThing == null) break;
+            if (invThing is null) break;
             pawn.inventory.innerContainer.TryAdd(invThing, true);
             remaining -= take;
         }
@@ -240,7 +240,7 @@ public class SquadEquipmentTracker : IExposable
 
     public virtual void StripPawn(Mercenary merc)
     {
-        if (merc?.pawn == null) return;
+        if (merc?.pawn is null) return;
 
         try
         {
@@ -260,7 +260,7 @@ public class SquadEquipmentTracker : IExposable
         if (squad?.mercenaries is null) return;
         for (int count = 0; count < squad.mercenaries.Count && count < MilSquadFC.MaxSquadSize; count++)
         {
-            if (squad.mercenaries[count]?.pawn != null)
+            if (squad.mercenaries[count]?.pawn is not null)
             {
                 StripPawn(squad.mercenaries[count]);
             }
@@ -276,7 +276,7 @@ public class SquadEquipmentTracker : IExposable
         if (squad is null || merc is null || loadout is null) return;
         if (merc.animals is null) merc.animals = new List<Mercenary>();
 
-        if (loadout.animals != null)
+        if (loadout.animals is not null)
         {
             foreach (SavedAnimal sa in loadout.animals)
             {
@@ -291,7 +291,7 @@ public class SquadEquipmentTracker : IExposable
             }
         }
 
-        if (FactionCompat.GiddyUp2Active && loadout.mount is object)
+        if (FactionCompat.GiddyUp2Active && loadout.mount is not null)
         {
             Mercenary mount = new Mercenary(true);
             MercenaryPawnFactory.CreateNewAnimal(squad, ref mount, loadout.mount);
@@ -320,7 +320,7 @@ public class SquadEquipmentTracker : IExposable
     private void ReconcileCompanions(Mercenary merc, MilUnitFC target)
     {
         Dictionary<PawnKindDef, int> wanted = new Dictionary<PawnKindDef, int>();
-        if (target?.animals != null)
+        if (target?.animals is not null)
         {
             foreach (SavedAnimal a in target.animals)
             {
@@ -339,14 +339,14 @@ public class SquadEquipmentTracker : IExposable
 
             PawnKindDef kind = sub.subPawnKind;
             int remaining;
-            if (kind != null && sub.pawn != null && !sub.pawn.Destroyed
+            if (kind is not null && sub.pawn is not null && !sub.pawn.Destroyed
                 && wanted.TryGetValue(kind, out remaining) && remaining > 0)
             {
                 wanted[kind] = remaining - 1;
             }
             else
             {
-                if (sub.pawn != null && !sub.pawn.Destroyed) sub.pawn.Destroy();
+                if (sub.pawn is not null && !sub.pawn.Destroyed) sub.pawn.Destroy();
                 merc.animals.RemoveAt(i);
             }
         }
@@ -367,12 +367,12 @@ public class SquadEquipmentTracker : IExposable
     /* Reconciles the single mount (subPawnType == Mount). Only wanted when Giddy Up 2 is active. */
     private void ReconcileMount(Mercenary merc, MilUnitFC target)
     {
-        PawnKindDef wanted = (FactionCompat.GiddyUp2Active && target != null) ? target.mount : null;
+        PawnKindDef wanted = (FactionCompat.GiddyUp2Active && target is not null) ? target.mount : null;
 
         Mercenary existing = null;
         for (int i = 0; i < merc.animals.Count; i++)
         {
-            if (merc.animals[i] != null && merc.animals[i].subPawnType == Mercenary.SubPawnType.Mount)
+            if (merc.animals[i] is not null && merc.animals[i].subPawnType == Mercenary.SubPawnType.Mount)
             {
                 existing = merc.animals[i];
                 break;
@@ -381,20 +381,20 @@ public class SquadEquipmentTracker : IExposable
 
         if (wanted is null)
         {
-            if (existing != null)
+            if (existing is not null)
             {
-                if (existing.pawn != null && !existing.pawn.Destroyed) existing.pawn.Destroy();
+                if (existing.pawn is not null && !existing.pawn.Destroyed) existing.pawn.Destroy();
                 merc.animals.Remove(existing);
             }
             return;
         }
 
         // Correct mount already present and alive — leave it.
-        if (existing != null && existing.pawn != null && existing.subPawnKind == wanted) return;
+        if (existing is not null && existing.pawn is not null && existing.subPawnKind == wanted) return;
 
-        if (existing != null)
+        if (existing is not null)
         {
-            if (existing.pawn != null && !existing.pawn.Destroyed) existing.pawn.Destroy();
+            if (existing.pawn is not null && !existing.pawn.Destroyed) existing.pawn.Destroy();
             merc.animals.Remove(existing);
         }
 
@@ -409,10 +409,10 @@ public class SquadEquipmentTracker : IExposable
     public void ClearSubPawns(Mercenary merc)
     {
         if (merc is null) return;
-        if (merc.animals != null)
+        if (merc.animals is not null)
         {
             foreach (Mercenary a in merc.animals)
-                if (a?.pawn != null && !a.pawn.Destroyed) a.pawn.Destroy();
+                if (a?.pawn is not null && !a.pawn.Destroyed) a.pawn.Destroy();
             merc.animals.Clear();
         }
         squad?.RemoveMechsFor(merc);
@@ -442,7 +442,7 @@ public class SquadEquipmentTracker : IExposable
             {
                 Mercenary mech = new Mercenary(true);
                 MercenaryPawnFactory.CreateNewMech(squad, ref mech, sm.kind, mechanitor.pawn, group, workMode);
-                if (mech.pawn != null)
+                if (mech.pawn is not null)
                 {
                     mech.handler = mechanitor;
                     mechanitor.mechs.Add(mech);
@@ -460,13 +460,13 @@ public class SquadEquipmentTracker : IExposable
     {
         if (merc is null || squad is null) return;
         squad.RemoveMechsFor(merc);
-        if (target != null && ModsConfig.BiotechActive && target.IsMechanitorDesign)
+        if (target is not null && ModsConfig.BiotechActive && target.IsMechanitorDesign)
             SpawnMechsFor(merc, target);
     }
 
     public void RemoveDroppedEquipment()
     {
-        if (UsedApparelList != null)
+        if (UsedApparelList is not null)
         {
             for (int i = UsedApparelList.Count - 1; i >= 0; i--)
             {
@@ -474,7 +474,7 @@ public class SquadEquipmentTracker : IExposable
                 // A reference-mode Scribe load can leave null entries (an apparel that wasn't saved /
                 // couldn't resolve). Drop them rather than deref ParentHolder on null.
                 if (apparel is null) { UsedApparelList.RemoveAt(i); continue; }
-                if (apparel.ParentHolder is Pawn_ApparelTracker tracker && tracker.pawn is object)
+                if (apparel.ParentHolder is Pawn_ApparelTracker tracker && tracker.pawn is not null)
                 {
                     Pawn pawn = tracker.pawn;
                     if ((pawn.Faction == FindFC.EmpireFaction ||
@@ -487,13 +487,13 @@ public class SquadEquipmentTracker : IExposable
             }
         }
 
-        if (UsedWeaponList != null)
+        if (UsedWeaponList is not null)
         {
             for (int i = UsedWeaponList.Count - 1; i >= 0; i--)
             {
                 ThingWithComps weapon = UsedWeaponList[i];
                 if (weapon is null) { UsedWeaponList.RemoveAt(i); continue; }
-                if (weapon.ParentHolder is Pawn_EquipmentTracker tracker && tracker.pawn is object)
+                if (weapon.ParentHolder is Pawn_EquipmentTracker tracker && tracker.pawn is not null)
                 {
                     Pawn pawn = tracker.pawn;
                     if ((pawn.Faction == FindFC.EmpireFaction ||
@@ -512,7 +512,7 @@ public class SquadEquipmentTracker : IExposable
     /// in PostLoadInit. Always-drains: passing nulls leaves the tracker's existing (empty) lists alone.</summary>
     internal void AdoptLegacyLists(List<ThingWithComps> weapons, List<Apparel> apparel)
     {
-        if (weapons != null) UsedWeaponList = weapons;
-        if (apparel != null) UsedApparelList = apparel;
+        if (weapons is not null) UsedWeaponList = weapons;
+        if (apparel is not null) UsedApparelList = apparel;
     }
 }

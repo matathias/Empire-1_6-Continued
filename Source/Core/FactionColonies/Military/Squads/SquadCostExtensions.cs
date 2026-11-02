@@ -14,7 +14,7 @@ public static class SquadCostExtensions
         foreach (Mercenary merc in squad.mercenaries)
         {
             if (merc is null || merc.IsEmptySlot) continue;
-            if (merc.pawn is object && merc.pawn.Dead) continue;
+            if (merc.pawn is not null && merc.pawn.Dead) continue;
             MilUnitFC current = merc.EffectiveLoadout;
             if (current is null) continue;
             total += current.getTotalCost;

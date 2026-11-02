@@ -236,7 +236,7 @@ public static class GeneValuationUtil
     private static void AccumulateGene(XenotypeProfile p, GeneDef gene)
     {
         /* statOffsets sum per stat */
-        if (gene.statOffsets is object)
+        if (gene.statOffsets is not null)
         {
             foreach (StatModifier so in gene.statOffsets)
             {
@@ -248,7 +248,7 @@ public static class GeneValuationUtil
         }
 
         /* statFactors multiply per stat */
-        if (gene.statFactors is object)
+        if (gene.statFactors is not null)
         {
             foreach (StatModifier sf in gene.statFactors)
             {
@@ -260,7 +260,7 @@ public static class GeneValuationUtil
         }
 
         /* capMods: offset sums, postFactor multiplies, per capacity */
-        if (gene.capMods is object)
+        if (gene.capMods is not null)
         {
             foreach (PawnCapacityModifier cm in gene.capMods)
             {
@@ -275,7 +275,7 @@ public static class GeneValuationUtil
         }
 
         /* aptitudes sum levels per skill */
-        if (gene.aptitudes is object)
+        if (gene.aptitudes is not null)
         {
             foreach (Aptitude apt in gene.aptitudes)
             {
@@ -287,7 +287,7 @@ public static class GeneValuationUtil
         }
 
         /* damageFactors multiply per damage type */
-        if (gene.damageFactors is object)
+        if (gene.damageFactors is not null)
         {
             foreach (DamageFactor df in gene.damageFactors)
             {
@@ -459,7 +459,7 @@ public static class GeneValuationUtil
     private static void AddBucket(string defName, StatBucket bucket)
     {
         StatDef d = DefDatabase<StatDef>.GetNamedSilentFail(defName);
-        if (d is object) _statBuckets[d] = bucket;
+        if (d is not null) _statBuckets[d] = bucket;
     }
 
     /* Stats where lower = better. Used in scoring to invert sign so genes that
@@ -492,7 +492,7 @@ public static class GeneValuationUtil
     private static void AddIfPresent(string defName)
     {
         StatDef d = DefDatabase<StatDef>.GetNamedSilentFail(defName);
-        if (d is object) _inverseDirectionStats.Add(d);
+        if (d is not null) _inverseDirectionStats.Add(d);
     }
 
     private static float StatWeight(StatDef stat)
@@ -530,7 +530,7 @@ public static class GeneValuationUtil
     private static void AddStat(string defName, float weight)
     {
         StatDef d = DefDatabase<StatDef>.GetNamedSilentFail(defName);
-        if (d is object) _explicitStatWeights[d] = weight;
+        if (d is not null) _explicitStatWeights[d] = weight;
     }
 
     private static float SkillWeight(SkillDef skill)

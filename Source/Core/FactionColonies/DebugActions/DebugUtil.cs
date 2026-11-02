@@ -53,8 +53,8 @@ public static class DebugUtil
         {
             if (op is null) continue;
             if (op.phase != MilitaryOperationPhase.Engaged) continue;
-            FCEvent evt = op.sourceEvents.FirstOrDefault(e => e is object && e.def == FCEventDefOf.autoResolveBattleRound);
-            if (evt is object)
+            FCEvent evt = op.sourceEvents.FirstOrDefault(e => e is not null && e.def == FCEventDefOf.autoResolveBattleRound);
+            if (evt is not null)
             {
                 evt.timeTillTrigger = Find.TickManager.TicksGame + 1;
                 bumped++;
@@ -90,13 +90,13 @@ public static class DebugUtil
     private static void DebugKillAndRegenLeader()
     {
         Faction faction = FindFC.EmpireFaction;
-        if (faction == null)
+        if (faction is null)
         {
             LogUtil.MessageForce("No Empire faction found.");
             return;
         }
         Pawn oldLeader = faction.leader;
-        if (oldLeader != null)
+        if (oldLeader is not null)
         {
             LogUtil.MessageForce($"Killing leader: {oldLeader.Name} ({oldLeader.ThingID}), " +
                                  $"title: {faction.LeaderTitle}, " +
@@ -108,7 +108,7 @@ public static class DebugUtil
             LogUtil.MessageForce("No current leader. Generating new one.");
         }
         ColonyUtil.CreatePlayerFactionLeader(faction);
-        if (faction.leader != null)
+        if (faction.leader is not null)
         {
             LogUtil.MessageForce($"New leader: {faction.leader.Name} ({faction.leader.ThingID}), " +
                                  $"title: {faction.LeaderTitle}, " +
@@ -130,7 +130,7 @@ public static class DebugUtil
 
         FactionRelation beforeRel = empire.RelationWith(player, allowNull: true);
         FactionRelationKind before = empire.RelationKindWith(player);
-        int beforeGoodwill = beforeRel is object ? beforeRel.baseGoodwill : empire.PlayerGoodwill;
+        int beforeGoodwill = beforeRel is not null ? beforeRel.baseGoodwill : empire.PlayerGoodwill;
 
         // Drive both directions back to a non-hostile ally state. TrySetRelationKind clamps goodwill
         // appropriately for goodwill-bearing factions and uses SetRelationDirect otherwise.
@@ -138,7 +138,7 @@ public static class DebugUtil
         RelationsUtilFC.TrySetRelationKind(player, empire, FactionRelationKind.Ally, canSendLetter: false);
 
         FactionRelation afterRel = empire.RelationWith(player, allowNull: true);
-        int afterGoodwill = afterRel is object ? afterRel.baseGoodwill : empire.PlayerGoodwill;
+        int afterGoodwill = afterRel is not null ? afterRel.baseGoodwill : empire.PlayerGoodwill;
         LogUtil.MessageForce($"Reset Empire-Player Relations: {before} ({beforeGoodwill}) -> " +
             $"{empire.RelationKindWith(player)} ({afterGoodwill}).");
     }
@@ -196,11 +196,11 @@ public static class DebugUtil
     private static void ClearFactionTraitsAndPolicies()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         for (int i = 0; i < FindFC.PolicyManager.factionTraits.Count; i++)
         {
-            if (FindFC.PolicyManager.factionTraits[i]?.behavior != null)
+            if (FindFC.PolicyManager.factionTraits[i]?.behavior is not null)
             {
                 try { FindFC.PolicyManager.factionTraits[i].behavior.OnRemoved(faction); }
                 catch (Exception e) { LogUtil.Error($"FCPolicyBehavior.OnRemoved error: {e}"); }
@@ -225,7 +225,7 @@ public static class DebugUtil
                 {
                     LogUtil.MessageForce("Debug - Make Random Event - " + evtDef.label);
                     FCEvent evt = FCEventMaker.MakeRandomEvent(evtDef, null);
-                    if (evt == null)
+                    if (evt is null)
                     {
                         if (!evtDef.activateAtStart)
                             LogUtil.Warning("Debug - Event returned null: " + evtDef.defName);
@@ -278,7 +278,7 @@ public static class DebugUtil
                         targets.Add(new DebugMenuOption(localSettlement.Name, DebugMenuOptionMode.Action, delegate
                         {
                             FCSituation sit = faction.situationManager.StartSituation(localDef, localSettlement);
-                            LogUtil.MessageForce(sit is object
+                            LogUtil.MessageForce(sit is not null
                                 ? $"Debug - Started situation '{localDef.defName}' on {localSettlement.Name}."
                                 : $"Debug - Failed to start situation '{localDef.defName}' on {localSettlement.Name}.");
                         }));
@@ -288,7 +288,7 @@ public static class DebugUtil
                 else
                 {
                     FCSituation sit = faction.situationManager.StartSituation(localDef, null);
-                    LogUtil.MessageForce(sit is object
+                    LogUtil.MessageForce(sit is not null
                         ? $"Debug - Started faction situation '{localDef.defName}'."
                         : $"Debug - Failed to start situation '{localDef.defName}'.");
                 }
@@ -338,7 +338,7 @@ public static class DebugUtil
         foreach (FCSituation sit in sits)
         {
             FCSituation localSit = sit;
-            string target = localSit.targetSettlement is object ? localSit.targetSettlement.Name : "faction-wide";
+            string target = localSit.targetSettlement is not null ? localSit.targetSettlement.Name : "faction-wide";
             string menuLabel = $"{localSit.def.label ?? localSit.def.defName} [{target}] @ {localSit.progress:0}/{localSit.def.maxProgress:0}";
             list.Add(new DebugMenuOption(menuLabel, DebugMenuOptionMode.Action, delegate
             {
@@ -363,7 +363,7 @@ public static class DebugUtil
         {
             if (!manager.Situations.Contains(sit)) return; // may have been removed by a Terminal endpoint
             manager.AddProgress(sit, delta);
-            string stage = sit.currentStage is object ? sit.currentStage.label : "none";
+            string stage = sit.currentStage is not null ? sit.currentStage.label : "none";
             LogUtil.MessageForce($"Debug - {sit.def.defName} progress -> {sit.progress:0} (stage: {stage}).");
         }));
     }
@@ -384,7 +384,7 @@ public static class DebugUtil
             list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
             {
                 Faction enemyFaction = Find.FactionManager.RandomEnemyFaction();
-                if (enemyFaction == null)
+                if (enemyFaction is null)
                 {
                     Messages.Message("No enemy faction found.", MessageTypeDefOf.RejectInput);
                     return;
@@ -422,7 +422,7 @@ public static class DebugUtil
             list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
             {
                 Faction enemyFaction = Find.FactionManager.RandomEnemyFaction();
-                if (enemyFaction == null)
+                if (enemyFaction is null)
                 {
                     Messages.Message("No enemy faction found.", MessageTypeDefOf.RejectInput);
                     return;
@@ -459,7 +459,7 @@ public static class DebugUtil
                                 break;
                             }
                         }
-                        if (attackEvt != null)
+                        if (attackEvt is not null)
                         {
                             attackEvt.timeTillTrigger = Find.TickManager.TicksGame + 1;
                         }
@@ -479,7 +479,7 @@ public static class DebugUtil
         FactionFC faction = FindFC.FactionComp;
         IReadOnlyList<FCEvent> attackEvents = faction.GetEventsByDef(FCEventDefOf.settlementBeingAttacked);
         FCEvent attackEvt = attackEvents.Count > 0 ? attackEvents[0] : null;
-        if (attackEvt == null)
+        if (attackEvt is null)
         {
             LogUtil.MessageForce("Debug - No pending settlementBeingAttacked event. Use 'Attack Player Settlement' first.");
             return;
@@ -518,8 +518,8 @@ public static class DebugUtil
                         WorldSettlementFC currentDefenderHome = defOp?.defender?.homeSettlement;
                         foreach (WorldSettlementFC settlement in worldcomp.settlements)
                         {
-                            if (settlement.MilitaryComp == null || !settlement.MilitaryComp.IsMilitaryValid()) continue;
-                            if (currentDefenderTarget is object && settlement.Name == currentDefenderTarget.Label) continue;
+                            if (settlement.MilitaryComp is null || !settlement.MilitaryComp.IsMilitaryValid()) continue;
+                            if (currentDefenderTarget is not null && settlement.Name == currentDefenderTarget.Label) continue;
                             list2.Add(new DebugMenuOption(
                                 settlement.Name + " - " + settlement.settlementMilitaryLevel + " - Busy: " +
                                 settlement.MilitaryComp.militaryBusy, DebugMenuOptionMode.Action, delegate
@@ -604,7 +604,7 @@ public static class DebugUtil
 
             foreach (Mercenary merc in squad.mercenaries.Concat(squad.AllSubPawns()).ToList())
             {
-                if (merc?.pawn != null && !merc.pawn.Destroyed)
+                if (merc?.pawn is not null && !merc.pawn.Destroyed)
                     merc.pawn.Destroy();
             }
 
@@ -635,7 +635,7 @@ public static class DebugUtil
         //    unregisters the op, which mutates the manager's active list.
         int opsResolved = 0;
         MilitaryOperationManager mgr = FindFC.MilitaryManager;
-        if (mgr is object)
+        if (mgr is not null)
         {
             List<MilitaryOperation> snapshot = new List<MilitaryOperation>(mgr.active);
             foreach (MilitaryOperation op in snapshot)
@@ -653,7 +653,7 @@ public static class DebugUtil
         // 3. Clear the per-squad cooldown gate so squads are immediately available.
         int squadsCleared = 0;
         List<MercenarySquadFC> pool = faction.military?.mercenarySquads;
-        if (pool is object)
+        if (pool is not null)
         {
             for (int i = 0; i < pool.Count; i++)
             {
@@ -714,7 +714,7 @@ public static class DebugUtil
         foreach (WorldSettlementFC settlement in FindFC.Settlements)
         {
             MercenarySquadFC squad = settlement.PrimaryStationedSquad;
-            if (squad != null)
+            if (squad is not null)
             {
                 list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
                 {
@@ -784,7 +784,7 @@ public static class DebugUtil
     {
         List<MercenarySquadFC> pool = FindFC.Military?.mercenarySquads;
         List<DebugMenuOption> list = new List<DebugMenuOption>();
-        if (pool is object)
+        if (pool is not null)
         {
             for (int i = 0; i < pool.Count; i++)
             {
@@ -1239,7 +1239,7 @@ public static class DebugUtil
                     // Faction-level (policies + traits)
                     foreach (FCPolicy p in FindFC.PolicyManager.policies)
                     {
-                        if (p?.def == null) continue;
+                        if (p?.def is null) continue;
                         foreach (FCStatModifier mod in p.def.statModifiers)
                         {
                             if (mod.stat == localStat)
@@ -1248,7 +1248,7 @@ public static class DebugUtil
                     }
                     foreach (FCPolicy p in FindFC.PolicyManager.factionTraits)
                     {
-                        if (p?.def == null || p.def == FCPolicyDefOf.empty) continue;
+                        if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
                         foreach (FCStatModifier mod in p.def.statModifiers)
                         {
                             if (mod.stat == localStat)
@@ -1277,7 +1277,7 @@ public static class DebugUtil
     private static void LogFactionStatValues()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         LogUtil.MessageForce("--- Faction-Level Stat Values ---");
         int defaultCount = 0;
@@ -1305,7 +1305,7 @@ public static class DebugUtil
         foreach (WorldSettlementFC s in FindFC.Settlements)
         {
             var comp = s.MilitaryComp;
-            if (comp == null)
+            if (comp is null)
             {
                 LogUtil.MessageForce($"[{s.Name}] MilitaryComp: null");
                 continue;
@@ -1321,7 +1321,7 @@ public static class DebugUtil
                 int deployedCount = 0;
                 for (int i = 0; i < stationed.Count; i++)
                 {
-                    if (stationed[i] != null && stationed[i].Deployment.IsPhysicallyDeployed()) deployedCount++;
+                    if (stationed[i] is not null && stationed[i].Deployment.IsPhysicallyDeployed()) deployedCount++;
                 }
                 squadInfo = $"Squads:{stationed.Count} Deployed:{deployedCount} Job:{comp.militaryJob}";
             }
@@ -1334,7 +1334,7 @@ public static class DebugUtil
     {
         WithSettlementChoice(settlement =>
         {
-            if (settlement.MilitaryComp != null)
+            if (settlement.MilitaryComp is not null)
             {
                 settlement.MilitaryComp.ReturnMilitary(true);
                 LogUtil.MessageForce($"Debug - Force returned military for {settlement.Name}");
@@ -1467,7 +1467,7 @@ public static class DebugUtil
         int count = 0;
         foreach (ResearchProjectDef proj in DefDatabase<ResearchProjectDef>.AllDefsListForReading)
         {
-            if (proj.knowledgeCategory is object) continue; // skip Anomaly knowledge research (different currency)
+            if (proj.knowledgeCategory is not null) continue; // skip Anomaly knowledge research (different currency)
             if (proj.baseCost <= 0f) continue;              // skip zero-cost / special projects
             if (proj.IsFinished) continue;
             // FinishProject (not DebugSetAllProjectsFinished) so Empire's ResearchCompleted postfix runs per project;
@@ -1541,14 +1541,14 @@ public static class DebugUtil
         FCEventDef def = parent.def;
         if (def.splitEventFollows)
         {
-            if (def.followingEvent is object)
+            if (def.followingEvent is not null)
                 options.Add(MakeFollowupOption(parent, def.followingEvent,
                     $"{def.followingEvent.defName} (split {def.splitEventChance}%)"));
-            if (def.followingEvent2 is object)
+            if (def.followingEvent2 is not null)
                 options.Add(MakeFollowupOption(parent, def.followingEvent2,
                     $"{def.followingEvent2.defName} (split {100 - def.splitEventChance}%)"));
         }
-        else if (def.followingEvent is object)
+        else if (def.followingEvent is not null)
         {
             options.Add(MakeFollowupOption(parent, def.followingEvent,
                 $"{def.followingEvent.defName} (guaranteed)"));
@@ -1566,7 +1566,7 @@ public static class DebugUtil
                 ? parent.settlementTraitLocations
                 : null;
             FCEvent tempEvent = FCEventMaker.MakeRandomEvent(target, settlements);
-            if (tempEvent != null)
+            if (tempEvent is not null)
             {
                 FindFC.EventManager.AddEvent(tempEvent);
                 Find.LetterStack.ReceiveLetter(tempEvent.def.label,
@@ -1584,12 +1584,12 @@ public static class DebugUtil
     private static void BuildRoadSegmentNow()
     {
         var rb = FindFC.RoadBuilder;
-        if (rb.roadDef == null)
+        if (rb.roadDef is null)
         {
             LogUtil.MessageForce("Debug - No road research completed yet");
             return;
         }
-        if (rb.roadQueue == null)
+        if (rb.roadQueue is null)
         {
             LogUtil.MessageForce("Debug - No road queue exists");
             return;
@@ -1634,7 +1634,7 @@ public static class DebugUtil
     private static void EnactPolicyDebug()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         List<DebugMenuOption> list = new List<DebugMenuOption>();
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
@@ -1648,7 +1648,7 @@ public static class DebugUtil
                 var policy = new FCPolicy(local);
                 FindFC.PolicyManager.policies.Add(policy);
                 FindFC.PolicyManager.RebuildBehaviorCache();
-                LogUtil.MessageForce($"Debug - Enacted policy: {local.defName} (behavior: {(policy.behavior != null ? policy.behavior.GetType().Name : "none")})");
+                LogUtil.MessageForce($"Debug - Enacted policy: {local.defName} (behavior: {(policy.behavior is not null ? policy.behavior.GetType().Name : "none")})");
             }));
         }
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
@@ -1658,7 +1658,7 @@ public static class DebugUtil
     private static void EnactTraitDebug()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         List<DebugMenuOption> traitList = new List<DebugMenuOption>();
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
@@ -1675,7 +1675,7 @@ public static class DebugUtil
                     string current = FindFC.PolicyManager.factionTraits[slot]?.def?.defName ?? "empty";
                     slotList.Add(new DebugMenuOption($"Slot {slot} [{current}]", DebugMenuOptionMode.Action, () =>
                     {
-                        if (FindFC.PolicyManager.factionTraits[slot]?.behavior != null)
+                        if (FindFC.PolicyManager.factionTraits[slot]?.behavior is not null)
                         {
                             try { FindFC.PolicyManager.factionTraits[slot].behavior.OnRemoved(faction); }
                             catch (Exception e) { LogUtil.Error($"OnRemoved error: {e}"); }
@@ -1696,7 +1696,7 @@ public static class DebugUtil
     private static void InstantlyEnactEdict()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         List<DebugMenuOption> list = new List<DebugMenuOption>();
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
@@ -1705,7 +1705,7 @@ public static class DebugUtil
             FCPolicyDef local = def;
             FCPolicy existing;
             FindFC.PolicyManager.edicts.TryGetValue(local.category, out existing);
-            string status = (existing != null && existing.def == local) ? " [ACTIVE]" : "";
+            string status = (existing is not null && existing.def == local) ? " [ACTIVE]" : "";
             list.Add(new DebugMenuOption($"[{local.category}] {local.LabelCap}{status}", DebugMenuOptionMode.Action, () =>
             {
                 FindFC.PolicyManager.EnactEdict(local);
@@ -1726,13 +1726,13 @@ public static class DebugUtil
     private static void LogPolicyBehaviorState()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         LogUtil.MessageForce("=== Policy Behavior State ===");
 
         foreach (FCPolicy p in FindFC.PolicyManager.policies)
         {
-            if (p?.behavior == null)
+            if (p?.behavior is null)
             {
                 LogUtil.MessageForce($"[Policy] {p?.def?.defName ?? "null"}: no behavior");
                 continue;
@@ -1743,8 +1743,8 @@ public static class DebugUtil
         for (int i = 0; i < FindFC.PolicyManager.factionTraits.Count; i++)
         {
             FCPolicy p = FindFC.PolicyManager.factionTraits[i];
-            if (p?.def == null || p.def == FCPolicyDefOf.empty) continue;
-            if (p.behavior == null)
+            if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
+            if (p.behavior is null)
             {
                 LogUtil.MessageForce($"[Trait {i}] {p.def.defName}: no behavior");
                 continue;
@@ -1789,7 +1789,7 @@ public static class DebugUtil
     private static void ForcePolicyCooldownsReady()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         int count = 0;
         foreach (FCPolicyBehavior b in FindFC.PolicyManager.CachedBehaviors)
@@ -1806,7 +1806,7 @@ public static class DebugUtil
     private static void TriggerPolicyHook()
     {
         FactionFC faction = FindFC.FactionComp;
-        if (faction == null) return;
+        if (faction is null) return;
 
         List<DebugMenuOption> hookList = new List<DebugMenuOption>();
 
@@ -1874,7 +1874,7 @@ public static class DebugUtil
     {
         var rb = FindFC.RoadBuilder;
         LogUtil.MessageForce($"Road Builder: Enabled:{rb.roadBuildingEnabled} RoadDef:{rb.roadDef?.defName ?? "null"} DaysBetweenTicks:{rb.daysBetweenTicks}");
-        if (rb.roadQueue != null)
+        if (rb.roadQueue is not null)
         {
             var rq = rb.roadQueue;
             LogUtil.MessageForce($"Road Queue: NextTick:{rq.nextRoadTick - Find.TickManager.TicksGame} ticks | FromTiles:{rq.lastFromTileCount} ToTiles:{rq.lastToTileCount} Paths:{rq.roadPaths.Count} NeedsUpdate:{rq.shouldUpdateSettlementsToProcess}");
@@ -1896,7 +1896,7 @@ public static class DebugUtil
     private static void FireSupportPickSource()
     {
         MilitaryFC util = FindFC.Military;
-        if (util.fireSupportDefs == null || !util.fireSupportDefs.Any())
+        if (util.fireSupportDefs is null || !util.fireSupportDefs.Any())
         {
             Messages.Message("No fire support definitions configured.", MessageTypeDefOf.RejectInput);
             return;
@@ -1905,7 +1905,7 @@ public static class DebugUtil
         List<DebugMenuOption> list = new List<DebugMenuOption>();
         foreach (MilitaryFireSupport support in util.fireSupportDefs)
         {
-            if (support.projectiles == null || !support.projectiles.Any()) continue;
+            if (support.projectiles is null || !support.projectiles.Any()) continue;
             MilitaryFireSupport localSupport = support;
             list.Add(new DebugMenuOption(
                 $"{localSupport.name} ({localSupport.projectiles.Count} shells, acc {localSupport.accuracy})",

@@ -155,7 +155,7 @@ public static class FactionColoniesMilitary
         Scribe_Values.Look(ref savedType, "savedType");
         if (string.IsNullOrEmpty(savedType)) return new T();
         Type type = GenTypes.GetTypeInAnyAssembly(savedType);
-        if (type == null || !typeof(T).IsAssignableFrom(type))
+        if (type is null || !typeof(T).IsAssignableFrom(type))
         {
             LogUtil.Warning($"Unknown saved type '{savedType}' (mod unloaded?); loading as base {typeof(T).Name}");
             return new T();
@@ -306,7 +306,7 @@ public class SavedUnitFC : IExposable
         // an explicit player choice and must be respected on import, even at weight 0.
         PawnKindDef resolvedKind = pawnKind;
 
-        if (resolvedKind == null)
+        if (resolvedKind is null)
         {
             resolvedKind = FindFC.EmpireFaction?.RandomPawnKind()
                 ?? PawnKindDefOf.Colonist;
@@ -318,23 +318,23 @@ public class SavedUnitFC : IExposable
         unit.name = name;
         // Drop companion rows whose kind failed to resolve (mod removed); mount loads as null and
         // is simply unassigned. Mirrors the mechs/psycasts filtering below.
-        unit.animals = animals?.Where(a => a.kind != null).ToList() ?? new List<SavedAnimal>();
+        unit.animals = animals?.Where(a => a.kind is not null).ToList() ?? new List<SavedAnimal>();
         unit.mount = mount;
         unit.pawnKind = resolvedKind;
         unit.xenotype = xenotype;
         unit.customXenotypeName = customXenotypeName;
         unit.forcedGender = forcedGender;
-        unit.weapons = weapons?.Where(w => w.thing != null).ToList() ?? new List<SavedThing>();
-        unit.apparel = apparel?.Where(a => a.thing != null).ToList() ?? new List<SavedThing>();
-        unit.inventory = inventory?.Where(i => i.thing != null).ToList() ?? new List<SavedThing>();
+        unit.weapons = weapons?.Where(w => w.thing is not null).ToList() ?? new List<SavedThing>();
+        unit.apparel = apparel?.Where(a => a.thing is not null).ToList() ?? new List<SavedThing>();
+        unit.inventory = inventory?.Where(i => i.thing is not null).ToList() ?? new List<SavedThing>();
         unit.implants = implants?.Where(im => im.IsValid).ToList() ?? new List<SavedImplant>();
         unit.psylinkLevel = psylinkLevel;
         // Keep def-backed entries (psycast/focus) and aggregate entries that carry a kind
         // (e.g. stat upgrades, which have no defName).
         unit.psycasts = psycasts?.Where(a => a.IsValid()).ToList() ?? new List<SavedPsycast>();
         unit.isMechanitor = isMechanitor;
-        unit.mechs = mechs?.Where(m => m.kind != null).ToList() ?? new List<SavedMech>();
-        unit.mechGroupWorkModes = mechGroupWorkModes != null
+        unit.mechs = mechs?.Where(m => m.kind is not null).ToList() ?? new List<SavedMech>();
+        unit.mechGroupWorkModes = mechGroupWorkModes is not null
             ? new List<MechWorkModeDef>(mechGroupWorkModes)
             : new List<MechWorkModeDef>();
         unit.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
@@ -373,8 +373,8 @@ public class SavedUnitFC : IExposable
         Scribe_Defs.Look(ref legacyAnimal, "animal");
         if (Scribe.mode == LoadSaveMode.LoadingVars)
         {
-            if (animals == null) animals = new List<SavedAnimal>();
-            if (animals.Count == 0 && legacyAnimal != null) animals.Add(new SavedAnimal(legacyAnimal, 1));
+            if (animals is null) animals = new List<SavedAnimal>();
+            if (animals.Count == 0 && legacyAnimal is not null) animals.Add(new SavedAnimal(legacyAnimal, 1));
         }
         Scribe_Defs.Look(ref pawnKind, "pawnKind");
         Scribe_Defs.Look(ref xenotype, "xenotype");
@@ -399,7 +399,7 @@ public class SavedUnitFC : IExposable
         if (Scribe.mode == LoadSaveMode.LoadingVars)
             forcedGender = hasGender ? genderVal : (Gender?)null;
 
-        if (xmlParent != null)
+        if (xmlParent is not null)
         {
             ValidateAfterLoad(xmlParent);
         }
@@ -413,11 +413,11 @@ public class SavedUnitFC : IExposable
         CheckDef(xmlParent, "mount", mount, missing);
         CheckDef(xmlParent, "xenotype", xenotype, missing);
 
-        int nullAnimals = animals?.Count(a => a.kind == null) ?? 0;
+        int nullAnimals = animals?.Count(a => a.kind is null) ?? 0;
         if (nullAnimals > 0) missing.Add($"{nullAnimals} companion animal(s)");
-        int nullWeapons = weapons?.Count(w => w.thing == null) ?? 0;
-        int nullApparel = apparel?.Count(a => a.thing == null) ?? 0;
-        int nullInventory = inventory?.Count(i => i.thing == null) ?? 0;
+        int nullWeapons = weapons?.Count(w => w.thing is null) ?? 0;
+        int nullApparel = apparel?.Count(a => a.thing is null) ?? 0;
+        int nullInventory = inventory?.Count(i => i.thing is null) ?? 0;
         int nullImplants = implants?.Count(im => !im.IsValid) ?? 0;
         if (nullWeapons > 0) missing.Add($"{nullWeapons} weapon(s)");
         if (nullApparel > 0) missing.Add($"{nullApparel} apparel item(s)");
@@ -436,10 +436,10 @@ public class SavedUnitFC : IExposable
     private static void CheckDef(XmlNode parent, string label, Def resolved, List<string> missing)
     {
         XmlNode node = parent?[label];
-        if (node == null) return;
+        if (node is null) return;
         string raw = node.InnerText;
         if (string.IsNullOrEmpty(raw) || raw == "null") return;
-        if (resolved == null)
+        if (resolved is null)
         {
             missing.Add($"{label}={raw}");
         }
@@ -452,7 +452,7 @@ public class SavedSquadFC : IExposable
     public List<SavedUnitFC> unitTemplates = new List<SavedUnitFC>();
     public List<int> units = new List<int>(30);
     public List<PermanentStatModifier> statModifiers;
-    public bool IsDegraded => unitTemplates != null && unitTemplates.Any(u => u.isDegraded);
+    public bool IsDegraded => unitTemplates is not null && unitTemplates.Any(u => u.isDegraded);
 
     public SavedSquadFC() { }
 
@@ -532,7 +532,7 @@ public class SavedFireSupportFC : IExposable
     {
         name = fireSupport.name;
         accuracy = fireSupport.accuracy;
-        projectiles = fireSupport.projectiles is object
+        projectiles = fireSupport.projectiles is not null
             ? new List<ThingDef>(fireSupport.projectiles)
             : new List<ThingDef>();
         fireSupportType = fireSupport.fireSupportType;
@@ -544,7 +544,7 @@ public class SavedFireSupportFC : IExposable
         fs.name = name;
         fs.accuracy = accuracy;
         fs.fireSupportType = fireSupportType;
-        fs.projectiles = projectiles?.Where(p => p is object).ToList() ?? new List<ThingDef>();
+        fs.projectiles = projectiles?.Where(p => p is not null).ToList() ?? new List<ThingDef>();
         fs.SetLoadID();
         return fs;
     }
@@ -566,7 +566,7 @@ public class SavedFireSupportFC : IExposable
         Scribe_Values.Look(ref fireSupportType, "fireSupportType");
         Scribe_Collections.Look(ref projectiles, "projectiles", LookMode.Def);
 
-        if (xmlParent is object)
+        if (xmlParent is not null)
         {
             ValidateAfterLoad(xmlParent);
         }
@@ -577,7 +577,7 @@ public class SavedFireSupportFC : IExposable
         List<string> missing = new List<string>();
 
         XmlNode projNode = xmlParent["projectiles"];
-        if (projNode is object)
+        if (projNode is not null)
         {
             int xmlCount = 0;
             foreach (XmlNode li in projNode.ChildNodes)
@@ -647,7 +647,7 @@ public struct SavedThing : IExposable
      * the total across multiple CreateThing calls. */
     public Thing CreateThing()
     {
-        if (thing == null) return null;
+        if (thing is null) return null;
         Thing t = ThingMaker.MakeThing(thing, stuff);
         if (quality.HasValue)
             t.TryGetComp<CompQuality>()?.SetQuality(quality.Value, null);
@@ -656,7 +656,7 @@ public struct SavedThing : IExposable
     }
 
     public float MarketValue =>
-        thing != null ? CraftUtil.ThingValue(thing, stuff, quality ?? QualityCategory.Normal) * Mathf.Max(1, count) : 0f;
+        thing is not null ? CraftUtil.ThingValue(thing, stuff, quality ?? QualityCategory.Normal) * Mathf.Max(1, count) : 0f;
 
     public void ExposeData()
     {
@@ -719,7 +719,7 @@ public struct SavedImplant : IExposable
 
     /// <summary>True when this entry resolved to a real install source (surgery recipe or
     /// self-install item). Used to filter out entries whose def failed to load.</summary>
-    public bool IsValid => recipe != null || selfInstallThing != null;
+    public bool IsValid => recipe is not null || selfInstallThing is not null;
 
     public void ExposeData()
     {

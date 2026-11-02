@@ -30,7 +30,7 @@ class ShuttleSenderCaravan : ShuttleSender
         Find.WorldObjects.Add(travelingTransporters);
 
         caravan.Destroy();
-        if (comp != null)
+        if (comp is not null)
         {
             comp.shuttleUsesRemaining -= cost;
         }

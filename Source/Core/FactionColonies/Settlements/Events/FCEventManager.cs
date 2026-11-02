@@ -97,7 +97,7 @@ public class FCEventManager : IExposable
     /// <summary>True if any event with the given def exists in the queue.</summary>
     public bool AnyWithDef(FCEventDef def)
     {
-        return def is object && defIndex.TryGetValue(def, out List<FCEvent> list) && list.Count > 0;
+        return def is not null && defIndex.TryGetValue(def, out List<FCEvent> list) && list.Count > 0;
     }
 
     /// <summary>All events with the given def at the given tile. Returns empty list if none.</summary>
@@ -135,7 +135,7 @@ public class FCEventManager : IExposable
     {
         if (evt is null) return;
 
-        if (evt.goods != null && evt.goods.Count > 0)
+        if (evt.goods is not null && evt.goods.Count > 0)
             evt.goods = FCEvent.ConsolidateGoods(evt.goods);
 
         FactionFC faction = FindFC.FactionComp;
@@ -151,7 +151,7 @@ public class FCEventManager : IExposable
 
         /* Post-enqueue lifecycle hook (default: applies stat + permanent modifiers). */
         FCEventHandlerExtension ext = evt.def?.GetModExtension<FCEventHandlerExtension>();
-        if (ext != null) ext.OnEventQueued(evt, faction);
+        if (ext is not null) ext.OnEventQueued(evt, faction);
         else EventStatModifierApplier.Apply(evt, faction);
     }
 
@@ -198,7 +198,7 @@ public class FCEventManager : IExposable
     {
         FactionFC faction = FindFC.FactionComp;
         FCEventHandlerExtension ext = evt.def?.GetModExtension<FCEventHandlerExtension>();
-        if (ext != null) ext.OnEventExpired(evt, faction);
+        if (ext is not null) ext.OnEventExpired(evt, faction);
         else EventStatModifierApplier.Remove(evt, faction);
     }
 

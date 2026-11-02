@@ -22,7 +22,7 @@ public static class AutoDefenderRegistry
             // as infinitely far — TraversalDistanceBetween returns int.MaxValue across layers otherwise.
             int distance = Find.WorldGrid.TraversalDistanceBetween(defender.WorldObject.Tile, targetTile, canTraverseLayers: true);
             if (distance > defender.Range) return best;
-            return (best == null || defender.MilitaryLevel > best.MilitaryLevel) ? defender : best;
+            return (best is null || defender.MilitaryLevel > best.MilitaryLevel) ? defender : best;
         }, "FindBestDefender");
 
     /// <summary>
@@ -31,7 +31,7 @@ public static class AutoDefenderRegistry
     /// </summary>
     public static IAutoDefender FindByWorldObject(WorldObject obj)
     {
-        if (obj == null) return null;
+        if (obj is null) return null;
         return RegistryDispatch.First(_list.Items, d => d.WorldObject == obj, nameof(IAutoDefender.WorldObject));
     }
 }

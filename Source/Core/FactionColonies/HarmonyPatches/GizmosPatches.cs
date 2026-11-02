@@ -10,13 +10,13 @@ class PawnDraftGizmos
     public static void Postfix(ref Pawn __instance, ref IEnumerable<Gizmo> __result)
     {
         // Early exit checks BEFORE any allocations - most pawns will exit here
-        if (__result == null || __instance?.Faction == null || __instance.Map == null)
+        if (__result is null || __instance?.Faction is null || __instance.Map is null)
         {
             return;
         }
 
         WorldSettlementFC settlementFc = __instance.Map.Parent as WorldSettlementFC;
-        if (settlementFc == null)
+        if (settlementFc is null)
         {
             // Offense: the map parent is a vanilla enemy Settlement under an active Empire assault.
             RimWorld.Planet.Settlement enemySettlement = __instance.Map.Parent as RimWorld.Planet.Settlement;
@@ -53,13 +53,13 @@ class PawnDraftGizmos
                     if (pawn.Faction == Faction.OfPlayer) return;
                     pawn.SetFaction(Faction.OfPlayer);
                     // SetFaction → AddAndRemoveDynamicComponents creates pawn.drafter for OfPlayer pawns
-                    if (pawn.drafter != null)
+                    if (pawn.drafter is not null)
                         pawn.drafter.Drafted = true;
                     // Vanilla switched any bonded mechs to the player faction too, but the bandwidth
                     // recalc can leave them "uncontrolled" — re-assign them to the (now player)
                     // mechanitor's control groups so the player can command them.
                     Mercenary drafted = FindFC.Military?.FindMercByPawn(pawn);
-                    if (drafted != null)
+                    if (drafted is not null)
                     {
                         MercenaryPawnFactory.RebindMechs(drafted);
                         // SetFaction above cascaded to the mount and ran ClearMind, ending its Mounted
@@ -67,7 +67,7 @@ class PawnDraftGizmos
                         RemountMerc(drafted);
                     }
                     // Track drafted NPC for faction restoration after battle
-                    if (milComp != null && !milComp.draftedNPCs.Contains(pawn))
+                    if (milComp is not null && !milComp.draftedNPCs.Contains(pawn))
                         milComp.draftedNPCs.Add(pawn);
                 },
                 defaultDesc = "CommandToggleDraftDesc".Translate(),
@@ -99,7 +99,7 @@ class PawnDraftGizmos
             foreach (Gizmo gizmo in output)
             {
                 Command_Toggle action = gizmo as Command_Toggle;
-                if (action != null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
+                if (action is not null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
                 {
                     action.toggleAction = () =>
                     {
@@ -113,14 +113,14 @@ class PawnDraftGizmos
                         Mercenary merc = FindFC.Military?.FindMercByPawn(found);
                         // Reconnect the merc's mechs to its (now Empire) mechanitor control after the
                         // faction swap back, else they sit uncontrolled.
-                        if (merc != null) MercenaryPawnFactory.RebindMechs(merc);
+                        if (merc is not null) MercenaryPawnFactory.RebindMechs(merc);
 
                         if (milComp.defenders.Any())
                         {
                             List<Pawn> rejoin = new List<Pawn> { found };
-                            if (merc != null)
+                            if (merc is not null)
                                 foreach (Mercenary sub in merc.SubPawns())
-                                    if (sub?.pawn != null && sub.pawn.Spawned && !sub.pawn.Dead)
+                                    if (sub?.pawn is not null && sub.pawn.Spawned && !sub.pawn.Dead)
                                         rejoin.Add(sub.pawn);
 
                             BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(milComp.WorldSettlement.Tile);
@@ -132,9 +132,9 @@ class PawnDraftGizmos
                             // came first, the rejoin was silently skipped and the pawns — having no lord
                             // — would try to leave the map instead of fighting.
                             Lord defenderLord = found.Map?.lordManager?.lords
-                                .FirstOrDefault(l => l != null && l.faction == FindFC.EmpireFaction
+                                .FirstOrDefault(l => l is not null && l.faction == FindFC.EmpireFaction
                                                      && l.LordJob is LordJob_DefendColony);
-                            if (defenderLord != null)
+                            if (defenderLord is not null)
                             {
                                 foreach (Pawn p in rejoin)
                                     if (!defenderLord.ownedPawns.Contains(p))
@@ -148,7 +148,7 @@ class PawnDraftGizmos
                         }
                         // Re-mount after the faction switch (and the rejoin's EndCurrentJob, which also
                         // ended the mount's Mounted job) so the merc stays seated through the undraft.
-                        if (merc != null) RemountMerc(merc);
+                        if (merc is not null) RemountMerc(merc);
                     };
                     break;
                 }
@@ -178,9 +178,9 @@ class PawnDraftGizmos
                 {
                     if (p.Faction == Faction.OfPlayer) return;
                     p.SetFaction(Faction.OfPlayer);
-                    if (p.drafter != null) p.drafter.Drafted = true;
+                    if (p.drafter is not null) p.drafter.Drafted = true;
                     Mercenary drafted = FindFC.Military?.FindMercByPawn(p);
-                    if (drafted != null)
+                    if (drafted is not null)
                     {
                         MercenaryPawnFactory.RebindMechs(drafted);
                         RemountMerc(drafted);
@@ -207,25 +207,25 @@ class PawnDraftGizmos
             foreach (Gizmo gizmo in output)
             {
                 Command_Toggle action = gizmo as Command_Toggle;
-                if (action != null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
+                if (action is not null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
                 {
                     action.toggleAction = () =>
                     {
                         found.SetFaction(FindFC.EmpireFaction);
                         bf.draftedNPCs.Remove(found);
                         Mercenary merc = FindFC.Military?.FindMercByPawn(found);
-                        if (merc != null) MercenaryPawnFactory.RebindMechs(merc);
+                        if (merc is not null) MercenaryPawnFactory.RebindMechs(merc);
 
                         List<Pawn> rejoin = new List<Pawn> { found };
-                        if (merc != null)
+                        if (merc is not null)
                             foreach (Mercenary sub in merc.SubPawns())
-                                if (sub?.pawn != null && sub.pawn.Spawned && !sub.pawn.Dead)
+                                if (sub?.pawn is not null && sub.pawn.Spawned && !sub.pawn.Dead)
                                     rejoin.Add(sub.pawn);
 
                         Lord assaultLord = found.Map?.lordManager?.lords
-                            .FirstOrDefault(l => l != null && l.faction == FindFC.EmpireFaction
+                            .FirstOrDefault(l => l is not null && l.faction == FindFC.EmpireFaction
                                                  && l.LordJob is LordJob_AssaultColony);
-                        if (assaultLord != null)
+                        if (assaultLord is not null)
                         {
                             foreach (Pawn rp in rejoin)
                                 if (!assaultLord.ownedPawns.Contains(rp))
@@ -234,7 +234,7 @@ class PawnDraftGizmos
                             foreach (Pawn rp in rejoin)
                                 rp.jobs?.EndCurrentJob(JobCondition.InterruptForced);
                         }
-                        if (merc != null) RemountMerc(merc);
+                        if (merc is not null) RemountMerc(merc);
                     };
                     break;
                 }
@@ -259,7 +259,7 @@ class PawnDraftGizmos
             // The Mounted job runs the mount's constant think tree, which logs "ThinkNode_DutyConstant
             // with no duty" if the mount has none — and the faction switch just dropped it from its
             // lord. Give it a duty first (mirrors LordToil_DefendSelfAndMount's ordering).
-            if (mount.mindState != null && mount.mindState.duty is null)
+            if (mount.mindState is not null && mount.mindState.duty is null)
                 mount.mindState.duty = new PawnDuty(DutyDefOf.Defend, mount.Position, -1f);
             GiddyUpUtil.Mount(merc.pawn, mount);
         }

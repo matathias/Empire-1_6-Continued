@@ -46,11 +46,11 @@ public static class NaturalSourceUtil
             AddSource(map, chunk, rock);
 
             // ...and every block cut from it (chunk.butcherProducts, e.g. ChunkGranite -> BlocksGranite).
-            if (chunk.butcherProducts is object)
+            if (chunk.butcherProducts is not null)
             {
                 foreach (ThingDefCountClass product in chunk.butcherProducts)
                 {
-                    if (product?.thingDef is object)
+                    if (product?.thingDef is not null)
                     {
                         AddSource(map, product.thingDef, rock);
                     }
@@ -74,14 +74,14 @@ public static class NaturalSourceUtil
     /// <summary>True if this thing is produced by mining a natural rock (a stone chunk or block).</summary>
     public static bool IsRockSourced(ThingDef thing)
     {
-        return thing is object && ProductToRocks.ContainsKey(thing);
+        return thing is not null && ProductToRocks.ContainsKey(thing);
     }
 
     /// <summary>The natural rock(s) this thing derives from, or an empty list if it is not rock-sourced.</summary>
     public static IReadOnlyList<ThingDef> GetSourceRocks(ThingDef thing)
     {
         List<ThingDef> rocks;
-        if (thing is object && ProductToRocks.TryGetValue(thing, out rocks)) return rocks;
+        if (thing is not null && ProductToRocks.TryGetValue(thing, out rocks)) return rocks;
         return EmptyRocks;
     }
 

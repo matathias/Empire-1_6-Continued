@@ -64,7 +64,7 @@ public static class AccentUtil
 
     public static Color GetMilitaryAccent(WorldObjectComp_SettlementMilitary milComp)
     {
-        if (milComp == null) return MilInactive;
+        if (milComp is null) return MilInactive;
         if (milComp.isUnderAttack) return MilUnderAttack;
         if (milComp.militaryBusy && (!milComp.militaryJob.isState || milComp.militaryJob == MilitaryJobDefOf.DefendFriendlySettlement))
             return MilActiveMission;
@@ -88,7 +88,7 @@ public static class AccentUtil
         // homeSettlement (not isUnderAttack on the target) so a squad billeted at the
         // attack target but with the defender swapped elsewhere doesn't show red.
         MilitaryOperationManager manager = FindFC.MilitaryManager;
-        if (manager is object)
+        if (manager is not null)
         {
             IReadOnlyList<MilitaryOperation> ops = manager.GetOpsForSettlement(squad.settlement);
             for (int i = 0; i < ops.Count; i++)
@@ -100,13 +100,13 @@ public static class AccentUtil
         }
 
         MilitaryOperation own = squad.Operation;
-        if (own is object)
+        if (own is not null)
         {
             if (own.kind == MilitaryJobDefOf.Cooldown) return MilCooldown;
             return MilActiveMission;
         }
 
-        if (squad.outfit != null) return MilReady;
+        if (squad.outfit is not null) return MilReady;
         return MilInactive;
     }
 
@@ -116,14 +116,14 @@ public static class AccentUtil
         List<MercenarySquadFC> stationed = settlement.StationedSquads;
         for (int i = 0; i < stationed.Count; i++)
         {
-            if (stationed[i]?.outfit != null) return true;
+            if (stationed[i]?.outfit is not null) return true;
         }
         return false;
     }
 
     public static string GetMilitaryStatusLabel(WorldObjectComp_SettlementMilitary milComp, WorldSettlementFC settlement = null)
     {
-        if (milComp == null) return "FCMilStatusNoSquad".Translate();
+        if (milComp is null) return "FCMilStatusNoSquad".Translate();
         if (milComp.isUnderAttack) return "FCMilStatusUnderAttack".Translate();
         if (milComp.militaryBusy)
         {
@@ -133,10 +133,10 @@ public static class AccentUtil
                 && milComp.militaryLocation.Valid)
             {
                 WorldObject target = Find.WorldObjects.WorldObjectAt<WorldObject>(milComp.militaryLocation);
-                if (target != null)
+                if (target is not null)
                     return "FCMilStatusDefendingTarget".Translate(target.LabelCap);
             }
-            return milComp.militaryJob.statusLabelKey != null
+            return milComp.militaryJob.statusLabelKey is not null
                 ? milComp.militaryJob.statusLabelKey.Translate()
                 : "FCMilStatusBusy".Translate();
         }
@@ -149,10 +149,10 @@ public static class AccentUtil
         // The op-level cooldown is now the squad's travel-home window, not a long heal-out
         // gate, so the label says "Traveling" to match the squad-level status pipeline.
         string label = "FCMilStatusTraveling".Translate();
-        if (settlement == null) return label;
+        if (settlement is null) return label;
 
         FCEvent cooldownEvent = FindFC.FactionComp?.FindEventByDefAndLocation(FCEventDefOf.cooldownMilitary, settlement.Tile);
-        if (cooldownEvent != null)
+        if (cooldownEvent is not null)
         {
             int ticksLeft = Math.Max(0, cooldownEvent.timeTillTrigger - Find.TickManager.TicksGame);
             label += " " + ticksLeft.ToTimeString();

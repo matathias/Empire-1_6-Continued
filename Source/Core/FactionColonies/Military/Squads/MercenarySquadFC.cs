@@ -49,7 +49,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
         if (source is null) return;
         if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
         statModifiers.RemoveAll(m => m.sourceId == DesignModifierSource);
-        if (source.statModifiers != null)
+        if (source.statModifiers is not null)
         {
             foreach (PermanentStatModifier m in source.statModifiers)
             {
@@ -192,7 +192,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     }
 
     private IEnumerable<Mercenary> SubPawnsOfType(Mercenary.SubPawnType type) =>
-        AllSubPawns().Where(s => s != null && s.subPawnType == type);
+        AllSubPawns().Where(s => s is not null && s.subPawnType == type);
 
     /// <summary>Reattach legacy squad-level companion animals (pre-merc-ownership saves) to their
     /// handler merc. Mechs need no equivalent — mechanitor handling never shipped.</summary>
@@ -209,22 +209,22 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     }
 
     public IEnumerable<Mercenary> EquippedMercenaries =>
-        mercenaries.Where(merc => merc?.pawn != null && merc.deployable);
+        mercenaries.Where(merc => merc?.pawn is not null && merc.deployable);
 
     public IEnumerable<Pawn> EquippedMercenaryPawns =>
         EquippedMercenaries.Select(merc => merc.pawn);
 
     public IEnumerable<Pawn> EquippedAnimalMercenaries =>
-        SubPawnsOfType(Mercenary.SubPawnType.Animal).Where(a => a?.pawn != null).Select(a => a.pawn);
+        SubPawnsOfType(Mercenary.SubPawnType.Animal).Where(a => a?.pawn is not null).Select(a => a.pawn);
 
     public IEnumerable<Pawn> EquippedMechMercenaries =>
-        SubPawnsOfType(Mercenary.SubPawnType.Mech).Where(mech => mech?.pawn != null).Select(mech => mech.pawn);
+        SubPawnsOfType(Mercenary.SubPawnType.Mech).Where(mech => mech?.pawn is not null).Select(mech => mech.pawn);
 
     /// <summary>Mount animals (Giddy Up 2). They must spawn into the battle/deploy map like companion
     /// animals so a rider can be mounted on them; they're filtered to riders in the battle/deploy
     /// wiring (BattlefieldContext / LordJob_DeployMilitary), not here.</summary>
     public IEnumerable<Pawn> EquippedMountMercenaries =>
-        SubPawnsOfType(Mercenary.SubPawnType.Mount).Where(m => m?.pawn != null).Select(m => m.pawn);
+        SubPawnsOfType(Mercenary.SubPawnType.Mount).Where(m => m?.pawn is not null).Select(m => m.pawn);
 
     public IEnumerable<Pawn> AllEquippedMercenaryPawns =>
         EquippedMercenaries.Select(merc => merc.pawn)
@@ -237,7 +237,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     /// stale pawn from a prior deploy that wasn't cleaned up would otherwise fail to spawn and
     /// break the deployed lord). Used by Deploy, defense initial spawn, and reinforcement.</summary>
     public IEnumerable<Pawn> SpawnableMercenaryPawns =>
-        AllEquippedMercenaryPawns.Where(p => p is object && !p.Downed && !p.Dead && !p.Destroyed && !p.Spawned);
+        AllEquippedMercenaryPawns.Where(p => p is not null && !p.Downed && !p.Dead && !p.Destroyed && !p.Spawned);
 
     public IEnumerable<Pawn> AllDeployedMercenaryPawns =>
         DeployedMercenaries.Select(merc => merc.pawn)
@@ -246,16 +246,16 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
             .Concat(DeployedMercenaryMounts.Select(merc => merc.pawn));
 
     public IEnumerable<Mercenary> DeployedMercenaries =>
-        mercenaries.Where(merc => merc?.pawn?.Map != null);
+        mercenaries.Where(merc => merc?.pawn?.Map is not null);
 
     public IEnumerable<Mercenary> DeployedMercenaryAnimals =>
-        SubPawnsOfType(Mercenary.SubPawnType.Animal).Where(merc => merc?.pawn?.Map != null);
+        SubPawnsOfType(Mercenary.SubPawnType.Animal).Where(merc => merc?.pawn?.Map is not null);
 
     public IEnumerable<Mercenary> DeployedMercenaryMechs =>
-        SubPawnsOfType(Mercenary.SubPawnType.Mech).Where(merc => merc?.pawn?.Map != null);
+        SubPawnsOfType(Mercenary.SubPawnType.Mech).Where(merc => merc?.pawn?.Map is not null);
 
     public IEnumerable<Mercenary> DeployedMercenaryMounts =>
-        SubPawnsOfType(Mercenary.SubPawnType.Mount).Where(merc => merc?.pawn?.Map != null);
+        SubPawnsOfType(Mercenary.SubPawnType.Mount).Where(merc => merc?.pawn?.Map is not null);
 
     /// <summary>The <see cref="MilitaryOperation"/> this squad is currently part of, if any.
     /// Returned via the <see cref="MilitaryOperationManager"/>'s squad index, so this is O(1)
@@ -263,19 +263,19 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     public MilitaryOperation Operation => FindFC.MilitaryManager?.GetOpForSquad(this);
 
     /// <summary>True when this squad is in any active op (offensive, defensive, deploy, or cooldown).</summary>
-    public bool IsBusy => Operation is object;
+    public bool IsBusy => Operation is not null;
 
     /// <summary>True when the squad's <see cref="SquadCostExtensions.DeploymentCost"/> exceeds
     /// its assigned settlement's max deploy cost. An underfunded squad stays assigned but
     /// can't take part in military operations. Distinct from <see cref="IsBusy"/>: this is a
     /// structural (cost) constraint, not a temporary deployment state.</summary>
     public bool IsUnderfunded
-        => settlement is object
+        => settlement is not null
            && MilitaryFC.SquadExceedsSettlementBudget(this, settlement, out _, out _);
 
     /// <summary>True when this squad is currently assigned to a billet (settlement). False
     /// when the squad sits in the unassigned hire pool.</summary>
-    public bool IsAssigned => settlement is object;
+    public bool IsAssigned => settlement is not null;
 
     /// <summary>True when the squad is assigned, not in any active op, not underfunded
     /// at its settlement, and past its post-op cooldown. Canonical "can launch a new
@@ -299,26 +299,26 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     /// </summary>
     public void InitiateSquad()
     {
-        if (mercenaries != null && mercenaries.Count > 0) return;
+        if (mercenaries is not null && mercenaries.Count > 0) return;
 
         mercenaries = new List<Mercenary>();
 
         int cap = MilSquadFC.MaxSquadSize;
-        int templateCount = (outfit?.Units != null) ? outfit.Units.Count : 0;
-        int slotCount = (outfit == null) ? cap : Math.Min(cap, templateCount);
+        int templateCount = (outfit?.Units is not null) ? outfit.Units.Count : 0;
+        int slotCount = (outfit is null) ? cap : Math.Min(cap, templateCount);
 
         for (int k = 0; k < slotCount; k++)
         {
             Mercenary placeholder = new Mercenary(true);
-            MilUnitFC slot = (outfit != null && k < templateCount) ? outfit.Units[k] : null;
+            MilUnitFC slot = (outfit is not null && k < templateCount) ? outfit.Units[k] : null;
 
             // Generate a pawn only for slots that have a real (non-blank) unit assignment.
             // Blank slots stay as empty placeholders (pawn == null), refillable via
             // FillEmptySlots / Upgrade when the player assigns a real unit later.
-            if (slot != null && !slot.isBlank)
+            if (slot is not null && !slot.isBlank)
             {
                 MercenaryPawnFactory.CreateNewPawn(this, ref placeholder, slot.pawnKind, slot.xenotype, slot.customXenotypeName, slot);
-                if (placeholder.pawn == null)
+                if (placeholder.pawn is null)
                 {
                     LogUtil.Warning($"Failed to create mercenary {k + 1}/{slotCount} for unit {slot.name ?? "unknown"}; leaving slot empty.");
                 }
@@ -336,7 +336,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
             loadID = FindFC.Military.NextMercenarySquadId();
         }
 
-        if (outfit != null)
+        if (outfit is not null)
         {
             Equipment.OutfitSquad(outfit);
         }
@@ -361,15 +361,15 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     {
         foreach (Mercenary merc in mercenaries)
         {
-            if (merc?.pawn?.skills == null) continue;
+            if (merc?.pawn?.skills is null) continue;
 
             var shooting = merc.pawn.skills.GetSkill(SkillDefOf.Shooting);
             var melee = merc.pawn.skills.GetSkill(SkillDefOf.Melee);
             var medicine = merc.pawn.skills.GetSkill(SkillDefOf.Medicine);
 
-            if (shooting != null) shooting.Level = Math.Min(level * 2, 20);
-            if (melee != null) melee.Level = Math.Min(level * 2, 20);
-            if (medicine != null) medicine.Level = Math.Min(level * 1, 20);
+            if (shooting is not null) shooting.Level = Math.Min(level * 2, 20);
+            if (melee is not null) melee.Level = Math.Min(level * 2, 20);
+            if (medicine is not null) medicine.Level = Math.Min(level * 1, 20);
         }
     }
 
@@ -426,10 +426,10 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
         // Tear down the existing pawn before recreating. Sever a mech's Overseer bond first (else the
         // mechanitor keeps a dangling relation), then destroy a still-live pawn we're discarding (a
         // dead/destroyed one is left to vanilla cleanup). Leaves a clean null on failure.
-        if (sub.pawn is object)
+        if (sub.pawn is not null)
         {
             bool gone = sub.pawn.Dead || sub.pawn.Destroyed;
-            if (sub.subPawnType == Mercenary.SubPawnType.Mech && sub.handler?.pawn != null)
+            if (sub.subPawnType == Mercenary.SubPawnType.Mech && sub.handler?.pawn is not null)
                 MercenaryPawnFactory.UnbondMech(sub.handler.pawn, sub.pawn);
             if (!gone && !sub.pawn.Destroyed) sub.pawn.Destroy();
             sub.pawn = null;
@@ -449,7 +449,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
             if (overseer is null) return false; // mech needs a live mechanitor overseer
             MercenaryPawnFactory.CreateNewMech(this, ref slot, sub.subPawnKind, overseer, sub.subPawnMechGroup, sub.subPawnWorkMode);
         }
-        return slot.pawn is object && !slot.pawn.Dead;
+        return slot.pawn is not null && !slot.pawn.Dead;
     }
 
     /// <summary>Pays <see cref="SquadCostExtensions.FillEmptySlotsCost"/> silver and generates fresh
@@ -468,7 +468,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
             return false;
         }
 
-        if (mercenaries != null)
+        if (mercenaries is not null)
         {
             foreach (Mercenary m in mercenaries)
             {
@@ -477,7 +477,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
                 if (blueprint is null || blueprint.isBlank) continue;
                 Mercenary slot = m;
                 MercenaryPawnFactory.CreateNewPawn(this, ref slot, blueprint.pawnKind, blueprint.xenotype, blueprint.customXenotypeName, blueprint);
-                if (slot.pawn != null)
+                if (slot.pawn is not null)
                 {
                     Equipment.EquipPawn(slot, blueprint);
                     // Refilling a dead merc rebuilds its whole unit from the blueprint (whose cost
@@ -519,13 +519,13 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
 
         /* Strip + destroy. Mirrors SquadUpgradeUtil.UpgradeToTemplate's fire-pass cleanup. */
         Equipment.StripPawn(merc);
-        if (merc.pawn != null && !merc.pawn.Destroyed) merc.pawn.Destroy();
+        if (merc.pawn is not null && !merc.pawn.Destroyed) merc.pawn.Destroy();
         merc.pawn = null;
         // Fully clear sub-pawns: the slot becomes a clean refill target and Fill recreates them.
-        if (merc.animals != null)
+        if (merc.animals is not null)
         {
             foreach (Mercenary a in merc.animals)
-                if (a?.pawn != null && !a.pawn.Destroyed) a.pawn.Destroy();
+                if (a?.pawn is not null && !a.pawn.Destroyed) a.pawn.Destroy();
             merc.animals.Clear();
         }
         RemoveMechsFor(merc);
@@ -545,7 +545,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     public bool RemoveEmptySlot(Mercenary merc)
     {
         if (merc is null) return false;
-        if (merc.pawn is object) return false;
+        if (merc.pawn is not null) return false;
         if (mercenaries is null) return false;
         if (IsBusy) return false;
         if (!mercenaries.Remove(merc)) return false;
@@ -558,7 +558,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
         LogUtil.MessageForce("Debug Mercenary Squad");
         foreach (Mercenary merc in mercenaries)
         {
-            if (merc?.pawn == null)
+            if (merc?.pawn is null)
             {
                 LogUtil.MessageForce("\t[empty]");
                 continue;
@@ -588,8 +588,8 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
             if (m is null) continue;
             // Sever the Overseer bond before discarding the mech so the mechanitor never keeps a
             // dangling relation to a destroyed pawn.
-            if (owner.pawn != null && m.pawn != null) MercenaryPawnFactory.UnbondMech(owner.pawn, m.pawn);
-            if (m.pawn != null && !m.pawn.Destroyed) m.pawn.Destroy();
+            if (owner.pawn is not null && m.pawn is not null) MercenaryPawnFactory.UnbondMech(owner.pawn, m.pawn);
+            if (m.pawn is not null && !m.pawn.Destroyed) m.pawn.Destroy();
             owner.mechs.RemoveAt(i);
         }
     }
@@ -608,7 +608,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
 
             // Reap dead/destroyed mechs into clean Missing placeholders: unassign from control
             // groups (best-effort) and null the wrapper. The Overseer relation is stripped below.
-            if (merc.mechs != null)
+            if (merc.mechs is not null)
             {
                 foreach (Mercenary mech in merc.mechs)
                 {

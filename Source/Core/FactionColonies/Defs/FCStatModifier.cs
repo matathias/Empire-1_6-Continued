@@ -13,10 +13,10 @@ public class FCStatModifier
     /// </summary>
     public static IEnumerable<string> ConfigErrors(List<FCStatModifier> modifiers, string ownerDefName)
     {
-        if (modifiers == null) yield break;
+        if (modifiers is null) yield break;
         for (int i = 0; i < modifiers.Count; i++)
         {
-            if (modifiers[i].stat == null)
+            if (modifiers[i].stat is null)
                 yield return $"{ownerDefName}: statModifiers[{i}] has null stat (unresolved defName?)";
         }
     }
@@ -27,7 +27,7 @@ public class FCStatModifier
     /// </summary>
     public bool IsBeneficial()
     {
-        if (stat == null) return false;
+        if (stat is null) return false;
         if (stat.aggregation == FCStatAggregation.Multiplicative)
             return stat.invertedForDisplay ? value < 1.0 : value > 1.0;
         return stat.invertedForDisplay ? value < 0.0 : value > 0.0;
@@ -46,9 +46,9 @@ public class FCStatModifier
         {
             foreach (FCStatModifier mod in modifiers)
             {
-                if (mod.stat == null) continue;
+                if (mod.stat is null) continue;
 
-                if (mod.stat.linkedResource != null)
+                if (mod.stat.linkedResource is not null)
                 {
                     if (mod.stat.aggregation == FCStatAggregation.Additive)
                         desc += "FCRTDproductionAdditive".Translate(TextUtil.ColorizeAdditiveBonus(mod.value), mod.stat.linkedResource.LabelCap) + "\n";

@@ -9,7 +9,7 @@ public static class MilitaryEfficiencyUtil
     /// </summary>
     public static void ApplyCombatEfficiencyHediff(Pawn pawn, double efficiency)
     {
-        if (pawn == null || pawn.health == null) return;
+        if (pawn is null || pawn.health is null) return;
 
         float dampedDelta = (float)((efficiency - 1.0) * FCSettings.efficiencyDamping);
         RemoveCombatEfficiencyHediff(pawn);
@@ -44,7 +44,7 @@ public static class MilitaryEfficiencyUtil
 
         Hediff existing = pawn.health.hediffSet.GetFirstHediffOfDef(FCHediffDefOf.FC_CombatEfficiency_Buff)
             ?? pawn.health.hediffSet.GetFirstHediffOfDef(FCHediffDefOf.FC_CombatEfficiency_Debuff);
-        if (existing != null)
+        if (existing is not null)
         {
             pawn.health.RemoveHediff(existing);
         }

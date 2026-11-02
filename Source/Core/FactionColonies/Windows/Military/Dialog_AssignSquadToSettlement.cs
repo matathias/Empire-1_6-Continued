@@ -71,7 +71,7 @@ public class Dialog_AssignSquadToSettlement : Dialog_SquadPicker
             "FCAssignSquadPickerMaxDeploy".Translate(maxDeployCost));
         y += lineH;
 
-        string slotLine = currentSlotSquad is object
+        string slotLine = currentSlotSquad is not null
             ? (string)"FCAssignSquadPickerCurrentSlot".Translate(currentSlotSquad.DisplayName)
             : (string)"FCAssignSquadPickerSlotEmpty".Translate();
         UIUtil.ClampedLabel(new Rect(innerX, y, innerW, lineH), slotLine);
@@ -102,7 +102,7 @@ public class Dialog_AssignSquadToSettlement : Dialog_SquadPicker
 
     protected override bool CanConfirm()
     {
-        if (unassignSelected) return currentSlotSquad is object && !currentSlotSquad.IsBusy;
+        if (unassignSelected) return currentSlotSquad is not null && !currentSlotSquad.IsBusy;
         if (selected is null) return false;
         if (selected == currentSlotSquad) return true; // explicit no-op confirm
         // Can't billet an over-budget squad here (matches the unavailable treatment in RebuildRows).
@@ -123,7 +123,7 @@ public class Dialog_AssignSquadToSettlement : Dialog_SquadPicker
 
         if (unassignSelected)
         {
-            if (currentSlotSquad is object) mfc.Unassign(currentSlotSquad);
+            if (currentSlotSquad is not null) mfc.Unassign(currentSlotSquad);
             Close();
             return;
         }
@@ -139,7 +139,7 @@ public class Dialog_AssignSquadToSettlement : Dialog_SquadPicker
         bool atCap = stationed >= cap && selected.settlement != target;
 
         bool ok;
-        if (atCap && currentSlotSquad is object && currentSlotSquad.settlement == target)
+        if (atCap && currentSlotSquad is not null && currentSlotSquad.settlement == target)
         {
             ok = mfc.AttemptToSwap(selected, target, currentSlotSquad);
         }
@@ -226,7 +226,7 @@ public class Dialog_AssignSquadToSettlement : Dialog_SquadPicker
      * when the slot has a current occupant; click selects it (clears any squad selection),
      * confirm calls Unassign on the occupant. */
     protected override float ExtraRowsHeight =>
-        currentSlotSquad is object ? (CardH + RowGap) : 0f;
+        currentSlotSquad is not null ? (CardH + RowGap) : 0f;
 
     protected override void DrawExtraRows(Rect viewRect, ref float runningY)
     {

@@ -126,7 +126,7 @@ public class FCWindow_MountPicker : Window
         Rect unequipRect = new Rect(buttonBar.x, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(unequipRect, "FCUnitActionUnequipThing".Translate()))
         {
-            if (onUnequip != null) onUnequip();
+            if (onUnequip is not null) onUnequip();
             Close();
         }
 
@@ -138,13 +138,13 @@ public class FCWindow_MountPicker : Window
         }
 
         // Confirm (left of cancel)
-        bool canConfirm = selectedDef != null;
+        bool canConfirm = selectedDef is not null;
         Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
         {
             if (canConfirm)
             {
-                if (onConfirm != null) onConfirm(selectedDef);
+                if (onConfirm is not null) onConfirm(selectedDef);
                 Close();
             }
         }

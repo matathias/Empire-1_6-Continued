@@ -33,8 +33,8 @@ public static class SquadUpgradeUtil
            cost rounds to zero (a same-price-or-cheaper re-equip still needs applying). */
         public bool HasWork =>
             ReassignCount > 0
-            || (Fires != null && Fires.Count > 0)
-            || (Slots != null && Slots.Any(s => s.claim is null));
+            || (Fires is not null && Fires.Count > 0)
+            || (Slots is not null && Slots.Any(s => s.claim is null));
     }
 
     /* Race + xenotype identity tuple comparison. With Biotech off, race alone is
@@ -42,12 +42,12 @@ public static class SquadUpgradeUtil
      * Returns true if the merc's pawn can stand in for a slot of the given unit. */
     internal static bool IsRaceXenoMatch(Mercenary merc, MilUnitFC slot)
     {
-        if (merc?.pawn?.kindDef?.race == null || slot?.pawnKind?.race == null) return false;
+        if (merc?.pawn?.kindDef?.race is null || slot?.pawnKind?.race is null) return false;
         if (merc.pawn.kindDef.race != slot.pawnKind.race) return false;
 
         if (!ModsConfig.BiotechActive) return true;
 
-        if (slot.customXenotypeName != null)
+        if (slot.customXenotypeName is not null)
         {
             string mercCustom = merc.pawn.genes?.CustomXenotype?.name;
             return mercCustom == slot.customXenotypeName;
@@ -68,7 +68,7 @@ public static class SquadUpgradeUtil
         List<Mercenary> claimable = new List<Mercenary>();
         foreach (Mercenary m in squad.mercenaries)
         {
-            if (m?.pawn?.kindDef != null) claimable.Add(m);
+            if (m?.pawn?.kindDef is not null) claimable.Add(m);
         }
 
         IReadOnlyList<MilUnitFC> templateUnits = squad.outfit.Units;
@@ -164,7 +164,7 @@ public static class SquadUpgradeUtil
     public static bool UpgradeWouldFirePersonalized(MercenarySquadFC squad)
     {
         if (squad?.outfit?.Units is null || squad.mercenaries is null) return false;
-        return BuildUpgradePlan(squad).Fires.Any(m => m?.ownedLoadout is object);
+        return BuildUpgradePlan(squad).Fires.Any(m => m?.ownedLoadout is not null);
     }
 
     /// <summary>Sets the squad's template reference to <paramref name="newTemplate"/> without
@@ -182,12 +182,12 @@ public static class SquadUpgradeUtil
         if (squad.mercenaries is null) return;
 
         HashSet<MilUnitFC> retainable = null;
-        if (newTemplate?.Units != null)
+        if (newTemplate?.Units is not null)
         {
             retainable = new HashSet<MilUnitFC>();
             foreach (MilUnitFC u in newTemplate.Units)
             {
-                if (u is object && !u.isBlank) retainable.Add(u);
+                if (u is not null && !u.isBlank) retainable.Add(u);
             }
         }
 
@@ -195,10 +195,10 @@ public static class SquadUpgradeUtil
         {
             Mercenary m = squad.mercenaries[i];
             if (m is null) continue;
-            if (m.pawn is object) continue;                  // only prune empty slots
+            if (m.pawn is not null) continue;                  // only prune empty slots
             MilUnitFC bp = m.loadout;
             if (bp is null || bp.isBlank) continue;          // already a blank placeholder
-            if (retainable != null && retainable.Contains(bp)) continue; // template still owns this slot
+            if (retainable is not null && retainable.Contains(bp)) continue; // template still owns this slot
             squad.mercenaries.RemoveAt(i);
         }
         FindFC.Military?.RebuildMercenaryPawnSet();
@@ -238,7 +238,7 @@ public static class SquadUpgradeUtil
         {
             if (m is null) continue;
             squad.Equipment.StripPawn(m);
-            if (m.pawn != null && !m.pawn.Destroyed) m.pawn.Destroy();
+            if (m.pawn is not null && !m.pawn.Destroyed) m.pawn.Destroy();
             m.pawn = null;
             squad.Equipment.ClearSubPawns(m);      // destroy + drop this merc's animals + bonded mechs
         }
@@ -253,7 +253,7 @@ public static class SquadUpgradeUtil
             MilUnitFC target = dec.target;
             Mercenary merc;
 
-            if (dec.claim != null)
+            if (dec.claim is not null)
             {
                 merc = dec.claim;
                 MilUnitFC prior = merc.currentLoadout;
@@ -283,7 +283,7 @@ public static class SquadUpgradeUtil
             {
                 merc = new Mercenary(true);
                 MercenaryPawnFactory.CreateNewPawn(squad, ref merc, slotUnit.pawnKind, slotUnit.xenotype, slotUnit.customXenotypeName, slotUnit);
-                if (merc.pawn == null)
+                if (merc.pawn is null)
                 {
                     LogUtil.Warning($"UpgradeToTemplate: failed to generate fresh pawn for slot {dec.slotIndex}");
                     continue;

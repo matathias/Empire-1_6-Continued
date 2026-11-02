@@ -21,7 +21,7 @@ public static class SettlementCardDrawer
 
         float height = RowPadding + NameHeight + descHeight + margin;
 
-        if (def.resources != null && def.resources.Count > 0)
+        if (def.resources is not null && def.resources.Count > 0)
         {
             height += ResourceRowHeight;
         }
@@ -56,7 +56,7 @@ public static class SettlementCardDrawer
         curY += descHeight + margin;
 
         // Resource icons
-        if (def.resources != null && def.resources.Count > 0)
+        if (def.resources is not null && def.resources.Count > 0)
         {
             DrawResourceRow(new Rect(xOffset, curY, contentWidth, ResourceRowHeight), def);
         }
@@ -74,7 +74,7 @@ public static class SettlementCardDrawer
 
         foreach (ResourceAvailability ra in def.resources)
         {
-            if (ra.resourceDef == null) continue;
+            if (ra.resourceDef is null) continue;
 
             Rect iconRect = new Rect(xCursor, rect.y + (rect.height - ResourceIconSize) / 2f, ResourceIconSize, ResourceIconSize);
             GUI.DrawTexture(iconRect, ra.resourceDef.Icon);
@@ -82,7 +82,7 @@ public static class SettlementCardDrawer
             xCursor += ResourceIconSize;
 
             string bonusText = GetBonusText(ra);
-            if (bonusText != null)
+            if (bonusText is not null)
             {
                 Text.Font = GameFont.Tiny;
                 float bonusWidth = Text.CalcSize(bonusText).x + 2f;

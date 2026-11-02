@@ -70,7 +70,7 @@ public class WorldComponent_Archive : WorldComponent
             for (int i = battleArchive.Count - 1; i >= 0; i--)
             {
                 BattleResult r = battleArchive[i];
-                if (r is object && r.reportId == id)
+                if (r is not null && r.reportId == id)
                 {
                     result = r;
                     return true;

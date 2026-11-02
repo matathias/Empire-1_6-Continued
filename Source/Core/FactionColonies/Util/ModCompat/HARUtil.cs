@@ -29,7 +29,7 @@ public static class HARUtil
     /// </summary>
     public static bool CanRaceWearApparel(ThingDef race, ThingDef apparel)
     {
-        if (Bridge == null || race == null || apparel == null) return true;
+        if (Bridge is null || race is null || apparel is null) return true;
         return Bridge.CanRaceWearApparel(race, apparel);
     }
 
@@ -39,7 +39,7 @@ public static class HARUtil
     /// </summary>
     public static bool CanRaceUseWeapon(ThingDef race, ThingDef weapon)
     {
-        if (Bridge == null || race == null || weapon == null) return true;
+        if (Bridge is null || race is null || weapon is null) return true;
         return Bridge.CanRaceUseWeapon(race, weapon);
     }
 }

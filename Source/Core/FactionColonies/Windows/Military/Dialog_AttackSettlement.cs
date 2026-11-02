@@ -49,7 +49,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
         this.validJobs = jobs;
         this.onConfirm = null;
         this.headerOverride = null;
-        this.currentJob = (initialJob is object && jobs is object && jobs.Contains(initialJob))
+        this.currentJob = (initialJob is not null && jobs is not null && jobs.Contains(initialJob))
             ? initialJob
             : jobs?.FirstOrDefault();
 
@@ -139,14 +139,14 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
 
-        bool twoColumn = headerOverride.NullOrEmpty() && validJobs is object && validJobs.Count > 0;
+        bool twoColumn = headerOverride.NullOrEmpty() && validJobs is not null && validJobs.Count > 0;
 
         if (!twoColumn)
         {
             // Single-column override mode: defender power line only, target row suppressed
             // (the override title already names the engagement context).
             float y = bodyTop;
-            if (defenderForceMin is object && defenderForceMax is object)
+            if (defenderForceMin is not null && defenderForceMax is not null)
             {
                 float defRowH = 22f;
                 UIUtil.ClampedLabel(new Rect(8f, y, inRect.width - 16f, defRowH), DefenderLineText());
@@ -223,7 +223,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
         y += TargetSettlementH;
 
         // Defender power line — sits below the target box
-        if (defenderForceMin is object && defenderForceMax is object)
+        if (defenderForceMin is not null && defenderForceMax is not null)
         {
             float defRowH = 22f;
             y += 4f;
@@ -313,7 +313,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
     }
 
     protected override bool CanConfirm() =>
-        selected is object && selected.IsAvailable && currentJob is object;
+        selected is not null && selected.IsAvailable && currentJob is not null;
 
     protected override void Confirm()
     {
@@ -322,13 +322,13 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
         if (currentJob is null) return;
 
         /* Morale lockout: refuse the raid before any deployment-cost bill is created. */
-        if (selected.settlement is object && selected.settlement.TryGetSquadDeploymentBlock(out string lockReason))
+        if (selected.settlement is not null && selected.settlement.TryGetSquadDeploymentBlock(out string lockReason))
         {
             Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
             return;
         }
 
-        if (onConfirm is object)
+        if (onConfirm is not null)
         {
             try { onConfirm(selected); }
             catch (Exception e) { LogUtil.Error($"Dialog_AttackSettlement.onConfirm threw: {e}"); }
@@ -337,7 +337,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
         }
 
         // Default behavior: create offensive op via manager.
-        int travel = selected.settlement is object && target is object
+        int travel = selected.settlement is not null && target is not null
             ? TravelUtil.ReturnTicksToArrive(selected.settlement.Tile, target.Tile)
             : GenDate.TicksPerDay;
         MilitaryOperationManager manager = FindFC.MilitaryManager;
@@ -351,7 +351,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
         // already has an op or a live map (the player is attacking it in person) -- launching
         // would later hijack that map. Message + return, leaving the dialog open, matching the
         // morale-lockout reject above.
-        if (target is object && !manager.CanLaunchOffensiveAt(target.Tile, out string launchReject))
+        if (target is not null && !manager.CanLaunchOffensiveAt(target.Tile, out string launchReject))
         {
             Messages.Message(launchReject, MessageTypeDefOf.RejectInput);
             return;
@@ -376,12 +376,12 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
             bool available = squad.IsAvailable;
             /* Morale lockout: a squad whose home settlement has collapsed morale cannot raid.
              * Treat it as unavailable so the row greys and the availableOnly filter hides it. */
-            bool moraleLocked = squad.settlement is object && squad.settlement.SquadDeploymentLocked;
+            bool moraleLocked = squad.settlement is not null && squad.settlement.SquadDeploymentLocked;
             if (moraleLocked) available = false;
             if (availableOnly && !available) continue;
 
             int travelTicks = 0;
-            if (squad.settlement is object && target is object)
+            if (squad.settlement is not null && target is not null)
                 travelTicks = TravelUtil.ReturnTicksToArrive(squad.settlement.Tile, target.Tile);
 
             // Attacker force is computed once per row so we can show power+efficiency on busy/cooldown
@@ -389,12 +389,12 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
             MilitaryForce attackerForce = MilitaryForce.CreateMilitaryForceFromSquad(squad, isAttacking: true);
             double attackerPower = SquadPowerRegistry.Resolve(squad).militaryLevel;
             double attackerEfficiency = attackerForce?.militaryEfficiency ?? 0;
-            bool hasAttackerForce = attackerForce is object;
+            bool hasAttackerForce = attackerForce is not null;
 
             /* Apply attacker-side modifiers per-row so the win chance reflects how the
              * specific squad would actually perform after BattleModifierRegistry runs at
              * engagement. Defender-side bounds were already pre-modified once at ctor. */
-            if (hasAttackerForce && target is object)
+            if (hasAttackerForce && target is not null)
             {
                 BattleForceContext rowCtx = new BattleForceContext
                 {
@@ -420,7 +420,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
              * here's how it would do" and drives the win-chance-tinted card highlights. */
             double winChanceMin = 0;
             double winChanceMax = 0;
-            if (hasAttackerForce && defenderForceMin is object && defenderForceMax is object)
+            if (hasAttackerForce && defenderForceMin is not null && defenderForceMax is not null)
             {
                 winChanceMin = SimulateBattleFc.CalculateAttackerWinChance(attackerForce, defenderForceMax);
                 winChanceMax = SimulateBattleFc.CalculateAttackerWinChance(attackerForce, defenderForceMin);

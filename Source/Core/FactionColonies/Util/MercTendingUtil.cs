@@ -32,7 +32,7 @@ public static class MercTendingUtil
         float maxQuality = medicine?.GetStatValueAbstract(StatDefOf.MedicalQualityMax) ?? 0.7f;
 
         _tmpHediffs.Clear();
-        TendUtility.GetOptimalHediffsToTendWithSingleTreatment(patient, medicine != null, _tmpHediffs);
+        TendUtility.GetOptimalHediffsToTendWithSingleTreatment(patient, medicine is not null, _tmpHediffs);
         for (int i = 0; i < _tmpHediffs.Count; i++)
         {
             _tmpHediffs[i].Tended(quality, maxQuality, i);

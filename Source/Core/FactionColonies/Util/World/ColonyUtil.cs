@@ -24,7 +24,7 @@ public static class ColonyUtil
     public static double CombinedFoundingStat(FCStatDef stat, BiomeResourceDef biome, FactionFC faction)
     {
         double biomeVal = stat.IdentityValue;
-        if (biome?.statModifiers != null)
+        if (biome?.statModifiers is not null)
         {
             foreach (FCStatModifier m in biome.statModifiers)
             {
@@ -32,7 +32,7 @@ public static class ColonyUtil
                     biomeVal = stat.aggregation == FCStatAggregation.Additive ? biomeVal + m.value : biomeVal * m.value;
             }
         }
-        double fac = faction is object ? faction.GetStatValue(stat) : stat.IdentityValue;
+        double fac = faction is not null ? faction.GetStatValue(stat) : stat.IdentityValue;
         return stat.aggregation == FCStatAggregation.Additive ? fac + biomeVal : fac * biomeVal;
     }
 
@@ -59,7 +59,7 @@ public static class ColonyUtil
 
     public static WorldSettlementFC CreatePlayerColonySettlement(PlanetTile tile, WorldSettlementDef settlementType, string name = null)
     {
-        if (settlementType == null)
+        if (settlementType is null)
         {
             settlementType = DefaultSettlementDefForTile(tile);
             LogUtil.Error($"Tried to create a settlement with null WorldSettlementDef! Defaulting to {settlementType.defName} based on tile layer.");
@@ -149,11 +149,11 @@ public static class ColonyUtil
         // than dangling with a destroyed settlement reference. The faction-wide pool
         // survives settlement removal — squads aren't owned by settlements.
         MilitaryFC mfc = faction.military;
-        if (mfc?.mercenarySquads is object)
+        if (mfc?.mercenarySquads is not null)
         {
             foreach (MercenarySquadFC s in mfc.mercenarySquads)
             {
-                if (s is object && s.settlement == settlement)
+                if (s is not null && s.settlement == settlement)
                 {
                     s.settlement = null;
                     s.autoDefend = false;
@@ -183,7 +183,7 @@ public static class ColonyUtil
         // by participant rather than scanning FCEvents, since the op is the canonical owner
         // of the aggressor / defender / target relationships.
         MilitaryOperationManager manager = FindFC.MilitaryManager;
-        if (manager?.active is object)
+        if (manager?.active is not null)
         {
             // Snapshot to avoid mutation during iteration: Resolve / ChangeDefendingMilitaryForce
             // unregister or replace ops in-place.
@@ -205,7 +205,7 @@ public static class ColonyUtil
                     && op.targetObject is WorldSettlementFC targetSettlement)
                 {
                     FCEvent warning = op.sourceEvents?.Find(e => e?.def == FCEventDefOf.settlementBeingAttacked);
-                    if (warning is object)
+                    if (warning is not null)
                     {
                         MilitaryOperationsUtil.ChangeDefendingMilitaryForce(warning, targetSettlement);
                         continue;
@@ -214,10 +214,10 @@ public static class ColonyUtil
 
                 // External raid target with the removed settlement as foreign defender: just
                 // cancel — the raid target stays alive.
-                if (defenderIsRemovedSettlement && !targetIsRemovedSettlement && op.targetObject is object)
+                if (defenderIsRemovedSettlement && !targetIsRemovedSettlement && op.targetObject is not null)
                 {
                     IRaidTarget raidTarget = RaidTargetRegistry.FindByWorldObject(op.targetObject);
-                    if (raidTarget != null) raidTarget.IsUnderAttack = false;
+                    if (raidTarget is not null) raidTarget.IsUnderAttack = false;
                 }
 
                 // Aggressor / target / external-defender cases: cancel the op entirely. Resolve
@@ -226,7 +226,7 @@ public static class ColonyUtil
                 // missing op id.
                 foreach (FCEvent srcEvt in new List<FCEvent>(op.sourceEvents ?? new List<FCEvent>()))
                 {
-                    if (srcEvt is object) faction.RemoveEvent(srcEvt);
+                    if (srcEvt is not null) faction.RemoveEvent(srcEvt);
                 }
                 op.Resolve();
             }
@@ -258,7 +258,7 @@ public static class ColonyUtil
             if (!toRemove.Contains(evt))
             {
                 FCEventHandlerExtension handler = evt.def.GetModExtension<FCEventHandlerExtension>();
-                if (handler != null && handler.ShouldCancelOnSettlementRemoval(evt, settlement))
+                if (handler is not null && handler.ShouldCancelOnSettlementRemoval(evt, settlement))
                 {
                     toRemove.Add(evt);
                 }
@@ -282,7 +282,7 @@ public static class ColonyUtil
     public static Faction CreatePlayerColonyFaction()
     {
         FactionFC worldcomp = FindFC.FactionComp;
-        if (worldcomp == null)
+        if (worldcomp is null)
         {
             LogUtil.Error("FactionFC world component is missing! Cannot create player colony faction.");
             return null;
@@ -305,7 +305,7 @@ public static class ColonyUtil
         // and share the player's tracker instance by reference).
         faction.ideos = new FactionIdeosTracker(faction);
         Ideo playerPrimary = Faction.OfPlayer.ideos?.PrimaryIdeo;
-        if (playerPrimary is object)
+        if (playerPrimary is not null)
         {
             faction.ideos.SetPrimary(playerPrimary);
         }
@@ -320,7 +320,7 @@ public static class ColonyUtil
         faction.TryAffectGoodwillWith(Faction.OfPlayer, 200);
 
         // Generate Leader
-        if (faction.leader == null || faction.leader.Dead)
+        if (faction.leader is null || faction.leader.Dead)
         {
             CreatePlayerFactionLeader(faction);
         }
@@ -359,7 +359,7 @@ public static class ColonyUtil
             forceGenerateNewPawn: true, allowDead: false, allowDowned: false,
             canGeneratePawnRelations: true, mustBeCapableOfViolence: true, colonistRelationChanceFactor: 0,
             forceAddFreeWarmLayerIfNeeded: false, worldPawnFactionDoesntMatter: false));
-            if (faction.leader == null)
+            if (faction.leader is null)
             {
                 LogUtil.Warning("Fallback leader generation also failed!");
                 success = false;

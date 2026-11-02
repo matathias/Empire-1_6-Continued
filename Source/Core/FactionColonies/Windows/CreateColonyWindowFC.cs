@@ -38,7 +38,7 @@ public class CreateColonyWindowFc : Window
         preventCameraMotion = false;
         doCloseX = true;
         faction = FindFC.FactionComp;
-        if (faction == null)
+        if (faction is null)
         {
             LogUtil.Error("FactionFC WorldComponent is null in CreateColonyWindowFC constructor!");
             return;
@@ -89,7 +89,7 @@ public class CreateColonyWindowFc : Window
     //Drawing
     public override void DoWindowContents(Rect inRect)
     {
-        if (faction == null || !Find.TilePicker.Active)
+        if (faction is null || !Find.TilePicker.Active)
         {
             Close();
             return;
@@ -176,7 +176,7 @@ public class CreateColonyWindowFc : Window
         else /* If a WorldObject is selected, then get the tile underneath it. */
         {
             WorldObject obj = Find.WorldSelector.SingleSelectedObject;
-            if (obj != null && obj.Tile != null && obj.Tile.Valid)
+            if (obj is not null && obj.Tile.Valid)
             {
                 currentTileSelected = obj.Tile;
             }
@@ -195,7 +195,7 @@ public class CreateColonyWindowFc : Window
         oldSettlementType = currentSettlementType;
         LogUtil.Message($"Called GetTileData on tile {selectedTile}. Valid: {selectedTile.Valid} layer: {selectedTile.Layer} tileid: {selectedTile.tileId}");
 
-        if (currentSettlementType.biomeResourceOverride != null)
+        if (currentSettlementType.biomeResourceOverride is not null)
         {
             currentBiomeSelected = currentSettlementType.biomeResourceOverride;
             //default biome
@@ -280,7 +280,7 @@ public class CreateColonyWindowFc : Window
                 float xMod = 70f;
                 Rect baseRect = new Rect(40, startHeight + i * (5 + baseHeight), 60, baseHeight + 2);
 
-                if (biomeRes == null || settleRes == null || !titheType.ResourceTypeAllowedByTech(faction.techLevel))
+                if (biomeRes is null || settleRes is null || !titheType.ResourceTypeAllowedByTech(faction.techLevel))
                 {
                     /* One of the following is true:
                      *  1. The biome does not support this resource type
@@ -388,7 +388,7 @@ public class CreateColonyWindowFc : Window
         // A submod (e.g. EmpireVOE's "found only via outposts" mode) can replace the Settle button
         // with an alternate action — e.g. "Send a Caravan" — instead of founding directly here.
         FoundingButtonOverride ovr = FoundingScreenHooks.GetSettleButtonOverride(currentTileSelected, currentSettlementType);
-        if (ovr is object)
+        if (ovr is not null)
         {
             if (UIUtil.ClampedButtonText(button, ovr.Label))
             {
@@ -527,7 +527,7 @@ public class CreateColonyWindowFc : Window
     {
         base.PreClose();
         FactionFC comp = FindFC.FactionComp;
-        if (comp != null)
+        if (comp is not null)
         {
             comp.layersForTilePicker = null;
             comp.roadBuilder.shouldDrawPaths = false;

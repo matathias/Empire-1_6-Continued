@@ -80,7 +80,7 @@ public class FCWindow_ItemStuffPicker : Window
         this.countBuffer = this.selectedCount.ToString();
         this.selectedQuality = initialQuality;
 
-        if (initialItem != null)
+        if (initialItem is not null)
         {
             selectedItem = initialItem;
             selectedStuff = initialStuff;
@@ -120,11 +120,11 @@ public class FCWindow_ItemStuffPicker : Window
 
         // Right panel: Stuff
         Rect stuffPanelRect = new Rect(panelWidth + PanelGap, contentTop, panelWidth, contentHeight);
-        if (selectedItem != null && selectedItem.MadeFromStuff)
+        if (selectedItem is not null && selectedItem.MadeFromStuff)
         {
             DrawStuffPanel(stuffPanelRect);
         }
-        else if (selectedItem != null)
+        else if (selectedItem is not null)
         {
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
@@ -208,7 +208,7 @@ public class FCWindow_ItemStuffPicker : Window
             ThingDef item = filtered[i];
             Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width, RowHeight);
 
-            string conflictTip = conflictTooltipFunc != null ? conflictTooltipFunc(item) : null;
+            string conflictTip = conflictTooltipFunc is not null ? conflictTooltipFunc(item) : null;
             bool hasConflict = !string.IsNullOrEmpty(conflictTip);
 
             if (item == selectedItem)
@@ -252,7 +252,7 @@ public class FCWindow_ItemStuffPicker : Window
                 }
 
                 // Keep selectedStuff if it's still valid for the new item
-                if (selectedStuff != null && (currentStuffs.Count == 0 || !currentStuffs.Contains(selectedStuff)))
+                if (selectedStuff is not null && (currentStuffs.Count == 0 || !currentStuffs.Contains(selectedStuff)))
                 {
                     selectedStuff = null;
                 }
@@ -361,13 +361,13 @@ public class FCWindow_ItemStuffPicker : Window
 
     private void DrawSummary(Rect rect)
     {
-        if (selectedItem == null) return;
+        if (selectedItem is null) return;
 
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
 
         string itemName = selectedItem.LabelCap;
-        if (selectedStuff != null)
+        if (selectedStuff is not null)
             itemName += " (" + selectedStuff.LabelCap + ")";
 
         float perUnit = CraftUtil.ThingValue(selectedItem, selectedStuff, SelectedQuality);
@@ -436,7 +436,7 @@ public class FCWindow_ItemStuffPicker : Window
         float buttonWidth = 120f;
 
         // Unequip (left)
-        if (onUnequip != null)
+        if (onUnequip is not null)
         {
             Rect unequipRect = new Rect(bar.x, bar.y, buttonWidth, bar.height);
             if (UIUtil.ClampedButtonText(unequipRect, "FCUnitActionUnequipThing".Translate()))
@@ -457,11 +457,11 @@ public class FCWindow_ItemStuffPicker : Window
         Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, bar.y, buttonWidth, bar.height);
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate()))
         {
-            if (selectedItem == null)
+            if (selectedItem is null)
             {
                 Messages.Message("fcPickerSelectItem".Translate(), MessageTypeDefOf.RejectInput, false);
             }
-            else if (selectedItem.MadeFromStuff && selectedStuff == null)
+            else if (selectedItem.MadeFromStuff && selectedStuff is null)
             {
                 Messages.Message("fcPickerSelectStuff".Translate(), MessageTypeDefOf.RejectInput, false);
             }
@@ -470,7 +470,7 @@ public class FCWindow_ItemStuffPicker : Window
                 // Items without CompQuality store null (Normal) — unchanged behavior.
                 QualityCategory? qualityToEmit =
                     CraftUtil.ThingHasQuality(selectedItem) ? (QualityCategory?)SelectedQuality : null;
-                if (onConfirmWithCount != null)
+                if (onConfirmWithCount is not null)
                     onConfirmWithCount(selectedItem, selectedStuff, Mathf.Max(1, selectedCount), qualityToEmit);
                 else
                     onConfirm(selectedItem, selectedStuff, qualityToEmit);
@@ -484,7 +484,7 @@ public class FCWindow_ItemStuffPicker : Window
     /// full sort/allocation no longer runs every frame.</summary>
     private void EnsureItemFilter()
     {
-        if (itemFilteredCache is object
+        if (itemFilteredCache is not null
             && itemFilterCacheTerm == itemSearchTerm
             && itemFilterCacheSort == itemSortIndex)
         {
@@ -505,7 +505,7 @@ public class FCWindow_ItemStuffPicker : Window
     /// source list (<see cref="currentStuffs"/>) is rebuilt whenever a new item is selected.</summary>
     private void EnsureStuffFilter()
     {
-        if (stuffFilteredCache is object
+        if (stuffFilteredCache is not null
             && stuffFilterCacheTerm == stuffSearchTerm
             && stuffFilterCacheSort == stuffSortIndex
             && stuffCacheItem == selectedItem
@@ -532,11 +532,11 @@ public class FCWindow_ItemStuffPicker : Window
             case 1: // Name Z-A
                 return list.OrderByDescending(t => t.label, StringComparer.OrdinalIgnoreCase).ToList();
             case 2: // Price Low-High
-                if (isStuffList && selectedItem != null)
+                if (isStuffList && selectedItem is not null)
                     return list.OrderBy(t => CraftUtil.ThingValue(selectedItem, t, SelectedQuality)).ToList();
                 return list.OrderBy(t => t.BaseMarketValue).ToList();
             case 3: // Price High-Low
-                if (isStuffList && selectedItem != null)
+                if (isStuffList && selectedItem is not null)
                     return list.OrderByDescending(t => CraftUtil.ThingValue(selectedItem, t, SelectedQuality)).ToList();
                 return list.OrderByDescending(t => t.BaseMarketValue).ToList();
             default: // 0: Name A-Z

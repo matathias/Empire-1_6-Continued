@@ -26,7 +26,7 @@ public class SettlementBuildingComp_Shuttles : SettlementBuildingComp
             if (slot != buildingSlotToSkip)
             {
                 BuildingFCExtension_Shuttles ext = parentComp?.GetBuildingInSlot(slot)?.GetModExtension<BuildingFCExtension_Shuttles>();
-                if (ext != null)
+                if (ext is not null)
                 {
                     totalShuttleUses += ext.shuttleUses;
                 }
@@ -77,7 +77,7 @@ public class SettlementBuildingComp_Shuttles : SettlementBuildingComp
     public override IEnumerable<Gizmo> GetGizmos()
     {
         IEnumerable<Gizmo> gizmos = base.GetGizmos();
-        if (gizmos != null)
+        if (gizmos is not null)
         {
             foreach (Gizmo gizmo in gizmos)
             {

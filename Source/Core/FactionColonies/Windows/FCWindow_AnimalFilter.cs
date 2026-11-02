@@ -159,7 +159,7 @@ public class FCWindow_AnimalFilter : Window
 
         // Delivery biome not covered by any allowed pack animal (player has packs, but none reach it).
         // Informational only - the player may keep the selection; they just won't get trade caravans.
-        bool biomeUncovered = deliveryBiome is object
+        bool biomeUncovered = deliveryBiome is not null
             && filter.AllowedPackAnimals.Count > 0
             && !AnimalBiomeUtil.SelectionCoversBiome(filter, deliveryBiome);
         if (biomeUncovered)
@@ -242,7 +242,7 @@ public class FCWindow_AnimalFilter : Window
             if (isPack)
             {
                 IReadOnlyList<BiomeDef> supportedBiomes = AnimalBiomeUtil.BiomesForPackAnimal(animal);
-                bool packGrayed = deliveryBiome is object && !deliveryBiome.IsPackAnimalAllowed(animal.race);
+                bool packGrayed = deliveryBiome is not null && !deliveryBiome.IsPackAnimalAllowed(animal.race);
 
                 // Inline biome count, e.g. "Pack (12)"
                 string packLabel = "FCAnimalTagPack".Translate() + " (" + supportedBiomes.Count.ToString() + ")";
@@ -319,7 +319,7 @@ public class FCWindow_AnimalFilter : Window
         string body = "FCAnimalTagPackTooltipHeader".Translate() + "\n" + list;
 
         // When grayed out, lead with why (the current delivery biome isn't supported).
-        if (unsupportedDeliveryBiome is object)
+        if (unsupportedDeliveryBiome is not null)
         {
             body = "FCAnimalTagPackUnsupportedNote".Translate(unsupportedDeliveryBiome.LabelCap) + "\n\n" + body;
         }

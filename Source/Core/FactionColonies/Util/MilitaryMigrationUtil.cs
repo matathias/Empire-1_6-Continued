@@ -70,14 +70,14 @@ public static class MilitaryMigrationUtil
             if (comp is null) continue;
             if (comp._legacyMilitaryBusy) return true;
             if (comp._legacyIsUnderAttack) return true;
-            if (comp._legacyActiveWaves is object && comp._legacyActiveWaves.Count > 0) return true;
-            if (comp._legacyAttackers is object && comp._legacyAttackers.Count > 0) return true;
-            if (comp._legacyDefenders is object && comp._legacyDefenders.Count > 0) return true;
+            if (comp._legacyActiveWaves is not null && comp._legacyActiveWaves.Count > 0) return true;
+            if (comp._legacyAttackers is not null && comp._legacyAttackers.Count > 0) return true;
+            if (comp._legacyDefenders is not null && comp._legacyDefenders.Count > 0) return true;
         }
 
         // Also check for any pending military events. If a pre-refactor save has events but
         // no comp flags (rare, but possible on a corrupted save), we still want to link them.
-        if (faction.eventManager is object)
+        if (faction.eventManager is not null)
         {
             foreach (FCEvent evt in faction.Events)
             {
@@ -124,13 +124,13 @@ public static class MilitaryMigrationUtil
 
             // Offensive op in flight (Traveling phase): comp has militaryJob set to a
             // handler-driven job (Raid / Capture / Enslave) and a pending arrival event.
-            if (comp._legacyMilitaryBusy && comp._legacyMilitaryJob is object && comp._legacyMilitaryJob.Handler is object)
+            if (comp._legacyMilitaryBusy && comp._legacyMilitaryJob is not null && comp._legacyMilitaryJob.Handler is not null)
             {
                 FCEvent arrival = FindPendingArrivalEvent(faction, settlement.Tile, comp._legacyMilitaryJob);
-                if (arrival is object)
+                if (arrival is not null)
                 {
                     MilitaryOperation op = ReconstructOffensiveOp(manager, settlement, comp, arrival);
-                    if (op is object)
+                    if (op is not null)
                     {
                         arrival.linkedOperation = op;
                         op.sourceEvents.Add(arrival);
@@ -142,10 +142,10 @@ public static class MilitaryMigrationUtil
             else if (comp._legacyMilitaryBusy && comp._legacyMilitaryJob == MilitaryJobDefOf.Cooldown)
             {
                 FCEvent cooldown = faction.FindEventByDefAndLocation(FCEventDefOf.cooldownMilitary, settlement.Tile);
-                if (cooldown is object)
+                if (cooldown is not null)
                 {
                     MilitaryOperation op = ReconstructCooldownOp(manager, settlement, comp, cooldown);
-                    if (op is object)
+                    if (op is not null)
                     {
                         cooldown.linkedOperation = op;
                         op.sourceEvents.Add(cooldown);
@@ -159,29 +159,29 @@ public static class MilitaryMigrationUtil
             else if (comp._legacyMilitaryBusy && comp._legacyMilitaryJob == MilitaryJobDefOf.Deploy)
             {
                 MilitaryOperation op = ReconstructDeployOp(manager, settlement, comp);
-                if (op is object) migratedCount++;
+                if (op is not null) migratedCount++;
             }
 
             // Defensive warning pending: comp._legacyIsUnderAttack + settlementBeingAttacked event.
             if (comp._legacyIsUnderAttack)
             {
                 FCEvent warning = faction.FindEventByDefAndLocation(FCEventDefOf.settlementBeingAttacked, settlement.Tile);
-                if (warning is object && warning.linkedOperation is null)
+                if (warning is not null && warning.linkedOperation is null)
                 {
                     MilitaryOperation op = ReconstructDefensiveOp(manager, settlement, comp, warning);
-                    if (op is object)
+                    if (op is not null)
                     {
                         warning.linkedOperation = op;
                         op.sourceEvents.Add(warning);
                         migratedCount++;
                     }
                 }
-                else if (comp._legacyActiveWaves is object && comp._legacyActiveWaves.Count > 0)
+                else if (comp._legacyActiveWaves is not null && comp._legacyActiveWaves.Count > 0)
                 {
                     // Mid-battle save: warning event already consumed, battle in progress
                     // on the comp. Reconstruct an op so EndBattle can fire CompleteBattle on it.
                     MilitaryOperation op = ReconstructEngagedDefensiveOp(manager, settlement, comp);
-                    if (op is object) migratedCount++;
+                    if (op is not null) migratedCount++;
                 }
             }
 
@@ -193,21 +193,21 @@ public static class MilitaryMigrationUtil
             if (HasLegacyBattleState(comp))
             {
                 BattlefieldContext bf = manager.GetOrCreateBattlefield(settlement.Tile);
-                if (bf is object)
+                if (bf is not null)
                 {
-                    if (comp._legacyDraftedNPCs is object) bf.draftedNPCs.AddRange(comp._legacyDraftedNPCs);
+                    if (comp._legacyDraftedNPCs is not null) bf.draftedNPCs.AddRange(comp._legacyDraftedNPCs);
                     bf.battleMapInitialized = comp._legacyBattleMapInitialized;
 
                     MilitaryOperation defensiveOp = bf.FirstDefensiveOp();
-                    if (defensiveOp is object)
+                    if (defensiveOp is not null)
                     {
                         // Legacy flat lists fold into the primary op's per-side pawn lists.
-                        if (comp._legacyAttackers is object)
+                        if (comp._legacyAttackers is not null)
                         {
                             defensiveOp.aggressor.pawns.AddRange(comp._legacyAttackers);
                             defensiveOp.aggressor.initialPawnCount += comp._legacyAttackers.Count;
                         }
-                        if (comp._legacyDefenders is object)
+                        if (comp._legacyDefenders is not null)
                         {
                             defensiveOp.defender.pawns.AddRange(comp._legacyDefenders);
                         }
@@ -221,13 +221,13 @@ public static class MilitaryMigrationUtil
 
                         // EndAttack walks ops to return external defender pawns; without this,
                         // an outpost-defended migrated battle would fail to return its survivors.
-                        if (comp._legacyActiveWaves is object)
+                        if (comp._legacyActiveWaves is not null)
                         {
                             foreach (DefenseWave wave in comp._legacyActiveWaves)
                             {
                                 if (wave is null) continue;
-                                if (wave.waveAttackers is object) defensiveOp.aggressor.pawns.AddRange(wave.waveAttackers);
-                                if (wave.waveDefenders is object) defensiveOp.defender.pawns.AddRange(wave.waveDefenders);
+                                if (wave.waveAttackers is not null) defensiveOp.aggressor.pawns.AddRange(wave.waveAttackers);
+                                if (wave.waveDefenders is not null) defensiveOp.defender.pawns.AddRange(wave.waveDefenders);
                             }
                         }
                     }
@@ -335,7 +335,7 @@ public static class MilitaryMigrationUtil
          * branch instead of using the player's stationed mercs; SpawnReinforcementsForOp
          * for foreign-defender saves bails because squad is null. Skip when an external
          * auto-defender owns the defense (no Empire squad on that path). */
-        if (op.externalDefenderSource is null && op.defender.homeSettlement is object)
+        if (op.externalDefenderSource is null && op.defender.homeSettlement is not null)
             op.defender.squad = MilitaryOperationManager.PickPrimaryDefendingSquad(op.defender.homeSettlement);
 
         manager.Register(op);
@@ -344,10 +344,10 @@ public static class MilitaryMigrationUtil
 
     private static bool HasLegacyBattleState(WorldObjectComp_SettlementMilitary comp)
     {
-        return (comp._legacyAttackers is object && comp._legacyAttackers.Count > 0)
-            || (comp._legacyDefenders is object && comp._legacyDefenders.Count > 0)
-            || (comp._legacyDraftedNPCs is object && comp._legacyDraftedNPCs.Count > 0)
-            || (comp._legacyActiveWaves is object && comp._legacyActiveWaves.Count > 0)
+        return (comp._legacyAttackers is not null && comp._legacyAttackers.Count > 0)
+            || (comp._legacyDefenders is not null && comp._legacyDefenders.Count > 0)
+            || (comp._legacyDraftedNPCs is not null && comp._legacyDraftedNPCs.Count > 0)
+            || (comp._legacyActiveWaves is not null && comp._legacyActiveWaves.Count > 0)
             || comp._legacyBattleMapInitialized
             || comp._legacyInitialDefenderCount > 0;
     }
@@ -357,7 +357,7 @@ public static class MilitaryMigrationUtil
     {
         // Mid-battle: pull force info from the first active wave. EndBattle will fire
         // CompleteBattle on this op when the battle resolves naturally.
-        DefenseWave wave = comp._legacyActiveWaves != null && comp._legacyActiveWaves.Count > 0
+        DefenseWave wave = comp._legacyActiveWaves is not null && comp._legacyActiveWaves.Count > 0
             ? comp._legacyActiveWaves[0]
             : null;
         if (wave is null) return null;
@@ -375,7 +375,7 @@ public static class MilitaryMigrationUtil
 
         // Mirror ReconstructDefensiveOp: wire the defender squad so post-battle reinforcement
         // paths and op-lifecycle code see the same shape as a fresh CreateDefensiveOp.
-        if (op.externalDefenderSource is null && op.defender.homeSettlement is object)
+        if (op.externalDefenderSource is null && op.defender.homeSettlement is not null)
             op.defender.squad = MilitaryOperationManager.PickPrimaryDefendingSquad(op.defender.homeSettlement);
 
         manager.Register(op);

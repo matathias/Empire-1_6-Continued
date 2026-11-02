@@ -100,7 +100,7 @@ public class MilitaryJobHandler_Raid : MilitaryJobHandler_Offensive
         text = loot.Aggregate(text, (current, thing) => current + thing.LabelCap + " " + thing.stackCount + "x\n ");
 
         int num = new IntRange(0, 10).RandomInRange;
-        if (num <= 4 && getSlaves && enemyFaction is object)
+        if (num <= 4 && getSlaves && enemyFaction is not null)
         {
             Pawn prisoner = PaymentUtil.GeneratePrisoner(enemyFaction);
             text += "FCPrisonerCaptureInfo".Translate(prisoner.Name.ToString(), home.Name);
@@ -125,7 +125,7 @@ public class MilitaryJobHandler_Raid : MilitaryJobHandler_Offensive
         // Nomad/caravan-phase players have no home colony map to deliver loot to; skip the
         // delivery (the victory letter above already fired) rather than NRE on the null map.
         Map playerHome = Find.AnyPlayerHomeMap;
-        if (playerHome is object)
+        if (playerHome is not null)
         {
             FCEvent eventParams = new FCEvent()
             {

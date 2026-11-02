@@ -43,7 +43,7 @@ public static class FCPawnGenerator
         if (unit.IsCustomXenotype)
         {
             CustomXenotype custom = unit.ResolveCustomXenotype();
-            if (custom != null)
+            if (custom is not null)
                 return WorkerOrMilitaryRequest(unit.pawnKind, custom, unit.forcedGender);
             return WorkerOrMilitaryRequest(unit.pawnKind, (XenotypeDef)null, unit.forcedGender);
         }
@@ -89,7 +89,7 @@ public static class FCPawnGenerator
             pawnKindDef = PColonyPawnKindDefOf.PColony_Fighter;
         }
 
-        if (!(xenotypeDef is null) && !(customXenotype is null))
+        if (xenotypeDef is not null && customXenotype is not null)
         {
             LogUtil.Warning($"HumanlikeRequest called with xenotypeDef {xenotypeDef.defName} and customXenotype {customXenotype.name}. Defaulting to xenotypeDef");
             customXenotype = null;

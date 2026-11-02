@@ -61,7 +61,7 @@ public class ResourceFilterExtension_Animals : ResourceFilterExtension
             // player's map. Collect them for EVERY animal so they can be blocked unconditionally
             // below, regardless of whether the animal is allowed. Unfertilized (food) eggs stay.
             CompProperties_EggLayer eggLayer = def.GetCompProperties<CompProperties_EggLayer>();
-            if (eggLayer?.eggFertilizedDef is object)
+            if (eggLayer?.eggFertilizedDef is not null)
                 fertilizedEggs.Add(eggLayer.eggFertilizedDef);
         }
 
@@ -88,19 +88,19 @@ public class ResourceFilterExtension_Animals : ResourceFilterExtension
 
     private static void CollectProducts(ThingDef race, HashSet<ThingDef> products)
     {
-        if (race.race.meatDef != null) products.Add(race.race.meatDef);
-        if (race.race.leatherDef != null) products.Add(race.race.leatherDef);
+        if (race.race.meatDef is not null) products.Add(race.race.meatDef);
+        if (race.race.leatherDef is not null) products.Add(race.race.leatherDef);
 
         CompProperties_Shearable shearable = race.GetCompProperties<CompProperties_Shearable>();
-        if (shearable?.woolDef != null) products.Add(shearable.woolDef);
+        if (shearable?.woolDef is not null) products.Add(shearable.woolDef);
 
         CompProperties_EggLayer eggLayer = race.GetCompProperties<CompProperties_EggLayer>();
-        if (eggLayer?.eggUnfertilizedDef != null) products.Add(eggLayer.eggUnfertilizedDef);
+        if (eggLayer?.eggUnfertilizedDef is not null) products.Add(eggLayer.eggUnfertilizedDef);
         // Fertilized eggs are handled separately in BuildBlockedProductSet: they hatch into live
         // animals, so they are blocked for every animal rather than tracked as a normal product.
 
         CompProperties_Milkable milkable = race.GetCompProperties<CompProperties_Milkable>();
-        if (milkable?.milkDef != null) products.Add(milkable.milkDef);
+        if (milkable?.milkDef is not null) products.Add(milkable.milkDef);
     }
     public override ThingSetMaker GetThingSetMaker(out TechLevel tlevel, ResourceFC resource = null)
     {
@@ -111,7 +111,7 @@ public class ResourceFilterExtension_Animals : ResourceFilterExtension
     {
         // Only handle animal race ThingDefs. For regular items (animal products),
         // return null so the generic path in ResourceFC.cs handles them.
-        if (thingDef.race == null)
+        if (thingDef.race is null)
         {
             return null;
         }
@@ -120,7 +120,7 @@ public class ResourceFilterExtension_Animals : ResourceFilterExtension
         for (int i = 0; i < quantity; i++)
         {
             Pawn animalPawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(thingDef.race.AnyPawnKind, Faction.OfPlayer));
-            if (!(animalPawn is null))
+            if (animalPawn is not null)
             {
                 output.Add(animalPawn);
             }
@@ -150,7 +150,7 @@ public class ThingSetMaker_Animals : ThingSetMaker
         List<ThingDef> productDefs = new List<ThingDef>();
         foreach (ThingDef def in parms.filter.AllowedThingDefs)
         {
-            if (def.race == null)
+            if (def.race is null)
             {
                 productDefs.Add(def);
             }
@@ -203,7 +203,7 @@ public class ThingSetMaker_Animals : ThingSetMaker
                 int attempts = 0;
                 do
                 {
-                    if (pawn != null)
+                    if (pawn is not null)
                     {
                         // Destroy the previous over-budget pawn before generating a new one
                         pawn.Destroy();
@@ -266,11 +266,11 @@ public class ThingSetMaker_Animals : ThingSetMaker
         }
 
         // Add non-race ThingDefs (animal products) from the filter
-        if (parms.filter != null)
+        if (parms.filter is not null)
         {
             foreach (ThingDef def in parms.filter.AllowedThingDefs)
             {
-                if (def.race == null)
+                if (def.race is null)
                 {
                     list.Add(def);
                 }

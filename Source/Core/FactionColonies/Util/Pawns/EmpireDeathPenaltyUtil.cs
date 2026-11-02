@@ -46,12 +46,12 @@ public static class EmpireDeathPenaltyUtil
 
     public static void MarkHandledByKillPrefix(Pawn pawn)
     {
-        if (pawn is object) handledByKillPrefix.Add(pawn);
+        if (pawn is not null) handledByKillPrefix.Add(pawn);
     }
-    public static bool WasHandledByKillPrefix(Pawn pawn) => pawn is object && handledByKillPrefix.Contains(pawn);
+    public static bool WasHandledByKillPrefix(Pawn pawn) => pawn is not null && handledByKillPrefix.Contains(pawn);
     public static void ClearHandledByKillPrefix(Pawn pawn)
     {
-        if (pawn is object) handledByKillPrefix.Remove(pawn);
+        if (pawn is not null) handledByKillPrefix.Remove(pawn);
     }
 
     /// <summary>Clears all transient, per-session static state. Called on game init (new game and
@@ -118,7 +118,7 @@ public static class EmpireDeathPenaltyUtil
         if (faction is null || lord is null) return;
 
         WorldSettlementFC home = faction.TryGetCaravanHome(lord.loadID) ?? HighestProsperity(faction);
-        if (home is object)
+        if (home is not null)
             ApplyDeathPenalty(home, dinfo, 0, SrcCaravan, "FCPenaltyCaravanDeath".Translate(FindFC.EmpireTitle.CapitalizeFirst()));
 
         // Pack-animal wipe: every animal in the caravan now dead (this pawn included).
@@ -246,13 +246,13 @@ public static class EmpireDeathPenaltyUtil
         FactionFC faction = FindFC.FactionComp;
         if (faction is null || !faction.settlements.Any()) return null;
 
-        if (tk is object && tk.defName is object)
+        if (tk is not null && tk.defName is not null)
         {
             if (tk.defName.StartsWith("FC_Caravan_Empire_"))
             {
                 string suffix = tk.defName.Substring("FC_Caravan_Empire_".Length);
                 ResourceTypeDef rtd = DefDatabase<ResourceTypeDef>.GetNamedSilentFail("RTD_" + suffix);
-                if (rtd is object)
+                if (rtd is not null)
                     return HighestBy(faction, s => s.GetResource(rtd)?.rawTotalProduction ?? 0);
             }
             else if (tk.category == "Slaver"

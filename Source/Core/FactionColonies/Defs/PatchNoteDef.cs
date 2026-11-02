@@ -56,7 +56,7 @@ class PatchNoteDef : Def
         {
             modContentPackCached = modContentPackCached ?? (modContentPackCached = LoadedModManager.RunningModsListForReading.FirstOrFallback(PackHasModId));
 
-            if (modContentPackCached == null)
+            if (modContentPackCached is null)
             {
                 LogUtil.ErrorOnce($"Couldn't find mod with ModId: {modId} Please check the spelling in the PatchNoteDef!", VersionSortKey);
             }
@@ -209,7 +209,7 @@ class PatchNoteDef : Def
         base.ResolveReferences();
 
         // Parse version from defName (format: major_minor_patch)
-        if (defName != null)
+        if (defName is not null)
         {
             string[] parts = defName.Split('_');
             int len = parts.Length;
