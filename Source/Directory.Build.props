@@ -1,0 +1,21 @@
+<Project>
+    <!-- Shared build settings for every project under Source/ (Core + compat patches).
+         Per-project files only carry output paths, assembly names, and their own references. -->
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <!-- Pinned so an SDK update can't silently change language semantics -->
+        <LangVersion>14</LangVersion>
+        <PlatformTarget>x64</PlatformTarget>
+        <Configurations>Debug;Release;Testing</Configurations>
+
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+        <GenerateDependencyFile>false</GenerateDependencyFile>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.*-*" />
+        <PackageReference Include="Lib.Harmony.Ref" Version="3.0.0-rc.3" />
+    </ItemGroup>
+</Project>

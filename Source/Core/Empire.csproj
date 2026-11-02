@@ -1,25 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <!-- Shared settings (framework, language version, RimWorld/Harmony refs) live in ../Directory.Build.props -->
     <PropertyGroup>
-        <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-        <TargetFramework>net10.0</TargetFramework>
-        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-        <GenerateDependencyFile>false</GenerateDependencyFile>
         <OutputPath>..\..\1.7\Assemblies</OutputPath>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <BaseOutputPath>..\..\1.7\Assemblies</BaseOutputPath>
         <AssemblyVersion>1.6.36.0</AssemblyVersion>
         <FileVersion>1.6.36.0</FileVersion>
-        <BaseOutputPath>..\..\1.7\Assemblies</BaseOutputPath>
-        <Configurations>Debug;Release;Testing</Configurations>
-        <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
-    <ItemGroup>
-        <!-- Rimworld (1.7 = net10.0; RimRef supplies Assembly-CSharp, UnityStubs, Waylith, etc.) -->
-        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.*-*" />
-
-        <!-- <ProjectReference Include="..\Common\Common.csproj" /> -->
-
-        <!-- Reference-only; the Harmony mod supplies 0Harmony.dll at runtime. Keep in step with the Harmony mod's 1.7 build -->
-        <PackageReference Include="Lib.Harmony.Ref" Version="3.0.0-rc.3" />
-    </ItemGroup>
 </Project>
