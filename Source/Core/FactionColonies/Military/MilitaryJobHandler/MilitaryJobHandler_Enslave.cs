@@ -1,8 +1,3 @@
-using FactionColonies.util;
-using RimWorld;
-using RimWorld.Planet;
-using Verse;
-
 namespace FactionColonies;
 
 public class MilitaryJobHandler_Enslave : MilitaryJobHandler_Offensive

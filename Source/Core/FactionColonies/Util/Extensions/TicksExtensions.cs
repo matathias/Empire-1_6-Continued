@@ -1,6 +1,4 @@
-﻿using RimWorld;
-
-namespace FactionColonies.util;
+﻿namespace FactionColonies.util;
 
 public static class TicksExtensions
 {

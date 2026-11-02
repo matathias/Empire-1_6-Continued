@@ -1,9 +1,4 @@
-﻿using RimWorld;
-using System;
-using System.Collections.Generic;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /// <summary>
 /// Per-policy runtime behavior instance. Only needed for policies that require

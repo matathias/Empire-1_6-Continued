@@ -1,6 +1,3 @@
-using RimWorld;
-using Verse;
-
 namespace FactionColonies;
 
 /* Multiplies InjuryHealingFactor for off-map mercenary pawns currently registered for

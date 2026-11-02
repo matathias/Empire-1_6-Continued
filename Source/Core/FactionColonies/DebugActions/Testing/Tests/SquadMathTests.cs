@@ -1,6 +1,3 @@
-using System.Linq;
-using Verse;
-
 namespace FactionColonies;
 
 /* Coverage for SquadEffectivenessUtil.PawnEffectiveness — the per-pawn combat-weight factor.

@@ -1,5 +1,3 @@
-using System;
-
 namespace FactionColonies;
 
 /* Coverage for CooldownAbility.SetCooldown — the stat-scaled cooldown duration setter.

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace FactionColonies;
 
 /* Coverage for CompareUtil's comparators. The def comparator is pure; the settlement

@@ -1,9 +1,3 @@
-using FactionColonies.util;
-using RimWorld;
-using RimWorld.Planet;
-using System.Linq;
-using Verse;
-
 namespace FactionColonies;
 
 public class MilitaryJobHandler_Capture : MilitaryJobHandler_Offensive

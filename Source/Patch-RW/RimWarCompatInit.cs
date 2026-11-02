@@ -1,9 +1,6 @@
 using HarmonyLib;
 using RimWar.Planet;
-using RimWorld.Planet;
-using System;
 using System.Reflection;
-using Verse;
 
 namespace FactionColonies.RW;
 

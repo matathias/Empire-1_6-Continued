@@ -1,6 +1,4 @@
-﻿using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 public class ProductionBonus : IExposable
 {

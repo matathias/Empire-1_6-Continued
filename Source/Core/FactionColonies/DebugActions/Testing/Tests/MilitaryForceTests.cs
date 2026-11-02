@@ -1,8 +1,3 @@
-using RimWorld;
-using RimWorld.Planet;
-using System;
-using Verse;
-
 namespace FactionColonies;
 
 public static class MilitaryForceTests

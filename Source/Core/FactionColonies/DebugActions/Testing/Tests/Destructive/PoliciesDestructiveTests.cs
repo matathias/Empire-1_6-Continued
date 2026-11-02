@@ -1,6 +1,3 @@
-using System.Linq;
-using Verse;
-
 namespace FactionColonies;
 
 /* DESTRUCTIVE: enacts and revokes real edicts on the live policy manager, and exercises the

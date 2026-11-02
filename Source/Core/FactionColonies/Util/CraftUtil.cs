@@ -1,8 +1,4 @@
-﻿using RimWorld;
-using System.Collections.Generic;
-using Verse;
-
-namespace FactionColonies.util;
+﻿namespace FactionColonies.util;
 
 public static class CraftUtil
 {

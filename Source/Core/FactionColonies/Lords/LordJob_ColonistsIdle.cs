@@ -1,5 +1,4 @@
-﻿using Verse;
-using Verse.AI.Group;
+﻿using Verse.AI.Group;
 
 namespace FactionColonies;
 

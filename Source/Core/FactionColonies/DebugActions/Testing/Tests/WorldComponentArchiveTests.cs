@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Verse;
-
 namespace FactionColonies;
 
 /* Tests for WorldComponent_Archive's battle-report storage. Recording is a persistent

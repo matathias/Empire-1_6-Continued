@@ -1,7 +1,3 @@
-using System.Linq;
-using RimWorld;
-using Verse;
-
 namespace FactionColonies;
 
 /* Destructive regression tests for the battle-map teardown fixes (Fix 4):

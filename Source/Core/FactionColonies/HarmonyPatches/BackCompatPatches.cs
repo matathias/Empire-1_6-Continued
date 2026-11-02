@@ -1,6 +1,4 @@
 using HarmonyLib;
-using System;
-using Verse;
 
 namespace FactionColonies;
 

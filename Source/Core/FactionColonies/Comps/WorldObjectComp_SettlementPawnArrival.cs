@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using RimWorld;
-using RimWorld.Planet;
-using Verse;
-
 namespace FactionColonies;
 
 /* Base for a settlement WorldObjectComp that can absorb pawns delivered straight to the

@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using FactionColonies.util;
-using RimWorld;
-using Verse;
 using Verse.AI.Group;
 
 namespace FactionColonies;

@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using RimWorld;
 using VanillaPsycastsExpanded;
 using VanillaPsycastsExpanded.UI;
 using VEF.Abilities;
-using Verse;
 using AbilityDef = VEF.Abilities.AbilityDef;
 
 namespace FactionColonies.VPE;

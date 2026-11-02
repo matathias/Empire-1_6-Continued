@@ -1,8 +1,4 @@
-﻿using RimWorld.Planet;
-using System;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /// <summary>
 /// This class allows resources to specify conditional additives/multipliers.

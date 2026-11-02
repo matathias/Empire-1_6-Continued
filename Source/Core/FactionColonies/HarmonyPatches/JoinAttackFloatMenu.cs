@@ -1,8 +1,4 @@
-using System.Collections.Generic;
 using HarmonyLib;
-using RimWorld.Planet;
-using UnityEngine;
-using Verse;
 
 namespace FactionColonies;
 

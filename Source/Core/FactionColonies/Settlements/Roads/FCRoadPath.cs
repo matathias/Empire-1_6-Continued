@@ -1,10 +1,4 @@
-﻿using RimWorld;
-using RimWorld.Planet;
-using System.Collections.Generic;
-using System.Linq;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /* Surface-only invariant: see FCRoadQueue. Tile IDs stored as int here
    are safe because the road system never handles non-surface tiles. */

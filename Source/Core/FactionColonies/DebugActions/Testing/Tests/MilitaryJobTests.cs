@@ -1,6 +1,3 @@
-using System.Linq;
-using Verse;
-
 namespace FactionColonies;
 
 public static class MilitaryJobTests

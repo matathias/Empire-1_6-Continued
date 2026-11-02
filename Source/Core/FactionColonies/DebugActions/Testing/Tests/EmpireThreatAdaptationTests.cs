@@ -1,6 +1,3 @@
-using Verse;
-using RimWorld;
-
 namespace FactionColonies;
 
 /* Tests for EmpireThreatAdaptation. The internal adaptDays field is private, so most tests

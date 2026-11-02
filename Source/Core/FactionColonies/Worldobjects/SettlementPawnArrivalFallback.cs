@@ -1,9 +1,3 @@
-using FactionColonies.util;
-using RimWorld;
-using RimWorld.Planet;
-using System.Collections.Generic;
-using Verse;
-
 namespace FactionColonies;
 
 /* Handles whatever is left in the pods after an "add to settlement" arrival has absorbed the

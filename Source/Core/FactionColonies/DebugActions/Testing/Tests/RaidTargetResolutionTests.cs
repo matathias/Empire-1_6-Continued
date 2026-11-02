@@ -1,6 +1,3 @@
-using System;
-using RimWorld.Planet;
-
 namespace FactionColonies;
 
 /* Regression tests for MilitaryOperation.CompleteBattle's IRaidTarget dispatch (review issue H3).

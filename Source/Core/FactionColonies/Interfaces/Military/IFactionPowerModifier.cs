@@ -1,5 +1,3 @@
-using RimWorld;
-
 namespace FactionColonies;
 
 /// <summary>

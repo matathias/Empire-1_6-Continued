@@ -18,4 +18,15 @@
         <PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.*-*" />
         <PackageReference Include="Lib.Harmony.Ref" Version="3.0.0-rc.3" />
     </ItemGroup>
+    <!-- Global usings for the namespaces nearly every file needs. UnityEngine is deliberately
+         left out: importing it everywhere makes Random/Object ambiguous with System. -->
+    <ItemGroup>
+        <Using Include="System" />
+        <Using Include="System.Collections.Generic" />
+        <Using Include="System.Linq" />
+        <Using Include="Verse" />
+        <Using Include="RimWorld" />
+        <Using Include="RimWorld.Planet" />
+        <Using Include="FactionColonies.util" />
+    </ItemGroup>
 </Project>

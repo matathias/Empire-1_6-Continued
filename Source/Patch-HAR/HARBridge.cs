@@ -1,6 +1,4 @@
 using AlienRace;
-using FactionColonies.util;
-using Verse;
 
 namespace FactionColonies.HAR;
 

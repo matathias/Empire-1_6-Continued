@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 public class ResourcePoolExt_Power : ResourcePoolExtension
 {

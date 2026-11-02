@@ -1,9 +1,4 @@
-using FactionColonies.util;
 using HarmonyLib;
-using RimWorld;
-using RimWorld.Planet;
-using System.Linq;
-using Verse;
 using Verse.AI;
 
 namespace FactionColonies;

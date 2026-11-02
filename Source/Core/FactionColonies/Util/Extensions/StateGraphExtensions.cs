@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Verse.AI.Group;
+﻿using Verse.AI.Group;
 
 namespace FactionColonies.util;
 

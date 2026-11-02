@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /// <summary>
 /// This extension allows for "pool"-type resources to specify how their pools are created, and other conditionals.

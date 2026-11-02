@@ -1,8 +1,4 @@
-﻿using RimWorld;
-using System.Collections.Generic;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /// <summary>
 /// Used to define filters for ResourceTypes that require more in-depth logic than Thing or ThingCategory allow/blocklists can provide.

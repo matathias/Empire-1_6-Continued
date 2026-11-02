@@ -1,8 +1,3 @@
-using System;
-using System.Linq;
-using RimWorld;
-using Verse;
-
 namespace FactionColonies;
 
 public static class ThreatScalingTests

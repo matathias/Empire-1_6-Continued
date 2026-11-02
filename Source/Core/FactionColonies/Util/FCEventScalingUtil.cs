@@ -1,5 +1,3 @@
-using System;
-
 namespace FactionColonies.util;
 
 /* Shared scaling rules for event mechanics that key off "how many settlements does this

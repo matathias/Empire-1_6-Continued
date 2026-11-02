@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Verse;
-
 namespace FactionColonies;
 
 public enum FCProductionCostScope : byte

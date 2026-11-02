@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /// <summary>
 /// Pure calculation methods for resource production and tithe economics.

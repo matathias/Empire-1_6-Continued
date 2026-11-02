@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using FactionColonies.util;
-using RimWorld;
-using Verse;
-
 namespace FactionColonies;
 
 /* Owns the faction's tax/billing state and the tax-cycle orchestration.

@@ -1,7 +1,4 @@
-using RimWorld;
 using RimWorld.BaseGen;
-using System;
-using Verse;
 
 namespace FactionColonies;
 

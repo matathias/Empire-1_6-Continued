@@ -1,9 +1,4 @@
-﻿using RimWorld;
-using System;
-using System.Linq;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /// <summary>
 /// Raid-scaling helpers. Live: the early-game raid cap, attack-frequency scaling, and

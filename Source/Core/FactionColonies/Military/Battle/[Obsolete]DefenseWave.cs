@@ -1,9 +1,3 @@
-using RimWorld;
-using RimWorld.Planet;
-using System;
-using System.Collections.Generic;
-using Verse;
-
 // DefenseWave is itself [Obsolete]; the class also reads [Obsolete] FCEvent.externalDefenderSource
 // from its sourceEvent argument. Both go away together when the per-wave MilitaryOperation
 // model fully replaces this type.

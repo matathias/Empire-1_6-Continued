@@ -1,10 +1,4 @@
-﻿using FactionColonies.util;
-using RimWorld.Planet;
-using System;
-using System.Collections.Generic;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 // Owns the faction's event queue and auxiliary cooldown / fire-count / id-counter
 // bookkeeping. The only code that mutates the queue lives here; everywhere else

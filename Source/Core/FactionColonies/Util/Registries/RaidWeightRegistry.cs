@@ -1,6 +1,3 @@
-using RimWorld;
-using System.Collections.Generic;
-
 namespace FactionColonies;
 
 public static class RaidWeightRegistry

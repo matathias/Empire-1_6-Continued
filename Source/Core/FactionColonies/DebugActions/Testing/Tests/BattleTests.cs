@@ -1,5 +1,3 @@
-using FactionColonies.util;
-
 namespace FactionColonies;
 
 public static class BattleTests

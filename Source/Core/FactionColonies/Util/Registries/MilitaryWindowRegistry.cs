@@ -1,6 +1,3 @@
-using FactionColonies.util;
-using System;
-
 namespace FactionColonies;
 
 public static class MilitaryWindowRegistry

@@ -1,6 +1,3 @@
-using RimWorld;
-using Verse;
-
 namespace FactionColonies;
 
 /* DESTRUCTIVE: mutates faction-wide state — pumps XP/level, spikes settlement morale, resets

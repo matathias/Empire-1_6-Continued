@@ -1,8 +1,5 @@
-﻿using FactionColonies.util;
-using HarmonyLib;
-using Verse;
+﻿using HarmonyLib;
 using Verse.AI.Group;
-using RimWorld;
 
 namespace FactionColonies;
 

@@ -1,7 +1,3 @@
-using RimWorld.Planet;
-using System.Collections.Generic;
-using Verse;
-
 // Migration utility — sole legitimate consumer of [Obsolete] legacy military state on
 // WorldObjectComp_SettlementMilitary, FCEvent, and DefenseWave. Drained on PostLoadInit.
 #pragma warning disable 0618

@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Verse;
-
-namespace FactionColonies.util;
+﻿namespace FactionColonies.util;
 
 /// <summary>
 /// This class provides extensions for some kinds of lists

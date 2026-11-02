@@ -1,8 +1,4 @@
-﻿using RimWorld;
-using System.Collections.Generic;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 public class Mercenary : IExposable, ILoadReferenceable
 {

@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using FactionColonies.util;
-
 namespace FactionColonies;
 
 /* Owns the four-way loop pattern (location-targeted vs faction-wide, add vs remove)

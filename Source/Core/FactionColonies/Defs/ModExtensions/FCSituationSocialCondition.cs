@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Verse;
-using FactionColonies.util;
-
 namespace FactionColonies;
 
 /// <summary>The four first-class social stats a situation condition can read.</summary>

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Verse;
-
 namespace FactionColonies;
 
 public class MilitaryJobDef : Def

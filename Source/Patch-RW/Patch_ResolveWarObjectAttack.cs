@@ -1,8 +1,5 @@
-using System;
 using HarmonyLib;
 using RimWar.Planet;
-using RimWorld;
-using Verse;
 
 namespace FactionColonies.RW;
 

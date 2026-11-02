@@ -1,9 +1,6 @@
-using FactionColonies.util;
 using GiddyUp;
 using GiddyUp.Jobs;
 using GiddyUpCore.Core;
-using RimWorld;
-using Verse;
 
 namespace FactionColonies.GiddyUpCompat;
 

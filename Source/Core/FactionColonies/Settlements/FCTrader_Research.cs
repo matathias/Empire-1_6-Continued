@@ -1,11 +1,4 @@
-﻿using FactionColonies.util;
-using RimWorld;
-using RimWorld.Planet;
-using System.Collections.Generic;
-using System.Linq;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 public class FCTrader_Research : ITrader
 {

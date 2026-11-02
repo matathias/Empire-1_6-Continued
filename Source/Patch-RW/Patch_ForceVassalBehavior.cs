@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using HarmonyLib;
 using RimWar;
 using RimWar.Planet;
-using Verse;
 
 namespace FactionColonies.RW;
 

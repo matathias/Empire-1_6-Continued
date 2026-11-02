@@ -1,6 +1,3 @@
-using System.Linq;
-using Verse;
-
 namespace FactionColonies;
 
 /* DESTRUCTIVE: creates and destroys real player settlements on the live world. No cleanup —

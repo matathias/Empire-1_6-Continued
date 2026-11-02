@@ -1,7 +1,3 @@
-using RimWorld;
-using System.Collections.Generic;
-using Verse;
-
 namespace FactionColonies;
 
 /* Auto-tending helper for off-map mercenary pawns. Mirrors what WorldPawns.WorldPawnsTick

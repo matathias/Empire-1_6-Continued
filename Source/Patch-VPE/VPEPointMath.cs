@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using VanillaPsycastsExpanded;
-using Verse;
 using AbilityDef = VEF.Abilities.AbilityDef;
 
 namespace FactionColonies.VPE;

@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using FactionColonies.util;
-using RimWorld;
-using Verse;
-
 namespace FactionColonies;
 
 /* Owns the faction's policy/trait/edict state and behavior caches.

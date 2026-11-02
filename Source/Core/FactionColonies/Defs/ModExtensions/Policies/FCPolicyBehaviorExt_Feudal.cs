@@ -1,5 +1,3 @@
-using RimWorld;
-
 namespace FactionColonies;
 
 public class FCPolicyBehaviorExt_Feudal : FCPolicyBehaviorExtension

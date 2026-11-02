@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using RimWorld;
-using Verse;
-
 namespace FactionColonies;
 
 /* Tests for SquadRestockUtil: the pure consumption-diff seam (ComputeConsumption) plus guard

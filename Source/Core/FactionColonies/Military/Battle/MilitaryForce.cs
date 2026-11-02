@@ -1,8 +1,4 @@
-﻿using RimWorld;
-using System;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 public class MilitaryForce : IExposable
 {

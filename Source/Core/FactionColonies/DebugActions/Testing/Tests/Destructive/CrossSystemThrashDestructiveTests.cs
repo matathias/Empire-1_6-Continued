@@ -1,7 +1,3 @@
-using System.Linq;
-using RimWorld.Planet;
-using Verse;
-
 namespace FactionColonies;
 
 /* DESTRUCTIVE: chains multiple subsystems together to stress cross-system consistency — the

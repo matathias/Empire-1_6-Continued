@@ -1,7 +1,3 @@
-using RimWorld;
-using System.Linq;
-using Verse;
-
 namespace FactionColonies;
 
 /* Tests for MercAutoTendRegistry: PickDoctor (first non-null wins) and PickMedicine

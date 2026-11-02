@@ -1,5 +1,3 @@
-using Verse;
-
 namespace FactionColonies;
 
 /* Tests for EmpireDeathPenaltyUtil's transient session state:

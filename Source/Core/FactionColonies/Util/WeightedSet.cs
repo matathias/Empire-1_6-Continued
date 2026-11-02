@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Verse;
-
 namespace FactionColonies.util;
 
 /* Dictionary of TKey -> float weights with a cached total and an optional

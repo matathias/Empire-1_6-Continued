@@ -1,8 +1,4 @@
-﻿using RimWorld;
-using RimWorld.Planet;
-using Verse;
-
-namespace FactionColonies.util;
+﻿namespace FactionColonies.util;
 
 class ShuttleSenderCaravan : ShuttleSender
 {

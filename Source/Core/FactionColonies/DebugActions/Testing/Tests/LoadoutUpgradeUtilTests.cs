@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using RimWorld;
-using Verse;
-
 namespace FactionColonies;
 
 /* Tests for LoadoutUpgradeUtil's order-independent row comparators (InventoryEquivalent /

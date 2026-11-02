@@ -1,9 +1,4 @@
-﻿using FactionColonies.util;
-using RimWorld;
-using System;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 public class ThingQualityTuple : IExposable, IEquatable<ThingQualityTuple>
 {

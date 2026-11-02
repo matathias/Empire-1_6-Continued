@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using FactionColonies.util;
-using Verse;
-
 namespace FactionColonies;
 
 /* Coverage for the event dynamic-cost subsystem: FCEventScalingUtil.CountAffectedSettlements

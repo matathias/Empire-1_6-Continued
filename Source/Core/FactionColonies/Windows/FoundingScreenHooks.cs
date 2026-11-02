@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using RimWorld.Planet;
-using Verse;
-
 namespace FactionColonies;
 
 /// <summary>

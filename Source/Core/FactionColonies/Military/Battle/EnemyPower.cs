@@ -1,7 +1,3 @@
-using RimWorld;
-using System;
-using Verse;
-
 namespace FactionColonies;
 
 /// <summary>

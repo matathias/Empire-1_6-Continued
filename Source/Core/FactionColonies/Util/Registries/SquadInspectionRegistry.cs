@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace FactionColonies;
 
 /// <summary>Registry of <see cref="ISquadInspectionSection"/>s rendered below the per-pawn

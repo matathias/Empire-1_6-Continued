@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace FactionColonies.util;
+﻿namespace FactionColonies.util;
 
 public enum MilitaryOrder
 {

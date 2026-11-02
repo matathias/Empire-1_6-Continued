@@ -1,6 +1,3 @@
-using System.Linq;
-using Verse;
-
 namespace FactionColonies;
 
 /* Regression cover for the no-home-map guard in WorldObjectComp_SettlementPrisoners.

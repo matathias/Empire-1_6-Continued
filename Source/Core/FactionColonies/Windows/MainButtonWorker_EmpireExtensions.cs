@@ -1,5 +1,3 @@
-using RimWorld;
-
 namespace FactionColonies;
 
 public class MainButtonWorker_EmpireExtensions : MainButtonWorker_ToggleTab

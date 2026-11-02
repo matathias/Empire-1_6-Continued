@@ -1,6 +1,4 @@
 ﻿using HarmonyLib;
-using RimWorld.Planet;
-using Verse;
 
 namespace FactionColonies;
 

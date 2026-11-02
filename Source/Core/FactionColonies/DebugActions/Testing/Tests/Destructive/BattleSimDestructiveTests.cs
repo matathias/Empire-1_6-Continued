@@ -1,8 +1,3 @@
-using System.Linq;
-using RimWorld;
-using RimWorld.Planet;
-using Verse;
-
 namespace FactionColonies;
 
 /* DESTRUCTIVE: drives REAL battle simulation — creates offensive/defensive ops, runs the

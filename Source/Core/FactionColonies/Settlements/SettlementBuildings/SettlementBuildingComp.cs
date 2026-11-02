@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /// <summary>
 /// A special custom 'comp' class for use with BuildingFCDefs. A building can specify a SettlementBuildingComp through defmodextensions.

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace FactionColonies;
 
 /* Coverage for the road system's pure key type. The road builder/queue/path themselves

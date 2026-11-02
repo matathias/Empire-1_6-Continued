@@ -1,6 +1,3 @@
-using System.Linq;
-using Verse;
-
 namespace FactionColonies;
 
 /* DESTRUCTIVE: starts, advances, switches, and removes real situations on the live faction

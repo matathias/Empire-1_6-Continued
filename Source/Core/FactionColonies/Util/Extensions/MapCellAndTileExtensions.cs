@@ -1,8 +1,4 @@
-﻿using RimWorld;
-using RimWorld.Planet;
-using Verse;
-
-namespace FactionColonies.util;
+﻿namespace FactionColonies.util;
 
 /// <summary>
 /// This class provides extentions for Tiles, Cells and Maps

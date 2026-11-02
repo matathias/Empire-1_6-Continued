@@ -1,9 +1,4 @@
-﻿using FactionColonies.util;
-using RimWorld;
-using System.Collections.Generic;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 public class FCEventDef : Def
 {

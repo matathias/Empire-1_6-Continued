@@ -1,10 +1,5 @@
-﻿using FactionColonies.util;
-using HarmonyLib;
-using RimWorld;
-using RimWorld.Planet;
+﻿using HarmonyLib;
 using RimWorld.QuestGen;
-using System.Collections.Generic;
-using Verse;
 
 namespace FactionColonies;
 //stops friendly faction from being a group source

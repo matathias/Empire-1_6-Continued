@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using FactionColonies.util;
-using RimWorld.Planet;
-using Verse;
-
 namespace FactionColonies;
 
 /* Tests for MilitaryOperation phase-machine guards and BuildBattleContext. Constructed

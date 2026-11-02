@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using Verse;
-using RimWorld;
-
 /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
  * XenotypeFilter — Security Guards (DORMANT)
  *

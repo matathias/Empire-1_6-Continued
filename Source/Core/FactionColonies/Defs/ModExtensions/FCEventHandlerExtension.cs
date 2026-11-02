@@ -1,7 +1,4 @@
-﻿using FactionColonies.util;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /// <summary>
 /// A DefModExtension for FCEventDef that provides a type-safe hook into event

@@ -1,10 +1,3 @@
-using RimWorld;
-using RimWorld.Planet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Verse;
-
 namespace FactionColonies;
 
 /* Transport-pod arrival action that adds the pod's pawns straight into an Empire settlement,

@@ -1,7 +1,4 @@
-﻿using System;
-using Verse;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 /// <summary>
 /// Class for centrally managing logging.

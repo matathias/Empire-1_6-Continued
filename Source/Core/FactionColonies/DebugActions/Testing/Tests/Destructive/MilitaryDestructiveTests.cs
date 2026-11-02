@@ -1,7 +1,3 @@
-using System.Linq;
-using RimWorld.Planet;
-using Verse;
-
 namespace FactionColonies;
 
 /* DESTRUCTIVE: hires/dismisses real mercenary squads (spends silver), assigns them, and

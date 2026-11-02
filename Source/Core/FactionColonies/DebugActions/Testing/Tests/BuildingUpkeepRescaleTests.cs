@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace FactionColonies;
 
 public static class BuildingUpkeepRescaleTests

@@ -1,5 +1,3 @@
-using System;
-
 namespace FactionColonies;
 
 /* Cost calculations for a mercenary squad. */

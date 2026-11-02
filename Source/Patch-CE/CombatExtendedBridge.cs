@@ -1,8 +1,5 @@
 using CombatExtended;
-using System;
-using System.Linq;
 using UnityEngine;
-using Verse;
 
 namespace FactionColonies.CE;
 

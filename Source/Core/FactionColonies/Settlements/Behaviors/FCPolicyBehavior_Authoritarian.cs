@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Verse;
-
 namespace FactionColonies;
 
 public class FCPolicyBehavior_Authoritarian : FCPolicyBehavior

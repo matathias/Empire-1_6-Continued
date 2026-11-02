@@ -1,6 +1,3 @@
-using RimWorld;
-using RimWorld.Planet;
-
 namespace FactionColonies;
 
 /// <summary>

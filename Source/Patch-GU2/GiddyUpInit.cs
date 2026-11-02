@@ -1,6 +1,3 @@
-using FactionColonies.util;
-using Verse;
-
 namespace FactionColonies.GiddyUpCompat;
 
 /// <summary>

@@ -1,7 +1,3 @@
-using RimWorld;
-using System.Collections.Generic;
-using Verse;
-
 namespace FactionColonies;
 
 /* Registry of IMercAutoTendProvider implementations. Walked once per off-map merc per

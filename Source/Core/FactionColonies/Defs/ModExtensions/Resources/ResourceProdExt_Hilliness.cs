@@ -1,7 +1,4 @@
-﻿using RimWorld.Planet;
-using System.Collections.Generic;
-
-namespace FactionColonies;
+﻿namespace FactionColonies;
 
 public class ResourceHilliness
 {

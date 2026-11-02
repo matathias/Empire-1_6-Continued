@@ -6,8 +6,8 @@ indent_size = 4
 
 #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 # Code style preferences (C# 14 / .NET 10). Kept at "suggestion" so they surface in
-# the editor without affecting the build. Matches the style applied by the
-# Notes/Plans/DotNet10-Modernization_PLAN.md sweeps.
+# the editor without affecting the build. The existing code has been converted
+# to this style, so new code should follow it.
 #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 # IDE0161: file-scoped namespaces

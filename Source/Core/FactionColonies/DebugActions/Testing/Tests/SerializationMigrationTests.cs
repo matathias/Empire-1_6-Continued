@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace FactionColonies;
 
 /* Coverage for the legacy save-migration seeders that run during FactionFC.ExposeData's

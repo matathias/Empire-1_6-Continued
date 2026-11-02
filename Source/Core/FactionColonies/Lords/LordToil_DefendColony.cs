@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Verse;
-using Verse.AI;
+﻿using Verse.AI;
 using Verse.AI.Group;
 
 namespace FactionColonies;

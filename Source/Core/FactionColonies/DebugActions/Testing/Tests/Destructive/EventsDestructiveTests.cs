@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace FactionColonies;
 
 /* DESTRUCTIVE: creates and processes real faction events on the live event manager. Added

@@ -1,5 +1,3 @@
-using Verse;
-
 namespace FactionColonies;
 
 public class FCPolicyBehavior_Lucky : FCPolicyBehavior

@@ -1,6 +1,4 @@
 using HarmonyLib;
-using RimWorld;
-using System.Collections.Generic;
 
 namespace FactionColonies;
 
