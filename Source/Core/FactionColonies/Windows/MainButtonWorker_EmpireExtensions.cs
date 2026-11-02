@@ -1,16 +1,15 @@
 using RimWorld;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+public class MainButtonWorker_EmpireExtensions : MainButtonWorker_ToggleTab
 {
-    public class MainButtonWorker_EmpireExtensions : MainButtonWorker_ToggleTab
+    public override bool Visible
     {
-        public override bool Visible
+        get
         {
-            get
-            {
-                if (!base.Visible) return false;
-                return MainTableRegistry.Tabs.Count > 0;
-            }
+            if (!base.Visible) return false;
+            return MainTableRegistry.Tabs.Count > 0;
         }
     }
 }

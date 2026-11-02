@@ -1,14 +1,13 @@
 using RimWorld;
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+[DefOf]
+public class FCOptionDefOf
 {
-    [DefOf]
-    public class FCOptionDefOf
+    static FCOptionDefOf()
     {
-        static FCOptionDefOf()
-        {
-            DefOfHelper.EnsureInitializedInCtor(typeof(FCOptionDefOf));
-        }
+        DefOfHelper.EnsureInitializedInCtor(typeof(FCOptionDefOf));
     }
 }

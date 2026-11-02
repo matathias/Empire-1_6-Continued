@@ -26,177 +26,176 @@ using RimWorld;
  *   5. Restore the InvalidateGuardAnimalCache call in AnimalFilter.InvalidateCache.
  *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
-namespace FactionColonies.util
+namespace FactionColonies.util;
+
+public partial class XenotypeFilter
 {
-    public partial class XenotypeFilter
+    private Dictionary<XenotypeDef, SecurityGuardList> securityGuardsByXenotype = new Dictionary<XenotypeDef, SecurityGuardList>();
+    private Dictionary<string, SecurityGuardList> securityGuardsByCustomXenotype = new Dictionary<string, SecurityGuardList>();
+
+    private List<PawnKindDef> cachedGuardAnimals = null;
+    public List<PawnKindDef> GuardAnimals
     {
-        private Dictionary<XenotypeDef, SecurityGuardList> securityGuardsByXenotype = new Dictionary<XenotypeDef, SecurityGuardList>();
-        private Dictionary<string, SecurityGuardList> securityGuardsByCustomXenotype = new Dictionary<string, SecurityGuardList>();
-
-        private List<PawnKindDef> cachedGuardAnimals = null;
-        public List<PawnKindDef> GuardAnimals
+        get
         {
-            get
+            if (cachedGuardAnimals is null)
             {
-                if (cachedGuardAnimals is null)
-                {
-                    List<PawnKindDef> combatPool = factionFc?.animalFilter?.AllowedCombatAnimals ?? FactionCache.AllCombatAnimalKindDefs;
-                    cachedGuardAnimals = combatPool.OrderByDescending(def => def.combatPower).Take(3).Distinct().ToList();
-                }
-                return cachedGuardAnimals;
+                List<PawnKindDef> combatPool = factionFc?.animalFilter?.AllowedCombatAnimals ?? FactionCache.AllCombatAnimalKindDefs;
+                cachedGuardAnimals = combatPool.OrderByDescending(def => def.combatPower).Take(3).Distinct().ToList();
             }
+            return cachedGuardAnimals;
         }
-        public void InvalidateGuardAnimalCache()
-        {
-            cachedGuardAnimals = null;
-        }
+    }
+    public void InvalidateGuardAnimalCache()
+    {
+        cachedGuardAnimals = null;
+    }
 
-        private void SetupSecurityGuards(XenotypeDef xenotype)
+    private void SetupSecurityGuards(XenotypeDef xenotype)
+    {
+        if (!securityGuardsByXenotype.ContainsKey(xenotype))
         {
-            if (!securityGuardsByXenotype.ContainsKey(xenotype))
-            {
-                securityGuardsByXenotype[xenotype] = new SecurityGuardList();
-            }
-
-            if (IsXenotypeNonViolent(xenotype))
-            {
-                securityGuardsByXenotype[xenotype].SetRange(GuardAnimals);
-            }
-        }
-        private void SetupSecurityGuards(string xenotype)
-        {
-            if (!securityGuardsByCustomXenotype.ContainsKey(xenotype))
-            {
-                securityGuardsByCustomXenotype[xenotype] = new SecurityGuardList();
-            }
-
-            if (IsCustomXenotypeNonViolent(xenotype))
-            {
-                securityGuardsByCustomXenotype[xenotype].SetRange(GuardAnimals);
-            }
-        }
-        private void SetupAllSecurityGuards()
-        {
-            foreach (XenotypeDef xenotype in XenotypeWeights.Keys)
-            {
-                SetupSecurityGuards(xenotype);
-            }
-            foreach (string xenoName in CustomXenotypeWeights.Keys)
-            {
-                SetupSecurityGuards(xenoName);
-            }
+            securityGuardsByXenotype[xenotype] = new SecurityGuardList();
         }
 
-        /* Returns the union of all configured guard kinds across all xenotypes. */
-        public List<PawnKindDef> GetAvailableSecurityGuards()
+        if (IsXenotypeNonViolent(xenotype))
         {
-            List<PawnKindDef> allGuards = new List<PawnKindDef>();
-            if (securityGuardsByXenotype.Count > 0)
-            {
-                foreach (SecurityGuardList guardList in securityGuardsByXenotype.Values)
-                {
-                    allGuards.AddRange(guardList.List);
-                }
-            }
-            if (securityGuardsByCustomXenotype.Count > 0)
-            {
-                foreach (SecurityGuardList guardList in securityGuardsByCustomXenotype.Values)
-                {
-                    allGuards.AddRange(guardList.List);
-                }
-            }
-            return allGuards.Distinct().ToList();
+            securityGuardsByXenotype[xenotype].SetRange(GuardAnimals);
         }
-        public List<PawnKindDef> GetSecurityGuardsForXenotype(XenotypeDef xenotype)
+    }
+    private void SetupSecurityGuards(string xenotype)
+    {
+        if (!securityGuardsByCustomXenotype.ContainsKey(xenotype))
         {
-            return securityGuardsByXenotype.ContainsKey(xenotype)
-                ? securityGuardsByXenotype[xenotype].List
-                : new List<PawnKindDef>();
-        }
-        public List<PawnKindDef> GetSecurityGuardsForCustomXenotype(string xenotypeName)
-        {
-            return securityGuardsByCustomXenotype.ContainsKey(xenotypeName)
-                ? securityGuardsByCustomXenotype[xenotypeName].List
-                : new List<PawnKindDef>();
+            securityGuardsByCustomXenotype[xenotype] = new SecurityGuardList();
         }
 
-        partial void ExposeSecurityGuardsData()
+        if (IsCustomXenotypeNonViolent(xenotype))
         {
-            Scribe_Collections.Look(ref securityGuardsByXenotype, "securityGuardsByXenotype", LookMode.Def, LookMode.Deep);
-            Scribe_Collections.Look(ref securityGuardsByCustomXenotype, "securityGuardsByCustomXenotype", LookMode.Value, LookMode.Deep);
-
-            if (Scribe.mode == LoadSaveMode.PostLoadInit)
-            {
-                if (securityGuardsByXenotype is null)
-                    securityGuardsByXenotype = new Dictionary<XenotypeDef, SecurityGuardList>();
-                if (securityGuardsByCustomXenotype is null)
-                    securityGuardsByCustomXenotype = new Dictionary<string, SecurityGuardList>();
-            }
+            securityGuardsByCustomXenotype[xenotype].SetRange(GuardAnimals);
+        }
+    }
+    private void SetupAllSecurityGuards()
+    {
+        foreach (XenotypeDef xenotype in XenotypeWeights.Keys)
+        {
+            SetupSecurityGuards(xenotype);
+        }
+        foreach (string xenoName in CustomXenotypeWeights.Keys)
+        {
+            SetupSecurityGuards(xenoName);
         }
     }
 
-    /* Scribe_Collections doesn't handle Dictionary<TKey, List<TValue>> directly, so the
-     * value side of the guard dicts uses this IExposable wrapper. */
-    public class SecurityGuardList : IExposable
+    /* Returns the union of all configured guard kinds across all xenotypes. */
+    public List<PawnKindDef> GetAvailableSecurityGuards()
     {
-        private List<PawnKindDef> list = new List<PawnKindDef>();
-
-        public int Count => list.Count;
-        public bool Contains(PawnKindDef def) => list.Contains(def);
-        public void Clear() => list.Clear();
-        public List<PawnKindDef> List => list;
-
-        public void InitList()
+        List<PawnKindDef> allGuards = new List<PawnKindDef>();
+        if (securityGuardsByXenotype.Count > 0)
         {
-            list = new List<PawnKindDef>();
-        }
-        public bool Add(PawnKindDef def)
-        {
-            if (Contains(def))
+            foreach (SecurityGuardList guardList in securityGuardsByXenotype.Values)
             {
-                return false;
+                allGuards.AddRange(guardList.List);
             }
-            list.Add(def);
-            return true;
         }
-        public bool Remove(PawnKindDef def)
+        if (securityGuardsByCustomXenotype.Count > 0)
         {
-            if (Contains(def))
+            foreach (SecurityGuardList guardList in securityGuardsByCustomXenotype.Values)
             {
-                list.Remove(def);
-                return true;
+                allGuards.AddRange(guardList.List);
             }
+        }
+        return allGuards.Distinct().ToList();
+    }
+    public List<PawnKindDef> GetSecurityGuardsForXenotype(XenotypeDef xenotype)
+    {
+        return securityGuardsByXenotype.ContainsKey(xenotype)
+            ? securityGuardsByXenotype[xenotype].List
+            : new List<PawnKindDef>();
+    }
+    public List<PawnKindDef> GetSecurityGuardsForCustomXenotype(string xenotypeName)
+    {
+        return securityGuardsByCustomXenotype.ContainsKey(xenotypeName)
+            ? securityGuardsByCustomXenotype[xenotypeName].List
+            : new List<PawnKindDef>();
+    }
+
+    partial void ExposeSecurityGuardsData()
+    {
+        Scribe_Collections.Look(ref securityGuardsByXenotype, "securityGuardsByXenotype", LookMode.Def, LookMode.Deep);
+        Scribe_Collections.Look(ref securityGuardsByCustomXenotype, "securityGuardsByCustomXenotype", LookMode.Value, LookMode.Deep);
+
+        if (Scribe.mode == LoadSaveMode.PostLoadInit)
+        {
+            if (securityGuardsByXenotype is null)
+                securityGuardsByXenotype = new Dictionary<XenotypeDef, SecurityGuardList>();
+            if (securityGuardsByCustomXenotype is null)
+                securityGuardsByCustomXenotype = new Dictionary<string, SecurityGuardList>();
+        }
+    }
+}
+
+/* Scribe_Collections doesn't handle Dictionary<TKey, List<TValue>> directly, so the
+ * value side of the guard dicts uses this IExposable wrapper. */
+public class SecurityGuardList : IExposable
+{
+    private List<PawnKindDef> list = new List<PawnKindDef>();
+
+    public int Count => list.Count;
+    public bool Contains(PawnKindDef def) => list.Contains(def);
+    public void Clear() => list.Clear();
+    public List<PawnKindDef> List => list;
+
+    public void InitList()
+    {
+        list = new List<PawnKindDef>();
+    }
+    public bool Add(PawnKindDef def)
+    {
+        if (Contains(def))
+        {
             return false;
         }
-        public void AddRange(List<PawnKindDef> deflist)
+        list.Add(def);
+        return true;
+    }
+    public bool Remove(PawnKindDef def)
+    {
+        if (Contains(def))
         {
-            foreach (PawnKindDef def in deflist)
-            {
-                Add(def);
-            }
+            list.Remove(def);
+            return true;
         }
-        public void RemoveRange(List<PawnKindDef> deflist)
+        return false;
+    }
+    public void AddRange(List<PawnKindDef> deflist)
+    {
+        foreach (PawnKindDef def in deflist)
         {
-            foreach (PawnKindDef def in deflist)
-            {
-                Remove(def);
-            }
+            Add(def);
         }
-        public void SetRange(List<PawnKindDef> deflist)
+    }
+    public void RemoveRange(List<PawnKindDef> deflist)
+    {
+        foreach (PawnKindDef def in deflist)
         {
-            Clear();
-            AddRange(deflist);
+            Remove(def);
         }
-        public void ExposeData()
-        {
-            Scribe_Collections.Look(ref list, "guardKindList", LookMode.Def);
+    }
+    public void SetRange(List<PawnKindDef> deflist)
+    {
+        Clear();
+        AddRange(deflist);
+    }
+    public void ExposeData()
+    {
+        Scribe_Collections.Look(ref list, "guardKindList", LookMode.Def);
 
-            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+        if (Scribe.mode == LoadSaveMode.PostLoadInit)
+        {
+            if (list is null)
             {
-                if (list is null)
-                {
-                    InitList();
-                }
+                InitList();
             }
         }
     }

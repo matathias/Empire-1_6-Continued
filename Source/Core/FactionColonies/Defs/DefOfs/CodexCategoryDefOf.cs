@@ -1,13 +1,12 @@
 using RimWorld;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+[DefOf]
+public class CodexCategoryDefOf
 {
-    [DefOf]
-    public class CodexCategoryDefOf
+    static CodexCategoryDefOf()
     {
-        static CodexCategoryDefOf()
-        {
-            DefOfHelper.EnsureInitializedInCtor(typeof(CodexCategoryDefOf));
-        }
+        DefOfHelper.EnsureInitializedInCtor(typeof(CodexCategoryDefOf));
     }
 }

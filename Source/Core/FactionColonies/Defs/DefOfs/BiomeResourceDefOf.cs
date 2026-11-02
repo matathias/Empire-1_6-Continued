@@ -1,15 +1,14 @@
 using RimWorld;
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+[DefOf]
+public class BiomeResourceDefOf
 {
-    [DefOf]
-    public class BiomeResourceDefOf
+    public static BiomeResourceDef defaultBiome;
+    static BiomeResourceDefOf()
     {
-        public static BiomeResourceDef defaultBiome;
-        static BiomeResourceDefOf()
-        {
-            DefOfHelper.EnsureInitializedInCtor(typeof(BiomeResourceDefOf));
-        }
+        DefOfHelper.EnsureInitializedInCtor(typeof(BiomeResourceDefOf));
     }
 }

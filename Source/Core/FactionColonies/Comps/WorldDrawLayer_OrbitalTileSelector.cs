@@ -2,51 +2,50 @@
 using System.Collections;
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+public class WorldDrawLayer_OrbitalTileSelector : WorldDrawLayer_RaycastableGrid
 {
-    public class WorldDrawLayer_OrbitalTileSelector : WorldDrawLayer_RaycastableGrid
+    private bool activated;
+
+    private static bool ShouldActivate
     {
-        private bool activated;
-
-        private static bool ShouldActivate
+        get
         {
-            get
+            if (Find.TilePicker.Active)
             {
-                if (Find.TilePicker.Active)
-                {
-                    return FindFC.FactionComp?.layersForTilePicker?.Contains(Find.WorldGrid.Orbit.Def) ?? false;
-                }
-                return false;
+                return FindFC.FactionComp?.layersForTilePicker?.Contains(Find.WorldGrid.Orbit.Def) ?? false;
+            }
+            return false;
+        }
+    }
+
+    public override bool ShouldRegenerate
+    {
+        get
+        {
+            if (activated == ShouldActivate)
+            {
+                return base.ShouldRegenerate;
+            }
+            return true;
+        }
+    }
+
+    public override IEnumerable Regenerate()
+    {
+        activated = ShouldActivate;
+        if (activated)
+        {
+            foreach (object item in base.Regenerate())
+            {
+                yield return item;
             }
         }
-
-        public override bool ShouldRegenerate
+        else
         {
-            get
-            {
-                if (activated == ShouldActivate)
-                {
-                    return base.ShouldRegenerate;
-                }
-                return true;
-            }
-        }
-
-        public override IEnumerable Regenerate()
-        {
-            activated = ShouldActivate;
-            if (activated)
-            {
-                foreach (object item in base.Regenerate())
-                {
-                    yield return item;
-                }
-            }
-            else
-            {
-                Dispose();
-                yield return RegenerateWorldMeshColliders();
-            }
+            Dispose();
+            yield return RegenerateWorldMeshColliders();
         }
     }
 }

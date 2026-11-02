@@ -1,7 +1,6 @@
-namespace FactionColonies
+namespace FactionColonies;
+
+public class FCPolicyBehaviorExt_Authoritarian : FCPolicyBehaviorExtension
 {
-    public class FCPolicyBehaviorExt_Authoritarian : FCPolicyBehaviorExtension
-    {
-        public int startingLoyalty = 70;
-    }
+    public int startingLoyalty = 70;
 }

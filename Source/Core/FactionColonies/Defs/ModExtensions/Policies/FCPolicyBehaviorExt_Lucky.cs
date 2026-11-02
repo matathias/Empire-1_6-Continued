@@ -1,7 +1,6 @@
-namespace FactionColonies
+namespace FactionColonies;
+
+public class FCPolicyBehaviorExt_Lucky : FCPolicyBehaviorExtension
 {
-    public class FCPolicyBehaviorExt_Lucky : FCPolicyBehaviorExtension
-    {
-        public float rerollChance = 0.2f;
-    }
+    public float rerollChance = 0.2f;
 }

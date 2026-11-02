@@ -3,20 +3,19 @@ using System.Linq;
 using Verse;
 using Verse.AI;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+class JobDriver_FollowCloseAndCarry : JobDriver_Follow
 {
-    class JobDriver_FollowCloseAndCarry : JobDriver_Follow
+    protected override IEnumerable<Toil> MakeNewToils()
     {
-        protected override IEnumerable<Toil> MakeNewToils()
+        List<Toil> toils = base.MakeNewToils().ToList();
+
+        toils.ForEach(toil => toil.AddFailCondition(delegate
         {
-            List<Toil> toils = base.MakeNewToils().ToList();
+            return ((Pawn)job.GetTarget(TargetIndex.A).Thing).carryTracker.CarriedThing == null;
+        }));
 
-            toils.ForEach(toil => toil.AddFailCondition(delegate
-            {
-                return ((Pawn)job.GetTarget(TargetIndex.A).Thing).carryTracker.CarriedThing == null;
-            }));
-
-            return toils;
-        }
+        return toils;
     }
 }

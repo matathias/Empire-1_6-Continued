@@ -2,15 +2,14 @@
 using RimWorld.Planet;
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+[HarmonyPatch(typeof(WorldPawns), "PassToWorld")]
+class MercenaryPassToWorld
 {
-    [HarmonyPatch(typeof(WorldPawns), "PassToWorld")]
-    class MercenaryPassToWorld
+    static bool Prefix(Pawn pawn, PawnDiscardDecideMode discardMode = PawnDiscardDecideMode.Decide)
     {
-        static bool Prefix(Pawn pawn, PawnDiscardDecideMode discardMode = PawnDiscardDecideMode.Decide)
-        {
-            FactionFC faction = FindFC.FactionComp;
-            return faction?.military == null || !faction.military.IsMercenaryPawn(pawn);
-        }
+        FactionFC faction = FindFC.FactionComp;
+        return faction?.military == null || !faction.military.IsMercenaryPawn(pawn);
     }
 }

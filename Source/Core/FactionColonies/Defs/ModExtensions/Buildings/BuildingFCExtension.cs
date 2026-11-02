@@ -1,10 +1,9 @@
 ﻿using System;
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+public class BuildingFCExtension : DefModExtension
 {
-    public class BuildingFCExtension : DefModExtension
-    {
-        public Type compClass;
-    }
+    public Type compClass;
 }

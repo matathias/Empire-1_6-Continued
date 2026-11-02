@@ -3,36 +3,35 @@ using System.Linq;
 using Verse;
 using Verse.AI;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+class JobDriver_GotoAndDrop : JobDriver_Goto
 {
-    class JobDriver_GotoAndDrop : JobDriver_Goto
+    protected override IEnumerable<Toil> MakeNewToils()
     {
-        protected override IEnumerable<Toil> MakeNewToils()
+        List<Toil> toils = base.MakeNewToils().ToList();
+
+        toils.Add(new Toil
         {
-            List<Toil> toils = base.MakeNewToils().ToList();
-
-            toils.Add(new Toil
+            initAction = delegate
             {
-                initAction = delegate
-                {
-                    pawn.carryTracker.TryDropCarriedThing(pawn.Position, ThingPlaceMode.Direct, out Thing thing);
-                }
-            });
-
-            foreach (Toil toil in toils)
-            {
-                toil.AddFailCondition(delegate ()
-                {
-                    if (pawn.carryTracker.CarriedThing == null) return true;
-
-                    bool flag = pawn.Map.dangerWatcher.DangerRating == RimWorld.StoryDanger.High;
-                    if (flag) pawn.carryTracker.TryDropCarriedThing(pawn.Position, ThingPlaceMode.Direct, out Thing thing);
-
-                    return flag;
-                });
+                pawn.carryTracker.TryDropCarriedThing(pawn.Position, ThingPlaceMode.Direct, out Thing thing);
             }
+        });
 
-            return toils;
+        foreach (Toil toil in toils)
+        {
+            toil.AddFailCondition(delegate ()
+            {
+                if (pawn.carryTracker.CarriedThing == null) return true;
+
+                bool flag = pawn.Map.dangerWatcher.DangerRating == RimWorld.StoryDanger.High;
+                if (flag) pawn.carryTracker.TryDropCarriedThing(pawn.Position, ThingPlaceMode.Direct, out Thing thing);
+
+                return flag;
+            });
         }
+
+        return toils;
     }
 }

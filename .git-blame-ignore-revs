@@ -1,0 +1,5 @@
+# Bulk mechanical commits (formatting/syntax only, no behavior change) for git blame to skip.
+# GitHub applies this file automatically. Locally:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# File-scoped namespaces

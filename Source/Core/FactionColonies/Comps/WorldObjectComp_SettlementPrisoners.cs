@@ -7,511 +7,510 @@ using System.Linq;
 using System.Text;
 using Verse;
 
-namespace FactionColonies
-{
-    public class WorldObjectCompProperties_SettlementPrisoners : WorldObjectCompProperties
-    {
-        public WorldObjectCompProperties_SettlementPrisoners()
-        {
-            compClass = typeof(WorldObjectComp_SettlementPrisoners);
-        }
+namespace FactionColonies;
 
-        public override IEnumerable<string> ConfigErrors(WorldObjectDef parentDef)
+public class WorldObjectCompProperties_SettlementPrisoners : WorldObjectCompProperties
+{
+    public WorldObjectCompProperties_SettlementPrisoners()
+    {
+        compClass = typeof(WorldObjectComp_SettlementPrisoners);
+    }
+
+    public override IEnumerable<string> ConfigErrors(WorldObjectDef parentDef)
+    {
+        foreach (string item in base.ConfigErrors(parentDef))
         {
-            foreach (string item in base.ConfigErrors(parentDef))
-            {
-                yield return item;
-            }
-            if (!typeof(MapParent).IsAssignableFrom(parentDef.worldObjectClass))
-            {
-                yield return parentDef.defName + " has WorldObjectCompProperties_SettlementPrisoners but it's not MapParent.";
-            }
+            yield return item;
+        }
+        if (!typeof(MapParent).IsAssignableFrom(parentDef.worldObjectClass))
+        {
+            yield return parentDef.defName + " has WorldObjectCompProperties_SettlementPrisoners but it's not MapParent.";
+        }
+    }
+}
+
+/* Owns this settlement's FCPrisoner list and its daily health tick.
+   Also emits the "Transfer prisoner to settlement" gizmo when a player
+   caravan sits on the settlement's tile with at least one pawn flagged
+   IsPrisonerOfColony. The gizmo is visible from both sides: selecting the
+   caravan (GetCaravanGizmos) and selecting the settlement (GetGizmos). */
+public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPawnArrival
+{
+    public List<FCPrisoner> prisonerList = new List<FCPrisoner>();
+    public WorldSettlementFC WorldSettlement => parent as WorldSettlementFC;
+
+    /* Per-settlement override of FactionFC.defaultPrisonerWorkload. When
+     * hasDefaultWorkloadOverride is false the settlement inherits the faction value. */
+    public bool hasDefaultWorkloadOverride;
+    public FCWorkLoad defaultWorkloadOverride = FCWorkLoad.Light;
+
+    public override void PostExposeData()
+    {
+        base.PostExposeData();
+        Scribe_Collections.Look(ref prisonerList, "prisoners", LookMode.Deep);
+        if (prisonerList is null) prisonerList = new List<FCPrisoner>();
+        Scribe_Values.Look(ref hasDefaultWorkloadOverride, "hasDefaultWorkloadOverride", false);
+        Scribe_Values.Look(ref defaultWorkloadOverride, "defaultWorkloadOverride", FCWorkLoad.Light);
+    }
+
+    public FCWorkLoad GetEffectiveDefaultWorkload()
+    {
+        if (hasDefaultWorkloadOverride) return defaultWorkloadOverride;
+        FactionFC comp = FindFC.FactionComp;
+        return comp?.defaultPrisonerWorkload ?? FCWorkLoad.Light;
+    }
+
+    public void SetDefaultWorkloadOverride(FCWorkLoad w)
+    {
+        hasDefaultWorkloadOverride = true;
+        defaultWorkloadOverride = w;
+    }
+
+    public void ClearDefaultWorkloadOverride()
+    {
+        hasDefaultWorkloadOverride = false;
+    }
+
+    public override void CompTick()
+    {
+        // base.CompTick() is empty in Rimworld 1.6.
+        if (Find.TickManager.TicksGame % GenDate.TicksPerDay == 0)
+        {
+            AdvanceDailyHealth();
         }
     }
 
-    /* Owns this settlement's FCPrisoner list and its daily health tick.
-       Also emits the "Transfer prisoner to settlement" gizmo when a player
-       caravan sits on the settlement's tile with at least one pawn flagged
-       IsPrisonerOfColony. The gizmo is visible from both sides: selecting the
-       caravan (GetCaravanGizmos) and selecting the settlement (GetGizmos). */
-    public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPawnArrival
+    /* Daily health update. Heavy workload damages, Light heals. Two-phase to keep
+     * the iteration over prisonerList safe: first pass applies deltas and gathers any
+     * dead prisoners into a scratch list; second pass processes the deaths. */
+    public void AdvanceDailyHealth()
     {
-        public List<FCPrisoner> prisonerList = new List<FCPrisoner>();
-        public WorldSettlementFC WorldSettlement => parent as WorldSettlementFC;
+        if (prisonerList is null) return;
 
-        /* Per-settlement override of FactionFC.defaultPrisonerWorkload. When
-         * hasDefaultWorkloadOverride is false the settlement inherits the faction value. */
-        public bool hasDefaultWorkloadOverride;
-        public FCWorkLoad defaultWorkloadOverride = FCWorkLoad.Light;
-
-        public override void PostExposeData()
+        List<FCPrisoner> dead = null;
+        foreach (FCPrisoner p in prisonerList)
         {
-            base.PostExposeData();
-            Scribe_Collections.Look(ref prisonerList, "prisoners", LookMode.Deep);
-            if (prisonerList is null) prisonerList = new List<FCPrisoner>();
-            Scribe_Values.Look(ref hasDefaultWorkloadOverride, "hasDefaultWorkloadOverride", false);
-            Scribe_Values.Look(ref defaultWorkloadOverride, "defaultWorkloadOverride", FCWorkLoad.Light);
-        }
-
-        public FCWorkLoad GetEffectiveDefaultWorkload()
-        {
-            if (hasDefaultWorkloadOverride) return defaultWorkloadOverride;
-            FactionFC comp = FindFC.FactionComp;
-            return comp?.defaultPrisonerWorkload ?? FCWorkLoad.Light;
-        }
-
-        public void SetDefaultWorkloadOverride(FCWorkLoad w)
-        {
-            hasDefaultWorkloadOverride = true;
-            defaultWorkloadOverride = w;
-        }
-
-        public void ClearDefaultWorkloadOverride()
-        {
-            hasDefaultWorkloadOverride = false;
-        }
-
-        public override void CompTick()
-        {
-            // base.CompTick() is empty in Rimworld 1.6.
-            if (Find.TickManager.TicksGame % GenDate.TicksPerDay == 0)
+            p.AdjustHealth(p.workload);
+            if (p.IsDead)
             {
-                AdvanceDailyHealth();
+                if (dead is null) dead = new List<FCPrisoner>();
+                dead.Add(p);
             }
         }
 
-        /* Daily health update. Heavy workload damages, Light heals. Two-phase to keep
-         * the iteration over prisonerList safe: first pass applies deltas and gathers any
-         * dead prisoners into a scratch list; second pass processes the deaths. */
-        public void AdvanceDailyHealth()
+        if (dead != null)
         {
-            if (prisonerList is null) return;
+            string sName = WorldSettlement?.Name ?? "";
+            Faction player = Find.FactionManager.OfPlayer;
+            Faction empire = FindFC.EmpireFaction;
+            const int goodwillPerDeath = -2;
 
-            List<FCPrisoner> dead = null;
-            foreach (FCPrisoner p in prisonerList)
+            List<string> deadNames = new List<string>(dead.Count);
+            Dictionary<Faction, int> goodwillByFaction = new Dictionary<Faction, int>();
+
+            for (int i = 0; i < dead.Count; i++)
             {
-                p.AdjustHealth(p.workload);
-                if (p.IsDead)
+                string name;
+                Faction home;
+                DropDeadPrisoner(dead[i], out name, out home);
+                deadNames.Add(name);
+
+                /* Skip non-relations factions: null, the player itself, our allied empire,
+                 * hidden factions (mechs etc.), permanent enemies (goodwill is locked). */
+                if (home is null || home == player || home == empire
+                    || home.Hidden || home.def.permanentEnemy) continue;
+
+                bool applied = home.TryAffectGoodwillWith(
+                    player, goodwillPerDeath,
+                    canSendMessage: false, canSendHostilityLetter: false,
+                    reason: HistoryEventDefOf.PrisonerDied);
+                if (applied)
                 {
-                    if (dead is null) dead = new List<FCPrisoner>();
-                    dead.Add(p);
+                    int total;
+                    if (!goodwillByFaction.TryGetValue(home, out total)) total = 0;
+                    goodwillByFaction[home] = total + goodwillPerDeath;
                 }
             }
 
-            if (dead != null)
+            SendDeathLetter(sName, deadNames, goodwillByFaction);
+        }
+
+        // A Light-workload heal may have un-downed a prisoner, so refresh the worker cap.
+        WorldSettlement?.NotifyWorkforceChanged();
+    }
+
+    /* The single removal entry point — no other code should call prisonerList.Remove
+     * directly. Null `p` is allowed (and removes the first null entry) so CullNullPrisoners
+     * can route degenerate null FCPrisoner entries through this method too. */
+    public bool RemovePrisoner(FCPrisoner p)
+    {
+        if (prisonerList is null) return false;
+        bool removed = prisonerList.Remove(p);
+        if (removed) WorldSettlement?.NotifyWorkforceChanged();
+        return removed;
+    }
+
+    /* Removes the prisoner and returns the data the death-letter builder needs.
+     * homeFaction is the prisoner's original faction (pawn.guest.HomeFaction) — used
+     * by the caller to apply a goodwill penalty against the player. */
+    private void DropDeadPrisoner(FCPrisoner p, out string pawnName, out Faction homeFaction)
+    {
+        pawnName    = p.prisoner?.Name?.ToString() ?? "";
+        homeFaction = p.prisoner?.Faction;
+        RemovePrisoner(p);
+    }
+
+    private static void SendDeathLetter(
+        string settlementName,
+        List<string> deadNames,
+        Dictionary<Faction, int> goodwillByFaction)
+    {
+        string title;
+        string body;
+        if (deadNames.Count == 1)
+        {
+            // Preserve existing single-death wording.
+            title = "FCPrisonerHasDiedLetter".Translate();
+            body  = "FCPrisonerHasDied".Translate(deadNames[0], settlementName);
+        }
+        else
+        {
+            StringBuilder header = new StringBuilder();
+            header.AppendLine("FCPrisonersHaveDiedBody".Translate(deadNames.Count, settlementName));
+            header.AppendLine();
+            foreach (string deadname in deadNames)
+                header.AppendLine("  - " + deadname);
+            title = "FCPrisonersHaveDiedLetter".Translate();
+            body  = header.ToString().TrimEnd();
+        }
+
+        if (goodwillByFaction.Count > 0)
+        {
+            StringBuilder sb = new StringBuilder(body);
+            sb.AppendLine();
+            sb.AppendLine();
+            sb.AppendLine("FCPrisonerDeathGoodwillHeader".Translate());
+            foreach (KeyValuePair<Faction, int> kvp in goodwillByFaction)
+                sb.AppendLine("  " + kvp.Key.Name + ": " + kvp.Value);
+            body = sb.ToString().TrimEnd();
+        }
+
+        Find.LetterStack.ReceiveLetter(title, body, LetterDefOf.NeutralEvent);
+    }
+
+    public void AddPrisoner(Pawn pawn)
+    {
+        WorldSettlementFC settlement = WorldSettlement;
+        if (settlement is null || pawn is null) return;
+
+        // FCPrisoner is the canonical deep owner of the held pawn. If WorldPawns
+        // already has it (e.g., redressed by PawnGenerator, passed via LeaveMap,
+        // dropped from a caravan), pull it out so save doesn't double-scribe.
+        // The conditional Scribe in FCPrisoner.ExposeData defends on-map cases.
+        if (Find.WorldPawns is object && Find.WorldPawns.Contains(pawn))
+        {
+            Find.WorldPawns.RemovePawn(pawn);
+        }
+        FCPrisoner created = new FCPrisoner(pawn, settlement);
+        created.workload = GetEffectiveDefaultWorkload();
+        prisonerList.Add(created);
+        settlement.DirtyStatsCache();
+    }
+
+    /* Removes any FCPrisoner entries that are themselves null or wrap a null pawn. */
+    public int CullNullPrisoners()
+    {
+        if (prisonerList is null) return 0;
+
+        List<FCPrisoner> toRemove = null;
+        foreach (FCPrisoner p in prisonerList)
+        {
+            if (p?.prisoner is null)
             {
-                string sName = WorldSettlement?.Name ?? "";
-                Faction player = Find.FactionManager.OfPlayer;
-                Faction empire = FindFC.EmpireFaction;
-                const int goodwillPerDeath = -2;
+                if (toRemove is null) toRemove = new List<FCPrisoner>();
+                toRemove.Add(p);
+            }
+        }
 
-                List<string> deadNames = new List<string>(dead.Count);
-                Dictionary<Faction, int> goodwillByFaction = new Dictionary<Faction, int>();
+        if (toRemove is null) return 0;
+        foreach (FCPrisoner p in toRemove) RemovePrisoner(p);
 
-                for (int i = 0; i < dead.Count; i++)
+        LogUtil.Warning("Culled " + toRemove.Count + " null prisoner(s) from " + (WorldSettlement?.Name ?? "<unknown>"));
+        return toRemove.Count;
+    }
+
+    public void TransferFromCaravan(Pawn pawn, Caravan caravan)
+    {
+        if (pawn is null || caravan is null) return;
+
+        // A caravan's goods are distributed across the inventories of ALL its pawns, prisoners
+        // included. Pull this prisoner's share of the caravan inventory back out before we absorb
+        // the pawn into the settlement — otherwise those items (carried loot, stashed sidearms)
+        // ride in with the prisoner and become unrecoverable (ReturnPrisonerToPlayer only ever
+        // delivers the pawn). Worn apparel and wielded equipment stay on the pawn: those are the
+        // captured pawn's own gear, not shared caravan goods.
+        List<Thing> carried = ExtractCarriedInventory(pawn);
+
+        caravan.RemovePawn(pawn);
+        caravan.Notify_PawnRemoved(pawn);
+
+        ReturnCarriedInventory(carried, caravan);
+
+        AddPrisoner(pawn);
+    }
+
+    /* Detaches and returns a pawn's carried inventory (its share of the caravan goods). Worn
+     * apparel and wielded equipment are intentionally left on the pawn. */
+    private static List<Thing> ExtractCarriedInventory(Pawn pawn)
+    {
+        List<Thing> items = new List<Thing>();
+        ThingOwner inner = pawn?.inventory?.innerContainer;
+        if (inner is null) return items;
+        for (int i = inner.Count - 1; i >= 0; i--)
+        {
+            Thing thing = inner[i];
+            inner.Remove(thing);
+            items.Add(thing);
+        }
+        return items;
+    }
+
+    /* Routes detached prisoner-carried goods back to the player, mirroring
+     * SettlementPawnArrivalFallback.RouteLeftovers: onto the caravan while it still has carriers,
+     * else home through Empire's delivery pipeline. Nothing is ever destroyed. */
+    private void ReturnCarriedInventory(List<Thing> items, Caravan caravan)
+    {
+        if (items is null || items.Count == 0) return;
+
+        if (caravan is object && caravan.PawnsListForReading.Count > 0)
+        {
+            for (int i = 0; i < items.Count; i++)
+                CaravanInventoryUtility.GiveThing(caravan, items[i]);
+            return;
+        }
+
+        // Caravan emptied out (the prisoner was its last pawn): route the goods home instead of
+        // dropping them on a world tile where they would be lost.
+        PlanetTile tile = WorldSettlement?.Tile ?? caravan?.Tile ?? PlanetTile.Invalid;
+        DeliveryEvent.CreateDeliveryEvent(items, tile);
+    }
+
+    public void DoTransferMenu(Caravan caravan)
+    {
+        if (caravan is null) return;
+
+        List<FloatMenuOption> list = new List<FloatMenuOption>();
+        List<Pawn> pawns = caravan.PawnsListForReading;
+        for (int i = 0; i < pawns.Count; i++)
+        {
+            Pawn captured = pawns[i];
+            if (!captured.IsPrisonerOfColony) continue;
+            list.Add(new FloatMenuOption(
+                "FCTransferPrisonerOption".Translate(captured.Name.ToStringShort),
+                delegate { TransferFromCaravan(captured, caravan); }));
+        }
+
+        if (list.Count == 0)
+        {
+            Messages.Message("FCNoPrisonersInCaravan".Translate(), MessageTypeDefOf.RejectInput);
+            return;
+        }
+
+        Find.WindowStack.Add(new FloatMenu(list));
+    }
+
+    public void SetWorkload(FCPrisoner p, FCWorkLoad workload)
+    {
+        if (p is null) return;
+        p.workload = workload;
+        WorldSettlement?.DirtyStatsCache();
+    }
+
+    public void SellPrisoner(FCPrisoner p)
+    {
+        if (p?.prisoner is null) return;
+        WorldSettlement?.AddOneTimeSilverIncome(p.prisoner.MarketValue);
+        RemovePrisoner(p);
+    }
+
+    public void ReturnPrisonerToPlayer(FCPrisoner p)
+    {
+        if (p?.prisoner is null) return;
+        WorldSettlementFC s = WorldSettlement;
+        if (s is null) return;
+
+        // No home colony map to deliver to (nomad/caravan phase): keep the prisoner here rather
+        // than downing them and destroying them in a delivery that can't be routed.
+        Map playerHome = Find.AnyPlayerHomeMap;
+        if (playerHome is null) return;
+
+        if (!HealthUtility.TryAnesthetize(p.prisoner))
+            HealthUtility.DamageUntilDowned(p.prisoner, false);
+
+        if (p.prisoner.guest is null)
+            p.prisoner.guest = new Pawn_GuestTracker(p.prisoner);
+        p.prisoner.guest.SetGuestStatus(Find.FactionManager.OfPlayer, GuestStatus.Prisoner);
+
+        DeliveryEvent.CreateDeliveryEvent(new FCEvent
+        {
+            location = playerHome.Tile,
+            source = s.Tile,
+            goods = new List<Thing> { p.prisoner },
+            customDescription = "FCAPrisonerIsBeingDeliveredToYou".Translate(),
+            timeTillTrigger = Find.TickManager.TicksGame + TravelUtil.ReturnTicksToArrive(s.Tile, playerHome.Tile)
+        });
+
+        RemovePrisoner(p);
+    }
+
+    public void DoActionsMenu(FCPrisoner p, Action onRemoved)
+    {
+        if (p is null) return;
+        List<FloatMenuOption> list = new List<FloatMenuOption>();
+
+        if (FindFC.FactionComp.IsActionAllowed(FCActionType.SellPrisoner))
+        {
+            list.Add(new FloatMenuOption(
+                "FCSellPawn".Translate() + " $" + p.prisoner.MarketValue + " " + "FCSellPawnInfo".Translate(),
+                delegate
                 {
-                    string name;
-                    Faction home;
-                    DropDeadPrisoner(dead[i], out name, out home);
-                    deadNames.Add(name);
+                    SellPrisoner(p);
+                    onRemoved?.Invoke();
+                }));
+        }
 
-                    /* Skip non-relations factions: null, the player itself, our allied empire,
-                     * hidden factions (mechs etc.), permanent enemies (goodwill is locked). */
-                    if (home is null || home == player || home == empire
-                        || home.Hidden || home.def.permanentEnemy) continue;
+        list.Add(new FloatMenuOption("FCReturnToPlayer".Translate(), delegate
+        {
+            ReturnPrisonerToPlayer(p);
+            onRemoved?.Invoke();
+        }));
 
-                    bool applied = home.TryAffectGoodwillWith(
-                        player, goodwillPerDeath,
-                        canSendMessage: false, canSendHostilityLetter: false,
-                        reason: HistoryEventDefOf.PrisonerDied);
-                    if (applied)
-                    {
-                        int total;
-                        if (!goodwillByFaction.TryGetValue(home, out total)) total = 0;
-                        goodwillByFaction[home] = total + goodwillPerDeath;
-                    }
-                }
+        Find.WindowStack.Add(new FloatMenu(list));
+    }
 
-                SendDeathLetter(sName, deadNames, goodwillByFaction);
+    public void OpenWorkloadFloatMenu(FCPrisoner p)
+    {
+        if (p is null) return;
+        Find.WindowStack.Add(new FloatMenu(
+            FCWorkLoadInfo.BuildSelectionMenu(delegate (FCWorkLoad w) { SetWorkload(p, w); })));
+    }
+
+    /* Sets this settlement's default-workload override for newly captured prisoners.
+     * The "Use faction default" option clears the override so the settlement inherits
+     * FactionFC.defaultPrisonerWorkload again. */
+    public void OpenDefaultWorkloadFloatMenu()
+    {
+        List<FloatMenuOption> list = FCWorkLoadInfo.BuildSelectionMenu(SetDefaultWorkloadOverride);
+        if (hasDefaultWorkloadOverride)
+        {
+            list.Add(new FloatMenuOption("FCUseFactionDefault".Translate(),
+                delegate { ClearDefaultWorkloadOverride(); }));
+        }
+        Find.WindowStack.Add(new FloatMenu(list));
+    }
+
+    /* Bulk-applies the chosen workload to every prisoner in this settlement.
+     * Routes each assignment through SetWorkload so DirtyStatsCache fires correctly. */
+    public void OpenBulkSetWorkloadFloatMenu()
+    {
+        Find.WindowStack.Add(new FloatMenu(FCWorkLoadInfo.BuildSelectionMenu(BulkSetWorkload)));
+    }
+
+    public void BulkSetWorkload(FCWorkLoad w)
+    {
+        if (prisonerList is null) return;
+        for (int i = 0; i < prisonerList.Count; i++) SetWorkload(prisonerList[i], w);
+    }
+
+    /* Downed prisoners can't perform any work, so they're excluded from worker contributions. */
+    public int ReturnMaxWorkersFromPrisoners()
+    {
+        int num = 0;
+        foreach (FCPrisoner p in prisonerList)
+        {
+            if (p?.prisoner is null || p.prisoner.Downed) continue;
+            num += FCWorkLoadInfo.WorkerSlots(p.workload);
+        }
+        return num;
+    }
+
+    public int ReturnOverMaxWorkersFromPrisoners()
+    {
+        int num = 0;
+        foreach (FCPrisoner p in prisonerList)
+        {
+            if (p?.prisoner is null || p.prisoner.Downed) continue;
+            num += FCWorkLoadInfo.OverMaxSlots(p.workload);
+        }
+        return num;
+    }
+
+    /* -*-*-*- Pawn arrival via transport pod (WorldObjectComp_SettlementPawnArrival) -*-*-*- */
+
+    /* Gate on the same SendPrisoner permission as the caravan-transfer gizmo so the pod path
+       and the caravan path stay consistent. (The battle/raid block is enforced centrally in
+       TransportersArrivalAction_AddToSettlementFC.) */
+    public override FloatMenuAcceptanceReport CanReceive
+        => FindFC.FactionComp?.IsActionAllowed(FCActionType.SendPrisoner) ?? false;
+
+    public override bool AcceptsPawn(Pawn pawn) => pawn is object && pawn.IsPrisonerOfColony;
+
+    public override string ArrivalMenuLabel => "FCAddPrisonersToSettlement".Translate(parent.Label);
+
+    public override string ArrivalMessage(List<Pawn> pawns)
+        => "FCPawnsAddedToSettlement".Translate(pawns.Count, parent.Label);
+
+    public override void ReceivePawns(List<Pawn> pawns)
+    {
+        if (pawns is null) return;
+        for (int i = 0; i < pawns.Count; i++) AddPrisoner(pawns[i]);
+    }
+
+    public override IEnumerable<Gizmo> GetCaravanGizmos(Caravan caravan)
+    {
+        foreach (Gizmo gizmo in base.GetCaravanGizmos(caravan))
+        {
+            yield return gizmo;
+        }
+
+        if (WorldSettlement is null) yield break;
+        if (caravan is null || caravan.Tile != parent.Tile) yield break;
+        if (FindFC.FactionComp is null) yield break;
+        if (!FindFC.FactionComp.IsActionAllowed(FCActionType.SendPrisoner)) yield break;
+        if (!PrisonerUtil.HasPrisonersOfColony(caravan)) yield break;
+
+        yield return BuildTransferGizmo(caravan);
+    }
+
+    public override IEnumerable<Gizmo> GetGizmos()
+    {
+        foreach (Gizmo gizmo in base.GetGizmos())
+        {
+            yield return gizmo;
+        }
+
+        if (WorldSettlement is null) yield break;
+        if (FindFC.FactionComp is null) yield break;
+        if (!FindFC.FactionComp.IsActionAllowed(FCActionType.SendPrisoner)) yield break;
+
+        Caravan caravan = Find.WorldObjects.PlayerControlledCaravanAt(parent.Tile);
+        if (caravan is null) yield break;
+        if (!PrisonerUtil.HasPrisonersOfColony(caravan)) yield break;
+
+        yield return BuildTransferGizmo(caravan);
+    }
+
+    private Command_Action BuildTransferGizmo(Caravan caravan)
+    {
+        return new Command_Action
+        {
+            defaultLabel = "FCTransferPrisonerToSettlement".Translate(),
+            defaultDesc = "FCTransferPrisonerGizmoDesc".Translate(),
+            icon = TexLoad.iconMilitary,
+            action = delegate
+            {
+                DoTransferMenu(caravan);
             }
-
-            // A Light-workload heal may have un-downed a prisoner, so refresh the worker cap.
-            WorldSettlement?.NotifyWorkforceChanged();
-        }
-
-        /* The single removal entry point — no other code should call prisonerList.Remove
-         * directly. Null `p` is allowed (and removes the first null entry) so CullNullPrisoners
-         * can route degenerate null FCPrisoner entries through this method too. */
-        public bool RemovePrisoner(FCPrisoner p)
-        {
-            if (prisonerList is null) return false;
-            bool removed = prisonerList.Remove(p);
-            if (removed) WorldSettlement?.NotifyWorkforceChanged();
-            return removed;
-        }
-
-        /* Removes the prisoner and returns the data the death-letter builder needs.
-         * homeFaction is the prisoner's original faction (pawn.guest.HomeFaction) — used
-         * by the caller to apply a goodwill penalty against the player. */
-        private void DropDeadPrisoner(FCPrisoner p, out string pawnName, out Faction homeFaction)
-        {
-            pawnName    = p.prisoner?.Name?.ToString() ?? "";
-            homeFaction = p.prisoner?.Faction;
-            RemovePrisoner(p);
-        }
-
-        private static void SendDeathLetter(
-            string settlementName,
-            List<string> deadNames,
-            Dictionary<Faction, int> goodwillByFaction)
-        {
-            string title;
-            string body;
-            if (deadNames.Count == 1)
-            {
-                // Preserve existing single-death wording.
-                title = "FCPrisonerHasDiedLetter".Translate();
-                body  = "FCPrisonerHasDied".Translate(deadNames[0], settlementName);
-            }
-            else
-            {
-                StringBuilder header = new StringBuilder();
-                header.AppendLine("FCPrisonersHaveDiedBody".Translate(deadNames.Count, settlementName));
-                header.AppendLine();
-                foreach (string deadname in deadNames)
-                    header.AppendLine("  - " + deadname);
-                title = "FCPrisonersHaveDiedLetter".Translate();
-                body  = header.ToString().TrimEnd();
-            }
-
-            if (goodwillByFaction.Count > 0)
-            {
-                StringBuilder sb = new StringBuilder(body);
-                sb.AppendLine();
-                sb.AppendLine();
-                sb.AppendLine("FCPrisonerDeathGoodwillHeader".Translate());
-                foreach (KeyValuePair<Faction, int> kvp in goodwillByFaction)
-                    sb.AppendLine("  " + kvp.Key.Name + ": " + kvp.Value);
-                body = sb.ToString().TrimEnd();
-            }
-
-            Find.LetterStack.ReceiveLetter(title, body, LetterDefOf.NeutralEvent);
-        }
-
-        public void AddPrisoner(Pawn pawn)
-        {
-            WorldSettlementFC settlement = WorldSettlement;
-            if (settlement is null || pawn is null) return;
-
-            // FCPrisoner is the canonical deep owner of the held pawn. If WorldPawns
-            // already has it (e.g., redressed by PawnGenerator, passed via LeaveMap,
-            // dropped from a caravan), pull it out so save doesn't double-scribe.
-            // The conditional Scribe in FCPrisoner.ExposeData defends on-map cases.
-            if (Find.WorldPawns is object && Find.WorldPawns.Contains(pawn))
-            {
-                Find.WorldPawns.RemovePawn(pawn);
-            }
-            FCPrisoner created = new FCPrisoner(pawn, settlement);
-            created.workload = GetEffectiveDefaultWorkload();
-            prisonerList.Add(created);
-            settlement.DirtyStatsCache();
-        }
-
-        /* Removes any FCPrisoner entries that are themselves null or wrap a null pawn. */
-        public int CullNullPrisoners()
-        {
-            if (prisonerList is null) return 0;
-
-            List<FCPrisoner> toRemove = null;
-            foreach (FCPrisoner p in prisonerList)
-            {
-                if (p?.prisoner is null)
-                {
-                    if (toRemove is null) toRemove = new List<FCPrisoner>();
-                    toRemove.Add(p);
-                }
-            }
-
-            if (toRemove is null) return 0;
-            foreach (FCPrisoner p in toRemove) RemovePrisoner(p);
-
-            LogUtil.Warning("Culled " + toRemove.Count + " null prisoner(s) from " + (WorldSettlement?.Name ?? "<unknown>"));
-            return toRemove.Count;
-        }
-
-        public void TransferFromCaravan(Pawn pawn, Caravan caravan)
-        {
-            if (pawn is null || caravan is null) return;
-
-            // A caravan's goods are distributed across the inventories of ALL its pawns, prisoners
-            // included. Pull this prisoner's share of the caravan inventory back out before we absorb
-            // the pawn into the settlement — otherwise those items (carried loot, stashed sidearms)
-            // ride in with the prisoner and become unrecoverable (ReturnPrisonerToPlayer only ever
-            // delivers the pawn). Worn apparel and wielded equipment stay on the pawn: those are the
-            // captured pawn's own gear, not shared caravan goods.
-            List<Thing> carried = ExtractCarriedInventory(pawn);
-
-            caravan.RemovePawn(pawn);
-            caravan.Notify_PawnRemoved(pawn);
-
-            ReturnCarriedInventory(carried, caravan);
-
-            AddPrisoner(pawn);
-        }
-
-        /* Detaches and returns a pawn's carried inventory (its share of the caravan goods). Worn
-         * apparel and wielded equipment are intentionally left on the pawn. */
-        private static List<Thing> ExtractCarriedInventory(Pawn pawn)
-        {
-            List<Thing> items = new List<Thing>();
-            ThingOwner inner = pawn?.inventory?.innerContainer;
-            if (inner is null) return items;
-            for (int i = inner.Count - 1; i >= 0; i--)
-            {
-                Thing thing = inner[i];
-                inner.Remove(thing);
-                items.Add(thing);
-            }
-            return items;
-        }
-
-        /* Routes detached prisoner-carried goods back to the player, mirroring
-         * SettlementPawnArrivalFallback.RouteLeftovers: onto the caravan while it still has carriers,
-         * else home through Empire's delivery pipeline. Nothing is ever destroyed. */
-        private void ReturnCarriedInventory(List<Thing> items, Caravan caravan)
-        {
-            if (items is null || items.Count == 0) return;
-
-            if (caravan is object && caravan.PawnsListForReading.Count > 0)
-            {
-                for (int i = 0; i < items.Count; i++)
-                    CaravanInventoryUtility.GiveThing(caravan, items[i]);
-                return;
-            }
-
-            // Caravan emptied out (the prisoner was its last pawn): route the goods home instead of
-            // dropping them on a world tile where they would be lost.
-            PlanetTile tile = WorldSettlement?.Tile ?? caravan?.Tile ?? PlanetTile.Invalid;
-            DeliveryEvent.CreateDeliveryEvent(items, tile);
-        }
-
-        public void DoTransferMenu(Caravan caravan)
-        {
-            if (caravan is null) return;
-
-            List<FloatMenuOption> list = new List<FloatMenuOption>();
-            List<Pawn> pawns = caravan.PawnsListForReading;
-            for (int i = 0; i < pawns.Count; i++)
-            {
-                Pawn captured = pawns[i];
-                if (!captured.IsPrisonerOfColony) continue;
-                list.Add(new FloatMenuOption(
-                    "FCTransferPrisonerOption".Translate(captured.Name.ToStringShort),
-                    delegate { TransferFromCaravan(captured, caravan); }));
-            }
-
-            if (list.Count == 0)
-            {
-                Messages.Message("FCNoPrisonersInCaravan".Translate(), MessageTypeDefOf.RejectInput);
-                return;
-            }
-
-            Find.WindowStack.Add(new FloatMenu(list));
-        }
-
-        public void SetWorkload(FCPrisoner p, FCWorkLoad workload)
-        {
-            if (p is null) return;
-            p.workload = workload;
-            WorldSettlement?.DirtyStatsCache();
-        }
-
-        public void SellPrisoner(FCPrisoner p)
-        {
-            if (p?.prisoner is null) return;
-            WorldSettlement?.AddOneTimeSilverIncome(p.prisoner.MarketValue);
-            RemovePrisoner(p);
-        }
-
-        public void ReturnPrisonerToPlayer(FCPrisoner p)
-        {
-            if (p?.prisoner is null) return;
-            WorldSettlementFC s = WorldSettlement;
-            if (s is null) return;
-
-            // No home colony map to deliver to (nomad/caravan phase): keep the prisoner here rather
-            // than downing them and destroying them in a delivery that can't be routed.
-            Map playerHome = Find.AnyPlayerHomeMap;
-            if (playerHome is null) return;
-
-            if (!HealthUtility.TryAnesthetize(p.prisoner))
-                HealthUtility.DamageUntilDowned(p.prisoner, false);
-
-            if (p.prisoner.guest is null)
-                p.prisoner.guest = new Pawn_GuestTracker(p.prisoner);
-            p.prisoner.guest.SetGuestStatus(Find.FactionManager.OfPlayer, GuestStatus.Prisoner);
-
-            DeliveryEvent.CreateDeliveryEvent(new FCEvent
-            {
-                location = playerHome.Tile,
-                source = s.Tile,
-                goods = new List<Thing> { p.prisoner },
-                customDescription = "FCAPrisonerIsBeingDeliveredToYou".Translate(),
-                timeTillTrigger = Find.TickManager.TicksGame + TravelUtil.ReturnTicksToArrive(s.Tile, playerHome.Tile)
-            });
-
-            RemovePrisoner(p);
-        }
-
-        public void DoActionsMenu(FCPrisoner p, Action onRemoved)
-        {
-            if (p is null) return;
-            List<FloatMenuOption> list = new List<FloatMenuOption>();
-
-            if (FindFC.FactionComp.IsActionAllowed(FCActionType.SellPrisoner))
-            {
-                list.Add(new FloatMenuOption(
-                    "FCSellPawn".Translate() + " $" + p.prisoner.MarketValue + " " + "FCSellPawnInfo".Translate(),
-                    delegate
-                    {
-                        SellPrisoner(p);
-                        onRemoved?.Invoke();
-                    }));
-            }
-
-            list.Add(new FloatMenuOption("FCReturnToPlayer".Translate(), delegate
-            {
-                ReturnPrisonerToPlayer(p);
-                onRemoved?.Invoke();
-            }));
-
-            Find.WindowStack.Add(new FloatMenu(list));
-        }
-
-        public void OpenWorkloadFloatMenu(FCPrisoner p)
-        {
-            if (p is null) return;
-            Find.WindowStack.Add(new FloatMenu(
-                FCWorkLoadInfo.BuildSelectionMenu(delegate (FCWorkLoad w) { SetWorkload(p, w); })));
-        }
-
-        /* Sets this settlement's default-workload override for newly captured prisoners.
-         * The "Use faction default" option clears the override so the settlement inherits
-         * FactionFC.defaultPrisonerWorkload again. */
-        public void OpenDefaultWorkloadFloatMenu()
-        {
-            List<FloatMenuOption> list = FCWorkLoadInfo.BuildSelectionMenu(SetDefaultWorkloadOverride);
-            if (hasDefaultWorkloadOverride)
-            {
-                list.Add(new FloatMenuOption("FCUseFactionDefault".Translate(),
-                    delegate { ClearDefaultWorkloadOverride(); }));
-            }
-            Find.WindowStack.Add(new FloatMenu(list));
-        }
-
-        /* Bulk-applies the chosen workload to every prisoner in this settlement.
-         * Routes each assignment through SetWorkload so DirtyStatsCache fires correctly. */
-        public void OpenBulkSetWorkloadFloatMenu()
-        {
-            Find.WindowStack.Add(new FloatMenu(FCWorkLoadInfo.BuildSelectionMenu(BulkSetWorkload)));
-        }
-
-        public void BulkSetWorkload(FCWorkLoad w)
-        {
-            if (prisonerList is null) return;
-            for (int i = 0; i < prisonerList.Count; i++) SetWorkload(prisonerList[i], w);
-        }
-
-        /* Downed prisoners can't perform any work, so they're excluded from worker contributions. */
-        public int ReturnMaxWorkersFromPrisoners()
-        {
-            int num = 0;
-            foreach (FCPrisoner p in prisonerList)
-            {
-                if (p?.prisoner is null || p.prisoner.Downed) continue;
-                num += FCWorkLoadInfo.WorkerSlots(p.workload);
-            }
-            return num;
-        }
-
-        public int ReturnOverMaxWorkersFromPrisoners()
-        {
-            int num = 0;
-            foreach (FCPrisoner p in prisonerList)
-            {
-                if (p?.prisoner is null || p.prisoner.Downed) continue;
-                num += FCWorkLoadInfo.OverMaxSlots(p.workload);
-            }
-            return num;
-        }
-
-        /* -*-*-*- Pawn arrival via transport pod (WorldObjectComp_SettlementPawnArrival) -*-*-*- */
-
-        /* Gate on the same SendPrisoner permission as the caravan-transfer gizmo so the pod path
-           and the caravan path stay consistent. (The battle/raid block is enforced centrally in
-           TransportersArrivalAction_AddToSettlementFC.) */
-        public override FloatMenuAcceptanceReport CanReceive
-            => FindFC.FactionComp?.IsActionAllowed(FCActionType.SendPrisoner) ?? false;
-
-        public override bool AcceptsPawn(Pawn pawn) => pawn is object && pawn.IsPrisonerOfColony;
-
-        public override string ArrivalMenuLabel => "FCAddPrisonersToSettlement".Translate(parent.Label);
-
-        public override string ArrivalMessage(List<Pawn> pawns)
-            => "FCPawnsAddedToSettlement".Translate(pawns.Count, parent.Label);
-
-        public override void ReceivePawns(List<Pawn> pawns)
-        {
-            if (pawns is null) return;
-            for (int i = 0; i < pawns.Count; i++) AddPrisoner(pawns[i]);
-        }
-
-        public override IEnumerable<Gizmo> GetCaravanGizmos(Caravan caravan)
-        {
-            foreach (Gizmo gizmo in base.GetCaravanGizmos(caravan))
-            {
-                yield return gizmo;
-            }
-
-            if (WorldSettlement is null) yield break;
-            if (caravan is null || caravan.Tile != parent.Tile) yield break;
-            if (FindFC.FactionComp is null) yield break;
-            if (!FindFC.FactionComp.IsActionAllowed(FCActionType.SendPrisoner)) yield break;
-            if (!PrisonerUtil.HasPrisonersOfColony(caravan)) yield break;
-
-            yield return BuildTransferGizmo(caravan);
-        }
-
-        public override IEnumerable<Gizmo> GetGizmos()
-        {
-            foreach (Gizmo gizmo in base.GetGizmos())
-            {
-                yield return gizmo;
-            }
-
-            if (WorldSettlement is null) yield break;
-            if (FindFC.FactionComp is null) yield break;
-            if (!FindFC.FactionComp.IsActionAllowed(FCActionType.SendPrisoner)) yield break;
-
-            Caravan caravan = Find.WorldObjects.PlayerControlledCaravanAt(parent.Tile);
-            if (caravan is null) yield break;
-            if (!PrisonerUtil.HasPrisonersOfColony(caravan)) yield break;
-
-            yield return BuildTransferGizmo(caravan);
-        }
-
-        private Command_Action BuildTransferGizmo(Caravan caravan)
-        {
-            return new Command_Action
-            {
-                defaultLabel = "FCTransferPrisonerToSettlement".Translate(),
-                defaultDesc = "FCTransferPrisonerGizmoDesc".Translate(),
-                icon = TexLoad.iconMilitary,
-                action = delegate
-                {
-                    DoTransferMenu(caravan);
-                }
-            };
-        }
+        };
     }
 }

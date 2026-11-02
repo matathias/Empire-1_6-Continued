@@ -1,8 +1,7 @@
-namespace FactionColonies
+namespace FactionColonies;
+
+public class FCPolicyBehaviorExt_Expansionist : FCPolicyBehaviorExtension
 {
-    public class FCPolicyBehaviorExt_Expansionist : FCPolicyBehaviorExtension
-    {
-        public int autoUpgradeToLevel = 2;
-        public float startingProsperity = 50f;
-    }
+    public int autoUpgradeToLevel = 2;
+    public float startingProsperity = 50f;
 }

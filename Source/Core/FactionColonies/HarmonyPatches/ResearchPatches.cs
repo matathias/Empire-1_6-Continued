@@ -2,26 +2,25 @@
 using RimWorld;
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+[HarmonyPatch(typeof(ResearchManager), "FinishProject")]
+class ResearchCompleted
 {
-    [HarmonyPatch(typeof(ResearchManager), "FinishProject")]
-    class ResearchCompleted
+    static void Postfix(ResearchProjectDef proj, bool doCompletionDialog = false, Pawn researcher = null)
     {
-        static void Postfix(ResearchProjectDef proj, bool doCompletionDialog = false, Pawn researcher = null)
+        FactionFC fc = FindFC.FactionComp;
+        if (fc is object)
         {
-            FactionFC fc = FindFC.FactionComp;
-            if (fc is object)
+            fc.DirtyTechLevelCache();
+            fc.roadBuilder.CheckForTechChanges();
+
+            foreach (WorldSettlementFC settlement in fc.settlements)
             {
-                fc.DirtyTechLevelCache();
-                fc.roadBuilder.CheckForTechChanges();
-
-                foreach (WorldSettlementFC settlement in fc.settlements)
-                {
-                    settlement.PrepareResources(fc.techLevel);
-                }
+                settlement.PrepareResources(fc.techLevel);
             }
-
-            LifecycleRegistry.InvokeOnResearchCompleted(proj);
         }
+
+        LifecycleRegistry.InvokeOnResearchCompleted(proj);
     }
 }

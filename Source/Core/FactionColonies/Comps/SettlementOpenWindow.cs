@@ -4,54 +4,53 @@ using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+public class WorldObjectCompProperties_SettlementOpenWindow : WorldObjectCompProperties
 {
-    public class WorldObjectCompProperties_SettlementOpenWindow : WorldObjectCompProperties
+    public WorldObjectCompProperties_SettlementOpenWindow()
     {
-        public WorldObjectCompProperties_SettlementOpenWindow()
+        compClass = typeof(WorldObjectComp_SettlementOpenWindow);
+    }
+    public override IEnumerable<string> ConfigErrors(WorldObjectDef parentDef)
+    {
+        foreach (string item in base.ConfigErrors(parentDef))
         {
-            compClass = typeof(WorldObjectComp_SettlementOpenWindow);
+            yield return item;
         }
-        public override IEnumerable<string> ConfigErrors(WorldObjectDef parentDef)
+        if (!typeof(MapParent).IsAssignableFrom(parentDef.worldObjectClass))
         {
-            foreach (string item in base.ConfigErrors(parentDef))
-            {
-                yield return item;
-            }
-            if (!typeof(MapParent).IsAssignableFrom(parentDef.worldObjectClass))
-            {
-                yield return parentDef.defName + " has WorldObjectCompProperties_SettlementOpenWindow but it's not MapParent.";
-            }
+            yield return parentDef.defName + " has WorldObjectCompProperties_SettlementOpenWindow but it's not MapParent.";
         }
     }
+}
 
-    public class WorldObjectComp_SettlementOpenWindow : WorldObjectComp
+public class WorldObjectComp_SettlementOpenWindow : WorldObjectComp
+{
+    public override IEnumerable<Gizmo> GetGizmos()
     {
-        public override IEnumerable<Gizmo> GetGizmos()
+        foreach (Gizmo gizmo in base.GetGizmos())
         {
-            foreach (Gizmo gizmo in base.GetGizmos())
-            {
-                yield return gizmo;
-            }
-            if (parent is WorldSettlementFC worldsettlement)
-            {
-                yield return OpenSettlementWindowAction(worldsettlement);
-            }
+            yield return gizmo;
         }
-        private Command OpenSettlementWindowAction(WorldSettlementFC worldsettlement)
+        if (parent is WorldSettlementFC worldsettlement)
         {
-            Command_Action openWindow = new Command_Action
+            yield return OpenSettlementWindowAction(worldsettlement);
+        }
+    }
+    private Command OpenSettlementWindowAction(WorldSettlementFC worldsettlement)
+    {
+        Command_Action openWindow = new Command_Action
+        {
+            defaultLabel = "FCOpenSettlementWindowDefaultLabel".Translate(),
+            defaultDesc = "FCOpenSettlementWindowDefaultDesc".Translate(),
+            icon = ContentFinder<Texture2D>.Get("UI/Icons/QuestionMark"),
+            action = delegate
             {
-                defaultLabel = "FCOpenSettlementWindowDefaultLabel".Translate(),
-                defaultDesc = "FCOpenSettlementWindowDefaultDesc".Translate(),
-                icon = ContentFinder<Texture2D>.Get("UI/Icons/QuestionMark"),
-                action = delegate
-                {
-                    Find.WindowStack.Add(new SettlementWindowFc(worldsettlement));
-                }
-            };
+                Find.WindowStack.Add(new SettlementWindowFc(worldsettlement));
+            }
+        };
 
-            return openWindow;
-        }
+        return openWindow;
     }
 }

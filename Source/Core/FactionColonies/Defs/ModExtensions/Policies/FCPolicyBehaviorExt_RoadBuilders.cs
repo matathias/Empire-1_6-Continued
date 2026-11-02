@@ -1,9 +1,8 @@
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+public class FCPolicyBehaviorExt_RoadBuilders : FCPolicyBehaviorExtension
 {
-    public class FCPolicyBehaviorExt_RoadBuilders : FCPolicyBehaviorExtension
-    {
-        public ResearchProjectDef autoUnlockResearch;
-    }
+    public ResearchProjectDef autoUnlockResearch;
 }

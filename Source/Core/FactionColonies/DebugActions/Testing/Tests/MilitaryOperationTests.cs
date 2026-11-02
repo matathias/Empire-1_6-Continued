@@ -3,279 +3,278 @@ using FactionColonies.util;
 using RimWorld.Planet;
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+/* Tests for MilitaryOperation phase-machine guards and BuildBattleContext. Constructed
+   as standalone ops (no manager registration, no game state mutation). */
+public static class MilitaryOperationTests
 {
-    /* Tests for MilitaryOperation phase-machine guards and BuildBattleContext. Constructed
-       as standalone ops (no manager registration, no game state mutation). */
-    public static class MilitaryOperationTests
+    private static MilitaryOperation Make(MilitaryOperationPhase phase = MilitaryOperationPhase.Scheduled)
     {
-        private static MilitaryOperation Make(MilitaryOperationPhase phase = MilitaryOperationPhase.Scheduled)
-        {
-            var op = new MilitaryOperation(-1, null, PlanetTile.Invalid, null);
-            op.phase = phase;
-            return op;
-        }
+        var op = new MilitaryOperation(-1, null, PlanetTile.Invalid, null);
+        op.phase = phase;
+        return op;
+    }
 
-        // -*- CompleteBattle re-entry guard -*-
+    // -*- CompleteBattle re-entry guard -*-
 
-        [EmpireTest("Military")]
-        public static void CompleteBattle_NotEngagedPhase_Ignored()
+    [EmpireTest("Military")]
+    public static void CompleteBattle_NotEngagedPhase_Ignored()
+    {
+        // Re-entry guard in CompleteBattle: only Engaged ops accept it.
+        var op = Make(MilitaryOperationPhase.Scheduled);
+        TestAssert.DoesNotThrow(() => op.CompleteBattle(new BattleResult { winner = BattleWinner.Attacker }));
+        TestAssert.IsNull(op.result, "Result should not be assigned on out-of-phase CompleteBattle");
+        TestAssert.AreEqual((object)MilitaryOperationPhase.Scheduled, (object)op.phase,
+            "Phase should remain Scheduled");
+    }
+
+    [EmpireTest("Military")]
+    public static void CompleteBattle_ResolvedPhase_Ignored()
+    {
+        var op = Make(MilitaryOperationPhase.Resolved);
+        int phaseStartTickBefore = op.phaseStartedTick;
+        TestAssert.DoesNotThrow(() => op.CompleteBattle(new BattleResult { winner = BattleWinner.Attacker }));
+        TestAssert.IsNull(op.result);
+        TestAssert.AreEqual((object)MilitaryOperationPhase.Resolved, (object)op.phase);
+    }
+
+    // -*- EnterCooldown re-entry guard -*-
+
+    [EmpireTest("Military")]
+    public static void EnterCooldown_AlreadyCooldownPending_Ignored()
+    {
+        // Re-entry guard in EnterCooldown — early-return on CooldownPending/Resolved.
+        var op = Make(MilitaryOperationPhase.CooldownPending);
+        int phaseStartBefore = op.phaseStartedTick;
+        TestAssert.DoesNotThrow(() => op.EnterCooldown());
+        TestAssert.AreEqual((object)MilitaryOperationPhase.CooldownPending, (object)op.phase);
+        TestAssert.AreEqual(phaseStartBefore, op.phaseStartedTick,
+            "phaseStartedTick should not be re-stamped on re-entry");
+    }
+
+    [EmpireTest("Military")]
+    public static void EnterCooldown_Resolved_Ignored()
+    {
+        var op = Make(MilitaryOperationPhase.Resolved);
+        int phaseStartBefore = op.phaseStartedTick;
+        TestAssert.DoesNotThrow(() => op.EnterCooldown());
+        TestAssert.AreEqual((object)MilitaryOperationPhase.Resolved, (object)op.phase);
+        TestAssert.AreEqual(phaseStartBefore, op.phaseStartedTick);
+    }
+
+    // -*- Resolve idempotency -*-
+
+    [EmpireTest("Military")]
+    public static void Resolve_AlreadyResolved_NoOp()
+    {
+        // Idempotency guard in Resolve — already-Resolved is a no-op.
+        var op = Make(MilitaryOperationPhase.Resolved);
+        int phaseStartBefore = op.phaseStartedTick;
+        TestAssert.DoesNotThrow(() => op.Resolve());
+        TestAssert.AreEqual((object)MilitaryOperationPhase.Resolved, (object)op.phase);
+        TestAssert.AreEqual(phaseStartBefore, op.phaseStartedTick,
+            "phaseStartedTick should not change on idempotent Resolve");
+    }
+
+    // -*- Resolve releases a pledged external auto-defender (IAutoDefender contract) -*-
+
+    [EmpireTest("Military")]
+    public static void Resolve_PreBattleWithExternalDefender_FiresReplaced()
+    {
+        // Pre-battle teardown (e.g. the target settlement is removed during the warning window):
+        // the pledged external defender must be released via OnDefenseReplaced, not left stuck.
+        var stub = new StubAutoDefender { worldObject = new WorldObject() };
+        AutoDefenderRegistry.Register(stub);
+        try
         {
-            // Re-entry guard in CompleteBattle: only Engaged ops accept it.
             var op = Make(MilitaryOperationPhase.Scheduled);
-            TestAssert.DoesNotThrow(() => op.CompleteBattle(new BattleResult { winner = BattleWinner.Attacker }));
-            TestAssert.IsNull(op.result, "Result should not be assigned on out-of-phase CompleteBattle");
-            TestAssert.AreEqual((object)MilitaryOperationPhase.Scheduled, (object)op.phase,
-                "Phase should remain Scheduled");
+            op.externalDefenderSource = stub.worldObject;
+
+            op.Resolve();
+
+            TestAssert.IsTrue(stub.replacedCalled,
+                "OnDefenseReplaced should fire when a pledged op is torn down pre-battle");
+            TestAssert.IsFalse(stub.completeCalled,
+                "OnDefenseComplete must not fire on a battle-less teardown");
+            TestAssert.IsNull(op.externalDefenderSource,
+                "externalDefenderSource should be cleared after release");
         }
-
-        [EmpireTest("Military")]
-        public static void CompleteBattle_ResolvedPhase_Ignored()
+        finally
         {
-            var op = Make(MilitaryOperationPhase.Resolved);
-            int phaseStartTickBefore = op.phaseStartedTick;
-            TestAssert.DoesNotThrow(() => op.CompleteBattle(new BattleResult { winner = BattleWinner.Attacker }));
-            TestAssert.IsNull(op.result);
-            TestAssert.AreEqual((object)MilitaryOperationPhase.Resolved, (object)op.phase);
+            AutoDefenderRegistry.Unregister(stub);
         }
+    }
 
-        // -*- EnterCooldown re-entry guard -*-
-
-        [EmpireTest("Military")]
-        public static void EnterCooldown_AlreadyCooldownPending_Ignored()
+    [EmpireTest("Military")]
+    public static void Resolve_CooldownWithExternalDefender_DoesNotFireReplaced()
+    {
+        // Post-battle teardown: CompleteBattle already fired OnDefenseComplete, so Resolve must
+        // NOT fire OnDefenseReplaced (that would be a double terminal callback).
+        var stub = new StubAutoDefender { worldObject = new WorldObject() };
+        AutoDefenderRegistry.Register(stub);
+        try
         {
-            // Re-entry guard in EnterCooldown — early-return on CooldownPending/Resolved.
             var op = Make(MilitaryOperationPhase.CooldownPending);
-            int phaseStartBefore = op.phaseStartedTick;
-            TestAssert.DoesNotThrow(() => op.EnterCooldown());
-            TestAssert.AreEqual((object)MilitaryOperationPhase.CooldownPending, (object)op.phase);
-            TestAssert.AreEqual(phaseStartBefore, op.phaseStartedTick,
-                "phaseStartedTick should not be re-stamped on re-entry");
-        }
+            op.externalDefenderSource = stub.worldObject;
 
-        [EmpireTest("Military")]
-        public static void EnterCooldown_Resolved_Ignored()
+            op.Resolve();
+
+            TestAssert.IsFalse(stub.replacedCalled,
+                "OnDefenseReplaced must not fire once the battle already completed (CooldownPending)");
+        }
+        finally
         {
-            var op = Make(MilitaryOperationPhase.Resolved);
-            int phaseStartBefore = op.phaseStartedTick;
-            TestAssert.DoesNotThrow(() => op.EnterCooldown());
-            TestAssert.AreEqual((object)MilitaryOperationPhase.Resolved, (object)op.phase);
-            TestAssert.AreEqual(phaseStartBefore, op.phaseStartedTick);
+            AutoDefenderRegistry.Unregister(stub);
         }
+    }
 
-        // -*- Resolve idempotency -*-
+    /* Minimal IAutoDefender that records which terminal callback fired and keys off a bare
+       WorldObject sentinel (AutoDefenderRegistry.FindByWorldObject matches by reference). */
+    private class StubAutoDefender : IAutoDefender
+    {
+        public WorldObject worldObject;
+        public bool replacedCalled;
+        public bool completeCalled;
 
-        [EmpireTest("Military")]
-        public static void Resolve_AlreadyResolved_NoOp()
-        {
-            // Idempotency guard in Resolve — already-Resolved is a no-op.
-            var op = Make(MilitaryOperationPhase.Resolved);
-            int phaseStartBefore = op.phaseStartedTick;
-            TestAssert.DoesNotThrow(() => op.Resolve());
-            TestAssert.AreEqual((object)MilitaryOperationPhase.Resolved, (object)op.phase);
-            TestAssert.AreEqual(phaseStartBefore, op.phaseStartedTick,
-                "phaseStartedTick should not change on idempotent Resolve");
-        }
+        public WorldObject WorldObject => worldObject;
+        public int MilitaryLevel => 0;
+        public int Range => 0;
+        public bool CanAutoDefend => false;
+        public MilitaryForce CreateDefendingForce() => null;
+        public void OnDefensePledged(WorldObject target) { }
+        public void OnDefenseStarted(WorldObject target) { }
+        public void OnDefenseComplete(bool won, BattleResult result) { completeCalled = true; }
+        public void OnDefenseReplaced() { replacedCalled = true; }
+        public List<Pawn> GetDefendingPawns() => null;
+        public void ReturnDefendingPawns(List<Pawn> pawns) { }
+    }
 
-        // -*- Resolve releases a pledged external auto-defender (IAutoDefender contract) -*-
+    // -*- BuildBattleContext -*-
 
-        [EmpireTest("Military")]
-        public static void Resolve_PreBattleWithExternalDefender_FiresReplaced()
-        {
-            // Pre-battle teardown (e.g. the target settlement is removed during the warning window):
-            // the pledged external defender must be released via OnDefenseReplaced, not left stuck.
-            var stub = new StubAutoDefender { worldObject = new WorldObject() };
-            AutoDefenderRegistry.Register(stub);
-            try
-            {
-                var op = Make(MilitaryOperationPhase.Scheduled);
-                op.externalDefenderSource = stub.worldObject;
+    [EmpireTest("Military")]
+    public static void BuildBattleContext_ReflectsParticipantsAndTarget()
+    {
+        var op = new MilitaryOperation(-1, MilitaryJobDefOf.RaidEnemySettlement, new PlanetTile(42), null);
+        op.aggressor.faction = FindFC.EmpireFaction;
 
-                op.Resolve();
+        BattleForceContext ctx = op.BuildBattleContext();
+        TestAssert.IsNotNull(ctx);
+        TestAssert.IsTrue(ReferenceEquals(MilitaryJobDefOf.RaidEnemySettlement, ctx.kind),
+            "kind should propagate");
+        TestAssert.IsTrue(ctx.targetTile.tileId == 42, "targetTile should propagate");
+        TestAssert.IsTrue(ReferenceEquals(op.aggressor, ctx.aggressor),
+            "aggressor participant should propagate by reference");
+        TestAssert.IsTrue(ReferenceEquals(op.defender, ctx.defender),
+            "defender participant should propagate by reference");
+    }
 
-                TestAssert.IsTrue(stub.replacedCalled,
-                    "OnDefenseReplaced should fire when a pledged op is torn down pre-battle");
-                TestAssert.IsFalse(stub.completeCalled,
-                    "OnDefenseComplete must not fire on a battle-less teardown");
-                TestAssert.IsNull(op.externalDefenderSource,
-                    "externalDefenderSource should be cleared after release");
-            }
-            finally
-            {
-                AutoDefenderRegistry.Unregister(stub);
-            }
-        }
+    // -*- IsDefensive / IsOffensive -*-
 
-        [EmpireTest("Military")]
-        public static void Resolve_CooldownWithExternalDefender_DoesNotFireReplaced()
-        {
-            // Post-battle teardown: CompleteBattle already fired OnDefenseComplete, so Resolve must
-            // NOT fire OnDefenseReplaced (that would be a double terminal callback).
-            var stub = new StubAutoDefender { worldObject = new WorldObject() };
-            AutoDefenderRegistry.Register(stub);
-            try
-            {
-                var op = Make(MilitaryOperationPhase.CooldownPending);
-                op.externalDefenderSource = stub.worldObject;
+    [EmpireTest("Military")]
+    public static void IsDefensive_NoFaction_False()
+    {
+        var op = Make();
+        TestAssert.IsFalse(op.IsDefensive);
+        TestAssert.IsFalse(op.IsOffensive);
+    }
 
-                op.Resolve();
+    [EmpireTest("Military")]
+    public static void IsDefensive_PlayerFactionAsDefender_True()
+    {
+        if (FindFC.EmpireFaction is null)
+            TestAssert.Skip("No player colony faction");
 
-                TestAssert.IsFalse(stub.replacedCalled,
-                    "OnDefenseReplaced must not fire once the battle already completed (CooldownPending)");
-            }
-            finally
-            {
-                AutoDefenderRegistry.Unregister(stub);
-            }
-        }
+        var op = Make();
+        op.defender.faction = FindFC.EmpireFaction;
+        TestAssert.IsTrue(op.IsDefensive);
+        TestAssert.IsFalse(op.IsOffensive);
+    }
 
-        /* Minimal IAutoDefender that records which terminal callback fired and keys off a bare
-           WorldObject sentinel (AutoDefenderRegistry.FindByWorldObject matches by reference). */
-        private class StubAutoDefender : IAutoDefender
-        {
-            public WorldObject worldObject;
-            public bool replacedCalled;
-            public bool completeCalled;
+    [EmpireTest("Military")]
+    public static void IsOffensive_PlayerFactionAsAggressor_True()
+    {
+        if (FindFC.EmpireFaction is null)
+            TestAssert.Skip("No player colony faction");
 
-            public WorldObject WorldObject => worldObject;
-            public int MilitaryLevel => 0;
-            public int Range => 0;
-            public bool CanAutoDefend => false;
-            public MilitaryForce CreateDefendingForce() => null;
-            public void OnDefensePledged(WorldObject target) { }
-            public void OnDefenseStarted(WorldObject target) { }
-            public void OnDefenseComplete(bool won, BattleResult result) { completeCalled = true; }
-            public void OnDefenseReplaced() { replacedCalled = true; }
-            public List<Pawn> GetDefendingPawns() => null;
-            public void ReturnDefendingPawns(List<Pawn> pawns) { }
-        }
+        var op = Make();
+        op.aggressor.faction = FindFC.EmpireFaction;
+        TestAssert.IsTrue(op.IsOffensive);
+        TestAssert.IsFalse(op.IsDefensive);
+    }
 
-        // -*- BuildBattleContext -*-
+    // -*- HasMapPresence -*-
 
-        [EmpireTest("Military")]
-        public static void BuildBattleContext_ReflectsParticipantsAndTarget()
-        {
-            var op = new MilitaryOperation(-1, MilitaryJobDefOf.RaidEnemySettlement, new PlanetTile(42), null);
-            op.aggressor.faction = FindFC.EmpireFaction;
+    [EmpireTest("Military")]
+    public static void HasMapPresence_InvalidBattlefieldRef_False()
+    {
+        var op = Make();
+        TestAssert.IsFalse(op.HasMapPresence);
+    }
 
-            BattleForceContext ctx = op.BuildBattleContext();
-            TestAssert.IsNotNull(ctx);
-            TestAssert.IsTrue(ReferenceEquals(MilitaryJobDefOf.RaidEnemySettlement, ctx.kind),
-                "kind should propagate");
-            TestAssert.IsTrue(ctx.targetTile.tileId == 42, "targetTile should propagate");
-            TestAssert.IsTrue(ReferenceEquals(op.aggressor, ctx.aggressor),
-                "aggressor participant should propagate by reference");
-            TestAssert.IsTrue(ReferenceEquals(op.defender, ctx.defender),
-                "defender participant should propagate by reference");
-        }
+    [EmpireTest("Military")]
+    public static void HasMapPresence_ValidBattlefieldRef_True()
+    {
+        var op = Make();
+        op.battlefieldRef = new PlanetTile(5);
+        TestAssert.IsTrue(op.HasMapPresence);
+    }
 
-        // -*- IsDefensive / IsOffensive -*-
+    // -*- GetUniqueLoadID -*-
 
-        [EmpireTest("Military")]
-        public static void IsDefensive_NoFaction_False()
-        {
-            var op = Make();
-            TestAssert.IsFalse(op.IsDefensive);
-            TestAssert.IsFalse(op.IsOffensive);
-        }
+    [EmpireTest("Military")]
+    public static void GetUniqueLoadID_IncludesId()
+    {
+        var op = new MilitaryOperation(123, null, PlanetTile.Invalid, null);
+        string id = op.GetUniqueLoadID();
+        TestAssert.AreEqual((object)"MilitaryOperation_123", (object)id);
+    }
 
-        [EmpireTest("Military")]
-        public static void IsDefensive_PlayerFactionAsDefender_True()
-        {
-            if (FindFC.EmpireFaction is null)
-                TestAssert.Skip("No player colony faction");
+    // -*- HasPendingWakeup (stalled-op detection used by the orphan reconciliation) -*-
 
-            var op = Make();
-            op.defender.faction = FindFC.EmpireFaction;
-            TestAssert.IsTrue(op.IsDefensive);
-            TestAssert.IsFalse(op.IsOffensive);
-        }
+    [EmpireTest("Military")]
+    public static void HasPendingWakeup_NoSourceEvents_False()
+    {
+        // A registered op with no wake-up event is stalled — its phase machine will never
+        // advance on its own. This is the state the reconciliation must resolve.
+        var op = Make(MilitaryOperationPhase.Engaged);
+        TestAssert.IsFalse(op.HasPendingWakeup);
+    }
 
-        [EmpireTest("Military")]
-        public static void IsOffensive_PlayerFactionAsAggressor_True()
-        {
-            if (FindFC.EmpireFaction is null)
-                TestAssert.Skip("No player colony faction");
+    [EmpireTest("Military")]
+    public static void HasPendingWakeup_QueuedEvent_True()
+    {
+        // A live auto-resolve battle always holds a Queued autoResolveBattleRound event; it
+        // must NOT be treated as orphaned.
+        var op = Make(MilitaryOperationPhase.Engaged);
+        op.sourceEvents.Add(new FCEvent()); // phase defaults to Queued
+        TestAssert.IsTrue(op.HasPendingWakeup);
+    }
 
-            var op = Make();
-            op.aggressor.faction = FindFC.EmpireFaction;
-            TestAssert.IsTrue(op.IsOffensive);
-            TestAssert.IsFalse(op.IsDefensive);
-        }
+    [EmpireTest("Military")]
+    public static void HasPendingWakeup_OnlyNonQueuedEvents_False()
+    {
+        // A fired-but-not-yet-swept event is not a pending wake-up: the chain is broken.
+        var op = Make(MilitaryOperationPhase.Engaged);
+        op.sourceEvents.Add(new FCEvent { phase = FCEventPhase.Fired });
+        op.sourceEvents.Add(new FCEvent { phase = FCEventPhase.Completed });
+        TestAssert.IsFalse(op.HasPendingWakeup);
+    }
 
-        // -*- HasMapPresence -*-
+    [EmpireTest("Military")]
+    public static void HasPendingWakeup_MixedEvents_TrueIfAnyQueued()
+    {
+        var op = Make(MilitaryOperationPhase.Engaged);
+        op.sourceEvents.Add(new FCEvent { phase = FCEventPhase.Completed });
+        op.sourceEvents.Add(new FCEvent()); // Queued
+        TestAssert.IsTrue(op.HasPendingWakeup);
+    }
 
-        [EmpireTest("Military")]
-        public static void HasMapPresence_InvalidBattlefieldRef_False()
-        {
-            var op = Make();
-            TestAssert.IsFalse(op.HasMapPresence);
-        }
-
-        [EmpireTest("Military")]
-        public static void HasMapPresence_ValidBattlefieldRef_True()
-        {
-            var op = Make();
-            op.battlefieldRef = new PlanetTile(5);
-            TestAssert.IsTrue(op.HasMapPresence);
-        }
-
-        // -*- GetUniqueLoadID -*-
-
-        [EmpireTest("Military")]
-        public static void GetUniqueLoadID_IncludesId()
-        {
-            var op = new MilitaryOperation(123, null, PlanetTile.Invalid, null);
-            string id = op.GetUniqueLoadID();
-            TestAssert.AreEqual((object)"MilitaryOperation_123", (object)id);
-        }
-
-        // -*- HasPendingWakeup (stalled-op detection used by the orphan reconciliation) -*-
-
-        [EmpireTest("Military")]
-        public static void HasPendingWakeup_NoSourceEvents_False()
-        {
-            // A registered op with no wake-up event is stalled — its phase machine will never
-            // advance on its own. This is the state the reconciliation must resolve.
-            var op = Make(MilitaryOperationPhase.Engaged);
-            TestAssert.IsFalse(op.HasPendingWakeup);
-        }
-
-        [EmpireTest("Military")]
-        public static void HasPendingWakeup_QueuedEvent_True()
-        {
-            // A live auto-resolve battle always holds a Queued autoResolveBattleRound event; it
-            // must NOT be treated as orphaned.
-            var op = Make(MilitaryOperationPhase.Engaged);
-            op.sourceEvents.Add(new FCEvent()); // phase defaults to Queued
-            TestAssert.IsTrue(op.HasPendingWakeup);
-        }
-
-        [EmpireTest("Military")]
-        public static void HasPendingWakeup_OnlyNonQueuedEvents_False()
-        {
-            // A fired-but-not-yet-swept event is not a pending wake-up: the chain is broken.
-            var op = Make(MilitaryOperationPhase.Engaged);
-            op.sourceEvents.Add(new FCEvent { phase = FCEventPhase.Fired });
-            op.sourceEvents.Add(new FCEvent { phase = FCEventPhase.Completed });
-            TestAssert.IsFalse(op.HasPendingWakeup);
-        }
-
-        [EmpireTest("Military")]
-        public static void HasPendingWakeup_MixedEvents_TrueIfAnyQueued()
-        {
-            var op = Make(MilitaryOperationPhase.Engaged);
-            op.sourceEvents.Add(new FCEvent { phase = FCEventPhase.Completed });
-            op.sourceEvents.Add(new FCEvent()); // Queued
-            TestAssert.IsTrue(op.HasPendingWakeup);
-        }
-
-        [EmpireTest("Military")]
-        public static void HasPendingWakeup_NullEntry_Ignored()
-        {
-            var op = Make(MilitaryOperationPhase.Engaged);
-            op.sourceEvents.Add(null);
-            TestAssert.IsFalse(op.HasPendingWakeup);
-        }
+    [EmpireTest("Military")]
+    public static void HasPendingWakeup_NullEntry_Ignored()
+    {
+        var op = Make(MilitaryOperationPhase.Engaged);
+        op.sourceEvents.Add(null);
+        TestAssert.IsFalse(op.HasPendingWakeup);
     }
 }

@@ -3,38 +3,37 @@ using RimWorld;
 using Verse;
 using FactionColonies.util;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+/// <summary>
+/// Charges each active situation's approach upkeep once per day, from the
+/// <see cref="PostDailyAccrual"/> callback that fires after the faction's daily accrual loop
+/// completes. The draw is empire-wide — <c>TryPaySilver</c>'s settlement arg only feeds payment
+/// modifiers; the silver comes diretly from the player's coffers. If an approach's upkeep cannot
+/// be paid, the situation auto-reverts to its default approach and the player is notified.
+/// </summary>
+public class SituationUpkeepDailyCharger : IDailyAccrualParticipant
 {
-    /// <summary>
-    /// Charges each active situation's approach upkeep once per day, from the
-    /// <see cref="PostDailyAccrual"/> callback that fires after the faction's daily accrual loop
-    /// completes. The draw is empire-wide — <c>TryPaySilver</c>'s settlement arg only feeds payment
-    /// modifiers; the silver comes diretly from the player's coffers. If an approach's upkeep cannot
-    /// be paid, the situation auto-reverts to its default approach and the player is notified.
-    /// </summary>
-    public class SituationUpkeepDailyCharger : IDailyAccrualParticipant
+    private const string UpkeepReason = "SituationUpkeep";
+
+    public void PostDailyAccrual(FactionFC faction)
     {
-        private const string UpkeepReason = "SituationUpkeep";
+        FCSituationManager manager = faction?.situationManager;
+        if (manager == null) return;
 
-        public void PostDailyAccrual(FactionFC faction)
+        // Snapshot — an auto-revert switches approach but does not mutate the list.
+        foreach (FCSituation sit in new List<FCSituation>(manager.Situations))
         {
-            FCSituationManager manager = faction?.situationManager;
-            if (manager == null) return;
+            FCSituationApproachDef approach = sit.activeApproach;
+            if (approach == null || approach.upkeepSilver <= 0) continue;
 
-            // Snapshot — an auto-revert switches approach but does not mutate the list.
-            foreach (FCSituation sit in new List<FCSituation>(manager.Situations))
+            bool paid = PaymentUtil.TryPaySilver(approach.upkeepSilver, UpkeepReason, sit.targetSettlement);
+            if (!paid && sit.def.defaultApproach != null && approach != sit.def.defaultApproach)
             {
-                FCSituationApproachDef approach = sit.activeApproach;
-                if (approach == null || approach.upkeepSilver <= 0) continue;
-
-                bool paid = PaymentUtil.TryPaySilver(approach.upkeepSilver, UpkeepReason, sit.targetSettlement);
-                if (!paid && sit.def.defaultApproach != null && approach != sit.def.defaultApproach)
-                {
-                    manager.SwitchApproach(sit, sit.def.defaultApproach);
-                    Messages.Message(
-                        "FCSituationUpkeepUnpaid".Translate(sit.def.LabelCap, sit.def.defaultApproach.LabelCap),
-                        MessageTypeDefOf.NegativeEvent);
-                }
+                manager.SwitchApproach(sit, sit.def.defaultApproach);
+                Messages.Message(
+                    "FCSituationUpkeepUnpaid".Translate(sit.def.LabelCap, sit.def.defaultApproach.LabelCap),
+                    MessageTypeDefOf.NegativeEvent);
             }
         }
     }

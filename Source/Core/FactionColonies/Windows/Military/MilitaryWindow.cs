@@ -3,38 +3,37 @@ using System;
 using UnityEngine;
 using Verse;
 
-namespace FactionColonies
+namespace FactionColonies;
+
+public abstract class MilitaryWindow
 {
-    public abstract class MilitaryWindow
+    public string selectedText;
+    public float scroll;
+
+    public abstract MilitaryWindowSlot Slot { get; }
+
+    public abstract void DrawTab(Rect rect);
+
+    public virtual void Select(IExposable selecting)
     {
-        public string selectedText;
-        public float scroll;
+        throw new ApplicationException("Trying to select " + selecting + " on window " + this);
+    }
 
-        public abstract MilitaryWindowSlot Slot { get; }
-
-        public abstract void DrawTab(Rect rect);
-
-        public virtual void Select(IExposable selecting)
+    public void ScrollWindow(float num, float maxScroll)
+    {
+        if (scroll - num * 5 < -1 * maxScroll)
         {
-            throw new ApplicationException("Trying to select " + selecting + " on window " + this);
+            scroll = -1f * maxScroll;
+        }
+        else if (scroll - num * 5 > 0)
+        {
+            scroll = 0;
+        }
+        else
+        {
+            scroll -= (int)Event.current.delta.y * 5;
         }
 
-        public void ScrollWindow(float num, float maxScroll)
-        {
-            if (scroll - num * 5 < -1 * maxScroll)
-            {
-                scroll = -1f * maxScroll;
-            }
-            else if (scroll - num * 5 > 0)
-            {
-                scroll = 0;
-            }
-            else
-            {
-                scroll -= (int)Event.current.delta.y * 5;
-            }
-
-            Event.current.Use();
-        }
+        Event.current.Use();
     }
 }
