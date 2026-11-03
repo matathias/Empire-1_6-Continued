@@ -95,6 +95,9 @@ public static class ScrollUtil
             // Grabbing the thumb keeps the grab point; clicking the bare track centers the thumb on the cursor
             dragGrabOffset = thumb.Contains(evt.mousePosition) ? evt.mousePosition.y - thumb.y : thumbHeight * 0.5f;
             dragId = id;
+            // Consumed so the window's GUI.DragWindow (run after its contents) doesn't also start a window drag
+            evt.Use();
+            return;
         }
         else if (dragId != id)
         {
@@ -106,14 +109,18 @@ public static class ScrollUtil
             if (evt.type == EventType.MouseUp) evt.Use();
             return;
         }
-        else if (evt.type != EventType.MouseDrag)
+        /* The engine routes mouse events only to the window under the cursor, so a drag that
+         * leaves the window stops receiving MouseDrag (and MouseUp). Repaint still reaches every
+         * window each frame with a live mousePosition, so the drag follows the cursor from there,
+         * and the Input.GetMouseButton check above ends it once the button is released. */
+        else if (evt.type != EventType.MouseDrag && evt.type != EventType.Repaint)
         {
             return;
         }
 
         float fraction = Mathf.Clamp01((evt.mousePosition.y - dragGrabOffset - track.y) / travel);
         scrollPosition.y = fraction * (contentHeight - outRect.height);
-        evt.Use();
+        if (evt.type == EventType.MouseDrag) evt.Use();
     }
 
     private static void DrawScrollbar(ScrollState state)
