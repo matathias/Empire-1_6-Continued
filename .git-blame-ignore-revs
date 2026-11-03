@@ -10,3 +10,6 @@ d4ffde07ddeebaa54f08d6820a2c4263651b90f6
 
 # Null checks -> is null / is not null
 c04547fedf4698110ff5674bda45e9442f78bbbd
+
+# ??=, new(), collection and switch expressions
+0a203d547496da51478f7b9f2a64aa24ec1050cc

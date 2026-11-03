@@ -5,7 +5,7 @@ namespace FactionColonies.util;
 /// Used by the save-format version stamp (see <see cref="FactionFC"/>) to gate save migrations
 /// on an ordered comparison of the version that wrote a save against the active mod version.
 /// </summary>
-public struct FCVersion : IComparable<FCVersion>, IEquatable<FCVersion>
+public readonly record struct FCVersion : IComparable<FCVersion>
 {
     public readonly int major;
     public readonly int minor;
@@ -49,9 +49,6 @@ public struct FCVersion : IComparable<FCVersion>, IEquatable<FCVersion>
 
     public bool IsOlderThan(FCVersion other) => CompareTo(other) < 0;
     public bool IsNewerThan(FCVersion other) => CompareTo(other) > 0;
-    public bool Equals(FCVersion other) => CompareTo(other) == 0;
 
-    public override bool Equals(object obj) => obj is FCVersion other && Equals(other);
-    public override int GetHashCode() => major * 1000000 + minor * 1000 + patch;
     public override string ToString() => $"{major}.{minor}.{patch}";
 }

@@ -7,6 +7,9 @@ namespace FactionColonies;
 /// Delegates tile equality to <see cref="PlanetTile.Equals(PlanetTile)"/>,
 /// preserving layer-aware comparison.
 /// </summary>
+/* Deliberately not a record struct: generated record equality would compare the def through
+ * Def.Equals (defName hash + type) instead of by reference, so two distinct defs with colliding
+ * defName hashes would become the same key. */
 public struct DefTileKey : IEquatable<DefTileKey>
 {
     public readonly FCEventDef def;

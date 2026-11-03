@@ -6,22 +6,17 @@ namespace FactionColonies;
 /// edge (A, B) is identical to (B, A). Layer context is held externally on
 /// the queue (see <c>incrementalLayer</c>); this struct only carries tile IDs.
 /// </summary>
-public struct TileEdgeKey : IEquatable<TileEdgeKey>
+public readonly record struct TileEdgeKey
 {
     public readonly int lo;
     public readonly int hi;
 
+    /* Normalizes the order, so (A, B) and (B, A) produce equal keys and equal hashes. */
     public TileEdgeKey(int a, int b)
     {
         if (a < b) { lo = a; hi = b; }
         else { lo = b; hi = a; }
     }
-
-    public bool Equals(TileEdgeKey other) => lo == other.lo && hi == other.hi;
-
-    public override bool Equals(object obj) => obj is TileEdgeKey k && Equals(k);
-
-    public override int GetHashCode() => (lo * 397) ^ hi;
 
     /* Save-format bridge for FCRoadQueue.edgeCostCache. The wire format
      * remains Dictionary<long, float> so existing saves continue to load. */

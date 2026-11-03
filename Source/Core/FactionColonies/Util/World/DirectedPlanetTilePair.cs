@@ -7,7 +7,7 @@ namespace FactionColonies;
 /// tileId on different planet layers (e.g. surface vs orbital) are treated
 /// as distinct endpoints.
 /// </summary>
-public struct DirectedPlanetTilePair : IEquatable<DirectedPlanetTilePair>
+public readonly record struct DirectedPlanetTilePair
 {
     public readonly PlanetTile from;
     public readonly PlanetTile to;
@@ -17,13 +17,4 @@ public struct DirectedPlanetTilePair : IEquatable<DirectedPlanetTilePair>
         this.from = from;
         this.to = to;
     }
-
-    public bool Equals(DirectedPlanetTilePair other)
-        => from.Equals(other.from) && to.Equals(other.to);
-
-    public override bool Equals(object obj)
-        => obj is DirectedPlanetTilePair p && Equals(p);
-
-    public override int GetHashCode()
-        => (from.GetHashCode() * 397) ^ to.GetHashCode();
 }
