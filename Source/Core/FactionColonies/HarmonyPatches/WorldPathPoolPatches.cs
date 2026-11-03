@@ -18,7 +18,7 @@ namespace FactionColonies;
 [HarmonyPatch("GetEmptyWorldPath")]
 class Patch_WorldPathPool_GetEmptyWorldPath
 {
-    internal static readonly object PoolLock = new object();
+    internal static readonly object PoolLock = new();
 
     static void Prefix()
     {

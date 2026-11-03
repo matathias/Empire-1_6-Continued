@@ -25,7 +25,7 @@ public static class ResourceEventRewardDefTests
         {
             overrideTechLevel = true,
             techLevel = TechLevel.Spacer,
-            modExtensions = new List<DefModExtension> { recorder }
+            modExtensions = [recorder]
         };
 
         ThingSetMakerParams param = def.BuildParams(1000.0, out _);

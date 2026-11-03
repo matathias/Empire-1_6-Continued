@@ -28,19 +28,19 @@ public class FCPolicyDef : Def
     public string iconPathLight;
     public string iconPathDark;
 
-    public List<FCStatModifier> statModifiers = new List<FCStatModifier>();
-    public List<FCActionType> blockedActions = new List<FCActionType>();
-    public List<FCActionType> enabledActions = new List<FCActionType>();
-    public List<MilitaryJobDef> blockedMilitaryJobs = new List<MilitaryJobDef>();
-    public List<MilitaryJobDef> enabledMilitaryJobs = new List<MilitaryJobDef>();
+    public List<FCStatModifier> statModifiers = [];
+    public List<FCActionType> blockedActions = [];
+    public List<FCActionType> enabledActions = [];
+    public List<MilitaryJobDef> blockedMilitaryJobs = [];
+    public List<MilitaryJobDef> enabledMilitaryJobs = [];
     public bool preventBuildingDestruction;
     public bool suppressMemberDeathPenalty;
 
     // Policies/traits that are incompatible with this one (mutual exclusion in selection UI)
-    public List<FCPolicyDef> incompatiblePolicies = new List<FCPolicyDef>();
+    public List<FCPolicyDef> incompatiblePolicies = [];
 
     // Policies/traits/edicts that must be active before this one can be enacted
-    public List<FCPolicyDef> requiredPolicies = new List<FCPolicyDef>();
+    public List<FCPolicyDef> requiredPolicies = [];
     public FCRequirementMode requirementMode = FCRequirementMode.All;
 
     [Unsaved] private Texture2D resolvedIconLight;
@@ -192,7 +192,7 @@ public class FCPolicyDef : Def
             return false;
         }
 
-        List<string> missing = new List<string>();
+        List<string> missing = [];
         foreach (FCPolicyDef required in requiredPolicies)
         {
             if (!FindFC.PolicyManager.HasPolicy(required) && !FindFC.PolicyManager.HasTrait(required) && !FindFC.PolicyManager.HasEdict(required))

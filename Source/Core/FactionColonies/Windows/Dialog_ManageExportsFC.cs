@@ -22,7 +22,7 @@ public abstract class Dialog_ManageExportsFC : Window
     #endregion
 
     protected Vector2 scrollPos;
-    public override Vector2 InitialSize => new Vector2(620f, 700f);
+    public override Vector2 InitialSize => new(620f, 700f);
 
     public Dialog_ManageExportsFC()
     {
@@ -43,13 +43,13 @@ public abstract class Dialog_ManageExportsFC : Window
     protected virtual void DrawElements(Rect inRect)
     {
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect elemRect = new Rect(inRect.x, inRect.y, inRect.width, ElementHeight);
+        Rect elemRect = new(inRect.x, inRect.y, inRect.width, ElementHeight);
 
-        Rect nameRect = new Rect(inRect.x, inRect.y, ElementNameWidth, ElementNameHeight);
+        Rect nameRect = new(inRect.x, inRect.y, ElementNameWidth, ElementNameHeight);
 
-        Rect deleteRect = new Rect(inRect.width - inRect.x - ElementDeleteWidth,
+        Rect deleteRect = new(inRect.width - inRect.x - ElementDeleteWidth,
             inRect.y, ElementDeleteWidth, ElementDeleteHeight);
-        Rect importRect = new Rect(deleteRect.x - ElementImportWidth,
+        Rect importRect = new(deleteRect.x - ElementImportWidth,
             inRect.y, ElementImportWidth, ElementImportHeight);
 
         bool alternate = false;
@@ -135,7 +135,7 @@ public class Dialog_ManageSquadExportsFC : Dialog_ManageExportsFC
         else
         {
             MilitaryWindow dsw = MilitaryWindowRegistry.CreateSquads(fc.military, fc);
-            FCWindow_Military newWindow = new FCWindow_Military(dsw, "Create Squads");
+            FCWindow_Military newWindow = new(dsw, "Create Squads");
             Find.WindowStack.Add(newWindow);
             newWindow.SetActive(squad);
         }
@@ -200,7 +200,7 @@ public class Dialog_ManageUnitExportsFC : Dialog_ManageExportsFC
         else
         {
             MilitaryWindow duw = MilitaryWindowRegistry.CreateUnits(fc.military, fc);
-            FCWindow_Military newWindow = new FCWindow_Military(duw, "Create Units");
+            FCWindow_Military newWindow = new(duw, "Create Units");
             Find.WindowStack.Add(newWindow);
             newWindow.SetActive(unit);
         }
@@ -263,7 +263,7 @@ public class Dialog_ManageFireSupportExportsFC : Dialog_ManageExportsFC
         {
             FactionFC fc = FindFC.FactionComp;
             MilitaryWindow fsw = MilitaryWindowRegistry.CreateFireSupport(fc.military, fc);
-            FCWindow_Military newWindow = new FCWindow_Military(fsw, "FCMilitaryTableButtonCreateFireSupport".Translate());
+            FCWindow_Military newWindow = new(fsw, "FCMilitaryTableButtonCreateFireSupport".Translate());
             Find.WindowStack.Add(newWindow);
             newWindow.SetActive(fs);
         }

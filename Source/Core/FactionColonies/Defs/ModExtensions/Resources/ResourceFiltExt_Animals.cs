@@ -3,10 +3,10 @@ namespace FactionColonies;
 public class ResourceFilterExtension_Animals : ResourceFilterExtension
 {
     /// <summary>Trade tags that disqualify an animal from Empire's animal lists. XML-configurable.</summary>
-    public List<string> blacklistedTradeTags = new List<string>();
+    public List<string> blacklistedTradeTags = [];
 
     /// <summary>Specific ThingDef defNames to exclude. For surgical exclusions of individual animals.</summary>
-    public List<string> blacklistedDefNames = new List<string>();
+    public List<string> blacklistedDefNames = [];
 
     /// <summary>
     /// Categories (e.g. Leathers, Wools) whose members should be restricted to animal-derived products.
@@ -14,13 +14,13 @@ public class ResourceFilterExtension_Animals : ResourceFilterExtension
     /// manufactured leathers/wools (e.g. patchleather, which is crafted rather than butchered/sheared)
     /// don't leak into the animal resource via the broad category allow list. XML-configurable.
     /// </summary>
-    public List<ThingCategoryDef> animalTextileCategories = new List<ThingCategoryDef>();
+    public List<ThingCategoryDef> animalTextileCategories = [];
 
     /// <summary>If true, animals must have at least one trade tag to be included.</summary>
     public bool requireTradeTags = true;
 
     private HashSet<ThingDef> _blockedProducts;
-    private HashSet<ThingDef> BlockedProducts => _blockedProducts ?? (_blockedProducts = BuildBlockedProductSet());
+    private HashSet<ThingDef> BlockedProducts => _blockedProducts ??= BuildBlockedProductSet();
 
     public override void SetFilter(ThingFilter filter, TechLevel techlevel, ResourceFC resource = null)
     {
@@ -36,15 +36,15 @@ public class ResourceFilterExtension_Animals : ResourceFilterExtension
 
     private HashSet<ThingDef> BuildBlockedProductSet()
     {
-        HashSet<ThingDef> allowedRaces = new HashSet<ThingDef>();
+        HashSet<ThingDef> allowedRaces = [];
         foreach (PawnKindDef kind in FactionCache.AllAnimalKindDefs)
         {
             allowedRaces.Add(kind.race);
         }
 
-        HashSet<ThingDef> allowedProducts = new HashSet<ThingDef>();
-        HashSet<ThingDef> allProducts = new HashSet<ThingDef>();
-        HashSet<ThingDef> fertilizedEggs = new HashSet<ThingDef>();
+        HashSet<ThingDef> allowedProducts = [];
+        HashSet<ThingDef> allProducts = [];
+        HashSet<ThingDef> fertilizedEggs = [];
 
         foreach (ThingDef def in DefDatabase<ThingDef>.AllDefs)
         {
@@ -116,7 +116,7 @@ public class ResourceFilterExtension_Animals : ResourceFilterExtension
             return null;
         }
 
-        List<Thing> output = new List<Thing>();
+        List<Thing> output = [];
         for (int i = 0; i < quantity; i++)
         {
             Pawn animalPawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(thingDef.race.AnyPawnKind, Faction.OfPlayer));
@@ -137,7 +137,7 @@ public class ThingSetMaker_Animals : ThingSetMaker
     protected override void Generate(ThingSetMakerParams parms, List<Thing> outThings)
     {
         // Build animal pawn pool
-        List<PawnKindDef> animalDefs = new List<PawnKindDef>();
+        List<PawnKindDef> animalDefs = [];
         foreach (PawnKindDef def in FactionCache.AllAnimalKindDefs)
         {
             if (parms.filter.Allows(def.race))
@@ -147,7 +147,7 @@ public class ThingSetMaker_Animals : ThingSetMaker
         }
 
         // Build animal product pool (non-race ThingDefs allowed by the filter)
-        List<ThingDef> productDefs = new List<ThingDef>();
+        List<ThingDef> productDefs = [];
         foreach (ThingDef def in parms.filter.AllowedThingDefs)
         {
             if (def.race is null)
@@ -209,7 +209,7 @@ public class ThingSetMaker_Animals : ThingSetMaker
                         pawn.Destroy();
                         pawn = null;
                     }
-                    PawnGenerationRequest request = new PawnGenerationRequest(kind: animalDefs.RandomElement(),
+                    PawnGenerationRequest request = new(kind: animalDefs.RandomElement(),
                                                                               faction: Find.FactionManager.OfPlayer,
                                                                               allowAddictions: false,
                                                                               worldPawnFactionDoesntMatter: true);
@@ -257,7 +257,7 @@ public class ThingSetMaker_Animals : ThingSetMaker
 
     protected override IEnumerable<ThingDef> AllGeneratableThingsDebugSub(ThingSetMakerParams parms)
     {
-        List<ThingDef> list = new List<ThingDef>();
+        List<ThingDef> list = [];
 
         // Add animal race ThingDefs
         foreach (PawnKindDef def in FactionCache.AllAnimalKindDefs)

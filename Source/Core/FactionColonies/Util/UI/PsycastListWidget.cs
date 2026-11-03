@@ -43,13 +43,13 @@ public static class PsycastListWidget
         }
 
         // --- Psylink stepper row ---
-        Rect headerRect = new Rect(rect.x, rect.y, rect.width, headerHeight);
+        Rect headerRect = new(rect.x, rect.y, rect.width, headerHeight);
         int maxLevel = active.MaxPsylinkLevel;
         int curLevel = displayUnit?.psylinkLevel ?? 0;
 
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect psyLabelRect = new Rect(headerRect.x, headerRect.y, 120f, headerHeight);
+        Rect psyLabelRect = new(headerRect.x, headerRect.y, 120f, headerHeight);
         UIUtil.ClampedLabel(psyLabelRect, "fcPsylinkLevel".Translate() + ": " + curLevel);
 
         // getEditTarget is resolved lazily inside each click handler (it may allocate a buffered
@@ -57,8 +57,8 @@ public static class PsycastListWidget
         bool editable = opts.canEdit && opts.showHeaderButtons;
         if (editable)
         {
-            Rect minusRect = new Rect(psyLabelRect.xMax, headerRect.y + (headerHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
-            Rect plusRect = new Rect(minusRect.xMax + 2f, minusRect.y, stepperButtonW, stepperButtonW);
+            Rect minusRect = new(psyLabelRect.xMax, headerRect.y + (headerHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
+            Rect plusRect = new(minusRect.xMax + 2f, minusRect.y, stepperButtonW, stepperButtonW);
             Text.Anchor = TextAnchor.MiddleCenter;
             if (UIUtil.ClampedButtonText(minusRect, "-") && curLevel > 0)
             {
@@ -75,7 +75,7 @@ public static class PsycastListWidget
             if (active.SupportsExplicitSelection)
             {
                 float btnW = 130f;
-                Rect editBtnRect = new Rect(headerRect.xMax - btnW, headerRect.y, btnW, headerHeight);
+                Rect editBtnRect = new(headerRect.xMax - btnW, headerRect.y, btnW, headerHeight);
                 bool canEditPsycasts = curLevel > 0;
                 if (canEditPsycasts)
                 {
@@ -95,7 +95,7 @@ public static class PsycastListWidget
             }
         }
 
-        Rect bodyRect = new Rect(rect.x, headerRect.yMax + 2f, rect.width, rect.height - headerHeight - 4f);
+        Rect bodyRect = new(rect.x, headerRect.yMax + 2f, rect.width, rect.height - headerHeight - 4f);
 
         // --- Base game: explanatory note, no list ---
         if (!active.SupportsExplicitSelection)
@@ -112,7 +112,7 @@ public static class PsycastListWidget
         int spent, budget;
         if (active.TryGetPointBudget(displayUnit, out spent, out budget))
         {
-            Rect summaryRect = new Rect(bodyRect.x, bodyRect.y, bodyRect.width, 18f);
+            Rect summaryRect = new(bodyRect.x, bodyRect.y, bodyRect.width, 18f);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             UIUtil.ClampedLabel(summaryRect, "fcPsycastPointsSummary".Translate(spent, budget));
@@ -123,7 +123,7 @@ public static class PsycastListWidget
         bool canClear = opts.canEdit && opts.showHeaderButtons;
         if (canClear)
         {
-            Rect clearRect = new Rect(bodyRect.x, bodyRect.yMax - 26f, 120f, 24f);
+            Rect clearRect = new(bodyRect.x, bodyRect.yMax - 26f, 120f, 24f);
             bodyRect.height -= 30f;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
@@ -147,14 +147,14 @@ public static class PsycastListWidget
             IPsycastSystemProvider provider = PsycastSystemRegistry.ByKey(item.systemKey);
             PsycastPickEntry entry = null;
             bool resolved = provider is not null && provider.TryGetDisplay(item, out entry);
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
             if (i % 2 == 0) Widgets.DrawHighlight(row);
 
-            Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
+            Rect iconRect = new(row.x + 2f, row.y + 2f, IconSize, IconSize);
             if (resolved && entry.icon != null)
                 GUI.DrawTexture(iconRect, entry.icon);
 
-            Rect costRect = new Rect(row.xMax - 4f - 60f, row.y, 60f, rowHeight);
+            Rect costRect = new(row.xMax - 4f - 60f, row.y, 60f, rowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
             double cost = resolved ? entry.cost : 0;
@@ -162,7 +162,7 @@ public static class PsycastListWidget
 
             string fallback = item.psycastDef.NullOrEmpty() ? (item.kind ?? "?") : item.psycastDef;
             string label = resolved ? entry.label : (fallback + " (?)");
-            Rect labelRect = new Rect(iconRect.xMax + 6f, row.y, costRect.x - iconRect.xMax - 10f, rowHeight);
+            Rect labelRect = new(iconRect.xMax + 6f, row.y, costRect.x - iconRect.xMax - 10f, rowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);

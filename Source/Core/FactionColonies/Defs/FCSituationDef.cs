@@ -28,8 +28,8 @@ public class FCSituationDef : Def
     public float decayRatePerDay = 0f;
 
     /* Stages and approaches are referenced by defName in XML. */
-    public List<FCSituationStageDef> stages = new List<FCSituationStageDef>();
-    public List<FCSituationApproachDef> approaches = new List<FCSituationApproachDef>();
+    public List<FCSituationStageDef> stages = [];
+    public List<FCSituationApproachDef> approaches = [];
     public FCSituationApproachDef defaultApproach;
 
     public FCSituationEndpointBehavior topBehavior = FCSituationEndpointBehavior.Clamp;

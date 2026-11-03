@@ -31,7 +31,7 @@ public class FCRoadBuilder : IExposable
         Scribe_Values.Look(ref daysBetweenTicks, "daysBetweenTicks");
         Scribe_Values.Look(ref roadBuildingEnabled, "roadBuildingEnabled");
         Scribe_Values.Look(ref wasRoadBuildingDisabled, "wasRoadBuildingDisabled");
-        Scribe_Deep.Look(ref roadQueue, "roadQueue", new object[] { this.roadDef, this.daysBetweenTicks });
+        Scribe_Deep.Look(ref roadQueue, "roadQueue", [this.roadDef, this.daysBetweenTicks]);
     }
 
     /* Resolves the days-between-road-builds interval. Normally the configured

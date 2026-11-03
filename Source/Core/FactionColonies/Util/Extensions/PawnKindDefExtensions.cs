@@ -18,12 +18,10 @@ static class PawnKindDefExtensions
     }
 
     private static ResourceFilterExtension_Animals _animalFilterConfig;
-    private static ResourceFilterExtension_Animals AnimalFilterConfig =>
-        _animalFilterConfig ?? (_animalFilterConfig = ResourceTypeDefOf.RTD_Animals?.GetModExtension<ResourceFilterExtension_Animals>());
+    private static ResourceFilterExtension_Animals AnimalFilterConfig => _animalFilterConfig ??= ResourceTypeDefOf.RTD_Animals?.GetModExtension<ResourceFilterExtension_Animals>();
 
     private static HashSet<string> _blacklistedDefNamesSet;
-    private static HashSet<string> BlacklistedDefNames =>
-        _blacklistedDefNamesSet ?? (_blacklistedDefNamesSet = new HashSet<string>(AnimalFilterConfig?.blacklistedDefNames ?? new List<string>()));
+    private static HashSet<string> BlacklistedDefNames => _blacklistedDefNamesSet ??= new HashSet<string>(AnimalFilterConfig?.blacklistedDefNames ?? []);
 
     public static bool ValidPawnKindDef(this PawnKindDef pawnKindDef)
     {

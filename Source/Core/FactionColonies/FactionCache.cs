@@ -11,7 +11,7 @@ namespace FactionColonies;
 public static class FactionCache
 {
     private static List<PawnKindDef> _cachedPawnKindDefs = null;
-    private static Dictionary<(Type, string), FieldInfo> _cachedFields = new Dictionary<(Type, string), FieldInfo>();
+    private static Dictionary<(Type, string), FieldInfo> _cachedFields = [];
     private static List<XenotypeDef> _cachedXenotypeList = null;
     private static List<XenotypeDef> _cachedViolentXenotypeList = null;
     private static List<CustomXenotype> _cachedCustomXenotypeList = null;
@@ -98,7 +98,7 @@ public static class FactionCache
         {
             if (_cachedFactionConditionedSituationDefs is null)
             {
-                _cachedFactionConditionedSituationDefs = new List<FCSituationDef>();
+                _cachedFactionConditionedSituationDefs = [];
                 foreach (FCSituationDef def in DefDatabase<FCSituationDef>.AllDefsListForReading)
                     if (def.scope == FCSituationScope.Faction && def.FactionCondition is not null)
                         _cachedFactionConditionedSituationDefs.Add(def);
@@ -114,7 +114,7 @@ public static class FactionCache
         {
             if (_cachedSettlementConditionedSituationDefs is null)
             {
-                _cachedSettlementConditionedSituationDefs = new List<FCSituationDef>();
+                _cachedSettlementConditionedSituationDefs = [];
                 foreach (FCSituationDef def in DefDatabase<FCSituationDef>.AllDefsListForReading)
                     if (def.scope == FCSituationScope.Settlement && def.SettlementCondition is not null)
                         _cachedSettlementConditionedSituationDefs.Add(def);
@@ -123,7 +123,7 @@ public static class FactionCache
         }
     }
 
-    public static List<XenotypeDef> XenotypeDefs => _cachedXenotypeList ?? (_cachedXenotypeList = DefDatabase<XenotypeDef>.AllDefsListForReading);
+    public static List<XenotypeDef> XenotypeDefs => _cachedXenotypeList ??= DefDatabase<XenotypeDef>.AllDefsListForReading;
     public static List<CustomXenotype> CustomXenotypes
     {
         get
@@ -215,7 +215,7 @@ public static class FactionCache
         {
             if (_cachedCustomXenotypeDecoder is null)
             {
-                Dictionary<string, CustomXenotype> decoder = new Dictionary<string, CustomXenotype>();
+                Dictionary<string, CustomXenotype> decoder = [];
                 List<CustomXenotype> xenos = CustomXenotypes;
                 if (xenos is not null)
                 {
@@ -248,7 +248,7 @@ public static class FactionCache
         {
             if (_cachedRaceList is null)
             {
-                _cachedRaceList = new List<ThingDef>();
+                _cachedRaceList = [];
                 foreach (PawnKindDef pawnKind in AllPawnKindDefs)
                 {
                     if (pawnKind.race is not null && !_cachedRaceList.Any(r => r.defName == pawnKind.race.defName) && (pawnKind.race == ThingDefOf.Human || pawnKind.IsHumanLikeRace()))
@@ -262,34 +262,29 @@ public static class FactionCache
     }
     // Technically there should *always* be at least one race: ThingDefOf.Human. But it probably can't hurt to null-check, just in case of edge cases...
     public static int HumanlikeRacesCount => HumanlikeRaces?.Count ?? 0;
-    public static List<PawnKindDef> AllAnimalKindDefs => _cachedAnimalKinds ??
-                                                         (_cachedAnimalKinds = AllPawnKindDefs.Where(kind => kind.IsAnimalAndAllowed()).ToList());
-    public static List<PawnKindDef> AllCombatAnimalKindDefs => _cachedCombatAnimalKinds ??
-                                                               (_cachedCombatAnimalKinds = AllAnimalKindDefs.Where(kind => kind.IsCombatAnimal()).ToList());
-    public static List<PawnKindDef> AllPackAnimalKinds => _cachedPackAnimalKinds ??
-                                                          (_cachedPackAnimalKinds = AllAnimalKindDefs.Where(kind => kind.IsPackAnimal()).ToList());
+    public static List<PawnKindDef> AllAnimalKindDefs => _cachedAnimalKinds ??= AllPawnKindDefs.Where(kind => kind.IsAnimalAndAllowed()).ToList();
+    public static List<PawnKindDef> AllCombatAnimalKindDefs => _cachedCombatAnimalKinds ??= AllAnimalKindDefs.Where(kind => kind.IsCombatAnimal()).ToList();
+    public static List<PawnKindDef> AllPackAnimalKinds => _cachedPackAnimalKinds ??= AllAnimalKindDefs.Where(kind => kind.IsPackAnimal()).ToList();
     /// <summary>All player-controllable mechanoid PawnKindDefs (mechs with an OverseerSubject comp
     /// and a BandwidthCost stat) that a mechanitor merc can be assigned. Empty when Biotech is off.
     /// Research-independent — use <see cref="UnlockedControllableMechKinds"/> for the picker.</summary>
-    public static List<PawnKindDef> AllControllableMechKinds => _cachedControllableMechKinds ??
-        (_cachedControllableMechKinds = (!ModsConfig.BiotechActive
-            ? new List<PawnKindDef>()
+    public static List<PawnKindDef> AllControllableMechKinds => _cachedControllableMechKinds ??= (!ModsConfig.BiotechActive
+            ? []
             : AllPawnKindDefs.Where(kind => kind?.race?.race is not null
                     && kind.race.race.IsMechanoid
                     && kind.race.GetCompProperties<CompProperties_OverseerSubject>() is not null
                     && kind.race.statBases is not null
                     && kind.race.statBases.Any(s => s.stat == StatDefOf.BandwidthCost))
-                .ToList()));
+                .ToList());
 
     /// <summary>Map of mech ThingDef -> its mechanitor gestation recipe(s). Research-independent
     /// (which recipes exist never changes), so it's safely cached; the research check itself
     /// (<see cref="IsMechResearchUnlocked"/>) reads live research state.</summary>
-    public static Dictionary<ThingDef, List<RecipeDef>> MechGestationRecipes => _cachedMechGestationRecipes ??
-        (_cachedMechGestationRecipes = BuildMechGestationRecipes());
+    public static Dictionary<ThingDef, List<RecipeDef>> MechGestationRecipes => _cachedMechGestationRecipes ??= BuildMechGestationRecipes();
 
     private static Dictionary<ThingDef, List<RecipeDef>> BuildMechGestationRecipes()
     {
-        Dictionary<ThingDef, List<RecipeDef>> map = new Dictionary<ThingDef, List<RecipeDef>>();
+        Dictionary<ThingDef, List<RecipeDef>> map = [];
         if (!ModsConfig.BiotechActive) return map;
         foreach (RecipeDef r in DefDatabase<RecipeDef>.AllDefsListForReading)
         {
@@ -297,7 +292,7 @@ public static class FactionCache
             ThingDef product = r.ProducedThingDef;
             if (product is null) continue;
             List<RecipeDef> list;
-            if (!map.TryGetValue(product, out list)) { list = new List<RecipeDef>(); map[product] = list; }
+            if (!map.TryGetValue(product, out list)) { list = []; map[product] = list; }
             list.Add(r);
         }
         return map;
@@ -428,14 +423,14 @@ public static class FactionCache
     {
         return CustomXenotypeIsNonViolent(xenotype.name);
     }
-    public static List<FCPolicyDef> AllFCPolicies => _cachedFCPolicyDefs ?? (_cachedFCPolicyDefs = DefDatabase<FCPolicyDef>.AllDefsListForReading);
+    public static List<FCPolicyDef> AllFCPolicies => _cachedFCPolicyDefs ??= DefDatabase<FCPolicyDef>.AllDefsListForReading;
     public static Dictionary<FCPolicyDef, string> FCPolicyDescs
     {
         get
         {
             if (_cachedFCPolicyDescs is null)
             {
-                _cachedFCPolicyDescs = new Dictionary<FCPolicyDef, string>();
+                _cachedFCPolicyDescs = [];
                 foreach (FCPolicyDef policy in AllFCPolicies)
                 {
                     _cachedFCPolicyDescs.Add(policy, policy.PolicyDesc());
@@ -448,8 +443,7 @@ public static class FactionCache
     /// <summary>Drops the cached policy descriptions so they re-resolve their tokens
     /// (e.g. {FACTION_TITLE}/{FACTION}) on next access. Call after the faction title or name changes.</summary>
     public static void InvalidatePolicyDescs() => _cachedFCPolicyDescs = null;
-    public static List<XenotypeDef> ViolentXenotypeDefs => _cachedViolentXenotypeList ??
-                                                           (_cachedViolentXenotypeList = XenotypeDefs.Where(x => !XenotypeIsNonViolent(x)).ToList());
+    public static List<XenotypeDef> ViolentXenotypeDefs => _cachedViolentXenotypeList ??= XenotypeDefs.Where(x => !XenotypeIsNonViolent(x)).ToList();
     public static List<CustomXenotype> ViolentCustomXenotypes
     {
         get
@@ -475,7 +469,7 @@ public static class FactionCache
         {
             if (_cachedTechBarriers is null)
             {
-                _cachedTechBarriers = new Dictionary<TechLevel, TechLevelBarrier>();
+                _cachedTechBarriers = [];
                 foreach (TechProgressionDef def in DefDatabase<TechProgressionDef>.AllDefsListForReading)
                 {
                     if (def.barriers is null) continue;
@@ -495,8 +489,7 @@ public static class FactionCache
         return TechBarriers.TryGetValue(level, out TechLevelBarrier b) ? b : null;
     }
 
-    public static ResearchProjectDef TechTransportPods => _cachedTransportPods ??
-                                                          (_cachedTransportPods = DefDatabase<ResearchProjectDef>.GetNamed("TransportPod", false));
+    public static ResearchProjectDef TechTransportPods => _cachedTransportPods ??= DefDatabase<ResearchProjectDef>.GetNamed("TransportPod", false);
 
     /// <summary>
     /// For each building, a flattened list of all upgrades reachable through the upgrade tree.
@@ -507,11 +500,11 @@ public static class FactionCache
         {
             if (_cachedUpgradeTrees is null)
             {
-                _cachedUpgradeTrees = new Dictionary<BuildingFCDef, List<BuildingUpgradeEntry>>();
+                _cachedUpgradeTrees = [];
                 foreach (BuildingFCDef building in DefDatabase<BuildingFCDef>.AllDefsListForReading)
                 {
                     if (building.upgrades is null || building.upgrades.Count == 0) continue;
-                    List<BuildingUpgradeEntry> tree = new List<BuildingUpgradeEntry>();
+                    List<BuildingUpgradeEntry> tree = [];
                     CollectUpgradeTree(building, 0, null, tree);
                     _cachedUpgradeTrees[building] = tree;
                 }
@@ -540,10 +533,10 @@ public static class FactionCache
         {
             if (_cachedUpgradeDescendants is null)
             {
-                _cachedUpgradeDescendants = new Dictionary<BuildingFCDef, HashSet<BuildingFCDef>>();
+                _cachedUpgradeDescendants = [];
                 foreach (var kvp in UpgradeTrees)
                 {
-                    HashSet<BuildingFCDef> set = new HashSet<BuildingFCDef>();
+                    HashSet<BuildingFCDef> set = [];
                     foreach (BuildingUpgradeEntry entry in kvp.Value)
                     {
                         set.Add(entry.def);
@@ -590,7 +583,7 @@ public static class FactionCache
         {
             if (_cachedRequiredByMap is null)
             {
-                _cachedRequiredByMap = new Dictionary<BuildingFCDef, List<BuildingFCDef>>();
+                _cachedRequiredByMap = [];
                 foreach (BuildingFCDef building in DefDatabase<BuildingFCDef>.AllDefsListForReading)
                 {
                     if (building.requiredBuildings is null) continue;
@@ -598,7 +591,7 @@ public static class FactionCache
                     {
                         if (!_cachedRequiredByMap.TryGetValue(req, out List<BuildingFCDef> list))
                         {
-                            list = new List<BuildingFCDef>();
+                            list = [];
                             _cachedRequiredByMap[req] = list;
                         }
                         list.Add(building);
@@ -614,7 +607,7 @@ public static class FactionCache
                     {
                         if (!_cachedRequiredByMap.TryGetValue(descendant, out List<BuildingFCDef> descList))
                         {
-                            descList = new List<BuildingFCDef>();
+                            descList = [];
                             _cachedRequiredByMap[descendant] = descList;
                         }
                         foreach (BuildingFCDef dep in baseRequiredBy)
@@ -627,8 +620,7 @@ public static class FactionCache
             return _cachedRequiredByMap;
         }
     }
-    public static List<FCEventCategoryDef> FCEventCategoryDefs => _cachedEventCategoryDefs ??
-                                (_cachedEventCategoryDefs = DefDatabase<FCEventCategoryDef>.AllDefsListForReading);
+    public static List<FCEventCategoryDef> FCEventCategoryDefs => _cachedEventCategoryDefs ??= DefDatabase<FCEventCategoryDef>.AllDefsListForReading;
 
     /// <summary>
     /// MilitaryJobDefs that have a floatMenuLabelKey, i.e. hostile operations shown in the world gizmo menu.
@@ -639,7 +631,7 @@ public static class FactionCache
         {
             if (_cachedHostileMilitaryJobs is null)
             {
-                _cachedHostileMilitaryJobs = new List<MilitaryJobDef>();
+                _cachedHostileMilitaryJobs = [];
                 foreach (MilitaryJobDef job in DefDatabase<MilitaryJobDef>.AllDefsListForReading)
                 {
                     if (job.floatMenuLabelKey is not null)
@@ -654,8 +646,7 @@ public static class FactionCache
     /* ResourceTypeDef caches */
     /*-*-*-*-*/
 
-    public static List<ResourceTypeDef> AllResourceTypeDefs => _cachedResourceTypeDefs ??
-                                                               (_cachedResourceTypeDefs = DefDatabase<ResourceTypeDef>.AllDefsListForReading);
+    public static List<ResourceTypeDef> AllResourceTypeDefs => _cachedResourceTypeDefs ??= DefDatabase<ResourceTypeDef>.AllDefsListForReading;
 
     public static List<ResourceTypeDef> PoolResourceTypeDefs
     {
@@ -663,7 +654,7 @@ public static class FactionCache
         {
             if (_cachedPoolResourceTypeDefs is null)
             {
-                _cachedPoolResourceTypeDefs = new List<ResourceTypeDef>();
+                _cachedPoolResourceTypeDefs = [];
                 foreach (ResourceTypeDef rtd in AllResourceTypeDefs)
                 {
                     if (rtd.isPoolResource) _cachedPoolResourceTypeDefs.Add(rtd);
@@ -679,7 +670,7 @@ public static class FactionCache
         {
             if (_cachedNonPoolResourceTypeDefs is null)
             {
-                _cachedNonPoolResourceTypeDefs = new List<ResourceTypeDef>();
+                _cachedNonPoolResourceTypeDefs = [];
                 foreach (ResourceTypeDef rtd in AllResourceTypeDefs)
                 {
                     if (!rtd.isPoolResource) _cachedNonPoolResourceTypeDefs.Add(rtd);
@@ -699,7 +690,7 @@ public static class FactionCache
         {
             if (_cachedTitheableResourceTypeDefs is null)
             {
-                _cachedTitheableResourceTypeDefs = new List<ResourceTypeDef>();
+                _cachedTitheableResourceTypeDefs = [];
                 foreach (ResourceTypeDef rtd in AllResourceTypeDefs)
                 {
                     if (!rtd.isPoolResource && rtd.CanTithe) _cachedTitheableResourceTypeDefs.Add(rtd);
@@ -709,11 +700,10 @@ public static class FactionCache
         }
     }
 
-    public static List<ResourceTypeDef> SortedResourceTypeDefsForUI => _cachedSortedResourceTypeDefsForUI ??
-                                                                       (_cachedSortedResourceTypeDefsForUI = AllResourceTypeDefs
+    public static List<ResourceTypeDef> SortedResourceTypeDefsForUI => _cachedSortedResourceTypeDefsForUI ??= AllResourceTypeDefs
                                                                            .OrderBy(d => d.uiPriority)
                                                                            .ThenBy(d => d.LabelCap.RawText)
-                                                                           .ToList());
+                                                                           .ToList();
 
     /*-*-*-*-*/
     /* Policy / Settlement / Event / Biome caches */
@@ -725,12 +715,12 @@ public static class FactionCache
         {
             if (_cachedPoliciesByCategory is null)
             {
-                _cachedPoliciesByCategory = new Dictionary<FCPolicyCategory, List<FCPolicyDef>>();
+                _cachedPoliciesByCategory = [];
                 foreach (FCPolicyDef policy in AllFCPolicies)
                 {
                     if (!_cachedPoliciesByCategory.TryGetValue(policy.category, out List<FCPolicyDef> list))
                     {
-                        list = new List<FCPolicyDef>();
+                        list = [];
                         _cachedPoliciesByCategory[policy.category] = list;
                     }
                     list.Add(policy);
@@ -742,7 +732,7 @@ public static class FactionCache
 
     public static List<FCPolicyDef> GetPoliciesByCategory(FCPolicyCategory cat)
     {
-        return PoliciesByCategory.TryGetValue(cat, out List<FCPolicyDef> list) ? list : new List<FCPolicyDef>();
+        return PoliciesByCategory.TryGetValue(cat, out List<FCPolicyDef> list) ? list : [];
     }
 
     public static List<WorldSettlementDef> AvailableWorldSettlementDefs
@@ -751,7 +741,7 @@ public static class FactionCache
         {
             if (_cachedAvailableWorldSettlementDefs is null)
             {
-                _cachedAvailableWorldSettlementDefs = new List<WorldSettlementDef>();
+                _cachedAvailableWorldSettlementDefs = [];
                 foreach (WorldSettlementDef def in DefDatabase<WorldSettlementDef>.AllDefsListForReading)
                 {
                     if (def.available) _cachedAvailableWorldSettlementDefs.Add(def);
@@ -771,7 +761,7 @@ public static class FactionCache
         {
             if (_cachedEventFollowUpDefNames is null)
             {
-                _cachedEventFollowUpDefNames = new HashSet<string>();
+                _cachedEventFollowUpDefNames = [];
                 foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)
                 {
                     if (def.followingEvent is not null) _cachedEventFollowUpDefNames.Add(def.followingEvent.defName);
@@ -806,7 +796,7 @@ public static class FactionCache
             if (_cachedRandomRollableEvents is null)
             {
                 HashSet<string> followUps = EventFollowUpDefNames;
-                _cachedRandomRollableEvents = new List<FCEventDef>();
+                _cachedRandomRollableEvents = [];
                 foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)
                 {
                     if (followUps.Contains(def.defName)) continue;
@@ -830,7 +820,7 @@ public static class FactionCache
         {
             if (_cachedAllRandomEventDefs is null)
             {
-                _cachedAllRandomEventDefs = new List<FCEventDef>();
+                _cachedAllRandomEventDefs = [];
                 foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)
                 {
                     if (def.isRandomEvent) _cachedAllRandomEventDefs.Add(def);
@@ -851,10 +841,10 @@ public static class FactionCache
         {
             if (_cachedEventDefNamesWithOptionsInChain is null)
             {
-                _cachedEventDefNamesWithOptionsInChain = new HashSet<string>();
+                _cachedEventDefNamesWithOptionsInChain = [];
                 foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)
                 {
-                    if (ChainHasOptions(def, new HashSet<FCEventDef>()))
+                    if (ChainHasOptions(def, []))
                         _cachedEventDefNamesWithOptionsInChain.Add(def.defName);
                 }
             }
@@ -885,7 +875,7 @@ public static class FactionCache
         {
             if (_cachedRandomChainMemberDefs is null)
             {
-                _cachedRandomChainMemberDefs = new HashSet<FCEventDef>();
+                _cachedRandomChainMemberDefs = [];
                 foreach (FCEventDef root in AllRandomEventDefs)
                 {
                     if (!LeadsToFollowUp(root)) continue; // one-shot roots never block
@@ -941,11 +931,11 @@ public static class FactionCache
         if (member is null) return null;
         if (_cachedChainCooldownRootByMember is null)
         {
-            _cachedChainCooldownRootByMember = new Dictionary<FCEventDef, FCEventDef>();
+            _cachedChainCooldownRootByMember = [];
             foreach (FCEventDef root in AllRandomEventDefs)
             {
                 if (root.cooldownTicks <= 0) continue;
-                HashSet<FCEventDef> members = new HashSet<FCEventDef>();
+                HashSet<FCEventDef> members = [];
                 CollectChainMembers(root, members);
                 foreach (FCEventDef m in members)
                     if (!_cachedChainCooldownRootByMember.ContainsKey(m)) // first writer wins; base chains are disjoint
@@ -955,8 +945,7 @@ public static class FactionCache
         return _cachedChainCooldownRootByMember.TryGetValue(member, out FCEventDef r) ? r : null;
     }
 
-    public static HashSet<BiomeResourceDef> BiomeResourceDefSet => _cachedBiomeResourceDefSet ??
-                                                                   (_cachedBiomeResourceDefSet = new HashSet<BiomeResourceDef>(DefDatabase<BiomeResourceDef>.AllDefsListForReading));
+    public static HashSet<BiomeResourceDef> BiomeResourceDefSet => _cachedBiomeResourceDefSet ??= new HashSet<BiomeResourceDef>(DefDatabase<BiomeResourceDef>.AllDefsListForReading);
 
     /// <summary>
     /// All buildable BuildingFCDefs (excludes "Empty" and "Construction") grouped by tech level,
@@ -968,13 +957,13 @@ public static class FactionCache
         {
             if (_cachedBuildingDefsByTechLevel is null)
             {
-                _cachedBuildingDefsByTechLevel = new Dictionary<TechLevel, List<BuildingFCDef>>();
+                _cachedBuildingDefsByTechLevel = [];
                 foreach (BuildingFCDef building in DefDatabase<BuildingFCDef>.AllDefsListForReading)
                 {
                     if (building.defName == "Empty" || building.defName == "Construction") continue;
                     if (!_cachedBuildingDefsByTechLevel.TryGetValue(building.techLevel, out List<BuildingFCDef> list))
                     {
-                        list = new List<BuildingFCDef>();
+                        list = [];
                         _cachedBuildingDefsByTechLevel[building.techLevel] = list;
                     }
                     list.Add(building);

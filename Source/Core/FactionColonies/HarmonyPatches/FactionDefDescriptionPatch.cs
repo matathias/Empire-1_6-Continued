@@ -70,12 +70,12 @@ class FactionDefDescriptionPatch
         }
 
         // Build replacement section from XenotypeFilter.
-        StringBuilder sb = new StringBuilder(baseDescription);
+        StringBuilder sb = new(baseDescription);
         sb.Append("\n\n");
         sb.Append(("MemberXenotypeChances".Translate() + ":").AsTipTitle());
         sb.Append("\n");
 
-        List<KeyValuePair<string, float>> entries = new List<KeyValuePair<string, float>>();
+        List<KeyValuePair<string, float>> entries = [];
 
         foreach (KeyValuePair<XenotypeDef, float> kvp in filter.XenotypeWeights)
         {
@@ -124,7 +124,7 @@ class FactionDefDescriptionPatch
             sb.Append(("FCEmpireMemberRaceChances".Translate() + ":").AsTipTitle());
             sb.Append("\n");
 
-            List<KeyValuePair<string, float>> raceEntries = new List<KeyValuePair<string, float>>();
+            List<KeyValuePair<string, float>> raceEntries = [];
             foreach (KeyValuePair<ThingDef, float> kvp in filter.RaceWeights)
             {
                 if (kvp.Value <= 0f)

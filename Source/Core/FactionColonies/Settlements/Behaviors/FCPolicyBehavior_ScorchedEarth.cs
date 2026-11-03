@@ -13,7 +13,7 @@ public class FCPolicyBehavior_ScorchedEarth : FCPolicyBehavior
         if (settlement?.BuildingsComp is null) return;
 
         var ext = Ext<FCPolicyBehaviorExt_ScorchedEarth>();
-        List<int> damaged = new List<int>();
+        List<int> damaged = [];
         for (int k = 0; k < settlement.BuildingsComp.NumBuildingSlots; k++)
         {
             if (!settlement.BuildingsComp.BuildingSlotIsBuilding(k)) continue;

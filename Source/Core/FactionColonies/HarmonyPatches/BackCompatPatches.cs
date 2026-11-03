@@ -16,10 +16,10 @@ static class BackCompatibleDefName_Patch
     // Must stay in sync with PawnKindTemplateUtil.FixupPawnKindDefs templates
     // and PColonyPawnKindDefOf entries.
     private static readonly string[] TemplateNames =
-    {
+    [
         "PColony_Fighter", "PColony_Elite", "PColony_Leader",
         "PColony_Trader", "PColony_Guard", "PColony_Villager"
-    };
+    ];
 
     static void Postfix(Type defType, ref string __result)
     {

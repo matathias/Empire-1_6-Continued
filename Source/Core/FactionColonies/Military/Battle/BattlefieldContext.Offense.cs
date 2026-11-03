@@ -139,7 +139,7 @@ public partial class BattlefieldContext
     private void StripNativeGarrison()
     {
         if (map is null) return;
-        List<Pawn> toRemove = new List<Pawn>();
+        List<Pawn> toRemove = [];
         foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
         {
             if (!pawn.RaceProps.Humanlike) continue;
@@ -201,7 +201,7 @@ public partial class BattlefieldContext
         }
 
         IntVec3 edge = FindNearEdgeCell(map);
-        List<Pawn> spawned = new List<Pawn>();
+        List<Pawn> spawned = [];
         foreach (Pawn merc in mercs)
         {
             if (merc.IsWildMan()) continue;
@@ -357,7 +357,7 @@ public partial class BattlefieldContext
     {
         MilitaryOperation op = activeOps?.FirstOrDefault(o => o?.aggressor?.pawns is not null);
         if (op is null) return;
-        HashSet<Pawn> tracked = new HashSet<Pawn>(attackerPawns);
+        HashSet<Pawn> tracked = new(attackerPawns);
         foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
         {
             if (pawn.Faction != Faction.OfPlayer) continue;
@@ -399,7 +399,7 @@ public partial class BattlefieldContext
         // loot / enslave delivery + letter + archive + cooldown). A manual Capture win defers
         // its settlement->colony swap to teardown via RegisterPendingCapture.
         List<MilitaryOperation> ops = activeOps is not null
-            ? activeOps.ToList() : new List<MilitaryOperation>();
+            ? activeOps.ToList() : [];
         foreach (MilitaryOperation op in ops)
         {
             if (op is null) continue;
@@ -443,7 +443,7 @@ public partial class BattlefieldContext
     {
         if (map is null) return false;
 
-        List<Pawn> playerColonists = new List<Pawn>();
+        List<Pawn> playerColonists = [];
         bool anyMobile = false;
         // Snapshot the spawned-pawn list: SetFaction on a spawned pawn de/re-registers it in
         // mapPawns' internal list -- the very list AllPawnsSpawned returns -- and mutating it
@@ -488,7 +488,7 @@ public partial class BattlefieldContext
             {
                 // Won: the garrison is cleared; idle the surviving Empire mercs as loot-phase
                 // guards until the player leaves.
-                List<Pawn> idlers = new List<Pawn>();
+                List<Pawn> idlers = [];
                 foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
                     if (pawn.Faction == empire && !pawn.Dead && !pawn.Downed) idlers.Add(pawn);
                 foreach (Pawn p in idlers) p.jobs?.StopAll();
@@ -524,7 +524,7 @@ public partial class BattlefieldContext
             return;
         }
 
-        List<Pawn> playerColonists = new List<Pawn>();
+        List<Pawn> playerColonists = [];
         bool anyMobile = false;
         // Snapshot: the merc-reclaim SetFaction below mutates the spawned-pawn list
         // (see TeardownOffenseMap).
@@ -674,8 +674,7 @@ public partial class BattlefieldContext
         int travelTicks = TravelUtil.ReturnTicksToArrive(tile, home.Tile);
         if (!won) travelTicks += GenDate.TicksPerDay;
 
-        List<Thing> goods = new List<Thing>(pawns.Count);
-        foreach (Pawn pawn in pawns) goods.Add(pawn);
+        List<Thing> goods = [.. pawns];
 
         DeliveryEvent.CreateDeliveryEvent(new FCEvent
         {

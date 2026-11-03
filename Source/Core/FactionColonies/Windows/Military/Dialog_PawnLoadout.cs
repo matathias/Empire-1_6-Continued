@@ -21,7 +21,7 @@ namespace FactionColonies;
 /// </summary>
 public class Dialog_PawnLoadout : Window
 {
-    public override Vector2 InitialSize => new Vector2(640f, 680f);
+    public override Vector2 InitialSize => new(640f, 680f);
 
     private readonly MercenarySquadFC squad;
     private readonly Mercenary merc;
@@ -97,7 +97,7 @@ public class Dialog_PawnLoadout : Window
 
         // Header bar (full-width highlight behind the title; right-inset
         // leaves room for the close X which overlaps inRect's top-right).
-        Rect headerBar = new Rect(inRect.x, inRect.y, inRect.width - 26f, 35f);
+        Rect headerBar = new(inRect.x, inRect.y, inRect.width - 26f, 35f);
         Widgets.DrawHighlight(headerBar);
 
         Text.Font = GameFont.Medium;
@@ -141,21 +141,21 @@ public class Dialog_PawnLoadout : Window
         float bottomBtnH = 36f;
 
         float leftW = 220f;
-        Rect leftPanel = new Rect(inRect.x, topY, leftW, inRect.height - (topY - inRect.y) - bottomBtnH - 8f);
+        Rect leftPanel = new(inRect.x, topY, leftW, inRect.height - (topY - inRect.y) - bottomBtnH - 8f);
         // Pull the right edge in a few px so the tab box's right border isn't clipped by the window frame.
-        Rect rightPanel = new Rect(inRect.x + leftW + 10f, topY, inRect.width - leftW - 10f - 3f, leftPanel.height);
+        Rect rightPanel = new(inRect.x + leftW + 10f, topY, inRect.width - leftW - 10f - 3f, leftPanel.height);
 
         DrawLeftPanel(leftPanel);
         DrawLoadoutPanel(rightPanel);
 
         // Bottom: [Pick] [Reset]               [Apply] [Close]
-        Rect bottomRect = new Rect(inRect.x, inRect.yMax - bottomBtnH, inRect.width, bottomBtnH);
+        Rect bottomRect = new(inRect.x, inRect.yMax - bottomBtnH, inRect.width, bottomBtnH);
         float gap = 8f;
         float pickW = 200f;
         float resetW = 180f;
         float rightBtnW = 90f;
 
-        Rect pickRect = new Rect(bottomRect.x, bottomRect.y, pickW, bottomRect.height);
+        Rect pickRect = new(bottomRect.x, bottomRect.y, pickW, bottomRect.height);
         if (UIUtil.ClampedButtonText(pickRect, "FCDialogPawnLoadoutPickFromPool".Translate()))
         {
             OpenPickFromPoolMenu();
@@ -166,7 +166,7 @@ public class Dialog_PawnLoadout : Window
         bool canReset = workingLoadout is not null && merc.loadout is not null;
         Color colorBefore = GUI.color;
         if (!canReset) GUI.color = Color.gray;
-        Rect resetRect = new Rect(pickRect.xMax + gap, bottomRect.y, resetW, bottomRect.height);
+        Rect resetRect = new(pickRect.xMax + gap, bottomRect.y, resetW, bottomRect.height);
         if (UIUtil.ClampedButtonText(resetRect, "FCDialogPawnLoadoutResetToPool".Translate(), true, true, canReset))
         {
             workingLoadout = null;
@@ -174,8 +174,8 @@ public class Dialog_PawnLoadout : Window
         }
         GUI.color = colorBefore;
 
-        Rect closeRect = new Rect(bottomRect.xMax - rightBtnW, bottomRect.y, rightBtnW, bottomRect.height);
-        Rect applyRect = new Rect(closeRect.x - gap - rightBtnW, bottomRect.y, rightBtnW, bottomRect.height);
+        Rect closeRect = new(bottomRect.xMax - rightBtnW, bottomRect.y, rightBtnW, bottomRect.height);
+        Rect applyRect = new(closeRect.x - gap - rightBtnW, bottomRect.y, rightBtnW, bottomRect.height);
 
         if (!dirty) GUI.color = Color.gray;
         if (UIUtil.ClampedButtonText(applyRect, "FCDialogPawnLoadoutApply".Translate(), true, true, dirty))
@@ -216,7 +216,7 @@ public class Dialog_PawnLoadout : Window
         const float slotSize = 50f;
         const float gap = 14f;
 
-        Rect portraitRect = new Rect(rect.x + (rect.width - 100f) / 2f, rect.y, 100f, portraitH);
+        Rect portraitRect = new(rect.x + (rect.width - 100f) / 2f, rect.y, 100f, portraitH);
         if (previewPawn is not null)
             UIUtil.DrawPawnPortrait(portraitRect, previewPawn);
         else
@@ -229,7 +229,7 @@ public class Dialog_PawnLoadout : Window
         float slotsY = portraitRect.yMax + gap + 18f;
         float slotsTotalW = showMount ? slotSize * 2 + 16f : slotSize;
         float slotsX = rect.x + (rect.width - slotsTotalW) / 2f;
-        Rect mountSlot = new Rect(slotsX, slotsY, slotSize, slotSize);
+        Rect mountSlot = new(slotsX, slotsY, slotSize, slotSize);
         Rect weaponSlot = showMount
             ? new Rect(slotsX + slotSize + 16f, slotsY, slotSize, slotSize)
             : new Rect(slotsX, slotsY, slotSize, slotSize);
@@ -408,7 +408,7 @@ public class Dialog_PawnLoadout : Window
     {
         MilitaryFC mfc = FindFC.Military;
         if (mfc?.units is null) return;
-        List<FloatMenuOption> options = new List<FloatMenuOption>();
+        List<FloatMenuOption> options = [];
         foreach (MilUnitFC unit in mfc.units)
         {
             MilUnitFC captured = unit;

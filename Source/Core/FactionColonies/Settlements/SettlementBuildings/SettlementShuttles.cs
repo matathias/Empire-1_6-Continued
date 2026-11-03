@@ -90,7 +90,7 @@ public class SettlementBuildingComp_Shuttles : SettlementBuildingComp
 
     private Command RequestShuttleAction(WorldSettlementFC worldsettlement)
     {
-        Command_Action requestShuttle = new Command_Action
+        Command_Action requestShuttle = new()
         {
             defaultLabel = "FCShuttlePortCallShuttleLabel".Translate(),
             defaultDesc = "FCShuttlePortCallShuttleDesc".Translate(shuttleUsesRemaining, ShuttleSender.cost),
@@ -114,7 +114,7 @@ public class SettlementBuildingComp_Shuttles : SettlementBuildingComp
 
     private Command RequestShuttleForCaravanAction(WorldSettlementFC worldsettlement)
     {
-        Command_Action requestShuttleForCaravan = new Command_Action
+        Command_Action requestShuttleForCaravan = new()
         {
             defaultLabel = "FCShuttlePortCallShuttleForCaravanLabel".Translate(),
             defaultDesc = "FCShuttlePortCallShuttleDesc".Translate(shuttleUsesRemaining, ShuttleSender.cost),

@@ -31,6 +31,6 @@ public class TileResourceBonus
 /// </summary>
 public class TileMutatorResourceExtension : DefModExtension
 {
-    public List<TileResourceBonus> bonuses = new List<TileResourceBonus>();
-    public List<FCStatModifier> statModifiers = new List<FCStatModifier>();
+    public List<TileResourceBonus> bonuses = [];
+    public List<FCStatModifier> statModifiers = [];
 }

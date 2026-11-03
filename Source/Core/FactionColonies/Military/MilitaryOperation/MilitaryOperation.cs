@@ -27,8 +27,8 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
     public WorldObject targetObject;
 
     /* Participants */
-    public MilitaryOperationParticipant aggressor = new MilitaryOperationParticipant();
-    public MilitaryOperationParticipant defender = new MilitaryOperationParticipant();
+    public MilitaryOperationParticipant aggressor = new();
+    public MilitaryOperationParticipant defender = new();
 
     /* External auto-defender that supplied the defending force, if any. Persisted so the
      * appropriate IAutoDefender callbacks fire on engagement and resolution. */
@@ -43,7 +43,7 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
     public BattleResult battleResult;
 
     /* Wakeup events scheduled by this op (arrival, cooldown, ...). */
-    public List<FCEvent> sourceEvents = new List<FCEvent>();
+    public List<FCEvent> sourceEvents = [];
 
     /// <summary>Tile of the active <see cref="BattlefieldContext"/> this op is attached to.
     /// <see cref="PlanetTile.Invalid"/> when the op has no battlefield (auto-resolved or pre-engagement).</summary>
@@ -110,9 +110,9 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (aggressor is null) aggressor = new MilitaryOperationParticipant();
-            if (defender is null) defender = new MilitaryOperationParticipant();
-            if (sourceEvents is null) sourceEvents = new List<FCEvent>();
+            aggressor ??= new MilitaryOperationParticipant();
+            defender ??= new MilitaryOperationParticipant();
+            sourceEvents ??= [];
         }
     }
 

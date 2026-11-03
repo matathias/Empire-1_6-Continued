@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class RaidTargetRegistry
 {
-    private static readonly RegistryList<IRaidTarget> _list = new RegistryList<IRaidTarget>();
+    private static readonly RegistryList<IRaidTarget> _list = new();
 
     internal static void Register(IRaidTarget target) => _list.Register(target);
     internal static void Unregister(IRaidTarget target) => _list.Unregister(target);

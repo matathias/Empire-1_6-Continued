@@ -55,7 +55,7 @@ public class FCTrader_Research : ITrader
     {
         get
         { //Possibly set to empty list?
-            return Enumerable.Empty<Thing>();
+            return [];
         }
     }
 

@@ -29,7 +29,7 @@ public class EmpireStockGenerator : StockGenerator
     /// at 0.2x scale shows ~1 item per resource; a level-10 settlement at 2x shows the full
     /// range times 2). Default is calibrated against vanilla focused-trader counts.
     /// </summary>
-    public IntRange varietyRange = new IntRange(5, 10);
+    public IntRange varietyRange = new(5, 10);
 
     /// <summary>Randomness range for per-item budget (multiplier). Prevents uniform stack sizes.</summary>
     private const float BudgetRandomMin = 0.5f;
@@ -115,7 +115,7 @@ public class EmpireStockGenerator : StockGenerator
                     {
                         PawnKindDef pawnKind = td.race.AnyPawnKind;
                         if (pawnKind is null) continue;
-                        PawnGenerationRequest request = new PawnGenerationRequest(pawnKind, null, PawnGenerationContext.NonPlayer);
+                        PawnGenerationRequest request = new(pawnKind, null, PawnGenerationContext.NonPlayer);
                         Pawn pawn = PawnGenerator.GeneratePawn(request);
                         if (pawn is not null) yield return pawn;
                     }

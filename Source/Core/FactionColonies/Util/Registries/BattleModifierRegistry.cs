@@ -8,9 +8,9 @@ namespace FactionColonies;
 /// </summary>
 public static class BattleModifierRegistry
 {
-    private static readonly RegistryList<IFactionPowerModifier> _factionList = new RegistryList<IFactionPowerModifier>();
-    private static readonly RegistryList<ISettlementPowerModifier> _settlementList = new RegistryList<ISettlementPowerModifier>();
-    private static readonly RegistryList<IBattleModifier> _battleList = new RegistryList<IBattleModifier>();
+    private static readonly RegistryList<IFactionPowerModifier> _factionList = new();
+    private static readonly RegistryList<ISettlementPowerModifier> _settlementList = new();
+    private static readonly RegistryList<IBattleModifier> _battleList = new();
 
     /* === Registration === */
 

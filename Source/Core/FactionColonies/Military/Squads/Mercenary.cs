@@ -30,8 +30,8 @@ public class Mercenary : IExposable, ILoadReferenceable
      * bonded mechanoids of a mechanitor merc. A wrapper with subPawnType != None and pawn == null
      * is "assigned but absent" (dead, awaiting paid replacement). See handler for the owning-merc
      * back-reference. */
-    public List<Mercenary> animals = new List<Mercenary>();
-    public List<Mercenary> mechs = new List<Mercenary>();
+    public List<Mercenary> animals = [];
+    public List<Mercenary> mechs = [];
     public Pawn pawn;
     public int loadID;
 
@@ -68,7 +68,7 @@ public class Mercenary : IExposable, ILoadReferenceable
     /// Effective per-unit stat modifiers read in combat/healing (unit scope). Holds a flattened copy of
     /// the loadout design's modifiers (sourceId == DesignModifierSource) plus any earned accolades.
     /// </summary>
-    public List<PermanentStatModifier> statModifiers = new List<PermanentStatModifier>();
+    public List<PermanentStatModifier> statModifiers = [];
 
     public void AddStatModifier(PermanentStatModifier mod) { statModifiers.Add(mod); }
     public void RemoveStatModifiersBySource(string sourceId) { statModifiers.RemoveAll(m => m.sourceId == sourceId); }
@@ -80,7 +80,7 @@ public class Mercenary : IExposable, ILoadReferenceable
     private void SyncDesignStatModifiers(MilUnitFC source)
     {
         if (source is null) return;
-        if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+        statModifiers ??= [];
         statModifiers.RemoveAll(m => m.sourceId == DesignModifierSource);
         if (source.statModifiers is not null)
         {
@@ -206,9 +206,9 @@ public class Mercenary : IExposable, ILoadReferenceable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
-            if (animals is null) animals = new List<Mercenary>();
-            if (mechs is null) mechs = new List<Mercenary>();
+            statModifiers ??= [];
+            animals ??= [];
+            mechs ??= [];
 
             /* Identity backfill for legacy sub-pawns (saved before subPawnType existed). The only
              * sub-pawn type that ever shipped is the companion animal, so any pre-existing wrapper
@@ -245,7 +245,7 @@ public class Mercenary : IExposable, ILoadReferenceable
 
     public void SetCustomData(string key, IExposable data)
     {
-        if (customData is null) customData = new Dictionary<string, IExposable>();
+        customData ??= [];
         customData[key] = data;
     }
 

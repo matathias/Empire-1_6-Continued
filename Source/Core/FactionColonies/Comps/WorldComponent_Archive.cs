@@ -13,7 +13,7 @@ namespace FactionColonies;
 public class WorldComponent_Archive : WorldComponent
 {
     /* -*- Battle archive -*- */
-    private List<BattleResult> battleArchive = new List<BattleResult>();
+    private List<BattleResult> battleArchive = [];
     private int nextReportId = 1;
 
     public WorldComponent_Archive(World world) : base(world) { }
@@ -25,7 +25,7 @@ public class WorldComponent_Archive : WorldComponent
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (battleArchive is null) battleArchive = new List<BattleResult>();
+            battleArchive ??= [];
             if (nextReportId < 1) nextReportId = 1;
         }
     }

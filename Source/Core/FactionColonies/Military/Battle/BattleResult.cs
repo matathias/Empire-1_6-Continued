@@ -60,7 +60,7 @@ public class BattleResult : IExposable
 
     /* -*- Live state (mutates during auto-resolve, frozen after Resolved) -*- */
     public BattleSubPhase subPhase = BattleSubPhase.Resolved;
-    public List<RoundEntry> rounds = new List<RoundEntry>();
+    public List<RoundEntry> rounds = [];
 
     /* -*- Archive metadata, populated when WorldComponent_Archive accepts the result -*- */
     public int reportId;
@@ -131,7 +131,7 @@ public class BattleResult : IExposable
         Scribe_Values.Look(ref wasWithdrawal, "wasWithdrawal", false);
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit && rounds is null)
-            rounds = new List<RoundEntry>();
+            rounds = [];
     }
 }
 

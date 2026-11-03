@@ -27,22 +27,22 @@ public class TileFieldCurve
 
     private static string DefaultLabel(TileField f)
     {
-        switch (f)
+        return f switch
         {
-            case TileField.Temperature: return "FCTileFieldTemperature".Translate();
-            case TileField.Rainfall: return "Rainfall".Translate();
-            case TileField.Swampiness: return "FCTileFieldSwampiness".Translate();
-            case TileField.Elevation: return "Elevation".Translate();
-            case TileField.Pollution: return "FCTileFieldPollution".Translate();
-            case TileField.AnimalDensity: return "FCTileFieldAnimalDensity".Translate();
-            case TileField.PlantDensityFactor: return "FCTileFieldPlantDensity".Translate();
-            case TileField.FishPopulationFactor: return "FCTileFieldFishPopulation".Translate();
-            case TileField.BiomePlantDensity: return "FCTileFieldBiomePlantDensity".Translate();
-            case TileField.RiverDistance: return "FCTileFieldRiverDistance".Translate();
-            case TileField.RoadCount: return "FCTileFieldRoadConnectivity".Translate();
-            case TileField.HasAnyRiver: return "River".Translate();
-            default: return f.ToString();
-        }
+            TileField.Temperature => "FCTileFieldTemperature".Translate(),
+            TileField.Rainfall => "Rainfall".Translate(),
+            TileField.Swampiness => "FCTileFieldSwampiness".Translate(),
+            TileField.Elevation => "Elevation".Translate(),
+            TileField.Pollution => "FCTileFieldPollution".Translate(),
+            TileField.AnimalDensity => "FCTileFieldAnimalDensity".Translate(),
+            TileField.PlantDensityFactor => "FCTileFieldPlantDensity".Translate(),
+            TileField.FishPopulationFactor => "FCTileFieldFishPopulation".Translate(),
+            TileField.BiomePlantDensity => "FCTileFieldBiomePlantDensity".Translate(),
+            TileField.RiverDistance => "FCTileFieldRiverDistance".Translate(),
+            TileField.RoadCount => "FCTileFieldRoadConnectivity".Translate(),
+            TileField.HasAnyRiver => "River".Translate(),
+            _ => f.ToString(),
+        };
     }
 
     public double Evaluate(PlanetTile tile)
@@ -110,13 +110,13 @@ public class TileFieldCurve
 /// </summary>
 public class ResourceProductionExtension_TileField : ResourceProductionExtension
 {
-    public List<TileFieldCurve> additives = new List<TileFieldCurve>();
-    public List<TileFieldCurve> multipliers = new List<TileFieldCurve>();
+    public List<TileFieldCurve> additives = [];
+    public List<TileFieldCurve> multipliers = [];
     /// <summary>
     /// Planet layers this extension applies to. Empty = surface only.
     /// Mirrors the convention used by WorldSettlementDef.planetLayers.
     /// </summary>
-    public List<PlanetLayerDef> planetLayers = new List<PlanetLayerDef>();
+    public List<PlanetLayerDef> planetLayers = [];
 
     public ResourceProductionExtension_TileField()
     {

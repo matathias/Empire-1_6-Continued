@@ -5,7 +5,7 @@ namespace FactionColonies;
 public class DescWindowFc : Window
 {
 
-    public override Vector2 InitialSize => new Vector2(400f, 320f);
+    public override Vector2 InitialSize => new(400f, 320f);
 
     //declare variables
 

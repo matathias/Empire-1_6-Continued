@@ -9,13 +9,13 @@ public class FCCustomizeXenotypesWindow : Window
     List<CustomXenotype> allCustomXenotypes;
     List<ThingDef> allRaces;
     XenotypeFilter filter;
-    private List<string> weightBufXenos = new List<string>();
-    private List<string> weightBufCustoms = new List<string>();
-    private List<string> weightBufRaces = new List<string>();
-    public override Vector2 InitialSize => new Vector2(400f, 600f);
+    private List<string> weightBufXenos = [];
+    private List<string> weightBufCustoms = [];
+    private List<string> weightBufRaces = [];
+    public override Vector2 InitialSize => new(400f, 600f);
 
-    private Vector2 xenoScrollBar = new Vector2();
-    private Vector2 raceScrollBar = new Vector2();
+    private Vector2 xenoScrollBar = new();
+    private Vector2 raceScrollBar = new();
 
     private const int margin = 5;
     private const int smallMargin = 3;
@@ -94,27 +94,27 @@ public class FCCustomizeXenotypesWindow : Window
 
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 35f);
+        Rect header = new(boundingBox.x, boundingBox.y, boundingBox.width, 35f);
         UIUtil.ClampedLabel(header, titleText);
         Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
         Text.Font = GameFont.Small;
-        Rect subHeader = new Rect(boundingBox.x, header.yMax, boundingBox.width, 30f);
+        Rect subHeader = new(boundingBox.x, header.yMax, boundingBox.width, 30f);
         UIUtil.ClampedLabel(subHeader, FindFC.EmpireFaction.Name);
 
         float availHeight = boundingBox.yMax - subHeader.yMax - CloseButSize.y - margin;
 
         if (allRaces.Count > 1)
         {
-            Rect xenoBox = new Rect(boundingBox.x, subHeader.yMax, (boundingBox.width - (margin * 2)) / 2, availHeight);
-            Rect raceBox = new Rect(xenoBox.xMax + (margin * 2), xenoBox.y, xenoBox.width, availHeight);
+            Rect xenoBox = new(boundingBox.x, subHeader.yMax, (boundingBox.width - (margin * 2)) / 2, availHeight);
+            Rect raceBox = new(xenoBox.xMax + (margin * 2), xenoBox.y, xenoBox.width, availHeight);
             Widgets.DrawLineVertical(xenoBox.xMax + margin, xenoBox.y, xenoBox.height);
             DoXenotypeSelection(xenoBox);
             DoRaceSelection(raceBox);
         }
         else
         {
-            Rect xenoBox = new Rect(boundingBox.x, subHeader.yMax, boundingBox.width, availHeight);
+            Rect xenoBox = new(boundingBox.x, subHeader.yMax, boundingBox.width, availHeight);
             DoXenotypeSelection(xenoBox);
         }
 
@@ -124,8 +124,8 @@ public class FCCustomizeXenotypesWindow : Window
     }
     private void DoXenotypeSelection(Rect boundingBox)
     {
-        Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, bigRowHeight);
-        Rect headerText = new Rect(header.x + smallMargin, header.y, header.width - (smallMargin * 2), header.height);
+        Rect header = new(boundingBox.x, boundingBox.y, boundingBox.width, bigRowHeight);
+        Rect headerText = new(header.x + smallMargin, header.y, header.width - (smallMargin * 2), header.height);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         Widgets.DrawHighlight(header);
@@ -134,8 +134,8 @@ public class FCCustomizeXenotypesWindow : Window
         float bottomY = boundingBox.yMax;
         if (filter.XenoCompleteWeight == 0)
         {
-            Rect errorBox = new Rect(boundingBox.x, boundingBox.yMax - bigRowHeight, boundingBox.width, bigRowHeight);
-            Rect errorLabel = new Rect(errorBox.x + smallMargin, errorBox.y + smallMargin, errorBox.width - (smallMargin * 2), errorBox.height - smallMargin);
+            Rect errorBox = new(boundingBox.x, boundingBox.yMax - bigRowHeight, boundingBox.width, bigRowHeight);
+            Rect errorLabel = new(errorBox.x + smallMargin, errorBox.y + smallMargin, errorBox.width - (smallMargin * 2), errorBox.height - smallMargin);
             TaggedString errorText = "FCXenotypeWeightError".Translate();
             errorText = errorText.Colorize(Color.red);
 
@@ -151,8 +151,8 @@ public class FCCustomizeXenotypesWindow : Window
         {
             string noticeText = "FCOnlyNonViolentXenoWarning".Translate();
             float textHeight = Text.CalcHeight(noticeText, boundingBox.width - (smallMargin * 2));
-            Rect noticeBox = new Rect(boundingBox.x, bottomY - textHeight, boundingBox.width, textHeight);
-            Rect noticeLabel = new Rect(noticeBox.x + smallMargin, noticeBox.y, noticeBox.width - (smallMargin * 2), textHeight);
+            Rect noticeBox = new(boundingBox.x, bottomY - textHeight, boundingBox.width, textHeight);
+            Rect noticeLabel = new(noticeBox.x + smallMargin, noticeBox.y, noticeBox.width - (smallMargin * 2), textHeight);
             noticeText = noticeText.Colorize(Color.yellow);
 
             Widgets.DrawHighlight(noticeBox);
@@ -166,8 +166,8 @@ public class FCCustomizeXenotypesWindow : Window
         {
             string noticeText = "* " + "FCXenoNonViolentIndicatorDesc".Translate();
             float textHeight = Text.CalcHeight(noticeText, boundingBox.width - (smallMargin * 2));
-            Rect noticeBox = new Rect(boundingBox.x, bottomY - textHeight, boundingBox.width, textHeight);
-            Rect noticeLabel = new Rect(noticeBox.x + smallMargin, noticeBox.y, noticeBox.width - (smallMargin * 2), textHeight);
+            Rect noticeBox = new(boundingBox.x, bottomY - textHeight, boundingBox.width, textHeight);
+            Rect noticeLabel = new(noticeBox.x + smallMargin, noticeBox.y, noticeBox.width - (smallMargin * 2), textHeight);
 
             Widgets.DrawHighlight(noticeBox);
             Text.Font = GameFont.Small;
@@ -177,8 +177,8 @@ public class FCCustomizeXenotypesWindow : Window
             bottomY -= (noticeBox.height + margin);
         }
 
-        Rect enableButton = new Rect(boundingBox.x, bottomY - bigRowHeight, boundingBox.width / 2, bigRowHeight);
-        Rect disableButton = new Rect(enableButton.xMax, enableButton.y, enableButton.width, enableButton.height);
+        Rect enableButton = new(boundingBox.x, bottomY - bigRowHeight, boundingBox.width / 2, bigRowHeight);
+        Rect disableButton = new(enableButton.xMax, enableButton.y, enableButton.width, enableButton.height);
         if (UIUtil.ClampedButtonText(enableButton, "FCXenoRaceEnableAll".Translate()))
         {
             filter.ResetToAllXenotypes();
@@ -191,19 +191,19 @@ public class FCCustomizeXenotypesWindow : Window
 
         float renderHeight = bottomY - header.yMax - margin;
         float totalHeight = rowHeight * (allXenotypes.Count + allCustomXenotypes.Count);
-        Rect drawBox = new Rect(boundingBox.x, header.yMax + margin, boundingBox.width, renderHeight);
-        Rect selectedListBox = new Rect(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
+        Rect drawBox = new(boundingBox.x, header.yMax + margin, boundingBox.width, renderHeight);
+        Rect selectedListBox = new(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
         Widgets.DrawMenuSection(selectedListBox);
         Rect innerScrollBox = ScrollUtil.BeginScrollView(selectedListBox, ref xenoScrollBar, totalHeight);
 
         Text.Anchor = TextAnchor.MiddleCenter;
         for (int i = 0; i < allXenotypes.Count + allCustomXenotypes.Count; i++)
         {
-            Rect row = new Rect(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
-            Rect icon = new Rect(row.x + margin, row.y, rowHeight, rowHeight);
-            Rect percentLabel = new Rect(row.xMax - 60f, row.y, 60f, rowHeight);
-            Rect inputBox = new Rect(percentLabel.x - 80f, row.y + 2, 80f, rowHeight - 4);
-            Rect label = new Rect(icon.x + margin, row.y, inputBox.x - icon.xMax, rowHeight);
+            Rect row = new(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
+            Rect icon = new(row.x + margin, row.y, rowHeight, rowHeight);
+            Rect percentLabel = new(row.xMax - 60f, row.y, 60f, rowHeight);
+            Rect inputBox = new(percentLabel.x - 80f, row.y + 2, 80f, rowHeight - 4);
+            Rect label = new(icon.x + margin, row.y, inputBox.x - icon.xMax, rowHeight);
             if (i % 2 == 0)
             {
                 Widgets.DrawHighlight(row);
@@ -272,8 +272,8 @@ public class FCCustomizeXenotypesWindow : Window
     }
     private void DoRaceSelection(Rect boundingBox)
     {
-        Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, bigRowHeight);
-        Rect headerText = new Rect(header.x + smallMargin, header.y, header.width - (smallMargin * 2), header.height);
+        Rect header = new(boundingBox.x, boundingBox.y, boundingBox.width, bigRowHeight);
+        Rect headerText = new(header.x + smallMargin, header.y, header.width - (smallMargin * 2), header.height);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         Widgets.DrawHighlight(header);
@@ -282,8 +282,8 @@ public class FCCustomizeXenotypesWindow : Window
         float bottomY = boundingBox.yMax;
         if (filter.RaceTotalWeight == 0)
         {
-            Rect errorBox = new Rect(boundingBox.x, boundingBox.yMax - bigRowHeight, boundingBox.width, bigRowHeight);
-            Rect errorLabel = new Rect(errorBox.x + smallMargin, errorBox.y, errorBox.width - (smallMargin * 2), errorBox.height);
+            Rect errorBox = new(boundingBox.x, boundingBox.yMax - bigRowHeight, boundingBox.width, bigRowHeight);
+            Rect errorLabel = new(errorBox.x + smallMargin, errorBox.y, errorBox.width - (smallMargin * 2), errorBox.height);
             TaggedString errorText = "FCRaceWeightError".Translate();
             errorText = errorText.Colorize(Color.red);
 
@@ -313,8 +313,8 @@ public class FCCustomizeXenotypesWindow : Window
             bottomY -= (noticeBox.height + margin);
         }*/
 
-        Rect enableButton = new Rect(boundingBox.x, bottomY - bigRowHeight, boundingBox.width / 2, bigRowHeight);
-        Rect disableButton = new Rect(enableButton.xMax, enableButton.y, enableButton.width, enableButton.height);
+        Rect enableButton = new(boundingBox.x, bottomY - bigRowHeight, boundingBox.width / 2, bigRowHeight);
+        Rect disableButton = new(enableButton.xMax, enableButton.y, enableButton.width, enableButton.height);
         if (UIUtil.ClampedButtonText(enableButton, "FCXenoRaceEnableAll".Translate()))
         {
             filter.ResetToAllRaces();
@@ -327,19 +327,19 @@ public class FCCustomizeXenotypesWindow : Window
 
         float renderHeight = bottomY - header.yMax - margin;
         float totalHeight = rowHeight * (allRaces.Count);
-        Rect drawBox = new Rect(boundingBox.x, header.yMax + margin, boundingBox.width, renderHeight);
-        Rect selectedListBox = new Rect(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
+        Rect drawBox = new(boundingBox.x, header.yMax + margin, boundingBox.width, renderHeight);
+        Rect selectedListBox = new(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
         Widgets.DrawMenuSection(selectedListBox);
         Rect innerScrollBox = ScrollUtil.BeginScrollView(selectedListBox, ref raceScrollBar, totalHeight);
 
         Text.Anchor = TextAnchor.MiddleCenter;
         for (int i = 0; i < allRaces.Count; i++)
         {
-            Rect row = new Rect(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
-            Rect icon = new Rect(row.x + margin, row.y, rowHeight, rowHeight);
-            Rect percentLabel = new Rect(row.xMax - 60f, row.y, 60f, rowHeight);
-            Rect inputBox = new Rect(percentLabel.x - 80f, row.y + 2, 80f, rowHeight - 4);
-            Rect label = new Rect(icon.x + margin, row.y, inputBox.x - icon.xMax, rowHeight);
+            Rect row = new(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
+            Rect icon = new(row.x + margin, row.y, rowHeight, rowHeight);
+            Rect percentLabel = new(row.xMax - 60f, row.y, 60f, rowHeight);
+            Rect inputBox = new(percentLabel.x - 80f, row.y + 2, 80f, rowHeight - 4);
+            Rect label = new(icon.x + margin, row.y, inputBox.x - icon.xMax, rowHeight);
             if (i % 2 == 0)
             {
                 Widgets.DrawHighlight(row);
@@ -375,9 +375,9 @@ public class FCCustomizeXenotypesWindow : Window
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
         float buttonSize = boundingBox.height;
-        Rect decButton = new Rect(boundingBox.x, boundingBox.y, buttonSize, buttonSize);
-        Rect incButton = new Rect(boundingBox.xMax - buttonSize, boundingBox.y, buttonSize, buttonSize);
-        Rect fieldBox = new Rect(decButton.xMax, boundingBox.y, incButton.x - decButton.xMax, boundingBox.height);
+        Rect decButton = new(boundingBox.x, boundingBox.y, buttonSize, buttonSize);
+        Rect incButton = new(boundingBox.xMax - buttonSize, boundingBox.y, buttonSize, buttonSize);
+        Rect fieldBox = new(decButton.xMax, boundingBox.y, incButton.x - decButton.xMax, boundingBox.height);
         Text.Anchor = TextAnchor.MiddleCenter;
         Text.Font = GameFont.Tiny;
         if (UIUtil.ClampedButtonText(decButton, "<"))

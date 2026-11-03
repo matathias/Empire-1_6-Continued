@@ -71,7 +71,7 @@ public static class PaymentUtil
     /// <c>GetSilver() &gt;= amount</c>.</summary>
     public static bool CanAfford(int amount, string reason = null, WorldSettlementFC settlement = null)
     {
-        SilverPaymentContext context = new SilverPaymentContext(amount, reason, settlement);
+        SilverPaymentContext context = new(amount, reason, settlement);
         SilverPaymentRegistry.InvokeModifiers(context);
         return context.Amount <= 0 || GetSilver() >= context.Amount;
     }
@@ -85,7 +85,7 @@ public static class PaymentUtil
     /// call site so affordability and payment stay a single atomic operation.</summary>
     public static bool TryPaySilver(int amount, string reason = null, WorldSettlementFC settlement = null)
     {
-        SilverPaymentContext context = new SilverPaymentContext(amount, reason, settlement);
+        SilverPaymentContext context = new(amount, reason, settlement);
         SilverPaymentRegistry.InvokeModifiers(context);
         int effective = context.Amount;
         if (effective <= 0)                         // modifiers waived / fully financed it
@@ -106,7 +106,7 @@ public static class PaymentUtil
     /// balance upstream and explicitly want a best-effort deduction.</summary>
     public static bool PaySilver(int amount, string reason = null, WorldSettlementFC settlement = null)
     {
-        SilverPaymentContext context = new SilverPaymentContext(amount, reason, settlement);
+        SilverPaymentContext context = new(amount, reason, settlement);
         SilverPaymentRegistry.InvokeModifiers(context);
         context.RunCommit();
         int effective = context.Amount;
@@ -122,7 +122,7 @@ public static class PaymentUtil
     {
         if (amount <= 0) return;
 
-        List<Thing> silverStacks = new List<Thing>();
+        List<Thing> silverStacks = [];
         foreach (Map map in Find.Maps)
         {
             if (map.IsPlayerHome)
@@ -191,7 +191,7 @@ public static class PaymentUtil
 
     public static ThingSetMakerParams ReturnThingSetMakerParams(int baseValue, int rangeMod)
     {
-        ThingSetMakerParams parms = new ThingSetMakerParams();
+        ThingSetMakerParams parms = new();
         parms.techLevel = Find.FactionManager.OfPlayer.def.techLevel;
         parms.totalMarketValueRange = new FloatRange(baseValue - rangeMod, baseValue + rangeMod);
         return parms;
@@ -203,9 +203,9 @@ public static class PaymentUtil
 
         float lootMultiplier = (float)faction.GetStatValue(FCStatDefOf.lootMultiplier);
 
-        List<Thing> things = new List<Thing>();
+        List<Thing> things = [];
         ThingSetMaker thingSetMaker = new ThingSetMaker_MarketValue();
-        ThingSetMakerParams param = new ThingSetMakerParams();
+        ThingSetMakerParams param = new();
         param.totalMarketValueRange = new FloatRange((500 + (lootLevel * 200)) * lootMultiplier,
             (1000 + (lootLevel * 500)) * lootMultiplier);
         param.filter = new ThingFilter();
@@ -257,7 +257,7 @@ public static class PaymentUtil
         if (rewardDef is null)
         {
             LogUtil.Error("GenerateRewardThings called with null rewardDef");
-            return new List<Thing>();
+            return [];
         }
 
         ThingSetMakerParams param = rewardDef.BuildParams(valueBase, out ThingSetMaker thingSetMaker);

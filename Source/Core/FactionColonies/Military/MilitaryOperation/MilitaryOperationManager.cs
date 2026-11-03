@@ -11,8 +11,8 @@ namespace FactionColonies;
 public class MilitaryOperationManager : IExposable
 {
     /* Saved state */
-    public List<MilitaryOperation> active = new List<MilitaryOperation>();
-    public Dictionary<PlanetTile, BattlefieldContext> battlefields = new Dictionary<PlanetTile, BattlefieldContext>();
+    public List<MilitaryOperation> active = [];
+    public Dictionary<PlanetTile, BattlefieldContext> battlefields = [];
     public int nextOperationId = 1;
 
     /* Indices — rebuilt on load, not scribed. _bySquad is list-valued because a squad can
@@ -32,13 +32,13 @@ public class MilitaryOperationManager : IExposable
      * DestroyedSettlement. Not scribed: it is repopulated from the reloaded contexts in
      * BattlefieldContext.ExposeData PostLoadInit. This is the durable predicate the offense
      * defeat/removal guards consult -- a live battle map must never be resolved by vanilla. */
-    [Unsaved] private readonly HashSet<Map> empireBattleMaps = new HashSet<Map>();
+    [Unsaved] private readonly HashSet<Map> empireBattleMaps = [];
 
     public MilitaryOperationManager()
     {
-        _byTile = new Dictionary<PlanetTile, List<MilitaryOperation>>();
-        _bySquad = new Dictionary<MercenarySquadFC, List<MilitaryOperation>>();
-        _bySettlement = new Dictionary<WorldSettlementFC, List<MilitaryOperation>>();
+        _byTile = [];
+        _bySquad = [];
+        _bySettlement = [];
     }
 
     public bool IsEmpty => (active is null || active.Count == 0)
@@ -57,17 +57,17 @@ public class MilitaryOperationManager : IExposable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (active is null) active = new List<MilitaryOperation>();
-            if (battlefields is null) battlefields = new Dictionary<PlanetTile, BattlefieldContext>();
+            active ??= [];
+            battlefields ??= [];
             EnsureIndicesAllocated();
         }
     }
 
     private void EnsureIndicesAllocated()
     {
-        if (_byTile is null) _byTile = new Dictionary<PlanetTile, List<MilitaryOperation>>();
-        if (_bySquad is null) _bySquad = new Dictionary<MercenarySquadFC, List<MilitaryOperation>>();
-        if (_bySettlement is null) _bySettlement = new Dictionary<WorldSettlementFC, List<MilitaryOperation>>();
+        _byTile ??= [];
+        _bySquad ??= [];
+        _bySettlement ??= [];
     }
 
     /* -*-*-*-*- Mutation -*-*-*-*- */
@@ -77,7 +77,7 @@ public class MilitaryOperationManager : IExposable
     public void Register(MilitaryOperation op)
     {
         if (op is null) return;
-        if (active is null) active = new List<MilitaryOperation>();
+        active ??= [];
         if (active.Contains(op)) return;
         active.Add(op);
         IndexAdd(op);
@@ -454,7 +454,7 @@ public class MilitaryOperationManager : IExposable
     /// <summary>Get-or-create a <see cref="BattlefieldContext"/> for <paramref name="tile"/>.</summary>
     public BattlefieldContext GetOrCreateBattlefield(PlanetTile tile)
     {
-        if (battlefields is null) battlefields = new Dictionary<PlanetTile, BattlefieldContext>();
+        battlefields ??= [];
         if (!battlefields.TryGetValue(tile, out BattlefieldContext ctx))
         {
             ctx = new BattlefieldContext(tile);
@@ -685,7 +685,7 @@ public class MilitaryOperationManager : IExposable
         {
             if (!_byTile.TryGetValue(op.targetTile, out List<MilitaryOperation> tileList))
             {
-                tileList = new List<MilitaryOperation>();
+                tileList = [];
                 _byTile[op.targetTile] = tileList;
             }
             if (!tileList.Contains(op)) tileList.Add(op);
@@ -715,7 +715,7 @@ public class MilitaryOperationManager : IExposable
         if (squad is null) return;
         if (!_bySquad.TryGetValue(squad, out List<MilitaryOperation> list))
         {
-            list = new List<MilitaryOperation>();
+            list = [];
             _bySquad[squad] = list;
         }
         if (!list.Contains(op)) list.Add(op);
@@ -736,7 +736,7 @@ public class MilitaryOperationManager : IExposable
         if (settlement is null) return;
         if (!_bySettlement.TryGetValue(settlement, out List<MilitaryOperation> list))
         {
-            list = new List<MilitaryOperation>();
+            list = [];
             _bySettlement[settlement] = list;
         }
         if (!list.Contains(op)) list.Add(op);

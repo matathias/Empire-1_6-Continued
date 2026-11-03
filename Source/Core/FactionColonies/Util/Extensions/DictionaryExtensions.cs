@@ -15,7 +15,7 @@ static class ListExtensions
     /// <returns></returns>
     public static string ToLetterString(this IEnumerable<Thing> list)
     {
-        Dictionary<string, int> thingCountDic = new Dictionary<string, int>();
+        Dictionary<string, int> thingCountDic = [];
         foreach (Thing thing in list)
         {
             if (thingCountDic.ContainsKey(thing.LabelCapNoCount))

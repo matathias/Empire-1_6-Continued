@@ -19,13 +19,13 @@ public class FCWindow_Pay_Silver : Window
 
     public string stringEffect;
 
-    Rect label_Title = new Rect(0, 20, 400, 30);
-    Rect label_Upper = new Rect(0, 50, 400, 30);
+    Rect label_Title = new(0, 20, 400, 30);
+    Rect label_Upper = new(0, 50, 400, 30);
 
-    Rect slider = new Rect(50, 70, 300, 30);
+    Rect slider = new(50, 70, 300, 30);
 
-    Rect label_Lower = new Rect(0, 90, 400, 30);
-    Rect button_Confirm = new Rect(155, 120, 90, 30);
+    Rect label_Lower = new(0, 90, 400, 30);
+    Rect button_Confirm = new(155, 120, 90, 30);
 
 
 

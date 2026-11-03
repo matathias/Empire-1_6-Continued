@@ -26,10 +26,10 @@ public class DefenseWave : IExposable
     public Faction attackerFaction;
 
     /// <summary>Pawns spawned for this wave's attackers (subset of the comp's flat <c>attackers</c> list).</summary>
-    public List<Pawn> waveAttackers = new List<Pawn>();
+    public List<Pawn> waveAttackers = [];
 
     /// <summary>Defenders spawned as reinforcements for this wave (subset of the comp's flat <c>defenders</c> list).</summary>
-    public List<Pawn> waveDefenders = new List<Pawn>();
+    public List<Pawn> waveDefenders = [];
 
     /// <summary>True once all of this wave's attackers are dead or removed.</summary>
     public bool resolved;
@@ -63,8 +63,8 @@ public class DefenseWave : IExposable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (waveAttackers is null) waveAttackers = new List<Pawn>();
-            if (waveDefenders is null) waveDefenders = new List<Pawn>();
+            waveAttackers ??= [];
+            waveDefenders ??= [];
             // Keep pod-bound pawns (not Spawned but held inside a Skyfaller) — they'll
             // spawn when the pod opens. Only prune null / destroyed / orphaned-despawned.
             waveAttackers.RemoveAll(p => p is null || p.Destroyed || (!p.Spawned && p.ParentHolder is null));

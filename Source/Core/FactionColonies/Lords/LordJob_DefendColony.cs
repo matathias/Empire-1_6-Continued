@@ -5,9 +5,9 @@ namespace FactionColonies;
 public class LordJob_DefendColony : LordJob
 {
     private Dictionary<Pawn, Pawn> mounts;
-    private List<Pawn> mountsKeys = new List<Pawn>();
-    private List<Pawn> mountsValues = new List<Pawn>();
-    private readonly HashSet<Pawn> readded = new HashSet<Pawn>();
+    private List<Pawn> mountsKeys = [];
+    private List<Pawn> mountsValues = [];
+    private readonly HashSet<Pawn> readded = [];
     private WorldSettlementFC settlement;
 
     public LordJob_DefendColony()
@@ -43,12 +43,12 @@ public class LordJob_DefendColony : LordJob
 
     public override StateGraph CreateGraph()
     {
-        StateGraph stateGraph = new StateGraph();
-        LordToil_DefendSelfAndMount defendSelf = new LordToil_DefendSelfAndMount(mounts);
+        StateGraph stateGraph = new();
+        LordToil_DefendSelfAndMount defendSelf = new(mounts);
         stateGraph.AddToil(defendSelf);
         LordToil defendColony = new LordToil_DefendColony();
         stateGraph.AddToil(defendColony);
-        Transition startDefending = new Transition(defendSelf, defendColony);
+        Transition startDefending = new(defendSelf, defendColony);
         startDefending.AddTrigger(new Trigger_Signal("startAssault"));
         stateGraph.AddTransition(startDefending);
         return stateGraph;

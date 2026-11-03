@@ -22,7 +22,7 @@ public class LordJob_HuntColonists : LordJob
 
     public override StateGraph CreateGraph()
     {
-        StateGraph stateGraph = new StateGraph();
+        StateGraph stateGraph = new();
 
         LordToil lordToil = new LordToil_HuntColonists();
         stateGraph.AddToil(lordToil);
@@ -32,7 +32,7 @@ public class LordJob_HuntColonists : LordJob
         stateGraph.AddToil(idleToil);
         stateGraph.StartingToil = idleToil;
 
-        Transition startAssault = new Transition(idleToil, lordToil);
+        Transition startAssault = new(idleToil, lordToil);
         startAssault.AddTrigger(new Trigger_TicksPassed(500));
         stateGraph.AddTransition(startAssault);
 

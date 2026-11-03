@@ -85,7 +85,7 @@ class Patch_PawnApparelGenerator_EnsureEmpireApparel
         foreach (ThingDef def in torsoApparelCheapestFirst)
         {
             if (!def.apparel.PawnCanWear(pawn)) continue;
-            if (fallback is null) fallback = def;                 // cheapest wearable, tag-agnostic
+            fallback ??= def;                 // cheapest wearable, tag-agnostic
             if (!hasTags) return def;                             // no tag preference -> cheapest wearable
             if (def.apparel.tags is not null && def.apparel.tags.Any(t => tags.Contains(t)))
                 return def;                                       // cheapest tag-matching wearable

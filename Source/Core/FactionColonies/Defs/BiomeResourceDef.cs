@@ -5,10 +5,10 @@ public class BiomeResourceDef : Def
     /* The SettlementDef should determine what resources are available to the settlement, not the biome.
      * Biomes should support all resources by default.
      * If a resource isn't specified in the BiomeResourceDef, then treat it as a default 1 additive, 1 multiplier resource. */
-    public List<ResourceAvailability> resources = new List<ResourceAvailability>();
+    public List<ResourceAvailability> resources = [];
     public bool canSettle;
-    public List<ResourceTypeDef> resourceBlockList = new List<ResourceTypeDef>();
-    public List<FCStatModifier> statModifiers = new List<FCStatModifier>();
+    public List<ResourceTypeDef> resourceBlockList = [];
+    public List<FCStatModifier> statModifiers = [];
 
     /// <summary>
     /// Translation key for the biome's settlement description (e.g. "FCDescBorealForest").

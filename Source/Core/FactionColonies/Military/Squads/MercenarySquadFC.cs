@@ -7,7 +7,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
 {
     public int loadID = -1;
     private string name;
-    public List<Mercenary> mercenaries = new List<Mercenary>();
+    public List<Mercenary> mercenaries = [];
     // Sub-pawns (companion animals + bonded mechs) are now deep-owned by each Mercenary
     // (Mercenary.animals / Mercenary.mechs). Use AllSubPawns() to iterate every sub-pawn in
     // the squad. The old squad-level animals/mechs lists migrate via the legacy buffers below.
@@ -35,7 +35,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     /// Effective per-squad stat modifiers read in combat (squad scope). Holds a flattened copy of the
     /// outfit template's modifiers (sourceId == DesignModifierSource) plus any earned accolades (other sources).
     /// </summary>
-    public List<PermanentStatModifier> statModifiers = new List<PermanentStatModifier>();
+    public List<PermanentStatModifier> statModifiers = [];
 
     public void AddStatModifier(PermanentStatModifier mod) { statModifiers.Add(mod); }
     public void RemoveStatModifiersBySource(string sourceId) { statModifiers.RemoveAll(m => m.sourceId == sourceId); }
@@ -47,7 +47,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     private void SyncDesignStatModifiers(MilSquadFC source)
     {
         if (source is null) return;
-        if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+        statModifiers ??= [];
         statModifiers.RemoveAll(m => m.sourceId == DesignModifierSource);
         if (source.statModifiers is not null)
         {
@@ -89,8 +89,8 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     }
 
     /* Factory hooks so subclasses can install custom sub-objects. */
-    protected virtual SquadEquipmentTracker CreateEquipment() => new SquadEquipmentTracker(this);
-    protected virtual SquadDeploymentState CreateDeployment() => new SquadDeploymentState(this);
+    protected virtual SquadEquipmentTracker CreateEquipment() => new(this);
+    protected virtual SquadDeploymentState CreateDeployment() => new(this);
 
     /* Raw squad name, or null if unset. Use DisplayName for UI; only use Name when
        the caller explicitly needs the raw value (e.g., seeding a rename text box). */
@@ -116,8 +116,8 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
         Scribe_References.Look(ref _outfit, "outfit");
         Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
         Scribe_Values.Look(ref dead, "dead");
-        Scribe_Deep.Look(ref Equipment, "equipment", new object[] { this });
-        Scribe_Deep.Look(ref Deployment, "deployment", new object[] { this });
+        Scribe_Deep.Look(ref Equipment, "equipment", [this]);
+        Scribe_Deep.Look(ref Deployment, "deployment", [this]);
         Scribe_References.Look(ref settlement, "Settlement");
         Scribe_Values.Look(ref nextAvailableTick, "nextAvailableTick", 0);
         Scribe_Values.Look(ref hiredAtTick, "hiredAtTick", 0);
@@ -151,17 +151,17 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+            statModifiers ??= [];
             RedistributeLegacyAnimals(_legacyAnimals);
             _legacyAnimals = null;
             // Repair any dangling Overseer relations a broken save left in memory (and reap dead mechs).
             CleanupMechBonds();
-            if (Equipment is null) Equipment = CreateEquipment();
+            Equipment ??= CreateEquipment();
             Equipment.AdoptLegacyLists(_legacyUsedWeaponList, _legacyUsedApparelList);
             _legacyUsedWeaponList = null;
             _legacyUsedApparelList = null;
 
-            if (Deployment is null) Deployment = CreateDeployment();
+            Deployment ??= CreateDeployment();
             /* Conditional drain: only pre-refactor saves carry non-default legacy buffers.
                Post-refactor saves loaded the real state into the nested "deployment" node, so
                AdoptLegacyValues skips (all buffers default) and preserves that live state. */
@@ -203,7 +203,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
         {
             if (sub?.handler is null) continue;
             if (sub.subPawnType == Mercenary.SubPawnType.None) sub.subPawnType = Mercenary.SubPawnType.Animal;
-            if (sub.handler.animals is null) sub.handler.animals = new List<Mercenary>();
+            sub.handler.animals ??= [];
             sub.handler.animals.Add(sub);
         }
     }
@@ -301,7 +301,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     {
         if (mercenaries is not null && mercenaries.Count > 0) return;
 
-        mercenaries = new List<Mercenary>();
+        mercenaries = [];
 
         int cap = MilSquadFC.MaxSquadSize;
         int templateCount = (outfit?.Units is not null) ? outfit.Units.Count : 0;
@@ -309,7 +309,7 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
 
         for (int k = 0; k < slotCount; k++)
         {
-            Mercenary placeholder = new Mercenary(true);
+            Mercenary placeholder = new(true);
             MilUnitFC slot = (outfit is not null && k < templateCount) ? outfit.Units[k] : null;
 
             // Generate a pawn only for slots that have a real (non-blank) unit assignment.

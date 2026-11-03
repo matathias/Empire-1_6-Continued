@@ -30,8 +30,8 @@ public static class FCWorkLoadInfo
     }
 
     private static readonly Dictionary<FCWorkLoad, WorkLoadData> table =
-        new Dictionary<FCWorkLoad, WorkLoadData>
-    {
+        new()
+        {
         { FCWorkLoad.Heavy,  new WorkLoadData {
             HealthDelta = -4, WorkerSlots = 2, OverMaxSlots = 0,
             LabelKey = "FCHeavy",  ExplanationKey = "FCHeavyExplanation",
@@ -130,7 +130,7 @@ public static class FCWorkLoadInfo
      * float menus. Caller-supplied callback receives the chosen value. */
     public static List<FloatMenuOption> BuildSelectionMenu(Action<FCWorkLoad> onSelect)
     {
-        List<FloatMenuOption> list = new List<FloatMenuOption>();
+        List<FloatMenuOption> list = [];
         foreach (FCWorkLoad w in AvailableValues)
         {
             FCWorkLoad captured = w;

@@ -8,15 +8,15 @@ namespace FactionColonies;
 public class ResourceEventRewardDef : Def
 {
     /// <summary>Thing categories to allow in the filter.</summary>
-    public List<ThingCategoryDef> thingCategoryAllowList = new List<ThingCategoryDef>();
+    public List<ThingCategoryDef> thingCategoryAllowList = [];
     /// <summary>Individual things to allow in the filter.</summary>
-    public List<ThingDef> thingAllowList = new List<ThingDef>();
+    public List<ThingDef> thingAllowList = [];
     /// <summary>Individual things to block from the filter.</summary>
-    public List<ThingDef> thingBlockList = new List<ThingDef>();
+    public List<ThingDef> thingBlockList = [];
     /// <summary>Stuff categories to allow in the filter.</summary>
-    public List<StuffCategoryDef> stuffCategoryAllowList = new List<StuffCategoryDef>();
+    public List<StuffCategoryDef> stuffCategoryAllowList = [];
     /// <summary>Stuff categories to block from the filter.</summary>
-    public List<StuffCategoryDef> stuffCategoryBlockList = new List<StuffCategoryDef>();
+    public List<StuffCategoryDef> stuffCategoryBlockList = [];
 
     /// <summary>
     /// If true, value range is calculated as (valueBase * valueMinFactor, valueBase * valueMaxFactor).
@@ -33,7 +33,7 @@ public class ResourceEventRewardDef : Def
     public float valueMaxFactor = 2.0f;
 
     /// <summary>Count range for generated items.</summary>
-    public IntRange countRange = new IntRange(1, 1);
+    public IntRange countRange = new(1, 1);
     /// <summary>If true, a count range is applied to the ThingSetMakerParams. Some ThingSetMakers (like ThingSetMaker_Animals) don't use count ranges.</summary>
     public bool useCountRange = true;
 
@@ -72,7 +72,7 @@ public class ResourceEventRewardDef : Def
             thingSetMaker = new ThingSetMaker_MarketValue();
         }
 
-        ThingSetMakerParams param = new ThingSetMakerParams();
+        ThingSetMakerParams param = new();
 
         // Value range
         if (useValueFactors)

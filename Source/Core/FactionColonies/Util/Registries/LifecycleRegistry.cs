@@ -9,10 +9,10 @@ namespace FactionColonies;
 /// </summary>
 public static class LifecycleRegistry
 {
-    private static readonly RegistryList<ISettlementListener>        _settlement = new RegistryList<ISettlementListener>();
-    private static readonly RegistryList<IMilitaryOperationListener> _militaryOp = new RegistryList<IMilitaryOperationListener>();
-    private static readonly RegistryList<IMercenarySquadListener>    _mercSquad  = new RegistryList<IMercenarySquadListener>();
-    private static readonly RegistryList<IResearchListener>          _research   = new RegistryList<IResearchListener>();
+    private static readonly RegistryList<ISettlementListener>        _settlement = new();
+    private static readonly RegistryList<IMilitaryOperationListener> _militaryOp = new();
+    private static readonly RegistryList<IMercenarySquadListener>    _mercSquad  = new();
+    private static readonly RegistryList<IResearchListener>          _research   = new();
 
     internal static void Register(object participant)
     {

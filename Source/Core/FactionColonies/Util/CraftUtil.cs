@@ -83,7 +83,7 @@ public static class CraftUtil
     /// <returns>The list of ThingDefs that can be used to stuff the given <paramref name="thing"/>. Returns an empty list if <paramref name="thing"/> is not stuffable.</returns>
     public static List<ThingDef> GetThingStuffs(ThingDef thing, List<ThingDef> filterList)
     {
-        List<ThingDef> list = new List<ThingDef>();
+        List<ThingDef> list = [];
         if (ThingIsStuffable(thing) && filterList.Count > 0)
         {
             foreach (ThingDef possible in filterList)

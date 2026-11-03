@@ -135,7 +135,7 @@ public static class LaborerHireUtil
             ? DeliveryLogistics.TaxDeliveryModeForSettlement(anyShuttlePort, source.Tile)
             : TaxDeliveryMode.Caravan;
 
-        Slate slate = new Slate();
+        Slate slate = new();
         slate.Set("map", map);
         slate.Set("laborersCount", count);
         slate.Set("permitFaction", FindFC.EmpireFaction);

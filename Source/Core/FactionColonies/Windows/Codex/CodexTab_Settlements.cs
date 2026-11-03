@@ -27,12 +27,12 @@ public class CodexTab_Settlements : ICodexTab
 
     /* Data */
     private readonly CodexWindow parentWindow;
-    private readonly List<LayerGroup> layerGroups = new List<LayerGroup>();
+    private readonly List<LayerGroup> layerGroups = [];
     private bool built;
     private WorldSettlementDef selectedDef;
 
     /* Expand/collapse state */
-    private readonly HashSet<string> expandedGroups = new HashSet<string>();
+    private readonly HashSet<string> expandedGroups = [];
 
     private class LayerGroup
     {
@@ -64,7 +64,7 @@ public class CodexTab_Settlements : ICodexTab
         List<WorldSettlementDef> allDefs = FactionCache.AvailableWorldSettlementDefs;
 
         // Group by planet layer. Settlements with empty planetLayers default to Surface.
-        Dictionary<string, LayerGroup> groupMap = new Dictionary<string, LayerGroup>();
+        Dictionary<string, LayerGroup> groupMap = [];
         PlanetLayerDef surfaceDef = PlanetLayerDefOf.Surface;
         string surfaceKey = surfaceDef?.defName ?? "Surface";
 
@@ -72,7 +72,7 @@ public class CodexTab_Settlements : ICodexTab
         {
             List<PlanetLayerDef> layers = def.planetLayers;
             if (layers is null || layers.Count == 0)
-                layers = new List<PlanetLayerDef> { surfaceDef };
+                layers = [surfaceDef];
 
             foreach (PlanetLayerDef layer in layers)
             {
@@ -85,7 +85,7 @@ public class CodexTab_Settlements : ICodexTab
                     {
                         key = key,
                         label = layer.LabelCap,
-                        settlements = new List<WorldSettlementDef>()
+                        settlements = []
                     };
                     groupMap[key] = group;
                 }
@@ -157,7 +157,7 @@ public class CodexTab_Settlements : ICodexTab
             bool isExpanded = expandedGroups.Contains(group.key);
 
             // Group header
-            Rect groupRect = new Rect(0f, curY, viewRect.width, GroupHeaderHeight);
+            Rect groupRect = new(0f, curY, viewRect.width, GroupHeaderHeight);
             if (CodexUIUtil.DrawGroupHeader(groupRect, group.label, CodexUIUtil.GroupAccentColor, isExpanded, CodexUIUtil.GroupBgColor, 20f))
             {
                 if (isExpanded) expandedGroups.Remove(group.key);
@@ -171,7 +171,7 @@ public class CodexTab_Settlements : ICodexTab
             // Settlement entries
             foreach (WorldSettlementDef def in group.settlements)
             {
-                Rect entryRect = new Rect(10f, curY, viewRect.width - 10f, EntryRowHeight);
+                Rect entryRect = new(10f, curY, viewRect.width - 10f, EntryRowHeight);
                 bool isSelected = selectedDef == def;
                 Color accent = GetAccent(def);
 
@@ -243,7 +243,7 @@ public class CodexTab_Settlements : ICodexTab
         if (!selectedDef.description.NullOrEmpty())
         {
             Text.Font = GameFont.Small;
-            Rect descRect = new Rect(0f, curY, contentWidth, 100f);
+            Rect descRect = new(0f, curY, contentWidth, 100f);
             Widgets.LabelCacheHeight(ref descRect, selectedDef.FormattedDesc);
             curY += descRect.height + Margin;
             CodexUIUtil.ResetText();
@@ -314,8 +314,8 @@ public class CodexTab_Settlements : ICodexTab
             curY = CodexUIUtil.DrawStatLine(curY, x, textW, "FCCodexSettlementMaxLevel".Translate(selectedDef.maxSettlementLevel.ToString()));
 
         // Building slots + workers progression table (3 columns, 75% width, centered)
-        List<int> slotsLevels = new List<int>();
-        List<int> slotsCounts = new List<int>();
+        List<int> slotsLevels = [];
+        List<int> slotsCounts = [];
         BuildSlotsProgression(selectedDef, slotsLevels, slotsCounts);
 
         List<string> workerCounts = slotsLevels
@@ -324,7 +324,7 @@ public class CodexTab_Settlements : ICodexTab
 
         float tableW = textW * 0.75f;
         float tableX = x + (textW - tableW) * 0.5f;
-        Rect tableRect = new Rect(tableX, curY, tableW, 0f);
+        Rect tableRect = new(tableX, curY, tableW, 0f);
         curY += UIUtil.DrawTable(tableRect,
             "FCCodexSettlementBuildingSlotsLevel".Translate(),
             slotsLevels.Select(l => l.ToString()).ToList(),
@@ -393,10 +393,10 @@ public class CodexTab_Settlements : ICodexTab
         {
             if (ra.resourceDef is null) continue;
 
-            Rect rowRect = new Rect(x, curY, width - x - Margin, ResourceRowHeight);
+            Rect rowRect = new(x, curY, width - x - Margin, ResourceRowHeight);
             bool isHover = Mouse.IsOver(rowRect);
 
-            Rect iconRect = new Rect(x, curY + (ResourceRowHeight - 20f) * 0.5f, 20f, 20f);
+            Rect iconRect = new(x, curY + (ResourceRowHeight - 20f) * 0.5f, 20f, 20f);
             GUI.DrawTexture(iconRect, ra.resourceDef.Icon);
 
             Text.Font = GameFont.Small;
@@ -490,7 +490,7 @@ public class CodexTab_Settlements : ICodexTab
         foreach (BiomeDef b in biomes)
         {
             BiomeResourceDef brd = DefDatabase<BiomeResourceDef>.GetNamedSilentFail(b.defName);
-            Rect rowRect = new Rect(indentX, curY, textW - 12f, StatRowHeight);
+            Rect rowRect = new(indentX, curY, textW - 12f, StatRowHeight);
 
             bool isLink = brd is not null;
             bool isHover = isLink && Mouse.IsOver(rowRect);
@@ -548,8 +548,8 @@ public class CodexTab_Settlements : ICodexTab
         total += statLines * StatRowHeight;
 
         // Building slots table
-        List<int> slotsLevels = new List<int>();
-        List<int> slotsCounts = new List<int>();
+        List<int> slotsLevels = [];
+        List<int> slotsCounts = [];
         BuildSlotsProgression(selectedDef, slotsLevels, slotsCounts);
         total += UIUtil.TableHeight(slotsLevels.Count) + SmallMargin;
 

@@ -113,22 +113,12 @@ public static class ColonyUtil
     public static WorldSettlementFC SetupCapturedSettlement(PlanetTile tile, string name, TechLevel enemyTech)
     {
         WorldSettlementFC settlement = CreatePlayerColonySettlement(tile, DefaultSettlementDefForTile(tile), name);
-
-        int upgradeTimes;
-        switch (enemyTech)
+        int upgradeTimes = enemyTech switch
         {
-            case TechLevel.Archotech:
-            case TechLevel.Ultra:
-            case TechLevel.Spacer:
-                upgradeTimes = 2;
-                break;
-            case TechLevel.Industrial:
-                upgradeTimes = 1;
-                break;
-            default:
-                upgradeTimes = 0;
-                break;
-        }
+            TechLevel.Archotech or TechLevel.Ultra or TechLevel.Spacer => 2,
+            TechLevel.Industrial => 1,
+            _ => 0,
+        };
         settlement.UpgradeSettlement(upgradeTimes);
 
         settlement.loyalty = 15;
@@ -224,7 +214,7 @@ public static class ColonyUtil
                 // also fires LifecycleRegistry hooks and removes the op from the manager's
                 // indices; sourceEvents will be GC'd when their handlers no-op against a
                 // missing op id.
-                foreach (FCEvent srcEvt in new List<FCEvent>(op.sourceEvents ?? new List<FCEvent>()))
+                foreach (FCEvent srcEvt in new List<FCEvent>(op.sourceEvents ?? []))
                 {
                     if (srcEvt is not null) faction.RemoveEvent(srcEvt);
                 }
@@ -233,7 +223,7 @@ public static class ColonyUtil
         }
 
         // Non-op event sweep: settlement-build / upgrade / cooldown / random-trait events.
-        HashSet<FCEvent> toRemove = new HashSet<FCEvent>();
+        HashSet<FCEvent> toRemove = [];
         foreach (FCEvent evt in faction.Events)
         {
             if (evt is null) continue;
@@ -291,7 +281,7 @@ public static class ColonyUtil
         worldcomp.SetCapital();
 
         FactionDef facDef = DefDatabase<FactionDef>.GetNamed("PColony");
-        Faction faction = new Faction
+        Faction faction = new()
         {
             def = facDef
         };

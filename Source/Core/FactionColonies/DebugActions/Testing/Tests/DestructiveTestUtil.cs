@@ -31,7 +31,7 @@ public static class DestructiveTestUtil
     /// </summary>
     public static WorldSettlementFC CreateTransientSettlement(int maxAttempts = 500, WorldSettlementDef def = null)
     {
-        if (def is null) def = WorldSettlementDefOf.WorldSettlementDef_Surface;
+        def ??= WorldSettlementDefOf.WorldSettlementDef_Surface;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {

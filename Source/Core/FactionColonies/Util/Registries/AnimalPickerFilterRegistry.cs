@@ -8,7 +8,7 @@ namespace FactionColonies;
 /// </summary>
 public static class AnimalPickerFilterRegistry
 {
-    private static readonly RegistryList<IAnimalPickerFilter> _list = new RegistryList<IAnimalPickerFilter>();
+    private static readonly RegistryList<IAnimalPickerFilter> _list = new();
 
     internal static void Register(IAnimalPickerFilter filter) => _list.Register(filter);
     internal static void Unregister(IAnimalPickerFilter filter) => _list.Unregister(filter);

@@ -76,7 +76,7 @@ public class CodexEntryDef : Def
         {
             if (imagesCached is null)
             {
-                imagesCached = new List<Texture2D>();
+                imagesCached = [];
                 if (!imagePaths.NullOrEmpty())
                 {
                     foreach (string path in imagePaths)

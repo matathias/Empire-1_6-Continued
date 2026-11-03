@@ -13,7 +13,7 @@ namespace FactionColonies;
 /// </summary>
 public class MainTabWindow_BattleReports : Window
 {
-    public override Vector2 InitialSize => new Vector2(900f, 640f);
+    public override Vector2 InitialSize => new(900f, 640f);
 
     private Vector2 listScrollPos;
 
@@ -58,7 +58,7 @@ public class MainTabWindow_BattleReports : Window
             "FCBattleArchiveCount".Translate(count),
             Color.gray);
 
-        Rect tableRect = new Rect(rect.x, rect.y + SummaryH + 4f,
+        Rect tableRect = new(rect.x, rect.y + SummaryH + 4f,
             rect.width, rect.height - SummaryH - 4f);
 
         if (archive is null || count == 0)
@@ -74,23 +74,22 @@ public class MainTabWindow_BattleReports : Window
         }
 
         // Header row above the scroll viewport.
-        Rect headerRect = new Rect(tableRect.x + Pad, tableRect.y, tableRect.width - Pad * 2f, HeaderH);
+        Rect headerRect = new(tableRect.x + Pad, tableRect.y, tableRect.width - Pad * 2f, HeaderH);
         DrawHeader(headerRect);
 
-        Rect listOuter = new Rect(tableRect.x, headerRect.yMax + 2f,
+        Rect listOuter = new(tableRect.x, headerRect.yMax + 2f,
             tableRect.width, tableRect.yMax - headerRect.yMax - 2f);
 
         // Snapshot to a list so the user can open a row mid-frame without a mutated
         // archive interfering.
-        List<BattleResult> reports = new List<BattleResult>();
-        foreach (BattleResult r in archive.RecentBattleReports) reports.Add(r);
+        List<BattleResult> reports = [.. archive.RecentBattleReports];
 
         float viewH = reports.Count * RowH;
         Rect scrollView = ScrollUtil.BeginScrollView(listOuter, ref listScrollPos, viewH);
 
         for (int i = 0; i < reports.Count; i++)
         {
-            Rect row = new Rect(scrollView.x, scrollView.y + i * RowH,
+            Rect row = new(scrollView.x, scrollView.y + i * RowH,
                 scrollView.width, RowH);
             DrawRow(row, reports[i], i);
         }
@@ -109,14 +108,14 @@ public class MainTabWindow_BattleReports : Window
         Text.Anchor = TextAnchor.MiddleLeft;
         Text.Font = GameFont.Small;
 
-        string[] headers = new[]
-        {
+        string[] headers =
+        [
             "FCBattleArchiveColKind".Translate().ToString(),
             "FCBattleArchiveColTarget".Translate().ToString(),
             "FCBattleArchiveColOurForce".Translate().ToString(),
             "FCBattleArchiveColDate".Translate().ToString(),
             "FCBattleArchiveColOutcome".Translate().ToString()
-        };
+        ];
         for (int i = 0; i < headers.Length; i++)
         {
             UIUtil.ClampedLabel(new Rect(x, rect.y, colW[i], rect.height), headers[i]);
@@ -153,7 +152,7 @@ public class MainTabWindow_BattleReports : Window
             : (report.defenderLabel ?? report.defenderFactionName ?? "?");
         double oppForce = isDefense ? report.attackerInitialForce : report.defenderInitialForce;
         string oppText = oppName + (string)"FCBattleArchiveForceSuffix".Translate(oppForce.ToString("F0"));
-        Rect oppRect = new Rect(x, rect.y, colW[1], rect.height);
+        Rect oppRect = new(x, rect.y, colW[1], rect.height);
         UIUtil.ClampedLabel(oppRect, oppText);
         x += colW[1];
 
@@ -173,7 +172,7 @@ public class MainTabWindow_BattleReports : Window
             double ourForce = isDefense ? report.defenderInitialForce : report.attackerInitialForce;
             ourCell = ourName + (string)"FCBattleArchiveForceSuffix".Translate(ourForce.ToString("F0"));
         }
-        Rect ourRect = new Rect(x, rect.y, colW[2], rect.height);
+        Rect ourRect = new(x, rect.y, colW[2], rect.height);
         UIUtil.ClampedLabel(ourRect, ourCell);
         x += colW[2];
 
@@ -202,29 +201,25 @@ public class MainTabWindow_BattleReports : Window
     /// </summary>
     private static BattleViewerSide ResolveStoredPlayerSide(BattleResult report)
     {
-        switch (report.kind)
+        return report.kind switch
         {
-            case BattleOperationKind.Defense: return BattleViewerSide.Defender;
-            case BattleOperationKind.Raid:
-            case BattleOperationKind.Capture:
-            case BattleOperationKind.Enslave:
-            case BattleOperationKind.Raze:
-                return BattleViewerSide.Attacker;
-            default: return BattleViewerSide.Neither;
-        }
+            BattleOperationKind.Defense => BattleViewerSide.Defender,
+            BattleOperationKind.Raid or BattleOperationKind.Capture or BattleOperationKind.Enslave or BattleOperationKind.Raze => BattleViewerSide.Attacker,
+            _ => BattleViewerSide.Neither,
+        };
     }
 
     private static string KindLabel(BattleOperationKind kind)
     {
-        switch (kind)
+        return kind switch
         {
-            case BattleOperationKind.Raid: return "FCRaidSettlement".Translate();
-            case BattleOperationKind.Capture: return "FCCaptureSettlement".Translate();
-            case BattleOperationKind.Raze: return "FCRazeSettlement".Translate();
-            case BattleOperationKind.Enslave: return "FCEnslavePopulation".Translate();
-            case BattleOperationKind.Defense: return "FCDefendColony".Translate();
-            default: return "?";
-        }
+            BattleOperationKind.Raid => "FCRaidSettlement".Translate(),
+            BattleOperationKind.Capture => "FCCaptureSettlement".Translate(),
+            BattleOperationKind.Raze => "FCRazeSettlement".Translate(),
+            BattleOperationKind.Enslave => "FCEnslavePopulation".Translate(),
+            BattleOperationKind.Defense => "FCDefendColony".Translate(),
+            _ => "?",
+        };
     }
 
     private static string OutcomeLabel(BattleResult report, BattleViewerSide playerSide)
@@ -251,13 +246,13 @@ public class MainTabWindow_BattleReports : Window
     private static float[] ComputeColumnWidths(float totalWidth)
     {
         float w = totalWidth - 8f;
-        return new[]
-        {
+        return
+        [
             w * 0.16f,
             w * 0.26f,
             w * 0.24f,
             w * 0.18f,
             w * 0.16f
-        };
+        ];
     }
 }

@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class RaidWeightRegistry
 {
-    private static readonly RegistryList<IRaidWeightProvider> _list = new RegistryList<IRaidWeightProvider>();
+    private static readonly RegistryList<IRaidWeightProvider> _list = new();
 
     internal static void Register(IRaidWeightProvider provider) => _list.Register(provider);
     internal static void Unregister(IRaidWeightProvider provider) => _list.Unregister(provider);

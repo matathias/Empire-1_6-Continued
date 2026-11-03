@@ -20,8 +20,8 @@ public class LordJob_DeployMilitary : LordJob
     // pawns have spawned (ApplyMountsIfNeeded) and re-applied on order changes (RestartPawnJobs) so a
     // dismount caused by a player move/attack order is corrected. Empty without Giddy Up 2.
     private Dictionary<Pawn, Pawn> mounts;
-    private List<Pawn> mountsKeys = new List<Pawn>();
-    private List<Pawn> mountsValues = new List<Pawn>();
+    private List<Pawn> mountsKeys = [];
+    private List<Pawn> mountsValues = [];
     private bool mountsApplied;
 
     private LordToil_DefendPoint lordToil_DefendPoint;
@@ -252,15 +252,15 @@ public class LordJob_DeployMilitary : LordJob
         {
             yield return new Transition(stateGraph.lordToils[i], stateGraph.lordToils.Last())
             {
-                triggers = new List<Trigger>(1) { new Trigger_Custom((TriggerSignal _) => Find.TickManager.TicksGame > whenToForceLeave) },
-                preActions = new List<TransitionAction>(1)
-                {
+                triggers = [new Trigger_Custom((TriggerSignal _) => Find.TickManager.TicksGame > whenToForceLeave)],
+                preActions =
+                [
                     new TransitionAction_Custom(delegate()
                     {
                         if (squad is not null) squad.Deployment.MilitaryOrder = MilitaryOrder.RecoverWoundedAndLeave;
                         Messages.Message("FCMilitaryPawnsLeavingTimeOut".Translate(), lord.ownedPawns, MessageTypeDefOf.NeutralEvent);
                     })
-                }
+                ]
             };
         }
     }
@@ -282,18 +282,18 @@ public class LordJob_DeployMilitary : LordJob
                 int k = j;
                 yield return new Transition(stateGraph.lordToils[i], stateGraph.lordToils[j])
                 {
-                    triggers = new List<Trigger>(1)
-                    {
+                    triggers =
+                    [
                         new Trigger_Custom((TriggerSignal _) => squad is not null && squad.Deployment.MilitaryOrder == (MilitaryOrder)k + 1 && ReadyForCommands)
-                    },
-                    preActions = new List<TransitionAction>(1)
-                    {
+                    ],
+                    preActions =
+                    [
                         new TransitionAction_Custom(UpdateOrderPositionData)
-                    },
-                    postActions = new List<TransitionAction>(1)
-                    {
+                    ],
+                    postActions =
+                    [
                         new TransitionAction_Custom(RestartPawnJobs)
-                    }
+                    ]
                 };
             }
         }
@@ -309,8 +309,8 @@ public class LordJob_DeployMilitary : LordJob
     {
         return new Transition(stateGraph.lordToils[0], stateGraph.lordToils[0], true)
         {
-            triggers = new List<Trigger>(1)
-            {
+            triggers =
+            [
                 new Trigger_Custom((TriggerSignal _) =>
                 {
                     if (squad is null) return false;
@@ -320,15 +320,15 @@ public class LordJob_DeployMilitary : LordJob
                         && op.phase == MilitaryOperationPhase.Engaged
                         && squad.Deployment.OrderLocation != currentOrderPosition;
                 })
-            },
-            preActions = new List<TransitionAction>(1)
-            {
+            ],
+            preActions =
+            [
                 new TransitionAction_Custom(UpdateOrderPositionData)
-            },
-            postActions = new List<TransitionAction>(1)
-            {
+            ],
+            postActions =
+            [
                 new TransitionAction_Custom(RestartPawnJobs)
-            }
+            ]
         };
     }
 
@@ -338,7 +338,7 @@ public class LordJob_DeployMilitary : LordJob
     /// <returns>a StateGraph</returns>
     public override StateGraph CreateGraph()
     {
-        StateGraph stateGraph = new StateGraph { StartingToil = lordToil_DefendPoint };
+        StateGraph stateGraph = new() { StartingToil = lordToil_DefendPoint };
 
         stateGraph.AddToil(lordToil_HuntEnemies);
         stateGraph.AddToil(new LordToil_RecoverWoundedAndLeave(new LordToilData_ExitMap() { canDig = false, locomotion = LocomotionUrgency.Jog, interruptCurrentJob = true }));

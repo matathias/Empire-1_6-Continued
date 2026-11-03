@@ -24,7 +24,7 @@ public class CodexTab_Biomes : ICodexTab
     private const float StatRowHeight = CodexUIUtil.StatRowHeight;
     private const float BannerHeight = CodexUIUtil.BannerHeight;
 
-    private static readonly Color BiomeAccent = new Color(0.45f, 0.72f, 0.42f);
+    private static readonly Color BiomeAccent = new(0.45f, 0.72f, 0.42f);
     private static readonly Color HighlightColor = CodexUIUtil.HighlightColor;
 
     /* Data */
@@ -34,7 +34,7 @@ public class CodexTab_Biomes : ICodexTab
     private BiomeEntry selectedEntry;
 
     /* Expand/collapse state (left pane mod groups) */
-    private readonly HashSet<string> expandedGroups = new HashSet<string>();
+    private readonly HashSet<string> expandedGroups = [];
 
     /* Collapsible sections (center pane) */
     private bool keyInfoExpanded = true;
@@ -82,7 +82,7 @@ public class CodexTab_Biomes : ICodexTab
 
         /* Build entries: only biomes that have a matching BiomeDef. This excludes synthetic
          * defs (e.g. defaultBiome) and lets each biome be attributed to its source mod. */
-        Dictionary<string, ModGroup> groupMap = new Dictionary<string, ModGroup>();
+        Dictionary<string, ModGroup> groupMap = [];
         foreach (BiomeResourceDef brd in DefDatabase<BiomeResourceDef>.AllDefsListForReading)
         {
             BiomeDef bd = DefDatabase<BiomeDef>.GetNamedSilentFail(brd.defName);
@@ -96,7 +96,7 @@ public class CodexTab_Biomes : ICodexTab
                 {
                     key = key,
                     label = bd.modContentPack?.ModMetaData?.Name ?? key,
-                    biomes = new List<BiomeEntry>()
+                    biomes = []
                 };
                 groupMap[key] = group;
             }
@@ -176,7 +176,7 @@ public class CodexTab_Biomes : ICodexTab
             bool isExpanded = expandedGroups.Contains(group.key);
 
             /* Group header */
-            Rect groupRect = new Rect(0f, curY, viewRect.width, GroupHeaderHeight);
+            Rect groupRect = new(0f, curY, viewRect.width, GroupHeaderHeight);
             if (CodexUIUtil.DrawGroupHeader(groupRect, group.label, CodexUIUtil.GroupAccentColor, isExpanded, CodexUIUtil.GroupBgColor, 20f))
             {
                 if (isExpanded) expandedGroups.Remove(group.key);
@@ -190,7 +190,7 @@ public class CodexTab_Biomes : ICodexTab
             /* Biome entries */
             foreach (BiomeEntry entry in group.biomes)
             {
-                Rect entryRect = new Rect(10f, curY, viewRect.width - 10f, EntryRowHeight);
+                Rect entryRect = new(10f, curY, viewRect.width - 10f, EntryRowHeight);
                 bool isSelected = selectedEntry == entry;
 
                 if (isSelected)
@@ -209,7 +209,7 @@ public class CodexTab_Biomes : ICodexTab
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 string fullLabel = entry.biomeDef.LabelCap;
-                Rect labelRect = new Rect(textX, entryRect.y, labelWidth, entryRect.height);
+                Rect labelRect = new(textX, entryRect.y, labelWidth, entryRect.height);
                 string truncated = Text.ClampTextWithEllipsis(labelRect, fullLabel);
                 Color labelColor = isSelected ? Color.white : ColorUtil.Gray9;
                 if (!entry.foundable)
@@ -293,7 +293,7 @@ public class CodexTab_Biomes : ICodexTab
         if (!desc.NullOrEmpty())
         {
             Text.Font = GameFont.Small;
-            Rect descRect = new Rect(0f, curY, contentWidth, 100f);
+            Rect descRect = new(0f, curY, contentWidth, 100f);
             Widgets.LabelCacheHeight(ref descRect, desc);
             curY += descRect.height + margin;
             CodexUIUtil.ResetText();
@@ -370,11 +370,11 @@ public class CodexTab_Biomes : ICodexTab
         float x = AccentBarWidth + margin;
         float tableW = width - x - margin;
 
-        List<ResourceTypeDef> rowResources = new List<ResourceTypeDef>();
-        List<string> resourceNames = new List<string>();
-        List<string> additives = new List<string>();
-        List<string> multipliers = new List<string>();
-        List<string> totals = new List<string>();
+        List<ResourceTypeDef> rowResources = [];
+        List<string> resourceNames = [];
+        List<string> additives = [];
+        List<string> multipliers = [];
+        List<string> totals = [];
 
         foreach (ResourceTypeDef res in FactionCache.SortedResourceTypeDefsForUI)
         {
@@ -400,7 +400,7 @@ public class CodexTab_Biomes : ICodexTab
 
         if (rowResources.Count > 0)
         {
-            Rect tableRect = new Rect(x, curY, tableW, 0f);
+            Rect tableRect = new(x, curY, tableW, 0f);
             int clickedRow;
             curY += UIUtil.DrawTable(tableRect, out clickedRow,
                 "FCCodexBiomeResourceColumn".Translate(), resourceNames,
@@ -452,7 +452,7 @@ public class CodexTab_Biomes : ICodexTab
      *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
     private List<WorldSettlementDef> GetFoundableSettlements(BiomeEntry entry)
     {
-        List<WorldSettlementDef> result = new List<WorldSettlementDef>();
+        List<WorldSettlementDef> result = [];
         if (entry is null || !entry.resourceDef.canSettle) return result;
 
         BiomeDef bd = entry.biomeDef;
@@ -478,7 +478,7 @@ public class CodexTab_Biomes : ICodexTab
         {
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
-            Rect noneRect = new Rect(x, curY, width - x - margin, StatRowHeight);
+            Rect noneRect = new(x, curY, width - x - margin, StatRowHeight);
             string msg = "FCCodexBiomeNoSettlements".Translate();
             Widgets.LabelCacheHeight(ref noneRect, msg);
             UIUtil.DrawColoredLabel(noneRect, msg, Color.gray);
@@ -488,7 +488,7 @@ public class CodexTab_Biomes : ICodexTab
 
         foreach (WorldSettlementDef def in foundable)
         {
-            Rect rowRect = new Rect(x, curY, width - x - margin, SettlementRowHeight);
+            Rect rowRect = new(x, curY, width - x - margin, SettlementRowHeight);
             bool isHover = Mouse.IsOver(rowRect);
 
             Text.Font = GameFont.Small;

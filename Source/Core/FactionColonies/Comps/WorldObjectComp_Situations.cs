@@ -40,7 +40,7 @@ public class WorldObjectComp_Situations : WorldObjectComp, ISettlementWindowOver
         WorldSettlementFC settlement = Settlement;
         if (faction is null || settlement is null) return;
 
-        List<FCSituation> sits = new List<FCSituation>(faction.situationManager.GetForSettlement(settlement));
+        List<FCSituation> sits = new(faction.situationManager.GetForSettlement(settlement));
         if (sits.Count == 0)
         {
             GameFont f = Text.Font;
@@ -61,7 +61,7 @@ public class WorldObjectComp_Situations : WorldObjectComp, ISettlementWindowOver
         for (int i = 0; i < sits.Count; i++)
         {
             float h = SituationsUI.RowHeight(sits[i], includeActions: true);
-            Rect rowRect = new Rect(0f, y, view.width, h);
+            Rect rowRect = new(0f, y, view.width, h);
             if (i % 2 == 0) Widgets.DrawHighlight(rowRect);
             SituationsUI.DrawRow(rowRect, sits[i], faction, showTarget: false, includeActions: true);
             y += h + gap;

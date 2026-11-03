@@ -22,7 +22,7 @@ public static class VPEPointMath
     {
         if (selections is null) return 0;
         int spent = 0;
-        HashSet<PsycasterPathDef> paths = new HashSet<PsycasterPathDef>();
+        HashSet<PsycasterPathDef> paths = [];
         foreach (SavedPsycast s in selections)
         {
             if (s.systemKey != VPEPsycastProvider.ProviderKey) continue;
@@ -53,12 +53,12 @@ public static class VPEPointMath
     /// </summary>
     public static List<SavedPsycast> Trim(List<SavedPsycast> selections, int psylinkLevel)
     {
-        List<SavedPsycast> result = new List<SavedPsycast>();
+        List<SavedPsycast> result = [];
         if (selections is null) return result;
 
         int budget = Budget(psylinkLevel);
         int spent = 0;
-        HashSet<PsycasterPathDef> paths = new HashSet<PsycasterPathDef>();
+        HashSet<PsycasterPathDef> paths = [];
 
         foreach (SavedPsycast s in selections)
         {

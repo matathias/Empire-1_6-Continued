@@ -76,7 +76,7 @@ public static class SettlementCardDrawer
         {
             if (ra.resourceDef is null) continue;
 
-            Rect iconRect = new Rect(xCursor, rect.y + (rect.height - ResourceIconSize) / 2f, ResourceIconSize, ResourceIconSize);
+            Rect iconRect = new(xCursor, rect.y + (rect.height - ResourceIconSize) / 2f, ResourceIconSize, ResourceIconSize);
             GUI.DrawTexture(iconRect, ra.resourceDef.Icon);
             TooltipHandler.TipRegion(iconRect, GetResourceTooltip(ra));
             xCursor += ResourceIconSize;

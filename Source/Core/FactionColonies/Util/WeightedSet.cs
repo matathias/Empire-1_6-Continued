@@ -5,7 +5,7 @@ namespace FactionColonies.util;
  * weight machinery that used to live inline in XenotypeFilter. */
 public class WeightedSet<TKey>
 {
-    private Dictionary<TKey, float> weights = new Dictionary<TKey, float>();
+    private Dictionary<TKey, float> weights = [];
     private bool dirtyTotal = true;
     private float cachedTotal;
     private readonly Action onChanged;
@@ -75,7 +75,7 @@ public class WeightedSet<TKey>
         {
             if (kvp.Value == 0f)
             {
-                if (toRemove is null) toRemove = new List<TKey>();
+                toRemove ??= [];
                 toRemove.Add(kvp.Key);
             }
         }
@@ -97,7 +97,7 @@ public class WeightedSet<TKey>
         Scribe_Collections.Look(ref weights, label, keyMode, LookMode.Value);
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (weights is null) weights = new Dictionary<TKey, float>();
+            weights ??= [];
             MarkDirty();
         }
     }

@@ -14,7 +14,7 @@ public class FCSituationStageDef : Def
     public float threshold = 0f;
 
     /* Applied whenever the bar is in this stage, regardless of entry direction. */
-    public List<FCStatModifier> statModifiers = new List<FCStatModifier>();
+    public List<FCStatModifier> statModifiers = [];
 
     /* Direction-aware event slots (all optional). A boundary crossing belongs to whichever stage
      * conceptually owns it; do not populate both sides of one crossing unless two events are

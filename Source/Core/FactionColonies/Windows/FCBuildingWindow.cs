@@ -20,7 +20,7 @@ class FCBuildingWindow : Window
     private float fullScrollHeight = 90f;
 
     // Slot upgrade list (upgrades available for the current slot's building)
-    private readonly List<BuildingUpgradeEntry> slotUpgradeList = new List<BuildingUpgradeEntry>();
+    private readonly List<BuildingUpgradeEntry> slotUpgradeList = [];
 
     // Locked buildings (above current tech level but otherwise valid)
     private bool showLockedBuildings = false;
@@ -35,7 +35,7 @@ class FCBuildingWindow : Window
     // Layout cache — only recomputed when width changes or filter is changed
     private float lastLayoutWidth = -1f;
     private bool layoutDirty = true;
-    private readonly List<float> cachedRowHeights = new List<float>();
+    private readonly List<float> cachedRowHeights = [];
     private float slotUpgradesHeight = 0f;
     private string buildingSearchTerm = "";
 
@@ -44,7 +44,7 @@ class FCBuildingWindow : Window
      */
     private int currentFilter = 0;
     private int filterSize = 0;
-    private readonly Dictionary<string, string> filterTruncateCache = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> filterTruncateCache = [];
     private int filterRows = 2;
     private const int filterButtonsPerRow = 4;
     private static readonly int filterButtonHeight = 25;
@@ -61,7 +61,7 @@ class FCBuildingWindow : Window
     private const float actionButtonWidth = 200f;
     private const float minWindowWidth = 600f;
     private const float headerHeight = 30f;
-    private static readonly Color selectionColor = new Color(0.2f, 0.5f, 0.8f, 0.8f);
+    private static readonly Color selectionColor = new(0.2f, 0.5f, 0.8f, 0.8f);
     private const float indentWidth = 20f;
     private const float collapsibleHeaderHeight = 22f;
     private const float SearchBarHeight = 28f;
@@ -71,7 +71,7 @@ class FCBuildingWindow : Window
     Rect SearchBarArea;
     Rect ToggleArea;
 
-    public override Vector2 InitialSize => new Vector2(
+    public override Vector2 InitialSize => new(
         Math.Max(FCSettings.buildingWindowWidth, minWindowWidth),
         Math.Max(FCSettings.buildingWindowHeight, 400f)
     );
@@ -154,7 +154,7 @@ class FCBuildingWindow : Window
 
     private void DrawCollapsibleHeader(float x, float curY, float width, string label, ref bool expanded)
     {
-        Rect headerRect = new Rect(x, curY, width, collapsibleHeaderHeight);
+        Rect headerRect = new(x, curY, width, collapsibleHeaderHeight);
         Widgets.DrawHighlight(headerRect);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
@@ -207,7 +207,7 @@ class FCBuildingWindow : Window
             int row = i / filterButtonsPerRow;
             int col = i % filterButtonsPerRow;
 
-            Rect buttonRect = new Rect(
+            Rect buttonRect = new(
                 FilterArea.x + (col * buttonWidth + smallMargin),
                 FilterArea.y + (row * (buttonHeight + smallMargin)),
                 buttonWidth - smallMargin,
@@ -238,9 +238,9 @@ class FCBuildingWindow : Window
             if (filterIcon != null)
             {
                 float iconSize = buttonRect.height - 4f;
-                Rect iconRect = new Rect(buttonRect.x + 2f, buttonRect.y + 2f, iconSize, iconSize);
+                Rect iconRect = new(buttonRect.x + 2f, buttonRect.y + 2f, iconSize, iconSize);
                 GUI.DrawTexture(iconRect, filterIcon);
-                Rect labelRect = new Rect(iconRect.xMax + 2f, buttonRect.y, buttonRect.width - iconSize - 6f, buttonRect.height);
+                Rect labelRect = new(iconRect.xMax + 2f, buttonRect.y, buttonRect.width - iconSize - 6f, buttonRect.height);
                 string truncatedLabel = filterLabel.Truncate(labelRect.width, filterTruncateCache);
                 UIUtil.ClampedLabel(labelRect, truncatedLabel);
                 if (truncatedLabel != filterLabel)
@@ -323,7 +323,7 @@ class FCBuildingWindow : Window
         TextAnchor anchorBefore = Text.Anchor;
 
         // Window header
-        Rect headerRect = new Rect(inRect.x, inRect.y, inRect.width, headerHeight);
+        Rect headerRect = new(inRect.x, inRect.y, inRect.width, headerHeight);
         Widgets.DrawHighlight(headerRect);
         Widgets.DrawHighlight(headerRect);
         Text.Font = GameFont.Medium;
@@ -336,8 +336,8 @@ class FCBuildingWindow : Window
         float leftWidth = (inRect.width - panelGap) * leftPanelRatio;
         float rightWidth = inRect.width - leftWidth - panelGap;
 
-        Rect leftPanel = new Rect(inRect.x, bodyTop, leftWidth, bodyHeight);
-        Rect rightPanel = new Rect(leftPanel.xMax + panelGap, bodyTop, rightWidth, bodyHeight);
+        Rect leftPanel = new(inRect.x, bodyTop, leftWidth, bodyHeight);
+        Rect rightPanel = new(leftPanel.xMax + panelGap, bodyTop, rightWidth, bodyHeight);
 
         CalculateLayout(leftWidth);
 
@@ -370,7 +370,7 @@ class FCBuildingWindow : Window
                     upgradeY += smallMargin;
                     BuildingUpgradeEntry entry = slotUpgradeList[i];
                     float cardHeight = CalculateBuildingCardHeight(entry.def, cardWidth);
-                    Rect cardRect = new Rect(panel.x, upgradeY, cardWidth, cardHeight);
+                    Rect cardRect = new(panel.x, upgradeY, cardWidth, cardHeight);
 
                     bool isSelected = selectedBuilding == entry.def;
                     Widgets.DrawHighlight(cardRect);
@@ -437,7 +437,7 @@ class FCBuildingWindow : Window
         }
 
         float scrollTop = (lockedBuildingList.Count > 0 ? ToggleArea.yMax : SearchBarArea.yMax) + margin;
-        Rect outRect = new Rect(panel.x, scrollTop, panel.width, panel.yMax - scrollTop);
+        Rect outRect = new(panel.x, scrollTop, panel.width, panel.yMax - scrollTop);
 
         Rect viewRect = ScrollUtil.BeginScrollView(outRect, ref scrollPosition, fullScrollHeight);
         var ls = new Listing_Standard();
@@ -459,8 +459,8 @@ class FCBuildingWindow : Window
     private void DrawBuildingCard(Rect row, BuildingFCDef building)
     {
         // Full-width name row with cost right-aligned
-        Rect nameRect = new Rect(row.x, row.y, row.width, 22f);
-        Rect nameText = new Rect(nameRect.x + margin, nameRect.y, nameRect.width - (margin * 2), nameRect.height);
+        Rect nameRect = new(row.x, row.y, row.width, 22f);
+        Rect nameText = new(nameRect.x + margin, nameRect.y, nameRect.width - (margin * 2), nameRect.height);
         Widgets.DrawHighlight(nameRect);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
@@ -470,7 +470,7 @@ class FCBuildingWindow : Window
 
         // Icon below the name row
         float contentY = nameRect.yMax + smallMargin;
-        Rect iconRect = new Rect(row.x + margin, contentY, listIconSize, listIconSize);
+        Rect iconRect = new(row.x + margin, contentY, listIconSize, listIconSize);
         Widgets.DrawMenuSection(iconRect);
         Widgets.DrawLightHighlight(iconRect);
         Widgets.ButtonImage(iconRect, building.Icon);
@@ -479,7 +479,7 @@ class FCBuildingWindow : Window
         float descX = iconRect.xMax + margin;
         float descWidth = row.xMax - descX - margin;
         TaggedString desc = settlement.BuildingsComp?.GetBuildingDesc(building) ?? TaggedString.Empty;
-        Rect descRect = new Rect(descX, contentY, descWidth, row.yMax - contentY - margin);
+        Rect descRect = new(descX, contentY, descWidth, row.yMax - contentY - margin);
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.UpperLeft;
         Widgets.Label(descRect, desc);
@@ -489,7 +489,7 @@ class FCBuildingWindow : Window
     {
         float thisRowHeight = cachedRowHeights[index];
         Rect fullrow = ls.GetRect(thisRowHeight);
-        Rect row = new Rect(fullrow.x, fullrow.y + smallMargin, fullrow.width, fullrow.height - smallMargin);
+        Rect row = new(fullrow.x, fullrow.y + smallMargin, fullrow.width, fullrow.height - smallMargin);
 
         bool isSelected = selectedBuilding == building;
         bool unmetReqs = HasUnmetRequirements(building);
@@ -531,7 +531,7 @@ class FCBuildingWindow : Window
         if (isLocked)
         {
             float lockSize = 20f;
-            Rect lockRect = new Rect(row.xMax - lockSize - margin, row.y + margin, lockSize, lockSize);
+            Rect lockRect = new(row.xMax - lockSize - margin, row.y + margin, lockSize, lockSize);
             GUI.DrawTexture(lockRect, TexLoad.buildingLocked);
         }
     }
@@ -544,7 +544,7 @@ class FCBuildingWindow : Window
     {
         // Section A: Current Slot (dynamic height)
         float slotHeight = CalculateCurrentSlotHeight(panel.width);
-        Rect currentSlotRect = new Rect(panel.x, panel.y, panel.width, slotHeight);
+        Rect currentSlotRect = new(panel.x, panel.y, panel.width, slotHeight);
         DrawCurrentSlot(currentSlotRect);
 
         float nextY = currentSlotRect.yMax;
@@ -554,7 +554,7 @@ class FCBuildingWindow : Window
         if (canDemolish)
         {
             nextY += smallMargin;
-            Rect demolishRect = new Rect(
+            Rect demolishRect = new(
                 panel.x + (panel.width - actionButtonWidth) / 2f,
                 nextY,
                 actionButtonWidth,
@@ -593,7 +593,7 @@ class FCBuildingWindow : Window
 
         // Section B: Selected Building Detail (scrollable)
         float detailTop = nextY + margin * 2;
-        Rect detailRect = new Rect(panel.x, detailTop, panel.width, panel.yMax - detailTop);
+        Rect detailRect = new(panel.x, detailTop, panel.width, panel.yMax - detailTop);
         DrawSelectedBuildingDetail(detailRect);
     }
 
@@ -627,12 +627,12 @@ class FCBuildingWindow : Window
         string slotLabel = (buildingDef == BuildingFCDefOf.Empty)
             ? "Empire_BuildingWindow_EmptySlot".Translate()
             : "Empire_BuildingWindow_CurrentBuilding".Translate();
-        Rect labelRect = new Rect(contentX, rect.y + margin, contentWidth, 18f);
+        Rect labelRect = new(contentX, rect.y + margin, contentWidth, 18f);
         UIUtil.DrawColoredLabel(labelRect, slotLabel, new Color(1f, 1f, 1f, 0.7f));
 
         // Icon
         float iconY = labelRect.yMax + smallMargin;
-        Rect iconRect = new Rect(contentX, iconY, detailIconSize, detailIconSize);
+        Rect iconRect = new(contentX, iconY, detailIconSize, detailIconSize);
         Widgets.DrawMenuSection(iconRect);
         Widgets.DrawLightHighlight(iconRect);
         Widgets.ButtonImage(iconRect, buildingDef.Icon);
@@ -640,13 +640,13 @@ class FCBuildingWindow : Window
         // Name
         float nameX = iconRect.xMax + margin;
         float nameWidth = rect.xMax - inner - nameX;
-        Rect nameRect = new Rect(nameX, iconY, nameWidth, 30f);
+        Rect nameRect = new(nameX, iconY, nameWidth, 30f);
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(nameRect, buildingDef.LabelCap);
 
         // Description (compact)
-        Rect descRect = new Rect(nameX, nameRect.yMax + smallMargin, nameWidth, rect.yMax - nameRect.yMax - smallMargin - inner);
+        Rect descRect = new(nameX, nameRect.yMax + smallMargin, nameWidth, rect.yMax - nameRect.yMax - smallMargin - inner);
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.UpperLeft;
         Widgets.Label(descRect, buildingDesc);
@@ -668,8 +668,8 @@ class FCBuildingWindow : Window
         float contentHeight = CalculateDetailContentHeight(rect.width - ScrollUtil.ScrollbarWidth);
 
         // Reserve space for the button at the bottom (outside scroll)
-        Rect buttonArea = new Rect(rect.x, rect.yMax - actionButtonHeight - margin, rect.width, actionButtonHeight + margin);
-        Rect scrollOutRect = new Rect(rect.x, rect.y, rect.width, rect.height - buttonArea.height);
+        Rect buttonArea = new(rect.x, rect.yMax - actionButtonHeight - margin, rect.width, actionButtonHeight + margin);
+        Rect scrollOutRect = new(rect.x, rect.y, rect.width, rect.height - buttonArea.height);
 
         Rect scrollViewRect = ScrollUtil.BeginScrollView(scrollOutRect, ref rightPanelScroll, contentHeight);
 
@@ -677,8 +677,8 @@ class FCBuildingWindow : Window
         float w = scrollViewRect.width;
 
         // C1: Building name
-        Rect nameRect = new Rect(scrollViewRect.x, curY, w, 30f);
-        Rect nameText = new Rect(nameRect.x + margin, nameRect.y, nameRect.width - (margin * 2), nameRect.height);
+        Rect nameRect = new(scrollViewRect.x, curY, w, 30f);
+        Rect nameText = new(nameRect.x + margin, nameRect.y, nameRect.width - (margin * 2), nameRect.height);
         Widgets.DrawHighlight(nameRect);
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
@@ -686,7 +686,7 @@ class FCBuildingWindow : Window
         curY = nameRect.yMax + margin;
 
         // C2: Icon + stats
-        Rect iconRect = new Rect(scrollViewRect.x, curY, detailIconSize, detailIconSize);
+        Rect iconRect = new(scrollViewRect.x, curY, detailIconSize, detailIconSize);
         Widgets.DrawMenuSection(iconRect);
         Widgets.DrawLightHighlight(iconRect);
         Widgets.ButtonImage(iconRect, selectedBuilding.Icon);
@@ -696,11 +696,11 @@ class FCBuildingWindow : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
 
-        Rect costRect = new Rect(statsX, curY, statsW, 22f);
+        Rect costRect = new(statsX, curY, statsW, 22f);
         UIUtil.ClampedLabel(costRect, "FCCost".Translate() + ": " + (settlement.BuildingsComp?.GetBuildingCost(selectedBuilding) ?? (int)selectedBuilding.cost));
 
         int buildTime = settlement.BuildingsComp?.GetBuildingConstructionTime(selectedBuilding) ?? 0;
-        Rect timeRect = new Rect(statsX, costRect.yMax + smallMargin, statsW, 22f);
+        Rect timeRect = new(statsX, costRect.yMax + smallMargin, statsW, 22f);
         UIUtil.ClampedLabel(timeRect, "FCBuildTime".Translate(buildTime.ToTimeString()));
 
         float statsBottom = timeRect.yMax;
@@ -708,13 +708,13 @@ class FCBuildingWindow : Window
         int upkeep = settlement.BuildingsComp?.GetBuildingUpkeep(selectedBuilding) ?? 0;
         if (upkeep > 0)
         {
-            Rect upkeepRect = new Rect(statsX, timeRect.yMax + smallMargin, statsW, 22f);
+            Rect upkeepRect = new(statsX, timeRect.yMax + smallMargin, statsW, 22f);
             UIUtil.ClampedLabel(upkeepRect, "FCBuildingUpkeep".Translate(upkeep.ToString()));
             statsBottom = upkeepRect.yMax;
         }
         else if (upkeep < 0)
         {
-            Rect upkeepRect = new Rect(statsX, timeRect.yMax + smallMargin, statsW, 22f);
+            Rect upkeepRect = new(statsX, timeRect.yMax + smallMargin, statsW, 22f);
             UIUtil.ClampedLabel(upkeepRect, "FCBuildingIncome".Translate(Math.Abs(upkeep).ToString()));
             statsBottom = upkeepRect.yMax;
         }
@@ -725,7 +725,7 @@ class FCBuildingWindow : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.UpperLeft;
         float descHeight = Text.CalcHeight(selectedBuilding.FormattedDesc, w);
-        Rect descRect = new Rect(scrollViewRect.x, curY, w, descHeight);
+        Rect descRect = new(scrollViewRect.x, curY, w, descHeight);
         Widgets.Label(descRect, selectedBuilding.FormattedDesc);
         curY = descRect.yMax + margin;
 
@@ -739,7 +739,7 @@ class FCBuildingWindow : Window
                 bool has = settlement.BuildingsComp?.HasBuildingOrUpgrade(req) == true;
                 bool isSlotBuilding = req == buildingDef;
                 bool satisfied = has && !isSlotBuilding;
-                Rect statusRect = new Rect(scrollViewRect.x + margin, curY, w - margin * 2, 18f);
+                Rect statusRect = new(scrollViewRect.x + margin, curY, w - margin * 2, 18f);
                 string checkmark = satisfied ? "✓ " : "✗ ";
                 UIUtil.DrawColoredLabel(statusRect,
                     checkmark + "Empire_BuildingWindow_Requires".Translate(req.LabelCap),
@@ -753,13 +753,13 @@ class FCBuildingWindow : Window
         if (lockedBuildingSet.Contains(selectedBuilding))
         {
             float lockIconSize = 18f;
-            Rect lockIconRect = new Rect(scrollViewRect.x + margin, curY + 2f, lockIconSize, lockIconSize);
+            Rect lockIconRect = new(scrollViewRect.x + margin, curY + 2f, lockIconSize, lockIconSize);
             GUI.DrawTexture(lockIconRect, TexLoad.buildingLocked);
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             string researchName = GetResearchRequirementForTechLevel(selectedBuilding.techLevel);
-            Rect techTextRect = new Rect(lockIconRect.xMax + smallMargin, curY, w - lockIconSize - margin * 2 - smallMargin, 22f);
+            Rect techTextRect = new(lockIconRect.xMax + smallMargin, curY, w - lockIconSize - margin * 2 - smallMargin, 22f);
             UIUtil.DrawColoredLabel(techTextRect,
                 "Empire_BuildingWindow_TechLocked".Translate(
                     selectedBuilding.techLevel.ToStringHuman(), researchName),
@@ -842,11 +842,11 @@ class FCBuildingWindow : Window
         float blockHeight = 22f + smallMargin + textHeight;
 
         // Block background
-        Rect blockRect = new Rect(x, curY, width, blockHeight);
+        Rect blockRect = new(x, curY, width, blockHeight);
         Widgets.DrawHighlight(blockRect);
 
         // Header (double highlight)
-        Rect headerRect = new Rect(x, curY, width, 22f);
+        Rect headerRect = new(x, curY, width, 22f);
         Widgets.DrawHighlight(headerRect);
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.DrawColoredLabel(
@@ -890,10 +890,10 @@ class FCBuildingWindow : Window
             curY += smallMargin;
             float blockHeight = 22f + smallMargin + contentHeight;
 
-            Rect blockRect = new Rect(x, curY, width, blockHeight);
+            Rect blockRect = new(x, curY, width, blockHeight);
             Widgets.DrawHighlight(blockRect);
 
-            Rect headerRect = new Rect(x, curY, width, 22f);
+            Rect headerRect = new(x, curY, width, 22f);
             Widgets.DrawHighlight(headerRect);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -902,7 +902,7 @@ class FCBuildingWindow : Window
                 section.SectionLabel,
                 new Color(1f, 1f, 1f, 0.7f));
 
-            Rect contentRect = new Rect(x + smallMargin, headerRect.yMax + smallMargin, contentWidth, contentHeight);
+            Rect contentRect = new(x + smallMargin, headerRect.yMax + smallMargin, contentWidth, contentHeight);
             section.DrawSection(selectedBuilding, contentRect);
 
             curY = blockRect.yMax + margin;
@@ -933,7 +933,7 @@ class FCBuildingWindow : Window
         if (selectedBuilding.statModifiers is null || !selectedBuilding.statModifiers.Any(m => m.stat is not null && m.stat.linkedResource is not null)) return curY;
 
         // Gather all affected resources from both old and new building
-        HashSet<ResourceTypeDef> affectedResources = new HashSet<ResourceTypeDef>();
+        HashSet<ResourceTypeDef> affectedResources = [];
         foreach (FCStatModifier mod in selectedBuilding.statModifiers)
             if (mod.stat is not null && mod.stat.linkedResource is not null)
                 affectedResources.Add(mod.stat.linkedResource);
@@ -954,11 +954,11 @@ class FCBuildingWindow : Window
         float blockHeight = 22f + smallMargin + contentHeight;
 
         // Block background
-        Rect blockRect = new Rect(x, curY, width, blockHeight);
+        Rect blockRect = new(x, curY, width, blockHeight);
         Widgets.DrawHighlight(blockRect);
 
         // Header (double highlight)
-        Rect headerRect = new Rect(x, curY, width, 22f);
+        Rect headerRect = new(x, curY, width, 22f);
         Widgets.DrawHighlight(headerRect);
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.DrawColoredLabel(
@@ -1004,14 +1004,14 @@ class FCBuildingWindow : Window
             double delta = projectedProd - currentProd;
 
             // Draw row: [icon] Label: current -> projected (delta)
-            Rect rowRect = new Rect(x, curY, width, 22f);
+            Rect rowRect = new(x, curY, width, 22f);
 
             // Resource color accent
             Widgets.DrawBoxSolid(new Rect(x, curY, 3f, 22f), resDef.color);
             float contentX = x + 3f + smallMargin;
 
             // Resource icon
-            Rect iconRect = new Rect(contentX, curY, 20f, 20f);
+            Rect iconRect = new(contentX, curY, 20f, 20f);
             GUI.DrawTexture(iconRect, resource.getIcon);
 
             Text.Font = GameFont.Small;
@@ -1022,16 +1022,16 @@ class FCBuildingWindow : Window
             string deltaStr = (delta >= 0 ? "+" : "") + delta.ToString("F1");
             Color deltaColor = delta >= 0 ? Color.green : Color.red;
 
-            Rect textRect = new Rect(iconRect.xMax + smallMargin, curY, width - (contentX - x) - 20f - smallMargin, 22f);
+            Rect textRect = new(iconRect.xMax + smallMargin, curY, width - (contentX - x) - 20f - smallMargin, 22f);
             string label = resource.label + ": " + currentStr + " → " + projectedStr + " (";
             UIUtil.ClampedLabel(textRect, label);
 
             // Draw delta with color
             float labelWidth = Text.CalcSize(label).x;
-            Rect deltaRect = new Rect(textRect.x + labelWidth, curY, Text.CalcSize(deltaStr).x, 22f);
+            Rect deltaRect = new(textRect.x + labelWidth, curY, Text.CalcSize(deltaStr).x, 22f);
             UIUtil.DrawColoredLabel(deltaRect, deltaStr, deltaColor);
 
-            Rect closeParenRect = new Rect(deltaRect.xMax, curY, 20f, 22f);
+            Rect closeParenRect = new(deltaRect.xMax, curY, 20f, 22f);
             UIUtil.ClampedLabel(closeParenRect, ")");
 
             curY = rowRect.yMax + smallMargin;
@@ -1044,7 +1044,7 @@ class FCBuildingWindow : Window
     {
         if (selectedBuilding?.statModifiers is null || !selectedBuilding.statModifiers.Any(m => m.stat is not null && m.stat.linkedResource is not null)) return 0;
 
-        HashSet<ResourceTypeDef> affected = new HashSet<ResourceTypeDef>();
+        HashSet<ResourceTypeDef> affected = [];
         foreach (FCStatModifier mod in selectedBuilding.statModifiers)
             if (mod.stat is not null && mod.stat.linkedResource is not null)
                 affected.Add(mod.stat.linkedResource);
@@ -1078,7 +1078,7 @@ class FCBuildingWindow : Window
 
         // Block background
         float blockHeight = CalculateUpgradesHeight(width) - smallMargin - margin;
-        Rect blockRect = new Rect(x, curY, width, blockHeight);
+        Rect blockRect = new(x, curY, width, blockHeight);
         Widgets.DrawHighlight(blockRect);
 
         // Header (double highlight via DrawCollapsibleHeader)
@@ -1099,7 +1099,7 @@ class FCBuildingWindow : Window
             {
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Rect reqRect = new Rect(x + indent + margin, curY, cardWidth, 18f);
+                Rect reqRect = new(x + indent + margin, curY, cardWidth, 18f);
                 UIUtil.DrawColoredLabel(reqRect,
                     "Empire_BuildingWindow_Requires".Translate(entry.parent.LabelCap),
                     new Color(1f, 1f, 1f, 0.5f));
@@ -1107,7 +1107,7 @@ class FCBuildingWindow : Window
             }
 
             float cardHeight = CalculateBuildingCardHeight(entry.def, cardWidth);
-            Rect cardRect = new Rect(x + indent, curY, cardWidth, cardHeight);
+            Rect cardRect = new(x + indent, curY, cardWidth, cardHeight);
 
             bool isSelected = selectedBuilding == entry.def;
             Widgets.DrawHighlight(cardRect);
@@ -1163,7 +1163,7 @@ class FCBuildingWindow : Window
 
         // Block background
         float blockHeight = CalculateRequiredByHeight(width) - smallMargin - margin;
-        Rect blockRect = new Rect(x, curY, width, blockHeight);
+        Rect blockRect = new(x, curY, width, blockHeight);
         Widgets.DrawHighlight(blockRect);
 
         // Header (double highlight via DrawCollapsibleHeader)
@@ -1182,7 +1182,7 @@ class FCBuildingWindow : Window
                     || building.applicableBiomes.Contains(settlement.biome));
 
             float cardHeight = CalculateBuildingCardHeight(building, width);
-            Rect cardRect = new Rect(x, curY, width, cardHeight);
+            Rect cardRect = new(x, curY, width, cardHeight);
 
             if (!canBuild)
                 GUI.color = new Color(1f, 1f, 1f, 0.4f);
@@ -1202,7 +1202,7 @@ class FCBuildingWindow : Window
                 foreach (BuildingFCDef req in building.requiredBuildings)
                 {
                     bool has = settlement.BuildingsComp?.HasBuildingOrUpgrade(req) == true;
-                    Rect statusRect = new Rect(x + margin * 2, curY, width - margin * 4, 18f);
+                    Rect statusRect = new(x + margin * 2, curY, width - margin * 4, 18f);
                     string checkmark = has ? "✓ " : "✗ ";
                     UIUtil.DrawColoredLabel(statusRect, checkmark + req.LabelCap,
                         has ? Color.green : Color.red);
@@ -1244,7 +1244,7 @@ class FCBuildingWindow : Window
 
     private void DrawBuildButton(Rect area)
     {
-        Rect buttonRect = new Rect(
+        Rect buttonRect = new(
             area.x + (area.width - actionButtonWidth) / 2f,
             area.y + margin,
             actionButtonWidth,
@@ -1298,7 +1298,7 @@ class FCBuildingWindow : Window
         if (!PaymentUtil.TryPaySilver(settlement.BuildingsComp.GetBuildingCost(selectedBuilding), PaymentUtil.Reason_BuildingConstruction, settlement))
             return;
 
-        FCEvent tmpEvt = new FCEvent(true)
+        FCEvent tmpEvt = new(true)
         {
             def = FCEventDefOf.constructBuilding,
             tickStarted = Find.TickManager.TicksGame,
@@ -1333,10 +1333,10 @@ class FCBuildingWindow : Window
         this.buildingSlot = buildingSlot;
         buildingDef = settlement.BuildingsComp?.GetBuildingInSlot(buildingSlot);
 
-        buildingList = new List<BuildingFCDef>();
-        filteredBuildingList = new List<BuildingFCDef>();
-        lockedBuildingList = new List<BuildingFCDef>();
-        lockedBuildingSet = new HashSet<BuildingFCDef>();
+        buildingList = [];
+        filteredBuildingList = [];
+        lockedBuildingList = [];
+        lockedBuildingSet = [];
 
         TechLevel maxReachableTech = FCSettings.medievalTechOnly
             ? TechLevel.Medieval

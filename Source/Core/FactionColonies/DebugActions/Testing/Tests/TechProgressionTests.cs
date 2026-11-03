@@ -15,7 +15,7 @@ public static class TechProgressionTests
     {
         var allBarrier = new TechLevelBarrier
         {
-            researchProjects = new List<ResearchProjectDef>(),
+            researchProjects = [],
             mode = TechBarrierMode.All
         };
         TestAssert.IsTrue(allBarrier.IsSatisfied(),
@@ -23,7 +23,7 @@ public static class TechProgressionTests
 
         var anyBarrier = new TechLevelBarrier
         {
-            researchProjects = new List<ResearchProjectDef>(),
+            researchProjects = [],
             mode = TechBarrierMode.Any
         };
         TestAssert.IsFalse(anyBarrier.IsSatisfied(),
@@ -53,7 +53,7 @@ public static class TechProgressionTests
         var barrier = new TechLevelBarrier
         {
             techLevel = TechLevel.Industrial,
-            researchProjects = new List<ResearchProjectDef> { proj },
+            researchProjects = [proj],
             mode = TechBarrierMode.All
         };
 
@@ -81,7 +81,7 @@ public static class TechProgressionTests
         var barrier = new TechLevelBarrier
         {
             techLevel = TechLevel.Industrial,
-            researchProjects = new List<ResearchProjectDef> { proj },
+            researchProjects = [proj],
             mode = TechBarrierMode.All
         };
 

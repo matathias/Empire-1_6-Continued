@@ -7,10 +7,10 @@ public static class UIUtil
 {
     // Table rendering constants
     private const float TableRowHeight = 22f;
-    private static readonly Color TableAltRowColor = new Color(1f, 1f, 1f, 0.06f);
-    private static readonly Color TableLineColor = new Color(1f, 1f, 1f, 0.15f);
-    private static readonly Color TableHeaderBgColor = new Color(1f, 1f, 1f, 0.1f);
-    private static readonly Color TableHeaderTextColor = new Color(0.85f, 0.85f, 0.85f);
+    private static readonly Color TableAltRowColor = new(1f, 1f, 1f, 0.06f);
+    private static readonly Color TableLineColor = new(1f, 1f, 1f, 0.15f);
+    private static readonly Color TableHeaderBgColor = new(1f, 1f, 1f, 0.1f);
+    private static readonly Color TableHeaderTextColor = new(0.85f, 0.85f, 0.85f);
 
     /// <summary>
     /// Fraction (0..1+) of the way from <paramref name="start"/> to <paramref name="finish"/> at the
@@ -34,8 +34,8 @@ public static class UIUtil
         // Sanitize so a NaN (e.g. a 0/0 from a zero-length timer) or out-of-range value can never
         // reach the draw as a NaN/negative bar width. Mathf.Clamp01 alone does NOT catch NaN.
         progress = float.IsNaN(progress) ? 0f : Mathf.Clamp01(progress);
-        Rect baseRect = new Rect(rect.x, rect.y, rect.width, rect.height);
-        Rect progressRect = new Rect(rect.x, rect.y, rect.width * progress, rect.height);
+        Rect baseRect = new(rect.x, rect.y, rect.width, rect.height);
+        Rect progressRect = new(rect.x, rect.y, rect.width * progress, rect.height);
         Widgets.DrawBoxSolid(baseRect, background);
         Widgets.DrawBoxSolid(progressRect, bar);
     }
@@ -87,7 +87,7 @@ public static class UIUtil
         Text.WordWrap = false;
         Color prevColor = GUI.color;
         GUI.color = disabled ? Color.gray : (labelColor ?? Color.white);
-        Rect labelRect = new Rect(rect.x + iconSpace, rect.y, rect.width - iconSpace, rect.height);
+        Rect labelRect = new(rect.x + iconSpace, rect.y, rect.width - iconSpace, rect.height);
         Widgets.Label(labelRect, ClampWithTip(labelRect, label));
         GUI.color = prevColor;
         Text.Anchor = prevAnchor;
@@ -254,12 +254,12 @@ public static class UIUtil
     }
     public static void LabelWithMargin(Rect rect, string label, float margin = 5f)
     {
-        Rect labelRect = new Rect(rect.x + margin, rect.y, rect.width - (margin * 2), rect.height);
+        Rect labelRect = new(rect.x + margin, rect.y, rect.width - (margin * 2), rect.height);
         Widgets.Label(labelRect, ClampWithTip(labelRect, label));
     }
     public static void ClampedLabelWithMargin(Rect rect, string label, float margin = 5f)
     {
-        Rect labelRect = new Rect(rect.x + margin, rect.y, rect.width - (margin * 2), rect.height);
+        Rect labelRect = new(rect.x + margin, rect.y, rect.width - (margin * 2), rect.height);
         ClampedLabel(labelRect, label);
     }
     public static void HighlightedLabel(Rect rect, string label)
@@ -294,7 +294,7 @@ public static class UIUtil
         float contentTop = boundingBox.y + totalTabHeight;
 
         // Track which row the selected tab lands in, and its rect
-        Rect chosenRect = new Rect();
+        Rect chosenRect = new();
         int selectedRow = -1;
         int tabIndex = 0;
         int result = selectedTab;
@@ -308,7 +308,7 @@ public static class UIUtil
 
             for (int col = 0; col < tabsThisRow; col++)
             {
-                Rect tabRect = new Rect(boundingBox.x + col * rowTabWidth, rowY, rowTabWidth, tabHeight);
+                Rect tabRect = new(boundingBox.x + col * rowTabWidth, rowY, rowTabWidth, tabHeight);
                 string label = tabLabels[tabIndex];
                 bool isSelected = tabIndex == selectedTab;
 
@@ -420,8 +420,8 @@ public static class UIUtil
         string col2Header, List<string> col2)
     {
         return DrawTableCore(rect,
-            new string[] { col1Header, col2Header },
-            new List<string>[] { col1, col2 });
+            [col1Header, col2Header],
+            [col1, col2]);
     }
 
     /// <summary>Draws a 3-column table. Returns the total height consumed.</summary>
@@ -431,8 +431,8 @@ public static class UIUtil
         string col3Header, List<string> col3)
     {
         return DrawTableCore(rect,
-            new string[] { col1Header, col2Header, col3Header },
-            new List<string>[] { col1, col2, col3 });
+            [col1Header, col2Header, col3Header],
+            [col1, col2, col3]);
     }
 
     /// <summary>Draws a 4-column table. Returns the total height consumed.</summary>
@@ -443,8 +443,8 @@ public static class UIUtil
         string col4Header, List<string> col4)
     {
         return DrawTableCore(rect,
-            new string[] { col1Header, col2Header, col3Header, col4Header },
-            new List<string>[] { col1, col2, col3, col4 });
+            [col1Header, col2Header, col3Header, col4Header],
+            [col1, col2, col3, col4]);
     }
 
     /// <summary>
@@ -459,8 +459,8 @@ public static class UIUtil
         string col4Header, List<string> col4)
     {
         return DrawTableCore(rect,
-            new string[] { col1Header, col2Header, col3Header, col4Header },
-            new List<string>[] { col1, col2, col3, col4 },
+            [col1Header, col2Header, col3Header, col4Header],
+            [col1, col2, col3, col4],
             true, out clickedRow);
     }
 
@@ -480,7 +480,7 @@ public static class UIUtil
         float curY = rect.y;
 
         // Header row
-        Rect headerRect = new Rect(rect.x, curY, rect.width, TableRowHeight);
+        Rect headerRect = new(rect.x, curY, rect.width, TableRowHeight);
         Widgets.DrawBoxSolid(headerRect, TableHeaderBgColor);
 
         Text.Font = GameFont.Small;
@@ -488,7 +488,7 @@ public static class UIUtil
         GUI.color = TableHeaderTextColor;
         for (int c = 0; c < colCount; c++)
         {
-            Rect headerCell = new Rect(rect.x + c * colW, curY, colW, TableRowHeight);
+            Rect headerCell = new(rect.x + c * colW, curY, colW, TableRowHeight);
             Widgets.Label(headerCell, ClampWithTip(headerCell, headers[c]));
         }
 
@@ -500,7 +500,7 @@ public static class UIUtil
         // Data rows
         for (int r = 0; r < rowCount; r++)
         {
-            Rect rowRect = new Rect(rect.x, curY, rect.width, TableRowHeight);
+            Rect rowRect = new(rect.x, curY, rect.width, TableRowHeight);
 
             if (r % 2 == 1)
                 Widgets.DrawBoxSolid(rowRect, TableAltRowColor);
@@ -517,7 +517,7 @@ public static class UIUtil
             GUI.color = Color.white;
             for (int c = 0; c < colCount; c++)
             {
-                Rect dataCell = new Rect(rect.x + c * colW, curY, colW, TableRowHeight);
+                Rect dataCell = new(rect.x + c * colW, curY, colW, TableRowHeight);
                 Widgets.Label(dataCell, ClampWithTip(dataCell, columns[c][r]));
             }
 

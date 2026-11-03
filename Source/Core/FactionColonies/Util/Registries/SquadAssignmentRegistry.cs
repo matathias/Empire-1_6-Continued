@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class SquadAssignmentRegistry
 {
-    private static readonly RegistryList<ISquadAssignmentValidator> _list = new RegistryList<ISquadAssignmentValidator>();
+    private static readonly RegistryList<ISquadAssignmentValidator> _list = new();
 
     internal static void Register(ISquadAssignmentValidator validator) => _list.Register(validator);
     internal static void Unregister(ISquadAssignmentValidator validator) => _list.Unregister(validator);

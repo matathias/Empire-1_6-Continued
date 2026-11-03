@@ -25,7 +25,7 @@ public class FCWindow_MechPicker : Window
     private const float HeaderHeight = 24f;
     private const float margin = 5f;
 
-    public override Vector2 InitialSize => new Vector2(480f, 600f);
+    public override Vector2 InitialSize => new(480f, 600f);
 
     public FCWindow_MechPicker(Func<MilUnitFC> getDisplayUnit, Func<MilUnitFC> getEditTarget, int group)
     {
@@ -56,13 +56,13 @@ public class FCWindow_MechPicker : Window
         Text.Anchor = TextAnchor.MiddleLeft;
         float used = displayUnit?.UsedMechBandwidth ?? 0f;
         float total = displayUnit?.TotalMechBandwidth ?? 0f;
-        Rect bwRect = new Rect(0, 38f, inRect.width, HeaderHeight);
+        Rect bwRect = new(0, 38f, inRect.width, HeaderHeight);
         if (used > total + 0.0001f) GUI.color = ColorLibrary.RedReadable;
         UIUtil.ClampedLabel(bwRect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
         GUI.color = Color.white;
 
         // Search bar
-        Rect searchRect = new Rect(0, bwRect.yMax + 2f, inRect.width, SearchBarHeight);
+        Rect searchRect = new(0, bwRect.yMax + 2f, inRect.width, SearchBarHeight);
         searchTerm = Widgets.TextField(searchRect, searchTerm);
 
         // Build mech list — only mechs the player has actually unlocked through research.
@@ -76,7 +76,7 @@ public class FCWindow_MechPicker : Window
         // Scroll view
         float listTop = searchRect.yMax + margin;
         float listHeight = inRect.height - listTop - 15f;
-        Rect scrollOutRect = new Rect(0, listTop, inRect.width, listHeight);
+        Rect scrollOutRect = new(0, listTop, inRect.width, listHeight);
         Widgets.DrawMenuSection(scrollOutRect);
 
         float viewHeight = mechKinds.Count * RowHeight;
@@ -85,15 +85,15 @@ public class FCWindow_MechPicker : Window
         for (int i = 0; i < mechKinds.Count; i++)
         {
             PawnKindDef mech = mechKinds[i];
-            Rect row = new Rect(0, i * RowHeight, scrollViewRect.width, RowHeight);
+            Rect row = new(0, i * RowHeight, scrollViewRect.width, RowHeight);
             if (i % 2 == 0) Widgets.DrawHighlight(row);
 
             // Row layout: Icon | Info | Label | Bandwidth | Cost
-            Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
-            Rect infoRect = new Rect(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
-            Rect costRect = new Rect(row.xMax - margin - 60f, row.y, 60f, RowHeight);
-            Rect bwCostRect = new Rect(costRect.x - 50f, row.y, 50f, RowHeight);
-            Rect labelRect = new Rect(infoRect.xMax + margin, row.y,
+            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
+            Rect infoRect = new(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
+            Rect costRect = new(row.xMax - margin - 60f, row.y, 60f, RowHeight);
+            Rect bwCostRect = new(costRect.x - 50f, row.y, 50f, RowHeight);
+            Rect labelRect = new(infoRect.xMax + margin, row.y,
                 bwCostRect.x - infoRect.xMax - (margin * 2), RowHeight);
 
             Widgets.ThingIcon(iconRect, mech.race);

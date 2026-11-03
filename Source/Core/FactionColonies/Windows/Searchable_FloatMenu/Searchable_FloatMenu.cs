@@ -14,7 +14,7 @@ class Searchable_FloatMenu : FloatMenu
     private Color baseColor = Color.white;
     private int noRemovalOnTick = 0;
 
-    private readonly Vector2 SearchBarOffset = new Vector2(25f, -27f);
+    private readonly Vector2 SearchBarOffset = new(25f, -27f);
     private bool canClose = true;
     private bool stayOpenOptionClicked = false;
 
@@ -25,7 +25,7 @@ class Searchable_FloatMenu : FloatMenu
     {
         get
         {
-            FloatMenuOption option = new FloatMenuOption("FCSMFForceOpen".Translate(), delegate
+            FloatMenuOption option = new("FCSMFForceOpen".Translate(), delegate
             {
                 canClose = !canClose;
                 stayOpenOptionClicked = true;
@@ -108,7 +108,7 @@ class Searchable_FloatMenu : FloatMenu
     /// <returns></returns>
     private static List<FloatMenuOption> FakeAddStayOpenOption(List<FloatMenuOption> options, bool canBeForcedOpen)
     {
-        List<FloatMenuOption> returnOptions = new List<FloatMenuOption>();
+        List<FloatMenuOption> returnOptions = [];
         if (canBeForcedOpen) returnOptions.Add(new FloatMenuOption("", null));
 
         returnOptions.AddRange(options);
@@ -121,9 +121,9 @@ class Searchable_FloatMenu : FloatMenu
     public override void ExtraOnGUI()
     {
         base.ExtraOnGUI();
-        Vector2 vector = new Vector2(windowRect.x, windowRect.y);
+        Vector2 vector = new(windowRect.x, windowRect.y);
         Text.Font = GameFont.Small;
-        Rect searchRect = new Rect(vector.x - SearchBarOffset.x, vector.y + SearchBarOffset.y, ColumnWidth + SearchBarOffset.x, 27f);
+        Rect searchRect = new(vector.x - SearchBarOffset.x, vector.y + SearchBarOffset.y, ColumnWidth + SearchBarOffset.x, 27f);
 
         if (stayOpenOptionClicked)
         {

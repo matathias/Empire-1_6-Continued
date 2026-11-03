@@ -11,9 +11,9 @@ public static class InventoryTests
     [EmpireTest("Inventory")]
     public static void ComputeAllowed_SubtractsExcludedFromBase()
     {
-        ThingDef a = new ThingDef { defName = "EmpireTest_A" };
-        ThingDef b = new ThingDef { defName = "EmpireTest_B" };
-        ThingDef c = new ThingDef { defName = "EmpireTest_C" };
+        ThingDef a = new() { defName = "EmpireTest_A" };
+        ThingDef b = new() { defName = "EmpireTest_B" };
+        ThingDef c = new() { defName = "EmpireTest_C" };
 
         HashSet<ThingDef> result = MilitaryInventoryUtil.ComputeAllowed(
             new[] { a, b, c }, new[] { b }, new ThingDef[0]);
@@ -26,8 +26,8 @@ public static class InventoryTests
     [EmpireTest("Inventory")]
     public static void ComputeAllowed_ForceAllowOverridesExclude()
     {
-        ThingDef a = new ThingDef { defName = "EmpireTest_A" };
-        ThingDef b = new ThingDef { defName = "EmpireTest_B" };
+        ThingDef a = new() { defName = "EmpireTest_A" };
+        ThingDef b = new() { defName = "EmpireTest_B" };
 
         HashSet<ThingDef> result = MilitaryInventoryUtil.ComputeAllowed(
             new[] { a, b }, new[] { b }, new[] { b });
@@ -38,7 +38,7 @@ public static class InventoryTests
     [EmpireTest("Inventory")]
     public static void ComputeAllowed_IgnoresNulls()
     {
-        ThingDef a = new ThingDef { defName = "EmpireTest_A" };
+        ThingDef a = new() { defName = "EmpireTest_A" };
 
         HashSet<ThingDef> result = MilitaryInventoryUtil.ComputeAllowed(
             new ThingDef[] { a, null }, new ThingDef[] { null }, new ThingDef[] { null });
@@ -53,18 +53,18 @@ public static class InventoryTests
     public static void IsNeverCarriable_BlocksBuildingsAndMinified()
     {
         // Positive market value so the zero-value rule can't be what trips these.
-        List<StatModifier> value = new List<StatModifier>
-        {
+        List<StatModifier> value =
+        [
             new StatModifier { stat = StatDefOf.MarketValue, value = 100f }
-        };
+        ];
 
         // Buildings are blocked by category, even turrets/mortars (category == Building),
         // and regardless of whether they carry a thingCategory.
-        ThingDef building = new ThingDef { category = ThingCategory.Building, statBases = value };
+        ThingDef building = new() { category = ThingCategory.Building, statBases = value };
         TestAssert.IsTrue(MilitaryInventoryUtil.IsNeverCarriable(building), "buildings blocked by category");
 
         // Minified wrappers are category Item, so they rely on the thingClass rule.
-        ThingDef minified = new ThingDef
+        ThingDef minified = new()
         {
             category = ThingCategory.Item, thingClass = typeof(MinifiedThing), statBases = value
         };
@@ -75,13 +75,13 @@ public static class InventoryTests
     public static void IsNeverCarriable_BlocksZeroValueButAllowsOrdinaryItem()
     {
         // Bare def has no MarketValue stat -> BaseMarketValue 0 -> blocked.
-        ThingDef worthless = new ThingDef { category = ThingCategory.Item };
+        ThingDef worthless = new() { category = ThingCategory.Item };
         TestAssert.IsTrue(MilitaryInventoryUtil.IsNeverCarriable(worthless), "zero market value blocked");
 
-        ThingDef item = new ThingDef
+        ThingDef item = new()
         {
             category = ThingCategory.Item,
-            statBases = new List<StatModifier> { new StatModifier { stat = StatDefOf.MarketValue, value = 100f } }
+            statBases = [new() { stat = StatDefOf.MarketValue, value = 100f }]
         };
         TestAssert.IsFalse(MilitaryInventoryUtil.IsNeverCarriable(item), "ordinary positive-value item not blocked");
     }

@@ -20,7 +20,7 @@ public class FCOptionDef : Def
     public FCEventDef parentEvent;
     public FCEventDef successEvent = null;
     public FCEventDef failEvent = null;
-    public List<FCPolicyDef> requiredPolicies = new List<FCPolicyDef>();
+    public List<FCPolicyDef> requiredPolicies = [];
     public FCRequirementMode requirementMode = FCRequirementMode.All;
 
     /* Ideology meme gate, parallel to requiredPolicies. Stored as MemeDef defName strings
@@ -28,7 +28,7 @@ public class FCOptionDef : Def
      * have no cross-reference to resolve, so meme-gated option defs load error-free even
      * without Ideology. When Ideology is off, FCOptionWindow hides any option with a meme gate.
      * Resolved to MemeDef at runtime via MemeUtilFC only when Ideology is active. */
-    public List<string> requiredMemes = new List<string>();
+    public List<string> requiredMemes = [];
     public FCRequirementMode memeRequirementMode = FCRequirementMode.All;
 
     public int EffectiveSilverCost
@@ -85,7 +85,7 @@ public class FCOptionWindow : Window
     private const float SettlementButtonSpacing = 4f;
     private const float MaxWindowHeight = 700f;
 
-    public List<FCOptionDef> options = new List<FCOptionDef>();
+    public List<FCOptionDef> options = [];
     public string header;
     public string desc;
     public FCEvent parentEvent;
@@ -171,7 +171,7 @@ public class FCOptionWindow : Window
         }
 
         // Affected settlements
-        this.affectedSettlements = new List<WorldSettlementFC>();
+        this.affectedSettlements = [];
         if (parentEvent is not null && parentEvent.settlementTraitLocations is not null)
         {
             foreach (WorldSettlementFC s in parentEvent.settlementTraitLocations)
@@ -188,7 +188,7 @@ public class FCOptionWindow : Window
          * reuse the snapshot. Must happen before MeasureLayout — cost width feeds layout. */
         if (parentEvent is not null && parentEvent.optionCostSnapshots is null && this.options is not null)
         {
-            parentEvent.optionCostSnapshots = new Dictionary<string, int>();
+            parentEvent.optionCostSnapshots = [];
             foreach (FCOptionDef opt in this.options)
             {
                 if (opt is null) continue;
@@ -354,7 +354,7 @@ public class FCOptionWindow : Window
                     : "FCEventNumSettlements".Translate(affectedSettlements.Count).ToString();
 
                 float btnWidth = Text.CalcSize(label).x + 16f;
-                Rect btnRect = new Rect(inRect.x + Padding, curY, btnWidth, SettlementButtonHeight);
+                Rect btnRect = new(inRect.x + Padding, curY, btnWidth, SettlementButtonHeight);
                 UIUtil.ButtonFlat(btnRect, label, categoryColor);
                 TooltipHandler.TipRegion(btnRect, string.Join("\n", affectedSettlements.Select(s => s.Name)));
             }
@@ -365,7 +365,7 @@ public class FCOptionWindow : Window
                 {
                     WorldSettlementFC settlement = affectedSettlements[i];
                     float btnWidth = Text.CalcSize(settlement.Name).x + 16f;
-                    Rect btnRect = new Rect(btnX, curY, btnWidth, SettlementButtonHeight);
+                    Rect btnRect = new(btnX, curY, btnWidth, SettlementButtonHeight);
 
                     if (UIUtil.ButtonFlat(btnRect, settlement.Name, categoryColor))
                     {
@@ -380,7 +380,7 @@ public class FCOptionWindow : Window
 
         // === Separator line ===
         curY += Padding;
-        Color dimCategoryColor = new Color(categoryColor.r, categoryColor.g, categoryColor.b, 0.3f);
+        Color dimCategoryColor = new(categoryColor.r, categoryColor.g, categoryColor.b, 0.3f);
         Widgets.DrawBoxSolid(new Rect(inRect.x + Padding, curY, textWidth, 1f), dimCategoryColor);
         curY += 1f + Padding;
 
@@ -389,7 +389,7 @@ public class FCOptionWindow : Window
         FCEventHandlerExtension optHandler = parentEvent?.def?.GetModExtension<FCEventHandlerExtension>();
 
         float scrollOuterHeight = inRect.yMax - curY;
-        Rect scrollOuterRect = new Rect(inRect.x, curY, contentWidth, scrollOuterHeight);
+        Rect scrollOuterRect = new(inRect.x, curY, contentWidth, scrollOuterHeight);
 
         Rect scrollInnerRect = ScrollUtil.BeginScrollView(scrollOuterRect, ref scrollPosition, cachedTotalOptionsHeight);
 
@@ -422,7 +422,7 @@ public class FCOptionWindow : Window
             }
             cardH = Math.Max(cardH, MinOptionHeight);
 
-            Rect cardRect = new Rect(0f, optY, scrollInnerRect.width, cardH);
+            Rect cardRect = new(0f, optY, scrollInnerRect.width, cardH);
 
             // Card background
             float bgVal = available ? 0.18f : 0.12f;
@@ -452,7 +452,7 @@ public class FCOptionWindow : Window
             innerY += cachedOptionLabelHeights[i] + 6f;
 
             // Metadata row: success hint (left) + cost (right)
-            Rect metaRect = new Rect(innerX, innerY, innerW, MetadataRowHeight);
+            Rect metaRect = new(innerX, innerY, innerW, MetadataRowHeight);
 
             // Success hint
             Text.Font = GameFont.Tiny;
@@ -474,7 +474,7 @@ public class FCOptionWindow : Window
             bool hasMemeReq = opt.requiredMemes is not null && opt.requiredMemes.Count > 0;
             if (hasPolicyReq || hasMemeReq)
             {
-                List<string> tagParts = new List<string>();
+                List<string> tagParts = [];
                 if (hasPolicyReq)
                 {
                     string sep = opt.requirementMode == FCRequirementMode.Any ? " / " : ", ";
@@ -504,7 +504,7 @@ public class FCOptionWindow : Window
                 float successWidth = Text.CalcSize(successLabel).x;
                 float tagX = metaRect.x + successWidth + 6f;
                 float tagW = metaRect.width - successWidth - 6f - costAreaWidth - 8f;
-                Rect tagRect = new Rect(tagX, metaRect.y, tagW, metaRect.height);
+                Rect tagRect = new(tagX, metaRect.y, tagW, metaRect.height);
 
                 string fullTagText = "[" + policyTag + "]";
                 string clampedTag = Text.ClampTextWithEllipsis(tagRect, fullTagText);
@@ -527,10 +527,10 @@ public class FCOptionWindow : Window
                 GUI.color = available ? Color.white : AccentUtil.Expense;
                 string costStr = effectiveCost.ToString();
                 float costTextW = Text.CalcSize(costStr).x;
-                Rect costTextRect = new Rect(metaRect.xMax - costTextW, metaRect.y, costTextW, metaRect.height);
+                Rect costTextRect = new(metaRect.xMax - costTextW, metaRect.y, costTextW, metaRect.height);
                 UIUtil.ClampedLabel(costTextRect, costStr);
 
-                Rect iconRect = new Rect(
+                Rect iconRect = new(
                     costTextRect.x - SilverIconSize - 2f,
                     metaRect.y + (metaRect.height - SilverIconSize) / 2f,
                     SilverIconSize, SilverIconSize
@@ -545,7 +545,7 @@ public class FCOptionWindow : Window
                 string costBreakdown = FCOptionCostUtil.BuildCostBreakdown(opt, parentEvent);
                 if (costBreakdown is not null)
                 {
-                    Rect costAreaRect = new Rect(iconRect.x, metaRect.y, costTextRect.xMax - iconRect.x, metaRect.height);
+                    Rect costAreaRect = new(iconRect.x, metaRect.y, costTextRect.xMax - iconRect.x, metaRect.height);
                     TooltipHandler.TipRegion(costAreaRect, costBreakdown);
                 }
 
@@ -620,8 +620,8 @@ public class FCOptionWindow : Window
         FCEventDef resultEvent = opt.successEvent;
         if (resultEvent is null) return null;
 
-        List<string> tempParts = new List<string>();
-        List<string> permParts = new List<string>();
+        List<string> tempParts = [];
+        List<string> permParts = [];
 
         // Temporary stat modifiers
         if (resultEvent.statModifiers is not null && resultEvent.statModifiers.Count > 0)
@@ -786,7 +786,7 @@ public class FCOptionWindow : Window
         }
         else
         {
-            List<string> missing = new List<string>();
+            List<string> missing = [];
             foreach (FCPolicyDef required in opt.requiredPolicies)
             {
                 if (!HasPolicyOrTrait(faction, required))
@@ -823,7 +823,7 @@ public class FCOptionWindow : Window
         }
         else
         {
-            List<string> missing = new List<string>();
+            List<string> missing = [];
             foreach (string required in opt.requiredMemes)
             {
                 if (!MemeUtilFC.EmpireHasMeme(required))

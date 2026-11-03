@@ -21,10 +21,10 @@ public static class CodexUIUtil
 
     /* Shared colors */
     public static readonly Color DefaultAccent = ColorUtil.Gold; // (0.83, 0.68, 0.21)
-    public static readonly Color SectionBgColor = new Color(0.15f, 0.15f, 0.15f, 0.4f);
-    public static readonly Color GroupBgColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
-    public static readonly Color GroupAccentColor = new Color(0.7f, 0.7f, 0.7f);
-    public static readonly Color HighlightColor = new Color(0.4f, 0.6f, 0.9f);
+    public static readonly Color SectionBgColor = new(0.15f, 0.15f, 0.15f, 0.4f);
+    public static readonly Color GroupBgColor = new(0.2f, 0.2f, 0.2f, 0.6f);
+    public static readonly Color GroupAccentColor = new(0.7f, 0.7f, 0.7f);
+    public static readonly Color HighlightColor = new(0.4f, 0.6f, 0.9f);
 
     /// <summary>Draws the body of a section between its header and the trailing margin. Returns the new curY.</summary>
     public delegate float CodexSectionDrawer(float curY, float width);
@@ -46,7 +46,7 @@ public static class CodexUIUtil
     {
         float curY = startY;
 
-        Rect headerRect = new Rect(0f, curY, width, SectionHeaderHeight);
+        Rect headerRect = new(0f, curY, width, SectionHeaderHeight);
         Widgets.DrawBoxSolid(headerRect, SectionBgColor);
         TexLoad.DrawHorizontalGradient(headerRect, ColorUtil.TransformA(accent, 0.15f));
         Widgets.DrawBoxSolid(new Rect(0f, curY, AccentBarWidth, SectionHeaderHeight), accent);
@@ -72,7 +72,7 @@ public static class CodexUIUtil
     {
         float curY = startY;
 
-        Rect headerRect = new Rect(0f, curY, width, SectionHeaderHeight);
+        Rect headerRect = new(0f, curY, width, SectionHeaderHeight);
         Widgets.DrawBoxSolid(headerRect, SectionBgColor);
         TexLoad.DrawHorizontalGradient(headerRect, ColorUtil.TransformA(accent, 0.15f));
         Widgets.DrawBoxSolid(new Rect(0f, curY, AccentBarWidth, SectionHeaderHeight), accent);
@@ -84,7 +84,7 @@ public static class CodexUIUtil
             header,
             ColorUtil.TransformRGB(accent, 1.3f));
 
-        Rect arrowRect = new Rect(headerRect.xMax - 20f - 2f, curY + (SectionHeaderHeight - 16f) * 0.5f, 16f, 16f);
+        Rect arrowRect = new(headerRect.xMax - 20f - 2f, curY + (SectionHeaderHeight - 16f) * 0.5f, 16f, 16f);
         Widgets.DrawTextureFitted(arrowRect, expanded ? TexButton.Collapse : TexButton.Reveal, 1f);
         ResetText();
 
@@ -128,7 +128,7 @@ public static class CodexUIUtil
 
         if (banner is not null)
         {
-            Rect bannerRect = new Rect(0f, curY, width, BannerHeight);
+            Rect bannerRect = new(0f, curY, width, BannerHeight);
             GUI.DrawTexture(bannerRect, banner, ScaleMode.ScaleToFit);
             curY += BannerHeight + SmallMargin;
         }
@@ -185,7 +185,7 @@ public static class CodexUIUtil
             label,
             ColorUtil.TransformRGB(accent, 1.3f));
 
-        Rect arrowRect = new Rect(headerRect.xMax - arrowSize - 2f, headerRect.y + (headerRect.height - arrowSize) * 0.5f,
+        Rect arrowRect = new(headerRect.xMax - arrowSize - 2f, headerRect.y + (headerRect.height - arrowSize) * 0.5f,
             arrowSize, arrowSize);
         Widgets.DrawTextureFitted(arrowRect, expanded ? TexButton.Collapse : TexButton.Reveal, 1f);
         ResetText();
@@ -214,7 +214,7 @@ public static class CodexUIUtil
         float textX = entryRect.x + textInset;
         if (icon is not null)
         {
-            Rect iconRect = new Rect(entryRect.x + iconInset, entryRect.y + (entryRect.height - EntryIconSize) * 0.5f,
+            Rect iconRect = new(entryRect.x + iconInset, entryRect.y + (entryRect.height - EntryIconSize) * 0.5f,
                 EntryIconSize, EntryIconSize);
             GUI.DrawTexture(iconRect, icon);
             textX = iconRect.xMax + SmallMargin;

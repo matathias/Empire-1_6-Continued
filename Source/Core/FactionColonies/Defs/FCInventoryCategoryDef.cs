@@ -15,15 +15,15 @@ public class FCInventoryCategoryDef : Def
     /// pool even if an <see cref="excludeCategories"/>/<see cref="excludeThings"/> entry would
     /// remove it. Allow wins over exclude. The base pool is already every ThingDef, so this is
     /// only needed to re-admit a child of a broadly-blocked subtree.</summary>
-    public List<ThingCategoryDef> categories = new List<ThingCategoryDef>();
+    public List<ThingCategoryDef> categories = [];
 
     /// <summary>Individual items to force-allow. Wins over excludes (un-block override).</summary>
-    public List<ThingDef> things = new List<ThingDef>();
+    public List<ThingDef> things = [];
 
     /// <summary>Whole categories to block — every descendant ThingDef is removed from the
     /// all-ThingDef base pool, unless re-admitted by <see cref="categories"/>/<see cref="things"/>.</summary>
-    public List<ThingCategoryDef> excludeCategories = new List<ThingCategoryDef>();
+    public List<ThingCategoryDef> excludeCategories = [];
 
     /// <summary>Individual items to block, unless re-admitted by <see cref="categories"/>/<see cref="things"/>.</summary>
-    public List<ThingDef> excludeThings = new List<ThingDef>();
+    public List<ThingDef> excludeThings = [];
 }

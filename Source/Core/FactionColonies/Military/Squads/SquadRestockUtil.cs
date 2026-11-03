@@ -53,14 +53,14 @@ public static class SquadRestockUtil
     public class EquipmentRestockResult
     {
         public double value;
-        public List<object> repairHandles = new List<object>();
-        public List<SavedThing> replacements = new List<SavedThing>();
+        public List<object> repairHandles = [];
+        public List<SavedThing> replacements = [];
     }
 
     // Quality used to key items that carry no quality (meds / ammo / drugs / food). Matches
     // SavedThing.MarketValue's own "quality ?? Normal" convention so design and pawn agree.
     private static ThingQualityTuple Key(ThingDef thing, ThingDef stuff, QualityCategory? quality) =>
-        new ThingQualityTuple { thingDef = thing, stuffDef = stuff, quality = quality ?? QualityCategory.Normal };
+        new() { thingDef = thing, stuffDef = stuff, quality = quality ?? QualityCategory.Normal };
 
     /// <summary>Pure diff: for each distinct item in <paramref name="design"/>, compares the wanted
     /// count against <paramref name="currentCount"/> (how many the pawn still carries) and returns
@@ -76,8 +76,8 @@ public static class SquadRestockUtil
         if (design is null || currentCount is null) return 0;
 
         // Aggregate the design by item: total wanted count + per-unit market value.
-        Dictionary<ThingQualityTuple, int> wanted = new Dictionary<ThingQualityTuple, int>();
-        Dictionary<ThingQualityTuple, float> perUnit = new Dictionary<ThingQualityTuple, float>();
+        Dictionary<ThingQualityTuple, int> wanted = [];
+        Dictionary<ThingQualityTuple, float> perUnit = [];
         foreach (SavedThing st in design)
         {
             if (st.thing is null) continue;
@@ -119,12 +119,12 @@ public static class SquadRestockUtil
     /// <see cref="ReconcileAndBill"/>.</summary>
     public static EquipmentRestockResult ComputeEquipmentRestock(List<SavedThing> design, List<PresentItem> present)
     {
-        EquipmentRestockResult result = new EquipmentRestockResult();
+        EquipmentRestockResult result = new();
         if (design is null) return result;
 
         // Design as a key -> queue of entries (so each present item claims one, and leftovers
         // are the missing items to replace). Per-entry value is the full item market value.
-        Dictionary<ThingQualityTuple, Queue<SavedThing>> wanted = new Dictionary<ThingQualityTuple, Queue<SavedThing>>();
+        Dictionary<ThingQualityTuple, Queue<SavedThing>> wanted = [];
         foreach (SavedThing st in design)
         {
             if (st.thing is null) continue;
@@ -176,7 +176,7 @@ public static class SquadRestockUtil
         if (squad?.mercenaries is null || DebugSettings.godMode) return 0;
 
         double totalValue = 0;
-        List<ConsumedItem> refill = new List<ConsumedItem>();
+        List<ConsumedItem> refill = [];
 
         foreach (Mercenary merc in squad.mercenaries)
         {
@@ -193,7 +193,7 @@ public static class SquadRestockUtil
             if (pawn.inventory?.innerContainer is not null && design.inventory is not null && design.inventory.Count > 0)
             {
                 // Count of each carried item the pawn still has (built once, read by the lambda).
-                Dictionary<ThingQualityTuple, int> have = new Dictionary<ThingQualityTuple, int>();
+                Dictionary<ThingQualityTuple, int> have = [];
                 foreach (Thing t in pawn.inventory.innerContainer)
                 {
                     if (t is null) continue;
@@ -261,7 +261,7 @@ public static class SquadRestockUtil
     /// without durability so they're never billed for "repair".</summary>
     private static List<PresentItem> BuildPresent(IEnumerable<Thing> things)
     {
-        List<PresentItem> list = new List<PresentItem>();
+        List<PresentItem> list = [];
         if (things is null) return list;
         foreach (Thing t in things)
         {

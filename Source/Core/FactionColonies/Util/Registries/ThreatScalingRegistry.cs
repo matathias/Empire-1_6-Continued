@@ -5,7 +5,7 @@ namespace FactionColonies;
 /// </summary>
 public static class ThreatScalingRegistry
 {
-    private static readonly RegistryList<IThreatScalingContributor> _list = new RegistryList<IThreatScalingContributor>();
+    private static readonly RegistryList<IThreatScalingContributor> _list = new();
 
     internal static void Register(IThreatScalingContributor contributor) => _list.Register(contributor);
     internal static void Unregister(IThreatScalingContributor contributor) => _list.Unregister(contributor);

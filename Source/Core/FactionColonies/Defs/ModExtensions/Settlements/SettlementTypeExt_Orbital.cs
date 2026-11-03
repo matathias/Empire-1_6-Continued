@@ -11,10 +11,8 @@ public class SettlementTypeExtension_Orbital : SettlementTypeExtension
 
     private static string[] GetSpaceLocations()
     {
-        if (spaceLocations is null)
-        {
-            spaceLocations = new string[]
-            {
+        spaceLocations ??=
+            [
                 "FCOrbitalLocation1".Translate(),
                 "FCOrbitalLocation2".Translate(),
                 "FCOrbitalLocation3".Translate(),
@@ -22,17 +20,14 @@ public class SettlementTypeExtension_Orbital : SettlementTypeExtension
                 "FCOrbitalLocation5".Translate(),
                 "FCOrbitalLocation6".Translate(),
                 "FCOrbitalLocation7".Translate()
-            };
-        }
+            ];
         return spaceLocations;
     }
 
     private static string[] GetSpaceKeywords()
     {
-        if (spaceKeywords is null)
-        {
-            spaceKeywords = new string[]
-            {
+        spaceKeywords ??=
+            [
                 "FCOrbitalKeyword1".Translate(),
                 "FCOrbitalKeyword2".Translate(),
                 "FCOrbitalKeyword3".Translate(),
@@ -43,8 +38,7 @@ public class SettlementTypeExtension_Orbital : SettlementTypeExtension
                 "FCOrbitalKeyword8".Translate(),
                 "FCOrbitalKeyword9".Translate(),
                 "FCOrbitalKeyword10".Translate()
-            };
-        }
+            ];
         return spaceKeywords;
     }
 
@@ -74,19 +68,14 @@ public class SettlementTypeExtension_Orbital : SettlementTypeExtension
         /* The four orbital types are horizontal specializations off the base station (each gated behind its own
          * research, each adding two exclusive buildings), so cost is base-cheapest, Glitter highest, with Advanced
          * nudged just above Logistics for its permanent build-time-cutting shipyard. */
-        switch (parentDef.defName)
+        return parentDef.defName switch
         {
-            case "WorldSettlementDef_Orbital":
-                return baseCost;
-            case "WorldSettlementDef_Orbital_Logistics":
-                return 7000;
-            case "WorldSettlementDef_Orbital_Advanced":
-                return 7500;
-            case "WorldSettlementDef_Orbital_Glitter":
-                return 9000;
-            default:
-                return baseCost;
-        }
+            "WorldSettlementDef_Orbital" => baseCost,
+            "WorldSettlementDef_Orbital_Logistics" => 7000,
+            "WorldSettlementDef_Orbital_Advanced" => 7500,
+            "WorldSettlementDef_Orbital_Glitter" => 9000,
+            _ => baseCost,
+        };
     }
     public override bool TileIsValidForSettlement(PlanetTile tile, StringBuilder reason = null)
     {
@@ -119,19 +108,14 @@ public class SettlementTypeExtension_Orbital : SettlementTypeExtension
         int baseDays = constructionDays;
 
         // Build time scales with tier to mirror creation cost (Advanced just above Logistics, Glitter highest).
-        switch (parentDef.defName)
+        return parentDef.defName switch
         {
-            case "WorldSettlementDef_Orbital":
-                return baseDays * GenDate.TicksPerDay;        // 8 days
-            case "WorldSettlementDef_Orbital_Logistics":
-                return (baseDays + 5) * GenDate.TicksPerDay;  // 13 days
-            case "WorldSettlementDef_Orbital_Advanced":
-                return (baseDays + 6) * GenDate.TicksPerDay;  // 14 days
-            case "WorldSettlementDef_Orbital_Glitter":
-                return (baseDays + 8) * GenDate.TicksPerDay;  // 16 days
-            default:
-                return baseDays * GenDate.TicksPerDay;
-        }
+            "WorldSettlementDef_Orbital" => baseDays * GenDate.TicksPerDay, // 8 days
+            "WorldSettlementDef_Orbital_Logistics" => (baseDays + 5) * GenDate.TicksPerDay, // 13 days
+            "WorldSettlementDef_Orbital_Advanced" => (baseDays + 6) * GenDate.TicksPerDay, // 14 days
+            "WorldSettlementDef_Orbital_Glitter" => (baseDays + 8) * GenDate.TicksPerDay, // 16 days
+            _ => baseDays * GenDate.TicksPerDay,
+        };
     }
     public override string GetLocationText(WorldSettlementFC settlement)
     {

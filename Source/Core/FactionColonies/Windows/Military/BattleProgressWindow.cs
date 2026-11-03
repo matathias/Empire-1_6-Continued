@@ -63,7 +63,7 @@ public class BattleProgressWindow : Window
         absorbInputAroundWindow = false;
     }
 
-    public override Vector2 InitialSize => new Vector2(720f, 600f);
+    public override Vector2 InitialSize => new(720f, 600f);
 
     private bool PlayerSideKnown => playerSide != BattleViewerSide.Neither;
     private bool PlayerIsAttacker => playerSide == BattleViewerSide.Attacker;
@@ -81,7 +81,7 @@ public class BattleProgressWindow : Window
         /* -*- Header (title + sub-phase + optional tick countdown) -*- */
         bool showTickBar = TryGetTickProgress(br, out float tickProgress, out int ticksRemaining);
         float headerH = showTickBar ? 80f : 56f;
-        Rect headerRect = new Rect(inRect.x, inRect.y, inRect.width, headerH);
+        Rect headerRect = new(inRect.x, inRect.y, inRect.width, headerH);
 
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.UpperCenter;
@@ -99,11 +99,11 @@ public class BattleProgressWindow : Window
             const float tickBarW = 240f;
             const float tickBarH = 12f;
             const float tickLabelH = 16f;
-            Rect tickBarRect = new Rect(
+            Rect tickBarRect = new(
                 headerRect.x + (headerRect.width - tickBarW) / 2f,
                 headerRect.y + 54f,
                 tickBarW, tickBarH);
-            Rect tickLabelRect = new Rect(
+            Rect tickLabelRect = new(
                 headerRect.x,
                 tickBarRect.yMax + 2f,
                 headerRect.width,
@@ -117,8 +117,8 @@ public class BattleProgressWindow : Window
         float columnsH = 132f;
         float colGap = 12f;
         float colW = (inRect.width - colGap) * 0.5f;
-        Rect attackerCol = new Rect(inRect.x, columnsY, colW, columnsH);
-        Rect defenderCol = new Rect(inRect.x + colW + colGap, columnsY, colW, columnsH);
+        Rect attackerCol = new(inRect.x, columnsY, colW, columnsH);
+        Rect defenderCol = new(inRect.x + colW + colGap, columnsY, colW, columnsH);
 
         DrawSideColumn(attackerCol, aggressorParticipant, br.attackerFaction,
             br.attackerLabel, br.attackerFactionName,
@@ -133,21 +133,21 @@ public class BattleProgressWindow : Window
         float listY = columnsY + columnsH + 8f;
         float closeBtnReserve = 40f;
         float listH = inRect.height - (listY - inRect.y) - closeBtnReserve;
-        Rect listRect = new Rect(inRect.x, listY, inRect.width, listH);
+        Rect listRect = new(inRect.x, listY, inRect.width, listH);
 
         DrawRoundList(listRect, br);
     }
 
     private string SubPhaseLabel(BattleResult br)
     {
-        switch (br.subPhase)
+        return br.subPhase switch
         {
-            case BattleSubPhase.Preparing: return "FCBattlePhasePreparing".Translate();
-            case BattleSubPhase.Engaged: return "FCBattlePhaseEngaged".Translate();
-            case BattleSubPhase.RollsInProgress: return "FCBattlePhaseRolling".Translate(br.rounds.Count);
-            case BattleSubPhase.Resolved: return "FCBattlePhaseResolved".Translate();
-            default: return string.Empty;
-        }
+            BattleSubPhase.Preparing => "FCBattlePhasePreparing".Translate(),
+            BattleSubPhase.Engaged => "FCBattlePhaseEngaged".Translate(),
+            BattleSubPhase.RollsInProgress => "FCBattlePhaseRolling".Translate(br.rounds.Count),
+            BattleSubPhase.Resolved => "FCBattlePhaseResolved".Translate(),
+            _ => string.Empty,
+        };
     }
 
     /* -*- Tick countdown -*- */
@@ -173,8 +173,8 @@ public class BattleProgressWindow : Window
 
     private static void DrawTickProgressBar(Rect barRect, Rect labelRect, float progress, int ticksRemaining)
     {
-        Color bg = new Color(0.15f, 0.15f, 0.15f);
-        Color fill = new Color(0.35f, 0.65f, 0.75f);
+        Color bg = new(0.15f, 0.15f, 0.15f);
+        Color fill = new(0.35f, 0.65f, 0.75f);
         UIUtil.DrawProgressBarColors(barRect, progress, bg, fill);
 
         int seconds = Mathf.CeilToInt(ticksRemaining / 60f);
@@ -204,7 +204,7 @@ public class BattleProgressWindow : Window
            transparent toward the panel centerline (between the two columns), so the
            two sides read as "facing inward". */
         float titleH = 22f;
-        Rect titleRect = new Rect(inner.x, inner.y, inner.width, titleH);
+        Rect titleRect = new(inner.x, inner.y, inner.width, titleH);
         Color titleTint = ResolveTitleTint(PlayerSideKnown, isPlayerSide);
         TexLoad.DrawHorizontalGradient(titleRect, titleTint, reversed: !isAttacker);
 
@@ -253,9 +253,9 @@ public class BattleProgressWindow : Window
 
         // Top text row: faction name (white). Bottom: label (dim grey).
         float textRowH = blockH * 0.5f;
-        Rect nameRect = new Rect(textBlockRect.x, textBlockRect.y,
+        Rect nameRect = new(textBlockRect.x, textBlockRect.y,
             textBlockRect.width, textRowH);
-        Rect labelRect = new Rect(textBlockRect.x, textBlockRect.y + textRowH,
+        Rect labelRect = new(textBlockRect.x, textBlockRect.y + textRowH,
             textBlockRect.width, textRowH);
 
         Text.Anchor = textAnchor;
@@ -266,16 +266,16 @@ public class BattleProgressWindow : Window
 
         /* Efficiency line */
         float effY = blockY + blockH + 4f;
-        Rect effRect = new Rect(inner.x, effY, inner.width, 20f);
+        Rect effRect = new(inner.x, effY, inner.width, 20f);
         Text.Anchor = textAnchor;
         UIUtil.ClampedLabel(effRect, "FCBattleEfficiencyLine".Translate(efficiency.ToString("0.00")));
 
         /* Force bar with overlay */
         float barY = effY + 24f;
         const float barH = 18f;
-        Rect bar = new Rect(inner.x, barY, inner.width, barH);
+        Rect bar = new(inner.x, barY, inner.width, barH);
         float fill = initial > 0 ? Mathf.Clamp01((float)(remaining / initial)) : 0f;
-        Color barBg = new Color(0.15f, 0.15f, 0.15f);
+        Color barBg = new(0.15f, 0.15f, 0.15f);
         Color barFill = isAttacker
             ? new Color(0.75f, 0.35f, 0.30f)
             : new Color(0.30f, 0.55f, 0.75f);
@@ -371,10 +371,10 @@ public class BattleProgressWindow : Window
         Faction defFaction = defenderParticipant?.faction ?? br.defenderFaction;
 
         float tableW = inner.width - scrollReserve;
-        Rect headerRect = new Rect(inner.x, inner.y, tableW, RoundHeaderH);
+        Rect headerRect = new(inner.x, inner.y, tableW, RoundHeaderH);
         DrawRoundListHeader(headerRect, atkFaction, defFaction);
 
-        Rect viewportOuter = new Rect(inner.x, inner.y + RoundHeaderH + 5f, inner.width, viewportH);
+        Rect viewportOuter = new(inner.x, inner.y + RoundHeaderH + 5f, inner.width, viewportH);
         Rect viewRect = ScrollUtil.BeginScrollView(viewportOuter, ref scrollPos, contentH);
 
         float[] leafW = ComputeRoundLeafWidths(viewRect.width);
@@ -392,7 +392,7 @@ public class BattleProgressWindow : Window
         for (int i = count - 1; i >= 0; i--)
         {
             int displayIndex = (count - 1) - i;
-            Rect rowRect = new Rect(0f, displayIndex * RoundRowH, viewRect.width, RoundRowH);
+            Rect rowRect = new(0f, displayIndex * RoundRowH, viewRect.width, RoundRowH);
             // Alternating row highlight (every other row) — same technique as the production
             // table for visual row tracking. Drawn before the row's own cells.
             if (displayIndex % 2 == 0)
@@ -423,23 +423,23 @@ public class BattleProgressWindow : Window
         string forceLabel = "FCBattleColForce".Translate().ToString();
 
         // Cell rects.
-        Rect leftRoundRect = new Rect(leafX[0], rect.y, leafW[0], RoundHeaderH);
-        Rect rightRoundRect = new Rect(leafX[7], rect.y, leafW[7], RoundHeaderH);
+        Rect leftRoundRect = new(leafX[0], rect.y, leafW[0], RoundHeaderH);
+        Rect rightRoundRect = new(leafX[7], rect.y, leafW[7], RoundHeaderH);
 
         // Group top-tier spans cells 1..3 (atk) and 4..6 (def) PLUS the two CellMargin gaps
         // between those leaves — so the group label reads as one continuous band with the
         // bottom-tier leaf cells gap-separated below it.
-        Rect atkGroupTopRect = new Rect(leafX[1], rect.y,
+        Rect atkGroupTopRect = new(leafX[1], rect.y,
             (leafX[3] + leafW[3]) - leafX[1], topRowH);
-        Rect defGroupTopRect = new Rect(leafX[4], rect.y,
+        Rect defGroupTopRect = new(leafX[4], rect.y,
             (leafX[6] + leafW[6]) - leafX[4], topRowH);
 
-        Rect atkForceRect = new Rect(leafX[1], midY, leafW[1], topRowH);
-        Rect atkRawRect = new Rect(leafX[2], midY, leafW[2], topRowH);
-        Rect atkFinalRect = new Rect(leafX[3], midY, leafW[3], topRowH);
-        Rect defFinalRect = new Rect(leafX[4], midY, leafW[4], topRowH);
-        Rect defRawRect = new Rect(leafX[5], midY, leafW[5], topRowH);
-        Rect defForceRect = new Rect(leafX[6], midY, leafW[6], topRowH);
+        Rect atkForceRect = new(leafX[1], midY, leafW[1], topRowH);
+        Rect atkRawRect = new(leafX[2], midY, leafW[2], topRowH);
+        Rect atkFinalRect = new(leafX[3], midY, leafW[3], topRowH);
+        Rect defFinalRect = new(leafX[4], midY, leafW[4], topRowH);
+        Rect defRawRect = new(leafX[5], midY, leafW[5], topRowH);
+        Rect defForceRect = new(leafX[6], midY, leafW[6], topRowH);
 
         // Per-cell backings. Most cells get a flat highlight; Final cells get DrawMenuSection
         // to match the persistent emphasis applied to the Final columns in the body.
@@ -493,14 +493,14 @@ public class BattleProgressWindow : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
 
-        Rect leftRoundCell = new Rect(leafX[0], rect.y, leafW[0], rect.height);
-        Rect atkForceCell = new Rect(leafX[1], rect.y, leafW[1], rect.height);
-        Rect atkRawCell = new Rect(leafX[2], rect.y, leafW[2], rect.height);
-        Rect atkFinalCell = new Rect(leafX[3], rect.y, leafW[3], rect.height);
-        Rect defFinalCell = new Rect(leafX[4], rect.y, leafW[4], rect.height);
-        Rect defRawCell = new Rect(leafX[5], rect.y, leafW[5], rect.height);
-        Rect defForceCell = new Rect(leafX[6], rect.y, leafW[6], rect.height);
-        Rect rightRoundCell = new Rect(leafX[7], rect.y, leafW[7], rect.height);
+        Rect leftRoundCell = new(leafX[0], rect.y, leafW[0], rect.height);
+        Rect atkForceCell = new(leafX[1], rect.y, leafW[1], rect.height);
+        Rect atkRawCell = new(leafX[2], rect.y, leafW[2], rect.height);
+        Rect atkFinalCell = new(leafX[3], rect.y, leafW[3], rect.height);
+        Rect defFinalCell = new(leafX[4], rect.y, leafW[4], rect.height);
+        Rect defRawCell = new(leafX[5], rect.y, leafW[5], rect.height);
+        Rect defForceCell = new(leafX[6], rect.y, leafW[6], rect.height);
+        Rect rightRoundCell = new(leafX[7], rect.y, leafW[7], rect.height);
 
         // (Persistent column highlights for Round / Final cells are drawn once in
         // DrawRoundList behind the entire scroll content, so they're not redrawn here.)
@@ -545,7 +545,7 @@ public class BattleProgressWindow : Window
     private static void DrawForceCell(Rect rect, double remaining, double initial, bool isAttacker)
     {
         float fill = initial > 0 ? Mathf.Clamp01((float)(remaining / initial)) : 0f;
-        Color bg = new Color(0.15f, 0.15f, 0.15f, 0.7f);
+        Color bg = new(0.15f, 0.15f, 0.15f, 0.7f);
         Color barFill = isAttacker
             ? new Color(0.55f, 0.25f, 0.20f)   // muted attacker red-orange
             : new Color(0.22f, 0.40f, 0.55f);  // muted defender blue
@@ -611,8 +611,8 @@ public class BattleProgressWindow : Window
     private static float[] ComputeRoundLeafWidths(float totalWidth)
     {
         float w = totalWidth - 7f * CellMargin;
-        return new[]
-        {
+        return
+        [
             w * 0.10f,
             w * 0.14f,
             w * 0.11f,
@@ -621,7 +621,7 @@ public class BattleProgressWindow : Window
             w * 0.11f,
             w * 0.14f,
             w * 0.10f
-        };
+        ];
     }
 
     /* X-positions of each leaf cell, accumulating widths and inter-cell margins. */

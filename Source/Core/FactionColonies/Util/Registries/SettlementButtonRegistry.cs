@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class SettlementButtonRegistry
 {
-    private static readonly RegistryList<ISettlementWindowButton> _list = new RegistryList<ISettlementWindowButton>();
+    private static readonly RegistryList<ISettlementWindowButton> _list = new();
 
     internal static void Register(ISettlementWindowButton entry) => _list.Register(entry);
     internal static void Unregister(ISettlementWindowButton entry) => _list.Unregister(entry);

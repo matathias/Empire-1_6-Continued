@@ -166,7 +166,7 @@ public static class DebugUtil
             Messages.Message("No prisoner selected!", MessageTypeDefOf.RejectInput);
             return;
         }
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (WorldSettlementFC settlement in FindFC.Settlements)
         {
             list.Add(new DebugMenuOption(
@@ -217,7 +217,7 @@ public static class DebugUtil
     [DebugAction("Empire", "Make Random Event", allowedGameStates = AllowedGameStates.Playing)]
     private static void MakeRandomEvent()
     {
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (FCEventDef evtDef in DefDatabase<FCEventDef>.AllDefsListForReading)
         {
             if (evtDef.isRandomEvent)
@@ -260,7 +260,7 @@ public static class DebugUtil
             return;
         }
 
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (FCSituationDef sitDef in DefDatabase<FCSituationDef>.AllDefsListForReading)
         {
             FCSituationDef localDef = sitDef;
@@ -271,7 +271,7 @@ public static class DebugUtil
                 // start immediately. Debug bypasses spawn eligibility (calls StartSituation directly).
                 if (localDef.scope == FCSituationScope.Settlement)
                 {
-                    List<DebugMenuOption> targets = new List<DebugMenuOption>();
+                    List<DebugMenuOption> targets = [];
                     foreach (WorldSettlementFC settlement in FindFC.Settlements)
                     {
                         WorldSettlementFC localSettlement = settlement;
@@ -327,14 +327,14 @@ public static class DebugUtil
         }
 
         FCSituationManager manager = faction.situationManager;
-        List<FCSituation> sits = new List<FCSituation>(manager.Situations);
+        List<FCSituation> sits = new(manager.Situations);
         if (sits.Count == 0)
         {
             Messages.Message("No active situations.", MessageTypeDefOf.RejectInput);
             return;
         }
 
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (FCSituation sit in sits)
         {
             FCSituation localSit = sit;
@@ -342,7 +342,7 @@ public static class DebugUtil
             string menuLabel = $"{localSit.def.label ?? localSit.def.defName} [{target}] @ {localSit.progress:0}/{localSit.def.maxProgress:0}";
             list.Add(new DebugMenuOption(menuLabel, DebugMenuOptionMode.Action, delegate
             {
-                List<DebugMenuOption> deltas = new List<DebugMenuOption>();
+                List<DebugMenuOption> deltas = [];
                 AddSituationDeltaOption(deltas, manager, localSit, "+10", 10f);
                 AddSituationDeltaOption(deltas, manager, localSit, "+25", 25f);
                 AddSituationDeltaOption(deltas, manager, localSit, "-10", -10f);
@@ -378,7 +378,7 @@ public static class DebugUtil
     [DebugAction("Empire", "Attack Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
     private static void AttackPlayerSettlement()
     {
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (WorldSettlementFC settlement in FindFC.Settlements)
         {
             list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
@@ -390,14 +390,14 @@ public static class DebugUtil
                     return;
                 }
 
-                List<DebugMenuOption> levelList = new List<DebugMenuOption>();
+                List<DebugMenuOption> levelList = [];
                 for (int level = 1; level <= 10; level++)
                 {
                     int chosenLevel = level;
                     levelList.Add(new DebugMenuOption($"Level {chosenLevel}", DebugMenuOptionMode.Action, delegate
                     {
                         MilitaryDeploymentUtil.GetTechLevelBaseline(enemyFaction.def.techLevel, out double _, out double efficiency);
-                        MilitaryForce attackingForce = new MilitaryForce(chosenLevel, efficiency, null, enemyFaction);
+                        MilitaryForce attackingForce = new(chosenLevel, efficiency, null, enemyFaction);
                         LogUtil.MessageForce($"Debug - Attack Player Settlement - {settlement.Name} (level {chosenLevel}, efficiency {efficiency})");
                         if (!MilitaryOperationsUtil.AttackPlayerSettlement(attackingForce, settlement, enemyFaction))
                         {
@@ -416,7 +416,7 @@ public static class DebugUtil
     [DebugAction("Empire", "Instant Attack Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
     private static void InstantAttackPlayerSettlement()
     {
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (WorldSettlementFC settlement in FindFC.Settlements)
         {
             list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
@@ -428,14 +428,14 @@ public static class DebugUtil
                     return;
                 }
 
-                List<DebugMenuOption> levelList = new List<DebugMenuOption>();
+                List<DebugMenuOption> levelList = [];
                 for (int level = 1; level <= 10; level++)
                 {
                     int chosenLevel = level;
                     levelList.Add(new DebugMenuOption($"Level {chosenLevel}", DebugMenuOptionMode.Action, delegate
                     {
                         MilitaryDeploymentUtil.GetTechLevelBaseline(enemyFaction.def.techLevel, out double _, out double efficiency);
-                        MilitaryForce attackingForce = new MilitaryForce(chosenLevel, efficiency, null, enemyFaction);
+                        MilitaryForce attackingForce = new(chosenLevel, efficiency, null, enemyFaction);
                         LogUtil.MessageForce($"Debug - Instant Attack Player Settlement - {settlement.Name} (level {chosenLevel}, efficiency {efficiency})");
                         if (settlement.MilitaryComp is null || FindFC.MilitaryManager is null)
                         {
@@ -501,7 +501,7 @@ public static class DebugUtil
     private static void ChangeAttackPlayerSettlementMilitaryForce()
     {
         FactionFC worldcomp = FindFC.FactionComp;
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (FCEvent evt in worldcomp.Events)
         {
             if (evt.def == FCEventDefOf.settlementBeingAttacked)
@@ -512,7 +512,7 @@ public static class DebugUtil
                     {
                         //when event is selected, select defending force to replace it with
 
-                        List<DebugMenuOption> list2 = new List<DebugMenuOption>();
+                        List<DebugMenuOption> list2 = [];
                         MilitaryOperation defOp = evt.linkedOperation;
                         WorldObject currentDefenderTarget = defOp?.targetObject;
                         WorldSettlementFC currentDefenderHome = defOp?.defender?.homeSettlement;
@@ -553,7 +553,7 @@ public static class DebugUtil
 
     private static void UpgradePlayerSettlement(int times = 1)
     {
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (WorldSettlementFC settlement in FindFC.Settlements)
         {
             list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
@@ -637,7 +637,7 @@ public static class DebugUtil
         MilitaryOperationManager mgr = FindFC.MilitaryManager;
         if (mgr is not null)
         {
-            List<MilitaryOperation> snapshot = new List<MilitaryOperation>(mgr.active);
+            List<MilitaryOperation> snapshot = new(mgr.active);
             foreach (MilitaryOperation op in snapshot)
             {
                 if (op is null || op.phase != MilitaryOperationPhase.CooldownPending) continue;
@@ -710,7 +710,7 @@ public static class DebugUtil
 
     private static void CallInAlliedForcesSelect()
     {
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (WorldSettlementFC settlement in FindFC.Settlements)
         {
             MercenarySquadFC squad = settlement.PrimaryStationedSquad;
@@ -718,7 +718,7 @@ public static class DebugUtil
             {
                 list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
                 {
-                    IncidentParms parms = new IncidentParms();
+                    IncidentParms parms = new();
                     parms.target = Find.CurrentMap;
                     parms.faction = FindFC.EmpireFaction;
                     parms.podOpenDelay = 140;
@@ -769,7 +769,7 @@ public static class DebugUtil
 
     private static void WithSettlementChoice(Action<WorldSettlementFC> callback)
     {
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (WorldSettlementFC settlement in FindFC.Settlements)
         {
             WorldSettlementFC local = settlement;
@@ -783,7 +783,7 @@ public static class DebugUtil
     private static void WithSquadChoice(Action<MercenarySquadFC> callback)
     {
         List<MercenarySquadFC> pool = FindFC.Military?.mercenarySquads;
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         if (pool is not null)
         {
             for (int i = 0; i < pool.Count; i++)
@@ -816,7 +816,7 @@ public static class DebugUtil
         {
             var comp = settlement.BuildingsComp;
             int slotCount = comp.NumBuildingSlots;
-            List<DebugMenuOption> slots = new List<DebugMenuOption>();
+            List<DebugMenuOption> slots = [];
             for (int i = 0; i < slotCount; i++)
             {
                 int localSlot = i;
@@ -824,7 +824,7 @@ public static class DebugUtil
                 string slotLabel = $"Slot {i}: {current.label ?? current.defName}";
                 slots.Add(new DebugMenuOption(slotLabel, DebugMenuOptionMode.Action, () =>
                 {
-                    List<DebugMenuOption> buildingOptions = new List<DebugMenuOption>();
+                    List<DebugMenuOption> buildingOptions = [];
                     foreach (BuildingFCDef bDef in DefDatabase<BuildingFCDef>.AllDefsListForReading)
                     {
                         if (bDef == BuildingFCDefOf.Empty || bDef == BuildingFCDefOf.Construction) continue;
@@ -857,14 +857,14 @@ public static class DebugUtil
     {
         WithSettlementChoice(settlement =>
         {
-            List<DebugMenuOption> stats = new List<DebugMenuOption>();
-            string[] statNames = { "happiness", "loyalty", "unrest", "prosperity" };
+            List<DebugMenuOption> stats = [];
+            string[] statNames = ["happiness", "loyalty", "unrest", "prosperity"];
             foreach (string stat in statNames)
             {
                 string localStat = stat;
                 stats.Add(new DebugMenuOption(localStat, DebugMenuOptionMode.Action, () =>
                 {
-                    List<DebugMenuOption> values = new List<DebugMenuOption>();
+                    List<DebugMenuOption> values = [];
                     foreach (int val in new[] { 0, 25, 50, 75, 100 })
                     {
                         int localVal = val;
@@ -896,14 +896,14 @@ public static class DebugUtil
             return;
         }
 
-        List<DebugMenuOption> stats = new List<DebugMenuOption>();
-        string[] statNames = { "happiness", "loyalty", "unrest", "prosperity" };
+        List<DebugMenuOption> stats = [];
+        string[] statNames = ["happiness", "loyalty", "unrest", "prosperity"];
         foreach (string stat in statNames)
         {
             string localStat = stat;
             stats.Add(new DebugMenuOption(localStat, DebugMenuOptionMode.Action, () =>
             {
-                List<DebugMenuOption> values = new List<DebugMenuOption>();
+                List<DebugMenuOption> values = [];
                 foreach (int val in new[] { 0, 25, 50, 75, 100 })
                 {
                     int localVal = val;
@@ -940,7 +940,7 @@ public static class DebugUtil
             return;
         }
 
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (WorldSettlementDef def in defs)
         {
             WorldSettlementDef localDef = def;
@@ -967,7 +967,7 @@ public static class DebugUtil
         Find.TilePicker.StartTargeting_NewTemp(
             delegate (PlanetTile tile)
             {
-                StringBuilder reason = new StringBuilder();
+                StringBuilder reason = new();
                 if (!WorldTileChecker.IsValidTileForNewSettlement(tile, def, reason))
                 {
                     Messages.Message($"Cannot settle here: {reason}", MessageTypeDefOf.RejectInput);
@@ -1042,7 +1042,7 @@ public static class DebugUtil
         int created = 0;
         int specialtyCount = 0;
         int skipped = 0;
-        StringBuilder summary = new StringBuilder();
+        StringBuilder summary = new();
 
         foreach (ResourceTypeDef rtd in FactionCache.AllResourceTypeDefs)
         {
@@ -1121,16 +1121,16 @@ public static class DebugUtil
     {
         WithSettlementChoice(settlement =>
         {
-            List<DebugMenuOption> list = new List<DebugMenuOption>();
+            List<DebugMenuOption> list = [];
             foreach (FCStatDef stat in DefDatabase<FCStatDef>.AllDefsListForReading)
             {
                 FCStatDef localStat = stat;
                 list.Add(new DebugMenuOption(localStat.defName, DebugMenuOptionMode.Action, () =>
                 {
-                    List<DebugMenuOption> values = new List<DebugMenuOption>();
+                    List<DebugMenuOption> values = [];
                     double[] options = localStat.aggregation == FCStatAggregation.Additive
-                        ? new double[] { -10, -5, -1, 1, 5, 10 }
-                        : new double[] { 0.5, 0.75, 1.25, 1.5, 2.0 };
+                        ? [-10, -5, -1, 1, 5, 10]
+                        : [0.5, 0.75, 1.25, 1.5, 2.0];
                     foreach (double val in options)
                     {
                         double localVal = val;
@@ -1140,7 +1140,7 @@ public static class DebugUtil
                         values.Add(new DebugMenuOption(label, DebugMenuOptionMode.Action, () =>
                         {
                             settlement.AddStatModifiers(
-                                new List<FCStatModifier> { new FCStatModifier { stat = localStat, value = localVal } },
+                                [new() { stat = localStat, value = localVal }],
                                 "debug", "Debug: " + localStat.defName);
                             LogUtil.MessageForce($"Debug - Added stat {localStat.defName} = {localVal} to {settlement.Name}");
                         }));
@@ -1207,7 +1207,7 @@ public static class DebugUtil
     {
         WithSettlementChoice(settlement =>
         {
-            List<DebugMenuOption> list = new List<DebugMenuOption>();
+            List<DebugMenuOption> list = [];
             foreach (FCStatDef stat in DefDatabase<FCStatDef>.AllDefsListForReading)
             {
                 FCStatDef localStat = stat;
@@ -1420,7 +1420,7 @@ public static class DebugUtil
     private static void AddFactionXP()
     {
         FactionFC faction = FindFC.FactionComp;
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (int amount in new[] { 100, 500, 1000 })
         {
             int localAmount = amount;
@@ -1498,7 +1498,7 @@ public static class DebugUtil
     [DebugAction("Empire", "Force Trigger Event", allowedGameStates = AllowedGameStates.Playing)]
     private static void ForceTriggerEvent()
     {
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (FCEvent evt in FindFC.Events)
         {
             FCEvent localEvt = evt;
@@ -1519,7 +1519,7 @@ public static class DebugUtil
     [DebugAction("Empire", "Force Trigger Followup", allowedGameStates = AllowedGameStates.Playing)]
     private static void ForceTriggerFollowup()
     {
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (FCEvent evt in FindFC.Events)
         {
             if (!evt.def.HasFollowUp) continue;
@@ -1537,7 +1537,7 @@ public static class DebugUtil
     // mirroring the branch semantics of FCEventMaker.ProcessEvents.
     private static List<DebugMenuOption> BuildFollowupOptions(FCEvent parent)
     {
-        List<DebugMenuOption> options = new List<DebugMenuOption>();
+        List<DebugMenuOption> options = [];
         FCEventDef def = parent.def;
         if (def.splitEventFollows)
         {
@@ -1636,7 +1636,7 @@ public static class DebugUtil
         FactionFC faction = FindFC.FactionComp;
         if (faction is null) return;
 
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
         {
             if (def == FCPolicyDefOf.empty) continue;
@@ -1660,7 +1660,7 @@ public static class DebugUtil
         FactionFC faction = FindFC.FactionComp;
         if (faction is null) return;
 
-        List<DebugMenuOption> traitList = new List<DebugMenuOption>();
+        List<DebugMenuOption> traitList = [];
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
         {
             if (def == FCPolicyDefOf.empty) continue;
@@ -1668,7 +1668,7 @@ public static class DebugUtil
             FCPolicyDef local = def;
             traitList.Add(new DebugMenuOption(local.defName, DebugMenuOptionMode.Action, () =>
             {
-                List<DebugMenuOption> slotList = new List<DebugMenuOption>();
+                List<DebugMenuOption> slotList = [];
                 for (int i = 0; i < FindFC.PolicyManager.factionTraits.Count; i++)
                 {
                     int slot = i;
@@ -1698,7 +1698,7 @@ public static class DebugUtil
         FactionFC faction = FindFC.FactionComp;
         if (faction is null) return;
 
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (FCPolicyDef def in DefDatabase<FCPolicyDef>.AllDefsListForReading)
         {
             if (!def.IsEdict) continue;
@@ -1808,59 +1808,55 @@ public static class DebugUtil
         FactionFC faction = FindFC.FactionComp;
         if (faction is null) return;
 
-        List<DebugMenuOption> hookList = new List<DebugMenuOption>();
-
-        hookList.Add(new DebugMenuOption("OnSettlementCreated", DebugMenuOptionMode.Action, () =>
-        {
-            WithSettlementChoice(settlement =>
+        List<DebugMenuOption> hookList =
+        [
+            new DebugMenuOption("OnSettlementCreated", DebugMenuOptionMode.Action, () =>
             {
-                FindFC.PolicyManager.ForEachBehavior(b => b.OnSettlementCreated(faction, settlement));
-                LogUtil.MessageForce($"Debug - Triggered OnSettlementCreated on {settlement.Name}");
-            });
-        }));
-
-        hookList.Add(new DebugMenuOption("OnSettlementRemoved", DebugMenuOptionMode.Action, () =>
-        {
-            WithSettlementChoice(settlement =>
+                WithSettlementChoice(settlement =>
+                {
+                    FindFC.PolicyManager.ForEachBehavior(b => b.OnSettlementCreated(faction, settlement));
+                    LogUtil.MessageForce($"Debug - Triggered OnSettlementCreated on {settlement.Name}");
+                });
+            }),
+            new DebugMenuOption("OnSettlementRemoved", DebugMenuOptionMode.Action, () =>
             {
-                FindFC.PolicyManager.ForEachBehavior(b => b.OnSettlementRemoved(faction, settlement));
-                LogUtil.MessageForce($"Debug - Triggered OnSettlementRemoved on {settlement.Name}");
-            });
-        }));
-
-        hookList.Add(new DebugMenuOption("OnSquadDeployed", DebugMenuOptionMode.Action, () =>
-        {
-            WithSettlementChoice(settlement =>
+                WithSettlementChoice(settlement =>
+                {
+                    FindFC.PolicyManager.ForEachBehavior(b => b.OnSettlementRemoved(faction, settlement));
+                    LogUtil.MessageForce($"Debug - Triggered OnSettlementRemoved on {settlement.Name}");
+                });
+            }),
+            new DebugMenuOption("OnSquadDeployed", DebugMenuOptionMode.Action, () =>
             {
-                // Debug trigger has no real op — behaviors that inspect op must null-check.
-                FindFC.PolicyManager.ForEachBehavior(b => b.OnSquadDeployed(faction, null, settlement, false));
-                LogUtil.MessageForce($"Debug - Triggered OnSquadDeployed on {settlement.Name}");
-            });
-        }));
-
-        hookList.Add(new DebugMenuOption("OnSquadRecalled", DebugMenuOptionMode.Action, () =>
-        {
-            WithSettlementChoice(settlement =>
+                WithSettlementChoice(settlement =>
+                {
+                    // Debug trigger has no real op — behaviors that inspect op must null-check.
+                    FindFC.PolicyManager.ForEachBehavior(b => b.OnSquadDeployed(faction, null, settlement, false));
+                    LogUtil.MessageForce($"Debug - Triggered OnSquadDeployed on {settlement.Name}");
+                });
+            }),
+            new DebugMenuOption("OnSquadRecalled", DebugMenuOptionMode.Action, () =>
             {
-                FindFC.PolicyManager.ForEachBehavior(b => b.OnSquadRecalled(faction, null, settlement));
-                LogUtil.MessageForce($"Debug - Triggered OnSquadRecalled on {settlement.Name}");
-            });
-        }));
-
-        hookList.Add(new DebugMenuOption("OnTaxCollected", DebugMenuOptionMode.Action, () =>
-        {
-            WithSettlementChoice(settlement =>
+                WithSettlementChoice(settlement =>
+                {
+                    FindFC.PolicyManager.ForEachBehavior(b => b.OnSquadRecalled(faction, null, settlement));
+                    LogUtil.MessageForce($"Debug - Triggered OnSquadRecalled on {settlement.Name}");
+                });
+            }),
+            new DebugMenuOption("OnTaxCollected", DebugMenuOptionMode.Action, () =>
             {
-                FindFC.PolicyManager.ForEachBehavior(b => b.OnTaxCollected(faction, settlement));
-                LogUtil.MessageForce($"Debug - Triggered OnTaxCollected on {settlement.Name}");
-            });
-        }));
-
-        hookList.Add(new DebugMenuOption("OnSettlementCostPaid", DebugMenuOptionMode.Action, () =>
-        {
-            FindFC.PolicyManager.ForEachBehavior(b => b.OnSettlementCostPaid(faction));
-            LogUtil.MessageForce("Debug - Triggered OnSettlementCostPaid");
-        }));
+                WithSettlementChoice(settlement =>
+                {
+                    FindFC.PolicyManager.ForEachBehavior(b => b.OnTaxCollected(faction, settlement));
+                    LogUtil.MessageForce($"Debug - Triggered OnTaxCollected on {settlement.Name}");
+                });
+            }),
+            new DebugMenuOption("OnSettlementCostPaid", DebugMenuOptionMode.Action, () =>
+            {
+                FindFC.PolicyManager.ForEachBehavior(b => b.OnSettlementCostPaid(faction));
+                LogUtil.MessageForce("Debug - Triggered OnSettlementCostPaid");
+            }),
+        ];
 
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(hookList));
     }
@@ -1902,7 +1898,7 @@ public static class DebugUtil
             return;
         }
 
-        List<DebugMenuOption> list = new List<DebugMenuOption>();
+        List<DebugMenuOption> list = [];
         foreach (MilitaryFireSupport support in util.fireSupportDefs)
         {
             if (support.projectiles is null || !support.projectiles.Any()) continue;
@@ -1919,10 +1915,9 @@ public static class DebugUtil
                             IntVec3 sourceLocation = UI.MouseCell();
                             Map map = Find.CurrentMap;
 
-                            List<ThingDef> projectiles = new List<ThingDef>();
-                            projectiles.AddRange(localSupport.projectiles);
+                            List<ThingDef> projectiles = [.. localSupport.projectiles];
 
-                            MilitaryFireSupport fireSupport = new MilitaryFireSupport(
+                            MilitaryFireSupport fireSupport = new(
                                 "fireSupport", map, targetLocation,
                                 projectiles.Count * 15, 600, localSupport.accuracy, projectiles);
                             fireSupport.sourceLocation = sourceLocation;
@@ -1946,7 +1941,7 @@ public static class DebugUtil
     [DebugAction("Empire", "Force Restock Settlement Trader", allowedGameStates = AllowedGameStates.Playing)]
     private static void DebugForceRestockSettlementTrader()
     {
-        List<DebugMenuOption> options = new List<DebugMenuOption>();
+        List<DebugMenuOption> options = [];
         foreach (WorldSettlementFC settlement in FindFC.Settlements)
         {
             options.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, () =>
@@ -1967,7 +1962,7 @@ public static class DebugUtil
         List<GeneDef> genes = DefDatabase<GeneDef>.AllDefsListForReading
             .OrderBy(g => g.defName).ToList();
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
         sb.AppendLine($"Gene raw contributions ({genes.Count} genes)");
         sb.AppendLine("Aggregate-then-score: per-gene raw inputs to the xenotype profile. " +
                       "Stat offsets sum, stat factors multiply, capMods accumulate per capacity, " +
@@ -1987,11 +1982,11 @@ public static class DebugUtil
     [DebugAction("Empire", "Dump Xenotype Valuation Cache", allowedGameStates = AllowedGameStates.Playing)]
     private static void DumpXenotypeValuationCache()
     {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         List<XenotypeDef> xenoDefs = DefDatabase<XenotypeDef>.AllDefsListForReading
             .OrderBy(x => x.defName).ToList();
-        List<CustomXenotype> customs = FactionCache.CustomXenotypes ?? new List<CustomXenotype>();
+        List<CustomXenotype> customs = FactionCache.CustomXenotypes ?? [];
 
         sb.AppendLine($"Xenotype valuation cache ({xenoDefs.Count} defs + {customs.Count} custom)");
         sb.AppendLine(
@@ -2081,7 +2076,7 @@ public static class DebugUtil
 
     private static string FormatGeneRawContribution(GeneDef gene, GeneValuationUtil.XenotypeProfile p)
     {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
         string scalarLine = FormatScalars(p);
         sb.AppendLine(scalarLine is null
             ? $"[{gene.defName}]"
@@ -2118,9 +2113,7 @@ public static class DebugUtil
         }
         if (p.CapOffsetSum.Count > 0 || p.CapFactorProduct.Count > 0)
         {
-            HashSet<PawnCapacityDef> seen = new HashSet<PawnCapacityDef>();
-            foreach (PawnCapacityDef k in p.CapOffsetSum.Keys) seen.Add(k);
-            foreach (PawnCapacityDef k in p.CapFactorProduct.Keys) seen.Add(k);
+            HashSet<PawnCapacityDef> seen = [.. p.CapOffsetSum.Keys, .. p.CapFactorProduct.Keys];
             sb.Append(indent).Append("caps: ");
             bool first = true;
             foreach (PawnCapacityDef cap in seen.OrderBy(c => c.defName))
@@ -2161,7 +2154,7 @@ public static class DebugUtil
 
     private static string FormatScalars(GeneValuationUtil.XenotypeProfile p)
     {
-        List<string> parts = new List<string>(4);
+        List<string> parts = new(4);
         if (Math.Abs(p.MvfProduct - 1f) > 0.0001f) parts.Add($"mvf=x{p.MvfProduct:F2}");
         if (Math.Abs(p.MetSum) > 0.0001f)         parts.Add($"met={p.MetSum:+0;-0;0}");
         if (Math.Abs(p.ArcSum) > 0.0001f)         parts.Add($"arc={p.ArcSum:+0;-0;0}");

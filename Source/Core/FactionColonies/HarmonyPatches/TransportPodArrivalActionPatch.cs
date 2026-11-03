@@ -16,7 +16,7 @@ class WorldSettlementTransportersArrivePatch
         if (Traverse.Create(__instance).Field("mapParent").GetValue() is not WorldSettlementFC)
             return;
 
-        List<Pawn> pawns = new List<Pawn>();
+        List<Pawn> pawns = [];
         foreach (ActiveTransporterInfo info in transporters)
         {
             foreach (Thing thing in info.innerContainer)

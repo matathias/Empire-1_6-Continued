@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class BuildingFilterRegistry
 {
-    private static readonly RegistryList<BuildingFilter> _list = new RegistryList<BuildingFilter>();
+    private static readonly RegistryList<BuildingFilter> _list = new();
 
     internal static void Register(BuildingFilter filter) => _list.Register(filter);
     internal static void Unregister(BuildingFilter filter) => _list.Unregister(filter);

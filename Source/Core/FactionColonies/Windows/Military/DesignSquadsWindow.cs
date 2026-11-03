@@ -28,10 +28,7 @@ public class DesignSquadsWindow : MilitaryWindow
         this.mfc = mfc;
         selectedText = "FCSelectASquad".Translate();
 
-        if (mfc.blankUnit is null)
-        {
-            mfc.blankUnit = MilTemplateFactory.CreateUnit(true);
-        }
+        mfc.blankUnit ??= MilTemplateFactory.CreateUnit(true);
 
         mfc.CheckMilitaryUtilForErrors();
     }
@@ -55,7 +52,7 @@ public class DesignSquadsWindow : MilitaryWindow
         float rightEdge = rect.xMax - margin;
 
         // Left sidebar
-        Rect sidebarRect = new Rect(rect.x + margin, contentTop,
+        Rect sidebarRect = new(rect.x + margin, contentTop,
             SidebarWidth, contentBottom - contentTop);
         DrawSidebar(sidebarRect);
 
@@ -66,19 +63,19 @@ public class DesignSquadsWindow : MilitaryWindow
         if (selectedSquad is not null)
         {
             // Header
-            Rect headerRect = new Rect(contentLeft, contentTop, contentWidth, 60f);
+            Rect headerRect = new(contentLeft, contentTop, contentWidth, 60f);
             DrawSquadHeader(headerRect);
 
             // Bottom bar
             float bottomBarHeight = ButtonHeight;
-            Rect bottomRect = new Rect(contentLeft, contentBottom - bottomBarHeight,
+            Rect bottomRect = new(contentLeft, contentBottom - bottomBarHeight,
                 contentWidth, bottomBarHeight);
             DrawBottomBar(bottomRect);
 
             // Unit list (between header and bottom bar)
             float unitListTop = headerRect.yMax + margin;
             float unitListBottom = bottomRect.y - margin;
-            Rect unitListRect = new Rect(contentLeft, unitListTop,
+            Rect unitListRect = new(contentLeft, unitListTop,
                 contentWidth, unitListBottom - unitListTop);
             DrawUnitList(unitListRect);
         }
@@ -97,18 +94,18 @@ public class DesignSquadsWindow : MilitaryWindow
         // Search bar
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new Rect(rect.x, rect.y, rect.width, SearchBarHeight);
+        Rect searchRect = new(rect.x, rect.y, rect.width, SearchBarHeight);
         squadSearchTerm = Widgets.TextField(searchRect, squadSearchTerm);
 
         // Squad list (fills space between search bar and buttons)
         float buttonsHeight = ButtonHeight * 2 + margin;
         float listHeight = rect.yMax - searchRect.yMax - margin - buttonsHeight - margin;
-        Rect listOutRect = new Rect(rect.x, searchRect.yMax + margin, rect.width, listHeight);
+        Rect listOutRect = new(rect.x, searchRect.yMax + margin, rect.width, listHeight);
         Widgets.DrawMenuSection(listOutRect);
 
         List<MilSquadFC> filteredSquads = string.IsNullOrEmpty(squadSearchTerm)
-            ? mfc.squads ?? new List<MilSquadFC>()
-            : (mfc.squads ?? new List<MilSquadFC>())
+            ? mfc.squads ?? []
+            : (mfc.squads ?? [])
                 .Where(s => (s.name ?? "").IndexOf(squadSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0)
                 .ToList();
 
@@ -118,7 +115,7 @@ public class DesignSquadsWindow : MilitaryWindow
         for (int i = 0; i < filteredSquads.Count; i++)
         {
             MilSquadFC squad = filteredSquads[i];
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * RowHeight,
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + i * RowHeight,
                 scrollViewRect.width, RowHeight);
 
             if (squad == selectedSquad)
@@ -128,7 +125,7 @@ public class DesignSquadsWindow : MilitaryWindow
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new Rect(row.x + 4f, row.y, row.width - 6f, RowHeight);
+            Rect labelRect = new(row.x + 4f, row.y, row.width - 6f, RowHeight);
             UIUtil.ClampedLabel(labelRect, squad.name);
 
             if (Widgets.ButtonInvisible(row))
@@ -148,10 +145,10 @@ public class DesignSquadsWindow : MilitaryWindow
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleCenter;
 
-        Rect createBtn = new Rect(rect.x, btnY, buttonW, ButtonHeight);
-        Rect importBtn = new Rect(rect.x + buttonW + margin, btnY, buttonW, ButtonHeight);
-        Rect deleteBtn = new Rect(rect.x, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
-        Rect exportBtn = new Rect(rect.x + buttonW + margin, btnY + ButtonHeight + margin,
+        Rect createBtn = new(rect.x, btnY, buttonW, ButtonHeight);
+        Rect importBtn = new(rect.x + buttonW + margin, btnY, buttonW, ButtonHeight);
+        Rect deleteBtn = new(rect.x, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
+        Rect exportBtn = new(rect.x + buttonW + margin, btnY + ButtonHeight + margin,
             buttonW, ButtonHeight);
 
         if (UIUtil.ClampedButtonText(createBtn, "FCCreateNewSquad".Translate()))
@@ -215,18 +212,18 @@ public class DesignSquadsWindow : MilitaryWindow
         TextAnchor anchorBefore = Text.Anchor;
 
         // Highlight banner
-        Rect highlightBar = new Rect(rect.x, rect.y, rect.width, 35f);
+        Rect highlightBar = new(rect.x, rect.y, rect.width, 35f);
         Widgets.DrawHighlight(highlightBar);
 
         // Squad name
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect nameRect = new Rect(rect.x + margin, rect.y, 400f, 30f);
+        Rect nameRect = new(rect.x + margin, rect.y, 400f, 30f);
         UIUtil.ClampedLabel(nameRect, selectedSquad.name);
 
         // Pencil icon
         float nameTextWidth = Text.CalcSize(selectedSquad.name).x;
-        Rect pencilRect = new Rect(
+        Rect pencilRect = new(
             rect.x + Mathf.Min(nameTextWidth + 8f + margin, rect.width - 22f),
             rect.y + 4f, 22f, 22f);
         if (Widgets.ButtonImage(pencilRect, TexButton.Rename))
@@ -288,7 +285,7 @@ public class DesignSquadsWindow : MilitaryWindow
 
         for (int i = 0; i < groups.Count; i++)
         {
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * UnitRowHeight,
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + i * UnitRowHeight,
                 scrollViewRect.width, UnitRowHeight);
             DrawUnitRow(row, groups[i].unit, groups[i].count, i);
         }
@@ -310,7 +307,7 @@ public class DesignSquadsWindow : MilitaryWindow
         float x = row.x + margin;
 
         // Pawn preview icon
-        Rect pawnRect = new Rect(x, row.y + 2f, UnitRowHeight - 4f, UnitRowHeight - 4f);
+        Rect pawnRect = new(x, row.y + 2f, UnitRowHeight - 4f, UnitRowHeight - 4f);
         Pawn preview = unit.PreviewPawn;
         if (preview is not null)
         {
@@ -328,7 +325,7 @@ public class DesignSquadsWindow : MilitaryWindow
         // Weapon icon
         if (unit.HasWeapon)
         {
-            Rect weaponRect = new Rect(x, row.y + (UnitRowHeight - IconSize) / 2f,
+            Rect weaponRect = new(x, row.y + (UnitRowHeight - IconSize) / 2f,
                 IconSize, IconSize);
             Widgets.DefIcon(weaponRect, unit.weapons[0].thing, unit.weapons[0].stuff);
             x = weaponRect.xMax + 4f;
@@ -337,7 +334,7 @@ public class DesignSquadsWindow : MilitaryWindow
         // Unit name
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect nameRect = new Rect(x, row.y, 130f, UnitRowHeight);
+        Rect nameRect = new(x, row.y, 130f, UnitRowHeight);
         UIUtil.ClampedLabel(nameRect, unit.name);
         x = nameRect.xMax + 4f;
 
@@ -347,7 +344,7 @@ public class DesignSquadsWindow : MilitaryWindow
         {
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect xenoRect = new Rect(x, row.y, 80f, UnitRowHeight);
+            Rect xenoRect = new(x, row.y, 80f, UnitRowHeight);
             UIUtil.ClampedLabel(xenoRect, xenoLabel);
         }
 
@@ -358,7 +355,7 @@ public class DesignSquadsWindow : MilitaryWindow
 
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleRight;
-        Rect costRect = new Rect(row.xMax - 246f, row.y, 100f, UnitRowHeight);
+        Rect costRect = new(row.xMax - 246f, row.y, 100f, UnitRowHeight);
         UIUtil.ClampedLabel(costRect, costText);
 
         // +/- controls
@@ -376,7 +373,7 @@ public class DesignSquadsWindow : MilitaryWindow
         }
 
         // Count label
-        Rect countRect = new Rect(controlX + btnSize + 2f, row.y, 26f, UnitRowHeight);
+        Rect countRect = new(controlX + btnSize + 2f, row.y, 26f, UnitRowHeight);
         UIUtil.ClampedLabel(countRect, count.ToString());
 
         // [+] button
@@ -386,14 +383,14 @@ public class DesignSquadsWindow : MilitaryWindow
         }
 
         // [X] remove-all button
-        Rect removeRect = new Rect(row.xMax - 54f, btnY, 22f, 22f);
+        Rect removeRect = new(row.xMax - 54f, btnY, 22f, 22f);
         if (Widgets.ButtonImage(removeRect, TexLoad.deleteX))
         {
             RemoveAllOfUnit(unit);
         }
 
         // Gear icon — open unit in editor
-        Rect gearRect = new Rect(row.xMax - 28f, btnY, 22f, 22f);
+        Rect gearRect = new(row.xMax - 28f, btnY, 22f, 22f);
         TooltipHandler.TipRegion(gearRect, "FCEditUnitTooltip".Translate());
         if (Widgets.ButtonImage(gearRect, TexLoad.iconCustomize))
         {
@@ -412,7 +409,7 @@ public class DesignSquadsWindow : MilitaryWindow
 
         FactionFC fc = FindFC.FactionComp;
         MilitaryWindow duw = MilitaryWindowRegistry.CreateUnits(fc.military, fc);
-        FCWindow_Military newWindow = new FCWindow_Military(
+        FCWindow_Military newWindow = new(
             duw, "FCMilitaryTableButtonCreateUnit".Translate());
         Find.WindowStack.Add(newWindow);
         newWindow.SetActive(unit);
@@ -431,14 +428,14 @@ public class DesignSquadsWindow : MilitaryWindow
         float btnW = (rect.width - margin * 4) / 5f;
 
         // Add Unit button
-        Rect addUnitBtn = new Rect(rect.x, rect.y, btnW, ButtonHeight);
+        Rect addUnitBtn = new(rect.x, rect.y, btnW, ButtonHeight);
         if (UIUtil.ClampedButtonText(addUnitBtn, "FCAddUnit".Translate()))
         {
             Find.WindowStack.Add(new FCWindow_UnitPicker(mfc, AddUnitToSquad));
         }
 
         // Set Point Ref button
-        Rect pointRefBtn = new Rect(addUnitBtn.xMax + margin, rect.y, btnW, ButtonHeight);
+        Rect pointRefBtn = new(addUnitBtn.xMax + margin, rect.y, btnW, ButtonHeight);
         if (UIUtil.ClampedButtonText(pointRefBtn, "FCSetPointRef".Translate()))
         {
             List<FloatMenuOption> settlementList = FindFC.FactionComp
@@ -456,12 +453,12 @@ public class DesignSquadsWindow : MilitaryWindow
                 settlementList.Add(new FloatMenuOption("FCNoValidSettlements".Translate(), null));
             }
 
-            FloatMenu floatMenu = new FloatMenu(settlementList) { vanishIfMouseDistant = true };
+            FloatMenu floatMenu = new(settlementList) { vanishIfMouseDistant = true };
             Find.WindowStack.Add(floatMenu);
         }
 
         // Reset button
-        Rect resetBtn = new Rect(pointRefBtn.xMax + margin, rect.y, btnW, ButtonHeight);
+        Rect resetBtn = new(pointRefBtn.xMax + margin, rect.y, btnW, ButtonHeight);
         if (UIUtil.ClampedButtonText(resetBtn, "FCResetToDefault".Translate()))
         {
             selectedSquad.NewSquad();
@@ -475,7 +472,7 @@ public class DesignSquadsWindow : MilitaryWindow
         int hireCost = (int)Math.Round((selectedSquad?.GetEquipmentTotalCost() ?? 0) * FCSettings.squadHireCostMultiplier);
         float silver = PaymentUtil.GetSilver();
         bool canAffordHire = silver >= hireCost;
-        Rect hireBtn = new Rect(resetBtn.xMax + margin, rect.y, btnW, ButtonHeight);
+        Rect hireBtn = new(resetBtn.xMax + margin, rect.y, btnW, ButtonHeight);
         Color colorBefore = GUI.color;
         if (!canAffordHire) GUI.color = Color.gray;
         if (UIUtil.ClampedButtonText(hireBtn, "FCHireSquadButton".Translate(hireCost), true, true, canAffordHire))
@@ -488,7 +485,7 @@ public class DesignSquadsWindow : MilitaryWindow
         // Unit count label
         int totalUnits = selectedSquad.Units.Count(u => !u.isBlank);
         Text.Anchor = TextAnchor.MiddleRight;
-        Rect countLabel = new Rect(hireBtn.xMax + margin, rect.y, btnW, ButtonHeight);
+        Rect countLabel = new(hireBtn.xMax + margin, rect.y, btnW, ButtonHeight);
         UIUtil.ClampedLabel(countLabel, "FCSquadUnitCount".Translate(totalUnits));
 
         Text.Font = fontBefore;

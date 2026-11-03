@@ -52,24 +52,13 @@ public class MilitaryJobHandler_Raid : MilitaryJobHandler_Offensive
 
     private static void LootByTech(TechLevel tech, ref int lootLevel, ref bool getSlaves)
     {
-        switch (tech)
+        lootLevel = tech switch
         {
-            case TechLevel.Archotech:
-            case TechLevel.Ultra:
-            case TechLevel.Spacer:
-                lootLevel = 4;
-                break;
-            case TechLevel.Industrial:
-                lootLevel = 3;
-                break;
-            case TechLevel.Medieval:
-            case TechLevel.Neolithic:
-                lootLevel = 2;
-                break;
-            default:
-                lootLevel = 1;
-                break;
-        }
+            TechLevel.Archotech or TechLevel.Ultra or TechLevel.Spacer => 4,
+            TechLevel.Industrial => 3,
+            TechLevel.Medieval or TechLevel.Neolithic => 2,
+            _ => 1,
+        };
     }
     private static void LootByFactionDef(FactionDef def, ref int lootLevel, ref bool getSlaves)
     {
@@ -127,7 +116,7 @@ public class MilitaryJobHandler_Raid : MilitaryJobHandler_Offensive
         Map playerHome = Find.AnyPlayerHomeMap;
         if (playerHome is not null)
         {
-            FCEvent eventParams = new FCEvent()
+            FCEvent eventParams = new()
             {
                 location = playerHome.Tile,
                 source = home.Tile,

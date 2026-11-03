@@ -14,27 +14,27 @@ class PatchNoteDef : Def
     private DateTime releaseDateParsed;
 
     private readonly PatchNoteType patchNoteType = PatchNoteType.Undefined;
-    private readonly List<string> patchNoteLines = new List<string>();
-    private readonly List<string> additionalNotes = new List<string>();
-    private readonly List<string> linkButtonToolTips = new List<string>();
+    private readonly List<string> patchNoteLines = [];
+    private readonly List<string> additionalNotes = [];
+    private readonly List<string> linkButtonToolTips = [];
 
     [NoTranslate]
     public readonly string modId = "";
 
     [NoTranslate]
-    private readonly List<string> links = new List<string>();
+    private readonly List<string> links = [];
 
     [NoTranslate]
-    private readonly List<string> authors = new List<string>();
+    private readonly List<string> authors = [];
 
     [NoTranslate]
-    private readonly List<string> linkButtonImagePaths = new List<string>();
+    private readonly List<string> linkButtonImagePaths = [];
 
     [NoTranslate]
     private readonly string bannerImagePath = "";
 
     private ModContentPack modContentPackCached = null;
-    private List<Texture2D> linkButtonImagesCached = new List<Texture2D>();
+    private List<Texture2D> linkButtonImagesCached = [];
     private Texture2D bannerImageCached;
 
     /// <summary>
@@ -54,7 +54,7 @@ class PatchNoteDef : Def
     {
         get
         {
-            modContentPackCached = modContentPackCached ?? (modContentPackCached = LoadedModManager.RunningModsListForReading.FirstOrFallback(PackHasModId));
+            modContentPackCached = (modContentPackCached ??= LoadedModManager.RunningModsListForReading.FirstOrFallback(PackHasModId));
 
             if (modContentPackCached is null)
             {
@@ -241,7 +241,7 @@ class PatchNoteDef : Def
     {
         base.ClearCachedData();
 
-        linkButtonImagesCached = new List<Texture2D>();
+        linkButtonImagesCached = [];
         bannerImageCached = null;
         modContentPackCached = null;
     }

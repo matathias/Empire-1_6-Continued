@@ -30,7 +30,7 @@ public class FCWindow_VPEPsycastEditor : Window
     private Vector2 pathsScrollPos;
     private float lastPathsHeight;
     private int pathsPerRow = 3;
-    private readonly Dictionary<AbilityDef, Vector2> abilityPos = new Dictionary<AbilityDef, Vector2>();
+    private readonly Dictionary<AbilityDef, Vector2> abilityPos = [];
     private bool useAltBackgrounds;
 
     // Meditation foci the player can buy with points, plus a local tally of psycaster-stat points
@@ -43,7 +43,7 @@ public class FCWindow_VPEPsycastEditor : Window
     // (psycast, focus, or a single stat purchase) is appended in order, so trimming on a psylink
     // decrease removes the most recent picks regardless of kind. Initialized from the unit's saved
     // selections and only written back to the unit on Apply (Cancel/X discards it).
-    private readonly List<SavedPsycast> selections = new List<SavedPsycast>();
+    private readonly List<SavedPsycast> selections = [];
 
     // Budget/spent are OUR authoritative numbers, derived from the psylink level and the live session
     // pawn state — never from VPE's mutable hediff.points (which desyncs across generate/replay).
@@ -65,7 +65,7 @@ public class FCWindow_VPEPsycastEditor : Window
 
     private int Available => Budget - Spent;
 
-    public override Vector2 InitialSize => new Vector2(1000f, 720f);
+    public override Vector2 InitialSize => new(1000f, 720f);
 
     public FCWindow_VPEPsycastEditor(MilUnitFC unit, Action onClosed)
     {
@@ -166,7 +166,7 @@ public class FCWindow_VPEPsycastEditor : Window
         PsycastsUIUtility.CompAbilities = compAbilities;
 
         // Reserve a bottom strip for the Clear button; the panels fill the rest.
-        Rect bottomBar = new Rect(inRect.x, inRect.yMax - 34f, inRect.width, 34f);
+        Rect bottomBar = new(inRect.x, inRect.yMax - 34f, inRect.width, 34f);
         Rect body = inRect;
         body.height -= 40f;
 
@@ -241,11 +241,11 @@ public class FCWindow_VPEPsycastEditor : Window
         else
         {
             pathsPerRow = Mathf.Max(1, Mathf.FloorToInt(right.width / 200f));
-            Rect tabArea = new Rect(right.x, right.y + 40f, right.width, right.height - 40f);
+            Rect tabArea = new(right.x, right.y + 40f, right.width, right.height - 40f);
             TabDrawer.DrawTabs(tabArea, tabs);
             Rect panel = tabArea;
             Widgets.DrawMenuSection(panel);
-            Rect viewRect = new Rect(0, 0, panel.width - 20f, lastPathsHeight);
+            Rect viewRect = new(0, 0, panel.width - 20f, lastPathsHeight);
             Widgets.BeginScrollView(panel.ContractedBy(2f), ref pathsScrollPos, viewRect);
             DoPaths(viewRect);
             Widgets.EndScrollView();
@@ -257,10 +257,10 @@ public class FCWindow_VPEPsycastEditor : Window
         const float btnW = 120f, btnH = 30f, btnGap = 8f;
         if (Widgets.ButtonText(new Rect(bottomBar.x, bottomBar.y, btnW, btnH), "fcClearPsycasts".Translate()))
             ClearSelections();
-        Rect applyRect = new Rect(bottomBar.xMax - btnW, bottomBar.y, btnW, btnH);
+        Rect applyRect = new(bottomBar.xMax - btnW, bottomBar.y, btnW, btnH);
         if (Widgets.ButtonText(applyRect, "fcApplyPsycasts".Translate()))
             ApplyAndClose();
-        Rect cancelRect = new Rect(applyRect.x - btnGap - btnW, bottomBar.y, btnW, btnH);
+        Rect cancelRect = new(applyRect.x - btnGap - btnW, bottomBar.y, btnW, btnH);
         if (Widgets.ButtonText(cancelRect, "fcCancelPsycasts".Translate()))
             Close();
 
@@ -301,7 +301,7 @@ public class FCWindow_VPEPsycastEditor : Window
         {
             Texture2D texture = useAltBackgrounds ? def.backgroundImage : def.altBackgroundImage;
             float height = widthPerPath / texture.width * texture.height + 30f;
-            Rect rect = new Rect(curPos, new Vector2(widthPerPath, height));
+            Rect rect = new(curPos, new Vector2(widthPerPath, height));
             PsycastsUIUtility.DrawPathBackground(ref rect, def, useAltBackgrounds);
 
             if (hediff.unlockedPaths.Contains(def))
@@ -314,7 +314,7 @@ public class FCWindow_VPEPsycastEditor : Window
                 Widgets.DrawRectFast(rect, new Color(0f, 0f, 0f, useAltBackgrounds ? 0.7f : 0.55f));
                 if (Available >= 1)
                 {
-                    Rect centerRect = new Rect(rect.center.x - 70f, rect.center.y - 15f, 140f, 30f);
+                    Rect centerRect = new(rect.center.x - 70f, rect.center.y - 15f, 140f, 30f);
                     if (def.CanPawnUnlock(sessionPawn))
                     {
                         if (Widgets.ButtonText(centerRect, "VPE.Unlock".Translate()))

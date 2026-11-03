@@ -6,14 +6,14 @@ public class SettlementWindowFC_AddTithe : Window
 {
     private WorldSettlementFC settlement;
     private ResourceFC resource;
-    private Vector2 scrollBarLeft = new Vector2();
-    private Vector2 scrollBarRight = new Vector2();
+    private Vector2 scrollBarLeft = new();
+    private Vector2 scrollBarRight = new();
 
     private ThingDef selectedThing = null;
     private QualityCategory? selectedQuality = null;
     private QualityCategory SelectedQuality => selectedQuality ?? QualityCategory.Normal;
     private ThingDef selectedStuff = null;
-    private List<ThingDef> currentStuffs = new List<ThingDef>();
+    private List<ThingDef> currentStuffs = [];
 
     private const int margin = 5;
     private const int smallMargin = 3;
@@ -27,7 +27,7 @@ public class SettlementWindowFC_AddTithe : Window
 
     private int itemSortIndex = 0;
     private int stuffSortIndex = 0;
-    private static readonly string[] sortLabelKeys = { "FCTitheSortNameAZ", "FCTitheSortNameZA", "FCTitheSortPriceLow", "FCTitheSortPriceHigh" };
+    private static readonly string[] sortLabelKeys = ["FCTitheSortNameAZ", "FCTitheSortNameZA", "FCTitheSortPriceLow", "FCTitheSortPriceHigh"];
 
     public override Vector2 InitialSize
     {
@@ -73,17 +73,17 @@ public class SettlementWindowFC_AddTithe : Window
 
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 35f);
+        Rect header = new(boundingBox.x, boundingBox.y, boundingBox.width, 35f);
         UIUtil.ClampedLabel(header, "FCAddTitheItemHeader".Translate());
         Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
         Text.Font = GameFont.Small;
-        Rect subHeader = new Rect(boundingBox.x, header.yMax, boundingBox.width, 30f);
+        Rect subHeader = new(boundingBox.x, header.yMax, boundingBox.width, 30f);
         UIUtil.ClampedLabel(subHeader, settlement.Name);
 
-        Rect iconBox = new Rect(boundingBox.x, subHeader.yMax, 30f, 30f);
-        Rect labelHighlight = new Rect(iconBox.xMax + margin, iconBox.y, boundingBox.width - margin - iconBox.width, 30f);
-        Rect labelText = new Rect(labelHighlight.x + smallMargin, labelHighlight.y + smallMargin, labelHighlight.width - (smallMargin * 2), labelHighlight.height - (smallMargin * 2));
+        Rect iconBox = new(boundingBox.x, subHeader.yMax, 30f, 30f);
+        Rect labelHighlight = new(iconBox.xMax + margin, iconBox.y, boundingBox.width - margin - iconBox.width, 30f);
+        Rect labelText = new(labelHighlight.x + smallMargin, labelHighlight.y + smallMargin, labelHighlight.width - (smallMargin * 2), labelHighlight.height - (smallMargin * 2));
 
         Text.Anchor = TextAnchor.MiddleCenter;
         Widgets.DrawHighlight(iconBox);
@@ -91,13 +91,13 @@ public class SettlementWindowFC_AddTithe : Window
         Text.Anchor = TextAnchor.MiddleLeft;
         Widgets.DrawHighlight(labelHighlight);
         UIUtil.ClampedLabel(labelText, resource.def.LabelCap);
-        Rect iconAccent = new Rect(iconBox.x, iconBox.y, iconBox.width, 3f);
-        Rect labelAccent = new Rect(labelHighlight.x, labelHighlight.y, labelHighlight.width, 3f);
+        Rect iconAccent = new(iconBox.x, iconBox.y, iconBox.width, 3f);
+        Rect labelAccent = new(labelHighlight.x, labelHighlight.y, labelHighlight.width, 3f);
         Widgets.DrawBoxSolid(iconAccent, resource.def.color);
         Widgets.DrawBoxSolid(labelAccent, resource.def.color);
 
         // Budget indicator
-        Rect budgetRow = new Rect(boundingBox.x, iconBox.yMax + margin, boundingBox.width, 22f);
+        Rect budgetRow = new(boundingBox.x, iconBox.yMax + margin, boundingBox.width, 22f);
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleLeft;
         double totalBudget = Math.Round(resource.GetTitheIncome(), 2);
@@ -118,9 +118,9 @@ public class SettlementWindowFC_AddTithe : Window
         Text.Font = GameFont.Small;
 
         float panelTopY = budgetRow.yMax + margin;
-        Rect drawBox = new Rect(boundingBox.x, panelTopY, boundingBox.width, boundingBox.yMax - panelTopY - selectionPanelHeight);
-        Rect leftPanel = new Rect(boundingBox.x, panelTopY, (boundingBox.width - margin) / 2f, boundingBox.yMax - panelTopY - selectionPanelHeight);
-        Rect rightPanel = new Rect(leftPanel.xMax + margin, leftPanel.y, leftPanel.width, leftPanel.height);
+        Rect drawBox = new(boundingBox.x, panelTopY, boundingBox.width, boundingBox.yMax - panelTopY - selectionPanelHeight);
+        Rect leftPanel = new(boundingBox.x, panelTopY, (boundingBox.width - margin) / 2f, boundingBox.yMax - panelTopY - selectionPanelHeight);
+        Rect rightPanel = new(leftPanel.xMax + margin, leftPanel.y, leftPanel.width, leftPanel.height);
         DrawLeftPanel(leftPanel);
 
         if (selectedThing is null || currentStuffs is null || currentStuffs.Count == 0)
@@ -136,7 +136,7 @@ public class SettlementWindowFC_AddTithe : Window
 
         if (selectedThing is not null)
         {
-            Rect selectionPanel = new Rect(boundingBox.x, boundingBox.yMax - selectionPanelHeight, boundingBox.width, selectionPanelHeight);
+            Rect selectionPanel = new(boundingBox.x, boundingBox.yMax - selectionPanelHeight, boundingBox.width, selectionPanelHeight);
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -149,12 +149,12 @@ public class SettlementWindowFC_AddTithe : Window
                 resource.CanSetTitheQuality(out maxQuality);
                 List<QualityCategory> categoryList = resource.GetValidTitheQualities(maxQuality);
 
-                Rect qualityLabel = new Rect(selectionPanel.x + margin, panelY, 60f, rowHeight);
-                Rect qualityButton = new Rect(qualityLabel.xMax + smallMargin, panelY, 120f, rowHeight);
+                Rect qualityLabel = new(selectionPanel.x + margin, panelY, 60f, rowHeight);
+                Rect qualityButton = new(qualityLabel.xMax + smallMargin, panelY, 120f, rowHeight);
                 UIUtil.ClampedLabel(qualityLabel, "Quality".Translate() + ":");
                 if (UIUtil.ClampedButtonText(qualityButton, TextUtil.GetQualityLabelCap(selectedQuality)))
                 {
-                    List<FloatMenuOption> options = new List<FloatMenuOption>();
+                    List<FloatMenuOption> options = [];
                     foreach (QualityCategory cat in categoryList)
                     {
                         options.Add(new FloatMenuOption(TextUtil.GetQualityLabelCap(cat), delegate
@@ -168,7 +168,7 @@ public class SettlementWindowFC_AddTithe : Window
             }
 
             Text.Anchor = TextAnchor.MiddleCenter;
-            Rect selectedLabel = new Rect(selectionPanel.x + margin, panelY, selectionPanel.width - (margin * 2), choiceBox);
+            Rect selectedLabel = new(selectionPanel.x + margin, panelY, selectionPanel.width - (margin * 2), choiceBox);
             Widgets.DrawHighlight(selectedLabel);
             string stuffStr = selectedStuff is null ? "" : $"{selectedStuff.LabelCap} ";
             string qualityStr = (thingHasQuality && selectedQuality is not null) ? $" ({TextUtil.GetQualityLabelCap(selectedQuality)})" : "";
@@ -185,8 +185,8 @@ public class SettlementWindowFC_AddTithe : Window
             panelY += selectedLabel.height + margin;
 
             float buttonWidth = (selectionPanel.width - (margin * 3)) / 2f;
-            Rect cancelButton = new Rect(selectionPanel.x + margin, panelY, buttonWidth, rowHeight);
-            Rect confirmButton = new Rect(cancelButton.xMax + margin, panelY, buttonWidth, rowHeight);
+            Rect cancelButton = new(selectionPanel.x + margin, panelY, buttonWidth, rowHeight);
+            Rect confirmButton = new(cancelButton.xMax + margin, panelY, buttonWidth, rowHeight);
 
             if (UIUtil.ClampedButtonText(cancelButton, "FCClearSelection".Translate()))
             {
@@ -204,7 +204,7 @@ public class SettlementWindowFC_AddTithe : Window
                 confirmTooltip = "FCMustSelectStuff".Translate();
             }
 
-            ThingQualityTuple tuple = new ThingQualityTuple
+            ThingQualityTuple tuple = new()
             {
                 thingDef = selectedThing,
                 quality = thingHasQuality ? SelectedQuality : QualityCategory.Normal,
@@ -242,16 +242,16 @@ public class SettlementWindowFC_AddTithe : Window
         float curY = boundingBox.y;
 
         // Panel header
-        Rect headerRow = new Rect(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
+        Rect headerRow = new(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
         Widgets.DrawHighlight(headerRow);
         Text.Anchor = TextAnchor.MiddleLeft;
         Text.Font = GameFont.Small;
         UIUtil.ClampedLabel(new Rect(headerRow.x + margin, headerRow.y, 60f, headerRow.height), "FCTitheItems".Translate());
         float sortBtnW = 120f;
-        Rect sortBtn = new Rect(headerRow.xMax - margin - 65f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
+        Rect sortBtn = new(headerRow.xMax - margin - 65f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
         if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[itemSortIndex].Translate())))
         {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            List<FloatMenuOption> options = [];
             for (int s = 0; s < sortLabelKeys.Length; s++)
             {
                 int captured = s;
@@ -266,7 +266,7 @@ public class SettlementWindowFC_AddTithe : Window
         curY = headerRow.yMax;
 
         // Search bar
-        Rect searchRect = new Rect(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
+        Rect searchRect = new(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
         thingSearchTerm = Widgets.TextField(searchRect, thingSearchTerm);
         if (string.IsNullOrEmpty(thingSearchTerm))
         {
@@ -287,8 +287,8 @@ public class SettlementWindowFC_AddTithe : Window
         thingsList = ApplySort(thingsList, itemSortIndex);
 
         // Actual scrollbox
-        Rect drawBox = new Rect(boundingBox.x, curY + margin, boundingBox.width, boundingBox.yMax - curY - margin);
-        Rect outerListBox = new Rect(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
+        Rect drawBox = new(boundingBox.x, curY + margin, boundingBox.width, boundingBox.yMax - curY - margin);
+        Rect outerListBox = new(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
         float listHeight = thingsList.Count * rowHeight;
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleRight;
@@ -301,11 +301,11 @@ public class SettlementWindowFC_AddTithe : Window
         for (int i = 0; i < thingsList.Count; i++)
         {
             ThingDef iThing = thingsList[i];
-            Rect row = new Rect(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
-            Rect icon = new Rect(row.x + margin, row.y, rowHeight, rowHeight);
-            Rect info = new Rect(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
-            Rect valueLabel = new Rect(row.xMax - margin - 70f, row.y, 60f, rowHeight);
-            Rect label = new Rect(info.xMax + margin, row.y, valueLabel.x - info.xMax - (margin * 2), rowHeight);
+            Rect row = new(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
+            Rect icon = new(row.x + margin, row.y, rowHeight, rowHeight);
+            Rect info = new(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
+            Rect valueLabel = new(row.xMax - margin - 70f, row.y, 60f, rowHeight);
+            Rect label = new(info.xMax + margin, row.y, valueLabel.x - info.xMax - (margin * 2), rowHeight);
 
             if (selectedThing == iThing)
             {
@@ -337,10 +337,7 @@ public class SettlementWindowFC_AddTithe : Window
                 }
                 if (CraftUtil.ThingHasQuality(iThing))
                 {
-                    if (selectedQuality is null)
-                    {
-                        selectedQuality = QualityCategory.Normal;
-                    }
+                    selectedQuality ??= QualityCategory.Normal;
                 }
                 else
                 {
@@ -361,16 +358,16 @@ public class SettlementWindowFC_AddTithe : Window
         float curY = boundingBox.y;
 
         // Panel header
-        Rect headerRow = new Rect(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
+        Rect headerRow = new(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
         Widgets.DrawHighlight(headerRow);
         Text.Anchor = TextAnchor.MiddleLeft;
         Text.Font = GameFont.Small;
         UIUtil.ClampedLabel(new Rect(headerRow.x + margin, headerRow.y, 80f, headerRow.height), "FCTitheStuff".Translate());
         float sortBtnW = 120f;
-        Rect sortBtn = new Rect(headerRow.xMax - margin - 75f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
+        Rect sortBtn = new(headerRow.xMax - margin - 75f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
         if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[stuffSortIndex].Translate())))
         {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            List<FloatMenuOption> options = [];
             for (int s = 0; s < sortLabelKeys.Length; s++)
             {
                 int captured = s;
@@ -385,7 +382,7 @@ public class SettlementWindowFC_AddTithe : Window
         curY = headerRow.yMax;
 
         // Search bar
-        Rect searchRect = new Rect(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
+        Rect searchRect = new(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
         stuffSearchTerm = Widgets.TextField(searchRect, stuffSearchTerm);
         if (string.IsNullOrEmpty(stuffSearchTerm))
         {
@@ -406,8 +403,8 @@ public class SettlementWindowFC_AddTithe : Window
         stuffList = ApplySort(stuffList, stuffSortIndex, isStuffList: true);
 
         // Actual scrollbox
-        Rect drawBox = new Rect(boundingBox.x, curY + margin, boundingBox.width, boundingBox.yMax - curY - margin);
-        Rect outerListBox = new Rect(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
+        Rect drawBox = new(boundingBox.x, curY + margin, boundingBox.width, boundingBox.yMax - curY - margin);
+        Rect outerListBox = new(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
         float listHeight = stuffList.Count * rowHeight;
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleRight;
@@ -420,11 +417,11 @@ public class SettlementWindowFC_AddTithe : Window
         for (int i = 0; i < stuffList.Count; i++)
         {
             ThingDef iStuff = stuffList[i];
-            Rect row = new Rect(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
-            Rect icon = new Rect(row.x + margin, row.y, rowHeight, rowHeight);
-            Rect info = new Rect(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
-            Rect valueLabel = new Rect(row.xMax - margin - 70f, row.y, 60f, rowHeight);
-            Rect label = new Rect(info.xMax + margin, row.y, valueLabel.x - info.xMax - (margin * 2), rowHeight);
+            Rect row = new(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
+            Rect icon = new(row.x + margin, row.y, rowHeight, rowHeight);
+            Rect info = new(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
+            Rect valueLabel = new(row.xMax - margin - 70f, row.y, 60f, rowHeight);
+            Rect label = new(info.xMax + margin, row.y, valueLabel.x - info.xMax - (margin * 2), rowHeight);
 
             if (selectedStuff == iStuff)
             {

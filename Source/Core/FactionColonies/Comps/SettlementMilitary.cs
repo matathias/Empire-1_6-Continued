@@ -75,7 +75,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
             if (value is null)
             {
                 // Snapshot the list — assigning settlement = null mutates StationedSquads.
-                List<MercenarySquadFC> stationed = new List<MercenarySquadFC>(WorldSettlement.StationedSquads);
+                List<MercenarySquadFC> stationed = new(WorldSettlement.StationedSquads);
                 foreach (MercenarySquadFC s in stationed)
                 {
                     if (s is not null) s.settlement = null;
@@ -83,7 +83,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
                 return;
             }
             if (value.settlement == WorldSettlement) return;
-            List<MercenarySquadFC> existing = new List<MercenarySquadFC>(WorldSettlement.StationedSquads);
+            List<MercenarySquadFC> existing = new(WorldSettlement.StationedSquads);
             foreach (MercenarySquadFC s in existing)
             {
                 if (s is not null && s != value) s.settlement = null;
@@ -155,13 +155,13 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
      * continues to compile and read correctly. Internal mutations live on BattlefieldContext.
      */
 
-    private static readonly List<Pawn> _emptyPawnList = new List<Pawn>();
+    private static readonly List<Pawn> _emptyPawnList = [];
 
     private BattlefieldContext Battlefield
         => FindFC.MilitaryManager?.GetBattlefield(WorldSettlement?.Tile ?? PlanetTile.Invalid);
 
-    public IEnumerable<Pawn> attackers => Battlefield?.attackerPawns ?? Enumerable.Empty<Pawn>();
-    public IEnumerable<Pawn> defenders => Battlefield?.defenderPawns ?? Enumerable.Empty<Pawn>();
+    public IEnumerable<Pawn> attackers => Battlefield?.attackerPawns ?? [];
+    public IEnumerable<Pawn> defenders => Battlefield?.defenderPawns ?? [];
     public List<Pawn> draftedNPCs => Battlefield?.draftedNPCs ?? _emptyPawnList;
 
     /* -*-*-*-*- Computed properties (derived from manager state) -*-*-*-*- */
@@ -333,7 +333,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
             Scribe_Deep.Look(ref legacyAttackerForce, "attackerForce");
             Scribe_Deep.Look(ref legacyDefenderForce, "defenderForce");
 
-            if (_legacyActiveWaves is null) _legacyActiveWaves = new List<DefenseWave>();
+            _legacyActiveWaves ??= [];
             if (_legacyActiveWaves.Count == 0 && (legacyAttackerForce is not null || legacyDefenderForce is not null))
             {
                 _legacyActiveWaves.Add(new DefenseWave
@@ -431,7 +431,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
 
     private Command DefendColonyAction()
     {
-        Command_Action defendColony = new Command_Action
+        Command_Action defendColony = new()
         {
             defaultLabel = "FCDefendColony".Translate(),
             defaultDesc = "FCDefendColonyDesc".Translate(),
@@ -477,7 +477,7 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
 
     private Command DefendColonyCaravan(Caravan caravan)
     {
-        Command_Action defendColonyCaravan = new Command_Action
+        Command_Action defendColonyCaravan = new()
         {
             defaultLabel = "FCDefendColony".Translate(),
             defaultDesc = "FCDefendColonyDesc".Translate(),

@@ -41,7 +41,7 @@ public static class MilitaryDeploymentUtil
             return;
         }
 
-        IncidentParms parms = new IncidentParms
+        IncidentParms parms = new()
         {
             target = currentMap,
             faction = FindFC.EmpireFaction,
@@ -64,7 +64,7 @@ public static class MilitaryDeploymentUtil
         }
         else
         {
-            PawnsArrivalModeWorker_EdgeWalkIn worker = new PawnsArrivalModeWorker_EdgeWalkIn();
+            PawnsArrivalModeWorker_EdgeWalkIn worker = new();
             if (RCellFinder.TryFindClosestEdgeCellTo(dropPosition, currentMap, out parms.spawnCenter))
             {
                 parms.spawnRotation = Rot4.FromAngleFlat((currentMap.Center - parms.spawnCenter).AngleFlat);
@@ -108,7 +108,7 @@ public static class MilitaryDeploymentUtil
 
         // Mounts (Giddy Up 2): map each mounted merc to its mount animal so the deploy lord can mount
         // them once they spawn. Only mount-typed sub-pawns; companion animals deploy and fight on foot.
-        Dictionary<Pawn, Pawn> mounts = new Dictionary<Pawn, Pawn>();
+        Dictionary<Pawn, Pawn> mounts = [];
         foreach (Mercenary sub in squad.AllSubPawns())
         {
             if (sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
@@ -149,7 +149,7 @@ public static class MilitaryDeploymentUtil
         SquadHealthUtil.ResetNeeds(squad);
 
         IntVec3 dropPosition;
-        DebugTool tool = new DebugTool("FCSelectDeploymentPosition".Translate(), delegate
+        DebugTool tool = new("FCSelectDeploymentPosition".Translate(), delegate
         {
             dropPosition = UI.MouseCell();
             Map curMap = Find.CurrentMap;
@@ -199,7 +199,7 @@ public static class MilitaryDeploymentUtil
     }
     public static void FireSupport(WorldSettlementFC settlement, MilitaryFireSupport support)
     {
-        TargetingParameters targetParams = new TargetingParameters
+        TargetingParameters targetParams = new()
         {
             canTargetLocations = true,
             canTargetSelf = false,
@@ -218,8 +218,8 @@ public static class MilitaryDeploymentUtil
                     || PaymentUtil.TryPaySilver((int)Math.Round(cost), PaymentUtil.Reason_FireSupport, settlement))
                 {
                     Map map = Find.CurrentMap;
-                    List<ThingDef> projectiles = new List<ThingDef>(support.projectiles);
-                    MilitaryFireSupport fireSupport = new MilitaryFireSupport("fireSupport", map, target.Cell,
+                    List<ThingDef> projectiles = new(support.projectiles);
+                    MilitaryFireSupport fireSupport = new("fireSupport", map, target.Cell,
                         projectiles.Count() * 15, 600, support.accuracy, projectiles, settlement.Tile);
                     FindFC.Military.fireSupport.Add(fireSupport);
 

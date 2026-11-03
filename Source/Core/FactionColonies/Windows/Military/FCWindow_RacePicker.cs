@@ -16,7 +16,7 @@ public class FCWindow_RacePicker : Window
     private const float ButtonHeight = 35f;
     private const float margin = 5f;
 
-    public override Vector2 InitialSize => new Vector2(450f, 550f);
+    public override Vector2 InitialSize => new(450f, 550f);
 
     public FCWindow_RacePicker(MilUnitFC unit, FactionFC faction)
     {
@@ -42,12 +42,12 @@ public class FCWindow_RacePicker : Window
         // Search bar
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new Rect(0, 40f, inRect.width, SearchBarHeight);
+        Rect searchRect = new(0, 40f, inRect.width, SearchBarHeight);
         searchTerm = Widgets.TextField(searchRect, searchTerm);
 
         // Build race list (same logic as DesignUnitsWindow lines 186-209)
-        List<string> seenRaces = new List<string>();
-        List<(PawnKindDef def, string label, double cost)> raceOptions = new List<(PawnKindDef, string, double)>();
+        List<string> seenRaces = [];
+        List<(PawnKindDef def, string label, double cost)> raceOptions = [];
 
         foreach (PawnKindDef def in FactionCache.AllPawnKindDefs
             .Where(d => d.IsHumanLikeRace()
@@ -69,7 +69,7 @@ public class FCWindow_RacePicker : Window
         // Scroll view
         float listTop = searchRect.yMax + margin;
         float listHeight = inRect.height - listTop - ButtonHeight - 15f;
-        Rect scrollOutRect = new Rect(0, listTop, inRect.width, listHeight);
+        Rect scrollOutRect = new(0, listTop, inRect.width, listHeight);
         Widgets.DrawMenuSection(scrollOutRect);
 
         float viewHeight = filtered.Count * RowHeight;
@@ -78,19 +78,19 @@ public class FCWindow_RacePicker : Window
         for (int i = 0; i < filtered.Count; i++)
         {
             var (def, label, cost) = filtered[i];
-            Rect row = new Rect(0, i * RowHeight, scrollViewRect.width, RowHeight);
+            Rect row = new(0, i * RowHeight, scrollViewRect.width, RowHeight);
 
             if (def == selectedDef)
                 Widgets.DrawHighlightSelected(row);
             else if (i % 2 == 0)
                 Widgets.DrawHighlight(row);
 
-            Rect iconRect = new Rect(row.x + 2f, row.y + 3f, IconSize, IconSize);
+            Rect iconRect = new(row.x + 2f, row.y + 3f, IconSize, IconSize);
             Widgets.ThingIcon(iconRect, def.race);
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new Rect(iconRect.xMax + 5f, row.y, row.width - IconSize - 10f, RowHeight);
+            Rect labelRect = new(iconRect.xMax + 5f, row.y, row.width - IconSize - 10f, RowHeight);
             UIUtil.ClampedLabel(labelRect, label + " - Cost: " + cost);
 
             if (Widgets.ButtonInvisible(row))
@@ -110,16 +110,16 @@ public class FCWindow_RacePicker : Window
 
         // Bottom buttons
         float buttonWidth = 120f;
-        Rect buttonBar = new Rect(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
+        Rect buttonBar = new(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
 
-        Rect cancelRect = new Rect(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
+        Rect cancelRect = new(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
         {
             Close();
         }
 
         bool canConfirm = selectedDef is not null;
-        Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
+        Rect confirmRect = new(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
         {
             if (canConfirm)
@@ -129,8 +129,7 @@ public class FCWindow_RacePicker : Window
                 if (selectedDef?.race != ThingDefOf.Human && unit.customXenotypeName is not null)
                 {
                     unit.customXenotypeName = null;
-                    if (unit.xenotype is null)
-                        unit.xenotype = XenotypeDefOf.Baseliner;
+                    unit.xenotype ??= XenotypeDefOf.Baseliner;
                 }
                 unit.RerollPreviewPawn();
                 // Drop implants that the new race's body can no longer accept.

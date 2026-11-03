@@ -8,7 +8,7 @@ public class MilSquadFC : IExposable, ILoadReferenceable
 
     public int loadID = -1;
     public string name;
-    private List<MilUnitFC> units = new List<MilUnitFC>();
+    private List<MilUnitFC> units = [];
     public IReadOnlyList<MilUnitFC> Units => units;
     public double equipmentTotalCost;
     public int tickChanged;
@@ -21,7 +21,7 @@ public class MilSquadFC : IExposable, ILoadReferenceable
     /// Design-level stat modifiers for this squad template (squad scope). Seeded onto deployed
     /// squads' own statModifiers when assigned as their outfit. Groundwork for a squad-upgrade system.
     /// </summary>
-    public List<PermanentStatModifier> statModifiers = new List<PermanentStatModifier>();
+    public List<PermanentStatModifier> statModifiers = [];
 
     public void AddStatModifier(PermanentStatModifier mod) { statModifiers.Add(mod); }
     public void RemoveStatModifiersBySource(string sourceId) { statModifiers.RemoveAll(m => m.sourceId == sourceId); }
@@ -61,7 +61,7 @@ public class MilSquadFC : IExposable, ILoadReferenceable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+            statModifiers ??= [];
             UpdateEquipmentTotalCost();
         }
     }
@@ -97,7 +97,7 @@ public class MilSquadFC : IExposable, ILoadReferenceable
 
     public void NewSquad()
     {
-        units = new List<MilUnitFC>();
+        units = [];
         for (int sq = 0; sq < MaxSquadSize; sq++)
         {
             units.Add(FindFC.Military.blankUnit);
@@ -155,11 +155,11 @@ public class MilSquadFC : IExposable, ILoadReferenceable
 
     /* Returns validation errors that should block mustering or flag issues in the UI.
        Base implementation is a no-op; subclasses add their own rules. */
-    public virtual List<string> GetValidationErrors() => new List<string>();
+    public virtual List<string> GetValidationErrors() => [];
 
     /* Creates the appropriate SavedSquadFC (or subclass) snapshot of this squad.
        Subclasses override to return their own SavedSquadFC subtype carrying their extra fields. */
-    public virtual SavedSquadFC ToSavedSquad() => new SavedSquadFC(this);
+    public virtual SavedSquadFC ToSavedSquad() => new(this);
 
     /* Called after base fields have been copied into a new instance during import.
        Subclasses override to pull their extra fields out of the SavedSquadFC subclass. */

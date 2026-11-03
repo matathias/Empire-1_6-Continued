@@ -18,8 +18,8 @@ public static class Listing_StandardExtensions
 {
     // Per-field text box contents and last-returned values, keyed by the caller's
     // unique key. The settings window is single-threaded GUI code, so static is safe.
-    private static readonly Dictionary<string, string> buffers = new Dictionary<string, string>();
-    private static readonly Dictionary<string, float> lastValues = new Dictionary<string, float>();
+    private static readonly Dictionary<string, string> buffers = [];
+    private static readonly Dictionary<string, float> lastValues = [];
 
     // Zebra-stripe row counter; only slider rows advance it, so consecutive sliders
     // always alternate even with checkboxes/headers between them.
@@ -59,19 +59,19 @@ public static class Listing_StandardExtensions
         TextAnchor prevAnchor = Text.Anchor;
 
         // Name label (far left).
-        Rect labelRect = new Rect(row.x, row.y, row.width * LabelPct, row.height);
+        Rect labelRect = new(row.x, row.y, row.width * LabelPct, row.height);
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(labelRect, label);
 
         // Unit area on the far right — always reserved so the boxes line up.
-        Rect unitRect = new Rect(row.xMax - UnitWidth, row.y, UnitWidth, row.height);
+        Rect unitRect = new(row.xMax - UnitWidth, row.y, UnitWidth, row.height);
         if (!unit.NullOrEmpty()) UIUtil.ClampedLabel(unitRect, unit);
 
         // Editable box, left of the reserved unit area.
         fieldRect = new Rect(unitRect.x - Gap - FieldWidth, row.y + (RowHeight - FieldHeight) / 2f, FieldWidth, FieldHeight);
 
         // Value readout, right-aligned so it hugs the slider's left edge.
-        Rect valueRect = new Rect(labelRect.xMax + Gap, row.y, ValueWidth, row.height);
+        Rect valueRect = new(labelRect.xMax + Gap, row.y, ValueWidth, row.height);
         Text.Anchor = TextAnchor.MiddleRight;
         UIUtil.ClampedLabel(valueRect, valueText);
         Text.Anchor = prevAnchor;
@@ -177,19 +177,19 @@ public static class Listing_StandardExtensions
         TextAnchor prevAnchor = Text.Anchor;
 
         // Name label (far left).
-        Rect labelRect = new Rect(row.x, row.y, row.width * LabelPct, row.height);
+        Rect labelRect = new(row.x, row.y, row.width * LabelPct, row.height);
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(labelRect, label);
 
         // Unit area on the far right — reserved so the box lines up with slider rows.
-        Rect unitRect = new Rect(row.xMax - UnitWidth, row.y, UnitWidth, row.height);
+        Rect unitRect = new(row.xMax - UnitWidth, row.y, UnitWidth, row.height);
         if (!unit.NullOrEmpty()) UIUtil.ClampedLabel(unitRect, unit);
         Text.Anchor = prevAnchor;
 
         // Editable box, left of the reserved unit area. Wider than a slider-row box since
         // there's no slider competing for the row's horizontal space.
         const float wideFieldWidth = FieldWidth * 2f;
-        Rect fieldRect = new Rect(unitRect.x - Gap - wideFieldWidth,
+        Rect fieldRect = new(unitRect.x - Gap - wideFieldWidth,
             row.y + (RowHeight - FieldHeight) / 2f, wideFieldWidth, FieldHeight);
 
         // Resync the box when the value was changed from outside this widget (e.g. reset).

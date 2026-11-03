@@ -22,7 +22,7 @@ public class FCWindow_AnimalPicker : Window
     private const float HeaderHeight = 24f;
     private const float margin = 5f;
 
-    public override Vector2 InitialSize => new Vector2(450f, 600f);
+    public override Vector2 InitialSize => new(450f, 600f);
 
     public FCWindow_AnimalPicker(Func<MilUnitFC> getDisplayUnit, Func<MilUnitFC> getEditTarget)
     {
@@ -58,13 +58,13 @@ public class FCWindow_AnimalPicker : Window
         Text.Anchor = TextAnchor.MiddleLeft;
         int total = displayUnit?.TotalAnimalCount ?? 0;
         int cap = FCSettings.maxAnimalSubpawns;
-        Rect countRect = new Rect(0, 38f, inRect.width, HeaderHeight);
+        Rect countRect = new(0, 38f, inRect.width, HeaderHeight);
         if (total >= cap) GUI.color = ColorLibrary.RedReadable;
         UIUtil.ClampedLabel(countRect, "fcAnimalCount".Translate(total, cap));
         GUI.color = Color.white;
 
         // Search bar
-        Rect searchRect = new Rect(0, countRect.yMax + 2f, inRect.width, SearchBarHeight);
+        Rect searchRect = new(0, countRect.yMax + 2f, inRect.width, SearchBarHeight);
         searchTerm = Widgets.TextField(searchRect, searchTerm);
 
         // Build animal list. Submods (e.g. Herds & Fisheries) can gate the offered kinds via
@@ -80,7 +80,7 @@ public class FCWindow_AnimalPicker : Window
         // Scroll view
         float listTop = searchRect.yMax + margin;
         float listHeight = inRect.height - listTop - 15f;
-        Rect scrollOutRect = new Rect(0, listTop, inRect.width, listHeight);
+        Rect scrollOutRect = new(0, listTop, inRect.width, listHeight);
         Widgets.DrawMenuSection(scrollOutRect);
 
         float viewHeight = animals.Count * RowHeight;
@@ -89,14 +89,14 @@ public class FCWindow_AnimalPicker : Window
         for (int i = 0; i < animals.Count; i++)
         {
             PawnKindDef animal = animals[i];
-            Rect row = new Rect(0, i * RowHeight, scrollViewRect.width, RowHeight);
+            Rect row = new(0, i * RowHeight, scrollViewRect.width, RowHeight);
             if (i % 2 == 0) Widgets.DrawHighlight(row);
 
             // Row layout: Icon | Info | Label | Cost
-            Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
-            Rect infoRect = new Rect(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
-            Rect costRect = new Rect(row.xMax - margin - 70f, row.y, 60f, RowHeight);
-            Rect labelRect = new Rect(infoRect.xMax + margin, row.y,
+            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
+            Rect infoRect = new(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
+            Rect costRect = new(row.xMax - margin - 70f, row.y, 60f, RowHeight);
+            Rect labelRect = new(infoRect.xMax + margin, row.y,
                 costRect.x - infoRect.xMax - (margin * 2), RowHeight);
 
             Widgets.ThingIcon(iconRect, animal.race);

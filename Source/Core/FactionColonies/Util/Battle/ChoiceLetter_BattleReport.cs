@@ -18,7 +18,7 @@ namespace FactionColonies;
 public class ChoiceLetter_BattleReport : ChoiceLetter
 {
     /// <summary>Canonical list of archived report ids — one per attack the letter covers.</summary>
-    public List<int> reportIds = new List<int>();
+    public List<int> reportIds = [];
 
     /// <summary>Legacy single-id field. Retained only so pre-multi-report saves migrate into
     /// <see cref="reportIds"/> on load; never written by new code.</summary>
@@ -59,7 +59,7 @@ public class ChoiceLetter_BattleReport : ChoiceLetter
         string label = attackNumber > 0
             ? "FCBattleReportButtonNumbered".Translate(attackNumber)
             : "FCBattleReportButton".Translate();
-        DiaOption opt = new DiaOption(label);
+        DiaOption opt = new(label);
         opt.action = delegate
         {
             WorldComponent_Archive archive = WorldComponent_Archive.Get();
@@ -90,7 +90,7 @@ public class ChoiceLetter_BattleReport : ChoiceLetter
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (reportIds is null) reportIds = new List<int>();
+            reportIds ??= [];
             // Pre-multi-report save: the letter carried a single reportId. Migrate it.
             if (reportIds.Count == 0 && reportId > 0) reportIds.Add(reportId);
         }

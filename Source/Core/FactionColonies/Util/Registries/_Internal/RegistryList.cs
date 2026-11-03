@@ -8,7 +8,7 @@ namespace FactionColonies;
 /// </summary>
 internal class RegistryList<T> where T : class
 {
-    private readonly List<T> _items = new List<T>();
+    private readonly List<T> _items = [];
 
     public void Register(T item)
     {

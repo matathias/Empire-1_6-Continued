@@ -6,10 +6,10 @@ namespace FactionColonies.util;
 /// </summary>
 static class PawnKindTemplateUtil
 {
-    private static Dictionary<RaceTechKey, List<PawnKindDef>> cloneCache = new Dictionary<RaceTechKey, List<PawnKindDef>>();
+    private static Dictionary<RaceTechKey, List<PawnKindDef>> cloneCache = [];
 
     // Def-derived gear data per race, bucketed by tech level. Populated once per race, never cleared.
-    private static Dictionary<ThingDef, PerRaceGearIndex> raceGearIndex = new Dictionary<ThingDef, PerRaceGearIndex>();
+    private static Dictionary<ThingDef, PerRaceGearIndex> raceGearIndex = [];
 
     // Apparel tags that at least one loaded apparel ThingDef actually carries. A pawnkind can declare an
     // apparelTag that no apparel uses (e.g. a race's vestigial "pilgrim" tag whose kinds equip via
@@ -23,7 +23,7 @@ static class PawnKindTemplateUtil
         {
             if (apparelTagsInUse is null)
             {
-                apparelTagsInUse = new HashSet<string>();
+                apparelTagsInUse = [];
                 foreach (ThingDef def in DefDatabase<ThingDef>.AllDefsListForReading)
                 {
                     if (def.apparel?.tags is null) continue;
@@ -87,15 +87,15 @@ static class PawnKindTemplateUtil
     {
         get
         {
-            return new PawnKindDef[]
-            {
+            return
+            [
                 PColonyPawnKindDefOf.PColony_Fighter,
                 PColonyPawnKindDefOf.PColony_Elite,
                 PColonyPawnKindDefOf.PColony_Leader,
                 PColonyPawnKindDefOf.PColony_Trader,
                 PColonyPawnKindDefOf.PColony_Guard,
                 PColonyPawnKindDefOf.PColony_Villager
-            };
+            ];
         }
     }
 
@@ -105,13 +105,13 @@ static class PawnKindTemplateUtil
     /// </summary>
     public static List<PawnKindDef> GetOrCreateClonesForRace(ThingDef race, TechLevel techLevel)
     {
-        RaceTechKey key = new RaceTechKey(race, techLevel);
+        RaceTechKey key = new(race, techLevel);
         if (cloneCache.TryGetValue(key, out List<PawnKindDef> cached))
         {
             return cached;
         }
 
-        List<PawnKindDef> clones = new List<PawnKindDef>();
+        List<PawnKindDef> clones = [];
         foreach (PawnKindDef template in Templates)
         {
             PawnKindDef clone = template.ShallowClone();
@@ -183,14 +183,14 @@ static class PawnKindTemplateUtil
         {
             case TechLevel.Neolithic:
                 ScaleMoneyRanges(clone, 0.3f, 0.4f);
-                ReplaceWeaponTags(clone, new List<string> { "NeolithicMeleeBasic", "NeolithicRangedBasic" });
-                ReplaceApparelTags(clone, new List<string> { "Neolithic" });
+                ReplaceWeaponTags(clone, ["NeolithicMeleeBasic", "NeolithicRangedBasic"]);
+                ReplaceApparelTags(clone, ["Neolithic"]);
                 break;
 
             case TechLevel.Medieval:
                 ScaleMoneyRanges(clone, 0.6f, 0.6f);
-                ReplaceWeaponTags(clone, new List<string> { "MedievalMeleeBasic", "MedievalMeleeDecent" });
-                ReplaceApparelTags(clone, new List<string> { "IndustrialBasic" });
+                ReplaceWeaponTags(clone, ["MedievalMeleeBasic", "MedievalMeleeDecent"]);
+                ReplaceApparelTags(clone, ["IndustrialBasic"]);
                 break;
 
             case TechLevel.Industrial:
@@ -222,7 +222,7 @@ static class PawnKindTemplateUtil
     private static void ReplaceWeaponTags(PawnKindDef clone, List<string> newTags)
     {
         if (clone.weaponTags is null)
-            clone.weaponTags = new List<string>();
+            clone.weaponTags = [];
         else
             clone.weaponTags.Clear();
         clone.weaponTags.AddRange(newTags);
@@ -231,7 +231,7 @@ static class PawnKindTemplateUtil
     private static void ReplaceApparelTags(PawnKindDef clone, List<string> newTags)
     {
         if (clone.apparelTags is null)
-            clone.apparelTags = new List<string>();
+            clone.apparelTags = [];
         else
             clone.apparelTags.Clear();
         clone.apparelTags.AddRange(newTags);
@@ -366,7 +366,7 @@ static class PawnKindTemplateUtil
         List<string> apparelTags = null;
         if (a.apparelTags is not null || b.apparelTags is not null)
         {
-            HashSet<string> set = new HashSet<string>();
+            HashSet<string> set = [];
             if (a.apparelTags is not null) set.AddRange(a.apparelTags);
             if (b.apparelTags is not null) set.AddRange(b.apparelTags);
             apparelTags = set.ToList();
@@ -375,7 +375,7 @@ static class PawnKindTemplateUtil
         List<string> weaponTags = null;
         if (a.weaponTags is not null || b.weaponTags is not null)
         {
-            HashSet<string> set = new HashSet<string>();
+            HashSet<string> set = [];
             if (a.weaponTags is not null) set.AddRange(a.weaponTags);
             if (b.weaponTags is not null) set.AddRange(b.weaponTags);
             weaponTags = set.ToList();
@@ -442,7 +442,7 @@ static class PawnKindTemplateUtil
             return existing;
 
         // Group PKDs by their faction's tech level
-        Dictionary<TechLevel, List<PawnKindDef>> groups = new Dictionary<TechLevel, List<PawnKindDef>>();
+        Dictionary<TechLevel, List<PawnKindDef>> groups = [];
         foreach (PawnKindDef def in FactionCache.AllPawnKindDefs)
         {
             if (def.race != race) continue;
@@ -452,18 +452,18 @@ static class PawnKindTemplateUtil
             TechLevel tier = def.defaultFactionDef?.techLevel ?? TechLevel.Undefined;
             if (!groups.TryGetValue(tier, out List<PawnKindDef> list))
             {
-                list = new List<PawnKindDef>();
+                list = [];
                 groups[tier] = list;
             }
             list.Add(def);
         }
 
         // Build per-tier RaceGearData
-        Dictionary<TechLevel, RaceGearData> tiers = new Dictionary<TechLevel, RaceGearData>();
+        Dictionary<TechLevel, RaceGearData> tiers = [];
         foreach (var kvp in groups)
         {
-            HashSet<string> apparelTags = new HashSet<string>();
-            HashSet<string> weaponTags = new HashSet<string>();
+            HashSet<string> apparelTags = [];
+            HashSet<string> weaponTags = [];
             float apparelMoneyMinSum = 0f, apparelMoneyMaxSum = 0f;
             float weaponMoneyMinSum = 0f, weaponMoneyMaxSum = 0f;
             int apparelBudgetCount = 0;
@@ -510,7 +510,7 @@ static class PawnKindTemplateUtil
             };
         }
 
-        PerRaceGearIndex index = new PerRaceGearIndex { tiers = tiers };
+        PerRaceGearIndex index = new() { tiers = tiers };
         raceGearIndex[race] = index;
         return index;
     }

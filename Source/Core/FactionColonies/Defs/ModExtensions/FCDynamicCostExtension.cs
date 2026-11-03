@@ -56,7 +56,7 @@ public class FCDynamicCostExtension : DefModExtension
     /// Per-resource scaling on the marginal production the option changes (rescues or adds):
     /// coefficient x (additiveDelta x productionMult x assignedWorkers), summed over the scope.
     /// </summary>
-    public List<ResourceProductionDeltaCost> costPerResourceDelta = new List<ResourceProductionDeltaCost>();
+    public List<ResourceProductionDeltaCost> costPerResourceDelta = [];
 
     /// <summary>Which settlements contribute to the production-delta sum.</summary>
     public FCProductionCostScope productionScope = FCProductionCostScope.AffectedSettlements;

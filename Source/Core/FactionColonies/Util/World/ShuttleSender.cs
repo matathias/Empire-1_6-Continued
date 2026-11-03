@@ -37,12 +37,12 @@ class ShuttleSender
 
         IntVec3 landingCell = DropCellFinder.GetBestShuttleLandingSpot(target.Map, Faction.OfPlayer);
         transportShip.ArriveAt(landingCell, target.Map.Parent);
-        transportShip.AddJobs(new ShipJobDef[]
-        {
+        transportShip.AddJobs(
+        [
             ShipJobDefOf.WaitForever,
             ShipJobDefOf.Unload,
             ShipJobDefOf.FlyAway
-        });
+        ]);
 
         if (comp is not null)
         {

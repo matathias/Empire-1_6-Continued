@@ -142,7 +142,7 @@ internal static class DefensiveBattleEffects
             overwhelming ? "FCOverwhelmingVictory".Translate() : "FCDefenseSuccessful".Translate(),
             body,
             FCLetterDefOf.FCBattleReportLetterPositive,
-            settlement, new List<int> { reportId }, op);
+            settlement, [reportId], op);
     }
 
     public static void ApplyLoss(WorldSettlementFC settlement, MilitaryOperation op = null, BattleResult result = null)
@@ -207,7 +207,7 @@ internal static class DefensiveBattleEffects
 
         if (canDestroyBuildings && settlement?.BuildingsComp is not null)
         {
-            List<int> candidates = new List<int>();
+            List<int> candidates = [];
             for (int k = 0; k < settlement.BuildingsComp.NumBuildingSlots; k++)
             {
                 int deconstructRoll = new IntRange(0, 10).RandomInRange;
@@ -273,7 +273,7 @@ internal static class DefensiveBattleEffects
             isCrushingDefeat ? "FCCrushingDefeat".Translate() : "FCDefenseFailure".Translate(),
             body,
             FCLetterDefOf.FCBattleReportLetterNegative,
-            settlement, new List<int> { reportId }, op);
+            settlement, [reportId], op);
     }
 
     /// <summary>
@@ -394,8 +394,8 @@ internal class DefenseLetterAccumulator
     public bool overwhelming;
 
     public int attackCount;
-    public readonly List<Entry> entries = new List<Entry>();
-    public readonly List<int> reportIds = new List<int>();
+    public readonly List<Entry> entries = [];
+    public readonly List<int> reportIds = [];
     public MilitaryOperation representativeOp;
 
     public double totalOvHappiness;
@@ -411,7 +411,7 @@ internal class DefenseLetterAccumulator
         string attackerName, double ovHappiness, double ovLoyalty)
     {
         attackCount++;
-        if (representativeOp is null) representativeOp = op;
+        representativeOp ??= op;
         if (reportId > 0) reportIds.Add(reportId);
         if (overwhelming) this.overwhelming = true;
         totalOvHappiness += ovHappiness;
@@ -423,7 +423,7 @@ internal class DefenseLetterAccumulator
         string attackerName, string detail)
     {
         attackCount++;
-        if (representativeOp is null) representativeOp = op;
+        representativeOp ??= op;
         if (reportId > 0) reportIds.Add(reportId);
         if (crushing) overwhelming = true;
         entries.Add(new Entry { attackerName = attackerName, detail = detail });

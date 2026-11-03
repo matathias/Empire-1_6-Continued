@@ -23,7 +23,7 @@ public class MilitaryOperationParticipant : IExposable
     public Faction faction;
 
     /// <summary>Pawns spawned on the battlefield map for manual battles. Empty for auto-resolved ops.</summary>
-    public List<Pawn> pawns = new List<Pawn>();
+    public List<Pawn> pawns = [];
 
     /// <summary>Initial spawn-time count of pawns on this side. Set as pawns are added to
     /// <see cref="pawns"/>; never decremented. Reading <c>initialPawnCount</c> minus the
@@ -53,6 +53,6 @@ public class MilitaryOperationParticipant : IExposable
         Scribe_Values.Look(ref initialPawnCount, "initialPawnCount", 0);
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit && pawns is null)
-            pawns = new List<Pawn>();
+            pawns = [];
     }
 }

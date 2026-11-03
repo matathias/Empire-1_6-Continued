@@ -23,7 +23,7 @@ public static class TitheIncomeTests
     {
         FactionFC faction = FindFC.FactionComp;
         var settlement = faction.settlements[0];
-        var mods = new List<FCStatModifier> { new FCStatModifier { stat = stat, value = value } };
+        var mods = new List<FCStatModifier> { new() { stat = stat, value = value } };
         settlement.AddStatModifiers(mods, "titheTest");
         try
         {

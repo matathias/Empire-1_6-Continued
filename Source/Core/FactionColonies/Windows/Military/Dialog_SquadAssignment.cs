@@ -12,7 +12,7 @@ namespace FactionColonies;
 /// </summary>
 public class Dialog_SquadAssignment : Window
 {
-    public override Vector2 InitialSize => new Vector2(480f, 460f);
+    public override Vector2 InitialSize => new(480f, 460f);
 
     private const float TitleHeight = 30f;
     private const float CostHeaderHeight = 22f;
@@ -35,7 +35,7 @@ public class Dialog_SquadAssignment : Window
     {
         int squadDeploy = squad.DeploymentCost();
 
-        Rect titleHighlightRect = new Rect(0, 0, inRect.width, TitleHeight);
+        Rect titleHighlightRect = new(0, 0, inRect.width, TitleHeight);
         Widgets.DrawHighlight(titleHighlightRect);
 
         Text.Font = GameFont.Medium;
@@ -47,7 +47,7 @@ public class Dialog_SquadAssignment : Window
         float listTop = HeaderHeight + 6f;
         float btnH = 36f;
         float listH = inRect.height - listTop - btnH - 8f;
-        Rect listRect = new Rect(0, listTop, inRect.width, listH);
+        Rect listRect = new(0, listTop, inRect.width, listH);
 
         DrawList(listRect, squadDeploy);
 
@@ -79,13 +79,13 @@ public class Dialog_SquadAssignment : Window
         MilitaryFC mfc = fc?.military;
         if (fc is null || mfc is null) return;
 
-        List<RowData> rows = new List<RowData>();
+        List<RowData> rows = [];
         if (fc.settlements is not null)
         {
             foreach (WorldSettlementFC s in fc.settlements)
             {
                 if (s is null) continue;
-                RowData r = new RowData
+                RowData r = new()
                 {
                     settlement = s,
                     stationed = s.StationedSquads.Count,
@@ -114,7 +114,7 @@ public class Dialog_SquadAssignment : Window
         int row = 0;
 
         // Unassign row
-        Rect unassignRect = new Rect(0, row * RowHeight, viewRect.width, RowHeight);
+        Rect unassignRect = new(0, row * RowHeight, viewRect.width, RowHeight);
         if (row % 2 == 0) Widgets.DrawHighlight(unassignRect);
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(new Rect(unassignRect.x + 8f, unassignRect.y, unassignRect.width - 100f, RowHeight),
@@ -129,7 +129,7 @@ public class Dialog_SquadAssignment : Window
 
         foreach (RowData r in rows)
         {
-            Rect rowRect = new Rect(0, row * RowHeight, viewRect.width, RowHeight);
+            Rect rowRect = new(0, row * RowHeight, viewRect.width, RowHeight);
             if (row % 2 == 0) Widgets.DrawHighlight(rowRect);
 
             bool disabled = r.Disabled;
@@ -141,9 +141,9 @@ public class Dialog_SquadAssignment : Window
             else if (r.isHere) GUI.color = new Color(0.6f, 0.9f, 0.6f);
 
             // Far-right: stationed / cap. Middle: max deployment budget (Tiny). Left: name.
-            Rect countRect = new Rect(rowRect.xMax - 60f, rowRect.y, 50f, RowHeight);
-            Rect budgetRect = new Rect(countRect.x - 200f, rowRect.y, 200f, RowHeight);
-            Rect nameRect = new Rect(rowRect.x + 8f, rowRect.y, budgetRect.x - rowRect.x - 12f, RowHeight);
+            Rect countRect = new(rowRect.xMax - 60f, rowRect.y, 50f, RowHeight);
+            Rect budgetRect = new(countRect.x - 200f, rowRect.y, 200f, RowHeight);
+            Rect nameRect = new(rowRect.x + 8f, rowRect.y, budgetRect.x - rowRect.x - 12f, RowHeight);
 
             Text.Anchor = TextAnchor.MiddleLeft;
             UIUtil.ClampedLabel(nameRect, r.settlement.Name ?? "?");
@@ -195,7 +195,7 @@ public class Dialog_SquadAssignment : Window
     /// <see cref="MilitaryFC.AttemptToSwap"/>.</summary>
     private void OpenDisplaceMenu(MilitaryFC mfc, WorldSettlementFC target)
     {
-        List<FloatMenuOption> opts = new List<FloatMenuOption>();
+        List<FloatMenuOption> opts = [];
         foreach (MercenarySquadFC occupant in target.StationedSquads)
         {
             if (occupant is null) continue;

@@ -24,7 +24,7 @@ internal static class MilitaryLetterUtil
         LookTargets lookTargets, int reportId, MilitaryOperation op = null)
     {
         SendBattleReportLetter(label, text, def, lookTargets,
-            new List<int> { reportId }, op);
+            [reportId], op);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ internal static class MilitaryLetterUtil
     {
         ChoiceLetter_BattleReport letter = (ChoiceLetter_BattleReport)
             LetterMaker.MakeLetter(label, text, def, lookTargets);
-        letter.reportIds = reportIds ?? new List<int>();
+        letter.reportIds = reportIds ?? [];
         letter.playerSide = MilitaryDeploymentUtil.ResolvePlayerSide(op);
         Find.LetterStack.ReceiveLetter(letter);
     }

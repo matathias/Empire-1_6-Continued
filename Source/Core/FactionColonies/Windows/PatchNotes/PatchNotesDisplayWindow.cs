@@ -21,7 +21,7 @@ public class PatchNotesDisplayWindow : Window
         public List<PatchNoteDef> entries;
     }
 
-    public override Vector2 InitialSize => new Vector2(750f + (StandardMargin * 2), 750f + (StandardMargin * 2));
+    public override Vector2 InitialSize => new(750f + (StandardMargin * 2), 750f + (StandardMargin * 2));
 
     private const float HeaderHeight = 45f;
     private const float GroupHeaderHeight = 35f;
@@ -37,7 +37,7 @@ public class PatchNotesDisplayWindow : Window
     private const float EntryIndent = 10f;
     private const float NewIndicatorWidth = 4f;
 
-    private static readonly Color GroupBgColor = new Color(0.15f, 0.15f, 0.15f, 0.6f);
+    private static readonly Color GroupBgColor = new(0.15f, 0.15f, 0.15f, 0.6f);
 
     private static List<PatchNoteDef> cachedPatchNoteDefs;
 
@@ -59,22 +59,22 @@ public class PatchNotesDisplayWindow : Window
     private string title = "FCPatchNotesWindowTitle".Translate();
 
     // Scroll state
-    private HashSet<int> expandedGroups = new HashSet<int>();
-    private HashSet<int> expandedEntries = new HashSet<int>();
-    private Dictionary<int, float> entryBodyHeights = new Dictionary<int, float>();
+    private HashSet<int> expandedGroups = [];
+    private HashSet<int> expandedEntries = [];
+    private Dictionary<int, float> entryBodyHeights = [];
     private bool shouldRefreshHeight = true;
     private float scrollViewHeight = 0f;
-    private Vector2 patchNoteScrollPos = new Vector2();
+    private Vector2 patchNoteScrollPos = new();
 
     // Scrolling bug fix
     private bool firstRun = true;
     private bool fixDone = false;
 
     // Badge colors
-    private static readonly Color BadgeColorMajor = new Color(0.85f, 0.65f, 0.13f);
-    private static readonly Color BadgeColorMinor = new Color(0.3f, 0.5f, 0.9f);
-    private static readonly Color BadgeColorHotfix = new Color(0.9f, 0.2f, 0.2f);
-    private static readonly Color BadgeColorPatch = new Color(0.5f, 0.5f, 0.5f);
+    private static readonly Color BadgeColorMajor = new(0.85f, 0.65f, 0.13f);
+    private static readonly Color BadgeColorMinor = new(0.3f, 0.5f, 0.9f);
+    private static readonly Color BadgeColorHotfix = new(0.9f, 0.2f, 0.2f);
+    private static readonly Color BadgeColorPatch = new(0.5f, 0.5f, 0.5f);
 
     public PatchNotesDisplayWindow(string modId = "matathias.empire")
     {
@@ -126,7 +126,7 @@ public class PatchNotesDisplayWindow : Window
                     versionLabel = "v" + def.Major + "." + def.Minor,
                     highestSeverity = PatchNoteType.Undefined,
                     hasNewEntries = false,
-                    entries = new List<PatchNoteDef>()
+                    entries = []
                 };
             }
 
@@ -167,12 +167,12 @@ public class PatchNotesDisplayWindow : Window
 
     public override void DoWindowContents(Rect inRect)
     {
-        Rect titleRect = new Rect(inRect.x + margin, inRect.y, inRect.width - margin * 2, TitleBarHeight);
+        Rect titleRect = new(inRect.x + margin, inRect.y, inRect.width - margin * 2, TitleBarHeight);
         float bannerTop = inRect.y + TitleBarHeight + DividerPad;
-        Rect bannerRect = new Rect(inRect.x + margin, bannerTop, inRect.width - margin * 2, BannerHeight);
+        Rect bannerRect = new(inRect.x + margin, bannerTop, inRect.width - margin * 2, BannerHeight);
         float contentTop = bannerTop + BannerHeight + margin;
         float contentHeight = inRect.height - (contentTop - inRect.y);
-        Rect contentPanel = new Rect(inRect.x + margin, contentTop, inRect.width - margin * 2, contentHeight);
+        Rect contentPanel = new(inRect.x + margin, contentTop, inRect.width - margin * 2, contentHeight);
 
         FixScrollingBug();
         CalculateScrollViewSize();
@@ -211,7 +211,7 @@ public class PatchNotesDisplayWindow : Window
             for (int i = anyDef.Links.Count - 1; i >= 0; i--)
             {
                 startX -= LinkButtonSize + margin;
-                Rect btnRect = new Rect(startX, titleRect.y + 3f, LinkButtonSize, LinkButtonSize);
+                Rect btnRect = new(startX, titleRect.y + 3f, LinkButtonSize, LinkButtonSize);
                 TooltipHandler.TipRegion(btnRect, anyDef.LinkButtonToolTips[i]);
                 if (Widgets.ButtonImage(btnRect, anyDef.LinkButtonImages[i]))
                 {
@@ -258,7 +258,7 @@ public class PatchNotesDisplayWindow : Window
             bool groupExpanded = expandedGroups.Contains(gi);
 
             // --- Group Header ---
-            Rect groupRect = new Rect(0f, curY, scrollContentWidth, GroupHeaderHeight);
+            Rect groupRect = new(0f, curY, scrollContentWidth, GroupHeaderHeight);
             DrawGroupHeader(groupRect, group, groupExpanded);
 
             if (Widgets.ButtonInvisible(groupRect))
@@ -290,7 +290,7 @@ public class PatchNotesDisplayWindow : Window
                     bool isNew = def.IsNewerThan(lsMaj, lsMin, lsPat);
 
                     // Entry header (indented)
-                    Rect headerRect = new Rect(EntryIndent, curY, scrollContentWidth - EntryIndent, HeaderHeight);
+                    Rect headerRect = new(EntryIndent, curY, scrollContentWidth - EntryIndent, HeaderHeight);
 
                     if (ei % 2 == 0)
                         Widgets.DrawHighlight(headerRect);
@@ -303,15 +303,15 @@ public class PatchNotesDisplayWindow : Window
                     ResetTextAndColor();
 
                     // Badge
-                    Rect badgeRect = new Rect(headerRect.x + margin, headerRect.y + (HeaderHeight - BadgeHeight) * 0.5f, BadgeWidth, BadgeHeight);
+                    Rect badgeRect = new(headerRect.x + margin, headerRect.y + (HeaderHeight - BadgeHeight) * 0.5f, BadgeWidth, BadgeHeight);
                     DrawTypeBadge(badgeRect, def.GetPatchNoteType);
 
                     // Expand/collapse icon
-                    Rect iconRect = new Rect(headerRect.xMax - IconSize, headerRect.y, IconSize, HeaderHeight);
+                    Rect iconRect = new(headerRect.xMax - IconSize, headerRect.y, IconSize, HeaderHeight);
                     Widgets.DrawTextureFitted(iconRect.ContractedBy(11f), entryExpanded ? TexButton.Collapse : TexButton.Reveal, 1f);
 
                     // Date
-                    Rect dateRect = new Rect(iconRect.x - DateWidth - margin, headerRect.y, DateWidth, HeaderHeight);
+                    Rect dateRect = new(iconRect.x - DateWidth - margin, headerRect.y, DateWidth, HeaderHeight);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleRight;
                     UIUtil.DrawColoredLabel(dateRect, def.ReleaseDate.ToString("dd MMM yyyy"), Color.gray);
@@ -319,7 +319,7 @@ public class PatchNotesDisplayWindow : Window
 
                     // Title
                     float titleX = badgeRect.xMax + margin;
-                    Rect titleLabelRect = new Rect(titleX, headerRect.y, dateRect.x - titleX - margin, HeaderHeight);
+                    Rect titleLabelRect = new(titleX, headerRect.y, dateRect.x - titleX - margin, HeaderHeight);
                     Text.Font = GameFont.Medium;
                     Text.Anchor = TextAnchor.MiddleLeft;
                     UIUtil.ClampedLabel(titleLabelRect, def.ShortTitle);
@@ -350,7 +350,7 @@ public class PatchNotesDisplayWindow : Window
                         Text.Font = GameFont.Small;
                         string bodyText = def.CompactBodyString;
                         float bodyWidth = scrollContentWidth - EntryIndent - margin * 4f;
-                        Rect bodyRect = new Rect(EntryIndent + margin * 2f, curY, bodyWidth, 100f);
+                        Rect bodyRect = new(EntryIndent + margin * 2f, curY, bodyWidth, 100f);
                         Widgets.LabelCacheHeight(ref bodyRect, bodyText);
                         entryBodyHeights[entryKey] = bodyRect.height;
                         curY += bodyRect.height + margin;
@@ -371,7 +371,7 @@ public class PatchNotesDisplayWindow : Window
         // New indicator — red left-border accent
         if (group.hasNewEntries)
         {
-            Rect newBar = new Rect(rect.x, rect.y, NewIndicatorWidth, rect.height);
+            Rect newBar = new(rect.x, rect.y, NewIndicatorWidth, rect.height);
             Widgets.DrawBoxSolid(newBar, Color.red);
         }
 
@@ -379,16 +379,16 @@ public class PatchNotesDisplayWindow : Window
         float labelX = rect.x + margin + (group.hasNewEntries ? NewIndicatorWidth + margin : 0f);
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect versionRect = new Rect(labelX, rect.y, 80f, rect.height);
+        Rect versionRect = new(labelX, rect.y, 80f, rect.height);
         UIUtil.ClampedLabel(versionRect, group.versionLabel);
         ResetTextAndColor();
 
         // Badge
-        Rect badgeRect = new Rect(versionRect.xMax + margin, rect.y + (GroupHeaderHeight - BadgeHeight) * 0.5f, BadgeWidth, BadgeHeight);
+        Rect badgeRect = new(versionRect.xMax + margin, rect.y + (GroupHeaderHeight - BadgeHeight) * 0.5f, BadgeWidth, BadgeHeight);
         DrawTypeBadge(badgeRect, group.highestSeverity);
 
         // Expand/collapse icon
-        Rect iconRect = new Rect(rect.xMax - IconSize, rect.y, IconSize, GroupHeaderHeight);
+        Rect iconRect = new(rect.xMax - IconSize, rect.y, IconSize, GroupHeaderHeight);
         Widgets.DrawTextureFitted(iconRect.ContractedBy(11f), expanded ? TexButton.Collapse : TexButton.Reveal, 1f);
 
         // Entry count + date range (right-aligned, before icon)
@@ -396,7 +396,7 @@ public class PatchNotesDisplayWindow : Window
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleRight;
         float rightWidth = rect.xMax - iconRect.width - badgeRect.xMax - margin * 3f;
-        Rect rightRect = new Rect(badgeRect.xMax + margin, rect.y, rightWidth, rect.height);
+        Rect rightRect = new(badgeRect.xMax + margin, rect.y, rightWidth, rect.height);
         UIUtil.DrawColoredLabel(rightRect, rightText, Color.gray);
         ResetTextAndColor();
     }

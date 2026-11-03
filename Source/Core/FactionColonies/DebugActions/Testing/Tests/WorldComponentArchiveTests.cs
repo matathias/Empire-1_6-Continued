@@ -146,7 +146,7 @@ public static class WorldComponentArchiveTests
         int id3 = archive.RecordBattleReport(MakeTestResult("order_3"));
 
         // Walk RecentBattleReports until we find our three test entries; assert ordering.
-        List<int> seenIds = new List<int>();
+        List<int> seenIds = [];
         foreach (BattleResult r in archive.RecentBattleReports)
         {
             if (r is null) continue;

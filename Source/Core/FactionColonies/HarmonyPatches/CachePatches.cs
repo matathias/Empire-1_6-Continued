@@ -9,7 +9,7 @@ namespace FactionColonies;
 /// </summary>
 public static class EmpireCacheUtil
 {
-    private static readonly Dictionary<string, Action> _invalidators = new Dictionary<string, Action>();
+    private static readonly Dictionary<string, Action> _invalidators = [];
 
     /// <summary>
     /// Registers a cache invalidation callback that will be invoked during <see cref="InvalidateAll"/>.

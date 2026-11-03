@@ -15,7 +15,7 @@ public class FCSituation : IExposable, ILoadReferenceable
     public WorldSettlementFC targetSettlement;     // null == faction-scoped
     public FCSituationApproachDef activeApproach;
     public FCSituationStageDef currentStage;        // null when below the first stage
-    public HashSet<string> firedStageLatches = new HashSet<string>();
+    public HashSet<string> firedStageLatches = [];
     public int loopCount;
     public int loadID = -1;
     public int tickStarted = -1;
@@ -54,6 +54,6 @@ public class FCSituation : IExposable, ILoadReferenceable
         Scribe_Values.Look(ref tickStarted, "tickStarted", -1);
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit && firedStageLatches is null)
-            firedStageLatches = new HashSet<string>();
+            firedStageLatches = [];
     }
 }

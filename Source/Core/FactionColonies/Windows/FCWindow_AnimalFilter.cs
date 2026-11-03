@@ -12,7 +12,7 @@ public class FCWindow_AnimalFilter : Window
     private int viewFilter; // 0=All, 1=Combat, 2=Pack
     private Vector2 scrollPos;
 
-    public override Vector2 InitialSize => new Vector2(450f, 600f);
+    public override Vector2 InitialSize => new(450f, 600f);
 
     private const float RowHeight = 30f;
     private const float SearchBarHeight = 28f;
@@ -76,19 +76,19 @@ public class FCWindow_AnimalFilter : Window
         // Header
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect header = new Rect(inRect.x, inRect.y, inRect.width, 35f);
+        Rect header = new(inRect.x, inRect.y, inRect.width, 35f);
         UIUtil.ClampedLabel(header, "FCAnimalSelection".Translate());
         Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
         // Sub-header: faction name
         Text.Font = GameFont.Small;
-        Rect subHeader = new Rect(inRect.x, header.yMax, inRect.width, 26f);
+        Rect subHeader = new(inRect.x, header.yMax, inRect.width, 26f);
         UIUtil.ClampedLabel(subHeader, FindFC.EmpireFaction.Name);
 
         // Search bar
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new Rect(inRect.x, subHeader.yMax + margin, inRect.width, SearchBarHeight);
+        Rect searchRect = new(inRect.x, subHeader.yMax + margin, inRect.width, SearchBarHeight);
         string newSearch = Widgets.TextField(searchRect, searchTerm);
         if (newSearch != searchTerm)
         {
@@ -101,9 +101,9 @@ public class FCWindow_AnimalFilter : Window
         float filterRowY = searchRect.yMax + margin;
         float filterBtnWidth = (inRect.width - margin * 2) / 3f;
 
-        Rect allBtn = new Rect(inRect.x, filterRowY, filterBtnWidth, filterBtnHeight);
-        Rect combatBtn = new Rect(allBtn.xMax + margin, filterRowY, filterBtnWidth, filterBtnHeight);
-        Rect packBtn = new Rect(combatBtn.xMax + margin, filterRowY, filterBtnWidth, filterBtnHeight);
+        Rect allBtn = new(inRect.x, filterRowY, filterBtnWidth, filterBtnHeight);
+        Rect combatBtn = new(allBtn.xMax + margin, filterRowY, filterBtnWidth, filterBtnHeight);
+        Rect packBtn = new(combatBtn.xMax + margin, filterRowY, filterBtnWidth, filterBtnHeight);
 
         Text.Font = GameFont.Small;
         DrawFilterButton(allBtn, "FCAnimalFilterShowAll".Translate(), 0);
@@ -117,8 +117,8 @@ public class FCWindow_AnimalFilter : Window
         {
             string errorText = "FCAnimalFilterNoneError".Translate();
             float textHeight = Text.CalcHeight(errorText, inRect.width - (smallMargin * 2));
-            Rect errorBox = new Rect(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
-            Rect errorLabel = new Rect(errorBox.x + smallMargin, errorBox.y + smallMargin, errorBox.width - (smallMargin * 2), textHeight);
+            Rect errorBox = new(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
+            Rect errorLabel = new(errorBox.x + smallMargin, errorBox.y + smallMargin, errorBox.width - (smallMargin * 2), textHeight);
 
             Widgets.DrawHighlight(errorBox);
             Text.Font = GameFont.Small;
@@ -132,8 +132,8 @@ public class FCWindow_AnimalFilter : Window
         {
             string warnText = "FCAnimalFilterNoCombatWarning".Translate();
             float textHeight = Text.CalcHeight(warnText, inRect.width - (smallMargin * 2));
-            Rect warnBox = new Rect(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
-            Rect warnLabel = new Rect(warnBox.x + smallMargin, warnBox.y + smallMargin, warnBox.width - (smallMargin * 2), textHeight);
+            Rect warnBox = new(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
+            Rect warnLabel = new(warnBox.x + smallMargin, warnBox.y + smallMargin, warnBox.width - (smallMargin * 2), textHeight);
 
             Widgets.DrawHighlight(warnBox);
             Text.Font = GameFont.Small;
@@ -147,8 +147,8 @@ public class FCWindow_AnimalFilter : Window
         {
             string errorText = "FCAnimalFilterNoPackError".Translate();
             float textHeight = Text.CalcHeight(errorText, inRect.width - (smallMargin * 2));
-            Rect errorBox = new Rect(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
-            Rect errorLabel = new Rect(errorBox.x + smallMargin, errorBox.y + smallMargin, errorBox.width - (smallMargin * 2), textHeight);
+            Rect errorBox = new(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
+            Rect errorLabel = new(errorBox.x + smallMargin, errorBox.y + smallMargin, errorBox.width - (smallMargin * 2), textHeight);
 
             Widgets.DrawHighlight(errorBox);
             Text.Font = GameFont.Small;
@@ -166,8 +166,8 @@ public class FCWindow_AnimalFilter : Window
         {
             string warnText = "FCAnimalFilterBiomeUncoveredWarning".Translate(deliveryBiome.LabelCap);
             float textHeight = Text.CalcHeight(warnText, inRect.width - (smallMargin * 2));
-            Rect warnBox = new Rect(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
-            Rect warnLabel = new Rect(warnBox.x + smallMargin, warnBox.y + smallMargin, warnBox.width - (smallMargin * 2), textHeight);
+            Rect warnBox = new(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
+            Rect warnLabel = new(warnBox.x + smallMargin, warnBox.y + smallMargin, warnBox.width - (smallMargin * 2), textHeight);
 
             Widgets.DrawHighlight(warnBox);
             Text.Font = GameFont.Small;
@@ -178,9 +178,9 @@ public class FCWindow_AnimalFilter : Window
 
         // Enable All / Disable All / Defaults buttons
         float btnWidth = inRect.width / 3f;
-        Rect enableButton = new Rect(inRect.x, bottomY - bigRowHeight, btnWidth, bigRowHeight);
-        Rect disableButton = new Rect(enableButton.xMax, enableButton.y, btnWidth, bigRowHeight);
-        Rect defaultsButton = new Rect(disableButton.xMax, enableButton.y, btnWidth, bigRowHeight);
+        Rect enableButton = new(inRect.x, bottomY - bigRowHeight, btnWidth, bigRowHeight);
+        Rect disableButton = new(enableButton.xMax, enableButton.y, btnWidth, bigRowHeight);
+        Rect defaultsButton = new(disableButton.xMax, enableButton.y, btnWidth, bigRowHeight);
         if (UIUtil.ClampedButtonText(enableButton, "FCAnimalEnableAll".Translate()))
         {
             filter.AllowAll();
@@ -198,10 +198,10 @@ public class FCWindow_AnimalFilter : Window
         // Scrollable animal list
         float listTop = filterRowY + filterBtnHeight + margin;
         float listHeight = bottomY - listTop;
-        Rect scrollOutRect = new Rect(inRect.x, listTop, inRect.width, listHeight);
+        Rect scrollOutRect = new(inRect.x, listTop, inRect.width, listHeight);
         Widgets.DrawMenuSection(scrollOutRect);
 
-        Rect innerRect = new Rect(scrollOutRect.x + 2, scrollOutRect.y + 2, scrollOutRect.width - 4, scrollOutRect.height - 4);
+        Rect innerRect = new(scrollOutRect.x + 2, scrollOutRect.y + 2, scrollOutRect.width - 4, scrollOutRect.height - 4);
         float viewHeight = filteredAnimals.Count * RowHeight;
 
         Rect scrollViewRect = ScrollUtil.BeginScrollView(innerRect, ref scrollPos, Math.Max(viewHeight, innerRect.height));
@@ -210,22 +210,22 @@ public class FCWindow_AnimalFilter : Window
         for (int i = 0; i < filteredAnimals.Count; i++)
         {
             PawnKindDef animal = filteredAnimals[i];
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width, RowHeight);
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width, RowHeight);
 
             if (i % 2 == 0)
                 Widgets.DrawHighlight(row);
 
             // Icon
-            Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
+            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
             Widgets.ThingIcon(iconRect, animal.race);
 
             // Info button
-            Rect infoRect = new Rect(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
+            Rect infoRect = new(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
             Widgets.InfoCardButton(infoRect, animal.race);
 
             // Checkbox
             float checkboxSize = 24f;
-            Rect checkRect = new Rect(row.xMax - margin - checkboxSize, row.y + (RowHeight - checkboxSize) / 2f, checkboxSize, checkboxSize);
+            Rect checkRect = new(row.xMax - margin - checkboxSize, row.y + (RowHeight - checkboxSize) / 2f, checkboxSize, checkboxSize);
             bool allowed = filter.IsAllowed(animal);
             bool prev = allowed;
             Widgets.Checkbox(checkRect.x, checkRect.y, ref allowed, checkboxSize);
@@ -248,7 +248,7 @@ public class FCWindow_AnimalFilter : Window
                 string packLabel = "FCAnimalTagPack".Translate() + " (" + supportedBiomes.Count.ToString() + ")";
                 float tagW = Text.CalcSize(packLabel).x + 8f;
                 tagX -= tagW;
-                Rect tagRect = new Rect(tagX, row.y + 4f, tagW, RowHeight - 8f);
+                Rect tagRect = new(tagX, row.y + 4f, tagW, RowHeight - 8f);
 
                 Color boxColor = packGrayed
                     ? new Color(0.32f, 0.32f, 0.32f, 0.6f)
@@ -269,7 +269,7 @@ public class FCWindow_AnimalFilter : Window
             {
                 float tagW = Text.CalcSize("FCAnimalTagCombat".Translate()).x + 8f;
                 tagX -= tagW;
-                Rect tagRect = new Rect(tagX, row.y + 4f, tagW, RowHeight - 8f);
+                Rect tagRect = new(tagX, row.y + 4f, tagW, RowHeight - 8f);
                 Widgets.DrawBoxSolid(tagRect, new Color(0.55f, 0.2f, 0.2f, 0.6f));
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
@@ -279,7 +279,7 @@ public class FCWindow_AnimalFilter : Window
 
             // Label
             float labelEnd = tagX - margin;
-            Rect labelRect = new Rect(infoRect.xMax + margin, row.y, labelEnd - infoRect.xMax - margin, RowHeight);
+            Rect labelRect = new(infoRect.xMax + margin, row.y, labelEnd - infoRect.xMax - margin, RowHeight);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             UIUtil.ClampedLabel(labelRect, animal.LabelCap);
@@ -329,7 +329,7 @@ public class FCWindow_AnimalFilter : Window
 
     private static string GetNonCombatReasons(PawnKindDef animal)
     {
-        List<string> reasons = new List<string>();
+        List<string> reasons = [];
 
         if (animal.RaceProps.trainability is null
             || animal.RaceProps.trainability.intelligenceOrder < TrainabilityDefOf.Intermediate.intelligenceOrder)

@@ -11,7 +11,7 @@ namespace FactionColonies.util;
 /// </summary>
 internal static class TickOverrideUtil
 {
-    private static readonly Dictionary<string, bool> cache = new Dictionary<string, bool>();
+    private static readonly Dictionary<string, bool> cache = [];
 
     /// <param name="type">Concrete runtime type to test.</param>
     /// <param name="methodName">Instance method to look for.</param>

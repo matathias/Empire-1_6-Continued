@@ -29,7 +29,7 @@ public class SilverPaymentContext
     public void Commit(Action action)
     {
         if (action is null) return;
-        if (commitActions is null) commitActions = new List<Action>();
+        commitActions ??= [];
         commitActions.Add(action);
     }
 
@@ -55,7 +55,7 @@ public class SilverPaymentContext
 
 public static class SilverPaymentRegistry
 {
-    private static readonly RegistryList<ISilverPaymentModifier> _list = new RegistryList<ISilverPaymentModifier>();
+    private static readonly RegistryList<ISilverPaymentModifier> _list = new();
 
     internal static void Register(ISilverPaymentModifier modifier) => _list.Register(modifier);
     internal static void Unregister(ISilverPaymentModifier modifier) => _list.Unregister(modifier);

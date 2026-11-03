@@ -40,9 +40,9 @@ public static class EmpireDeathPenaltyUtil
     // pawn it records it here so Notify_MemberDied skips it (avoiding a second, faction-wide hit).
     // Keyed by pawn (not a single slot) so a nested Pawn.Kill — e.g. a death explosion killing a
     // second pawn mid-Kill — clears only its own entry in the postfix, never the outer pawn's.
-    private static readonly HashSet<Pawn> handledByKillPrefix = new HashSet<Pawn>();
+    private static readonly HashSet<Pawn> handledByKillPrefix = [];
     // Per-caravan dedupe so a pack-animal wipe fires once, not once per dying animal. Transient.
-    private static readonly HashSet<int> wipedCaravanLords = new HashSet<int>();
+    private static readonly HashSet<int> wipedCaravanLords = [];
 
     public static void MarkHandledByKillPrefix(Pawn pawn)
     {
@@ -101,7 +101,7 @@ public static class EmpireDeathPenaltyUtil
     {
         FactionFC faction = FindFC.FactionComp;
         if (faction is null) return;
-        if (home is null) home = HighestProsperity(faction);
+        home ??= HighestProsperity(faction);
         if (home is null) return;
         ApplyDeathPenalty(home, dinfo, 0, SrcPawn, "FCPenaltyPawnDeath".Translate(FindFC.EmpireTitle.CapitalizeFirst()));
     }
@@ -220,24 +220,24 @@ public static class EmpireDeathPenaltyUtil
 
     private static FCStatDef LossStatFor(SettlementStat which)
     {
-        switch (which)
+        return which switch
         {
-            case SettlementStat.Happiness: return FCStatDefOf.happinessLostBase;
-            case SettlementStat.Loyalty: return FCStatDefOf.loyaltyLostBase;
-            case SettlementStat.Unrest: return FCStatDefOf.unrestGainedBase;
-            default: return null;
-        }
+            SettlementStat.Happiness => FCStatDefOf.happinessLostBase,
+            SettlementStat.Loyalty => FCStatDefOf.loyaltyLostBase,
+            SettlementStat.Unrest => FCStatDefOf.unrestGainedBase,
+            _ => null,
+        };
     }
 
     private static bool IsPastThreshold(WorldSettlementFC s, SettlementStat which)
     {
-        switch (which)
+        return which switch
         {
-            case SettlementStat.Happiness: return s.happiness < THRESHOLD_LOW;
-            case SettlementStat.Loyalty: return s.loyalty < THRESHOLD_LOW;
-            case SettlementStat.Unrest: return s.unrest > THRESHOLD_HIGH_UNREST;
-            default: return false;
-        }
+            SettlementStat.Happiness => s.happiness < THRESHOLD_LOW,
+            SettlementStat.Loyalty => s.loyalty < THRESHOLD_LOW,
+            SettlementStat.Unrest => s.unrest > THRESHOLD_HIGH_UNREST,
+            _ => false,
+        };
     }
 
     /// <summary>Resolves a caravan's home settlement from its trader kind.</summary>

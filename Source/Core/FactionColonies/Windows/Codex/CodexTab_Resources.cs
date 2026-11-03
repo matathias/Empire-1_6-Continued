@@ -32,7 +32,7 @@ public class CodexTab_Resources : ICodexTab
 
     /* Tithe item cache (built once per resource, lazy) */
     private readonly Dictionary<ResourceTypeDef, List<TitheItemEntry>> titheItemCache
-        = new Dictionary<ResourceTypeDef, List<TitheItemEntry>>();
+        = [];
 
     /* Collapsible sections */
     private bool keyInfoExpanded = true;
@@ -102,7 +102,7 @@ public class CodexTab_Resources : ICodexTab
 
         foreach (ResourceTypeDef def in resourceDefs)
         {
-            Rect entryRect = new Rect(0f, curY, viewRect.width, EntryRowHeight);
+            Rect entryRect = new(0f, curY, viewRect.width, EntryRowHeight);
             bool isSelected = selectedResource == def;
             Color accent = GetAccent(def);
 
@@ -152,7 +152,7 @@ public class CodexTab_Resources : ICodexTab
         if (selectedResource.Icon is not null)
         {
             float titleIconSize = 28f;
-            Rect iconBgRect = new Rect(0f, curY, titleIconSize, titleIconSize);
+            Rect iconBgRect = new(0f, curY, titleIconSize, titleIconSize);
             Widgets.DrawBoxSolid(iconBgRect, ColorUtil.TransformA(accent, 0.25f));
             UIUtil.DrawColoredBox(iconBgRect, ColorUtil.TransformA(accent, 0.6f));
             GUI.DrawTexture(iconBgRect.ContractedBy(3f), selectedResource.Icon);
@@ -173,7 +173,7 @@ public class CodexTab_Resources : ICodexTab
         if (!selectedResource.description.NullOrEmpty())
         {
             Text.Font = GameFont.Small;
-            Rect descRect = new Rect(0f, curY, contentWidth, 100f);
+            Rect descRect = new(0f, curY, contentWidth, 100f);
             Widgets.LabelCacheHeight(ref descRect, selectedResource.FormattedDesc);
             curY += descRect.height + margin;
             CodexUIUtil.ResetText();
@@ -283,11 +283,11 @@ public class CodexTab_Resources : ICodexTab
         float tableW = width - x - margin;
 
         List<BiomeResourceDef> allBiomes = DefDatabase<BiomeResourceDef>.AllDefsListForReading;
-        List<BiomeResourceDef> rowBiomes = new List<BiomeResourceDef>();
-        List<string> biomeNames = new List<string>();
-        List<string> additives = new List<string>();
-        List<string> multipliers = new List<string>();
-        List<string> totals = new List<string>();
+        List<BiomeResourceDef> rowBiomes = [];
+        List<string> biomeNames = [];
+        List<string> additives = [];
+        List<string> multipliers = [];
+        List<string> totals = [];
 
         foreach (BiomeResourceDef biomeDef in allBiomes.OrderBy(b => b.LabelCap.RawText))
         {
@@ -316,7 +316,7 @@ public class CodexTab_Resources : ICodexTab
 
         if (biomeNames.Count > 0)
         {
-            Rect tableRect = new Rect(x, curY, tableW, 0f);
+            Rect tableRect = new(x, curY, tableW, 0f);
             int clickedRow;
             curY += UIUtil.DrawTable(tableRect, out clickedRow,
                 "FCCodexResourceBiomeName".Translate(), biomeNames,
@@ -355,16 +355,16 @@ public class CodexTab_Resources : ICodexTab
         if (titheItemCache.TryGetValue(def, out cached))
             return cached;
 
-        cached = new List<TitheItemEntry>();
+        cached = [];
 
         if (!def.CanTithe) { titheItemCache[def] = cached; return cached; }
 
         // Build an unrestricted filter that ignores research/tech checks
-        ThingFilter filter = new ThingFilter();
+        ThingFilter filter = new();
         Dictionary<ThingDef, TitheRestrictionInfo> restrictions;
         def.FilterResourceForCodex(filter, out restrictions);
 
-        ThingSetMakerParams param = new ThingSetMakerParams();
+        ThingSetMakerParams param = new();
         param.filter = filter;
         param.techLevel = TechLevel.Archotech;
         param.countRange = new IntRange(1, 1);
@@ -374,7 +374,7 @@ public class CodexTab_Resources : ICodexTab
 
         foreach (ThingDef thing in things)
         {
-            TitheItemEntry entry = new TitheItemEntry();
+            TitheItemEntry entry = new();
             entry.thingDef = thing;
 
             // Use restriction info from the ResourceTypeDef's allow lists
@@ -384,7 +384,7 @@ public class CodexTab_Resources : ICodexTab
                 entry.minTechLevel = info.minTechLevel;
                 if (info.researchProjects is not null && info.researchProjects.Count > 0)
                 {
-                    entry.researchLabels = new List<string>();
+                    entry.researchLabels = [];
                     foreach (ResearchProjectDef rp in info.researchProjects)
                         entry.researchLabels.Add(rp.LabelCap);
                 }
@@ -393,7 +393,7 @@ public class CodexTab_Resources : ICodexTab
             // Also check recipe-level research prerequisites (not from our restriction, but from the ThingDef itself)
             if ((entry.researchLabels is null || entry.researchLabels.Count == 0) && thing.recipeMaker is not null)
             {
-                List<string> recipeResearch = new List<string>();
+                List<string> recipeResearch = [];
                 if (thing.recipeMaker.researchPrerequisite is not null)
                     recipeResearch.Add(thing.recipeMaker.researchPrerequisite.LabelCap);
                 if (thing.recipeMaker.researchPrerequisites is not null)
@@ -430,7 +430,7 @@ public class CodexTab_Resources : ICodexTab
         float textW = width - x - margin;
 
         // Search bar
-        Rect searchRect = new Rect(x, curY, textW, SearchBarHeight);
+        Rect searchRect = new(x, curY, textW, SearchBarHeight);
         string prevSearch = titheSearchTerm;
         Text.Font = GameFont.Small;
         titheSearchTerm = Widgets.TextField(searchRect, titheSearchTerm);
@@ -450,7 +450,7 @@ public class CodexTab_Resources : ICodexTab
             filtered = allItems;
         else
         {
-            filtered = new List<TitheItemEntry>();
+            filtered = [];
             foreach (TitheItemEntry entry in allItems)
             {
                 if ((entry.thingDef.label ?? entry.thingDef.defName)
@@ -466,7 +466,7 @@ public class CodexTab_Resources : ICodexTab
             float rowX = x;
 
             // Info card button
-            Rect infoBtnRect = new Rect(rowX, curY + (StatRowHeight - infoButtonSize) * 0.5f, infoButtonSize, infoButtonSize);
+            Rect infoBtnRect = new(rowX, curY + (StatRowHeight - infoButtonSize) * 0.5f, infoButtonSize, infoButtonSize);
             Widgets.InfoCardButton(infoBtnRect, entry.thingDef);
             rowX = infoBtnRect.xMax + SmallMargin;
 
@@ -474,7 +474,7 @@ public class CodexTab_Resources : ICodexTab
             Texture2D icon = entry.thingDef.uiIcon;
             if (icon is not null)
             {
-                Rect iconRect = new Rect(rowX, curY + (StatRowHeight - IconSmall) * 0.5f, IconSmall, IconSmall);
+                Rect iconRect = new(rowX, curY + (StatRowHeight - IconSmall) * 0.5f, IconSmall, IconSmall);
                 GUI.color = entry.thingDef.uiIconColor;
                 GUI.DrawTexture(iconRect, icon);
                 GUI.color = Color.white;
@@ -523,7 +523,7 @@ public class CodexTab_Resources : ICodexTab
      *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
     private List<WorldSettlementDef> GetCompatibleSettlements(ResourceTypeDef resource)
     {
-        List<WorldSettlementDef> result = new List<WorldSettlementDef>();
+        List<WorldSettlementDef> result = [];
         foreach (WorldSettlementDef def in DefDatabase<WorldSettlementDef>.AllDefsListForReading)
         {
             if (!def.available) continue;
@@ -556,7 +556,7 @@ public class CodexTab_Resources : ICodexTab
 
         foreach (WorldSettlementDef def in settlements)
         {
-            Rect rowRect = new Rect(x, curY, width - x - margin, UpgradeRowHeight);
+            Rect rowRect = new(x, curY, width - x - margin, UpgradeRowHeight);
             bool isHover = Mouse.IsOver(rowRect);
 
             Text.Font = GameFont.Small;

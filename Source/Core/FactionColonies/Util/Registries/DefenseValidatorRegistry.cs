@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class DefenseValidatorRegistry
 {
-    private static readonly RegistryList<IDefenseValidator> _list = new RegistryList<IDefenseValidator>();
+    private static readonly RegistryList<IDefenseValidator> _list = new();
 
     internal static void Register(IDefenseValidator v) => _list.Register(v);
     internal static void Unregister(IDefenseValidator v) => _list.Unregister(v);

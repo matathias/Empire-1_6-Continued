@@ -41,7 +41,7 @@ public static class MilitaryMigrationUtil
             if (comp is null) continue;
             MercenarySquadFC legacy = comp._legacyMilitarySquad;
             if (legacy is null) continue;
-            if (legacy.settlement is null) legacy.settlement = settlement;
+            legacy.settlement ??= settlement;
             if (comp._legacyAutoDefend && !legacy.autoDefend) legacy.autoDefend = true;
             comp._legacyMilitarySquad = null;
             comp._legacyAutoDefend = false;
@@ -116,7 +116,7 @@ public static class MilitaryMigrationUtil
 
         int migratedCount = 0;
 
-        foreach (WorldSettlementFC settlement in faction.settlements ?? new List<WorldSettlementFC>())
+        foreach (WorldSettlementFC settlement in faction.settlements ?? [])
         {
             if (settlement is null) continue;
             var comp = settlement.MilitaryComp;
@@ -268,7 +268,7 @@ public static class MilitaryMigrationUtil
     {
         // Resolve target world object from the comp's recorded location.
         WorldObject target = Find.WorldObjects.WorldObjectAt<WorldSettlementFC>(comp._legacyMilitaryLocation);
-        if (target is null) target = Find.WorldObjects.SettlementAt(comp._legacyMilitaryLocation);
+        target ??= Find.WorldObjects.SettlementAt(comp._legacyMilitaryLocation);
         if (target is null) return null;
 
         int newId = manager.nextOperationId++;

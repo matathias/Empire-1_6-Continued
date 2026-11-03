@@ -31,18 +31,18 @@ class LordJob_DeliverSupplies : LordJob
     /// </summary>
     /// <param name="stateGraph"></param>
     /// <returns>the Transition</returns>
-    private Transition DeliveryToFightTransition(StateGraph stateGraph) => new Transition(stateGraph.StartingToil, stateGraph.lordToils[1])
+    private Transition DeliveryToFightTransition(StateGraph stateGraph) => new(stateGraph.StartingToil, stateGraph.lordToils[1])
     {
-        triggers = new List<Trigger>(2)
-        {
+        triggers =
+        [
             new Trigger_PawnHarmed(),
             new Trigger_Custom((TriggerSignal s) => Map?.dangerWatcher?.DangerRating == StoryDanger.High)
-        },
-        preActions = new List<TransitionAction>(2)
-        {
+        ],
+        preActions =
+        [
             new TransitionAction_Custom(() => lord.ownedPawns.ForEach(pawn => pawn.DropItem(pawn.Position, ThingPlaceMode.Direct, out _))),
             new TransitionAction_Custom(() => Messages.Message("FCDeliveryPawnsHiding".Translate(), lord.ownedPawns, MessageTypeDefOf.NeutralEvent))
-        }
+        ]
     };
 
     /// <summary>
@@ -51,15 +51,15 @@ class LordJob_DeliverSupplies : LordJob
     /// </summary>
     /// <param name="stateGraph"></param>
     /// <returns>the Transition</returns>
-    private Transition RefreshFightTransition(StateGraph stateGraph) => new Transition(stateGraph.lordToils[1], stateGraph.lordToils[1], true)
+    private Transition RefreshFightTransition(StateGraph stateGraph) => new(stateGraph.lordToils[1], stateGraph.lordToils[1], true)
     {
-        triggers = new List<Trigger>(2)
-        {
+        triggers =
+        [
             new Trigger_PawnHarmed(),
             new Trigger_Custom((TriggerSignal _) => Map?.dangerWatcher?.DangerRating == StoryDanger.High)
-        },
-        preActions = new List<TransitionAction>
-        {
+        ],
+        preActions =
+        [
             new TransitionAction_Custom(delegate()
             {
                 if (lord.ownedPawns.NullOrEmpty()) return;
@@ -67,7 +67,7 @@ class LordJob_DeliverSupplies : LordJob
                 traverseParms.pawn = lord.ownedPawns[0];
                 ((LordToil_DefendPoint)stateGraph.lordToils[1]).SetDefendPoint(defendPosition.IsValid ? defendPosition : (defendPosition = DeliveryLogistics.GetDeliveryCell(traverseParms, lord.Map)));
             })
-        }
+        ]
     };
 
     /// <summary>
@@ -75,16 +75,16 @@ class LordJob_DeliverSupplies : LordJob
     /// </summary>
     /// <param name="stateGraph"></param>
     /// <returns>the Transition</returns>
-    private Transition FightingToLeavingTransition(StateGraph stateGraph) => new Transition(stateGraph.lordToils[1], stateGraph.lordToils[2])
+    private Transition FightingToLeavingTransition(StateGraph stateGraph) => new(stateGraph.lordToils[1], stateGraph.lordToils[2])
     {
-        triggers = new List<Trigger>(1)
-        {
+        triggers =
+        [
             new Trigger_TicksPassedAndNoRecentHarm(1000)
-        },
-        preActions = new List<TransitionAction>(1)
-        {
+        ],
+        preActions =
+        [
             new TransitionAction_Custom(() => Messages.Message(Map.HasDownedForFaction(lord.faction) ? "FCDeliveryPawnsLeavingMapWithDowned".Translate() : "FCDeliveryPawnsLeavingMap".Translate(), lord.ownedPawns, MessageTypeDefOf.NeutralEvent))
-        }
+        ]
     };
 
     /// <summary>
@@ -92,18 +92,18 @@ class LordJob_DeliverSupplies : LordJob
     /// </summary>
     /// <param name="stateGraph"></param>
     /// <returns>the Transition</returns>
-    private Transition LeavingToFightTransition(StateGraph stateGraph) => new Transition(stateGraph.lordToils[2], stateGraph.lordToils[1])
+    private Transition LeavingToFightTransition(StateGraph stateGraph) => new(stateGraph.lordToils[2], stateGraph.lordToils[1])
     {
-        triggers = new List<Trigger>(2)
-        {
+        triggers =
+        [
             new Trigger_PawnHarmed(),
             new Trigger_Custom((TriggerSignal s) => Map?.dangerWatcher?.DangerRating == StoryDanger.High)
-        },
-        preActions = new List<TransitionAction>(2)
-        {
+        ],
+        preActions =
+        [
             new TransitionAction_Custom(() => lord.ownedPawns.ForEach(pawn => pawn.DropItem(pawn.Position, ThingPlaceMode.Direct, out _))),
             new TransitionAction_Custom(() => Messages.Message("FCDeliveryPawnsHiding".Translate(), lord.ownedPawns, MessageTypeDefOf.NeutralEvent))
-        }
+        ]
     };
 
     /// <summary>
@@ -112,15 +112,15 @@ class LordJob_DeliverSupplies : LordJob
     /// </summary>
     /// <param name="stateGraph"></param>
     /// <returns>the Transition</returns>
-    private Transition CanNotDeliverToLeavingTransition(StateGraph stateGraph) => new Transition(stateGraph.lordToils[0], stateGraph.lordToils[2])
+    private Transition CanNotDeliverToLeavingTransition(StateGraph stateGraph) => new(stateGraph.lordToils[0], stateGraph.lordToils[2])
     {
-        triggers = new List<Trigger>(1) { new Trigger_Custom((TriggerSignal _) => CanNotReach()) },
-        preActions = new List<TransitionAction>(1) { new TransitionAction_Custom(() => Messages.Message("FCDeliveryPawnsLeavingMapNoPath".Translate(), lord.ownedPawns, MessageTypeDefOf.NeutralEvent)) }
+        triggers = [new Trigger_Custom((TriggerSignal _) => CanNotReach())],
+        preActions = [new TransitionAction_Custom(() => Messages.Message("FCDeliveryPawnsLeavingMapNoPath".Translate(), lord.ownedPawns, MessageTypeDefOf.NeutralEvent))]
     };
 
     public override StateGraph CreateGraph()
     {
-        StateGraph stateGraph = new StateGraph { StartingToil = new LordToil_DeliverSupplies() };
+        StateGraph stateGraph = new() { StartingToil = new LordToil_DeliverSupplies() };
 
         stateGraph.AddToil(new LordToil_DefendPoint(fallbackLocation));
         stateGraph.AddToil(new LordToil_RecoverWoundedAndLeave(new LordToilData_ExitMap() { canDig = false, locomotion = LocomotionUrgency.Sprint, interruptCurrentJob = true }));

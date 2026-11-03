@@ -49,7 +49,7 @@ public class Dialog_AssignSquadToSettlement : Dialog_SquadPicker
 
     protected override float DrawHeader(Rect inRect)
     {
-        Rect titleRect = new Rect(0, 0, inRect.width, TitleH);
+        Rect titleRect = new(0, 0, inRect.width, TitleH);
         Widgets.DrawHighlight(titleRect);
 
         Text.Font = GameFont.Medium;
@@ -194,7 +194,7 @@ public class Dialog_AssignSquadToSettlement : Dialog_SquadPicker
             string unavailableReason = null;
             if (!available)
             {
-                List<string> reasons = new List<string>();
+                List<string> reasons = [];
                 if (squad.IsBusy) reasons.Add(SquadStatusUtil.BusyReason(squad));
                 if (overBudget) reasons.Add(SquadStatusUtil.OverBudgetReason(squad.DeploymentCost(), maxDeployCost, target?.Name));
                 unavailableReason = SquadStatusUtil.FormatUnavailTooltip(reasons);
@@ -232,7 +232,7 @@ public class Dialog_AssignSquadToSettlement : Dialog_SquadPicker
     {
         if (currentSlotSquad is null) return;
 
-        Rect cardRect = new Rect(0f, runningY, viewRect.width, CardH);
+        Rect cardRect = new(0f, runningY, viewRect.width, CardH);
         DrawUnassignCard(cardRect);
         runningY += CardH + RowGap;
     }

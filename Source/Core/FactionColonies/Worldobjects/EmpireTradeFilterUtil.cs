@@ -45,8 +45,7 @@ public static class EmpireTradeFilterUtil
     /// </summary>
     public static bool IsCommonEssential(ThingDef thingDef)
     {
-        if (_commonEssentials is null)
-            _commonEssentials = BuildCommonEssentials();
+        _commonEssentials ??= BuildCommonEssentials();
         return _commonEssentials.Allows(thingDef);
     }
 
@@ -56,14 +55,13 @@ public static class EmpireTradeFilterUtil
     /// </summary>
     public static bool MatchesAnyResource(ThingDef thingDef)
     {
-        if (_allResourceThingDefs is null)
-            _allResourceThingDefs = BuildAllResourceThingDefs();
+        _allResourceThingDefs ??= BuildAllResourceThingDefs();
         return _allResourceThingDefs.Allows(thingDef);
     }
 
     private static ThingFilter BuildCommonEssentials()
     {
-        ThingFilter filter = new ThingFilter();
+        ThingFilter filter = new();
         filter.SetAllow(ThingCategoryDefOf.Foods, true);
         filter.SetAllow(ThingCategoryDefOf.Medicine, true);
         filter.SetAllow(ThingCategoryDefOf.Apparel, true);
@@ -73,7 +71,7 @@ public static class EmpireTradeFilterUtil
 
     private static ThingFilter BuildAllResourceThingDefs()
     {
-        ThingFilter filter = new ThingFilter();
+        ThingFilter filter = new();
         foreach (ResourceTypeDef rtd in FactionCache.NonPoolResourceTypeDefs)
         {
             rtd.FilterResourceForTrade(filter);

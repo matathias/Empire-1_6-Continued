@@ -11,7 +11,7 @@ namespace FactionColonies;
  * skilled doctor or override the medicine the base mod chose from tech level. */
 public static class MercTendingUtil
 {
-    private static readonly List<Hediff> _tmpHediffs = new List<Hediff>();
+    private static readonly List<Hediff> _tmpHediffs = [];
 
     /// <summary>
     /// Applies one tend pass to <paramref name="merc"/>'s pawn using the doctor + medicine

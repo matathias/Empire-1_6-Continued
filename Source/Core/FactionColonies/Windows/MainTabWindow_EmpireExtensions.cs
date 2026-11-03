@@ -5,10 +5,10 @@ namespace FactionColonies;
 public class MainTabWindow_EmpireExtensions : MainTabWindow
 {
     private string curTab;
-    private List<TabRecord> tabs = new List<TabRecord>();
-    private Dictionary<string, Action<Rect>> tabFuncs = new Dictionary<string, Action<Rect>>();
+    private List<TabRecord> tabs = [];
+    private Dictionary<string, Action<Rect>> tabFuncs = [];
 
-    public override Vector2 InitialSize => new Vector2(1060f, 640f);
+    public override Vector2 InitialSize => new(1060f, 640f);
 
     public override void PreOpen()
     {
@@ -32,7 +32,7 @@ public class MainTabWindow_EmpireExtensions : MainTabWindow
                     itab.OnTabSwitch();
                 }, () => curTab == name));
                 tabFuncs.Add(name, itab.DrawOverviewTab);
-                if (curTab is null) curTab = name;
+                curTab ??= name;
             }
             catch (Exception e)
             {
@@ -58,7 +58,7 @@ public class MainTabWindow_EmpireExtensions : MainTabWindow
         float minTabWidth = maxLabelWidth + 16f;
 
         float tabHeight = TabDrawer.GetOverflowTabHeight(inRect, tabs, minTabWidth, 200f);
-        Rect contentRect = new Rect(inRect.x, inRect.y + tabHeight, inRect.width, inRect.height - tabHeight);
+        Rect contentRect = new(inRect.x, inRect.y + tabHeight, inRect.width, inRect.height - tabHeight);
         Widgets.DrawMenuSection(contentRect);
         TabDrawer.DrawTabsOverflow(inRect, tabs, minTabWidth, 200f);
 

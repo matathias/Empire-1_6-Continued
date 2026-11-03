@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public class FCPolicyBehavior_Feudal : FCPolicyBehavior
 {
-    private CooldownAbility mercenaryCooldown = new CooldownAbility();
+    private CooldownAbility mercenaryCooldown = new();
 
     public override void PostInitialize()
     {
@@ -30,7 +30,7 @@ public class FCPolicyBehavior_Feudal : FCPolicyBehavior
             request.ColonistRelationChanceFactor = Ext<FCPolicyBehaviorExt_Feudal>().relationChanceFactor;
             Pawn pawn = PawnGenerator.GeneratePawn(request);
 
-            IncidentParms parms = new IncidentParms
+            IncidentParms parms = new()
             {
                 target = Find.CurrentMap,
                 faction = FindFC.EmpireFaction,
@@ -41,9 +41,9 @@ public class FCPolicyBehavior_Feudal : FCPolicyBehavior
                 raidStrategy = RaidStrategyDefOf.ImmediateAttackFriendly
             };
 
-            PawnsArrivalModeWorker_EdgeWalkIn worker = new PawnsArrivalModeWorker_EdgeWalkIn();
+            PawnsArrivalModeWorker_EdgeWalkIn worker = new();
             worker.TryResolveRaidSpawnCenter(parms);
-            worker.Arrive(new List<Pawn> { pawn }, parms);
+            worker.Arrive([pawn], parms);
 
             Find.LetterStack.ReceiveLetter(
                 "FCMercenaryJoined".Translate(),

@@ -42,8 +42,8 @@ public static class BattleForecastTests
     public static void Forecast_ResultAlwaysInBounds()
     {
         // Test a variety of force/efficiency combos
-        double[] forces = { 1, 3, 5, 10, 20 };
-        double[] efficiencies = { 0.5, 0.9, 1.0, 1.2, 1.5 };
+        double[] forces = [1, 3, 5, 10, 20];
+        double[] efficiencies = [0.5, 0.9, 1.0, 1.2, 1.5];
 
         foreach (double af in forces)
         foreach (double df in forces)

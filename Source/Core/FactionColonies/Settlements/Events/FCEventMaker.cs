@@ -169,7 +169,7 @@ public static class FCEventMaker
 
     public static FCEventDef ReturnRandomEvent()
     {
-        List<FCEventDef> tmpEventList = new List<FCEventDef>();
+        List<FCEventDef> tmpEventList = [];
 
         foreach (FCEventDef eventDef in FactionCache.AllRandomEventDefs)
         {
@@ -214,7 +214,7 @@ public static class FCEventMaker
             return null;
         }
 
-        FCEvent tempEvent = new FCEvent(true);
+        FCEvent tempEvent = new(true);
         tempEvent.def = def;
         tempEvent.tickStarted = Find.TickManager.TicksGame;
         int duration = def.timeTillTrigger;
@@ -241,11 +241,11 @@ public static class FCEventMaker
 
         int now = Find.TickManager.TicksGame;
         int duration = def.timeTillTrigger;
-        FCEvent tempEvent = new FCEvent(true)
+        FCEvent tempEvent = new(true)
         {
             def = def,
             tickStarted = now,
-            settlementTraitLocations = new List<WorldSettlementFC>()
+            settlementTraitLocations = []
         };
         if (def.HasVariableDuration)
         {
@@ -265,7 +265,7 @@ public static class FCEventMaker
             else if (tempEvent.def.targetAllSettlements)
             {
                 // Deterministically target every qualifying settlement
-                HashSet<WorldSettlementFC> excludedSettlements = new HashSet<WorldSettlementFC>();
+                HashSet<WorldSettlementFC> excludedSettlements = [];
                 foreach (FCEvent activeEvt in worldcomp.Events)
                 {
                     if (activeEvt.def is null) continue;
@@ -318,12 +318,12 @@ public static class FCEventMaker
                 }
 
                 //List of map locations
-                List<WorldSettlementFC> settlements = new List<WorldSettlementFC>();
+                List<WorldSettlementFC> settlements = [];
                 //temporary list of settlemnts.
-                List<WorldSettlementFC> tmp = new List<WorldSettlementFC>();
+                List<WorldSettlementFC> tmp = [];
 
                 // Exclude settlements already affected by the same or an incompatible event
-                HashSet<WorldSettlementFC> excludedSettlements = new HashSet<WorldSettlementFC>();
+                HashSet<WorldSettlementFC> excludedSettlements = [];
                 foreach (FCEvent activeEvt in worldcomp.Events)
                 {
                     if (activeEvt.def is null) continue;
@@ -558,12 +558,12 @@ public static class FCEventMaker
                                     }
 
                                     // Let registered interceptors try to handle delivery first
-                                    TaxDeliveryContext deliveryCtx = new TaxDeliveryContext(evt, settlement);
+                                    TaxDeliveryContext deliveryCtx = new(evt, settlement);
                                     if (!TaxDeliveryRegistry.InvokeTryDeliverGoods(deliveryCtx))
                                     {
                                         // No interceptor handled it — default delivery
                                         string str = "FCTaxesFrom".Translate() + " " + settlement.Name + " " + "FCHaveBeenDelivered".Translate() + "!";
-                                        Message msg = new Message(str, MessageTypeDefOf.PositiveEvent);
+                                        Message msg = new(str, MessageTypeDefOf.PositiveEvent);
                                         PaymentUtil.DeliverThings(evt, LetterMaker.MakeLetter("FCTaxesHaveArrived".Translate(), str + "\n" + evt.goods.ToLetterString(), LetterDefOf.PositiveEvent), msg);
                                     }
                                     break;

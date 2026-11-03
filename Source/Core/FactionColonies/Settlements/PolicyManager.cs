@@ -10,10 +10,10 @@ namespace FactionColonies;
 public class PolicyManager : IExposable
 {
     /* Owned state */
-    public List<FCPolicy> policies = new List<FCPolicy>();
+    public List<FCPolicy> policies = [];
     public List<FCPolicy> factionTraits = SeedDefaultTraits();
-    public Dictionary<FCPolicyCategory, FCPolicy> edicts = new Dictionary<FCPolicyCategory, FCPolicy>();
-    internal HashSet<FCPolicyCategory> pendingEdictActivations = new HashSet<FCPolicyCategory>();
+    public Dictionary<FCPolicyCategory, FCPolicy> edicts = [];
+    internal HashSet<FCPolicyCategory> pendingEdictActivations = [];
 
     /* Transient caches (not scribed) */
     private List<FCPolicyBehavior> _cachedBehaviors;
@@ -26,10 +26,10 @@ public class PolicyManager : IExposable
 
     /* Lazy-resolved parent ref via FindFC. Robust against load/init order. */
     private FactionFC _cachedFactionFC = null;
-    public FactionFC Faction => _cachedFactionFC ?? (_cachedFactionFC = FindFC.FactionComp);
+    public FactionFC Faction => _cachedFactionFC ??= FindFC.FactionComp;
 
     /* Minimum faction level required to unlock each edict category */
-    public static readonly Dictionary<FCPolicyCategory, int> EdictCategoryUnlockLevels = new Dictionary<FCPolicyCategory, int>
+    public static readonly Dictionary<FCPolicyCategory, int> EdictCategoryUnlockLevels = new()
     {
         { FCPolicyCategory.Social, 2 },
         { FCPolicyCategory.Tax, 3 },
@@ -57,10 +57,10 @@ public class PolicyManager : IExposable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (policies is null) policies = new List<FCPolicy>();
-            if (factionTraits is null) factionTraits = SeedDefaultTraits();
-            if (edicts is null) edicts = new Dictionary<FCPolicyCategory, FCPolicy>();
-            pendingEdictActivations = new HashSet<FCPolicyCategory>();
+            policies ??= [];
+            factionTraits ??= SeedDefaultTraits();
+            edicts ??= [];
+            pendingEdictActivations = [];
             ScrubDeadPolicies();
         }
     }
@@ -80,7 +80,7 @@ public class PolicyManager : IExposable
             foreach (KeyValuePair<FCPolicyCategory, FCPolicy> kv in edicts)
             {
                 if (kv.Value?.def is null)
-                    (deadEdicts ?? (deadEdicts = new List<FCPolicyCategory>())).Add(kv.Key);
+                    (deadEdicts ??= []).Add(kv.Key);
             }
             if (deadEdicts is not null)
                 foreach (FCPolicyCategory cat in deadEdicts)
@@ -98,14 +98,14 @@ public class PolicyManager : IExposable
         if (legacyEdicts is not null) edicts = legacyEdicts;
     }
 
-    private static List<FCPolicy> SeedDefaultTraits() => new List<FCPolicy>
-    {
+    private static List<FCPolicy> SeedDefaultTraits() =>
+    [
         new FCPolicy(FCPolicyDefOf.empty),
         new FCPolicy(FCPolicyDefOf.empty),
         new FCPolicy(FCPolicyDefOf.empty),
         new FCPolicy(FCPolicyDefOf.empty),
         new FCPolicy(FCPolicyDefOf.empty)
-    };
+    ];
 
     #region Behavior System
 
@@ -117,7 +117,7 @@ public class PolicyManager : IExposable
     public void RebuildBehaviorCache()
     {
         LogUtil.Message("Rebuilding faction behavior cache");
-        _cachedBehaviors = new List<FCPolicyBehavior>();
+        _cachedBehaviors = [];
         foreach (FCPolicy p in policies)
         {
             if (p?.behavior is not null)
@@ -136,7 +136,7 @@ public class PolicyManager : IExposable
         }
 
         // Cache the subset that actually overrides Tick, so the per-tick dispatch skips no-op behaviors.
-        _tickingBehaviors = new List<FCPolicyBehavior>();
+        _tickingBehaviors = [];
         foreach (FCPolicyBehavior b in _cachedBehaviors)
         {
             if (TickOverrideUtil.Overrides(b.GetType(), "Tick", typeof(FCPolicyBehavior), typeof(FactionFC)))
@@ -151,10 +151,10 @@ public class PolicyManager : IExposable
 
     private void RebuildActionCache()
     {
-        _cachedBlockedActions = new HashSet<FCActionType>();
-        _cachedEnabledActions = new HashSet<FCActionType>();
-        _cachedBlockedJobs = new HashSet<MilitaryJobDef>();
-        _cachedEnabledJobs = new HashSet<MilitaryJobDef>();
+        _cachedBlockedActions = [];
+        _cachedEnabledActions = [];
+        _cachedBlockedJobs = [];
+        _cachedEnabledJobs = [];
         foreach (FCPolicy p in policies)
         {
             if (p?.def is null) continue;
@@ -347,7 +347,7 @@ public class PolicyManager : IExposable
         // Revoke existing edict in this category (if any)
         RevokeEdict(def.category, silent: true);
 
-        FCPolicy edict = new FCPolicy(def);
+        FCPolicy edict = new(def);
         edicts[def.category] = edict;
         if (def.enactDuration > 0)
             pendingEdictActivations.Add(def.category);
@@ -379,7 +379,7 @@ public class PolicyManager : IExposable
         // Cascade: revoke any active edicts that depended on the one just removed
         if (revokedDef is not null)
         {
-            List<FCPolicyCategory> toRevoke = new List<FCPolicyCategory>();
+            List<FCPolicyCategory> toRevoke = [];
             foreach (KeyValuePair<FCPolicyCategory, FCPolicy> kvp in edicts)
             {
                 if (kvp.Value.def.requiredPolicies.NullOrEmpty()) continue;
@@ -399,7 +399,7 @@ public class PolicyManager : IExposable
     public void RevokeAllEdicts()
     {
         // Copy keys to avoid modifying collection during iteration
-        List<FCPolicyCategory> categories = new List<FCPolicyCategory>(edicts.Keys);
+        List<FCPolicyCategory> categories = new(edicts.Keys);
         foreach (FCPolicyCategory cat in categories)
         {
             RevokeEdict(cat, silent: true);
@@ -420,7 +420,7 @@ public class PolicyManager : IExposable
     public void CheckEdictActivations()
     {
         bool anyActivated = false;
-        List<FCPolicyCategory> toRemove = new List<FCPolicyCategory>();
+        List<FCPolicyCategory> toRemove = [];
         foreach (FCPolicyCategory cat in pendingEdictActivations)
         {
             if (!edicts.TryGetValue(cat, out FCPolicy edict) || edict.IsFullyActive)

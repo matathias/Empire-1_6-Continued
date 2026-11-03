@@ -24,7 +24,7 @@ public static class StatTests
     /// </summary>
     private static void WithTestModifier(WorldSettlementFC settlement, FCStatDef stat, double value, Action action)
     {
-        var mods = new List<FCStatModifier> { new FCStatModifier { stat = stat, value = value } };
+        var mods = new List<FCStatModifier> { new() { stat = stat, value = value } };
         settlement.AddStatModifiers(mods, "test");
         try
         {
@@ -104,7 +104,7 @@ public static class StatTests
     [EmpireTest("Stat")]
     public static void ConfigErrors_NullStat_YieldsError()
     {
-        var mods = new List<FCStatModifier> { new FCStatModifier { stat = null, value = 1 } };
+        var mods = new List<FCStatModifier> { new() { stat = null, value = 1 } };
         int errorCount = FCStatModifier.ConfigErrors(mods, "TestOwner").Count();
         TestAssert.AreEqual(1, errorCount, "Should yield exactly 1 config error for null stat");
     }
@@ -114,7 +114,7 @@ public static class StatTests
     {
         var mods = new List<FCStatModifier>
         {
-            new FCStatModifier { stat = FCStatDefOf.militaryBaseLevel, value = 1 }
+            new() { stat = FCStatDefOf.militaryBaseLevel, value = 1 }
         };
         int errorCount = FCStatModifier.ConfigErrors(mods, "TestOwner").Count();
         TestAssert.AreEqual(0, errorCount, "Should yield no config errors for valid stat");
@@ -126,7 +126,7 @@ public static class StatTests
         int nullErrors = FCStatModifier.ConfigErrors(null, "TestOwner").Count();
         TestAssert.AreEqual(0, nullErrors, "Null list should yield no errors");
 
-        int emptyErrors = FCStatModifier.ConfigErrors(new List<FCStatModifier>(), "TestOwner").Count();
+        int emptyErrors = FCStatModifier.ConfigErrors([], "TestOwner").Count();
         TestAssert.AreEqual(0, emptyErrors, "Empty list should yield no errors");
     }
 
@@ -140,7 +140,7 @@ public static class StatTests
         var stage = new FCSituationStageDef
         {
             defName = "EmpireTest_SituationStage",
-            statModifiers = new List<FCStatModifier> { new FCStatModifier { stat = null, value = 1 } }
+            statModifiers = [new() { stat = null, value = 1 }]
         };
         bool hasNullStatError = stage.ConfigErrors().Any(e => e.Contains("null stat"));
         TestAssert.IsTrue(hasNullStatError,
@@ -153,7 +153,7 @@ public static class StatTests
         var stage = new FCSituationStageDef
         {
             defName = "EmpireTest_SituationStage",
-            statModifiers = new List<FCStatModifier> { new FCStatModifier { stat = FCStatDefOf.militaryBaseLevel, value = 1 } }
+            statModifiers = [new() { stat = FCStatDefOf.militaryBaseLevel, value = 1 }]
         };
         bool hasNullStatError = stage.ConfigErrors().Any(e => e.Contains("null stat"));
         TestAssert.IsFalse(hasNullStatError,
@@ -166,7 +166,7 @@ public static class StatTests
         var approach = new FCSituationApproachDef
         {
             defName = "EmpireTest_SituationApproach",
-            statModifiers = new List<FCStatModifier> { new FCStatModifier { stat = null, value = 1 } }
+            statModifiers = [new() { stat = null, value = 1 }]
         };
         bool hasNullStatError = approach.ConfigErrors().Any(e => e.Contains("null stat"));
         TestAssert.IsTrue(hasNullStatError,
@@ -179,7 +179,7 @@ public static class StatTests
         var approach = new FCSituationApproachDef
         {
             defName = "EmpireTest_SituationApproach",
-            statModifiers = new List<FCStatModifier> { new FCStatModifier { stat = FCStatDefOf.militaryBaseLevel, value = 1 } }
+            statModifiers = [new() { stat = FCStatDefOf.militaryBaseLevel, value = 1 }]
         };
         bool hasNullStatError = approach.ConfigErrors().Any(e => e.Contains("null stat"));
         TestAssert.IsFalse(hasNullStatError,
@@ -193,7 +193,7 @@ public static class StatTests
     [EmpireTest("Stat")]
     public static void Description_EmptyList_ReturnsEmpty()
     {
-        TaggedString desc = FCStatModifier.GetDescription(new List<FCStatModifier>());
+        TaggedString desc = FCStatModifier.GetDescription([]);
         TestAssert.IsTrue(desc.RawText.NullOrEmpty(),
             $"Empty list should produce empty description, got '{desc}'");
     }
@@ -201,7 +201,7 @@ public static class StatTests
     [EmpireTest("Stat")]
     public static void Description_NullStatEntry_DoesNotThrow()
     {
-        var mods = new List<FCStatModifier> { new FCStatModifier { stat = null, value = 1 } };
+        var mods = new List<FCStatModifier> { new() { stat = null, value = 1 } };
         TaggedString desc = FCStatModifier.GetDescription(mods);
         TestAssert.IsTrue(desc.RawText.NullOrEmpty(),
             $"Null stat entry should be skipped, got '{desc}'");
@@ -214,7 +214,7 @@ public static class StatTests
         FCStatDef stat = FCStatDefOf.militaryBaseLevel;
         if (stat.descriptionKey.NullOrEmpty())
             TestAssert.Skip("militaryBaseLevel has no descriptionKey");
-        var mods = new List<FCStatModifier> { new FCStatModifier { stat = stat, value = 2 } };
+        var mods = new List<FCStatModifier> { new() { stat = stat, value = 2 } };
         TaggedString desc = FCStatModifier.GetDescription(mods);
         TestAssert.IsFalse(desc.RawText.NullOrEmpty(),
             "Additive stat with descriptionKey should produce non-empty description");
@@ -227,7 +227,7 @@ public static class StatTests
         FCStatDef stat = FCStatDefOf.happinessGainedMultiplier;
         if (stat.descriptionKey.NullOrEmpty())
             TestAssert.Skip("happinessGainedMultiplier has no descriptionKey");
-        var mods = new List<FCStatModifier> { new FCStatModifier { stat = stat, value = 1.5 } };
+        var mods = new List<FCStatModifier> { new() { stat = stat, value = 1.5 } };
         TaggedString desc = FCStatModifier.GetDescription(mods);
         TestAssert.IsFalse(desc.RawText.NullOrEmpty(),
             "Multiplicative stat with descriptionKey should produce non-empty description");
@@ -242,7 +242,7 @@ public static class StatTests
             TestAssert.Skip("No ResourceTypeDef with productionAdditiveStat");
         var mods = new List<FCStatModifier>
         {
-            new FCStatModifier { stat = rtd.productionAdditiveStat, value = 3 }
+            new() { stat = rtd.productionAdditiveStat, value = 3 }
         };
         TaggedString desc = FCStatModifier.GetDescription(mods);
         TestAssert.IsFalse(desc.RawText.NullOrEmpty(),
@@ -411,7 +411,7 @@ public static class StatTests
         FCStatDef stat = FCStatDefOf.happinessGainedBase;
         double before = settlement.GetSettlementStatValue(stat);
 
-        var mods = new List<FCStatModifier> { new FCStatModifier { stat = stat, value = 5.0 } };
+        var mods = new List<FCStatModifier> { new() { stat = stat, value = 5.0 } };
         settlement.AddStatModifiers(mods, "test");
         try
         {
@@ -441,8 +441,8 @@ public static class StatTests
         double before = settlement.GetSettlementStatValue(stat);
 
         // Create two separate modifier lists with same stat and value
-        var mods1 = new List<FCStatModifier> { new FCStatModifier { stat = stat, value = 2.0 } };
-        var mods2 = new List<FCStatModifier> { new FCStatModifier { stat = stat, value = 2.0 } };
+        var mods1 = new List<FCStatModifier> { new() { stat = stat, value = 2.0 } };
+        var mods2 = new List<FCStatModifier> { new() { stat = stat, value = 2.0 } };
 
         settlement.AddStatModifiers(mods1, "test1");
         settlement.AddStatModifiers(mods2, "test2");
@@ -482,8 +482,8 @@ public static class StatTests
         double before = settlement.GetSettlementStatValue(stat);
 
         // Add modifiers from two different sources
-        var mods1 = new List<FCStatModifier> { new FCStatModifier { stat = stat, value = 3.0 } };
-        var mods2 = new List<FCStatModifier> { new FCStatModifier { stat = stat, value = 5.0 } };
+        var mods1 = new List<FCStatModifier> { new() { stat = stat, value = 3.0 } };
+        var mods2 = new List<FCStatModifier> { new() { stat = stat, value = 5.0 } };
 
         settlement.AddStatModifiers(mods1, "testA");
         settlement.AddStatModifiers(mods2, "testB");
@@ -621,14 +621,14 @@ public static class StatTests
             TestAssert.Skip("No faction/settlements");
 
         // Test a representative sample of stats across all settlements
-        FCStatDef[] sampleStats = new FCStatDef[]
-        {
+        FCStatDef[] sampleStats =
+        [
             FCStatDefOf.taxBonusFlat,
             FCStatDefOf.happinessGainedBase,
             FCStatDefOf.militaryBaseLevel,
             FCStatDefOf.settlementCostMultiplier,
             FCStatDefOf.prosperityGainedBase
-        };
+        ];
 
         foreach (WorldSettlementFC settlement in faction.settlements)
         {

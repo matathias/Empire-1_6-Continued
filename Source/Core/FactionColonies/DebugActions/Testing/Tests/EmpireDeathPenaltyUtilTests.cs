@@ -14,7 +14,7 @@ public static class EmpireDeathPenaltyUtilTests
     // checks — which route through Pawn.Equals -> def.defName — throw NRE. Give each marker pawn a
     // stub def and a unique thingIDNumber so equality and hashing are well-defined.
     private static Pawn MarkerPawn(int id) =>
-        new Pawn { def = new ThingDef { defName = "EmpireTestPawn" }, thingIDNumber = id };
+        new() { def = new ThingDef { defName = "EmpireTestPawn" }, thingIDNumber = id };
 
     // -*- Fix 4: nested Kill must not clear the outer pawn's marker -*-
 

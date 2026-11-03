@@ -50,7 +50,7 @@ public class WorldObjectComp_FactionInteraction : WorldObjectComp
         parent.Faction != Find.FactionManager.OfPlayer;
 
     private static Command_Action HostileAction(FactionFC factionFC, Faction faction, PlanetTile tile) =>
-        new Command_Action
+        new()
         {
             defaultLabel = "FCAttackSettlement".Translate(
                 faction.HasName ? faction.Name : "FCUnsupportedSettlementFaction".Translate().ToString()),
@@ -80,7 +80,7 @@ public class WorldObjectComp_FactionInteraction : WorldObjectComp
         };
 
     private static Command_Action PeacefulAction(FactionFC factionFC, Faction faction) =>
-        new Command_Action
+        new()
         {
             defaultLabel = "FCIncreaseRelations".Translate(),
             defaultDesc = "",

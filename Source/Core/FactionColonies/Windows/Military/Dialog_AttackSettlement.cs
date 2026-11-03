@@ -103,7 +103,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
 
         defenderPower = registry.GetOrCompute(targetSettlement);
 
-        BattleForceContext probeCtx = new BattleForceContext
+        BattleForceContext probeCtx = new()
         {
             kind = currentJob,
             targetTile = targetSettlement.Tile,
@@ -122,7 +122,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
     protected override float DrawHeader(Rect inRect)
     {
         // Title banner (full width)
-        Rect titleRect = new Rect(0, 0, inRect.width, TitleH);
+        Rect titleRect = new(0, 0, inRect.width, TitleH);
         Widgets.DrawHighlight(titleRect);
 
         Text.Font = GameFont.Medium;
@@ -157,8 +157,8 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
 
         // Two-column body
         float colW = (inRect.width - HeaderColGap) * 0.5f;
-        Rect leftCol = new Rect(0, bodyTop, colW, 0);
-        Rect rightCol = new Rect(colW + HeaderColGap, bodyTop, colW, 0);
+        Rect leftCol = new(0, bodyTop, colW, 0);
+        Rect rightCol = new(colW + HeaderColGap, bodyTop, colW, 0);
 
         float leftBottom = DrawHeaderLeftColumn(leftCol);
         float rightBottom = DrawHeaderRightColumn(rightCol);
@@ -187,8 +187,8 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
         Text.Anchor = TextAnchor.MiddleCenter;
 
         // Target header row
-        Rect targetHeader = new Rect(col.x + margin, y, col.width - (margin * 2), SubHeaderH);
-        Rect targetHeaderLabel = new Rect(targetHeader.x + smallMargin, targetHeader.y, targetHeader.width - (smallMargin * 2), targetHeader.height);
+        Rect targetHeader = new(col.x + margin, y, col.width - (margin * 2), SubHeaderH);
+        Rect targetHeaderLabel = new(targetHeader.x + smallMargin, targetHeader.y, targetHeader.width - (smallMargin * 2), targetHeader.height);
         UIUtil.ClampedLabel(targetHeaderLabel, "FCSquadPickerTarget".Translate());
         TexLoad.DrawHorizontalPeakGradientLine(targetHeader.x, targetHeader.yMax, targetHeader.width, Color.gray);
         y += targetHeader.height + margin;
@@ -247,19 +247,19 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
         Text.Anchor = TextAnchor.MiddleCenter;
 
         // Operation header row
-        Rect opHeader = new Rect(col.x + margin, y, col.width - (margin * 2), SubHeaderH);
-        Rect opHeaderLabel = new Rect(opHeader.x + smallMargin, opHeader.y, opHeader.width - (smallMargin * 2), opHeader.height);
+        Rect opHeader = new(col.x + margin, y, col.width - (margin * 2), SubHeaderH);
+        Rect opHeaderLabel = new(opHeader.x + smallMargin, opHeader.y, opHeader.width - (smallMargin * 2), opHeader.height);
         UIUtil.ClampedLabel(opHeaderLabel, "FCSquadPickerOperation".Translate());
         TexLoad.DrawHorizontalPeakGradientLine(opHeader.x, opHeader.yMax, opHeader.width, Color.gray);
         y += opHeader.height + margin;
 
         // Operation dropdown row
         float buttonMargin = margin * 3;
-        Rect opButton = new Rect(col.x + buttonMargin, y, col.width - (buttonMargin * 2), SubHeaderH - 4f);
+        Rect opButton = new(col.x + buttonMargin, y, col.width - (buttonMargin * 2), SubHeaderH - 4f);
         string btnLabel = currentJob is null ? "?" : currentJob.LabelCap.ToString();
         if (UIUtil.ClampedButtonText(opButton, btnLabel))
         {
-            List<FloatMenuOption> opts = new List<FloatMenuOption>();
+            List<FloatMenuOption> opts = [];
             foreach (MilitaryJobDef job in validJobs)
             {
                 MilitaryJobDef captured = job;
@@ -396,7 +396,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
              * engagement. Defender-side bounds were already pre-modified once at ctor. */
             if (hasAttackerForce && target is not null)
             {
-                BattleForceContext rowCtx = new BattleForceContext
+                BattleForceContext rowCtx = new()
                 {
                     kind = currentJob,
                     targetTile = target.Tile,
@@ -447,7 +447,7 @@ public class Dialog_AttackSettlement : Dialog_SquadPicker
             string unavailableReason = null;
             if (!available)
             {
-                List<string> reasons = new List<string>();
+                List<string> reasons = [];
                 SquadStatusUtil.AppendIntrinsicUnavailReasons(squad, reasons);
                 if (moraleLocked && squad.settlement.TryGetSquadDeploymentBlock(out string mr)) reasons.Add(mr);
                 unavailableReason = SquadStatusUtil.FormatUnavailTooltip(reasons);

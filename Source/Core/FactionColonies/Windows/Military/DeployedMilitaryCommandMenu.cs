@@ -8,10 +8,10 @@ public class DeployedMilitaryCommandMenu : Window
 {
     readonly FactionFC faction;
     public MercenarySquadFC selectedSquad;
-    private List<MercenarySquadFC> squads = new List<MercenarySquadFC>();
+    private List<MercenarySquadFC> squads = [];
     public string squadText;
 
-    private Dictionary<string, string> truncateCache = new Dictionary<string, string>();
+    private Dictionary<string, string> truncateCache = [];
 
     public DeployedMilitaryCommandMenu()
     {
@@ -31,7 +31,7 @@ public class DeployedMilitaryCommandMenu : Window
         selectedSquad = faction.military.SquadsInDeployOp.Where(squad => squad.getSettlement is not null).RandomElementWithFallback();
     }
 
-    public override Vector2 InitialSize => new Vector2(216f, 300f);
+    public override Vector2 InitialSize => new(216f, 300f);
 
     protected override float Margin => 8f;
 
@@ -45,7 +45,7 @@ public class DeployedMilitaryCommandMenu : Window
     /// </summary>
     private void DoSelectSquadCommand()
     {
-        List<FloatMenuOption> list = new List<FloatMenuOption>();
+        List<FloatMenuOption> list = [];
         foreach (MercenarySquadFC squad in faction.military.SquadsInDeployOp)
         {
             if (squad.getSettlement is not null)
@@ -162,11 +162,11 @@ public class DeployedMilitaryCommandMenu : Window
         Widgets.DrawBoxSolid(rect, new Color(bg, bg, bg));
 
         float iconY = rect.y + (rect.height - iconSize) / 2f;
-        Rect iconRect = new Rect(rect.x + iconMargin, iconY, iconSize, iconSize);
+        Rect iconRect = new(rect.x + iconMargin, iconY, iconSize, iconSize);
         GUI.DrawTexture(iconRect, icon);
 
         float textX = iconRect.xMax + 4f;
-        Rect labelRect = new Rect(textX, rect.y, rect.xMax - textX - 4f, rect.height);
+        Rect labelRect = new(textX, rect.y, rect.xMax - textX - 4f, rect.height);
         TextAnchor prevAnchor = Text.Anchor;
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(labelRect, label);
@@ -213,7 +213,7 @@ public class DeployedMilitaryCommandMenu : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
 
-        Rect selectSquadRect = new Rect(rect.x, curY, contentWidth, buttonHeight);
+        Rect selectSquadRect = new(rect.x, curY, contentWidth, buttonHeight);
         squadText = "FCSelectDeployedSquad".Translate();
         if (UIUtil.ClampedButtonText(selectSquadRect, squadText))
         {
@@ -233,7 +233,7 @@ public class DeployedMilitaryCommandMenu : Window
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.WordWrap = false;
 
-            Rect settlementRect = new Rect(rect.x, curY, contentWidth, infoRowHeight);
+            Rect settlementRect = new(rect.x, curY, contentWidth, infoRowHeight);
             bool settlementHovered = Mouse.IsOver(settlementRect);
             Widgets.DrawHighlight(settlementRect);
             if (settlementHovered) Widgets.DrawHighlight(settlementRect);
@@ -258,7 +258,7 @@ public class DeployedMilitaryCommandMenu : Window
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
 
-            Rect squadNameRect = new Rect(rect.x, curY, contentWidth, infoRowHeight);
+            Rect squadNameRect = new(rect.x, curY, contentWidth, infoRowHeight);
             bool squadHovered = Mouse.IsOver(squadNameRect);
             Widgets.DrawHighlight(squadNameRect);
             if (squadHovered) Widgets.DrawHighlight(squadNameRect);
@@ -293,21 +293,21 @@ public class DeployedMilitaryCommandMenu : Window
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.WordWrap = false;
 
-            Rect attackRect = new Rect(rect.x, curY, contentWidth, buttonHeight);
+            Rect attackRect = new(rect.x, curY, contentWidth, buttonHeight);
             if (DrawIconButton(attackRect, "FCCommandAttack".Translate(), TexCommand.Attack, iconSize, iconMargin))
             {
                 DoAttackCommand();
             }
             curY = attackRect.yMax + spacing;
 
-            Rect moveRect = new Rect(rect.x, curY, contentWidth, buttonHeight);
+            Rect moveRect = new(rect.x, curY, contentWidth, buttonHeight);
             if (DrawIconButton(moveRect, "FCCommandMove".Translate(), TexCommand.Draft, iconSize, iconMargin))
             {
                 DoMoveCommand();
             }
             curY = moveRect.yMax + spacing;
 
-            Rect leaveRect = new Rect(rect.x, curY, contentWidth, buttonHeight);
+            Rect leaveRect = new(rect.x, curY, contentWidth, buttonHeight);
             if (DrawIconButton(leaveRect, "FCCommandLeave".Translate(), TexCommand.PauseCaravan, iconSize, iconMargin))
             {
                 DoLeaveCommand();
@@ -316,7 +316,7 @@ public class DeployedMilitaryCommandMenu : Window
 
             if (Prefs.DevMode)
             {
-                Rect debugRect = new Rect(rect.x, curY, contentWidth, buttonHeight);
+                Rect debugRect = new(rect.x, curY, contentWidth, buttonHeight);
                 if (UIUtil.ButtonFlat(debugRect, "FCDebugRemoveAllCommand".Translate()))
                 {
                     DoDebugCommand();

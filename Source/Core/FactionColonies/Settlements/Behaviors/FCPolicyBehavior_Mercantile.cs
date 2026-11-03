@@ -31,7 +31,7 @@ public class FCPolicyBehavior_Mercantile : FCPolicyBehavior
 
         try
         {
-            IncidentWorker_TraderCaravanArrival worker = new IncidentWorker_TraderCaravanArrival();
+            IncidentWorker_TraderCaravanArrival worker = new();
             worker.def = IncidentDefOf.TraderCaravanArrival;
             IncidentParms parms =
                 StorytellerUtility.DefaultParmsNow(IncidentCategoryDefOf.Misc, map);
@@ -88,7 +88,7 @@ public class FCPolicyBehavior_Mercantile : FCPolicyBehavior
     {
         try
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             List<PawnGroupMaker> list = def?.pawnGroupMakers;
             sb.Append(" | makers=").Append(list is null ? "null" : list.Count.ToString());
             if (list is null) return sb.ToString();
@@ -128,8 +128,8 @@ public class FCPolicyBehavior_Mercantile : FCPolicyBehavior
                 if (biome is not null && trader.carriers is not null)
                 {
                     int pass = 0;
-                    List<string> passNames = new List<string>(5);
-                    List<string> failNames = new List<string>(5);
+                    List<string> passNames = new(5);
+                    List<string> failNames = new(5);
                     foreach (PawnGenOption c in trader.carriers)
                     {
                         bool ok = biome.IsPackAnimalAllowed(c.kind.race);

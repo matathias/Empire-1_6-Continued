@@ -11,8 +11,8 @@ public static class ScrollUtil
     private static GUIStyle thumbStyle;
 
     // Stack of saved originals — supports nested scroll views
-    private static readonly Stack<GUIStyle> savedTracks = new Stack<GUIStyle>();
-    private static readonly Stack<GUIStyle> savedThumbs = new Stack<GUIStyle>();
+    private static readonly Stack<GUIStyle> savedTracks = new();
+    private static readonly Stack<GUIStyle> savedThumbs = new();
 
     private static void EnsureStyles()
     {
@@ -39,7 +39,7 @@ public static class ScrollUtil
 
         bool needsScroll = contentHeight > outRect.height;
         float viewWidth = needsScroll ? outRect.width - (ScrollbarWidth + 1f) : outRect.width;
-        Rect viewRect = new Rect(0f, 0f, viewWidth, Mathf.Max(contentHeight, outRect.height));
+        Rect viewRect = new(0f, 0f, viewWidth, Mathf.Max(contentHeight, outRect.height));
 
         savedTracks.Push(GUI.skin.verticalScrollbar);
         savedThumbs.Push(GUI.skin.verticalScrollbarThumb);

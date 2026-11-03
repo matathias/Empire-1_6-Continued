@@ -13,7 +13,7 @@ namespace FactionColonies;
 /// </summary>
 public static class NaturalSourceUtil
 {
-    private static readonly List<ThingDef> EmptyRocks = new List<ThingDef>();
+    private static readonly List<ThingDef> EmptyRocks = [];
 
     /* product ThingDef (chunk or stone block) -> the natural rock(s) it derives from.
        Built lazily once from DefDatabase and never invalidated (rock/chunk defs are static
@@ -24,17 +24,14 @@ public static class NaturalSourceUtil
     {
         get
         {
-            if (_cachedProductToRocks is null)
-            {
-                _cachedProductToRocks = BuildProductToRocks();
-            }
+            _cachedProductToRocks ??= BuildProductToRocks();
             return _cachedProductToRocks;
         }
     }
 
     private static Dictionary<ThingDef, List<ThingDef>> BuildProductToRocks()
     {
-        Dictionary<ThingDef, List<ThingDef>> map = new Dictionary<ThingDef, List<ThingDef>>();
+        Dictionary<ThingDef, List<ThingDef>> map = [];
         foreach (ThingDef rock in DefDatabase<ThingDef>.AllDefsListForReading)
         {
             if (!rock.IsNonResourceNaturalRock) continue;
@@ -65,7 +62,7 @@ public static class NaturalSourceUtil
         List<ThingDef> rocks;
         if (!map.TryGetValue(product, out rocks))
         {
-            rocks = new List<ThingDef>();
+            rocks = [];
             map[product] = rocks;
         }
         if (!rocks.Contains(rock)) rocks.Add(rock);
@@ -96,7 +93,7 @@ public static class NaturalSourceUtil
         if (sourceRocks.Count == 0) return true;
         if (Find.World is null || !tile.Valid) return true;
 
-        HashSet<ThingDef> tileRocks = new HashSet<ThingDef>(Find.World.NaturalRockTypesIn(tile));
+        HashSet<ThingDef> tileRocks = new(Find.World.NaturalRockTypesIn(tile));
         for (int i = 0; i < sourceRocks.Count; i++)
         {
             if (tileRocks.Contains(sourceRocks[i])) return true;

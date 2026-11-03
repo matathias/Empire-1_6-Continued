@@ -28,5 +28,5 @@ public struct TileEdgeKey : IEquatable<TileEdgeKey>
     public long Pack() => ((long)lo << 32) | (uint)hi;
 
     public static TileEdgeKey Unpack(long key)
-        => new TileEdgeKey((int)(key >> 32), (int)(key & 0xFFFFFFFFL));
+        => new((int)(key >> 32), (int)(key & 0xFFFFFFFFL));
 }

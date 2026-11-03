@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public class FCPolicyBehavior_Militaristic : FCPolicyBehavior
 {
-    private CooldownAbility extraSquadCooldown = new CooldownAbility();
+    private CooldownAbility extraSquadCooldown = new();
 
     public override void PostInitialize()
     {
@@ -72,14 +72,14 @@ public class FCPolicyBehavior_Militaristic : FCPolicyBehavior
         {
             if (PaymentUtil.GetSilver() >= cost)
             {
-                List<FloatMenuOption> deploymentOptions = new List<FloatMenuOption>
-                {
+                List<FloatMenuOption> deploymentOptions =
+                [
                     new FloatMenuOption("FCWalkIntoMapDeploymentOption".Translate(), delegate
                     {
                         MilitaryDeploymentUtil.CallinExtraForces(settlement, false);
                         Find.WindowStack.currentlyDrawnWindow.Close();
                     })
-                };
+                ];
 
                 if (!FCSettings.medievalTechOnly &&
                     (FactionCache.TechTransportPods?.IsFinished ?? false))

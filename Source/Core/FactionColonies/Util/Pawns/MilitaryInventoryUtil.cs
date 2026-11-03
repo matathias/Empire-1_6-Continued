@@ -21,8 +21,8 @@ public static class MilitaryInventoryUtil
     {
         if (allowedCache is not null) return allowedCache;
 
-        HashSet<ThingDef> excluded = new HashSet<ThingDef>();
-        HashSet<ThingDef> forceAllow = new HashSet<ThingDef>();
+        HashSet<ThingDef> excluded = [];
+        HashSet<ThingDef> forceAllow = [];
         foreach (FCInventoryCategoryDef def in DefDatabase<FCInventoryCategoryDef>.AllDefs)
         {
             if (def.excludeCategories is not null)
@@ -75,7 +75,7 @@ public static class MilitaryInventoryUtil
         IEnumerable<ThingDef> excluded, IEnumerable<ThingDef> forceAllow)
     {
         HashSet<ThingDef> excludedSet = excluded as HashSet<ThingDef> ?? new HashSet<ThingDef>(excluded);
-        HashSet<ThingDef> result = new HashSet<ThingDef>();
+        HashSet<ThingDef> result = [];
         foreach (ThingDef t in basePool)
             if (t is not null && !excludedSet.Contains(t))
                 result.Add(t);

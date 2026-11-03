@@ -25,8 +25,8 @@ namespace FactionColonies.util;
 
 public partial class XenotypeFilter
 {
-    private Dictionary<XenotypeDef, SecurityGuardList> securityGuardsByXenotype = new Dictionary<XenotypeDef, SecurityGuardList>();
-    private Dictionary<string, SecurityGuardList> securityGuardsByCustomXenotype = new Dictionary<string, SecurityGuardList>();
+    private Dictionary<XenotypeDef, SecurityGuardList> securityGuardsByXenotype = [];
+    private Dictionary<string, SecurityGuardList> securityGuardsByCustomXenotype = [];
 
     private List<PawnKindDef> cachedGuardAnimals = null;
     public List<PawnKindDef> GuardAnimals
@@ -85,7 +85,7 @@ public partial class XenotypeFilter
     /* Returns the union of all configured guard kinds across all xenotypes. */
     public List<PawnKindDef> GetAvailableSecurityGuards()
     {
-        List<PawnKindDef> allGuards = new List<PawnKindDef>();
+        List<PawnKindDef> allGuards = [];
         if (securityGuardsByXenotype.Count > 0)
         {
             foreach (SecurityGuardList guardList in securityGuardsByXenotype.Values)
@@ -106,13 +106,13 @@ public partial class XenotypeFilter
     {
         return securityGuardsByXenotype.ContainsKey(xenotype)
             ? securityGuardsByXenotype[xenotype].List
-            : new List<PawnKindDef>();
+            : [];
     }
     public List<PawnKindDef> GetSecurityGuardsForCustomXenotype(string xenotypeName)
     {
         return securityGuardsByCustomXenotype.ContainsKey(xenotypeName)
             ? securityGuardsByCustomXenotype[xenotypeName].List
-            : new List<PawnKindDef>();
+            : [];
     }
 
     partial void ExposeSecurityGuardsData()
@@ -122,10 +122,8 @@ public partial class XenotypeFilter
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (securityGuardsByXenotype is null)
-                securityGuardsByXenotype = new Dictionary<XenotypeDef, SecurityGuardList>();
-            if (securityGuardsByCustomXenotype is null)
-                securityGuardsByCustomXenotype = new Dictionary<string, SecurityGuardList>();
+            securityGuardsByXenotype ??= [];
+            securityGuardsByCustomXenotype ??= [];
         }
     }
 }
@@ -134,7 +132,7 @@ public partial class XenotypeFilter
  * value side of the guard dicts uses this IExposable wrapper. */
 public class SecurityGuardList : IExposable
 {
-    private List<PawnKindDef> list = new List<PawnKindDef>();
+    private List<PawnKindDef> list = [];
 
     public int Count => list.Count;
     public bool Contains(PawnKindDef def) => list.Contains(def);
@@ -143,7 +141,7 @@ public class SecurityGuardList : IExposable
 
     public void InitList()
     {
-        list = new List<PawnKindDef>();
+        list = [];
     }
     public bool Add(PawnKindDef def)
     {

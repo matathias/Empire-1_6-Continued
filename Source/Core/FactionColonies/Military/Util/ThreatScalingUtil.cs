@@ -8,55 +8,55 @@
 public static class ThreatScalingUtil
 {
     /* Income curve: maps faction income to a 0–0.9 factor */
-    private static readonly SimpleCurve IncomeCurve = new SimpleCurve
-    {
+    private static readonly SimpleCurve IncomeCurve =
+    [
         new CurvePoint(0f, 0f),
         new CurvePoint(500f, 0.1f),
         new CurvePoint(2000f, 0.3f),
         new CurvePoint(5000f, 0.5f),
         new CurvePoint(10000f, 0.7f),
         new CurvePoint(20000f, 0.9f)
-    };
+    ];
 
     /* Count curve: maps settlement count to a 0–0.6 factor */
-    private static readonly SimpleCurve CountCurve = new SimpleCurve
-    {
+    private static readonly SimpleCurve CountCurve =
+    [
         new CurvePoint(1f, 0f),
         new CurvePoint(3f, 0.2f),
         new CurvePoint(5f, 0.3f),
         new CurvePoint(10f, 0.5f),
         new CurvePoint(15f, 0.6f)
-    };
+    ];
 
     /* Time curve for the dormant handicap cap: maps seasons elapsed to a cap */
-    private static readonly SimpleCurve TimeCurve = new SimpleCurve
-    {
+    private static readonly SimpleCurve TimeCurve =
+    [
         new CurvePoint(0f, 2f),
         new CurvePoint(1f, 3f),
         new CurvePoint(2f, 4.5f),
         new CurvePoint(4f, 8f),
         new CurvePoint(8f, 15f)
-    };
+    ];
 
     /* Early-game raid cap: softens raids for the first 30 days after raids begin, then
        rises above any faction level (max ~9 + variance ~2) so it no longer binds.
        X axis = days since raids began. */
-    private static readonly SimpleCurve EarlyGameCapCurve = new SimpleCurve
-    {
+    private static readonly SimpleCurve EarlyGameCapCurve =
+    [
         new CurvePoint(0f, 2f),
         new CurvePoint(30f, 12f),
         new CurvePoint(60f, 100f)
-    };
+    ];
 
     /* Frequency curve: maps settlement count to a frequency multiplier */
-    public static readonly SimpleCurve FrequencyCurve = new SimpleCurve
-    {
+    public static readonly SimpleCurve FrequencyCurve =
+    [
         new CurvePoint(1f, 1.0f),
         new CurvePoint(3f, 1.2f),
         new CurvePoint(5f, 1.4f),
         new CurvePoint(10f, 1.8f),
         new CurvePoint(15f, 2.0f)
-    };
+    ];
 
     /// <summary>
     /// DORMANT — not used by the live raid path; retained for a future threat-scaling

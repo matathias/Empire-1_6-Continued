@@ -78,23 +78,19 @@ public static class MilitaryWindowRegistry
 
     public static MilitaryWindow Create(MilitaryWindowSlot slot, MilitaryFC mfc, FactionFC faction)
     {
-        switch (slot)
+        return slot switch
         {
-            case MilitaryWindowSlot.Units:
-                return _unitsFactory is not null
-                    ? _unitsFactory(mfc, faction)
-                    : new DesignUnitsWindow(mfc, faction);
-            case MilitaryWindowSlot.Squads:
-                return _squadsFactory is not null
-                    ? _squadsFactory(mfc, faction)
-                    : new DesignSquadsWindow(mfc);
-            case MilitaryWindowSlot.FireSupport:
-                return _fireSupportFactory is not null
-                    ? _fireSupportFactory(mfc, faction)
-                    : new FireSupportWindow(mfc);
-            default:
-                throw new ArgumentOutOfRangeException(nameof(slot), slot, null);
-        }
+            MilitaryWindowSlot.Units => _unitsFactory is not null
+                ? _unitsFactory(mfc, faction)
+                : new DesignUnitsWindow(mfc, faction),
+            MilitaryWindowSlot.Squads => _squadsFactory is not null
+                ? _squadsFactory(mfc, faction)
+                : new DesignSquadsWindow(mfc),
+            MilitaryWindowSlot.FireSupport => _fireSupportFactory is not null
+                ? _fireSupportFactory(mfc, faction)
+                : new FireSupportWindow(mfc),
+            _ => throw new ArgumentOutOfRangeException(nameof(slot), slot, null),
+        };
     }
 
     /* Shorthand creation */

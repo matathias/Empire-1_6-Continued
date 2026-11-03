@@ -17,13 +17,13 @@ namespace FactionColonies;
 /// </summary>
 public class Dialog_SquadInspection : Window
 {
-    public override Vector2 InitialSize => new Vector2(620f, 680f);
+    public override Vector2 InitialSize => new(620f, 680f);
 
     private readonly MercenarySquadFC squad;
     private Vector2 scroll;
     /* Per-merc expand/collapse state for the sub-pawn list, keyed by merc.loadID
        (stable across the Mercenary-reference swaps that Fill/Upgrade perform). */
-    private readonly HashSet<int> expandedMercs = new HashSet<int>();
+    private readonly HashSet<int> expandedMercs = [];
 
     /* Layout constants */
     private const float TitleBandHeight = 38f;
@@ -52,8 +52,8 @@ public class Dialog_SquadInspection : Window
     private const float SubReplaceBtnW = 96f;
     private const float ExpandArrowSize = 18f;
 
-    private static readonly Color CaptionTextColor = new Color(0.7f, 0.7f, 0.7f);
-    private static readonly Color DimValueColor = new Color(0.65f, 0.65f, 0.65f);
+    private static readonly Color CaptionTextColor = new(0.7f, 0.7f, 0.7f);
+    private static readonly Color DimValueColor = new(0.65f, 0.65f, 0.65f);
 
     public Dialog_SquadInspection(MercenarySquadFC squad)
     {
@@ -79,34 +79,34 @@ public class Dialog_SquadInspection : Window
         float y = inRect.y;
 
         /* Title band: full-width highlighted header with squad name + rename pencil */
-        Rect titleRect = new Rect(inRect.x, y, inRect.width, TitleBandHeight);
+        Rect titleRect = new(inRect.x, y, inRect.width, TitleBandHeight);
         DrawTitleBand(titleRect);
         y = titleRect.yMax + BandGap;
 
         /* Two-column context band: Settlement | Template (caption / value / buttons) */
-        Rect contextRect = new Rect(inRect.x, y, inRect.width, ContextBandHeight);
+        Rect contextRect = new(inRect.x, y, inRect.width, ContextBandHeight);
         DrawContextBand(contextRect);
         y = contextRect.yMax + (BandGap / 2f);
 
-        Rect barAboveStats = new Rect(inRect.x + 4f, y, inRect.width - 8f, 1f);
+        Rect barAboveStats = new(inRect.x + 4f, y, inRect.width - 8f, 1f);
         TexLoad.DrawHorizontalPeakGradient(barAboveStats, Color.gray);
         y = barAboveStats.yMax + (BandGap / 2f);
 
         /* Stats band: Current value | Deployment cost | Power | Slots */
-        Rect statsRect = new Rect(inRect.x, y, inRect.width, StatsBandHeight);
+        Rect statsRect = new(inRect.x, y, inRect.width, StatsBandHeight);
         DrawStatsBand(statsRect);
         y = statsRect.yMax + (BandGap / 2f);
 
-        Rect barAboveActions = new Rect(inRect.x + 4f, y, inRect.width - 8f, 1f);
+        Rect barAboveActions = new(inRect.x + 4f, y, inRect.width - 8f, 1f);
         TexLoad.DrawHorizontalPeakGradient(barAboveActions, Color.gray);
         y = barAboveActions.yMax + (BandGap / 2f);
 
         /* Action bar: Fill empty / Upgrade all */
-        Rect actionsRect = new Rect(inRect.x, y, inRect.width, ActionBarHeight);
+        Rect actionsRect = new(inRect.x, y, inRect.width, ActionBarHeight);
         DrawActionBar(actionsRect);
         y = actionsRect.yMax + (BandGap / 2f);
 
-        Rect barBelowActions = new Rect(inRect.x + 4f, y, inRect.width - 8f, 1f);
+        Rect barBelowActions = new(inRect.x + 4f, y, inRect.width - 8f, 1f);
         TexLoad.DrawHorizontalPeakGradient(barBelowActions, Color.gray);
         y = barBelowActions.yMax + (BandGap / 2f);
 
@@ -114,14 +114,14 @@ public class Dialog_SquadInspection : Window
         float sectionsHeight = ComputeSectionsHeight(inRect.width);
         float listH = inRect.yMax - y - sectionsHeight - (sectionsHeight > 0f ? BandGap : 0f);
         if (listH < 80f) listH = 80f;
-        Rect listRect = new Rect(inRect.x, y, inRect.width, listH);
+        Rect listRect = new(inRect.x, y, inRect.width, listH);
         DrawCardList(listRect);
         y = listRect.yMax + BandGap;
 
         /* Submod sections */
         if (sectionsHeight > 0f)
         {
-            Rect sectionsRect = new Rect(inRect.x, y, inRect.width, sectionsHeight);
+            Rect sectionsRect = new(inRect.x, y, inRect.width, sectionsHeight);
             DrawSubmodSections(sectionsRect);
         }
 
@@ -144,7 +144,7 @@ public class Dialog_SquadInspection : Window
 
         /* Pencil rename icon to the right of the squad name */
         float iconY = rect.y + (rect.height - IconButtonSize) / 2f;
-        Rect pencilRect = new Rect(labelX + labelW + 8f, iconY, IconButtonSize, IconButtonSize);
+        Rect pencilRect = new(labelX + labelW + 8f, iconY, IconButtonSize, IconButtonSize);
         Color prevPencilColor = GUI.color;
         GUI.color = squad.IsBusy ? Color.gray : Color.white;
         bool renameClicked = Widgets.ButtonImage(pencilRect, TexButton.Rename) && !squad.IsBusy;
@@ -198,7 +198,7 @@ public class Dialog_SquadInspection : Window
         float valueH = 24f;
         float topPad = (rect.height - (captionH + valueH)) / 2f;
         float y = rect.y + Mathf.Max(2f, topPad);
-        Rect inner = new Rect(rect.x + 6f, y, rect.width - 12f, captionH);
+        Rect inner = new(rect.x + 6f, y, rect.width - 12f, captionH);
 
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.LowerLeft;
@@ -216,8 +216,8 @@ public class Dialog_SquadInspection : Window
         float midX = rect.x + rect.width / 2f;
         UIUtil.DrawColoredVerticalLine(midX, rect.y + 4f, rect.height - 8f, Color.gray);
 
-        Rect leftCol = new Rect(rect.x + 6f, rect.y, rect.width / 2f - 12f, rect.height);
-        Rect rightCol = new Rect(midX + 6f, rect.y, rect.width / 2f - 12f, rect.height);
+        Rect leftCol = new(rect.x + 6f, rect.y, rect.width / 2f - 12f, rect.height);
+        Rect rightCol = new(midX + 6f, rect.y, rect.width / 2f - 12f, rect.height);
 
         DrawSettlementColumn(leftCol);
         DrawTemplateColumn(rightCol);
@@ -254,7 +254,7 @@ public class Dialog_SquadInspection : Window
         /* Buttons: [Reassign] [Dismiss squad] */
         bool canReassign = !squad.IsBusy;
         bool canDismiss = !squad.IsBusy;
-        Rect reassignRect = new Rect(rect.x, y, ActionButtonWidth, buttonsH);
+        Rect reassignRect = new(rect.x, y, ActionButtonWidth, buttonsH);
         if (UIUtil.ButtonFlat(reassignRect, "FCSquadActReassign".Translate(), disabled: !canReassign))
         {
             Find.WindowStack.Add(new Dialog_SquadAssignment(squad));
@@ -262,7 +262,7 @@ public class Dialog_SquadInspection : Window
         if (squad.IsBusy)
             TooltipHandler.TipRegion(reassignRect, "FCSquadCannotModifyBusyTip".Translate());
 
-        Rect dismissRect = new Rect(rect.x + ActionButtonWidth + SmallGap, y, ActionButtonWidth, buttonsH);
+        Rect dismissRect = new(rect.x + ActionButtonWidth + SmallGap, y, ActionButtonWidth, buttonsH);
         if (UIUtil.ButtonFlat(dismissRect, "FCSquadActDismissSquad".Translate(), disabled: !canDismiss))
         {
             MercenarySquadFC captured = squad;
@@ -307,7 +307,7 @@ public class Dialog_SquadInspection : Window
         y += valueH;
 
         /* Buttons: [Pick template] [Clear template] */
-        Rect pickRect = new Rect(rect.x, y, ActionButtonWidth, buttonsH);
+        Rect pickRect = new(rect.x, y, ActionButtonWidth, buttonsH);
         if (UIUtil.ButtonFlat(pickRect, "FCSquadInspectionPickTemplate".Translate(), disabled: squad.IsBusy))
         {
             OpenTemplateMenu();
@@ -315,7 +315,7 @@ public class Dialog_SquadInspection : Window
         if (squad.IsBusy)
             TooltipHandler.TipRegion(pickRect, "FCSquadCannotModifyBusyTip".Translate());
 
-        Rect clearRect = new Rect(rect.x + ActionButtonWidth + SmallGap, y, ActionButtonWidth, buttonsH);
+        Rect clearRect = new(rect.x + ActionButtonWidth + SmallGap, y, ActionButtonWidth, buttonsH);
         if (UIUtil.ButtonFlat(clearRect, "FCSquadInspectionClearTemplate".Translate(), disabled: !hasTemplate || squad.IsBusy))
         {
             SquadUpgradeUtil.SwapTemplate(squad, null);
@@ -341,7 +341,7 @@ public class Dialog_SquadInspection : Window
         float btnW = (rect.width - gap * 2f) / 3f;
         float bx = rect.x;
 
-        Rect fillRect = new Rect(bx, rect.y, btnW, rect.height);
+        Rect fillRect = new(bx, rect.y, btnW, rect.height);
         string fillLabel = "FCSquadInspectionFillEmptySlots".Translate(emptyCount, fillCost);
         if (UIUtil.ButtonFlat(fillRect, fillLabel, disabled: !canFill || squad.IsBusy))
         {
@@ -351,7 +351,7 @@ public class Dialog_SquadInspection : Window
             TooltipHandler.TipRegion(fillRect, "FCSquadCannotModifyBusyTip".Translate());
         bx += btnW + gap;
 
-        Rect upgradeRect = new Rect(bx, rect.y, btnW, rect.height);
+        Rect upgradeRect = new(bx, rect.y, btnW, rect.height);
         string upgradeLabel = squad.outfit is null
             ? (string)"FCSquadInspectionUpgradeAllNoTemplate".Translate()
             : (hasUpgradeWork
@@ -380,7 +380,7 @@ public class Dialog_SquadInspection : Window
         bool hasFreeSlot = squad.mercenaries is not null && squad.mercenaries.Any(m => m is not null && m.pawn is null);
         bool canAddUnit = !squad.IsBusy && hasBlueprints && hasFreeSlot;
 
-        Rect addRect = new Rect(bx, rect.y, btnW, rect.height);
+        Rect addRect = new(bx, rect.y, btnW, rect.height);
         if (UIUtil.ButtonFlat(addRect, "FCSquadInspectionAddUnit".Translate(), disabled: !canAddUnit))
         {
             OpenAddUnitMenu();
@@ -400,7 +400,7 @@ public class Dialog_SquadInspection : Window
     {
         /* Filter out the blank-loadout placeholder slots created by InitiateSquad
            when the template has fewer real units than MilSquadFC.MaxSquadSize. */
-        List<Mercenary> mercs = (squad.mercenaries ?? new List<Mercenary>())
+        List<Mercenary> mercs = (squad.mercenaries ?? [])
             .Where(m => m is not null && m.EffectiveLoadout is not null && !m.EffectiveLoadout.isBlank)
             .ToList();
 
@@ -412,7 +412,7 @@ public class Dialog_SquadInspection : Window
         float rowY = 0f;
         for (int i = 0; i < mercs.Count; i++)
         {
-            Rect cardRect = new Rect(0f, rowY, viewRect.width, CardHeight);
+            Rect cardRect = new(0f, rowY, viewRect.width, CardHeight);
             DrawPawnCard(cardRect, i, mercs[i]);
             rowY += CardHeight + CardGap;
 
@@ -454,13 +454,13 @@ public class Dialog_SquadInspection : Window
 
         /* Accent bar (3px on the left edge) — health-driven */
         Color accent = GetSlotAccent(merc);
-        Rect accentRect = new Rect(leftx, cardRect.y, AccentBarWidth, cardRect.height);
+        Rect accentRect = new(leftx, cardRect.y, AccentBarWidth, cardRect.height);
         Widgets.DrawBoxSolid(accentRect, accent);
 
         /* Portrait */
         float portraitX = leftx + AccentBarWidth + CardOuterPad;
         float portraitY = cardRect.y + (cardRect.height - PortraitSize) / 2f;
-        Rect portraitRect = new Rect(portraitX, portraitY, PortraitSize, PortraitSize);
+        Rect portraitRect = new(portraitX, portraitY, PortraitSize, PortraitSize);
         if (merc?.pawn is not null)
         {
             UIUtil.DrawPawnPortrait(portraitRect, merc.pawn);
@@ -473,7 +473,7 @@ public class Dialog_SquadInspection : Window
         /* Content area to the right of the portrait, leaving room for action buttons */
         float contentX = portraitRect.xMax + CardOuterPad;
         float contentW = cardRect.xMax - contentX;
-        Rect contentRect = new Rect(contentX, cardRect.y + 4f, contentW, cardRect.height - 8f);
+        Rect contentRect = new(contentX, cardRect.y + 4f, contentW, cardRect.height - 8f);
         DrawCardContent(contentRect, slotIndex, merc);
 
         /* Whole-card click toggles the sub-pawn list. Drawn LAST so the action buttons,
@@ -504,7 +504,7 @@ public class Dialog_SquadInspection : Window
         string mt = SubTypeBadgeSegment(mounts, "FCSubPawnBadgeMount", "FCSubPawnBadgeMounts");
         string m = SubTypeBadgeSegment(merc.mechs, "FCSubPawnBadgeMech", "FCSubPawnBadgeMechs");
 
-        List<string> parts = new List<string>(3);
+        List<string> parts = new(3);
         if (a is not null) parts.Add(a);
         if (mt is not null) parts.Add(mt);
         if (m is not null) parts.Add(m);
@@ -533,7 +533,7 @@ public class Dialog_SquadInspection : Window
         if (missing == 0 && downed == 0 && injured == 0) return head;
 
         bool bare = total == 1; // "1 animal (downed)" rather than "1 animal (1 downed)"
-        List<string> parts = new List<string>(3);
+        List<string> parts = new(3);
         if (downed > 0) parts.Add(bare ? (string)"FCSubPawnWordDowned".Translate() : (string)"FCSubPawnSummaryDowned".Translate(downed));
         if (missing > 0) parts.Add(bare ? (string)"FCSubPawnWordMissing".Translate() : (string)"FCSubPawnSummaryMissing".Translate(missing));
         if (injured > 0) parts.Add(bare ? (string)"FCSubPawnWordInjured".Translate() : (string)"FCSubPawnSummaryInjured".Translate(injured));
@@ -579,7 +579,7 @@ public class Dialog_SquadInspection : Window
         bool hasSubPawns = merc is not null && merc.SubPawns().Any();
         if (hasSubPawns)
         {
-            Rect arrowRect = new Rect(rect.x, y, ExpandArrowSize, headerH);
+            Rect arrowRect = new(rect.x, y, ExpandArrowSize, headerH);
             TextAnchor arrowAnchorBefore = Text.Anchor;
             Text.Anchor = TextAnchor.MiddleCenter;
             UIUtil.DrawColoredLabel(arrowRect, IsExpanded(merc) ? "▼" : "▶", new Color(1f, 1f, 1f, 0.7f));
@@ -589,7 +589,7 @@ public class Dialog_SquadInspection : Window
 
         float nameW = Text.CalcSize(headerText).x;
         float availW = rect.xMax - headerX - iconAreaW;
-        Rect headerRect = new Rect(headerX, y, Mathf.Min(nameW + 2f, availW), headerH);
+        Rect headerRect = new(headerX, y, Mathf.Min(nameW + 2f, availW), headerH);
         UIUtil.ClampedLabel(headerRect, headerText);
 
         /* Sub-pawn roster/condition badge (e.g. "1 animal (downed) · 5 mechs (1 downed, 1 missing)")
@@ -607,7 +607,7 @@ public class Dialog_SquadInspection : Window
                 if (maxW > 24f)
                 {
                     float badgeW = Mathf.Min(Text.CalcSize(badge).x + badgePad * 2f, maxW);
-                    Rect badgeRect = new Rect(badgeX, y + (headerH - badgeH) / 2f, badgeW, badgeH);
+                    Rect badgeRect = new(badgeX, y + (headerH - badgeH) / 2f, badgeW, badgeH);
                     Widgets.DrawBoxSolid(badgeRect, new Color(1f, 1f, 1f, 0.08f));
                     TextAnchor badgeAnchorBefore = Text.Anchor;
                     Text.Anchor = TextAnchor.MiddleCenter;
@@ -624,7 +624,7 @@ public class Dialog_SquadInspection : Window
             float ix = rect.xMax - iconAreaW + 4f;
             Widgets.InfoCardButton(ix, iconY, merc.pawn);
             ix += InfoCardSize + 4f;
-            Rect pencilRect = new Rect(ix, y + (headerH - IconButtonSize) / 2f, IconButtonSize, IconButtonSize);
+            Rect pencilRect = new(ix, y + (headerH - IconButtonSize) / 2f, IconButtonSize, IconButtonSize);
             Color prevPawnPencilColor = GUI.color;
             GUI.color = squad.IsBusy ? Color.gray : Color.white;
             bool pawnRenameClicked = Widgets.ButtonImage(pencilRect, TexButton.Rename) && !squad.IsBusy;
@@ -645,7 +645,7 @@ public class Dialog_SquadInspection : Window
         string loadoutName = merc?.EffectiveLoadout?.name ?? (string)"FCNone".Translate();
         if (merc?.ownedLoadout is not null) loadoutName = "* " + loadoutName;
         string loadoutText = "FCSquadInspectionLoadoutLabel".Translate(loadoutName);
-        Rect loadoutRect = new Rect(rect.x, y, rect.width, lineH);
+        Rect loadoutRect = new(rect.x, y, rect.width, lineH);
         UIUtil.ClampedLabel(loadoutRect, loadoutText);
         if (merc?.ownedLoadout is not null)
         {
@@ -657,13 +657,13 @@ public class Dialog_SquadInspection : Window
            Colored by the merc's own accent so "OK" stays green; the left card bar still
            rolls up sub-pawn trouble via GetSlotAccent. */
         string statusText = "FCSquadInspectionStatusLabel".Translate(ComputePawnStatus(merc));
-        Rect statusRect = new Rect(rect.x, y, rect.width, lineH);
+        Rect statusRect = new(rect.x, y, rect.width, lineH);
         UIUtil.DrawColoredLabel(statusRect, statusText, GetPawnAccent(merc));
 
 
         /* Action buttons (right-aligned, vertically centered) */
         float actionsW = ActionButtonWidth * 3 + SmallGap * 2 + CardOuterPad;
-        Rect actionsRect = new Rect(rect.xMax - actionsW,
+        Rect actionsRect = new(rect.xMax - actionsW,
             rect.yMax - ActionButtonHeight - 5f,
             actionsW, ActionButtonHeight);
         DrawCardActions(actionsRect, slotIndex, merc);
@@ -686,7 +686,7 @@ public class Dialog_SquadInspection : Window
             /* Two buttons sharing the same column grid as Edit/Upgrade/Dismiss on filled slots:
                Fill spans the first two button-widths, Remove fills the third. */
             float fillW = btnW * 2f + SmallGap;
-            Rect fillRect = new Rect(bx, rect.y, fillW, btnH);
+            Rect fillRect = new(bx, rect.y, fillW, btnH);
             if (UIUtil.ButtonFlat(fillRect,
                 "FCSquadInspectionPerSlotFill".Translate(slotFillCost), disabled: !canFill || squad.IsBusy))
             {
@@ -695,7 +695,7 @@ public class Dialog_SquadInspection : Window
             if (squad.IsBusy)
                 TooltipHandler.TipRegion(fillRect, "FCSquadCannotModifyBusyTip".Translate());
 
-            Rect removeRect = new Rect(fillRect.xMax + SmallGap, rect.y, btnW, btnH);
+            Rect removeRect = new(fillRect.xMax + SmallGap, rect.y, btnW, btnH);
             if (UIUtil.ButtonFlat(removeRect, "FCSquadInspectionPerSlotRemove".Translate(), disabled: squad.IsBusy))
             {
                 Mercenary captured = merc;
@@ -708,7 +708,7 @@ public class Dialog_SquadInspection : Window
         else if (merc?.pawn is not null)
         {
             /* Edit Loadout */
-            Rect editRect = new Rect(bx, rect.y, btnW, btnH);
+            Rect editRect = new(bx, rect.y, btnW, btnH);
             if (UIUtil.ButtonFlat(editRect, "FCSquadInspectionEditLoadout".Translate(), disabled: squad.IsBusy))
             {
                 Find.WindowStack.Add(new Dialog_PawnLoadout(squad, merc));
@@ -723,7 +723,7 @@ public class Dialog_SquadInspection : Window
                including same-cost or cheaper changes (which charge zero silver). */
             int slotUpgradeCost = ComputePerPawnUpgradeCost(merc);
             bool canUpgrade = PerPawnUpgradeNeeded(merc) && !squad.IsBusy && merc.pawn is not null;
-            Rect upgRect = new Rect(bx, rect.y, btnW, btnH);
+            Rect upgRect = new(bx, rect.y, btnW, btnH);
             if (UIUtil.ButtonFlat(upgRect,
                 "FCSquadInspectionPerSlotUpgrade".Translate(slotUpgradeCost), disabled: !canUpgrade))
             {
@@ -735,7 +735,7 @@ public class Dialog_SquadInspection : Window
 
             /* Dismiss this merc — clears the slot for refill. No silver returned. */
             bool canDismiss = !squad.IsBusy;
-            Rect dismissRect = new Rect(bx, rect.y, btnW, btnH);
+            Rect dismissRect = new(bx, rect.y, btnW, btnH);
             if (UIUtil.ButtonFlat(dismissRect, "FCMercDismiss".Translate(), disabled: !canDismiss))
             {
                 Mercenary captured = merc;
@@ -819,7 +819,7 @@ public class Dialog_SquadInspection : Window
         float y = rect.y;
         foreach (Mercenary sub in owner.SubPawns())
         {
-            Rect row = new Rect(rect.x + SubRowIndent, y, rect.width - SubRowIndent, SubRowHeight);
+            Rect row = new(rect.x + SubRowIndent, y, rect.width - SubRowIndent, SubRowHeight);
             DrawSubPawnRow(row, sub);
             y += SubRowHeight + SubRowGap;
         }
@@ -842,7 +842,7 @@ public class Dialog_SquadInspection : Window
 
         float px = row.x + AccentBarWidth + CardOuterPad;
         float py = row.y + (row.height - SubPortraitSize) / 2f;
-        Rect portraitRect = new Rect(px, py, SubPortraitSize, SubPortraitSize);
+        Rect portraitRect = new(px, py, SubPortraitSize, SubPortraitSize);
         if (hasLivePawn) UIUtil.DrawPawnPortrait(portraitRect, sub.pawn);
         else Widgets.DrawMenuSection(portraitRect);
 
@@ -987,8 +987,7 @@ public class Dialog_SquadInspection : Window
     {
         MilitaryFC mfc = FindFC.Military;
         if (mfc?.squads is null) return;
-        List<FloatMenuOption> options = new List<FloatMenuOption>();
-        options.Add(new FloatMenuOption("FCNone".Translate(), delegate { SquadUpgradeUtil.SwapTemplate(squad, null); }));
+        List<FloatMenuOption> options = [new FloatMenuOption("FCNone".Translate(), delegate { SquadUpgradeUtil.SwapTemplate(squad, null); })];
         foreach (MilSquadFC template in mfc.squads)
         {
             MilSquadFC captured = template;
@@ -1003,7 +1002,7 @@ public class Dialog_SquadInspection : Window
     {
         MilitaryFC mfc = FindFC.Military;
         if (mfc?.units is null) return;
-        List<FloatMenuOption> options = new List<FloatMenuOption>();
+        List<FloatMenuOption> options = [];
         foreach (MilUnitFC unit in mfc.units)
         {
             if (unit is null || unit.isBlank) continue;
@@ -1036,8 +1035,7 @@ public class Dialog_SquadInspection : Window
             target = squad.mercenaries.FirstOrDefault(m =>
                 m is not null && m.pawn is null &&
                 (m.BlueprintLoadout is null || m.BlueprintLoadout.isBlank));
-            if (target is null)
-                target = squad.mercenaries.FirstOrDefault(m => m is not null && m.pawn is null);
+            target ??= squad.mercenaries.FirstOrDefault(m => m is not null && m.pawn is null);
         }
         if (target is null)
         {
@@ -1097,7 +1095,7 @@ public class Dialog_SquadInspection : Window
             UIUtil.ClampedLabel(new Rect(rect.x, y, rect.width, headerH), section.SectionLabel);
             y += headerH;
 
-            Rect contentRect = new Rect(rect.x, y, rect.width, sh);
+            Rect contentRect = new(rect.x, y, rect.width, sh);
             try { section.DrawSection(squad, contentRect); }
             catch (Exception ex)
             {

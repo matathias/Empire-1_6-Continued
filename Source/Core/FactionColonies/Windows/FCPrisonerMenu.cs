@@ -13,14 +13,14 @@ class FCPrisonerMenu : Window
     private const float titleHeight = 30f;
     private const float dividerGap = 8f;
 
-    public override Vector2 InitialSize => new Vector2(538f, 518f);
+    public override Vector2 InitialSize => new(538f, 518f);
 
     public FCPrisonerMenu(WorldSettlementFC settlement)
     {
         this.faction = FindFC.FactionComp;
         this.settlement = settlement;
         settlement.PrisonerComp?.CullNullPrisoners();
-        this.prisoners = settlement.PrisonerComp?.prisonerList ?? new List<FCPrisoner>();
+        this.prisoners = settlement.PrisonerComp?.prisonerList ?? [];
 
         this.forcePause = false;
         this.draggable = true;
@@ -40,8 +40,8 @@ class FCPrisonerMenu : Window
         float btnW = (inRect.width - btnGap) / 2f;
         WorldObjectComp_SettlementPrisoners comp = settlement.PrisonerComp;
 
-        Rect countRect = new Rect(inRect.xMax - countBadgeW, inRect.y, countBadgeW, titleHeight);
-        Rect titleRect = new Rect(inRect.x, inRect.y, countRect.x - inRect.x, titleHeight);
+        Rect countRect = new(inRect.xMax - countBadgeW, inRect.y, countBadgeW, titleHeight);
+        Rect titleRect = new(inRect.x, inRect.y, countRect.x - inRect.x, titleHeight);
 
         bool wordWrapBefore = Text.WordWrap;
         Text.WordWrap = false;
@@ -65,8 +65,8 @@ class FCPrisonerMenu : Window
 
         if (comp is not null)
         {
-            Rect bulkRect = new Rect(inRect.xMax - btnW, buttonRowY, btnW, titleHeight);
-            Rect defaultRect = new Rect(bulkRect.x - btnGap - btnW, buttonRowY, btnW, titleHeight);
+            Rect bulkRect = new(inRect.xMax - btnW, buttonRowY, btnW, titleHeight);
+            Rect defaultRect = new(bulkRect.x - btnGap - btnW, buttonRowY, btnW, titleHeight);
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;

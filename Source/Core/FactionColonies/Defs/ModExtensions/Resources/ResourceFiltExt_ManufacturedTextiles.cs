@@ -16,10 +16,10 @@ public class ResourceFilterExtension_ManufacturedTextiles : ResourceFilterExtens
     /// <summary>
     /// Textile categories whose non-organism-derived members are allowed (e.g. Leathers, Wools).
     /// </summary>
-    public List<ThingCategoryDef> categories = new List<ThingCategoryDef>();
+    public List<ThingCategoryDef> categories = [];
 
     private HashSet<ThingDef> _organismDerived;
-    private HashSet<ThingDef> OrganismDerived => _organismDerived ?? (_organismDerived = BuildOrganismDerivedSet());
+    private HashSet<ThingDef> OrganismDerived => _organismDerived ??= BuildOrganismDerivedSet();
 
     public override void SetFilter(ThingFilter filter, TechLevel techlevel, ResourceFC resource = null)
     {
@@ -39,7 +39,7 @@ public class ResourceFilterExtension_ManufacturedTextiles : ResourceFilterExtens
 
     private static HashSet<ThingDef> BuildOrganismDerivedSet()
     {
-        HashSet<ThingDef> organismDerived = new HashSet<ThingDef>();
+        HashSet<ThingDef> organismDerived = [];
         foreach (ThingDef def in DefDatabase<ThingDef>.AllDefs)
         {
             // Any race (animal or humanlike) contributes its leather; shearable animals their wool.

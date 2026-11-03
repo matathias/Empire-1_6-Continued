@@ -13,7 +13,7 @@ public class FactionCustomizePoliciesWindowFC : Window
     private const float cardGap = 6f;
     private const float cardPadding = 8f;
     private const float removeButtonSize = 24f;
-    public override Vector2 InitialSize => new Vector2(fullwidth, fullheight);
+    public override Vector2 InitialSize => new(fullwidth, fullheight);
 
     private FactionFC faction;
     public string header;
@@ -21,7 +21,7 @@ public class FactionCustomizePoliciesWindowFC : Window
 
     bool traitsChosen;
 
-    List<FCPolicyDef> selectedPolicies = new List<FCPolicyDef>();
+    List<FCPolicyDef> selectedPolicies = [];
     private FCPolicyDef hoveredPolicy;
 
     private Vector2 availableListScroll;
@@ -69,7 +69,7 @@ public class FactionCustomizePoliciesWindowFC : Window
         hoveredPolicy = null;
 
         // Header
-        Rect labelHeader = new Rect(0, 0, 200, 40);
+        Rect labelHeader = new(0, 0, 200, 40);
         float headerHeight = labelHeader.yMax + (margin * 4);
 
         Text.Anchor = TextAnchor.MiddleLeft;
@@ -84,7 +84,7 @@ public class FactionCustomizePoliciesWindowFC : Window
         {
             int clearCost = PolicyRepickCost.Compute(faction);
             bool canAfford = PaymentUtil.GetSilver() >= clearCost;
-            Rect clearBtn = new Rect(inRect.xMax - 240, 5, 230, 30);
+            Rect clearBtn = new(inRect.xMax - 240, 5, 230, 30);
 
             Color savedColor = GUI.color;
             if (!canAfford) GUI.color = new Color(1f, 1f, 1f, 0.5f);
@@ -102,10 +102,10 @@ public class FactionCustomizePoliciesWindowFC : Window
         }
 
         // Confirm button
-        Rect buttonConfirm = new Rect((inRect.xMax - 200) / 2f, inRect.yMax - 50, 200, 30);
+        Rect buttonConfirm = new((inRect.xMax - 200) / 2f, inRect.yMax - 50, 200, 30);
 
         // Alert text
-        Rect alertRect = new Rect(inRect.x + margin, buttonConfirm.y - 25, inRect.width - (margin * 2), 20);
+        Rect alertRect = new(inRect.x + margin, buttonConfirm.y - 25, inRect.width - (margin * 2), 20);
 
         // Two-panel layout: cards (left) + picker (right)
         float panelTop = headerHeight;
@@ -114,8 +114,8 @@ public class FactionCustomizePoliciesWindowFC : Window
         float cardsWidth = inRect.width * 0.58f;
         float pickerWidth = inRect.width - cardsWidth - margin;
 
-        Rect cardsPanel = new Rect(inRect.x, panelTop, cardsWidth, panelHeight);
-        Rect pickerPanel = new Rect(cardsPanel.xMax + margin, panelTop, pickerWidth, panelHeight);
+        Rect cardsPanel = new(inRect.x, panelTop, cardsWidth, panelHeight);
+        Rect pickerPanel = new(cardsPanel.xMax + margin, panelTop, pickerWidth, panelHeight);
 
         // Draw picker first so hoveredPolicy is set before cards read it
         DrawAvailablePolicies(pickerPanel);
@@ -169,7 +169,7 @@ public class FactionCustomizePoliciesWindowFC : Window
 
         for (int i = 0; i < FCSettings.maxPolicyCount; i++)
         {
-            Rect cardRect = new Rect(inRect.x, inRect.y + i * (cardHeight + cardGap), inRect.width, cardHeight);
+            Rect cardRect = new(inRect.x, inRect.y + i * (cardHeight + cardGap), inRect.width, cardHeight);
 
             if (i < selectedPolicies.Count)
             {
@@ -201,7 +201,7 @@ public class FactionCustomizePoliciesWindowFC : Window
         Texture2D icon = policy.IconLight;
         if (icon != null)
         {
-            Rect iconRect = new Rect(inner.x, y + (iconSize - iconSize) / 2f, iconSize, iconSize);
+            Rect iconRect = new(inner.x, y + (iconSize - iconSize) / 2f, iconSize, iconSize);
             Widgets.DrawTextureFitted(iconRect, icon, 1f);
         }
 
@@ -212,7 +212,7 @@ public class FactionCustomizePoliciesWindowFC : Window
         if (!isPreview && !traitsChosen)
         {
             nameLabelWidth -= removeButtonSize + margin;
-            Rect removeBtn = new Rect(inner.xMax - removeButtonSize, y + (iconSize - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
+            Rect removeBtn = new(inner.xMax - removeButtonSize, y + (iconSize - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
 
             // Restore color briefly for the button
             Color savedColor = GUI.color;
@@ -227,7 +227,7 @@ public class FactionCustomizePoliciesWindowFC : Window
             GUI.color = savedColor;
         }
 
-        Rect nameRect = new Rect(nameLabelX, y, nameLabelWidth, iconSize);
+        Rect nameRect = new(nameLabelX, y, nameLabelWidth, iconSize);
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(nameRect, policy.LabelCap);
@@ -245,7 +245,7 @@ public class FactionCustomizePoliciesWindowFC : Window
         }
 
         // Policy effects description
-        Rect descRect = new Rect(inner.x, y, inner.width, inner.yMax - y);
+        Rect descRect = new(inner.x, y, inner.width, inner.yMax - y);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.UpperLeft;
         string desc = returnPolicyDesc(policy);
@@ -278,7 +278,7 @@ public class FactionCustomizePoliciesWindowFC : Window
 
     private void DrawAvailablePolicies(Rect inRect)
     {
-        Rect listHeader = new Rect(inRect.x, inRect.y, inRect.width, 22f);
+        Rect listHeader = new(inRect.x, inRect.y, inRect.width, 22f);
         Widgets.DrawHighlight(listHeader);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
@@ -289,7 +289,7 @@ public class FactionCustomizePoliciesWindowFC : Window
         float listHeight = inRect.yMax - listY;
         float contentHeight = allCorePolicies.Count * (policyRowHeight + smallMargin);
 
-        Rect viewRect = new Rect(inRect.x, listY, inRect.width, listHeight);
+        Rect viewRect = new(inRect.x, listY, inRect.width, listHeight);
 
         Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref availableListScroll, Mathf.Max(contentHeight, listHeight));
 
@@ -298,7 +298,7 @@ public class FactionCustomizePoliciesWindowFC : Window
             FCPolicyDef policy = allCorePolicies[i];
             bool isSelected = selectedPolicies.Contains(policy);
             bool isBlocked = IsBlockedByIncompatible(policy);
-            Rect row = new Rect(scrollRect.x, scrollRect.y + i * (policyRowHeight + smallMargin), scrollRect.width, policyRowHeight);
+            Rect row = new(scrollRect.x, scrollRect.y + i * (policyRowHeight + smallMargin), scrollRect.width, policyRowHeight);
 
             // Determine label style
             string buttonLabel;

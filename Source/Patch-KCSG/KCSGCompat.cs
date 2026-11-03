@@ -28,7 +28,7 @@ public static class Patch_CanPlaceAt
     static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
         var roofedMethod = AccessTools.Method(typeof(GridsUtility), "Roofed",
-            new[] { typeof(IntVec3), typeof(Map) });
+            [typeof(IntVec3), typeof(Map)]);
         var safeMethod = AccessTools.Method(typeof(Patch_CanPlaceAt), "RoofedSafe");
 
         var codes = instructions.ToList();

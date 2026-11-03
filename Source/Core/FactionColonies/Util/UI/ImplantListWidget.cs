@@ -34,7 +34,7 @@ public static class ImplantListWidget
         if (opts.canEdit && opts.showHeaderButtons && displayUnit is not null)
         {
             float addW = 120f;
-            Rect addBtnRect = new Rect(rect.xMax - addW, btnY, addW, headerHeight);
+            Rect addBtnRect = new(rect.xMax - addW, btnY, addW, headerHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
             if (UIUtil.ClampedButtonText(addBtnRect, "fcAddImplant".Translate()))
@@ -44,9 +44,9 @@ public static class ImplantListWidget
             }
         }
 
-        Rect listOutRect = new Rect(rect.x, btnY + headerHeight + 2f, rect.width, rect.height - headerHeight - 4f);
+        Rect listOutRect = new(rect.x, btnY + headerHeight + 2f, rect.width, rect.height - headerHeight - 4f);
 
-        List<SavedImplant> items = displayUnit?.implants ?? new List<SavedImplant>();
+        List<SavedImplant> items = displayUnit?.implants ?? [];
         float viewHeight = items.Count * rowHeight;
         Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref scrollPos, viewHeight);
 
@@ -55,16 +55,16 @@ public static class ImplantListWidget
             SavedImplant item = items[i];
             if (!item.IsValid) continue;
             int index = i;
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
             if (i % 2 == 0) Widgets.DrawHighlight(row);
 
             // Icon + info card (the implant item / self-install item)
             ThingDef iconThing = MilUnitFC.ImplantIconThing(item);
-            Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
+            Rect iconRect = new(row.x + 2f, row.y + 2f, IconSize, IconSize);
             if (iconThing is not null)
                 Widgets.ThingIcon(iconRect, iconThing);
 
-            Rect infoRect = new Rect(iconRect.xMax + 2f, row.y + 2f, IconSize - 2f, IconSize - 2f);
+            Rect infoRect = new(iconRect.xMax + 2f, row.y + 2f, IconSize - 2f, IconSize - 2f);
             if (iconThing is not null)
                 Widgets.InfoCardButton(infoRect, iconThing);
 
@@ -84,7 +84,7 @@ public static class ImplantListWidget
 
             // Cost
             float costRight = opts.canEdit ? removeRect.x - 4f : row.xMax - 4f;
-            Rect costRect = new Rect(costRight - 60f, row.y, 60f, rowHeight);
+            Rect costRect = new(costRight - 60f, row.y, 60f, rowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
             UIUtil.ClampedLabel(costRect, "$" + MilUnitFC.ImplantCost(item).ToString("F0"));
@@ -98,7 +98,7 @@ public static class ImplantListWidget
             string label = item.bodyPart is not null
                 ? hediffLabel + " (" + item.bodyPart.label + ")"
                 : hediffLabel;
-            Rect labelRect = new Rect(infoRect.xMax + 6f, row.y, costRect.x - infoRect.xMax - 10f, rowHeight);
+            Rect labelRect = new(infoRect.xMax + 6f, row.y, costRect.x - infoRect.xMax - 10f, rowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);

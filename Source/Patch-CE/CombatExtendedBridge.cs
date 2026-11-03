@@ -59,7 +59,7 @@ public class CombatExtendedBridge : ICombatExtendedBridge
             float minSpeedSq = gravityPerWidth * (Mathf.Sqrt(shotHeight * shotHeight + range * range) - shotHeight);
             float shotSpeed = Mathf.Max(20f, Mathf.Sqrt(minSpeedSq) * 1.1f);
 
-            Vector3 source3D = new Vector3(source.x, shotHeight, source.z);
+            Vector3 source3D = new(source.x, shotHeight, source.z);
             Vector3 target3D = target.ToVector3Shifted();
 
             float shotRotation = ceProps.TrajectoryWorker.ShotRotation(ceProps, source3D, target3D);

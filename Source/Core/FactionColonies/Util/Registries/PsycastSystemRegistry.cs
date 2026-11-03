@@ -12,9 +12,9 @@ namespace FactionColonies;
 /// </summary>
 public static class PsycastSystemRegistry
 {
-    private static readonly VanillaPsycastProvider _vanilla = new VanillaPsycastProvider();
+    private static readonly VanillaPsycastProvider _vanilla = new();
     private static readonly List<IPsycastSystemProvider> _providers =
-        new List<IPsycastSystemProvider> { _vanilla };
+        [_vanilla];
 
     public static void Register(IPsycastSystemProvider provider)
     {

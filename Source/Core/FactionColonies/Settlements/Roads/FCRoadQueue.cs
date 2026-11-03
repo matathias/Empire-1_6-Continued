@@ -39,8 +39,8 @@ public class FCRoadQueue : IExposable
 
     // Edge cost cache (saved). Wire format on disk is Dictionary<long, float>
     // for save-compat with older versions; conversion happens in ExposeData.
-    private Dictionary<TileEdgeKey, float> edgeCostCache = new Dictionary<TileEdgeKey, float>();
-    private HashSet<int> previousTileSet = new HashSet<int>();
+    private Dictionary<TileEdgeKey, float> edgeCostCache = [];
+    private HashSet<int> previousTileSet = [];
     private RoadDef cachedRoadDef;
 
     // Background thread result handoff (not saved)
@@ -63,7 +63,7 @@ public class FCRoadQueue : IExposable
         }
     }
 
-    public List<FCRoadPath> roadPaths = new List<FCRoadPath>();
+    public List<FCRoadPath> roadPaths = [];
 
     private class UnionFind
     {
@@ -120,8 +120,8 @@ public class FCRoadQueue : IExposable
     {
         int n = allTiles.Count;
         int k = Math.Min(KNearestNeighbors, n - 1);
-        HashSet<TileEdgeKey> candidateKeys = new HashSet<TileEdgeKey>();
-        List<KeyValuePair<int, float>> distances = new List<KeyValuePair<int, float>>(n);
+        HashSet<TileEdgeKey> candidateKeys = [];
+        List<KeyValuePair<int, float>> distances = new(n);
 
         for (int i = 0; i < n; i++)
         {
@@ -146,7 +146,7 @@ public class FCRoadQueue : IExposable
 
     private void InvalidateCacheForTiles(HashSet<int> removedTiles)
     {
-        List<TileEdgeKey> toRemove = new List<TileEdgeKey>();
+        List<TileEdgeKey> toRemove = [];
         foreach (TileEdgeKey key in edgeCostCache.Keys)
         {
             if (removedTiles.Contains(key.lo) || removedTiles.Contains(key.hi))
@@ -158,7 +158,7 @@ public class FCRoadQueue : IExposable
 
     private List<Edge> BuildEdgeListFromCache(HashSet<TileEdgeKey> candidateEdges)
     {
-        List<Edge> edges = new List<Edge>(candidateEdges.Count);
+        List<Edge> edges = new(candidateEdges.Count);
         foreach (TileEdgeKey key in candidateEdges)
         {
             float cost;
@@ -183,8 +183,7 @@ public class FCRoadQueue : IExposable
         Scribe_Values.Look(ref nextRoadTick, "nextRoadTick");
         Scribe_Values.Look(ref daysBetweenTicks, "daysBetweenTicks");
         Scribe_Collections.Look(ref roadPaths, "roadPaths", LookMode.Deep);
-        if (roadPaths is null)
-            roadPaths = new List<FCRoadPath>();
+        roadPaths ??= [];
 
         // Edge cost cache persistence. Wire format remains Dictionary<long, float>
         // so saves from the pre-TileEdgeKey version still load. The struct provides
@@ -196,13 +195,12 @@ public class FCRoadQueue : IExposable
         if (Scribe.mode == LoadSaveMode.LoadingVars)
         {
             edgeCostCache = packedEdgeCache is null
-                ? new Dictionary<TileEdgeKey, float>()
+                ? []
                 : packedEdgeCache.ToDictionary(kvp => TileEdgeKey.Unpack(kvp.Key), kvp => kvp.Value);
         }
 
         Scribe_Collections.Look(ref previousTileSet, "previousTilesList", LookMode.Value);
-        if (previousTileSet is null)
-            previousTileSet = new HashSet<int>();
+        previousTileSet ??= [];
 
         Scribe_Defs.Look(ref cachedRoadDef, "cachedRoadDef");
     }
@@ -280,7 +278,7 @@ public class FCRoadQueue : IExposable
         try
         {
             // Compute only the missing edges
-            Dictionary<TileEdgeKey, float> newEdges = new Dictionary<TileEdgeKey, float>(edgesToCompute.Count);
+            Dictionary<TileEdgeKey, float> newEdges = new(edgesToCompute.Count);
             using (var pathing = new WorldPathing(layer))
             {
                 foreach (TileEdgeKey key in edgesToCompute)
@@ -303,7 +301,7 @@ public class FCRoadQueue : IExposable
                 return;
 
             // Merge cached + newly computed edges for Kruskal
-            List<Edge> edges = new List<Edge>(cacheSnapshot.Count + newEdges.Count);
+            List<Edge> edges = new(cacheSnapshot.Count + newEdges.Count);
             foreach (var kvp in cacheSnapshot)
             {
                 edges.Add(new Edge { fromTile = kvp.Key.lo, toTile = kvp.Key.hi, cost = kvp.Value });
@@ -327,7 +325,7 @@ public class FCRoadQueue : IExposable
         catch (Exception e)
         {
             pendingLogMessage = $"Road MST background computation failed: {e}";
-            computedMSTEdges = new List<Edge>();
+            computedMSTEdges = [];
             completedGeneration = generation;
         }
     }
@@ -363,13 +361,13 @@ public class FCRoadQueue : IExposable
     static List<Edge> RunKruskal(List<Edge> edges, List<int> allTiles)
     {
         int n = allTiles.Count;
-        Dictionary<int, int> tileToIndex = new Dictionary<int, int>(n);
+        Dictionary<int, int> tileToIndex = new(n);
         for (int i = 0; i < n; i++)
             tileToIndex[allTiles[i]] = i;
 
         edges.Sort((a, b) => a.cost.CompareTo(b.cost));
-        UnionFind uf = new UnionFind(n);
-        List<Edge> mstEdges = new List<Edge>(n - 1);
+        UnionFind uf = new(n);
+        List<Edge> mstEdges = new(n - 1);
 
         foreach (Edge edge in edges)
         {
@@ -490,7 +488,7 @@ public class FCRoadQueue : IExposable
 
             if (!alreadyExists)
             {
-                FCRoadPath newPath = new FCRoadPath(from, to);
+                FCRoadPath newPath = new(from, to);
                 newPath.builtRoadDef = this.roadDef;
                 yield return newPath;
             }
@@ -502,7 +500,7 @@ public class FCRoadQueue : IExposable
         FactionFC fC = FindFC.FactionComp;
 
         // Collect empire settlement tiles
-        HashSet<int> allTileSet = new HashSet<int>();
+        HashSet<int> allTileSet = [];
         int fromCount = 0;
         foreach (WorldSettlementFC settlement in fC.settlements)
         {
@@ -538,7 +536,7 @@ public class FCRoadQueue : IExposable
         roadPaths.RemoveAll(p => !p.IsCompleted ||
             FCRoadPath.IsNewRoadBetter(p.builtRoadDef, this.roadDef));
 
-        List<int> allTiles = new List<int>(allTileSet);
+        List<int> allTiles = new(allTileSet);
         if (allTiles.Count < 2)
             return;
 
@@ -557,7 +555,7 @@ public class FCRoadQueue : IExposable
         else
         {
             // Partial invalidation: remove edges touching removed tiles
-            HashSet<int> removedTiles = new HashSet<int>(previousTileSet);
+            HashSet<int> removedTiles = new(previousTileSet);
             removedTiles.ExceptWith(allTileSet);
             if (removedTiles.Count > 0)
             {
@@ -571,7 +569,7 @@ public class FCRoadQueue : IExposable
         currentCandidateEdges = SelectKNNCandidateEdges(allTiles, layer);
 
         // Filter to uncached edges
-        HashSet<TileEdgeKey> edgesToCompute = new HashSet<TileEdgeKey>(currentCandidateEdges);
+        HashSet<TileEdgeKey> edgesToCompute = new(currentCandidateEdges);
         edgesToCompute.ExceptWith(edgeCostCache.Keys);
 
         // Short-circuit: all candidates are cached, just run Kruskal
@@ -587,15 +585,15 @@ public class FCRoadQueue : IExposable
         if (FCSettings.useThreadedRoadComputation)
         {
             // Snapshot relevant cache entries for the background thread
-            Dictionary<TileEdgeKey, float> cacheSnapshot = new Dictionary<TileEdgeKey, float>();
+            Dictionary<TileEdgeKey, float> cacheSnapshot = [];
             foreach (TileEdgeKey key in currentCandidateEdges)
             {
                 float cost;
                 if (edgeCostCache.TryGetValue(key, out cost))
                     cacheSnapshot[key] = cost;
             }
-            HashSet<TileEdgeKey> edgesToComputeCopy = new HashSet<TileEdgeKey>(edgesToCompute);
-            Thread thread = new Thread(() => ComputeMSTBackground(allTiles, layer, generation, edgesToComputeCopy, cacheSnapshot));
+            HashSet<TileEdgeKey> edgesToComputeCopy = new(edgesToCompute);
+            Thread thread = new(() => ComputeMSTBackground(allTiles, layer, generation, edgesToComputeCopy, cacheSnapshot));
             thread.IsBackground = true;
             thread.Start();
         }
@@ -633,8 +631,7 @@ public class FCRoadQueue : IExposable
         }
 
         // MST just completed — create iterator
-        if (this.roadPathIterator is null)
-            this.roadPathIterator = ProcessPath();
+        this.roadPathIterator ??= ProcessPath();
 
         if (this.roadPathIterator.MoveNext())
         {

@@ -5,7 +5,7 @@ namespace FactionColonies;
 public class ResourceTypeDef : Def
 {
     public string iconPath;
-    public Color color = new Color(0.65f, 0.65f, 0.65f);
+    public Color color = new(0.65f, 0.65f, 0.65f);
     /// <summary>Description with {FACTION}/{FACTION_TITLE} tokens and [b]/[i] emphasis markup resolved for display.</summary>
     public string FormattedDesc => description.Format();
 
@@ -14,18 +14,18 @@ public class ResourceTypeDef : Def
      *         - If a Thing's category isn't allowed, but the Thing satisfies all of its own requirements, then that Thing is allowed
      *         - If a Thing's category is allowed, but the Thing does *not* satisfy all of its own requirements, then that Thing is disallowed
      */
-    List<ResourceThingDefRestriction> thingAllowList = new List<ResourceThingDefRestriction>();
-    List<ThingDef> thingBlockList = new List<ThingDef>();
+    List<ResourceThingDefRestriction> thingAllowList = [];
+    List<ThingDef> thingBlockList = [];
 
-    List<ResourceThingCategoryDefRestriction> thingCategoryAllowList = new List<ResourceThingCategoryDefRestriction>();
-    List<ThingCategoryDef> thingCategoryBlockList = new List<ThingCategoryDef>();
+    List<ResourceThingCategoryDefRestriction> thingCategoryAllowList = [];
+    List<ThingCategoryDef> thingCategoryBlockList = [];
 
-    List<StuffCategoryDef> stuffCategoryAllowList = new List<StuffCategoryDef>();
-    List<StuffCategoryDef> stuffCategoryBlockList = new List<StuffCategoryDef>();
+    List<StuffCategoryDef> stuffCategoryAllowList = [];
+    List<StuffCategoryDef> stuffCategoryBlockList = [];
 
     /* biomeAllowList and biomeBlockList are mutually exclusive */
-    List<BiomeResourceDef> biomeAllowList = new List<BiomeResourceDef>();
-    List<BiomeResourceDef> biomeBlockList = new List<BiomeResourceDef>();
+    List<BiomeResourceDef> biomeAllowList = [];
+    List<BiomeResourceDef> biomeBlockList = [];
 
     /// <summary>
     /// Minimum tech level to access or produce this resource type.
@@ -40,11 +40,11 @@ public class ResourceTypeDef : Def
     /// <summary>
     /// A list of research projects required to unlock access to this resource type.
     /// </summary>
-    public List<ResearchProjectDef> researchProjectDefs = new List<ResearchProjectDef>();
+    public List<ResearchProjectDef> researchProjectDefs = [];
     /// <summary>
     /// The pawn skills associated with producing this resource type. May be empty.
     /// </summary>
-    public List<SkillDef> associatedSkills = new List<SkillDef>();
+    public List<SkillDef> associatedSkills = [];
     /// <summary>
     /// Indicates whether the resource type needs to meet both the techlevel AND researchProjectDefs requirements to become available.
     /// </summary>
@@ -557,7 +557,7 @@ public class ResourceTypeDef : Def
     /// </summary>
     public void FilterResourceForCodex(ThingFilter filter, out Dictionary<ThingDef, TitheRestrictionInfo> restrictions)
     {
-        restrictions = new Dictionary<ThingDef, TitheRestrictionInfo>();
+        restrictions = [];
 
         // Category allow lists — allow everything, record category-level restrictions
         foreach (ResourceThingCategoryDefRestriction catRestriction in thingCategoryAllowList)
@@ -569,7 +569,7 @@ public class ResourceTypeDef : Def
             {
                 foreach (ThingDef thing in catRestriction.thingCategoryDef.DescendantThingDefs)
                 {
-                    TitheRestrictionInfo info = new TitheRestrictionInfo();
+                    TitheRestrictionInfo info = new();
                     info.minTechLevel = catRestriction.minTechLevel;
                     info.researchProjects = catRestriction.researchProjectDefs;
                     restrictions[thing] = info;
@@ -592,7 +592,7 @@ public class ResourceTypeDef : Def
         {
             filter.SetAllow(thingRestriction.thingDef, true);
 
-            TitheRestrictionInfo info = new TitheRestrictionInfo();
+            TitheRestrictionInfo info = new();
             info.minTechLevel = thingRestriction.minTechLevel;
             info.researchProjects = thingRestriction.researchProjectDefs;
             restrictions[thingRestriction.thingDef] = info;

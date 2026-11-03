@@ -13,8 +13,8 @@ public static class SettlementPawnArrivalFallback
 {
     public static void RouteLeftovers(List<ActiveTransporterInfo> transporters, PlanetTile tile, WorldSettlementFC settlement)
     {
-        List<Pawn> leftoverPawns = new List<Pawn>();
-        List<Thing> leftoverItems = new List<Thing>();
+        List<Pawn> leftoverPawns = [];
+        List<Thing> leftoverItems = [];
 
         for (int i = 0; i < transporters.Count; i++)
         {

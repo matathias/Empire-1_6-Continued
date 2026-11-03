@@ -21,8 +21,8 @@ public class SquadEquipmentTracker : IExposable
     public SquadEquipmentTracker(MercenarySquadFC squad)
     {
         this.squad = squad;
-        UsedWeaponList = new List<ThingWithComps>();
-        UsedApparelList = new List<Apparel>();
+        UsedWeaponList = [];
+        UsedApparelList = [];
     }
 
     public void ExposeData()
@@ -41,8 +41,8 @@ public class SquadEquipmentTracker : IExposable
         if (squad is null) return;
         int count = 0;
         squad.outfit = outfit;
-        UsedWeaponList = new List<ThingWithComps>();
-        UsedApparelList = new List<Apparel>();
+        UsedWeaponList = [];
+        UsedApparelList = [];
         foreach (MilUnitFC loadout in outfit.Units)
         {
             try
@@ -56,7 +56,7 @@ public class SquadEquipmentTracker : IExposable
                 // Ensure we have enough mercenaries in the list
                 while (squad.mercenaries.Count <= count)
                 {
-                    Mercenary newMerc = new Mercenary(true);
+                    Mercenary newMerc = new(true);
                     MercenaryPawnFactory.CreateNewPawn(squad, ref newMerc, loadout?.pawnKind, loadout?.xenotype, loadout?.customXenotypeName, loadout);
                     if (newMerc?.pawn is not null)
                     {
@@ -79,7 +79,7 @@ public class SquadEquipmentTracker : IExposable
 
                 if (squad.mercenaries[count].pawn.kindDef != loadout.pawnKind || squad.mercenaries[count].pawn.Dead)
                 {
-                    Mercenary pawn = new Mercenary(true);
+                    Mercenary pawn = new(true);
                     MercenaryPawnFactory.CreateNewPawn(squad, ref pawn, loadout.pawnKind, loadout.xenotype, loadout.customXenotypeName, loadout);
                     // Only replace if new pawn was successfully created
                     if (pawn?.pawn is not null)
@@ -141,8 +141,8 @@ public class SquadEquipmentTracker : IExposable
 
         // Ensure the snapshot lists exist even if this loadout has no apparel/weapons; the
         // per-item helpers below append the worn items as they go (see RemoveDroppedEquipment).
-        if (UsedWeaponList is null) UsedWeaponList = new List<ThingWithComps>();
-        if (UsedApparelList is null) UsedApparelList = new List<Apparel>();
+        UsedWeaponList ??= [];
+        UsedApparelList ??= [];
 
         if (merc.pawn.apparel is not null)
         {
@@ -187,7 +187,7 @@ public class SquadEquipmentTracker : IExposable
         if (FCSettings.antiExploit)
             ap.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
 
-        if (UsedApparelList is null) UsedApparelList = new List<Apparel>();
+        UsedApparelList ??= [];
         UsedApparelList.Add(ap);
     }
 
@@ -214,7 +214,7 @@ public class SquadEquipmentTracker : IExposable
         if (FCSettings.antiExploit)
             twc.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
 
-        if (UsedWeaponList is null) UsedWeaponList = new List<ThingWithComps>();
+        UsedWeaponList ??= [];
         UsedWeaponList.Add(twc);
     }
 
@@ -274,7 +274,7 @@ public class SquadEquipmentTracker : IExposable
     public void SpawnAnimalsFor(Mercenary merc, MilUnitFC loadout)
     {
         if (squad is null || merc is null || loadout is null) return;
-        if (merc.animals is null) merc.animals = new List<Mercenary>();
+        merc.animals ??= [];
 
         if (loadout.animals is not null)
         {
@@ -283,7 +283,7 @@ public class SquadEquipmentTracker : IExposable
                 if (sa.kind is null) continue;
                 for (int n = 0; n < Mathf.Max(1, sa.count); n++)
                 {
-                    Mercenary animal = new Mercenary(true);
+                    Mercenary animal = new(true);
                     MercenaryPawnFactory.CreateNewAnimal(squad, ref animal, sa.kind);
                     animal.handler = merc;
                     merc.animals.Add(animal);
@@ -293,7 +293,7 @@ public class SquadEquipmentTracker : IExposable
 
         if (FactionCompat.GiddyUp2Active && loadout.mount is not null)
         {
-            Mercenary mount = new Mercenary(true);
+            Mercenary mount = new(true);
             MercenaryPawnFactory.CreateNewAnimal(squad, ref mount, loadout.mount);
             mount.subPawnType = Mercenary.SubPawnType.Mount;   // CreateNewAnimal tags it Animal; override.
             mount.handler = merc;
@@ -310,7 +310,7 @@ public class SquadEquipmentTracker : IExposable
     public void ReconcileAnimal(Mercenary merc, MilUnitFC target)
     {
         if (merc is null || squad is null) return;
-        if (merc.animals is null) merc.animals = new List<Mercenary>();
+        merc.animals ??= [];
 
         ReconcileCompanions(merc, target);
         ReconcileMount(merc, target);
@@ -319,7 +319,7 @@ public class SquadEquipmentTracker : IExposable
     /* Reconciles the (kind -> count) multiset of companion animals (subPawnType == Animal). */
     private void ReconcileCompanions(Mercenary merc, MilUnitFC target)
     {
-        Dictionary<PawnKindDef, int> wanted = new Dictionary<PawnKindDef, int>();
+        Dictionary<PawnKindDef, int> wanted = [];
         if (target?.animals is not null)
         {
             foreach (SavedAnimal a in target.animals)
@@ -356,7 +356,7 @@ public class SquadEquipmentTracker : IExposable
         {
             for (int n = 0; n < kv.Value; n++)
             {
-                Mercenary animal = new Mercenary(true);
+                Mercenary animal = new(true);
                 MercenaryPawnFactory.CreateNewAnimal(squad, ref animal, kv.Key);
                 animal.handler = merc;
                 merc.animals.Add(animal);
@@ -398,7 +398,7 @@ public class SquadEquipmentTracker : IExposable
             merc.animals.Remove(existing);
         }
 
-        Mercenary mount = new Mercenary(true);
+        Mercenary mount = new(true);
         MercenaryPawnFactory.CreateNewAnimal(squad, ref mount, wanted);
         mount.subPawnType = Mercenary.SubPawnType.Mount;
         mount.handler = merc;
@@ -430,7 +430,7 @@ public class SquadEquipmentTracker : IExposable
         // pawn that predates this loadout becoming a mechanitor design.
         MilUnitFC.ApplyMechanitorToPawn(mechanitor.pawn, loadout);
         if (mechanitor.pawn.mechanitor is null) return;
-        if (mechanitor.mechs is null) mechanitor.mechs = new List<Mercenary>();
+        mechanitor.mechs ??= [];
         if (loadout.mechs is null) return;
 
         foreach (SavedMech sm in loadout.mechs)
@@ -440,7 +440,7 @@ public class SquadEquipmentTracker : IExposable
             MechWorkModeDef workMode = loadout.GetGroupWorkMode(group);
             for (int n = 0; n < Mathf.Max(1, sm.count); n++)
             {
-                Mercenary mech = new Mercenary(true);
+                Mercenary mech = new(true);
                 MercenaryPawnFactory.CreateNewMech(squad, ref mech, sm.kind, mechanitor.pawn, group, workMode);
                 if (mech.pawn is not null)
                 {

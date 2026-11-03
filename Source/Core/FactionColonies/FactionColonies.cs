@@ -213,11 +213,11 @@ public class FCSettings : ModSettings
 
     public static int minDaysTillMilitaryAction = DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION;
     public static int maxDaysTillMilitaryAction = DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION;
-    public static IntRange minMaxDaysTillMilitaryAction = new IntRange(minDaysTillMilitaryAction, maxDaysTillMilitaryAction);
+    public static IntRange minMaxDaysTillMilitaryAction = new(minDaysTillMilitaryAction, maxDaysTillMilitaryAction);
 
     public static int minDaysTillRandomEvent = DEFAULT_MIN_DAYS_TIL_RANDOM_EVENT;
     public static int maxDaysTillRandomEvent = DEFAULT_MAX_DAYS_TIL_RANDOM_EVENT;
-    public static IntRange minMaxDaysTillRandomEvent = new IntRange(minDaysTillRandomEvent, maxDaysTillRandomEvent);
+    public static IntRange minMaxDaysTillRandomEvent = new(minDaysTillRandomEvent, maxDaysTillRandomEvent);
 
     /* Settlement tuning knobs, exposed on the Advanced settings tab. */
     public static double unrestBaseGain = DEFAULT_UNREST_BASE_GAIN;
@@ -403,7 +403,7 @@ public class FCSettings : ModSettings
     public static float buildingWindowHeight = 600f;
 
     // Patch notes version tracking — per-mod dictionary of "major.minor.patch" strings
-    public static Dictionary<string, string> lastSeenVersions = new Dictionary<string, string>();
+    public static Dictionary<string, string> lastSeenVersions = [];
 
     // Settings-format version stamp (independent of the patch-notes lastSeenVersions above).
     // Semantic mod version that last wrote the settings file. Re-stamped on every save. Null pre-stamp.
@@ -422,16 +422,16 @@ public class FCSettings : ModSettings
     public static PatchNoteType patchNoteAutoOpenThreshold = DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD;
 
     // Saved color picker colors (persisted across sessions)
-    public static List<Color> savedPickerColors = new List<Color>();
+    public static List<Color> savedPickerColors = [];
     public const int MaxSavedPickerColors = 24;
 
     // Per-event disable list (defName strings)
-    public static HashSet<string> disabledEventDefs = new HashSet<string>();
+    public static HashSet<string> disabledEventDefs = [];
     public static bool IsEventDisabled(string defName) => disabledEventDefs.Contains(defName);
 
     // Settings tab state
     private static int settingsTab = 0;
-    private static List<TabRecord> settingsTabs = new List<TabRecord>();
+    private static List<TabRecord> settingsTabs = [];
 
     public override void ExposeData()
     {
@@ -578,13 +578,13 @@ public class FCSettings : ModSettings
         Scribe_Values.Look(ref prosperityDriftStep, "prosperityDriftStep", DEFAULT_PROSPERITY_DRIFT_STEP);
         Scribe_Values.Look(ref productionResearchBase, "productionResearchBase", DEFAULT_PRODUCTION_RESEARCH_BASE);
         Scribe_Collections.Look(ref lastSeenVersions, "lastSeenVersions", LookMode.Value, LookMode.Value);
-        if (lastSeenVersions is null) lastSeenVersions = new Dictionary<string, string>();
+        lastSeenVersions ??= [];
         Scribe_Values.Look(ref patchNoteAutoOpenThreshold, "patchNoteAutoOpenThreshold", DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD);
         Scribe_Collections.Look(ref disabledEventDefs, "disabledEventDefs", LookMode.Value);
-        if (disabledEventDefs is null) disabledEventDefs = new HashSet<string>();
+        disabledEventDefs ??= [];
 
         Scribe_Collections.Look(ref savedPickerColors, "savedPickerColors", LookMode.Value);
-        if (savedPickerColors is null) savedPickerColors = new List<Color>();
+        savedPickerColors ??= [];
 
         if (Scribe.mode == LoadSaveMode.LoadingVars)
         {
@@ -924,23 +924,16 @@ public class FCSettings : ModSettings
 
     public static int DaysBetweenTaxesByDifficulty(EmpireDifficultyLevel difficulty)
     {
-        switch (difficulty)
+        return difficulty switch
         {
-            case EmpireDifficultyLevel.Peaceful:
-                return DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL;
-            case EmpireDifficultyLevel.CommunityBuilder:
-                return DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER;
-            case EmpireDifficultyLevel.AdventureStory:
-                return DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY;
-            case EmpireDifficultyLevel.StriveToSurvive:
-                return DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE;
-            case EmpireDifficultyLevel.BloodAndDust:
-                return DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST;
-            case EmpireDifficultyLevel.LosingIsFun:
-                return DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN;
-            default:
-                return DEFAULT_TAX_INTERVAL_DAYS;
-        }
+            EmpireDifficultyLevel.Peaceful => DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL,
+            EmpireDifficultyLevel.CommunityBuilder => DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER,
+            EmpireDifficultyLevel.AdventureStory => DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY,
+            EmpireDifficultyLevel.StriveToSurvive => DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE,
+            EmpireDifficultyLevel.BloodAndDust => DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST,
+            EmpireDifficultyLevel.LosingIsFun => DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN,
+            _ => DEFAULT_TAX_INTERVAL_DAYS,
+        };
     }
     public static int TicksBetweenTaxesByDifficulty(EmpireDifficultyLevel difficulty)
     {
@@ -956,12 +949,12 @@ public class FCSettings : ModSettings
 
     private static int timeBetweenTaxes_lastSeen = DEFAULT_TAX_INTERVAL_DAYS;
 
-    private Vector2 scrollVectorGeneral = new Vector2();
-    private Vector2 scrollVectorEvents = new Vector2();
-    private Vector2 scrollVectorMilitary = new Vector2();
-    private Vector2 scrollVectorRoadBuilder = new Vector2();
-    private Vector2 scrollVectorCompat = new Vector2();
-    private Vector2 scrollVectorAdvanced = new Vector2();
+    private Vector2 scrollVectorGeneral = new();
+    private Vector2 scrollVectorEvents = new();
+    private Vector2 scrollVectorMilitary = new();
+    private Vector2 scrollVectorRoadBuilder = new();
+    private Vector2 scrollVectorCompat = new();
+    private Vector2 scrollVectorAdvanced = new();
 
     /* Per-tab content heights, measured from the previous frame's Listing_Standard and
      * fed back into the scroll view so the scrollbar matches the real content length. */
@@ -997,42 +990,42 @@ public class FCSettings : ModSettings
     {
         get
         {
-            return new List<FloatMenuOption>()
-            {
-                new FloatMenuOption("FCTaxDeliveryModeDefaultDesc".Translate(), delegate() {forcedTaxDeliveryMode = default;}),
-                new FloatMenuOption("FCTaxDeliveryModeTaxSpotDesc".Translate(), delegate() {forcedTaxDeliveryMode = TaxDeliveryMode.TaxSpot;}),
-                new FloatMenuOption("FCTaxDeliveryModeCaravanDesc".Translate(), delegate() {forcedTaxDeliveryMode = TaxDeliveryMode.Caravan;}),
-                new FloatMenuOption("FCTaxDeliveryModeDropPodDesc".Translate(), delegate() {forcedTaxDeliveryMode = TaxDeliveryMode.DropPod;}),
+            return
+            [
+                new("FCTaxDeliveryModeDefaultDesc".Translate(), delegate() {forcedTaxDeliveryMode = default;}),
+                new("FCTaxDeliveryModeTaxSpotDesc".Translate(), delegate() {forcedTaxDeliveryMode = TaxDeliveryMode.TaxSpot;}),
+                new("FCTaxDeliveryModeCaravanDesc".Translate(), delegate() {forcedTaxDeliveryMode = TaxDeliveryMode.Caravan;}),
+                new("FCTaxDeliveryModeDropPodDesc".Translate(), delegate() {forcedTaxDeliveryMode = TaxDeliveryMode.DropPod;}),
                 ShuttleOption
-            };
+            ];
         }
     }
 
-    private List<FloatMenuOption> BattleModeOptions => new List<FloatMenuOption>
-    {
+    private List<FloatMenuOption> BattleModeOptions =>
+    [
         new FloatMenuOption("FCBattleModeAuto".Translate() + " - " + "FCBattleModeAutoDesc".Translate(), () => battleMode = BattleMode.Auto),
         new FloatMenuOption("FCBattleModeManual".Translate() + " - " + "FCBattleModeManualDesc".Translate(), () => battleMode = BattleMode.Manual),
         new FloatMenuOption("FCBattleModeHybrid".Translate() + " - " + "FCBattleModeHybridDesc".Translate(), () => battleMode = BattleMode.Hybrid)
-    };
+    ];
 
     // Offense has no Hybrid state (the caravan-on-tile heuristic doesn't map to attacking), so
     // it is a simple Auto / Manual toggle backed by the manualOffenseBattle bool.
-    private List<FloatMenuOption> OffenseBattleModeOptions => new List<FloatMenuOption>
-    {
+    private List<FloatMenuOption> OffenseBattleModeOptions =>
+    [
         new FloatMenuOption("FCBattleModeAuto".Translate() + " - " + "FCOffenseBattleModeAutoDesc".Translate(), () => manualOffenseBattle = false),
         new FloatMenuOption("FCBattleModeManual".Translate() + " - " + "FCOffenseBattleModeManualDesc".Translate(), () => manualOffenseBattle = true)
-    };
+    ];
 
     /// <summary>
     /// Creates a list of options for tax notification mode
     /// </summary>
-    private List<FloatMenuOption> TaxNotificationOptions => new List<FloatMenuOption>
-    {
+    private List<FloatMenuOption> TaxNotificationOptions =>
+    [
         new FloatMenuOption("FCTaxNotifyAll".Translate(), () => taxNotificationMode = TaxNotificationMode.All),
         new FloatMenuOption("FCTaxNotifyLetterOnly".Translate(), () => taxNotificationMode = TaxNotificationMode.LetterOnly),
         new FloatMenuOption("FCTaxNotifyMessageOnly".Translate(), () => taxNotificationMode = TaxNotificationMode.MessageOnly),
         new FloatMenuOption("FCTaxNotifyNone".Translate(), () => taxNotificationMode = TaxNotificationMode.None)
-    };
+    ];
 
     public void DoWindowContents(Rect inRect)
     {
@@ -1045,7 +1038,7 @@ public class FCSettings : ModSettings
         settingsTabs.Add(new TabRecord("FCSettingsTabCompat".Translate(), delegate { settingsTab = 4; }, settingsTab == 4));
         settingsTabs.Add(new TabRecord("FCSettingsTabAdvanced".Translate(), delegate { settingsTab = 5; }, settingsTab == 5));
 
-        Rect contentRect = new Rect(inRect.x, inRect.y + 40f, inRect.width, inRect.height - 40f);
+        Rect contentRect = new(inRect.x, inRect.y + 40f, inRect.width, inRect.height - 40f);
         Widgets.DrawMenuSection(contentRect);
         TabDrawer.DrawTabs(contentRect, settingsTabs);
 
@@ -1076,8 +1069,8 @@ public class FCSettings : ModSettings
         minMaxDaysTillRandomEvent = new IntRange(minDaysTillRandomEvent, maxDaysTillRandomEvent);
 
         Rect viewRect = ScrollUtil.BeginScrollView(rect, ref scrollVectorGeneral, contentHeightGeneral);
-        Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
-        Listing_Standard ls = new Listing_Standard();
+        Rect listRect = new(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
+        Listing_Standard ls = new();
         ls.Begin(listRect);
         Listing_StandardExtensions.ResetRowStripe();
 
@@ -1231,26 +1224,24 @@ public class FCSettings : ModSettings
         ls.CheckboxLabeled("FCSettingEnableDebugLogging".Translate(), ref printDebug);
 
         if (ls.ButtonText("FCOpenPatchNotes".Translate())) DebugActionsMisc.PatchNotesDisplayWindow();
-
-        string thresholdLabel;
-        switch (patchNoteAutoOpenThreshold)
+        string thresholdLabel = patchNoteAutoOpenThreshold switch
         {
-            case PatchNoteType.Major: thresholdLabel = "Major only"; break;
-            case PatchNoteType.Minor: thresholdLabel = "Minor and above"; break;
-            case PatchNoteType.Hotfix: thresholdLabel = "Hotfix and above"; break;
-            case PatchNoteType.Patch: thresholdLabel = "Patch and above"; break;
-            default: thresholdLabel = "Never"; break;
-        }
+            PatchNoteType.Major => "Major only",
+            PatchNoteType.Minor => "Minor and above",
+            PatchNoteType.Hotfix => "Hotfix and above",
+            PatchNoteType.Patch => "Patch and above",
+            _ => "Never",
+        };
         if (ls.ButtonText("FCPatchNoteAutoOpenThreshold".Translate() + thresholdLabel))
         {
-            Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>
-            {
-                new FloatMenuOption("Major only", () => patchNoteAutoOpenThreshold = PatchNoteType.Major),
-                new FloatMenuOption("Minor and above", () => patchNoteAutoOpenThreshold = PatchNoteType.Minor),
-                new FloatMenuOption("Hotfix and above", () => patchNoteAutoOpenThreshold = PatchNoteType.Hotfix),
-                new FloatMenuOption("Patch and above", () => patchNoteAutoOpenThreshold = PatchNoteType.Patch),
-                new FloatMenuOption("Never", () => patchNoteAutoOpenThreshold = PatchNoteType.Undefined)
-            }));
+            Find.WindowStack.Add(new FloatMenu(
+            [
+                new("Major only", () => patchNoteAutoOpenThreshold = PatchNoteType.Major),
+                new("Minor and above", () => patchNoteAutoOpenThreshold = PatchNoteType.Minor),
+                new("Hotfix and above", () => patchNoteAutoOpenThreshold = PatchNoteType.Hotfix),
+                new("Patch and above", () => patchNoteAutoOpenThreshold = PatchNoteType.Patch),
+                new("Never", () => patchNoteAutoOpenThreshold = PatchNoteType.Undefined)
+            ]));
         }
 
         ls.GapLine();
@@ -1275,8 +1266,8 @@ public class FCSettings : ModSettings
     private void DoAdvancedTab(Rect rect)
     {
         Rect viewRect = ScrollUtil.BeginScrollView(rect, ref scrollVectorAdvanced, contentHeightAdvanced);
-        Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
-        Listing_Standard ls = new Listing_Standard();
+        Rect listRect = new(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
+        Listing_Standard ls = new();
         ls.Begin(listRect);
         Listing_StandardExtensions.ResetRowStripe();
 
@@ -1325,8 +1316,8 @@ public class FCSettings : ModSettings
     private void DoEventsTab(Rect rect)
     {
         Rect viewRect = ScrollUtil.BeginScrollView(rect, ref scrollVectorEvents, contentHeightEvents);
-        Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
-        Listing_Standard ls = new Listing_Standard();
+        Rect listRect = new(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
+        Listing_Standard ls = new();
         ls.Begin(listRect);
         Listing_StandardExtensions.ResetRowStripe();
 
@@ -1361,7 +1352,7 @@ public class FCSettings : ModSettings
         {
             string catLabel = def.category is not null ? def.category.LabelCap.ToString() : "FCOther".Translate().ToString();
             if (!grouped.ContainsKey(catLabel))
-                grouped[catLabel] = new List<FCEventDef>();
+                grouped[catLabel] = [];
             grouped[catLabel].Add(def);
         }
 
@@ -1413,8 +1404,8 @@ public class FCSettings : ModSettings
         minMaxDaysTillMilitaryAction = new IntRange(minDaysTillMilitaryAction, maxDaysTillMilitaryAction);
 
         Rect viewRect = ScrollUtil.BeginScrollView(rect, ref scrollVectorMilitary, contentHeightMilitary);
-        Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
-        Listing_Standard ls = new Listing_Standard();
+        Rect listRect = new(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
+        Listing_Standard ls = new();
         ls.Begin(listRect);
         Listing_StandardExtensions.ResetRowStripe();
 
@@ -1657,8 +1648,8 @@ public class FCSettings : ModSettings
     private void DoRoadBuilderTab(Rect rect)
     {
         Rect viewRect = ScrollUtil.BeginScrollView(rect, ref scrollVectorRoadBuilder, contentHeightRoadBuilder);
-        Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
-        Listing_Standard ls = new Listing_Standard();
+        Rect listRect = new(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
+        Listing_Standard ls = new();
         ls.Begin(listRect);
         Listing_StandardExtensions.ResetRowStripe();
 
@@ -1705,8 +1696,8 @@ public class FCSettings : ModSettings
     private void DoCompatTab(Rect rect)
     {
         Rect viewRect = ScrollUtil.BeginScrollView(rect, ref scrollVectorCompat, contentHeightCompat);
-        Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
-        Listing_Standard ls = new Listing_Standard();
+        Rect listRect = new(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
+        Listing_Standard ls = new();
         ls.Begin(listRect);
         Listing_StandardExtensions.ResetRowStripe();
 
@@ -1764,7 +1755,7 @@ public class FCSettings : ModSettings
         string key = label ?? "FCSettingResetSection".Translate();
         ls.Gap(4f);
         Rect row = ls.GetRect(28f);
-        Rect btn = new Rect(row.x, row.y, row.width, row.height);
+        Rect btn = new(row.x, row.y, row.width, row.height);
         if (UIUtil.ClampedButtonText(btn, key)) resetAction();
     }
 }
@@ -1772,7 +1763,7 @@ public class FCSettings : ModSettings
 
 public class FactionColoniesMod : Mod
 {
-    public FCSettings settings = new FCSettings();
+    public FCSettings settings = new();
 
     public FactionColoniesMod(ModContentPack content) : base(content)
     {

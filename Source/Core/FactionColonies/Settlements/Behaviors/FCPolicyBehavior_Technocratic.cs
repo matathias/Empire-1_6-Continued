@@ -9,7 +9,7 @@ public class FCPolicyBehavior_Technocratic : FCPolicyBehavior
             if (Find.ColonistBar.GetColonistsInOrder().Count > 0)
             {
                 Pawn playerNegotiator = Find.ColonistBar.GetColonistsInOrder()[0];
-                FCTrader_Research trader = new FCTrader_Research();
+                FCTrader_Research trader = new();
                 Find.WindowStack.Add(new Dialog_Trade(playerNegotiator, trader));
             }
             else

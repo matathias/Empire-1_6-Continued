@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class MilitaryTabRegistry
 {
-    private static readonly RegistryList<IMilitaryTabEntry> _list = new RegistryList<IMilitaryTabEntry>();
+    private static readonly RegistryList<IMilitaryTabEntry> _list = new();
 
     internal static void Register(IMilitaryTabEntry entry) => _list.Register(entry);
     internal static void Unregister(IMilitaryTabEntry entry) => _list.Unregister(entry);

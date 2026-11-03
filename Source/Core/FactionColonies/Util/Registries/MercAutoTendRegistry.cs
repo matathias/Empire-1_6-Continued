@@ -6,7 +6,7 @@ namespace FactionColonies;
  * default internally, so callers only ever invoke PickMedicine, never PickDefaultMedicine. */
 public static class MercAutoTendRegistry
 {
-    private static readonly RegistryList<IMercAutoTendProvider> _list = new RegistryList<IMercAutoTendProvider>();
+    private static readonly RegistryList<IMercAutoTendProvider> _list = new();
 
     internal static void Register(IMercAutoTendProvider provider) => _list.Register(provider);
     internal static void Unregister(IMercAutoTendProvider provider) => _list.Unregister(provider);
@@ -48,21 +48,13 @@ public static class MercAutoTendRegistry
     {
         Faction faction = FindFC.EmpireFaction;
         TechLevel tech = faction?.def?.techLevel ?? TechLevel.Industrial;
-        switch (tech)
+        return tech switch
         {
-            case TechLevel.Animal:
-                return null;
-            case TechLevel.Neolithic:
-            case TechLevel.Medieval:
-                return ThingDefOf.MedicineHerbal;
-            case TechLevel.Industrial:
-            case TechLevel.Spacer:
-                return ThingDefOf.MedicineIndustrial;
-            case TechLevel.Ultra:
-            case TechLevel.Archotech:
-                return ThingDefOf.MedicineUltratech;
-            default:
-                return ThingDefOf.MedicineIndustrial;
-        }
+            TechLevel.Animal => null,
+            TechLevel.Neolithic or TechLevel.Medieval => ThingDefOf.MedicineHerbal,
+            TechLevel.Industrial or TechLevel.Spacer => ThingDefOf.MedicineIndustrial,
+            TechLevel.Ultra or TechLevel.Archotech => ThingDefOf.MedicineUltratech,
+            _ => ThingDefOf.MedicineIndustrial,
+        };
     }
 }

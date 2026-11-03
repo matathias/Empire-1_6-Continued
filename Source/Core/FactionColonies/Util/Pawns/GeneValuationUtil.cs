@@ -71,12 +71,12 @@ public static class GeneValuationUtil
      * inspect raw aggregated values. */
     public class XenotypeProfile
     {
-        public readonly Dictionary<StatDef, float> StatOffsetSum = new Dictionary<StatDef, float>();
-        public readonly Dictionary<StatDef, float> StatFactorProduct = new Dictionary<StatDef, float>();
-        public readonly Dictionary<PawnCapacityDef, float> CapOffsetSum = new Dictionary<PawnCapacityDef, float>();
-        public readonly Dictionary<PawnCapacityDef, float> CapFactorProduct = new Dictionary<PawnCapacityDef, float>();
-        public readonly Dictionary<SkillDef, int> AptitudeSum = new Dictionary<SkillDef, int>();
-        public readonly Dictionary<DamageDef, float> DamageFactorProduct = new Dictionary<DamageDef, float>();
+        public readonly Dictionary<StatDef, float> StatOffsetSum = [];
+        public readonly Dictionary<StatDef, float> StatFactorProduct = [];
+        public readonly Dictionary<PawnCapacityDef, float> CapOffsetSum = [];
+        public readonly Dictionary<PawnCapacityDef, float> CapFactorProduct = [];
+        public readonly Dictionary<SkillDef, int> AptitudeSum = [];
+        public readonly Dictionary<DamageDef, float> DamageFactorProduct = [];
         public float MvfProduct = 1f;
         public float MetSum;
         public float ArcSum;
@@ -92,19 +92,19 @@ public static class GeneValuationUtil
      * (and to DmgResistBonus). Identity in [-1, +1]; slope 1/3 outside up to plus/minus 2 at
      * plus/minus 4; SimpleCurve.Evaluate clamps to endpoint y-values past that. Mirrors the
      * shape of vanilla's PriceUtility.AverageSkillCurve. */
-    private static readonly SimpleCurve _statContributionCurve = new SimpleCurve
-    {
+    private static readonly SimpleCurve _statContributionCurve =
+    [
         new CurvePoint(-4f, -2f),
         new CurvePoint(-1f, -1f),
         new CurvePoint( 0f,  0f),
         new CurvePoint( 1f,  1f),
         new CurvePoint( 4f,  2f),
-    };
+    ];
 
     private static readonly Dictionary<XenotypeDef, GeneValueComponents> _xenotypeComponentsCache
-        = new Dictionary<XenotypeDef, GeneValueComponents>();
+        = [];
     private static readonly Dictionary<string, GeneValueComponents> _customXenotypeComponentsCache
-        = new Dictionary<string, GeneValueComponents>();
+        = [];
 
     /* Called by FactionCache.InvalidateCustomXenotypeCache so player-edited xenotypes
      * pick up gene list changes. */
@@ -223,7 +223,7 @@ public static class GeneValuationUtil
 
     private static XenotypeProfile BuildProfile(IEnumerable<GeneDef> genes)
     {
-        XenotypeProfile p = new XenotypeProfile();
+        XenotypeProfile p = new();
         if (genes is null) return p;
         foreach (GeneDef gene in genes)
         {
@@ -345,7 +345,7 @@ public static class GeneValuationUtil
 
         /* capMods: combined contribution per capacity, curve, then route to Shared (sight/manipulation/
          * moving/consciousness affect both combat styles). */
-        HashSet<PawnCapacityDef> seenCaps = new HashSet<PawnCapacityDef>();
+        HashSet<PawnCapacityDef> seenCaps = [];
         foreach (KeyValuePair<PawnCapacityDef, float> kvp in p.CapOffsetSum)
         {
             seenCaps.Add(kvp.Key);
@@ -425,7 +425,7 @@ public static class GeneValuationUtil
         {
             if (_statBuckets is null)
             {
-                _statBuckets = new Dictionary<StatDef, StatBucket>();
+                _statBuckets = [];
                 /* Pure shooting */
                 AddBucket("ShootingAccuracyPawn",          StatBucket.Shooting);
                 AddBucket("ShootingAccuracyFactor_Touch",  StatBucket.Shooting);
@@ -472,7 +472,7 @@ public static class GeneValuationUtil
         {
             if (_inverseDirectionStats is null)
             {
-                _inverseDirectionStats = new HashSet<StatDef>();
+                _inverseDirectionStats = [];
                 AddIfPresent("ComfyTemperatureMin");    // lower = more cold tolerance
                 AddIfPresent("StaggerDurationFactor");  // lower = recovers faster
                 AddIfPresent("Flammability");           // lower = doesn't catch fire
@@ -512,7 +512,7 @@ public static class GeneValuationUtil
         {
             if (_explicitStatWeights is null)
             {
-                _explicitStatWeights = new Dictionary<StatDef, float>();
+                _explicitStatWeights = [];
                 AddStat("MoveSpeed",                  0.6f);
                 AddStat("ImmunityGainSpeed",          0.4f);
                 AddStat("InjuryHealingFactor",        0.4f);

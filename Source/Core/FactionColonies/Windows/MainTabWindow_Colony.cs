@@ -10,21 +10,21 @@ public class MainTabWindow_Colony : MainTabWindow
 
     // ===== TAB STATE =====
     private string curTab = "FCOverview".Translate();
-    private List<TabRecord> tabs = new List<TabRecord>();
+    private List<TabRecord> tabs = [];
 
-    private List<string> overviewTabs = new List<string>
-    {
+    private List<string> overviewTabs =
+    [
         "FCOverview".Translate(),
         "FCBills".Translate(),
         "FCEvents".Translate(),
         "FCMilitary".Translate(),
         "FCEdicts".Translate(),
         "FCPrisoners".Translate()
-    };
-    private Dictionary<string, Action<Rect>> overviewFuncs = new Dictionary<string, Action<Rect>>();
+    ];
+    private Dictionary<string, Action<Rect>> overviewFuncs = [];
 
     // ===== WINDOW SIZE =====
-    public override Vector2 InitialSize => new Vector2(1060f, 640f);
+    public override Vector2 InitialSize => new(1060f, 640f);
 
     // ===== DATA =====
     public bool selectingColonyFC;
@@ -37,7 +37,7 @@ public class MainTabWindow_Colony : MainTabWindow
     private Vector2 productionScroll;
 
     // ===== EVENT FILTER STATE =====
-    private static readonly HashSet<FCEventCategoryDef> hiddenEventCategories = new HashSet<FCEventCategoryDef>();
+    private static readonly HashSet<FCEventCategoryDef> hiddenEventCategories = [];
 
     // ===== EVENTS/SITUATIONS SUBTAB STATE (0 = Events, 1 = Situations) =====
     private int eventsSubtab = 0;
@@ -52,7 +52,7 @@ public class MainTabWindow_Colony : MainTabWindow
     // ===== PRISONERS STATE =====
     private Vector2 prisonersScroll;
     private Vector2 situationsScroll;
-    private HashSet<int> collapsedPrisonerSections = new HashSet<int>();
+    private HashSet<int> collapsedPrisonerSections = [];
 
     // ===== SORTED LIST CACHES =====
     private List<FCEvent> cachedSortedEvents;
@@ -141,7 +141,7 @@ public class MainTabWindow_Colony : MainTabWindow
         {
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Medium;
-            Rect btn = new Rect(inRect.x + inRect.width / 2f - 150f, inRect.y + inRect.height / 2f - 20f, 300f, 40f);
+            Rect btn = new(inRect.x + inRect.width / 2f - 150f, inRect.y + inRect.height / 2f - 20f, 300f, 40f);
             if (UIUtil.ClampedButtonText(btn, "FCCreateNewFaction".Translate()))
             {
                 ColonyUtil.CreatePlayerColonyFaction();
@@ -183,7 +183,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
         // Content area sits below the tab strip (dynamic height for overflow rows)
         float tabHeight = TabDrawer.GetOverflowTabHeight(inRect, tabs, minTabWidth, 200f);
-        Rect contentRect = new Rect(inRect.x, inRect.y + tabHeight, inRect.width, inRect.height - tabHeight);
+        Rect contentRect = new(inRect.x, inRect.y + tabHeight, inRect.width, inRect.height - tabHeight);
         Widgets.DrawMenuSection(contentRect);
         TabDrawer.DrawTabsOverflow(inRect, tabs, minTabWidth, 200f);
 
@@ -213,10 +213,10 @@ public class MainTabWindow_Colony : MainTabWindow
         float bodyY = rect.y + margin + headerHeight + panelGap;
         float bodyH = rect.height - panelGap - headerHeight - margin;
 
-        Rect headerPanel = new Rect(rect.x + margin, rect.y + margin, rect.width - (margin * 2), headerHeight);
-        Rect leftPanel = new Rect(rect.x + margin, bodyY, leftWidth, bodyH);
-        Rect rightPanel = new Rect(rect.xMax - margin - rightWidth, bodyY, rightWidth, bodyH);
-        Rect centerPanel = new Rect(leftPanel.xMax + panelGap, bodyY, rightPanel.x - leftPanel.xMax - panelGap * 2, bodyH);
+        Rect headerPanel = new(rect.x + margin, rect.y + margin, rect.width - (margin * 2), headerHeight);
+        Rect leftPanel = new(rect.x + margin, bodyY, leftWidth, bodyH);
+        Rect rightPanel = new(rect.xMax - margin - rightWidth, bodyY, rightWidth, bodyH);
+        Rect centerPanel = new(leftPanel.xMax + panelGap, bodyY, rightPanel.x - leftPanel.xMax - panelGap * 2, bodyH);
 
         DrawOverviewHeaderPanel(headerPanel);
         DrawOverviewLeftPanel(leftPanel);
@@ -229,16 +229,16 @@ public class MainTabWindow_Colony : MainTabWindow
     private void DrawOverviewHeaderPanel(Rect panel)
     {
         float iconSz = 55f;
-        Rect iconRect = new Rect(panel.x, panel.y + (panel.height - iconSz) / 2f, iconSz, iconSz);
+        Rect iconRect = new(panel.x, panel.y + (panel.height - iconSz) / 2f, iconSz, iconSz);
         Widgets.ButtonImage(iconRect, faction.factionIcon);
 
         float customizeBtnSize = 20f;
-        Rect codexBtn = new Rect(panel.xMax - customizeBtnSize * 2 - margin, panel.y + margin, customizeBtnSize, customizeBtnSize);
-        Rect customizeBtn = new Rect(panel.xMax - customizeBtnSize, panel.y + margin, customizeBtnSize, customizeBtnSize);
-        Rect labelBox = new Rect(iconRect.xMax + margin, panel.y, panel.width - iconSz - margin, 30f);
-        Rect labelTextBox = new Rect(labelBox.x + margin, labelBox.y, labelBox.width - (margin * 2), labelBox.height);
-        Rect titleBox = new Rect(labelBox.x, labelBox.yMax + margin, labelBox.width / 2f, 22f);
-        Rect foundingBox = new Rect(titleBox.xMax, titleBox.y, titleBox.width, titleBox.height);
+        Rect codexBtn = new(panel.xMax - customizeBtnSize * 2 - margin, panel.y + margin, customizeBtnSize, customizeBtnSize);
+        Rect customizeBtn = new(panel.xMax - customizeBtnSize, panel.y + margin, customizeBtnSize, customizeBtnSize);
+        Rect labelBox = new(iconRect.xMax + margin, panel.y, panel.width - iconSz - margin, 30f);
+        Rect labelTextBox = new(labelBox.x + margin, labelBox.y, labelBox.width - (margin * 2), labelBox.height);
+        Rect titleBox = new(labelBox.x, labelBox.yMax + margin, labelBox.width / 2f, 22f);
+        Rect foundingBox = new(titleBox.xMax, titleBox.y, titleBox.width, titleBox.height);
 
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
@@ -267,7 +267,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
         // --- XP Bar ---
         float xpH = 18f;
-        Rect xpBar = new Rect(panel.x, y, panel.width, xpH);
+        Rect xpBar = new(panel.x, y, panel.width, xpH);
         UIUtil.DrawProgressBarColors(xpBar, faction.factionXPCurrent / faction.factionXPGoal, Color.black, Color.green);
         Widgets.DrawShadowAround(xpBar);
         Text.Font = GameFont.Tiny;
@@ -277,22 +277,22 @@ public class MainTabWindow_Colony : MainTabWindow
 
         // Faction level
         Text.Font = GameFont.Small;
-        Rect levelBox = new Rect(panel.x, y, panel.width, 20f);
+        Rect levelBox = new(panel.x, y, panel.width, 20f);
         Widgets.DrawHighlight(levelBox);
         UIUtil.ClampedLabel(levelBox, "FCLevel".Translate(faction.factionLevel));
         y += levelBox.height + margin;
 
         // --- Stats ---
         Text.Anchor = TextAnchor.MiddleLeft;
-        string[] statKeys = { "happiness", "loyalty", "unrest", "prosperity" };
+        string[] statKeys = ["happiness", "loyalty", "unrest", "prosperity"];
         float statH = 32f;
 
         foreach (string statKey in statKeys)
         {
             float iconSize = statH - (smallMargin * 2);
-            Rect statBox = new Rect(panel.x, y, panel.width, statH);
-            Rect iconBox = new Rect(statBox.x + smallMargin, y + smallMargin, iconSize, iconSize);
-            Rect valueBox = new Rect(statBox.x + iconSize + bigMargin, y, statBox.width - iconSize - bigMargin, statH);
+            Rect statBox = new(panel.x, y, panel.width, statH);
+            Rect iconBox = new(statBox.x + smallMargin, y + smallMargin, iconSize, iconSize);
+            Rect valueBox = new(statBox.x + iconSize + bigMargin, y, statBox.width - iconSize - bigMargin, statH);
             Widgets.DrawMenuSection(statBox);
 
             Texture2D icon;
@@ -353,7 +353,7 @@ public class MainTabWindow_Colony : MainTabWindow
             float leftX = panel.x + (panel.width - (policySize * FindFC.PolicyManager.policies.Count) - (margin * (FindFC.PolicyManager.policies.Count - 1))) / 2f;
             for (int i = 0; i < FindFC.PolicyManager.policies.Count; i++)
             {
-                Rect policyBox = new Rect(leftX + (i * (policySize + margin)), y, policySize, policySize);
+                Rect policyBox = new(leftX + (i * (policySize + margin)), y, policySize, policySize);
                 // Guard IconLight: policies without an icon path (e.g. submod traits) resolve to
                 // null; ButtonImage(null) spams Unity errors. Fall back to an invisible button so
                 // the customize action still works.
@@ -372,7 +372,7 @@ public class MainTabWindow_Colony : MainTabWindow
         {
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Rect buttonRect = new Rect(panel.x, y, panel.width, policySize);
+            Rect buttonRect = new(panel.x, y, panel.width, policySize);
             if (UIUtil.ClampedButtonText(buttonRect, "FCSelectPolicies".Translate()))
             {
                 Find.WindowStack.Add(new FactionCustomizePoliciesWindowFC(faction));
@@ -393,8 +393,8 @@ public class MainTabWindow_Colony : MainTabWindow
             bool isOpen = !isLocked && current.def == FCPolicyDefOf.empty;
             if (isOpen) hasOpenSlots = true;
 
-            Rect traitRect = new Rect(panel.x, y, panel.width, traitH);
-            Rect labelRect = new Rect(traitRect.x + (bigMargin * 2), y, traitRect.width - (bigMargin * 2), traitRect.height);
+            Rect traitRect = new(panel.x, y, panel.width, traitH);
+            Rect labelRect = new(traitRect.x + (bigMargin * 2), y, traitRect.width - (bigMargin * 2), traitRect.height);
 
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.DrawHighlight(traitRect);
@@ -418,7 +418,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
         if (hasOpenSlots)
         {
-            Rect selectButton = new Rect(panel.x, y, panel.width, traitH);
+            Rect selectButton = new(panel.x, y, panel.width, traitH);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
             if (UIUtil.ClampedButtonText(selectButton, "FCSelectTraits".Translate()))
@@ -436,9 +436,9 @@ public class MainTabWindow_Colony : MainTabWindow
         // --- Road Building ---
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect roadBox = new Rect(panel.x, y, panel.width, 26f);
-        Rect roadLabel = new Rect(roadBox.x + margin, y, 120f, roadBox.height);
-        Rect checkBox = new Rect(roadBox.xMax - 24f, y + 1, 24f, 24f);
+        Rect roadBox = new(panel.x, y, panel.width, 26f);
+        Rect roadLabel = new(roadBox.x + margin, y, 120f, roadBox.height);
+        Rect checkBox = new(roadBox.xMax - 24f, y + 1, 24f, 24f);
         Widgets.DrawMenuSection(roadBox);
         UIUtil.ClampedLabel(roadLabel, "FCBuildRoads".Translate());
         Widgets.DrawHighlight(checkBox);
@@ -452,7 +452,7 @@ public class MainTabWindow_Colony : MainTabWindow
         float width = panel.width;
 
         // --- Action Buttons ---
-        Rect actionPanel = new Rect(x, y, width, 30f);
+        Rect actionPanel = new(x, y, width, 30f);
         DrawActionButtons(actionPanel);
 
         y += actionPanel.height + margin;
@@ -469,7 +469,7 @@ public class MainTabWindow_Colony : MainTabWindow
     private void DrawActionButtons(Rect panel)
     {
         // Collect action buttons from all active policy/trait extensions
-        List<(TaggedString label, Action onClick)> actionButtons = new List<(TaggedString, Action)>();
+        List<(TaggedString label, Action onClick)> actionButtons = [];
         FindFC.PolicyManager.ForEachBehavior(b =>
         {
             var buttons = b.GetMainTabActionButtons(faction);
@@ -494,7 +494,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
         foreach (var (label, onClick) in actionButtons)
         {
-            Rect btnRect = new Rect(x, y, calcButtonWidth, height);
+            Rect btnRect = new(x, y, calcButtonWidth, height);
             if (UIUtil.ClampedButtonText(btnRect, label))
                 onClick();
             x += btnRect.width + margin;
@@ -505,7 +505,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // with a tooltip reason (cooldown / no map / not enough silver) when momentarily unavailable.
         if (showLaborers)
         {
-            Rect laborerRect = new Rect(x, y, calcButtonWidth, height);
+            Rect laborerRect = new(x, y, calcButtonWidth, height);
             if (LaborerHireUtil.TryGetActiveLaborerQuest(out _))
             {
                 if (UIUtil.ClampedButtonText(laborerRect, "FCDismissLaborers".Translate()))
@@ -527,7 +527,7 @@ public class MainTabWindow_Colony : MainTabWindow
             x += laborerRect.width + margin;
         }
 
-        Rect newColonyButton = new Rect(x, y, calcButtonWidth * 2, height);
+        Rect newColonyButton = new(x, y, calcButtonWidth * 2, height);
         if (UIUtil.ClampedButtonText(newColonyButton, "FCCreateNewColony".Translate()))
         {
             Find.WindowStack.Add(new CreateColonyWindowFc());
@@ -536,7 +536,7 @@ public class MainTabWindow_Colony : MainTabWindow
             Find.WindowStack.TryRemove(this);
         }
     }
-    private Vector2 poolScrollbar = new Vector2();
+    private Vector2 poolScrollbar = new();
     private void DrawOverviewRightPanel(Rect panel)
     {
         float x = panel.x;
@@ -550,9 +550,9 @@ public class MainTabWindow_Colony : MainTabWindow
         bool factionHasAvg = faction.HasTaxAverageData;
         double factionDisplay = factionHasAvg ? faction.averageProfit : faction.profit;
 
-        Rect profitBox = new Rect(x, y, width, 28f);
-        Rect profitLabel = new Rect(profitBox.x, profitBox.y, (width - margin) / 2f, profitBox.height);
-        Rect profitNum = new Rect(profitLabel.xMax + margin, profitLabel.y, profitLabel.width, profitBox.height);
+        Rect profitBox = new(x, y, width, 28f);
+        Rect profitLabel = new(profitBox.x, profitBox.y, (width - margin) / 2f, profitBox.height);
+        Rect profitNum = new(profitLabel.xMax + margin, profitLabel.y, profitLabel.width, profitBox.height);
 
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
@@ -567,7 +567,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
         y += profitBox.height + margin;
 
-        Rect taxBox = new Rect(x, y, width, 22f);
+        Rect taxBox = new(x, y, width, 22f);
         Text.Anchor = TextAnchor.MiddleCenter;
         UIUtil.ClampedLabel(taxBox, "FCTimeTillTax".Translate() + ": " + Math.Max(0, faction.taxLedger.nextTaxDueTick - Find.TickManager.TicksGame).ToTimeString());
         TooltipHandler.TipRegion(taxBox, CodexTooltips.GetTaxTimerTooltip());
@@ -586,12 +586,12 @@ public class MainTabWindow_Colony : MainTabWindow
             float sectionHeight = rowSize * Math.Min(numPools, 5);
             float totalHeight = rowSize * numPools;
 
-            Rect poolHeader = new Rect(x, y, width, rowSize);
+            Rect poolHeader = new(x, y, width, rowSize);
             Widgets.DrawHighlight(poolHeader);
             UIUtil.ClampedLabel(poolHeader, "FCResourcePools".Translate());
             y += poolHeader.height + margin;
 
-            Rect poolListBox = new Rect(x, y, width, sectionHeight);
+            Rect poolListBox = new(x, y, width, sectionHeight);
             Widgets.DrawMenuSection(poolListBox);
             if (totalHeight > sectionHeight)
             {
@@ -605,10 +605,10 @@ public class MainTabWindow_Colony : MainTabWindow
             for (int i = 0; i < faction.resourcePools.Count; i++)
             {
                 ResourcePool pool = faction.resourcePools[i];
-                Rect row = new Rect(x, y + (i * rowSize), rowWidth, rowSize);
-                Rect icon = new Rect(row.x + 2f, row.y + 1, rowSize - 2, rowSize - 2);
-                Rect actions = new Rect(row.xMax - 80f, row.y + 1, 79f, rowSize - 2);
-                Rect amount = new Rect(icon.xMax + margin, row.y, actions.x - icon.xMax - (margin * 2), rowSize);
+                Rect row = new(x, y + (i * rowSize), rowWidth, rowSize);
+                Rect icon = new(row.x + 2f, row.y + 1, rowSize - 2, rowSize - 2);
+                Rect actions = new(row.xMax - 80f, row.y + 1, 79f, rowSize - 2);
+                Rect amount = new(icon.xMax + margin, row.y, actions.x - icon.xMax - (margin * 2), rowSize);
 
                 if (i % 2 == 0)
                 {
@@ -633,9 +633,7 @@ public class MainTabWindow_Colony : MainTabWindow
                 Text.Font = GameFont.Tiny;
                 if (UIUtil.ClampedButtonText(actions, "FCActions".Translate(), active: !changedGui))
                 {
-                    List<FloatMenuOption> list = new List<FloatMenuOption>();
-                    foreach (FloatMenuOption option in options)
-                        list.Add(option);
+                    List<FloatMenuOption> list = [.. options];
                     Find.WindowStack.Add(new FloatMenu(list));
                 }
                 if (changedGui)
@@ -658,7 +656,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // --- Resource Production ---
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect prodHeaderBox = new Rect(x, y, width, 22f);
+        Rect prodHeaderBox = new(x, y, width, 22f);
         Widgets.DrawHighlight(prodHeaderBox);
         UIUtil.ClampedLabel(prodHeaderBox, "FCTotalProduction".Translate());
         y += prodHeaderBox.height + margin;
@@ -672,7 +670,7 @@ public class MainTabWindow_Colony : MainTabWindow
         float sectionHeight2 = Math.Min(totalHeight2, maxHeight);
         float rowWidth2 = width;
 
-        Rect sectionBox = new Rect(x, y, width, sectionHeight2);
+        Rect sectionBox = new(x, y, width, sectionHeight2);
         bool needsScroll = totalHeight2 > sectionHeight2;
         if (needsScroll)
         {
@@ -685,7 +683,7 @@ public class MainTabWindow_Colony : MainTabWindow
         foreach (ResourceDisplay resource in faction.FactionResources)
         {
             float ry = y + ri * (rowHeight + rowSpacing);
-            Rect rowRect = new Rect(x, ry, rowWidth2, rowHeight);
+            Rect rowRect = new(x, ry, rowWidth2, rowHeight);
 
             if (ri % 2 == 0)
             {
@@ -694,15 +692,15 @@ public class MainTabWindow_Colony : MainTabWindow
 
             Widgets.DrawBoxSolid(new Rect(x, ry, 3f, rowHeight), resource.resourceDef.color);
 
-            Rect iconRect = new Rect(x + 5f, ry + (rowHeight - iconSm) / 2f, iconSm, iconSm);
+            Rect iconRect = new(x + 5f, ry + (rowHeight - iconSm) / 2f, iconSm, iconSm);
             Widgets.ButtonImage(iconRect, resource.Icon);
 
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new Rect(iconRect.xMax + 4f, ry, rowWidth2 - iconRect.xMax + x - 4f - 50f, rowHeight);
+            Rect labelRect = new(iconRect.xMax + 4f, ry, rowWidth2 - iconRect.xMax + x - 4f - 50f, rowHeight);
             UIUtil.ClampedLabel(labelRect, resource.label);
 
             Text.Anchor = TextAnchor.MiddleRight;
-            Rect amountRect = new Rect(x + rowWidth2 - 50f, ry, 48f, rowHeight);
+            Rect amountRect = new(x + rowWidth2 - 50f, ry, 48f, rowHeight);
             UIUtil.ClampedLabel(amountRect, resource.amount.ToString());
 
             TooltipHandler.TipRegion(rowRect, resource.label);
@@ -716,7 +714,7 @@ public class MainTabWindow_Colony : MainTabWindow
     }
 
     private static readonly string[] settlementSortLabels =
-    {
+    [
         "FCSettlementTableName",
         "FCSettlementTableLevel",
         "FCSettlementTableMilLevel",
@@ -726,10 +724,10 @@ public class MainTabWindow_Colony : MainTabWindow
         "FCSettlementTableLoyalty",
         "FCSettlementTableUnrest",
         "FCSettlementTableFounding"
-    };
+    ];
 
     private static readonly Comparison<WorldSettlementFC>[] settlementSortActions =
-    {
+    [
         CompareUtil.CompareSettlementName,
         CompareUtil.CompareSettlementLevel,
         CompareUtil.CompareSettlementMilitaryLevel,
@@ -739,7 +737,7 @@ public class MainTabWindow_Colony : MainTabWindow
         CompareUtil.CompareSettlementLoyalty,
         CompareUtil.CompareSettlementUnrest,
         CompareUtil.CompareSettlementFoundingDate
-    };
+    ];
 
     private void DrawSettlementsTable(Rect tableRect)
     {
@@ -766,10 +764,10 @@ public class MainTabWindow_Colony : MainTabWindow
 
         // Summary header — right: sort dropdown
         float sortBtnW = 180f;
-        Rect sortBtnRect = new Rect(innerX + innerW - sortBtnW, tableRect.y + pad, sortBtnW, summaryH);
+        Rect sortBtnRect = new(innerX + innerW - sortBtnW, tableRect.y + pad, sortBtnW, summaryH);
         if (UIUtil.ClampedButtonText(sortBtnRect, "FCSortBy".Translate(settlementSortLabels[currentSettlementSortIndex].Translate())))
         {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            List<FloatMenuOption> options = [];
             for (int i = 0; i < settlementSortLabels.Length; i++)
             {
                 int captured = i;
@@ -799,7 +797,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Scrollable settlement list
         float listY = tableRect.y + pad + summaryH + 4f;
         float viewH = tableRect.yMax - listY - pad;
-        Rect viewRect = new Rect(innerX, listY, innerW, viewH);
+        Rect viewRect = new(innerX, listY, innerW, viewH);
         float contentH = faction.settlements.Count * (rowH + rowGap);
         Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref settlementScroll, contentH);
 
@@ -808,7 +806,7 @@ public class MainTabWindow_Colony : MainTabWindow
             WorldSettlementFC s = faction.settlements[i];
             float ry = i * (rowH + rowGap);
             float rowW = scrollRect.width;
-            Rect rowRect = new Rect(0f, ry, rowW, rowH);
+            Rect rowRect = new(0f, ry, rowW, rowH);
 
             // Alternating row background
             if (i % 2 == 0)
@@ -833,7 +831,7 @@ public class MainTabWindow_Colony : MainTabWindow
             anchorBefore = Text.Anchor;
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect nameRect = new Rect(contentX, topY, nameW, lineH);
+            Rect nameRect = new(contentX, topY, nameW, lineH);
             UIUtil.DrawColoredLabel(nameRect, s.Name, accent);
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -863,7 +861,7 @@ public class MainTabWindow_Colony : MainTabWindow
             anchorBefore = Text.Anchor;
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleRight;
-            Rect profitRect = new Rect(contentX + contentW - profitDisplayW, topY, profitDisplayW, lineH);
+            Rect profitRect = new(contentX + contentW - profitDisplayW, topY, profitDisplayW, lineH);
             UIUtil.DrawColoredLabel(profitRect, profitStr, displayProfit >= 0 ? AccentUtil.Income : AccentUtil.Expense);
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -904,7 +902,7 @@ public class MainTabWindow_Colony : MainTabWindow
                 float progress = UIUtil.NormalizeProgress(s.StartUpgradeTick, s.FinishUpgradeTick);
                 float barW = 30f;
                 float barH = 10f;
-                Rect barRect = new Rect(upgradeBadgeX + labelW + 2f, botY + (lineH - barH) / 2f, barW, barH);
+                Rect barRect = new(upgradeBadgeX + labelW + 2f, botY + (lineH - barH) / 2f, barW, barH);
                 UIUtil.DrawProgressBarColors(barRect, progress, new Color(0.15f, 0.15f, 0.15f), new Color(0.3f, 0.75f, 1f));
 
                 int ticksLeft = Math.Max(0, s.FinishUpgradeTick - Find.TickManager.TicksGame);
@@ -915,7 +913,7 @@ public class MainTabWindow_Colony : MainTabWindow
             {
                 fontBefore = Text.Font;
                 Text.Font = GameFont.Tiny;
-                Rect btnRect = new Rect(upgradeBadgeX, botY + 2f, upgradeBadgeW, lineH - 4f);
+                Rect btnRect = new(upgradeBadgeX, botY + 2f, upgradeBadgeW, lineH - 4f);
                 if (UIUtil.ButtonFlat(btnRect, "FCUpgrade".Translate(), AccentUtil.Income, highlighted: i % 2 != 0))
                     Find.WindowStack.Add(new SettlementUpgradeWindowFc(s));
                 Text.Font = fontBefore;
@@ -1007,7 +1005,7 @@ public class MainTabWindow_Colony : MainTabWindow
         anchorBefore = Text.Anchor;
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleRight;
-        Rect autoResolveRectLabel = new Rect(autoX, rect.y + pad, 150f, summaryH);
+        Rect autoResolveRectLabel = new(autoX, rect.y + pad, 150f, summaryH);
         UIUtil.DrawColoredLabel(autoResolveRectLabel, "FCAutoResolve".Translate(), Color.gray);
         Text.Font = fontBefore;
         Text.Anchor = anchorBefore;
@@ -1030,7 +1028,7 @@ public class MainTabWindow_Colony : MainTabWindow
         anchorBefore = Text.Anchor;
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleRight;
-        Rect latePaymentRectLabel = new Rect(lateX, lateY, 150f, summaryH);
+        Rect latePaymentRectLabel = new(lateX, lateY, 150f, summaryH);
         UIUtil.DrawColoredLabel(latePaymentRectLabel, "FCAllowLatePayments".Translate(), Color.gray);
         Text.Font = fontBefore;
         Text.Anchor = anchorBefore;
@@ -1064,7 +1062,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Scrollable bill list
         float listY = rect.y + pad + summaryH + 4f;
         float viewH = rect.yMax - listY - pad;
-        Rect viewRect = new Rect(innerX, listY, innerW, viewH);
+        Rect viewRect = new(innerX, listY, innerW, viewH);
         float contentH = bills.Count * (rowH + rowGap);
         Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref billsScroll, contentH);
 
@@ -1077,7 +1075,7 @@ public class MainTabWindow_Colony : MainTabWindow
             BillFC bill = sorted[i];
             float ry = i * (rowH + rowGap);
             float rowW = scrollRect.width;
-            Rect rowRect = new Rect(0f, ry, rowW, rowH);
+            Rect rowRect = new(0f, ry, rowW, rowH);
 
             // Alternating row background
             if (i % 2 == 0)
@@ -1102,7 +1100,7 @@ public class MainTabWindow_Colony : MainTabWindow
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             float nameW = contentW - resolveW - 160f;
-            Rect nameRect = new Rect(contentX, topY, nameW, lineH);
+            Rect nameRect = new(contentX, topY, nameW, lineH);
             UIUtil.DrawColoredLabel(nameRect, headerLabel, accent);
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -1127,7 +1125,7 @@ public class MainTabWindow_Colony : MainTabWindow
             Text.Anchor = anchorBefore;
 
             // Resolve button (right side, full row height)
-            Rect resolveRect = new Rect(contentX + contentW - resolveW, ry + 4f, resolveW, rowH - 8f);
+            Rect resolveRect = new(contentX + contentW - resolveW, ry + 4f, resolveW, rowH - 8f);
             if (UIUtil.ClampedButtonText(resolveRect, "FCResolveBill".Translate()))
             {
                 if (bill.AttemptResolve())
@@ -1201,10 +1199,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
     private void DrawEventFilterBar(Rect barRect)
     {
-        if (cachedSortedCategories is null)
-        {
-            cachedSortedCategories = FactionCache.FCEventCategoryDefs.OrderBy(c => c.displayOrder).ToList();
-        }
+        cachedSortedCategories ??= FactionCache.FCEventCategoryDefs.OrderBy(c => c.displayOrder).ToList();
         List<FCEventCategoryDef> categories = cachedSortedCategories;
         int count = categories.Count + 1; // +1 for "All" button
         float gap = 3f;
@@ -1214,7 +1209,7 @@ public class MainTabWindow_Colony : MainTabWindow
         Text.Font = GameFont.Tiny;
 
         // "All" button
-        Rect allRect = new Rect(barRect.x, barRect.y, btnW, barRect.height);
+        Rect allRect = new(barRect.x, barRect.y, btnW, barRect.height);
         bool allActive = hiddenEventCategories.Count == 0;
         Color allColor = allActive ? Color.white : Color.gray;
         if (UIUtil.ButtonFlat(allRect, "FCEventCatAll".Translate(), labelColor: allColor, highlighted: allActive))
@@ -1227,7 +1222,7 @@ public class MainTabWindow_Colony : MainTabWindow
         {
             FCEventCategoryDef cat = categories[i];
             float x = barRect.x + (i + 1) * (btnW + gap);
-            Rect btnRect = new Rect(x, barRect.y, btnW, barRect.height);
+            Rect btnRect = new(x, barRect.y, btnW, barRect.height);
 
             bool visible = !hiddenEventCategories.Contains(cat);
             Color catColor = cat.color;
@@ -1249,7 +1244,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
     private void DrawSituationsContent(Rect rect)
     {
-        List<FCSituation> sits = new List<FCSituation>(faction.situationManager.Situations);
+        List<FCSituation> sits = new(faction.situationManager.Situations);
         const float pad = 8f;
         float innerX = rect.x + pad;
         float innerW = rect.width - pad * 2f;
@@ -1276,7 +1271,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
         float listY = rect.y + pad + 24f + 6f;
         float viewH = rect.yMax - listY - pad;
-        Rect viewRect = new Rect(innerX, listY, innerW, viewH);
+        Rect viewRect = new(innerX, listY, innerW, viewH);
         const float gap = 4f;
         float contentH = 0f;
         foreach (FCSituation sit in sits) contentH += SituationsUI.RowHeight(sit, includeActions: false) + gap;
@@ -1286,7 +1281,7 @@ public class MainTabWindow_Colony : MainTabWindow
         for (int i = 0; i < sits.Count; i++)
         {
             float h = SituationsUI.RowHeight(sits[i], includeActions: false);
-            Rect rowRect = new Rect(0f, y, scrollRect.width, h);
+            Rect rowRect = new(0f, y, scrollRect.width, h);
             if (i % 2 == 0) Widgets.DrawHighlight(rowRect);
             SituationsUI.DrawRow(rowRect, sits[i], faction, showTarget: true, includeActions: false);
             y += h + gap;
@@ -1308,11 +1303,11 @@ public class MainTabWindow_Colony : MainTabWindow
         }
 
         Text.Font = GameFont.Small;
-        List<string> subtabs = new List<string>
-        {
+        List<string> subtabs =
+        [
             "FCEvents".Translate(),
             "FCSituations".Translate(),
-        };
+        ];
         Rect contentRect;
         eventsSubtab = UIUtil.DrawTabRow(rect, subtabs, eventsSubtab, out contentRect, tabHeight: 24f);
 
@@ -1371,7 +1366,7 @@ public class MainTabWindow_Colony : MainTabWindow
         Text.Anchor = anchorBefore;
 
         // Filter bar
-        Rect filterBar = new Rect(innerX, rect.y + pad + summaryH + 2f, innerW, filterH);
+        Rect filterBar = new(innerX, rect.y + pad + summaryH + 2f, innerW, filterH);
         DrawEventFilterBar(filterBar);
 
         // Empty state
@@ -1393,7 +1388,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Scrollable event list
         float listY = rect.y + pad + summaryH + filterH + 6f;
         float viewH = rect.yMax - listY - pad;
-        Rect viewRect = new Rect(innerX, listY, innerW, viewH);
+        Rect viewRect = new(innerX, listY, innerW, viewH);
         float contentH = sorted.Count * (rowH + rowGap);
 
         // Filtered empty state
@@ -1419,7 +1414,7 @@ public class MainTabWindow_Colony : MainTabWindow
             FCEvent evt = sorted[i];
             float ry = i * (rowH + rowGap);
             float rowW = scrollRect.width;
-            Rect rowRect = new Rect(0f, ry, rowW, rowH);
+            Rect rowRect = new(0f, ry, rowW, rowH);
 
             // Alternating row background
             if (i % 2 == 0)
@@ -1475,7 +1470,7 @@ public class MainTabWindow_Colony : MainTabWindow
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             float descW = contentW - progressW - 10f;
-            Rect descRect = new Rect(contentX, botY, descW, lineH);
+            Rect descRect = new(contentX, botY, descW, lineH);
             UIUtil.ClampedLabel(descRect, TextUtil.CleaveAtNewline(GetEventDescription(evt)));
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -1508,8 +1503,8 @@ public class MainTabWindow_Colony : MainTabWindow
 
             float barX = contentX + contentW - progressW;
             float barY = botY + (lineH - progressH) / 2f;
-            Color barBg = new Color(catColor.r * 0.25f, catColor.g * 0.25f, catColor.b * 0.25f);
-            Color barFill = new Color(catColor.r * 0.7f, catColor.g * 0.7f, catColor.b * 0.7f);
+            Color barBg = new(catColor.r * 0.25f, catColor.g * 0.25f, catColor.b * 0.25f);
+            Color barFill = new(catColor.r * 0.7f, catColor.g * 0.7f, catColor.b * 0.7f);
             UIUtil.DrawProgressBarColors(new Rect(barX, barY, progressW, progressH), progress, barBg, barFill);
 
             fontBefore = Text.Font;
@@ -1593,7 +1588,7 @@ public class MainTabWindow_Colony : MainTabWindow
         }
         else if (evt.settlementTraitLocations.Count > 0)
         {
-            List<FloatMenuOption> list = new List<FloatMenuOption>();
+            List<FloatMenuOption> list = [];
             foreach (WorldSettlementFC settlement in evt.settlementTraitLocations)
             {
                 if (settlement is not null)
@@ -1654,11 +1649,11 @@ public class MainTabWindow_Colony : MainTabWindow
         float buttonHeight = 35f;
         float bx = rect.xMax - buttonWidth * 3 - margin;
 
-        Rect iconRect = new Rect(x + margin, y + margin, buttonHeight, buttonHeight);
+        Rect iconRect = new(x + margin, y + margin, buttonHeight, buttonHeight);
         Widgets.ButtonImage(iconRect, faction.factionIcon);
 
-        Rect labelBox = new Rect(iconRect.xMax + margin, y + margin, bx - iconRect.xMax - (margin * 2), buttonHeight);
-        Rect labelTextBox = new Rect(labelBox.x + margin, labelBox.y, labelBox.width - (margin * 2), labelBox.height);
+        Rect labelBox = new(iconRect.xMax + margin, y + margin, bx - iconRect.xMax - (margin * 2), buttonHeight);
+        Rect labelTextBox = new(labelBox.x + margin, labelBox.y, labelBox.width - (margin * 2), labelBox.height);
 
         GameFont headerFontBefore = Text.Font;
         TextAnchor headerAnchorBefore = Text.Anchor;
@@ -1691,15 +1686,15 @@ public class MainTabWindow_Colony : MainTabWindow
            (before any tab content has had a chance to set its own font). */
         float subtabAreaH = rect.yMax - y - margin;
         if (subtabAreaH <= 0f) return;
-        Rect subtabBox = new Rect(x + margin, y, width - (margin * 2), subtabAreaH);
+        Rect subtabBox = new(x + margin, y, width - (margin * 2), subtabAreaH);
 
         Text.Font = GameFont.Small;
-        List<string> tabLabels = new List<string>
-        {
+        List<string> tabLabels =
+        [
             (string)"FCMilitaryTabBySettlement".Translate(),
             (string)"FCMilitaryTabBySquad".Translate(),
             (string)"FCMilitaryTabBattleReports".Translate(),
-        };
+        ];
         Rect contentRect;
         militarySubtab = UIUtil.DrawTabRow(subtabBox, tabLabels, militarySubtab,
             out contentRect, tabHeight: 24f);
@@ -1713,12 +1708,12 @@ public class MainTabWindow_Colony : MainTabWindow
         }
         else if (militarySubtab == 1)
         {
-            if (_bySquadRenderer is null) _bySquadRenderer = new MainTabWindow_Squads();
+            _bySquadRenderer ??= new MainTabWindow_Squads();
             _bySquadRenderer.Draw(tableRect);
         }
         else
         {
-            if (_battleReportsRenderer is null) _battleReportsRenderer = new MainTabWindow_BattleReports();
+            _battleReportsRenderer ??= new MainTabWindow_BattleReports();
             _battleReportsRenderer.Draw(tableRect);
         }
     }
@@ -1790,7 +1785,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Scrollable card list
         float listY = tableRect.y + pad + summaryH + 4f;
         float viewH = tableRect.yMax - listY - pad;
-        Rect viewRect = new Rect(innerX, listY, innerW, viewH);
+        Rect viewRect = new(innerX, listY, innerW, viewH);
         Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref militaryScroll, totalContentH);
 
         float runningY = 0f;
@@ -1802,7 +1797,7 @@ public class MainTabWindow_Colony : MainTabWindow
             float cardH = cardHeights[i];
             float ry = runningY;
             float rowW = scrollRect.width;
-            Rect cardRect = new Rect(0f, ry, rowW, cardH);
+            Rect cardRect = new(0f, ry, rowW, cardH);
 
             // Alternating row background
             bool isHighlighted = i % 2 == 0;
@@ -1831,7 +1826,7 @@ public class MainTabWindow_Colony : MainTabWindow
             anchorBefore = Text.Anchor;
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect nameRect = new Rect(contentX, topY, nameW, lineH);
+            Rect nameRect = new(contentX, topY, nameW, lineH);
             UIUtil.DrawColoredLabel(nameRect, settlement.Name, accent);
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -1865,7 +1860,7 @@ public class MainTabWindow_Colony : MainTabWindow
                 ColorForPowerStatus(powStatus));
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
-            Rect badgeRect = new Rect(contentX + nameW, topY, badgeW, lineH);
+            Rect badgeRect = new(contentX + nameW, topY, badgeW, lineH);
             TooltipHandler.TipRegion(badgeRect, TooltipForPowerStatus(powStatus, settlement, stationed));
 
             // Header-center-right: "Squads: N / M" counter (or "No military" for cap=0)
@@ -1892,7 +1887,7 @@ public class MainTabWindow_Colony : MainTabWindow
                     || !FindFC.FactionComp.IsActionAllowed(FCActionType.UseFireSupport);
                 float fsBtnH = lineH - 6f;
                 float fsBtnY = topY + (lineH - fsBtnH) / 2f;
-                Rect fsSupportRect = new Rect(contentX + contentW - fsBtnW, fsBtnY, fsBtnW, fsBtnH);
+                Rect fsSupportRect = new(contentX + contentW - fsBtnW, fsBtnY, fsBtnW, fsBtnH);
                 Text.Font = GameFont.Tiny;
                 if (UIUtil.ButtonFlat(fsSupportRect, "FCMilitaryTableFireSupport".Translate(), disabled: fsDisabled, highlighted: isHighlighted))
                 {
@@ -1915,7 +1910,7 @@ public class MainTabWindow_Colony : MainTabWindow
                 for (int slotIdx = 0; slotIdx < settlementCap; slotIdx++)
                 {
                     float slotY = ry + headerH + (slotIdx * slotH);
-                    Rect slotRect = new Rect(contentX, slotY, contentW, slotH);
+                    Rect slotRect = new(contentX, slotY, contentW, slotH);
                     MercenarySquadFC squadInSlot = (slotIdx < stationed.Count) ? stationed[slotIdx] : null;
                     DrawSettlementSlotRow(slotRect, settlement, milComp, slotIdx, squadInSlot, isHighlighted);
                 }
@@ -1948,7 +1943,7 @@ public class MainTabWindow_Colony : MainTabWindow
             float ry = runningY;
             float rowW = scrollRect.width;
             float rowH = externalRowH;
-            Rect rowRect = new Rect(0f, ry, rowW, rowH);
+            Rect rowRect = new(0f, ry, rowW, rowH);
 
             bool isHighlighted = rowIndex % 2 == 0;
             if (isHighlighted)
@@ -1974,7 +1969,7 @@ public class MainTabWindow_Colony : MainTabWindow
             anchorBefore = Text.Anchor;
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect nameRect = new Rect(contentX, topY, nameW, lineH);
+            Rect nameRect = new(contentX, topY, nameW, lineH);
             UIUtil.DrawColoredLabel(nameRect, entry.Name, accent);
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -2022,7 +2017,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
             // Bottom-right: Auto-defend toggle only
             Text.Font = GameFont.Tiny;
-            Rect autoDefRect = new Rect(contentX + contentW - btnW, btnY, btnW, btnH);
+            Rect autoDefRect = new(contentX + contentW - btnW, btnY, btnW, btnH);
             if (UIUtil.ButtonFlat(autoDefRect, "FCMilAutoDefend".Translate(),
                 labelColor: entry.AutoDefend ? AccentUtil.MilReady : (Color?)null,
                 highlighted: isHighlighted))
@@ -2068,8 +2063,8 @@ public class MainTabWindow_Colony : MainTabWindow
         // Slot index column (indented to suggest it's a child of the settlement header)
         const float slotIndent = 18f;
         float idxW = 40f;
-        Rect fullSlot = new Rect(rect.x + slotIndent, rect.y, rect.width - slotIndent + 4f, rect.height);
-        Rect slotLabel = new Rect(rect.x + slotIndent, rect.y, idxW, rect.height);
+        Rect fullSlot = new(rect.x + slotIndent, rect.y, rect.width - slotIndent + 4f, rect.height);
+        Rect slotLabel = new(rect.x + slotIndent, rect.y, idxW, rect.height);
 
         UIUtil.DrawColoredHighlight(fullSlot, AccentUtil.GetSquadAccent(squad));
 
@@ -2091,7 +2086,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Name area also reserves the status column + a margin between name and status.
         float nameAreaW = rect.xMax - slotLabel.xMax - buttonAreaW - 4f - powW - depCostW - statusW - (margin * 3);
         if (nameAreaW < 40f) nameAreaW = 40f;
-        Rect squadNameLabel = new Rect(slotLabel.xMax + 5f, rect.y, nameAreaW, rect.height);
+        Rect squadNameLabel = new(slotLabel.xMax + 5f, rect.y, nameAreaW, rect.height);
         Text.Anchor = TextAnchor.MiddleLeft;
         int underSquadDeploy = 0;
         int underMaxDeploy = 0;
@@ -2109,7 +2104,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Squad status (between name and Power). Single source of truth: SquadStatusUtil.Resolve.
         // Left-aligned (anchor still MiddleLeft from the name); clamped with ellipsis + tooltip when
         // it doesn't fit. Mirrors the status shown in the Squads subtab.
-        Rect statusRect = new Rect(squadNameLabel.xMax + margin, rect.y, statusW, rect.height);
+        Rect statusRect = new(squadNameLabel.xMax + margin, rect.y, statusW, rect.height);
         if (squad is not null)
         {
             SquadStatusUtil.Resolve(squad, out string statusLabel, out Color statusColor, out _);
@@ -2119,8 +2114,8 @@ public class MainTabWindow_Colony : MainTabWindow
         }
 
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect powerLabel = new Rect(statusRect.xMax + margin, rect.y, powW, rect.height);
-        Rect depCostLabel = new Rect(powerLabel.xMax + margin, rect.y, depCostW, rect.height);
+        Rect powerLabel = new(statusRect.xMax + margin, rect.y, powW, rect.height);
+        Rect depCostLabel = new(powerLabel.xMax + margin, rect.y, depCostW, rect.height);
         if (squad is not null)
         {
             double powerLevel = SquadPowerRegistry.Resolve(squad).militaryLevel;
@@ -2137,7 +2132,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // enough; the menu lists the live pool, not templates), or when the slot's squad is busy.
         bool noSquads = (militaryFC.mercenarySquads?.Count ?? 0) == 0;
         bool slotBusy = squad is not null && squad.IsBusy;
-        Rect setRect = new Rect(bx, btnY, btnW, btnH);
+        Rect setRect = new(bx, btnY, btnW, btnH);
         string setLabel = squad is null
             ? (string)"FCMilitaryTableSetSquad".Translate()
             : (string)"FCMilitaryTableChangeSquad".Translate();
@@ -2153,7 +2148,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Inspect (per-squad) — opens Dialog_SquadInspection on this slot's squad.
         // Always available even when busy so the player can read pawn state.
         bool canInspect = squad is not null;
-        Rect inspectRect = new Rect(bx, btnY, btnW, btnH);
+        Rect inspectRect = new(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(inspectRect, "FCMilitaryTableInspect".Translate(), disabled: !canInspect, highlighted: isHighlighted))
         {
             Find.WindowStack.Add(new Dialog_SquadInspection(squad));
@@ -2166,7 +2161,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // squads can't deploy. The squad-name tooltip explains the underfunded state.
         bool deployDisabled = squad is null || !squad.IsAvailable
             || (squad.outfit is null && (squad.mercenaries?.Any(m => m?.pawn is not null) != true));
-        Rect deployRect = new Rect(bx, btnY, btnW, btnH);
+        Rect deployRect = new(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(deployRect, "FCDeploy".Translate(), disabled: deployDisabled, highlighted: isHighlighted))
         {
             if (squad is not null)
@@ -2185,7 +2180,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Auto-Defend toggle (per-squad)
         bool canToggle = squad is not null && !slotBusy;
         bool autoDefendOn = squad?.autoDefend ?? false;
-        Rect autoDefRect = new Rect(bx, btnY, btnW, btnH);
+        Rect autoDefRect = new(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(autoDefRect, "FCMilAutoDefend".Translate(),
             disabled: !canToggle,
             labelColor: autoDefendOn ? AccentUtil.MilReady : (Color?)null,
@@ -2209,7 +2204,7 @@ public class MainTabWindow_Colony : MainTabWindow
         }
         else if (milComp.IsMilitaryBusy(true) && milComp.IsMilitarySquadValid() && FindFC.FactionComp.IsActionAllowed(FCActionType.DeployExtraSquad))
         {
-            List<FloatMenuOption> extraOptions = new List<FloatMenuOption>();
+            List<FloatMenuOption> extraOptions = [];
             FindFC.PolicyManager.ForEachBehavior(b =>
             {
                 var options = b.GetExtraDeploymentOptions(faction, settlement, milComp);
@@ -2226,7 +2221,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
     private void HandleFireSupportClick(WorldSettlementFC settlement, WorldObjectComp_SettlementMilitary milComp)
     {
-        List<FloatMenuOption> list = new List<FloatMenuOption>();
+        List<FloatMenuOption> list = [];
 
         foreach (MilitaryFireSupport support in militaryFC.fireSupportDefs)
         {
@@ -2285,20 +2280,20 @@ public class MainTabWindow_Colony : MainTabWindow
     {
         /* Morale lockout: present a single disabled option explaining why deploys are blocked. */
         if (settlement is not null && settlement.TryGetSquadDeploymentBlock(out string lockReason))
-            return new List<FloatMenuOption> { new FloatMenuOption(lockReason, null) };
+            return [new(lockReason, null)];
 
         MercenarySquadFC primary = settlement?.FirstAvailableStationedSquad
                                 ?? settlement?.PrimaryStationedSquad;
         int cost = primary.DeploymentCost();
         string costSuffix = cost > 0 ? " ($" + cost + ")" : "";
-        return new List<FloatMenuOption>
-        {
-            new FloatMenuOption("FCWalkIntoMapDeploymentOption".Translate() + costSuffix, delegate
+        return
+        [
+            new("FCWalkIntoMapDeploymentOption".Translate() + costSuffix, delegate
             {
                 MilitaryDeploymentUtil.CallinAlliedForces(settlement, false);
             }),
             DropPodDeploymentOption(settlement)
-        };
+        ];
     }
 
     /// <summary>Same shape as <see cref="DeploymentOptions"/> but routes to a specific squad
@@ -2308,14 +2303,16 @@ public class MainTabWindow_Colony : MainTabWindow
     {
         /* Morale lockout: present a single disabled option explaining why deploys are blocked. */
         if (settlement is not null && settlement.TryGetSquadDeploymentBlock(out string lockReason))
-            return new List<FloatMenuOption> { new FloatMenuOption(lockReason, null) };
+            return [new(lockReason, null)];
 
         int cost = squad.DeploymentCost();
         string costSuffix = cost > 0 ? " ($" + cost + ")" : "";
 
-        List<FloatMenuOption> opts = new List<FloatMenuOption>();
-        opts.Add(new FloatMenuOption("FCWalkIntoMapDeploymentOption".Translate() + costSuffix,
-            delegate { MilitaryDeploymentUtil.CallinAlliedForces(settlement, false, squad); }));
+        List<FloatMenuOption> opts =
+        [
+            new FloatMenuOption("FCWalkIntoMapDeploymentOption".Translate() + costSuffix,
+                delegate { MilitaryDeploymentUtil.CallinAlliedForces(settlement, false, squad); }),
+        ];
 
         bool medievalOnly = FCSettings.medievalTechOnly;
         if (!medievalOnly && (FactionCache.TechTransportPods?.IsFinished ?? false))
@@ -2373,14 +2370,14 @@ public class MainTabWindow_Colony : MainTabWindow
 
     private static Color ColorForPowerStatus(SettlementPowerStatus status)
     {
-        switch (status)
+        return status switch
         {
-            case SettlementPowerStatus.UnderAttack: return AccentUtil.MilUnderAttack;
-            case SettlementPowerStatus.AllBusy: return new Color(1f, 0.85f, 0.4f);
-            case SettlementPowerStatus.Ghost: return new Color(1f, 0.85f, 0.4f);
-            case SettlementPowerStatus.NoMilitary: return Color.gray;
-            default: return Color.white;
-        }
+            SettlementPowerStatus.UnderAttack => AccentUtil.MilUnderAttack,
+            SettlementPowerStatus.AllBusy => new Color(1f, 0.85f, 0.4f),
+            SettlementPowerStatus.Ghost => new Color(1f, 0.85f, 0.4f),
+            SettlementPowerStatus.NoMilitary => Color.gray,
+            _ => Color.white,
+        };
     }
 
     private static string TooltipForPowerStatus(SettlementPowerStatus status,
@@ -2425,11 +2422,11 @@ public class MainTabWindow_Colony : MainTabWindow
         bool hasSettlements = faction.settlements?.Count > 0;
         float bx = hasSettlements ? rect.xMax - buttonWidth * 2 - margin : rect.xMax - margin;
 
-        Rect iconRect = new Rect(x + margin, y + margin, buttonHeight, buttonHeight);
+        Rect iconRect = new(x + margin, y + margin, buttonHeight, buttonHeight);
         Widgets.ButtonImage(iconRect, faction.factionIcon);
 
-        Rect labelBox = new Rect(iconRect.xMax + margin, y + margin, bx - iconRect.xMax - (margin * 2), buttonHeight);
-        Rect labelTextBox = new Rect(labelBox.x + margin, labelBox.y, labelBox.width - (margin * 2), labelBox.height);
+        Rect labelBox = new(iconRect.xMax + margin, y + margin, bx - iconRect.xMax - (margin * 2), buttonHeight);
+        Rect labelTextBox = new(labelBox.x + margin, labelBox.y, labelBox.width - (margin * 2), labelBox.height);
 
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
@@ -2510,7 +2507,7 @@ public class MainTabWindow_Colony : MainTabWindow
             }
         }
 
-        Rect viewRect = new Rect(innerX, tableY, innerW, tableH);
+        Rect viewRect = new(innerX, tableY, innerW, tableH);
         Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref prisonersScroll, contentH);
 
         float cy = 0f;
@@ -2534,7 +2531,7 @@ public class MainTabWindow_Colony : MainTabWindow
 
             // Section header: light highlight band + accent + name (clickable) + inline workload buttons + count badge (collapse toggle)
             Color settlementAccent = AccentUtil.GetSettlementAccent(s);
-            Rect headerBoxRect = new Rect(0f, cy, scrollRect.width, sectionHeaderH);
+            Rect headerBoxRect = new(0f, cy, scrollRect.width, sectionHeaderH);
             Widgets.DrawBoxSolid(headerBoxRect, ColorUtil.Gray3);
             Widgets.DrawBoxSolid(new Rect(0f, cy, PrisonerUtil.AccentWidth, sectionHeaderH), settlementAccent);
 
@@ -2546,10 +2543,10 @@ public class MainTabWindow_Colony : MainTabWindow
             float sectionBtnY = cy + (sectionHeaderH - sectionBtnH) / 2f;
 
             float countRectX = scrollRect.width - countColW - 4f;
-            Rect bulkBtnRect = new Rect(countRectX - sectionBtnGap - sectionBtnW, sectionBtnY, sectionBtnW, sectionBtnH);
-            Rect defaultBtnRect = new Rect(bulkBtnRect.x - sectionBtnGap - sectionBtnW, sectionBtnY, sectionBtnW, sectionBtnH);
+            Rect bulkBtnRect = new(countRectX - sectionBtnGap - sectionBtnW, sectionBtnY, sectionBtnW, sectionBtnH);
+            Rect defaultBtnRect = new(bulkBtnRect.x - sectionBtnGap - sectionBtnW, sectionBtnY, sectionBtnW, sectionBtnH);
 
-            Rect nameRect = new Rect(headerContentX, cy, defaultBtnRect.x - headerContentX - 4f, sectionHeaderH);
+            Rect nameRect = new(headerContentX, cy, defaultBtnRect.x - headerContentX - 4f, sectionHeaderH);
 
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -2579,7 +2576,7 @@ public class MainTabWindow_Colony : MainTabWindow
                     sComp.OpenBulkSetWorkloadFloatMenu();
             }
 
-            Rect countRect = new Rect(countRectX, cy, countColW, sectionHeaderH);
+            Rect countRect = new(countRectX, cy, countColW, sectionHeaderH);
             if (Mouse.IsOver(countRect))
                 Widgets.DrawHighlight(countRect);
             if (Widgets.ButtonInvisible(countRect))
@@ -2605,7 +2602,7 @@ public class MainTabWindow_Colony : MainTabWindow
                 {
                     bool isLeft = (j % 2) == 0;
                     float cardX = isLeft ? prisonerRowIndent : prisonerRowIndent + cardW + cardGap;
-                    Rect rowBox = new Rect(cardX, cy, cardW, PrisonerUtil.CompactRowHeight);
+                    Rect rowBox = new(cardX, cy, cardW, PrisonerUtil.CompactRowHeight);
                     int checker = (j / 2) + (j % 2);  // (0,0)/(1,1)=highlight, (0,1)/(1,0)=plain
                     PrisonerUtil.DrawPrisonerRowCompact(rowBox, sList[j], s, checker, null);
                     if (!isLeft || j == sList.Count - 1)

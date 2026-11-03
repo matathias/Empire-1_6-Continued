@@ -26,7 +26,7 @@ public class FCWindow_ImplantPicker : Window
     private readonly Func<MilUnitFC> getDisplayUnit;
     private readonly Func<MilUnitFC> getEditTarget;
 
-    private List<Option> options = new List<Option>();
+    private List<Option> options = [];
     private int builtForVersion = int.MinValue;
     private MilUnitFC builtForUnit;
     private string searchTerm = "";
@@ -36,7 +36,7 @@ public class FCWindow_ImplantPicker : Window
     private const float SearchBarHeight = 28f;
     private const float margin = 5f;
 
-    public override Vector2 InitialSize => new Vector2(540f, 620f);
+    public override Vector2 InitialSize => new(540f, 620f);
 
     public FCWindow_ImplantPicker(Func<MilUnitFC> getDisplayUnit, Func<MilUnitFC> getEditTarget)
     {
@@ -59,12 +59,12 @@ public class FCWindow_ImplantPicker : Window
 
         RebuildIfStale();
 
-        Rect searchRect = new Rect(0, 40f, inRect.width, SearchBarHeight);
+        Rect searchRect = new(0, 40f, inRect.width, SearchBarHeight);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.UpperLeft;
         searchTerm = Widgets.TextField(searchRect, searchTerm);
 
-        Rect listOut = new Rect(0, searchRect.yMax + margin, inRect.width, inRect.height - searchRect.yMax - margin - 40f);
+        Rect listOut = new(0, searchRect.yMax + margin, inRect.width, inRect.height - searchRect.yMax - margin - 40f);
         Widgets.DrawMenuSection(listOut);
 
         List<Option> filtered = string.IsNullOrEmpty(searchTerm)
@@ -77,27 +77,27 @@ public class FCWindow_ImplantPicker : Window
         for (int i = 0; i < filtered.Count; i++)
         {
             Option opt = filtered[i];
-            Rect row = new Rect(scrollView.x, scrollView.y + i * RowHeight, scrollView.width, RowHeight);
+            Rect row = new(scrollView.x, scrollView.y + i * RowHeight, scrollView.width, RowHeight);
             if (i % 2 == 0) Widgets.DrawHighlight(row);
 
             ThingDef iconThing = opt.IconThing;
-            Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
+            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
             if (iconThing is not null)
                 Widgets.ThingIcon(iconRect, iconThing);
 
-            Rect infoRect = new Rect(iconRect.xMax, row.y + 2f, RowHeight - 4f, RowHeight - 4f);
+            Rect infoRect = new(iconRect.xMax, row.y + 2f, RowHeight - 4f, RowHeight - 4f);
             if (iconThing is not null)
                 Widgets.InfoCardButton(infoRect, iconThing);
 
             float optCost = opt.recipe is not null
                 ? MilUnitFC.ImplantCost(opt.recipe)
                 : (opt.selfInstallThing?.BaseMarketValue ?? 0f);
-            Rect costRect = new Rect(row.xMax - margin - 65f, row.y, 60f, RowHeight);
+            Rect costRect = new(row.xMax - margin - 65f, row.y, 60f, RowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
             UIUtil.ClampedLabel(costRect, "$" + optCost.ToString("F0"));
 
-            Rect labelRect = new Rect(infoRect.xMax + margin, row.y, costRect.x - infoRect.xMax - 2 * margin, RowHeight);
+            Rect labelRect = new(infoRect.xMax + margin, row.y, costRect.x - infoRect.xMax - 2 * margin, RowHeight);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             UIUtil.ClampedLabel(labelRect, opt.label);
@@ -122,7 +122,7 @@ public class FCWindow_ImplantPicker : Window
         // at Small) never ran, so the Close button would otherwise inherit the title's Medium font.
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect closeRect = new Rect(inRect.width - 120f, inRect.height - 35f, 120f, 30f);
+        Rect closeRect = new(inRect.width - 120f, inRect.height - 35f, 120f, 30f);
         if (UIUtil.ClampedButtonText(closeRect, "FCDialogPawnLoadoutClose".Translate()))
             Close();
 
@@ -142,7 +142,7 @@ public class FCWindow_ImplantPicker : Window
 
     private static List<Option> BuildOptions(Pawn pawn)
     {
-        List<Option> result = new List<Option>();
+        List<Option> result = [];
         if (pawn is null || pawn.health is null) return result;
 
         foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefs)
@@ -168,13 +168,13 @@ public class FCWindow_ImplantPicker : Window
                 if (partThing is null || !CraftUtil.CanCraftItem(partThing)) continue;
             }
 
-            List<BodyPartRecord> parts = new List<BodyPartRecord>(recipe.Worker.GetPartsToApplyOn(pawn, recipe));
+            List<BodyPartRecord> parts = new(recipe.Worker.GetPartsToApplyOn(pawn, recipe));
 
             if (!recipe.targetsBodyPart)
             {
                 BodyPartRecord wholeBody = parts.Count > 0 ? parts[0] : null;
                 if (!recipe.Worker.AvailableOnNow(pawn, wholeBody)) continue;
-                Option o = new Option();
+                Option o = new();
                 o.recipe = recipe;
                 o.bodyPartDef = wholeBody is not null ? wholeBody.def : null;
                 o.bodyPartIndex = 0;
@@ -187,7 +187,7 @@ public class FCWindow_ImplantPicker : Window
             {
                 BodyPartRecord part = parts[idx];
                 if (!recipe.Worker.AvailableOnNow(pawn, part)) continue;
-                Option o = new Option();
+                Option o = new();
                 o.recipe = recipe;
                 o.bodyPartDef = part is not null ? part.def : null;
                 // Store the STABLE occurrence index in body.AllParts (not the filtered-list
@@ -256,7 +256,7 @@ public class FCWindow_ImplantPicker : Window
                 }
             }
 
-            Option o = new Option();
+            Option o = new();
             o.selfInstallThing = thing;
             o.bodyPartDef = part.def;
             o.bodyPartIndex = MilUnitFC.BodyPartOccurrenceIndex(pawn, part);

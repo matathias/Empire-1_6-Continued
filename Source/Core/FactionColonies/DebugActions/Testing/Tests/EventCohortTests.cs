@@ -16,7 +16,7 @@ public static class EventCohortTests
         {
             appliedStatSettlements = recorded,
             // Populated but must be ignored while a recorded cohort exists.
-            settlementTraitLocations = new List<WorldSettlementFC> { null, null }
+            settlementTraitLocations = [null, null]
         };
 
         // faction null is safe: the recorded cohort short-circuits before the fallback.

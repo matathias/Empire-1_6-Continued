@@ -14,7 +14,7 @@ public class PermanentStatModifier : IExposable
 
     /// <summary>Deep copy — used when seeding design modifiers onto squad/unit instances.</summary>
     public PermanentStatModifier Clone() =>
-        new PermanentStatModifier { stat = stat, value = value, sourceId = sourceId, sourceLabel = sourceLabel };
+        new() { stat = stat, value = value, sourceId = sourceId, sourceLabel = sourceLabel };
 
     public void ExposeData()
     {

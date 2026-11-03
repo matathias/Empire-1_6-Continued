@@ -7,7 +7,7 @@ public static class MilitaryDestructiveTests
     private static WorldSettlementFC FirstOrTransientSettlement()
     {
         WorldSettlementFC s = FindFC.Settlements?.FirstOrDefault();
-        if (s is null) s = DestructiveTestUtil.CreateTransientSettlement();
+        s ??= DestructiveTestUtil.CreateTransientSettlement();
         return s;
     }
 
@@ -113,9 +113,9 @@ public static class MilitaryDestructiveTests
         MilUnitFC loadout = MilTemplateFactory.CreateUnit(false);
         loadout.ClearAllEquipment();
 
-        MercenarySquadFC squad = new MercenarySquadFC();
-        squad.mercenaries = new System.Collections.Generic.List<Mercenary>();
-        Mercenary merc = new Mercenary(true);
+        MercenarySquadFC squad = new();
+        squad.mercenaries = [];
+        Mercenary merc = new(true);
         TestAssert.DoesNotThrow(() => MercenaryPawnFactory.CreateNewPawn(squad, ref merc,
             loadout.pawnKind, loadout.xenotype, loadout.customXenotypeName, loadout),
             "CreateNewPawn threw");

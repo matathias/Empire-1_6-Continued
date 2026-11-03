@@ -52,7 +52,7 @@ public static class RaidTargetResolutionTests
         return op;
     }
 
-    private static BattleResult MakeResult(BattleWinner winner) => new BattleResult { winner = winner };
+    private static BattleResult MakeResult(BattleWinner winner) => new() { winner = winner };
 
     [EmpireTest("Battle")]
     public static void RaidTarget_DefenderVictory_FiresOnRaidWon_AndClearsFlag()

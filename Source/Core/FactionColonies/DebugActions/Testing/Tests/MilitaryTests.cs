@@ -86,11 +86,11 @@ public static class MilitaryTests
         // Squad with empty-slot mercenaries (all pawn=null). TicksToFullHealth(null) == 0,
         // so the squad-level worst-case stays at 0.
         var squad = new MercenarySquadFC();
-        squad.mercenaries = new System.Collections.Generic.List<Mercenary>
-        {
-            new Mercenary(),
-            new Mercenary()
-        };
+        squad.mercenaries =
+        [
+            new(),
+            new()
+        ];
         TestAssert.AreEqual(0, SquadHealingEstimator.TicksToFullEffectiveness(squad));
     }
 }

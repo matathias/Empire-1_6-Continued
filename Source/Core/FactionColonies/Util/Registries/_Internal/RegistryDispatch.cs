@@ -92,7 +92,7 @@ internal static class RegistryDispatch
     /// callback would otherwise invalidate the enumerator and throw <see cref="InvalidOperationException"/>
     /// out of the <c>foreach</c> — past the per-item try/catch — and into game code.
     /// </summary>
-    private static List<T> Snapshot<T>(IReadOnlyList<T> items) where T : class => new List<T>(items);
+    private static List<T> Snapshot<T>(IReadOnlyList<T> items) where T : class => new(items);
 
     private static void Log<T>(T offender, string call, Exception e) where T : class
     {

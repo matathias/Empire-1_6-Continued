@@ -19,7 +19,7 @@ public class FCWindow_ConfirmSettle : Window
 
     private bool checkboxState;
 
-    public override Vector2 InitialSize => new Vector2(WindowWidth, computedHeight);
+    public override Vector2 InitialSize => new(WindowWidth, computedHeight);
 
     public FCWindow_ConfirmSettle(WorldSettlementDef settlementType, int silverCost, Action onConfirm, Action<bool> onCheckboxChanged)
     {
@@ -60,7 +60,7 @@ public class FCWindow_ConfirmSettle : Window
         // Settlement card
         float cardWidth = inRect.width;
         float cardHeight = SettlementCardDrawer.GetCardHeight(settlementType, cardWidth);
-        Rect cardRect = new Rect(inRect.x, curY, cardWidth, cardHeight);
+        Rect cardRect = new(inRect.x, curY, cardWidth, cardHeight);
 
         // Subtle background for the card area
         Widgets.DrawHighlight(cardRect);
@@ -77,15 +77,15 @@ public class FCWindow_ConfirmSettle : Window
         // Checkbox
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect checkboxRect = new Rect(inRect.width / 2f - 100f, curY, 200f, CheckboxHeight);
-        Rect checkboxBoundingRect = new Rect(checkboxRect.x - 3f, checkboxRect.y, checkboxRect.width + 6f,
+        Rect checkboxRect = new(inRect.width / 2f - 100f, curY, 200f, CheckboxHeight);
+        Rect checkboxBoundingRect = new(checkboxRect.x - 3f, checkboxRect.y, checkboxRect.width + 6f,
             checkboxRect.height);
         Widgets.DrawMenuSection(checkboxBoundingRect);
         Widgets.CheckboxLabeled(checkboxRect, "FCConfirmDontShowAgain".Translate(), ref checkboxState);
         curY += CheckboxHeight + Padding;
 
         // Confirm button
-        Rect buttonRect = new Rect(inRect.width / 2f - 45f, curY, 90f, ButtonHeight);
+        Rect buttonRect = new(inRect.width / 2f - 45f, curY, 90f, ButtonHeight);
         if (UIUtil.ClampedButtonText(buttonRect, "FCConfirm".Translate()))
         {
             onCheckboxChanged?.Invoke(checkboxState);

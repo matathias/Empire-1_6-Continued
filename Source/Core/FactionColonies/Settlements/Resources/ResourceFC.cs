@@ -22,8 +22,8 @@ public class ResourceFC : IExposable
     }
 
     /* All bonuses and maluses, even from biome or hilliness, should be applied through productionAdditives and productionMultipliers */
-    private Dictionary<string, ProductionBonus> productionAdditives = new Dictionary<string, ProductionBonus>();
-    private Dictionary<string, ProductionBonus> productionMultipliers = new Dictionary<string, ProductionBonus>();
+    private Dictionary<string, ProductionBonus> productionAdditives = [];
+    private Dictionary<string, ProductionBonus> productionMultipliers = [];
 
     private bool dirtyProductionBaseCache = true;
     private bool dirtyProductionMultCache = true;
@@ -43,7 +43,7 @@ public class ResourceFC : IExposable
 
     /* Don't expose tithes publicly. We want values to be added or removed *only* through our special functions, so that we can dirty or set
      * cached values appropriately. */
-    private List<TitheEntry> tithes = new List<TitheEntry>();
+    private List<TitheEntry> tithes = [];
     public IReadOnlyList<TitheEntry> Tithes => tithes;
     private bool dirtyTitheCache = true;
     private double cachedTitheTotalValue = 0;
@@ -58,11 +58,11 @@ public class ResourceFC : IExposable
     public bool tithesPaused = false;
     public bool hasRandomTithe = false;
     public bool autoMaxRandomTithe = false;
-    public ThingFilter randomTitheFilter = new ThingFilter();
+    public ThingFilter randomTitheFilter = new();
     private bool dirtyRandomTitheCache = true;
-    private List<ThingDef> thingsForRandomTithes = new List<ThingDef>();
+    private List<ThingDef> thingsForRandomTithes = [];
     private bool dirtyFilteredRandomTitheCache = true;
-    private List<ThingDef> filteredThingsForRandomTithes = new List<ThingDef>();
+    private List<ThingDef> filteredThingsForRandomTithes = [];
     public string storedRandomTitheBudgetBuffer = "";
     public int storedRandomTitheBudget = 0;
     private int oldStoredRandomTitheBudget = 0;
@@ -75,7 +75,7 @@ public class ResourceFC : IExposable
         public double amount;                   // units diverted per DAY
         public Action<double, double> realize;  // (requested, actual) invoked each day; null allowed
     }
-    private Dictionary<string, StockpileEntry> stockpileAllocations = new Dictionary<string, StockpileEntry>();
+    private Dictionary<string, StockpileEntry> stockpileAllocations = [];
     public double totalStockpileAllocation => stockpileAllocations.Values.Sum(e => e.amount);
 
     /// <summary>
@@ -296,7 +296,7 @@ public class ResourceFC : IExposable
         Scribe_Collections.Look(ref tithes, "titheList", LookMode.Deep);
         if (Scribe.mode == LoadSaveMode.LoadingVars)
         {
-            if (tithes is null) tithes = new List<TitheEntry>();
+            tithes ??= [];
             if (tithes.Count == 0)
             {
                 // Legacy: read the old Dictionary<ThingQualityTuple,int> node "tithes" and seed the list.
@@ -523,7 +523,7 @@ public class ResourceFC : IExposable
 
     public ResourcePool CreatePool()
     {
-        ResourcePool pool = new ResourcePool
+        ResourcePool pool = new()
         {
             resource = def,
             pool = 0
@@ -629,7 +629,7 @@ public class ResourceFC : IExposable
     }
     public void AddProductionAdditive(string id, double value, string desc)
     {
-        ProductionBonus additive = new ProductionBonus(value, desc);
+        ProductionBonus additive = new(value, desc);
 
         if (desc.NullOrEmpty())
         {
@@ -697,7 +697,7 @@ public class ResourceFC : IExposable
 
     public void AddProductionMultiplier(string id, double value, string desc)
     {
-        ProductionBonus multiplier = new ProductionBonus(value, desc);
+        ProductionBonus multiplier = new(value, desc);
 
         if (desc.NullOrEmpty())
         {
@@ -805,7 +805,7 @@ public class ResourceFC : IExposable
 
             FactionFC faction = FindFC.FactionComp;
             ThingSetMaker thingSetMaker = new ThingSetMaker_Count();
-            ThingSetMakerParams param = new ThingSetMakerParams();
+            ThingSetMakerParams param = new();
             param.filter = new ThingFilter();
             param.techLevel = FindFC.EmpireFaction.def.techLevel;
             param.countRange = new IntRange(1, 1);
@@ -837,7 +837,7 @@ public class ResourceFC : IExposable
                 ResetThingFilter();
             }
 
-            filteredThingsForRandomTithes = new List<ThingDef>();
+            filteredThingsForRandomTithes = [];
             List<ThingDef> possibleThings = GenerateThingDefList();
 
             foreach (ThingDef thingDef in possibleThings)
@@ -854,20 +854,14 @@ public class ResourceFC : IExposable
     }
     public void ClearRandomTitheFilter()
     {
-        if (randomTitheFilter is null)
-        {
-            randomTitheFilter = new ThingFilter();
-        }
+        randomTitheFilter ??= new ThingFilter();
         randomTitheFilter.SetDisallowAll();
         SetDirtyRandomTitheCache();
         dirtyFilteredRandomTitheCache = true;
     }
     public void SetAllRandomTitheFilter()
     {
-        if (randomTitheFilter is null)
-        {
-            randomTitheFilter = new ThingFilter();
-        }
+        randomTitheFilter ??= new ThingFilter();
         ResetThingFilter();
         SetDirtyRandomTitheCache();
         dirtyFilteredRandomTitheCache = true;
@@ -1057,7 +1051,7 @@ public class ResourceFC : IExposable
     public List<Thing> GenerateTithe(out int extraSilver)
     {
         int outSilver = 0;
-        List<Thing> titheItems = new List<Thing>();
+        List<Thing> titheItems = [];
 
         //Sanity check to make sure that this function is only being called after the proper prep
         if (!settlement.IsCalculatingTax)
@@ -1152,9 +1146,9 @@ public class ResourceFC : IExposable
                 LogUtil.Message($"{settlement.Name}, resource {label}, minimum random tithe: {minimum}, budget: {effectiveRandomBudget}");
                 if (minimum <= effectiveRandomBudget)
                 {
-                    List<Thing> randomTitheList = new List<Thing>();
+                    List<Thing> randomTitheList = [];
                     ThingSetMaker thingSetMaker = new ThingSetMaker_MarketValue();
-                    ThingSetMakerParams param = new ThingSetMakerParams();
+                    ThingSetMakerParams param = new();
                     param.totalMarketValueRange = new FloatRange((float)effectiveRandomBudget, (float)(effectiveRandomBudget + GetTotalTitheModifierForWorkers()));
                     param.filter = randomTitheFilter;
                     param.techLevel = FindFC.EmpireFaction.def.techLevel;

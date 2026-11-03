@@ -136,7 +136,7 @@ public class ResourcePoolExt_Research : ResourcePoolExtension
         pool.pool -= pointsConsumed;
 
         // Split into stack-limit-sized silver piles, matching how tax deliveries are built.
-        List<Thing> goods = new List<Thing>();
+        List<Thing> goods = [];
         int remaining = silver;
         while (remaining > 0)
         {

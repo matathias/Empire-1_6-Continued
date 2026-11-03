@@ -40,7 +40,7 @@ public static class TexLoad
     public static readonly Texture2D iconTrade = ContentFinder<Texture2D>.Get("UI/Commands/Trade");
     public static readonly Texture2D codexLogo = ContentFinder<Texture2D>.Get("UI/Icons/EmpireLogo");
 
-    public static List<Texture2D> factionIcons = new List<Texture2D>();
+    public static List<Texture2D> factionIcons = [];
     public static readonly Texture2D checkerboard;
     public static readonly Texture2D gradientHorizontal;
     public static readonly Texture2D gradientVertical;
@@ -54,7 +54,7 @@ public static class TexLoad
     private static Texture2D CreateHorizontalGradient()
     {
         const int width = 256;
-        Texture2D tex = new Texture2D(width, 1, TextureFormat.ARGB32, false);
+        Texture2D tex = new(width, 1, TextureFormat.ARGB32, false);
         tex.name = "GradientHorizontalTex";
         tex.filterMode = FilterMode.Bilinear;
         tex.wrapMode = TextureWrapMode.Clamp;
@@ -92,7 +92,7 @@ public static class TexLoad
     private static Texture2D CreateVerticalGradient()
     {
         const int height = 256;
-        Texture2D tex = new Texture2D(1, height, TextureFormat.ARGB32, false);
+        Texture2D tex = new(1, height, TextureFormat.ARGB32, false);
         tex.name = "GradientVerticalTex";
         tex.filterMode = FilterMode.Bilinear;
         tex.wrapMode = TextureWrapMode.Clamp;
@@ -158,19 +158,19 @@ public static class TexLoad
 
         if (fadeInFraction > 0f)
         {
-            Rect fadeInRect = new Rect(rect.x, rect.y, fadeInWidth, rect.height);
+            Rect fadeInRect = new(rect.x, rect.y, fadeInWidth, rect.height);
             GUI.DrawTextureWithTexCoords(fadeInRect, gradientHorizontal, new Rect(1, 0, -1, 1));
         }
 
         if (constantWidth > 0f)
         {
-            Rect constantRect = new Rect(rect.x + fadeInWidth, rect.y, constantWidth, rect.height);
+            Rect constantRect = new(rect.x + fadeInWidth, rect.y, constantWidth, rect.height);
             GUI.DrawTexture(constantRect, BaseContent.WhiteTex, ScaleMode.StretchToFill, true);
         }
 
         if (fadeOutFraction > 0f)
         {
-            Rect fadeOutRect = new Rect(rect.x + fadeInWidth + constantWidth, rect.y, fadeOutWidth, rect.height);
+            Rect fadeOutRect = new(rect.x + fadeInWidth + constantWidth, rect.y, fadeOutWidth, rect.height);
             GUI.DrawTexture(fadeOutRect, gradientHorizontal, ScaleMode.StretchToFill, true);
         }
 
@@ -212,19 +212,19 @@ public static class TexLoad
 
         if (fadeInFraction > 0f)
         {
-            Rect fadeInRect = new Rect(rect.x, rect.y, rect.width, fadeInHeight);
+            Rect fadeInRect = new(rect.x, rect.y, rect.width, fadeInHeight);
             GUI.DrawTextureWithTexCoords(fadeInRect, gradientVertical, new Rect(0, 1, 1, -1));
         }
 
         if (constantHeight > 0f)
         {
-            Rect constantRect = new Rect(rect.x, rect.y + fadeInHeight, rect.width, constantHeight);
+            Rect constantRect = new(rect.x, rect.y + fadeInHeight, rect.width, constantHeight);
             GUI.DrawTexture(constantRect, BaseContent.WhiteTex, ScaleMode.StretchToFill, true);
         }
 
         if (fadeOutFraction > 0f)
         {
-            Rect fadeOutRect = new Rect(rect.x, rect.y + fadeInHeight + constantHeight, rect.width, fadeOutHeight);
+            Rect fadeOutRect = new(rect.x, rect.y + fadeInHeight + constantHeight, rect.width, fadeOutHeight);
             GUI.DrawTexture(fadeOutRect, gradientVertical, ScaleMode.StretchToFill, true);
         }
 
@@ -233,7 +233,7 @@ public static class TexLoad
 
     private static Texture2D SolidTex(string name, Color color)
     {
-        Texture2D tex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        Texture2D tex = new(1, 1, TextureFormat.ARGB32, false);
         tex.name = name;
         tex.SetPixel(0, 0, color);
         tex.Apply();
@@ -244,10 +244,10 @@ public static class TexLoad
     {
         int size = 8;
         int cellSize = 4;
-        Color light = new Color(1f, 1f, 1f, 0.15f);
-        Color dark = new Color(0f, 0f, 0f, 0.1f);
+        Color light = new(1f, 1f, 1f, 0.15f);
+        Color dark = new(0f, 0f, 0f, 0.1f);
 
-        Texture2D tex = new Texture2D(size, size, TextureFormat.ARGB32, false);
+        Texture2D tex = new(size, size, TextureFormat.ARGB32, false);
         tex.name = "CheckerboardTex";
         tex.filterMode = FilterMode.Point;
         tex.wrapMode = TextureWrapMode.Repeat;

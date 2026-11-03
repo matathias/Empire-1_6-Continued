@@ -30,7 +30,7 @@ public static class FCOptionCostUtil
     {
         if (opt is null || evt is null) return null;
 
-        List<string> lines = new List<string>();
+        List<string> lines = [];
         double raw = ComputeRaw(opt, evt, lines);
 
         // If nothing actually scaled (no breakdown lines beyond the base), return null —
@@ -46,7 +46,7 @@ public static class FCOptionCostUtil
         }
         lines.Add("FCOptionCostTotal".Translate(total.ToString("N0")));
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
         for (int i = 0; i < lines.Count; i++)
         {
             if (i > 0) sb.Append('\n');

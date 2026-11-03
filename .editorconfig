@@ -30,7 +30,7 @@ dotnet_diagnostic.IDE0074.severity = suggestion
 csharp_style_implicit_object_creation_when_type_is_apparent = true:suggestion
 dotnet_diagnostic.IDE0090.severity = suggestion
 
-# IDE0028 / IDE0300-IDE0305: collection initializers and collection expressions ("[]")
+# IDE0028 / IDE0300-IDE0304: collection initializers and collection expressions ("[]")
 dotnet_style_collection_initializer = true:suggestion
 dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
 dotnet_diagnostic.IDE0028.severity = suggestion
@@ -39,7 +39,8 @@ dotnet_diagnostic.IDE0301.severity = suggestion
 dotnet_diagnostic.IDE0302.severity = suggestion
 dotnet_diagnostic.IDE0303.severity = suggestion
 dotnet_diagnostic.IDE0304.severity = suggestion
-dotnet_diagnostic.IDE0305.severity = suggestion
+# IDE0305 (".ToList()" -> "[.. query]") is off: the spread form hides the end of long LINQ chains
+dotnet_diagnostic.IDE0305.severity = none
 
 # IDE0066: switch expressions (applied selectively; review before accepting)
 csharp_style_prefer_switch_expression = true:suggestion

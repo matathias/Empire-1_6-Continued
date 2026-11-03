@@ -7,10 +7,10 @@ namespace FactionColonies;
    Category "LoadoutUpgrade" — run via Debug menu -> Empire -> Run Tests by Category. */
 public static class LoadoutUpgradeUtilTests
 {
-    private static ThingDef Def(string name) => new ThingDef { defName = name };
+    private static ThingDef Def(string name) => new() { defName = name };
 
     private static SavedThing Row(ThingDef thing, ThingDef stuff, QualityCategory? q = null, int count = 1)
-        => new SavedThing(thing, stuff, count, q);
+        => new(thing, stuff, count, q);
 
     // -*- InventoryEquivalent: same def, different stuff, reversed order -*-
 

@@ -7,7 +7,7 @@ namespace FactionColonies;
 /// </summary>
 public static class RoadNodeProviderRegistry
 {
-    private static readonly RegistryList<IRoadNodeProvider> _list = new RegistryList<IRoadNodeProvider>();
+    private static readonly RegistryList<IRoadNodeProvider> _list = new();
 
     internal static void Register(IRoadNodeProvider provider) => _list.Register(provider);
     internal static void Unregister(IRoadNodeProvider provider) => _list.Unregister(provider);

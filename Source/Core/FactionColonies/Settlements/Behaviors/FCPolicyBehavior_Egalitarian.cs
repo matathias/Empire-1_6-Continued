@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public class FCPolicyBehavior_Egalitarian : FCPolicyBehavior
 {
-    private Dictionary<PlanetTile, TaxBreakData> taxBreaks = new Dictionary<PlanetTile, TaxBreakData>();
+    private Dictionary<PlanetTile, TaxBreakData> taxBreaks = [];
 
     public override double ModifyStat(FCStatDef stat, double currentValue, WorldSettlementFC settlement)
     {
@@ -98,7 +98,7 @@ public class FCPolicyBehavior_Egalitarian : FCPolicyBehavior
     public override void ExposeData()
     {
         Scribe_Collections.Look(ref taxBreaks, "taxBreaks", LookMode.Value, LookMode.Deep);
-        taxBreaks = taxBreaks ?? new Dictionary<PlanetTile, TaxBreakData>();
+        taxBreaks = taxBreaks ?? [];
     }
 
     // Debug accessors

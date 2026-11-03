@@ -10,7 +10,7 @@ namespace FactionColonies;
 /// </summary>
 public class MainTabWindow_Squads : Window
 {
-    public override Vector2 InitialSize => new Vector2(900f, 640f);
+    public override Vector2 InitialSize => new(900f, 640f);
 
     private Vector2 scroll;
 
@@ -49,7 +49,7 @@ public class MainTabWindow_Squads : Window
 
         FactionFC fc = FindFC.FactionComp;
         MilitaryFC mfc = fc?.military;
-        List<MercenarySquadFC> pool = mfc?.mercenarySquads ?? new List<MercenarySquadFC>();
+        List<MercenarySquadFC> pool = mfc?.mercenarySquads ?? [];
 
         float innerX = rect.x + Pad;
         float innerW = rect.width - Pad * 2f;
@@ -64,7 +64,7 @@ public class MainTabWindow_Squads : Window
         // Opens the template browse-and-hire menu, dropping hires into the unassigned pool.
         const float hireBtnW = 140f;
         const float hireBtnH = 22f;
-        Rect hireBtnRect = new Rect(innerX + innerW - hireBtnW, rect.y + Pad, hireBtnW, hireBtnH);
+        Rect hireBtnRect = new(innerX + innerW - hireBtnW, rect.y + Pad, hireBtnW, hireBtnH);
         Text.Anchor = TextAnchor.UpperLeft;
         if (UIUtil.ButtonFlat(hireBtnRect, "FCHireSquadsPoolButton".Translate()))
         {
@@ -75,7 +75,7 @@ public class MainTabWindow_Squads : Window
         if (mfc is not null)
         {
             const float toggleW = 150f;
-            Rect toggleRect = new Rect(hireBtnRect.x - toggleW - 8f, rect.y + Pad, toggleW, hireBtnH);
+            Rect toggleRect = new(hireBtnRect.x - toggleW - 8f, rect.y + Pad, toggleW, hireBtnH);
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.Label(new Rect(toggleRect.x, toggleRect.y, toggleW - 26f, toggleRect.height),
                 "FCSquadAutoReplace".Translate());
@@ -84,7 +84,7 @@ public class MainTabWindow_Squads : Window
             Text.Anchor = TextAnchor.UpperLeft;
         }
 
-        Rect tableRect = new Rect(rect.x, rect.y + SummaryH + 4f,
+        Rect tableRect = new(rect.x, rect.y + SummaryH + 4f,
             rect.width, rect.height - SummaryH - 4f);
 
         if (pool.Count == 0)
@@ -101,7 +101,7 @@ public class MainTabWindow_Squads : Window
         float viewH = tableRect.yMax - listY - Pad;
         float totalH = pool.Count * (CardH + RowGap);
 
-        Rect viewRect = new Rect(innerX, listY, innerW, viewH);
+        Rect viewRect = new(innerX, listY, innerW, viewH);
         Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref scroll, totalH);
 
         int now = Find.TickManager.TicksGame;
@@ -110,7 +110,7 @@ public class MainTabWindow_Squads : Window
         {
             MercenarySquadFC squad = pool[i];
             if (squad is null) continue;
-            Rect cardRect = new Rect(0f, runningY, scrollRect.width, CardH);
+            Rect cardRect = new(0f, runningY, scrollRect.width, CardH);
             DrawSquadCard(cardRect, squad, i, now, mfc);
             runningY += CardH + RowGap;
         }
@@ -162,7 +162,7 @@ public class MainTabWindow_Squads : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         float nameW = contentW - statusW - 6f;
-        Rect nameRect = new Rect(contentX, headerY, nameW, CardHeaderH);
+        Rect nameRect = new(contentX, headerY, nameW, CardHeaderH);
         UIUtil.DrawColoredLabel(nameRect, squad.DisplayName, accent);
         if (Mouse.IsOver(nameRect)) Widgets.DrawHighlight(nameRect);
         if (Widgets.ButtonInvisible(nameRect))
@@ -213,7 +213,7 @@ public class MainTabWindow_Squads : Window
         float bx = cardRect.xMax - buttonAreaW - 4f;
 
         // Inspect
-        Rect inspectRect = new Rect(bx, btnY, btnW, btnH);
+        Rect inspectRect = new(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(inspectRect, "FCMilitaryTableInspect".Translate(), highlighted: isHighlighted))
         {
             Find.WindowStack.Add(new Dialog_SquadInspection(capturedSquad));
@@ -222,7 +222,7 @@ public class MainTabWindow_Squads : Window
         bx += btnW + btnGap;
 
         // Reassign
-        Rect reassignRect = new Rect(bx, btnY, btnW, btnH);
+        Rect reassignRect = new(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(reassignRect, "FCSquadActReassign".Translate(), highlighted: isHighlighted, disabled: squad.IsBusy))
         {
             Find.WindowStack.Add(new Dialog_SquadAssignment(capturedSquad));
@@ -233,7 +233,7 @@ public class MainTabWindow_Squads : Window
 
         // Upgrade
         bool canUpgrade = hasUpgradeWork && !squad.IsBusy;
-        Rect upgradeRect = new Rect(bx, btnY, btnW, btnH);
+        Rect upgradeRect = new(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(upgradeRect, "FCSquadActUpgrade".Translate(), highlighted: isHighlighted, disabled: !canUpgrade))
         {
             MilitaryDeploymentUtil.ConfirmAndUpgradeAll(capturedSquad);
@@ -244,7 +244,7 @@ public class MainTabWindow_Squads : Window
 
         // Dismiss
         bool canDismiss = !squad.IsBusy;
-        Rect dismissRect = new Rect(bx, btnY, btnW, btnH);
+        Rect dismissRect = new(bx, btnY, btnW, btnH);
         if (UIUtil.ButtonFlat(dismissRect, "FCSquadActDismiss".Translate(), highlighted: isHighlighted, disabled: !canDismiss))
         {
             MilitaryFC utilCaptured = mfc;

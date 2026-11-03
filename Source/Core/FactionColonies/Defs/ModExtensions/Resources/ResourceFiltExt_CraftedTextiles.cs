@@ -10,7 +10,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
     /// <summary>
     /// Categories whose direct fabric members are considered (e.g. Textiles).
     /// </summary>
-    public List<ThingCategoryDef> categories = new List<ThingCategoryDef>();
+    public List<ThingCategoryDef> categories = [];
 
     /// <summary>
     /// Each fabric mapped to one research-prerequisite set per crafting recipe that produces it. A
@@ -18,7 +18,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
     /// <see cref="ResearchProjectDef.IsFinished"/> checks happen per call.
     /// </summary>
     private Dictionary<ThingDef, List<List<ResearchProjectDef>>> _craftedFabrics;
-    private Dictionary<ThingDef, List<List<ResearchProjectDef>>> CraftedFabrics => _craftedFabrics ?? (_craftedFabrics = BuildCraftedFabrics());
+    private Dictionary<ThingDef, List<List<ResearchProjectDef>>> CraftedFabrics => _craftedFabrics ??= BuildCraftedFabrics();
 
     public override void SetFilter(ThingFilter filter, TechLevel techlevel, ResourceFC resource = null)
     {
@@ -44,7 +44,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
             List<ResearchProjectDef> requirement = MinimalRequirement(fabric.Value);
             if (requirement is not null)
             {
-                TitheRestrictionInfo info = new TitheRestrictionInfo();
+                TitheRestrictionInfo info = new();
                 info.researchProjects = requirement;
                 restrictions[fabric.Key] = info;
             }
@@ -90,7 +90,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
     {
         // The fabrics we care about: direct members of the configured categories (excludes the
         // Leathers/Wools subcategories, which are owned by other resources/extensions).
-        HashSet<ThingDef> fabrics = new HashSet<ThingDef>();
+        HashSet<ThingDef> fabrics = [];
         foreach (ThingCategoryDef category in categories)
         {
             if (category is null) continue;
@@ -100,7 +100,7 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
             }
         }
 
-        Dictionary<ThingDef, List<List<ResearchProjectDef>>> outputs = new Dictionary<ThingDef, List<List<ResearchProjectDef>>>();
+        Dictionary<ThingDef, List<List<ResearchProjectDef>>> outputs = [];
         if (fabrics.Count == 0) return outputs;
 
         foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefs)
@@ -111,14 +111,14 @@ public class ResourceFilterExtension_CraftedTextiles : ResourceFilterExtension
             {
                 if (product?.thingDef is null || !fabrics.Contains(product.thingDef)) continue;
 
-                List<ResearchProjectDef> prereqs = new List<ResearchProjectDef>();
+                List<ResearchProjectDef> prereqs = [];
                 if (recipe.researchPrerequisite is not null) prereqs.Add(recipe.researchPrerequisite);
                 if (!recipe.researchPrerequisites.NullOrEmpty()) prereqs.AddRange(recipe.researchPrerequisites);
 
                 List<List<ResearchProjectDef>> producers;
                 if (!outputs.TryGetValue(product.thingDef, out producers))
                 {
-                    producers = new List<List<ResearchProjectDef>>();
+                    producers = [];
                     outputs[product.thingDef] = producers;
                 }
                 producers.Add(prereqs);

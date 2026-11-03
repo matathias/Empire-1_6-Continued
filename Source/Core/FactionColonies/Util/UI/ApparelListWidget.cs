@@ -38,7 +38,7 @@ public static class ApparelListWidget
             float btnX = rect.xMax;
 
             btnX -= btnW;
-            Rect addBtnRect = new Rect(btnX, btnY, btnW, headerHeight);
+            Rect addBtnRect = new(btnX, btnY, btnW, headerHeight);
             if (UIUtil.ClampedButtonText(addBtnRect, "fcAddApparel".Translate()))
             {
                 OpenApparelPicker(displayUnit, opts);
@@ -47,7 +47,7 @@ public static class ApparelListWidget
             if (displayUnit is not null && displayUnit.apparel.Any(a => a.thing is not null))
             {
                 btnX -= btnW + 2f;
-                Rect setAllBtn = new Rect(btnX, btnY, btnW, headerHeight);
+                Rect setAllBtn = new(btnX, btnY, btnW, headerHeight);
                 if (UIUtil.ClampedButtonText(setAllBtn, "fcSetAllColors".Translate()))
                 {
                     Color current = FindFC.FactionComp?.hasFactionColor == true
@@ -62,7 +62,7 @@ public static class ApparelListWidget
                 if (displayUnit.apparel.Any(a => a.hasColor))
                 {
                     btnX -= btnW + 2f;
-                    Rect clearBtn = new Rect(btnX, btnY, btnW, headerHeight);
+                    Rect clearBtn = new(btnX, btnY, btnW, headerHeight);
                     if (UIUtil.ClampedButtonText(clearBtn, "fcClearColors".Translate()))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
@@ -73,13 +73,13 @@ public static class ApparelListWidget
         }
 
         // List
-        Rect listOutRect = new Rect(rect.x, btnY + headerHeight + 2f, rect.width, rect.height - headerHeight - 4f);
+        Rect listOutRect = new(rect.x, btnY + headerHeight + 2f, rect.width, rect.height - headerHeight - 4f);
 
         List<SavedThing> sortedApparel = displayUnit?.apparel
             ?.Where(a => a.thing is not null)
             .OrderByDescending(a => a.thing.apparel.layers.Max(l => l.drawOrder))
             .ThenBy(a => a.thing.label)
-            .ToList() ?? new List<SavedThing>();
+            .ToList() ?? [];
 
         float viewHeight = sortedApparel.Count * apparelRowHeight;
         Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref scrollPos, viewHeight);
@@ -87,17 +87,17 @@ public static class ApparelListWidget
         for (int i = 0; i < sortedApparel.Count; i++)
         {
             SavedThing item = sortedApparel[i];
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * apparelRowHeight, scrollViewRect.width, apparelRowHeight);
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + i * apparelRowHeight, scrollViewRect.width, apparelRowHeight);
 
             if (i % 2 == 0) Widgets.DrawHighlight(row);
 
             // Icon
-            Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
+            Rect iconRect = new(row.x + 2f, row.y + 2f, IconSize, IconSize);
             Widgets.ThingIcon(iconRect, item.thing, item.stuff);
 
             // Info card button
             const float infoBtnSize = 24f;
-            Rect infoRect = new Rect(iconRect.xMax + 2f, row.y + (apparelRowHeight - infoBtnSize) / 2f, infoBtnSize, infoBtnSize);
+            Rect infoRect = new(iconRect.xMax + 2f, row.y + (apparelRowHeight - infoBtnSize) / 2f, infoBtnSize, infoBtnSize);
             Widgets.InfoCardButton(infoRect.x, infoRect.y, item.thing, item.stuff);
 
             // Remove button (right side)
@@ -119,7 +119,7 @@ public static class ApparelListWidget
 
             // Color swatch
             float swatchRightEdge = opts.canEdit ? removeRect.x - 4f : row.xMax - 4f;
-            Rect swatchRect = new Rect(swatchRightEdge - swatchSize, row.y + (apparelRowHeight - swatchSize) / 2f, swatchSize, swatchSize);
+            Rect swatchRect = new(swatchRightEdge - swatchSize, row.y + (apparelRowHeight - swatchSize) / 2f, swatchSize, swatchSize);
             FactionFC factionComp = FindFC.FactionComp;
             Color resolvedColor = factionComp is not null ? factionComp.ResolveApparelColor(item) : Color.white;
             Color outlineColor = item.hasColor ? Color.white : new Color(0.5f, 0.5f, 0.5f);
@@ -135,13 +135,13 @@ public static class ApparelListWidget
             }
 
             // Cost
-            Rect costRect = new Rect(swatchRect.x - costWidth - 2f, row.y, costWidth, apparelRowHeight);
+            Rect costRect = new(swatchRect.x - costWidth - 2f, row.y, costWidth, apparelRowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
             UIUtil.ClampedLabel(costRect, "$" + item.MarketValue.ToString("F0"));
 
             // Label
-            Rect labelRect = new Rect(infoRect.xMax + 4f, row.y, costRect.x - infoRect.xMax - 8f, apparelRowHeight);
+            Rect labelRect = new(infoRect.xMax + 4f, row.y, costRect.x - infoRect.xMax - 8f, apparelRowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             string label = item.stuff is not null
@@ -154,7 +154,7 @@ public static class ApparelListWidget
             // Click row to open replace picker
             if (opts.canEdit)
             {
-                Rect clickRect = new Rect(row.x, row.y, costRect.x - row.x, apparelRowHeight);
+                Rect clickRect = new(row.x, row.y, costRect.x - row.x, apparelRowHeight);
                 if (Widgets.ButtonInvisible(clickRect))
                 {
                     OpenApparelReplacePicker(displayUnit, item, opts);
@@ -174,7 +174,7 @@ public static class ApparelListWidget
     {
         ThingDef raceDef = displayUnit?.pawnKind?.race;
         BodyDef body = raceDef?.race?.body ?? BodyDefOf.Human;
-        List<SavedThing> currentApparel = displayUnit?.apparel ?? new List<SavedThing>();
+        List<SavedThing> currentApparel = displayUnit?.apparel ?? [];
 
         // Static predicates (IsApparel/PawnCanWear) are cached in the pool; only the live research
         // + race gates and the worn-set exclusion run per open.
@@ -201,7 +201,7 @@ public static class ApparelListWidget
     {
         ThingDef raceDef = displayUnit?.pawnKind?.race;
         BodyDef body = raceDef?.race?.body ?? BodyDefOf.Human;
-        List<SavedThing> currentApparel = displayUnit?.apparel ?? new List<SavedThing>();
+        List<SavedThing> currentApparel = displayUnit?.apparel ?? [];
 
         // Static predicates (IsApparel/PawnCanWear) are cached in the pool; only the live research
         // + race gates run per open (the replace picker keeps the currently-worn item selectable).

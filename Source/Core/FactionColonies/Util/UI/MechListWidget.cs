@@ -27,7 +27,7 @@ public static class MechListWidget
     private const float stepperButtonW = 20f;
     private const float IconSize = 24f;
     private const float groupGap = 12f;
-    private static readonly Color separatorColor = new Color(0.6f, 0.6f, 0.6f, 0.85f);
+    private static readonly Color separatorColor = new(0.6f, 0.6f, 0.6f, 0.85f);
 
     public static void Draw(Rect rect, MilUnitFC displayUnit, ref Vector2 scrollPos, Options opts)
     {
@@ -48,7 +48,7 @@ public static class MechListWidget
         bool editable = opts.canEdit && opts.showHeaderButtons;
 
         // --- "Make mechanitor" toggle ---
-        Rect toggleRect = new Rect(rect.x, rect.y, rect.width, headerHeight);
+        Rect toggleRect = new(rect.x, rect.y, rect.width, headerHeight);
         bool isMech = displayUnit?.isMechanitor ?? false;
         bool newIsMech = isMech;
         Text.Font = GameFont.Small;
@@ -70,7 +70,7 @@ public static class MechListWidget
         // When not a mechanitor, show a hint and stop.
         if (!(displayUnit?.IsMechanitorDesign ?? false) && !newIsMech)
         {
-            Rect hintRect = new Rect(rect.x, toggleRect.yMax + 4f, rect.width, rect.height - headerHeight - 6f);
+            Rect hintRect = new(rect.x, toggleRect.yMax + 4f, rect.width, rect.height - headerHeight - 6f);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.UpperLeft;
             UIUtil.ClampedLabel(hintRect.ContractedBy(4f), "fcMechsHint".Translate());
@@ -82,7 +82,7 @@ public static class MechListWidget
         // --- Bandwidth summary (full width; Add Mech lives per-group below) ---
         float used = displayUnit?.UsedMechBandwidth ?? 0f;
         float total = displayUnit?.TotalMechBandwidth ?? 0f;
-        Rect bwRect = new Rect(rect.x, toggleRect.yMax + 2f, rect.width, headerHeight);
+        Rect bwRect = new(rect.x, toggleRect.yMax + 2f, rect.width, headerHeight);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         if (used > total + 0.0001f) GUI.color = ColorLibrary.RedReadable;
@@ -91,11 +91,11 @@ public static class MechListWidget
 
         // --- Grouped mech list ---
         int groupCount = displayUnit is not null ? Mathf.Max(1, displayUnit.MechGroupCount) : 1;
-        List<SavedMech> items = displayUnit?.mechs ?? new List<SavedMech>();
+        List<SavedMech> items = displayUnit?.mechs ?? [];
 
         // Bucket mech indices by their (clamped) control group.
-        List<List<int>> buckets = new List<List<int>>();
-        for (int g = 0; g < groupCount; g++) buckets.Add(new List<int>());
+        List<List<int>> buckets = [];
+        for (int g = 0; g < groupCount; g++) buckets.Add([]);
         for (int i = 0; i < items.Count; i++)
         {
             if (items[i].kind?.race is null) continue;
@@ -106,7 +106,7 @@ public static class MechListWidget
         }
 
         float listTop = bwRect.yMax + 4f;
-        Rect listOutRect = new Rect(rect.x, listTop, rect.width, rect.height - (listTop - rect.y));
+        Rect listOutRect = new(rect.x, listTop, rect.width, rect.height - (listTop - rect.y));
         float viewHeight = 0f;
         for (int g = 0; g < groupCount; g++) viewHeight += headerHeight + buckets[g].Count * rowHeight;
         viewHeight += (groupCount - 1) * groupGap;
@@ -124,18 +124,18 @@ public static class MechListWidget
             }
 
             // Group header (the only highlighted strip): "Group N" + work-mode + Add Mech buttons.
-            Rect gHeader = new Rect(scrollViewRect.x, y, scrollViewRect.width, headerHeight);
+            Rect gHeader = new(scrollViewRect.x, y, scrollViewRect.width, headerHeight);
             Widgets.DrawHighlight(gHeader);
             MechWorkModeDef gMode = displayUnit?.GetGroupWorkMode(g) ?? MechWorkModeDefOf.Escort;
 
             float gAddW = 90f;
             float gWmW = 150f;
-            Rect addBtnRect = new Rect(gHeader.xMax - gAddW - 2f, gHeader.y + 1f, gAddW, headerHeight - 2f);
-            Rect wmRect = new Rect(addBtnRect.x - gWmW - 4f, gHeader.y + 1f, gWmW, headerHeight - 2f);
+            Rect addBtnRect = new(gHeader.xMax - gAddW - 2f, gHeader.y + 1f, gAddW, headerHeight - 2f);
+            Rect wmRect = new(addBtnRect.x - gWmW - 4f, gHeader.y + 1f, gWmW, headerHeight - 2f);
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect gLabelRect = new Rect(gHeader.x + 4f, gHeader.y, wmRect.x - gHeader.x - 8f, headerHeight);
+            Rect gLabelRect = new(gHeader.x + 4f, gHeader.y, wmRect.x - gHeader.x - 8f, headerHeight);
             UIUtil.ClampedLabel(gLabelRect, "fcMechGroup".Translate(g + 1));
 
             Text.Font = GameFont.Tiny;
@@ -145,7 +145,7 @@ public static class MechListWidget
                 int capturedGroup = g;
                 if (UIUtil.ClampedButtonText(wmRect, "fcMechWorkMode".Translate() + ": " + gMode.LabelCap))
                 {
-                    List<FloatMenuOption> modeOpts = new List<FloatMenuOption>();
+                    List<FloatMenuOption> modeOpts = [];
                     foreach (MechWorkModeDef mode in DefDatabase<MechWorkModeDef>.AllDefsListForReading)
                     {
                         MechWorkModeDef captured = mode;
@@ -176,13 +176,13 @@ public static class MechListWidget
             foreach (int index in buckets[g])
             {
                 SavedMech item = items[index];
-                Rect row = new Rect(scrollViewRect.x, y, scrollViewRect.width, rowHeight);
+                Rect row = new(scrollViewRect.x, y, scrollViewRect.width, rowHeight);
                 Widgets.DrawHighlightIfMouseover(row);
 
-                Rect iconRect = new Rect(row.x + 6f, row.y + 2f, IconSize, IconSize);
+                Rect iconRect = new(row.x + 6f, row.y + 2f, IconSize, IconSize);
                 Widgets.ThingIcon(iconRect, item.kind.race);
 
-                Rect infoRect = new Rect(iconRect.xMax + 2f, row.y + 2f, IconSize - 2f, IconSize - 2f);
+                Rect infoRect = new(iconRect.xMax + 2f, row.y + 2f, IconSize - 2f, IconSize - 2f);
                 Widgets.InfoCardButton(infoRect, item.kind.race);
 
                 float cursorRight = row.xMax - 4f;
@@ -190,7 +190,7 @@ public static class MechListWidget
                 // Remove button (far right)
                 if (editable)
                 {
-                    Rect removeRect = new Rect(cursorRight - removeButtonSize, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
+                    Rect removeRect = new(cursorRight - removeButtonSize, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
                     Text.Font = GameFont.Small;
                     Text.Anchor = TextAnchor.MiddleCenter;
                     if (UIUtil.ClampedButtonText(removeRect, "X"))
@@ -204,9 +204,9 @@ public static class MechListWidget
                 // Count steppers ( - N + )
                 if (editable)
                 {
-                    Rect plusRect = new Rect(cursorRight - stepperButtonW, row.y + (rowHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
-                    Rect countRect = new Rect(plusRect.x - 26f, row.y, 26f, rowHeight);
-                    Rect minusRect = new Rect(countRect.x - stepperButtonW, plusRect.y, stepperButtonW, stepperButtonW);
+                    Rect plusRect = new(cursorRight - stepperButtonW, row.y + (rowHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
+                    Rect countRect = new(plusRect.x - 26f, row.y, 26f, rowHeight);
+                    Rect minusRect = new(countRect.x - stepperButtonW, plusRect.y, stepperButtonW, stepperButtonW);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleCenter;
                     if (UIUtil.ClampedButtonText(minusRect, "-"))
@@ -224,7 +224,7 @@ public static class MechListWidget
                 }
                 else
                 {
-                    Rect countRect = new Rect(cursorRight - 30f, row.y, 30f, rowHeight);
+                    Rect countRect = new(cursorRight - 30f, row.y, 30f, rowHeight);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleRight;
                     UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
@@ -235,12 +235,12 @@ public static class MechListWidget
                 if (editable && groupCount > 1)
                 {
                     float grpW = 34f;
-                    Rect grpRect = new Rect(cursorRight - grpW, row.y + 2f, grpW, rowHeight - 4f);
+                    Rect grpRect = new(cursorRight - grpW, row.y + 2f, grpW, rowHeight - 4f);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleCenter;
                     if (UIUtil.ClampedButtonText(grpRect, "G" + (g + 1)))
                     {
-                        List<FloatMenuOption> grpOpts = new List<FloatMenuOption>();
+                        List<FloatMenuOption> grpOpts = [];
                         for (int dest = 0; dest < groupCount; dest++)
                         {
                             int capturedDest = dest;
@@ -257,14 +257,14 @@ public static class MechListWidget
 
                 // Bandwidth cost
                 float bandwidth = item.kind.race.GetStatValueAbstract(StatDefOf.BandwidthCost) * Mathf.Max(1, item.count);
-                Rect bwCostRect = new Rect(cursorRight - 45f, row.y, 45f, rowHeight);
+                Rect bwCostRect = new(cursorRight - 45f, row.y, 45f, rowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
                 UIUtil.ClampedLabel(bwCostRect, "BW " + bandwidth.ToString("0.#"));
 
                 // Label
                 string label = item.kind.LabelCap;
-                Rect labelRect = new Rect(infoRect.xMax + 6f, row.y, bwCostRect.x - infoRect.xMax - 10f, rowHeight);
+                Rect labelRect = new(infoRect.xMax + 6f, row.y, bwCostRect.x - infoRect.xMax - 10f, rowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);

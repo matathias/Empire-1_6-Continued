@@ -20,7 +20,7 @@ public static class FCSituationMaker
         SpawnPass(faction, manager);
 
         // Snapshot: a Terminal endpoint can remove a situation mid-pass.
-        List<FCSituation> snapshot = new List<FCSituation>(manager.Situations);
+        List<FCSituation> snapshot = new(manager.Situations);
         foreach (FCSituation sit in snapshot)
         {
             if (!manager.Situations.Contains(sit)) continue;
@@ -204,7 +204,7 @@ public static class FCSituationMaker
         if (evt is null) return;
         if (sit.targetSettlement is not null)
         {
-            evt.settlementTraitLocations = new List<WorldSettlementFC> { sit.targetSettlement };
+            evt.settlementTraitLocations = [sit.targetSettlement];
             evt.location = sit.targetSettlement.Tile;
             evt.source = sit.targetSettlement.Tile;
         }

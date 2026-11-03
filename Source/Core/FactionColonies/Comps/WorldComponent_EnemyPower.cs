@@ -19,10 +19,8 @@ public class WorldComponent_EnemyPower : WorldComponent
 
     public const int RecomputeIntervalTicks = GenDate.TicksPerDay * 5;
 
-    private Dictionary<Settlement, EnemyPower> settlementPowers
-        = new Dictionary<Settlement, EnemyPower>();
-    private Dictionary<Faction, EnemyPower> factionPowers
-        = new Dictionary<Faction, EnemyPower>();
+    private Dictionary<Settlement, EnemyPower> settlementPowers = [];
+    private Dictionary<Faction, EnemyPower> factionPowers = [];
 
     /* Working lists for Scribe_Collections (Reference-keyed dicts need them per scribe-primer §5). */
     private List<Settlement> _scribeSettlementKeys;
@@ -67,8 +65,8 @@ public class WorldComponent_EnemyPower : WorldComponent
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (settlementPowers is null) settlementPowers = new Dictionary<Settlement, EnemyPower>();
-            if (factionPowers is null) factionPowers = new Dictionary<Faction, EnemyPower>();
+            settlementPowers ??= [];
+            factionPowers ??= [];
 
             /* LookMode.Reference silently leaves entries with null keys for unresolved /
              * destroyed targets — drop them. */
@@ -142,7 +140,7 @@ public class WorldComponent_EnemyPower : WorldComponent
     public void RecomputeAll()
     {
         // 1. Faction baselines (canonical) + faction-level modifier pass.
-        HashSet<Faction> currentFactions = new HashSet<Faction>();
+        HashSet<Faction> currentFactions = [];
         foreach (Faction f in Find.FactionManager.AllFactions)
         {
             if (f is null || f.def is null) continue;
@@ -167,7 +165,7 @@ public class WorldComponent_EnemyPower : WorldComponent
         }
 
         // 2. Settlement entries: copy from faction baseline, then settlement-level modifier pass.
-        HashSet<Settlement> currentSettlements = new HashSet<Settlement>();
+        HashSet<Settlement> currentSettlements = [];
         foreach (Settlement s in Find.WorldObjects.Settlements)
         {
             if (s is null || s.Destroyed) continue;
@@ -273,14 +271,14 @@ public class WorldComponent_EnemyPower : WorldComponent
     private void BuildDefCachesIfNeeded()
     {
         if (techDefCache is not null) return;
-        techDefCache = new Dictionary<TechLevel, EnemyPowerTechDef>();
+        techDefCache = [];
         foreach (EnemyPowerTechDef d in DefDatabase<EnemyPowerTechDef>.AllDefsListForReading)
         {
             if (techDefCache.ContainsKey(d.techLevel))
                 LogUtil.Warning($"Duplicate EnemyPowerTechDef for {d.techLevel}: {d.defName} overrides previous");
             techDefCache[d.techLevel] = d;
         }
-        factionDefCache = new Dictionary<FactionDef, EnemyPowerFactionDef>();
+        factionDefCache = [];
         foreach (EnemyPowerFactionDef d in DefDatabase<EnemyPowerFactionDef>.AllDefsListForReading)
         {
             if (d.factionDef is null) continue;

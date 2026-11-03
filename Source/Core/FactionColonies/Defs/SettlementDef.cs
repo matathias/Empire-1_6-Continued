@@ -9,7 +9,7 @@ public class WorldSettlementDef : WorldObjectDef
 {
     /// <summary>Description with {FACTION}/{FACTION_TITLE} tokens and [b]/[i] emphasis markup resolved for display.</summary>
     public string FormattedDesc => description.Format();
-    public List<ResourceAvailability> resources = new List<ResourceAvailability>();
+    public List<ResourceAvailability> resources = [];
     /// <summary>
     /// If true, all ResourceTypeDefs with isDefaultResource set to true are automatically added to this settlement's resources list
     /// (unless already explicitly listed). Explicit entries take priority over defaults.
@@ -19,20 +19,20 @@ public class WorldSettlementDef : WorldObjectDef
     public int workersMaxMult = 3;
     public int workersUltraMaxBase = 5;
     public int workersUltraMaxMult = 0;
-    public List<BiomeDef> blockedBiomes = new List<BiomeDef>();
-    public List<BiomeDef> allowedBiomes = new List<BiomeDef>();
+    public List<BiomeDef> blockedBiomes = [];
+    public List<BiomeDef> allowedBiomes = [];
 
-    public List<FCStatModifier> statModifiers = new List<FCStatModifier>();
+    public List<FCStatModifier> statModifiers = [];
     /// <summary>
     /// If a biomeResourceOverride is specified, then the settlement will use the resources of the given override rather than the resources
     /// of the biome of the tile that it's on.
     /// </summary>
     public BiomeResourceDef biomeResourceOverride;
 
-    public List<ResearchProjectDef> researchProjects = new List<ResearchProjectDef>();
+    public List<ResearchProjectDef> researchProjects = [];
     public TechLevel techLevel = TechLevel.Undefined;
 
-    public List<PlanetLayerDef> planetLayers = new List<PlanetLayerDef>();
+    public List<PlanetLayerDef> planetLayers = [];
 
     /// <summary>
     /// Lower-case display label of the planet layer(s) this settlement can be founded on.
@@ -45,7 +45,7 @@ public class WorldSettlementDef : WorldObjectDef
         {
             if (planetLayers is null || planetLayers.Count == 0)
                 return "FCCodexLayerSurface".Translate().RawText;
-            List<string> labels = new List<string>(planetLayers.Count);
+            List<string> labels = new(planetLayers.Count);
             foreach (PlanetLayerDef layer in planetLayers)
                 labels.Add(layer == PlanetLayerDefOf.Surface ? "FCCodexLayerSurface".Translate().RawText : layer.label);
             return string.Join(", ", labels.ToArray());
@@ -130,7 +130,7 @@ public class WorldSettlementDef : WorldObjectDef
     /// If the tile has Hilliness.Impassable AND at least one of these mutators is present,
     /// the impassable restriction is bypassed. Null/empty = impassable tiles always blocked (default).
     /// </summary>
-    public List<TileMutatorDef> impassableAllowedMutators = new List<TileMutatorDef>();
+    public List<TileMutatorDef> impassableAllowedMutators = [];
 
     /// <summary>
     /// If false, battles at this settlement type always auto-resolve, even if the player
@@ -145,7 +145,7 @@ public class WorldSettlementDef : WorldObjectDef
     }
     public List<ResourceTypeDef> GetResourceDefs()
     {
-        List<ResourceTypeDef> list = new List<ResourceTypeDef>();
+        List<ResourceTypeDef> list = [];
         if (resources is not null)
         {
             foreach (ResourceAvailability rb in resources)
@@ -157,7 +157,7 @@ public class WorldSettlementDef : WorldObjectDef
     }
     public List<string> GetResourceDefNames()
     {
-        List<string> list = new List<string>();
+        List<string> list = [];
         if (resources is not null)
         {
             foreach (ResourceAvailability rb in resources)
@@ -209,7 +209,7 @@ public class WorldSettlementDef : WorldObjectDef
     /// </summary>
     public bool IsUnlocked(out string lockedReason)
     {
-        List<string> reasons = new List<string>();
+        List<string> reasons = [];
         if (researchProjects?.Count > 0)
         {
             foreach (ResearchProjectDef rp in researchProjects)
@@ -345,7 +345,7 @@ public class WorldSettlementDef : WorldObjectDef
         }
         if (baseSettlementType is not null)
         {
-            HashSet<WorldSettlementDef> visited = new HashSet<WorldSettlementDef> { this };
+            HashSet<WorldSettlementDef> visited = [this];
             WorldSettlementDef current = baseSettlementType;
             while (current is not null)
             {

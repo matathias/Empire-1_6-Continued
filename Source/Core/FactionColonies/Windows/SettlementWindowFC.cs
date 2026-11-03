@@ -61,11 +61,11 @@ public sealed class SettlementWindowFc : Window
     private int titheTab = 0;
 
     // Tithe buffers
-    private List<string> titheBuffers = new List<string>();
+    private List<string> titheBuffers = [];
     private int currentDictSize = 0;
 
     // Comps with overview tabs
-    private List<ISettlementWindowOverview> overviews = new List<ISettlementWindowOverview>();
+    private List<ISettlementWindowOverview> overviews = [];
     private Color accentColor;
     private Color highlightColor;
 
@@ -100,28 +100,28 @@ public sealed class SettlementWindowFc : Window
         }
     }
 
-    private List<string> overviewTabs = new List<string>
-    {
+    private List<string> overviewTabs =
+    [
         "FCOverview".Translate(),
         "FCTithing".Translate()
-    };
+    ];
 
     private static readonly SettlementStatType[] stats =
-    {
+    [
         SettlementStatType.MilitaryLevel,
         SettlementStatType.Happiness,
         SettlementStatType.Loyalty,
         SettlementStatType.Unrest,
         SettlementStatType.Prosperity
-    };
+    ];
 
     private static readonly SettlementButtonType[] mainButtons =
-    {
+    [
         SettlementButtonType.Upgrade,
         SettlementButtonType.SpecialActions,
         SettlementButtonType.Prisoners,
         SettlementButtonType.Military
-    };
+    ];
 
     private WorldSettlementFC settlement; //Don't expose
 
@@ -153,10 +153,10 @@ public sealed class SettlementWindowFc : Window
         float rightWidth = 465f;
         float centerWidth = validWidth - leftWidth - rightWidth - (margin * 2);
 
-        Rect headerBox = new Rect(inRect.x, inRect.y, leftWidth + centerWidth + margin, 30 + (margin * 2) + 60);
-        Rect leftBox = new Rect(inRect.x, headerBox.yMax + (margin * 2), leftWidth, validHeight - headerBox.height - (margin * 2));
-        Rect centerBox = new Rect(leftBox.xMax + margin, headerBox.yMax + (margin * 2), centerWidth, validHeight - headerBox.height - (margin * 2));
-        Rect rightBox = new Rect(centerBox.xMax + margin, inRect.y, rightWidth, validHeight);
+        Rect headerBox = new(inRect.x, inRect.y, leftWidth + centerWidth + margin, 30 + (margin * 2) + 60);
+        Rect leftBox = new(inRect.x, headerBox.yMax + (margin * 2), leftWidth, validHeight - headerBox.height - (margin * 2));
+        Rect centerBox = new(leftBox.xMax + margin, headerBox.yMax + (margin * 2), centerWidth, validHeight - headerBox.height - (margin * 2));
+        Rect rightBox = new(centerBox.xMax + margin, inRect.y, rightWidth, validHeight);
 
         DrawCenterHeader(headerBox);
         DrawLeftInfo(leftBox);
@@ -170,10 +170,10 @@ public sealed class SettlementWindowFc : Window
     /* Left side overview */
     private void DrawLeftInfo(Rect boundingBox)
     {
-        Rect topBox = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height / 2f);
-        Rect topBoxInner = new Rect(topBox.x + margin, topBox.y + margin, topBox.width - (margin * 2), topBox.height - (margin * 2));
-        Rect botBox = new Rect(topBox.x, topBox.yMax, topBox.width, topBox.height);
-        Rect botBoxInner = new Rect(botBox.x + margin, botBox.y + margin, botBox.width - (margin * 2), botBox.height - (margin * 2));
+        Rect topBox = new(boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height / 2f);
+        Rect topBoxInner = new(topBox.x + margin, topBox.y + margin, topBox.width - (margin * 2), topBox.height - (margin * 2));
+        Rect botBox = new(topBox.x, topBox.yMax, topBox.width, topBox.height);
+        Rect botBoxInner = new(botBox.x + margin, botBox.y + margin, botBox.width - (margin * 2), botBox.height - (margin * 2));
 
         UIUtil.DrawColoredBox(topBox, accentColor);
         UIUtil.DrawColoredBox(botBox, accentColor);
@@ -218,27 +218,27 @@ public sealed class SettlementWindowFc : Window
         /* Settlement name on top */
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect nameRect = new Rect(boundingBox.x + margin, boundingBox.y + margin, boundingBox.width - (margin * 2 + 44), 30);
+        Rect nameRect = new(boundingBox.x + margin, boundingBox.y + margin, boundingBox.width - (margin * 2 + 44), 30);
         UIUtil.SettlementLabel(nameRect, settlement);
         //Draw codex button
-        Rect codexBtnRect = new Rect(nameRect.xMax + margin, boundingBox.y + margin, 20, 20);
+        Rect codexBtnRect = new(nameRect.xMax + margin, boundingBox.y + margin, 20, 20);
         CodexTooltips.DrawCodexButton(codexBtnRect);
         //Draw name settings button
-        Rect configRect = new Rect(codexBtnRect.xMax + margin, boundingBox.y + margin, 20, 20);
+        Rect configRect = new(codexBtnRect.xMax + margin, boundingBox.y + margin, 20, 20);
         if (Widgets.ButtonImage(configRect, TexLoad.iconCustomize))
         {
             //if click faction customize button
             Find.WindowStack.Add(new SettlementCustomizeWindowFc(settlement));
         }
         // Just used for alignment. Can maybe use this box to draw some background art based on the settlement's biome. Kinda like stellaris, maybe
-        Rect infoBox = new Rect(boundingBox.x, nameRect.yMax, boundingBox.width, boundingBox.height - (nameRect.height + margin * 2));
+        Rect infoBox = new(boundingBox.x, nameRect.yMax, boundingBox.width, boundingBox.height - (nameRect.height + margin * 2));
 
         /* Town level */
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect levelBoundingBox = new Rect(infoBox.x, infoBox.y + margin, 60, 60);
+        Rect levelBoundingBox = new(infoBox.x, infoBox.y + margin, 60, 60);
         //gotta love aligning text
-        Rect levelBox = new Rect(levelBoundingBox.x + 14, levelBoundingBox.y + 14, 30, 30);
+        Rect levelBox = new(levelBoundingBox.x + 14, levelBoundingBox.y + 14, 30, 30);
         Widgets.DrawShadowAround(levelBox);
         UIUtil.DrawColoredHighlight(levelBoundingBox, highlightColor);
         UIUtil.DrawColoredBox(levelBoundingBox, accentColor);
@@ -248,13 +248,13 @@ public sealed class SettlementWindowFc : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         float rightSideWidth = boundingBox.width - (margin + levelBoundingBox.width);
-        Rect typeBox = new Rect(levelBoundingBox.xMax + margin, levelBoundingBox.y, rightSideWidth, levelBoundingBox.height / 2);
-        Rect typeTextBox = new Rect(typeBox.x + margin, typeBox.y, (typeBox.width - (margin * 2)) / 2f, typeBox.height);
-        Rect foundTextBox = new Rect(typeTextBox.xMax, typeTextBox.y, typeTextBox.width, typeTextBox.height);
-        Rect basicDescBox = new Rect(typeBox.x, typeBox.yMax, rightSideWidth * 0.4f, levelBoundingBox.height / 2);
-        Rect basicDescTextBox = new Rect(basicDescBox.x + margin, basicDescBox.y, basicDescBox.width - (margin * 2), basicDescBox.height);
-        Rect locBox = new Rect(basicDescBox.xMax + margin, typeBox.yMax, (rightSideWidth * 0.6f) - margin, levelBoundingBox.height / 2);
-        Rect locTextBox = new Rect(locBox.x + margin, locBox.y, locBox.width - (margin * 2), locBox.height);
+        Rect typeBox = new(levelBoundingBox.xMax + margin, levelBoundingBox.y, rightSideWidth, levelBoundingBox.height / 2);
+        Rect typeTextBox = new(typeBox.x + margin, typeBox.y, (typeBox.width - (margin * 2)) / 2f, typeBox.height);
+        Rect foundTextBox = new(typeTextBox.xMax, typeTextBox.y, typeTextBox.width, typeTextBox.height);
+        Rect basicDescBox = new(typeBox.x, typeBox.yMax, rightSideWidth * 0.4f, levelBoundingBox.height / 2);
+        Rect basicDescTextBox = new(basicDescBox.x + margin, basicDescBox.y, basicDescBox.width - (margin * 2), basicDescBox.height);
+        Rect locBox = new(basicDescBox.xMax + margin, typeBox.yMax, (rightSideWidth * 0.6f) - margin, levelBoundingBox.height / 2);
+        Rect locTextBox = new(locBox.x + margin, locBox.y, locBox.width - (margin * 2), locBox.height);
         UIUtil.DrawColoredHighlight(typeBox, highlightColor);
         UIUtil.ClampedLabel(typeTextBox, settlement.settlementDef.LabelCap);
         Text.Anchor = TextAnchor.MiddleRight;
@@ -269,8 +269,8 @@ public sealed class SettlementWindowFc : Window
     private void DrawBasicOverview(Rect boundingBox)
     {
         float bottomHeight = (buildingBoxSide * 3) + (buildingSpacing * 4) + 30f;
-        Rect topRect = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, (boundingBox.height - margin - bottomHeight));
-        Rect botRect = new Rect(boundingBox.x, topRect.yMax + margin, boundingBox.width, bottomHeight);
+        Rect topRect = new(boundingBox.x, boundingBox.y, boundingBox.width, (boundingBox.height - margin - bottomHeight));
+        Rect botRect = new(boundingBox.x, topRect.yMax + margin, boundingBox.width, bottomHeight);
 
         DrawBasicOverviewTop(topRect);
         DrawBasicOverviewBottom(botRect);
@@ -289,8 +289,8 @@ public sealed class SettlementWindowFc : Window
         float buildingBoxWidth = Math.Max(boundingBox.x * 0.7f, (buildingSpacingFromSide * 2) + (buildingBoxSide * 4) + (buildingSpacing * 3) + scrollMargin);
         float constructionBoxWidth = boundingBox.width - buildingBoxWidth;
 
-        Rect leftBox = new Rect(boundingBox.x, boundingBox.y, constructionBoxWidth, boundingBox.height);
-        Rect rightBox = new Rect(leftBox.xMax, leftBox.y, buildingBoxWidth, boundingBox.height);
+        Rect leftBox = new(boundingBox.x, boundingBox.y, constructionBoxWidth, boundingBox.height);
+        Rect rightBox = new(leftBox.xMax, leftBox.y, buildingBoxWidth, boundingBox.height);
 
         if (settlement.BuildingsComp is null)
         {
@@ -312,12 +312,12 @@ public sealed class SettlementWindowFc : Window
         /* Draw resource tabs on the left */
         float tabWidth = 25f;
         float tabHeight = boundingBox.height / numResources;
-        Rect chosenRect = new Rect();
+        Rect chosenRect = new();
         for (int i = 0; i < numResources; i++)
         {
-            Rect tabBox = new Rect(boundingBox.x, boundingBox.y + (tabHeight * i), tabWidth, tabHeight);
+            Rect tabBox = new(boundingBox.x, boundingBox.y + (tabHeight * i), tabWidth, tabHeight);
             float imgSize = Math.Min(tabWidth, tabHeight);
-            Rect iconBox = new Rect(tabBox.x + 2f + (tabWidth - imgSize) / 2f, tabBox.y + (tabHeight - imgSize) / 2f, imgSize, imgSize);
+            Rect iconBox = new(tabBox.x + 2f + (tabWidth - imgSize) / 2f, tabBox.y + (tabHeight - imgSize) / 2f, imgSize, imgSize);
             if (UIUtil.ButtonFlat(tabBox, "", highlighted: titheTab == i))
             {
                 titheTab = i;
@@ -382,7 +382,7 @@ public sealed class SettlementWindowFc : Window
         float scrollboxHeight = bodyHeight - randomboxHeight;
 
         /* Header box (contains pause button — always interactive) */
-        Rect headerBox = new Rect(bodyX, boundingBox.y, bodyWidth, headerHeight);
+        Rect headerBox = new(bodyX, boundingBox.y, bodyWidth, headerHeight);
         DrawTitheHeaderBox(headerBox, titheRes);
 
         /* Dim content below header when paused */
@@ -392,15 +392,15 @@ public sealed class SettlementWindowFc : Window
         }
 
         /* Scrollbox */
-        Rect scrollBox = new Rect(bodyX, headerBox.yMax + margin, bodyWidth, scrollboxHeight);
+        Rect scrollBox = new(bodyX, headerBox.yMax + margin, bodyWidth, scrollboxHeight);
         DrawTitheScrollBox(scrollBox, titheRes);
 
         /* Random tithe box */
-        Rect titheBox = new Rect(bodyX, scrollBox.yMax, bodyWidth, randomboxHeight);
+        Rect titheBox = new(bodyX, scrollBox.yMax, bodyWidth, randomboxHeight);
         DrawTitheRandomBox(titheBox, titheRes);
 
         /* Footer box */
-        Rect footerBox = new Rect(bodyX, titheBox.yMax + margin, bodyWidth, footerHeight);
+        Rect footerBox = new(bodyX, titheBox.yMax + margin, bodyWidth, footerHeight);
         DrawTitheFooterBox(footerBox, titheRes);
         GUI.enabled = true;
         GUI.color = origColor;
@@ -409,7 +409,7 @@ public sealed class SettlementWindowFc : Window
         if (titheRes.tithesPaused)
         {
             float overlayY = boundingBox.y + 30f + margin;
-            Rect contentArea = new Rect(bodyX, overlayY, bodyWidth, boundingBox.yMax - overlayY);
+            Rect contentArea = new(bodyX, overlayY, bodyWidth, boundingBox.yMax - overlayY);
             Widgets.DrawBoxSolid(contentArea, new Color(0f, 0f, 0f, 0.75f));
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleCenter;
@@ -419,10 +419,10 @@ public sealed class SettlementWindowFc : Window
     private void DrawTitheHeaderBox(Rect boundingBox, ResourceFC res)
     {
         float pauseBtnWidth = 90f;
-        Rect iconBox = new Rect(boundingBox.x, boundingBox.y, 30f, 30f);
-        Rect labelHighlight = new Rect(iconBox.xMax + margin, boundingBox.y, boundingBox.width - margin - iconBox.width - pauseBtnWidth - margin, 30f);
-        Rect labelText = new Rect(labelHighlight.x + smallMargin, labelHighlight.y + smallMargin, labelHighlight.width - (smallMargin * 2), labelHighlight.height - (smallMargin * 2));
-        Rect pauseBtn = new Rect(labelHighlight.xMax + margin, boundingBox.y + 3f, pauseBtnWidth, 27f);
+        Rect iconBox = new(boundingBox.x, boundingBox.y, 30f, 30f);
+        Rect labelHighlight = new(iconBox.xMax + margin, boundingBox.y, boundingBox.width - margin - iconBox.width - pauseBtnWidth - margin, 30f);
+        Rect labelText = new(labelHighlight.x + smallMargin, labelHighlight.y + smallMargin, labelHighlight.width - (smallMargin * 2), labelHighlight.height - (smallMargin * 2));
+        Rect pauseBtn = new(labelHighlight.xMax + margin, boundingBox.y + 3f, pauseBtnWidth, 27f);
 
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
@@ -442,9 +442,9 @@ public sealed class SettlementWindowFc : Window
         }
         TooltipHandler.TipRegion(pauseBtn, "FCPauseTithesDesc".Translate());
 
-        Rect iconAccent = new Rect(iconBox.x, iconBox.y, iconBox.width, 3f);
-        Rect labelAccent = new Rect(labelHighlight.x, labelHighlight.y, labelHighlight.width, 3f);
-        Rect btnAccent = new Rect(pauseBtn.x, pauseBtn.y - 3f, pauseBtn.width, 3f);
+        Rect iconAccent = new(iconBox.x, iconBox.y, iconBox.width, 3f);
+        Rect labelAccent = new(labelHighlight.x, labelHighlight.y, labelHighlight.width, 3f);
+        Rect btnAccent = new(pauseBtn.x, pauseBtn.y - 3f, pauseBtn.width, 3f);
         Widgets.DrawBoxSolid(iconAccent, res.def.color);
         Widgets.DrawBoxSolid(labelAccent, res.def.color);
         Widgets.DrawBoxSolid(btnAccent, res.def.color);
@@ -460,21 +460,21 @@ public sealed class SettlementWindowFc : Window
         double titheMult = res.GetTitheValueMultiplier();
         bool showMult = Math.Abs(titheMult - 1.0) > 0.001;
 
-        Rect titheModBox = new Rect(boundingBox.x, iconBox.yMax + margin, (boundingBox.width - margin) / 2f, rowHeight * 3f);
-        Rect prodBox = new Rect(titheModBox.xMax + margin, iconBox.yMax + margin, (boundingBox.width - margin) / 2f, rowHeight);
+        Rect titheModBox = new(boundingBox.x, iconBox.yMax + margin, (boundingBox.width - margin) / 2f, rowHeight * 3f);
+        Rect prodBox = new(titheModBox.xMax + margin, iconBox.yMax + margin, (boundingBox.width - margin) / 2f, rowHeight);
         float perDayBudgetY = hasInjection ? prodBox.yMax + rowHeight : prodBox.yMax;
-        Rect perDayBudgetBox = new Rect(titheModBox.xMax + margin, perDayBudgetY, (boundingBox.width - margin) / 2f, rowHeight);
-        Rect projectedBudgetBox = new Rect(titheModBox.xMax + margin, perDayBudgetBox.yMax, (boundingBox.width - margin) / 2f, rowHeight);
+        Rect perDayBudgetBox = new(titheModBox.xMax + margin, perDayBudgetY, (boundingBox.width - margin) / 2f, rowHeight);
+        Rect projectedBudgetBox = new(titheModBox.xMax + margin, perDayBudgetBox.yMax, (boundingBox.width - margin) / 2f, rowHeight);
 
         /* Tithe modifier info */
-        Rect titheRow1 = new Rect(titheModBox.x, titheModBox.y, titheModBox.width, rowHeight);
-        Rect trow1label = new Rect(titheRow1.x + smallMargin, titheRow1.y + smallMargin, (titheRow1.width - (smallMargin * 2)), labelHeight);
-        Rect titheRow2 = new Rect(titheModBox.x + (margin * 2), titheRow1.yMax, titheModBox.width - (margin * 2), rowHeight);
-        Rect trow2label = new Rect(titheRow2.x + smallMargin, titheRow2.y + smallMargin, (titheRow2.width - (smallMargin * 2)) * 0.75f, labelHeight);
-        Rect trow2num = new Rect(trow2label.xMax, trow2label.y, (titheRow2.width - (smallMargin * 2)) * 0.25f, labelHeight);
-        Rect titheRow3 = new Rect(titheRow2.x, titheRow2.yMax, titheRow2.width, rowHeight);
-        Rect trow3label = new Rect(titheRow3.x + smallMargin, titheRow3.y + smallMargin, (titheRow3.width - (smallMargin * 2)) * 0.75f, labelHeight);
-        Rect trow3num = new Rect(trow3label.xMax, trow3label.y, (titheRow3.width - (smallMargin * 2)) * 0.25f, labelHeight);
+        Rect titheRow1 = new(titheModBox.x, titheModBox.y, titheModBox.width, rowHeight);
+        Rect trow1label = new(titheRow1.x + smallMargin, titheRow1.y + smallMargin, (titheRow1.width - (smallMargin * 2)), labelHeight);
+        Rect titheRow2 = new(titheModBox.x + (margin * 2), titheRow1.yMax, titheModBox.width - (margin * 2), rowHeight);
+        Rect trow2label = new(titheRow2.x + smallMargin, titheRow2.y + smallMargin, (titheRow2.width - (smallMargin * 2)) * 0.75f, labelHeight);
+        Rect trow2num = new(trow2label.xMax, trow2label.y, (titheRow2.width - (smallMargin * 2)) * 0.25f, labelHeight);
+        Rect titheRow3 = new(titheRow2.x, titheRow2.yMax, titheRow2.width, rowHeight);
+        Rect trow3label = new(titheRow3.x + smallMargin, titheRow3.y + smallMargin, (titheRow3.width - (smallMargin * 2)) * 0.75f, labelHeight);
+        Rect trow3num = new(trow3label.xMax, trow3label.y, (titheRow3.width - (smallMargin * 2)) * 0.25f, labelHeight);
         Widgets.DrawHighlight(titheModBox);
         Widgets.DrawHighlight(titheRow1);
         UIUtil.ClampedLabel(trow1label, "FCTitheModifier".Translate());
@@ -511,8 +511,8 @@ public sealed class SettlementWindowFc : Window
 
         /* Production */
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect prodLabel = new Rect(prodBox.x + smallMargin, prodBox.y + smallMargin, (prodBox.width - (margin * 2)) * 0.75f, labelHeight);
-        Rect prodnum = new Rect(prodLabel.xMax, prodLabel.y, (prodBox.width - (margin * 2)) * 0.25f, labelHeight);
+        Rect prodLabel = new(prodBox.x + smallMargin, prodBox.y + smallMargin, (prodBox.width - (margin * 2)) * 0.75f, labelHeight);
+        Rect prodnum = new(prodLabel.xMax, prodLabel.y, (prodBox.width - (margin * 2)) * 0.25f, labelHeight);
         Widgets.DrawHighlight(prodBox);
         UIUtil.ClampedLabel(prodLabel, "FCTotalProd".Translate());
         Text.Anchor = TextAnchor.MiddleRight;
@@ -530,15 +530,15 @@ public sealed class SettlementWindowFc : Window
         /* External Tithe Injection */
         if (hasInjection)
         {
-            Rect injBox = new Rect(prodBox.x, prodBox.yMax, prodBox.width, rowHeight);
-            Rect injLabel = new Rect(injBox.x + smallMargin, injBox.y + smallMargin, (injBox.width - (margin * 2)) * 0.75f, labelHeight);
-            Rect injNum = new Rect(injLabel.xMax, injLabel.y, (injBox.width - (margin * 2)) * 0.25f, labelHeight);
+            Rect injBox = new(prodBox.x, prodBox.yMax, prodBox.width, rowHeight);
+            Rect injLabel = new(injBox.x + smallMargin, injBox.y + smallMargin, (injBox.width - (margin * 2)) * 0.75f, labelHeight);
+            Rect injNum = new(injLabel.xMax, injLabel.y, (injBox.width - (margin * 2)) * 0.25f, labelHeight);
             Text.Anchor = TextAnchor.MiddleLeft;
             UIUtil.ClampedLabel(injLabel, "FCExternalTitheBudget".Translate());
             Text.Anchor = TextAnchor.MiddleRight;
             UIUtil.ClampedLabel(injNum, Math.Round(extBudget).ToString());
 
-            StringBuilder injTip = new StringBuilder();
+            StringBuilder injTip = new();
             foreach (WorldObjectComp comp in res.settlement.AllComps)
             {
                 if (comp is ITitheBudgetModifier modifier)
@@ -554,8 +554,8 @@ public sealed class SettlementWindowFc : Window
 
         /* Per-day tithe budget (zebra highlight, no outline) */
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect budgetLabel = new Rect(perDayBudgetBox.x + smallMargin, perDayBudgetBox.y + smallMargin, (perDayBudgetBox.width - (margin * 2)) * 0.75f, labelHeight);
-        Rect budgetnum = new Rect(budgetLabel.xMax, budgetLabel.y, (perDayBudgetBox.width - (margin * 2)) * 0.25f, labelHeight);
+        Rect budgetLabel = new(perDayBudgetBox.x + smallMargin, perDayBudgetBox.y + smallMargin, (perDayBudgetBox.width - (margin * 2)) * 0.75f, labelHeight);
+        Rect budgetnum = new(budgetLabel.xMax, budgetLabel.y, (perDayBudgetBox.width - (margin * 2)) * 0.25f, labelHeight);
         Widgets.DrawHighlight(perDayBudgetBox);
         UIUtil.ClampedLabel(budgetLabel, "FCPerDayTitheBudget".Translate());
         Text.Anchor = TextAnchor.MiddleRight;
@@ -564,14 +564,14 @@ public sealed class SettlementWindowFc : Window
 
         /* Projected tithe budget (expected budget at tax time) */
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect projLabel = new Rect(projectedBudgetBox.x + smallMargin, projectedBudgetBox.y + smallMargin, (projectedBudgetBox.width - (margin * 2)) * 0.75f, labelHeight);
-        Rect projNum = new Rect(projLabel.xMax, projLabel.y, (projectedBudgetBox.width - (margin * 2)) * 0.25f, labelHeight);
+        Rect projLabel = new(projectedBudgetBox.x + smallMargin, projectedBudgetBox.y + smallMargin, (projectedBudgetBox.width - (margin * 2)) * 0.75f, labelHeight);
+        Rect projNum = new(projLabel.xMax, projLabel.y, (projectedBudgetBox.width - (margin * 2)) * 0.25f, labelHeight);
         UIUtil.ClampedLabel(projLabel, "FCProjectedTitheBudget".Translate());
         Text.Anchor = TextAnchor.MiddleRight;
         UIUtil.ClampedLabel(projNum, Math.Round(res.GetProjectedTitheBudget()).ToString());
         TooltipHandler.TipRegion(projectedBudgetBox, "FCProjectedTitheBudgetDesc".Translate());
     }
-    private Vector2 titheScrollBar = new Vector2();
+    private Vector2 titheScrollBar = new();
     private void UpdateTitheDictBuffers(ResourceFC res)
     {
         titheBuffers.Clear();
@@ -599,12 +599,12 @@ public sealed class SettlementWindowFc : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         float rowHeight = 23f;
-        Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width * 0.8f, rowHeight);
-        Rect headerText = new Rect(header.x + margin, header.y, header.width - (margin * 2), header.height);
+        Rect header = new(boundingBox.x, boundingBox.y, boundingBox.width * 0.8f, rowHeight);
+        Rect headerText = new(header.x + margin, header.y, header.width - (margin * 2), header.height);
         Widgets.DrawHighlight(header);
         UIUtil.ClampedLabel(headerText, "FCTitheSelection".Translate());
 
-        Rect addItemButton = new Rect(header.xMax, header.y, (boundingBox.width * 0.2f) - smallMargin, header.height);
+        Rect addItemButton = new(header.xMax, header.y, (boundingBox.width * 0.2f) - smallMargin, header.height);
         if (UIUtil.ClampedButtonText(addItemButton, "FCAddItem".Translate()))
         {
             Find.WindowStack.Add(new SettlementWindowFC_AddTithe(settlement, res));
@@ -619,8 +619,8 @@ public sealed class SettlementWindowFc : Window
         double runningCost = 0.0;
 
         /* Doing weird box-in-a-box to try and fix some UI drawing issues */
-        Rect drawBox = new Rect(boundingBox.x + margin, header.yMax, boundingBox.width - (margin * 2), boundingBox.yMax - header.yMax - margin);
-        Rect selectedListBox = new Rect(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
+        Rect drawBox = new(boundingBox.x + margin, header.yMax, boundingBox.width - (margin * 2), boundingBox.yMax - header.yMax - margin);
+        Rect selectedListBox = new(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
         float listHeight = orderedTithes.Count * rowHeight;
         Widgets.DrawMenuSection(selectedListBox);
         Rect innerScrollBox = ScrollUtil.BeginScrollView(selectedListBox, ref titheScrollBar, listHeight);
@@ -638,20 +638,20 @@ public sealed class SettlementWindowFc : Window
             bool belowWaterline = runningCost + entryCost > projectedBudget;
             runningCost += entryCost;
 
-            Rect row = new Rect(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
+            Rect row = new(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
             /* Up/down reorder arrows (left-most, square icons stacked vertically) */
             float arrowH = (rowHeight - 4) / 2f;          // ~9.5px each, half the row
             float arrowColW = arrowH;                      // square icons -> column == arrow height
-            Rect upArrow = new Rect(row.x + margin, row.y + 2, arrowColW, arrowH);
-            Rect downArrow = new Rect(row.x + margin, upArrow.yMax, arrowColW, arrowH);
-            Rect icon = new Rect(downArrow.xMax + margin, row.y, rowHeight, rowHeight);
-            Rect info = new Rect(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
-            Rect xBox = new Rect(row.xMax - margin - 20f, row.y + 2, rowHeight - 4, rowHeight - 4);
-            Rect fieldBox = new Rect(xBox.x - margin - 180f, row.y + 2, 180f, rowHeight - 4);
-            Rect valueLabel = new Rect(fieldBox.x - margin - 60f, row.y, 60f, rowHeight);
-            Rect stuffBox = new Rect(valueLabel.x - margin - 80f, row.y + 2, 80f, rowHeight - 4);
-            Rect qualityBox = new Rect(stuffBox.x - 80f, row.y + 2, 80f, rowHeight - 4);
-            Rect label = new Rect(info.xMax + margin, row.y, qualityBox.x - info.xMax - margin, rowHeight);
+            Rect upArrow = new(row.x + margin, row.y + 2, arrowColW, arrowH);
+            Rect downArrow = new(row.x + margin, upArrow.yMax, arrowColW, arrowH);
+            Rect icon = new(downArrow.xMax + margin, row.y, rowHeight, rowHeight);
+            Rect info = new(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
+            Rect xBox = new(row.xMax - margin - 20f, row.y + 2, rowHeight - 4, rowHeight - 4);
+            Rect fieldBox = new(xBox.x - margin - 180f, row.y + 2, 180f, rowHeight - 4);
+            Rect valueLabel = new(fieldBox.x - margin - 60f, row.y, 60f, rowHeight);
+            Rect stuffBox = new(valueLabel.x - margin - 80f, row.y + 2, 80f, rowHeight - 4);
+            Rect qualityBox = new(stuffBox.x - 80f, row.y + 2, 80f, rowHeight - 4);
+            Rect label = new(info.xMax + margin, row.y, qualityBox.x - info.xMax - margin, rowHeight);
             if (i % 2 == 0)
             {
                 Widgets.DrawHighlight(row);
@@ -694,12 +694,12 @@ public sealed class SettlementWindowFc : Window
                 if (UIUtil.ClampedButtonText(qualityBox, TextUtil.GetQualityLabelCap(iQuality)))
                 {
                     int index = i; // capture for the deferred FloatMenu delegate (loop var would be stale)
-                    List<FloatMenuOption> options = new List<FloatMenuOption>();
+                    List<FloatMenuOption> options = [];
                     foreach (QualityCategory cat in categoryList)
                     {
                         options.Add(new FloatMenuOption(TextUtil.GetQualityLabelCap(cat), delegate
                         {
-                            ThingQualityTuple newTuple = new ThingQualityTuple
+                            ThingQualityTuple newTuple = new()
                             {
                                 thingDef = iThing,
                                 quality = cat,
@@ -724,12 +724,12 @@ public sealed class SettlementWindowFc : Window
                 if (UIUtil.ClampedButtonText(stuffBox, iStuff?.LabelCap ?? "None"))
                 {
                     int index = i; // capture for the deferred FloatMenu delegate (loop var would be stale)
-                    List<FloatMenuOption> options = new List<FloatMenuOption>();
+                    List<FloatMenuOption> options = [];
                     foreach (ThingDef stuff in stuffList)
                     {
                         options.Add(new FloatMenuOption(stuff.LabelCap, delegate
                         {
-                            ThingQualityTuple newTuple = new ThingQualityTuple
+                            ThingQualityTuple newTuple = new()
                             {
                                 thingDef = iThing,
                                 quality = iQuality,
@@ -780,7 +780,7 @@ public sealed class SettlementWindowFc : Window
 
         ScrollUtil.EndScrollView();
     }
-    private Vector2 randomTitheScrollBar = new Vector2();
+    private Vector2 randomTitheScrollBar = new();
     private void DrawTitheRandomBox(Rect boundingBox, ResourceFC res)
     {
         Color origColor = GUI.color;
@@ -789,18 +789,18 @@ public sealed class SettlementWindowFc : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         float rowHeight = 23f;
-        Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, rowHeight);
-        Rect headerText = new Rect(header.x + margin, header.y, header.width - (margin * 2), header.height);
+        Rect header = new(boundingBox.x, boundingBox.y, boundingBox.width, rowHeight);
+        Rect headerText = new(header.x + margin, header.y, header.width - (margin * 2), header.height);
         Widgets.DrawHighlight(header);
         bool hasRandom = res.hasRandomTithe;
         Widgets.CheckboxLabeled(headerText, "FCRandomTithesEnabled".Translate(), ref hasRandom, disabled: res.tithesPaused);
         if (hasRandom != res.hasRandomTithe) res.SetHasRandomTithe(hasRandom);
         TooltipHandler.TipRegion(header, "FCRandomTithesDesc".Translate());
 
-        Rect accruedBox = new Rect(boundingBox.x, header.yMax, boundingBox.width * 0.6f, rowHeight);
-        Rect accruedTextBox = new Rect(accruedBox.x + smallMargin, accruedBox.y, accruedBox.width - (smallMargin * 2), accruedBox.height);
-        Rect disburseBox = new Rect(accruedBox.xMax, header.yMax, boundingBox.width - accruedBox.width, rowHeight);
-        Rect disbursedTextBox = new Rect(disburseBox.x + smallMargin, disburseBox.y, disburseBox.width - (smallMargin * 2), disburseBox.height);
+        Rect accruedBox = new(boundingBox.x, header.yMax, boundingBox.width * 0.6f, rowHeight);
+        Rect accruedTextBox = new(accruedBox.x + smallMargin, accruedBox.y, accruedBox.width - (smallMargin * 2), accruedBox.height);
+        Rect disburseBox = new(accruedBox.xMax, header.yMax, boundingBox.width - accruedBox.width, rowHeight);
+        Rect disbursedTextBox = new(disburseBox.x + smallMargin, disburseBox.y, disburseBox.width - (smallMargin * 2), disburseBox.height);
         UIUtil.ClampedLabel(accruedTextBox, "FCRandomTitheAccrued".Translate(res.randomTitheStock));
         bool disburse = res.disburseTitheStock;
         Widgets.CheckboxLabeled(disbursedTextBox, "FCDisburseAccruedRandomTithe".Translate(), ref disburse, disabled: res.tithesPaused);
@@ -812,8 +812,8 @@ public sealed class SettlementWindowFc : Window
         {
             float budgetRowWidth = boundingBox.width * 0.6f;
             float checkboxWidth = 55f;
-            Rect budgetBox = new Rect(boundingBox.x, disburseBox.yMax, budgetRowWidth - checkboxWidth, 23f);
-            Rect budgetTextBox = new Rect(budgetBox.x + margin, budgetBox.y, budgetBox.width - (margin * 2), budgetBox.height);
+            Rect budgetBox = new(boundingBox.x, disburseBox.yMax, budgetRowWidth - checkboxWidth, 23f);
+            Rect budgetTextBox = new(budgetBox.x + margin, budgetBox.y, budgetBox.width - (margin * 2), budgetBox.height);
             if (res.autoMaxRandomTithe)
             {
                 UIUtil.ClampedLabel(budgetTextBox, "FCRandomTitheBudget".Translate() + ": " + res.randomTitheBudget);
@@ -828,12 +828,12 @@ public sealed class SettlementWindowFc : Window
                 res.storedRandomTitheBudgetBuffer = buffer;
                 if (budget != res.storedRandomTitheBudget) res.SetStoredRandomTitheBudget(budget);
             }
-            Rect maxCheckBox = new Rect(budgetBox.xMax, budgetBox.y, checkboxWidth, budgetBox.height);
+            Rect maxCheckBox = new(budgetBox.xMax, budgetBox.y, checkboxWidth, budgetBox.height);
             bool autoMax = res.autoMaxRandomTithe;
             Widgets.CheckboxLabeled(maxCheckBox, "FCAutoMaxRandomTithe".Translate(), ref autoMax, disabled: res.tithesPaused);
             TooltipHandler.TipRegion(maxCheckBox, "FCAutoMaxRandomTitheDesc".Translate());
             if (autoMax != res.autoMaxRandomTithe) res.SetAutoMaxRandomTithe(autoMax);
-            Rect selectBox = new Rect(boundingBox.x + budgetRowWidth, budgetBox.y, boundingBox.width * 0.4f - margin, budgetBox.height);
+            Rect selectBox = new(boundingBox.x + budgetRowWidth, budgetBox.y, boundingBox.width * 0.4f - margin, budgetBox.height);
             if (UIUtil.ClampedButtonText(selectBox, "FCItemSelection".Translate()))
             {
                 Find.WindowStack.Add(new SettlementWindowFC_RandomTithe(settlement, res));
@@ -842,8 +842,8 @@ public sealed class SettlementWindowFc : Window
             List<ThingDef> selectedThings = res.GetRandomTitheFilterThings();
 
             /* Doing weird box-in-a-box to try and fix some UI drawing issues */
-            Rect drawBox = new Rect(boundingBox.x + margin, budgetBox.yMax, boundingBox.width - (margin * 2), boundingBox.yMax - budgetBox.yMax - margin);
-            Rect selectedListBox = new Rect(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
+            Rect drawBox = new(boundingBox.x + margin, budgetBox.yMax, boundingBox.width - (margin * 2), boundingBox.yMax - budgetBox.yMax - margin);
+            Rect selectedListBox = new(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
             float listHeight = selectedThings.Count * rowHeight;
 
             Widgets.DrawMenuSection(selectedListBox);
@@ -852,12 +852,12 @@ public sealed class SettlementWindowFc : Window
             for (int i = 0; i < selectedThings.Count; i++)
             {
                 ThingDef iThing = selectedThings[i];
-                Rect row = new Rect(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
-                Rect icon = new Rect(row.x + margin, row.y, rowHeight, rowHeight);
-                Rect info = new Rect(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
-                Rect xBox = new Rect(row.xMax - margin - 20f, row.y + 2, 19f, 19f);
-                Rect valueLabel = new Rect(xBox.x - margin - 60f, xBox.y, 60f, rowHeight);
-                Rect label = new Rect(info.xMax + margin, row.y, valueLabel.x - info.xMax - margin, rowHeight);
+                Rect row = new(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
+                Rect icon = new(row.x + margin, row.y, rowHeight, rowHeight);
+                Rect info = new(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
+                Rect xBox = new(row.xMax - margin - 20f, row.y + 2, 19f, 19f);
+                Rect valueLabel = new(xBox.x - margin - 60f, xBox.y, 60f, rowHeight);
+                Rect label = new(info.xMax + margin, row.y, valueLabel.x - info.xMax - margin, rowHeight);
 
                 if (i % 2 == 0)
                 {
@@ -888,7 +888,7 @@ public sealed class SettlementWindowFc : Window
         double selectedTotal = res.titheTotalValue;
 
         Widgets.DrawHighlight(boundingBox);
-        Rect readoutLabel = new Rect(boundingBox.x + smallMargin, boundingBox.y + smallMargin,
+        Rect readoutLabel = new(boundingBox.x + smallMargin, boundingBox.y + smallMargin,
             boundingBox.width - (smallMargin * 2), boundingBox.height - (smallMargin * 2));
         Color origColor = GUI.color;
         if (selectedTotal > projectedBudget)
@@ -913,12 +913,12 @@ public sealed class SettlementWindowFc : Window
         {
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.Font = GameFont.Medium;
-            Rect statBox = new Rect(boundingBox.x, boundingBox.y + (statBoxHeight + margin) * i, boundingBox.width, statBoxHeight);
+            Rect statBox = new(boundingBox.x, boundingBox.y + (statBoxHeight + margin) * i, boundingBox.width, statBoxHeight);
             Widgets.DrawMenuSection(statBox);
-            Rect buttonBox = new Rect(statBox.x + margin, statBox.y + margin, statSize + 4, statSize + 4);
-            Rect labelBox = new Rect(buttonBox.xMax, buttonBox.y, statBox.width - (buttonBox.width + margin * 2), buttonBox.height);
-            Rect statGainBox = new Rect(statBox.xMax - statGainBoxWidth - margin, statBox.y + (statBox.height - statGainBoxHeight) / 2, statGainBoxWidth, statGainBoxHeight);
-            Rect mainToolTipBox = new Rect(statBox.x, statBox.y, statGainBox.x - statBox.x, statBox.height);
+            Rect buttonBox = new(statBox.x + margin, statBox.y + margin, statSize + 4, statSize + 4);
+            Rect labelBox = new(buttonBox.xMax, buttonBox.y, statBox.width - (buttonBox.width + margin * 2), buttonBox.height);
+            Rect statGainBox = new(statBox.xMax - statGainBoxWidth - margin, statBox.y + (statBox.height - statGainBoxHeight) / 2, statGainBoxWidth, statGainBoxHeight);
+            Rect mainToolTipBox = new(statBox.x, statBox.y, statGainBox.x - statBox.x, statBox.height);
             string tooltip;
 
             switch (stats[i])
@@ -1017,14 +1017,14 @@ public sealed class SettlementWindowFc : Window
 
     private static Color ColorForPowerStatus(SettlementPowerStatus status)
     {
-        switch (status)
+        return status switch
         {
-            case SettlementPowerStatus.UnderAttack: return AccentUtil.MilUnderAttack;
-            case SettlementPowerStatus.AllBusy: return new Color(1f, 0.85f, 0.4f);
-            case SettlementPowerStatus.Ghost: return new Color(1f, 0.85f, 0.4f);
-            case SettlementPowerStatus.NoMilitary: return Color.gray;
-            default: return Color.white;
-        }
+            SettlementPowerStatus.UnderAttack => AccentUtil.MilUnderAttack,
+            SettlementPowerStatus.AllBusy => new Color(1f, 0.85f, 0.4f),
+            SettlementPowerStatus.Ghost => new Color(1f, 0.85f, 0.4f),
+            SettlementPowerStatus.NoMilitary => Color.gray,
+            _ => Color.white,
+        };
     }
 
     private string DrawStatWithGainBox(Rect buttonBox, Rect labelBox, Rect statGainBox,
@@ -1055,7 +1055,7 @@ public sealed class SettlementWindowFc : Window
     {
         Widgets.DrawMenuSection(boundingBox);
 
-        Rect textBox = new Rect(boundingBox.x + margin, boundingBox.y + margin, boundingBox.width - (margin * 2), boundingBox.height - (margin * 2));
+        Rect textBox = new(boundingBox.x + margin, boundingBox.y + margin, boundingBox.width - (margin * 2), boundingBox.height - (margin * 2));
 
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.UpperLeft;
@@ -1095,7 +1095,7 @@ public sealed class SettlementWindowFc : Window
             ISettlementWindowButton button = registered[i];
             if (!button.IsVisible(settlement)) continue;
 
-            Rect buttonRect = new Rect(boundingBox.x, boundingBox.y + ((size + margin) * drawn), boundingBox.width, size);
+            Rect buttonRect = new(boundingBox.x, boundingBox.y + ((size + margin) * drawn), boundingBox.width, size);
             drawn++;
 
             bool enabled = button.IsEnabled(settlement);
@@ -1115,7 +1115,7 @@ public sealed class SettlementWindowFc : Window
 
     private void DrawBuiltInButton(Rect boundingBox, SettlementButtonType type, float size, ref int drawn)
     {
-        Rect buttonRect = new Rect(boundingBox.x, boundingBox.y + ((size + margin) * drawn), boundingBox.width, size);
+        Rect buttonRect = new(boundingBox.x, boundingBox.y + ((size + margin) * drawn), boundingBox.width, size);
         drawn++;
 
         string label = GetButtonLabel(type);
@@ -1195,14 +1195,14 @@ public sealed class SettlementWindowFc : Window
 
     private void HandleSpecialActionsClick()
     {
-        List<FloatMenuOption> list = new List<FloatMenuOption>
-        {
+        List<FloatMenuOption> list =
+        [
             new FloatMenuOption("FCGoToLocation".Translate(), delegate
             {
                 Find.WindowStack.TryRemove(this);
                 settlement.GoTo();
             })
-        };
+        ];
 
         FindFC.PolicyManager.ForEachBehavior(b =>
         {
@@ -1223,12 +1223,13 @@ public sealed class SettlementWindowFc : Window
         List<MercenarySquadFC> stationed = settlement.StationedSquads;
         int cap = settlement.SquadCap;
 
-        List<FloatMenuOption> list = new List<FloatMenuOption>();
-
-        // Header: Squads N / M  •  Max squad size K (informational, no action)
-        list.Add(new FloatMenuOption(
-            "FCSettlementMilHeader".Translate(stationed.Count, cap, settlement.MaxSquadSize),
-            null, MenuOptionPriority.High));
+        List<FloatMenuOption> list =
+        [
+            // Header: Squads N / M  •  Max squad size K (informational, no action)
+            new FloatMenuOption(
+                "FCSettlementMilHeader".Translate(stationed.Count, cap, settlement.MaxSquadSize),
+                null, MenuOptionPriority.High),
+        ];
 
         // Per-stationed-squad submenu — Auto-defend toggle, recall (unassign), reassign, reset pawns.
         foreach (MercenarySquadFC mercSquad in stationed)
@@ -1285,20 +1286,19 @@ public sealed class SettlementWindowFc : Window
     {
         if (squad is null) return;
         MilitaryFC mfc = FindFC.Military;
-        List<FloatMenuOption> list = new List<FloatMenuOption>();
-
-        list.Add(new FloatMenuOption("FCSquadMenuInspect".Translate(),
-            delegate { Find.WindowStack.Add(new Dialog_SquadInspection(squad)); }));
-
-        list.Add(new FloatMenuOption(
-            "FCSquadMenuToggleAutoDefend".Translate(squad.autoDefend ? (string)"FCOn".Translate() : (string)"FCOff".Translate()),
-            delegate { squad.autoDefend = !squad.autoDefend; }));
-
-        list.Add(new FloatMenuOption("FCSquadMenuReassign".Translate(),
-            squad.IsBusy ? (Action)null : (Action)delegate
-            {
-                Find.WindowStack.Add(new Dialog_SquadAssignment(squad));
-            }));
+        List<FloatMenuOption> list =
+        [
+            new FloatMenuOption("FCSquadMenuInspect".Translate(),
+                delegate { Find.WindowStack.Add(new Dialog_SquadInspection(squad)); }),
+            new FloatMenuOption(
+                "FCSquadMenuToggleAutoDefend".Translate(squad.autoDefend ? (string)"FCOn".Translate() : (string)"FCOff".Translate()),
+                delegate { squad.autoDefend = !squad.autoDefend; }),
+            new FloatMenuOption("FCSquadMenuReassign".Translate(),
+                squad.IsBusy ? (Action)null : (Action)delegate
+                {
+                    Find.WindowStack.Add(new Dialog_SquadAssignment(squad));
+                }),
+        ];
 
         int upgrade = SquadUpgradeUtil.UpgradeCost(squad);
         if (SquadUpgradeUtil.HasUpgradeWork(squad))
@@ -1334,7 +1334,7 @@ public sealed class SettlementWindowFc : Window
         Find.WindowStack.Add(new FloatMenu(list));
     }
 
-    private Vector2 scrollVectorBuildings = new Vector2();
+    private Vector2 scrollVectorBuildings = new();
     public void DrawFacilities(Rect boundingBox)
     {
         Widgets.DrawMenuSection(boundingBox);
@@ -1348,8 +1348,8 @@ public sealed class SettlementWindowFc : Window
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
 
-        Rect labelHighlight = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 30);
-        Rect labelTextBox = new Rect(labelHighlight.x + smallMargin, labelHighlight.y + smallMargin, labelHighlight.width - (smallMargin * 2), labelHighlight.height - (smallMargin * 2));
+        Rect labelHighlight = new(boundingBox.x, boundingBox.y, boundingBox.width, 30);
+        Rect labelTextBox = new(labelHighlight.x + smallMargin, labelHighlight.y + smallMargin, labelHighlight.width - (smallMargin * 2), labelHighlight.height - (smallMargin * 2));
         Widgets.DrawHighlight(labelHighlight);
         UIUtil.ClampedLabel(labelTextBox, "FCFacilities".Translate());
 
@@ -1357,7 +1357,7 @@ public sealed class SettlementWindowFc : Window
         Text.Anchor = TextAnchor.LowerCenter;
 
         float buildingBoxHeight = boundingBox.height - (labelHighlight.height + margin);
-        Rect buildingBox = new Rect(boundingBox.x, labelHighlight.yMax + margin, boundingBox.width, buildingBoxHeight);
+        Rect buildingBox = new(boundingBox.x, labelHighlight.yMax + margin, boundingBox.width, buildingBoxHeight);
 
         // For a row of n buildings, there will only be n-1 spaces between them. So to offset the denominator, we add one buildingSpacing to the numerator.
         int elementsPerRow = (int)((boundingBox.width - (buildingSpacingFromSide * 2) + buildingSpacing) / (buildingBoxSide + buildingSpacing));
@@ -1366,8 +1366,8 @@ public sealed class SettlementWindowFc : Window
         int row;
         int column;
 
-        Rect box = new Rect(0 + buildingSpacingFromSide, 0, buildingBoxSide, buildingBoxSide);
-        Rect buildingIcon = new Rect(4 + box.x, 4 + box.y, buildingBoxSide - 8, buildingBoxSide - 8);
+        Rect box = new(0 + buildingSpacingFromSide, 0, buildingBoxSide, buildingBoxSide);
+        Rect buildingIcon = new(4 + box.x, 4 + box.y, buildingBoxSide - 8, buildingBoxSide - 8);
 
         Rect nBox;
         Rect nBuilding;
@@ -1430,7 +1430,7 @@ public sealed class SettlementWindowFc : Window
         }
         ScrollUtil.EndScrollView();
     }
-    private Vector2 scrollVectorConstruction = new Vector2();
+    private Vector2 scrollVectorConstruction = new();
     private void DrawConstructionBox(Rect boundingBox, int numConstruction, List<BuildingFC> construction)
     {
         Widgets.DrawMenuSection(boundingBox);
@@ -1438,8 +1438,8 @@ public sealed class SettlementWindowFc : Window
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
         /* Draw the construction header */
-        Rect conHeader = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 30);
-        Rect conHeaderText = new Rect(conHeader.x, conHeader.y + smallMargin, conHeader.width, conHeader.height - (smallMargin * 2));
+        Rect conHeader = new(boundingBox.x, boundingBox.y, boundingBox.width, 30);
+        Rect conHeaderText = new(conHeader.x, conHeader.y + smallMargin, conHeader.width, conHeader.height - (smallMargin * 2));
         Widgets.DrawHighlight(conHeader);
         UIUtil.ClampedLabel(conHeaderText, "FCActiveConstruction".Translate());
 
@@ -1449,7 +1449,7 @@ public sealed class SettlementWindowFc : Window
             /* Scroll view time, baby */
             float listHeight = boundingBox.height - (conHeader.height + margin);
             float totalHeight = (constructionListItemHeight * numConstruction) + (margin * (numConstruction - 1));
-            Rect listBox = new Rect(boundingBox.x, conHeader.yMax + margin, boundingBox.width, listHeight);
+            Rect listBox = new(boundingBox.x, conHeader.yMax + margin, boundingBox.width, listHeight);
             Rect viewRect = ScrollUtil.BeginScrollView(listBox, ref scrollVectorConstruction, totalHeight);
 
             float initialY = viewRect.y;
@@ -1458,7 +1458,7 @@ public sealed class SettlementWindowFc : Window
             if (settlement.IsUpgrading)
             {
                 float progress = UIUtil.NormalizeProgress(settlement.StartUpgradeTick, settlement.FinishUpgradeTick);
-                Rect upgradeRect = new Rect(viewRect.x + margin,
+                Rect upgradeRect = new(viewRect.x + margin,
                                             viewRect.y,
                                             viewRect.width - (margin * 2),
                                             constructionListItemHeight);
@@ -1472,7 +1472,7 @@ public sealed class SettlementWindowFc : Window
             for (int i = 0; i < construction.Count; i++)
             {
                 float progress = UIUtil.NormalizeProgress(construction[i].startedTick, construction[i].completionTick);
-                Rect upgradeRect = new Rect(viewRect.x + margin,
+                Rect upgradeRect = new(viewRect.x + margin,
                                             initialY + (i * (constructionListItemHeight + margin)),
                                             viewRect.width - (margin * 2),
                                             constructionListItemHeight);
@@ -1492,23 +1492,23 @@ public sealed class SettlementWindowFc : Window
         float elementHeight = (boundingBox.height - (smallMargin * 4f)) / 3f;
         float iconHeight = (boundingBox.height - (smallMargin * 3f)) * (2f / 3f);
         float labelX = icon == null ? boundingBox.x : boundingBox.x + constructionListIconHeight + smallMargin;
-        Rect iconBox = new Rect(boundingBox.x + smallMargin,
+        Rect iconBox = new(boundingBox.x + smallMargin,
                                 boundingBox.y + smallMargin,
                                 constructionListIconHeight,
                                 constructionListIconHeight);
-        Rect labelBox = new Rect(labelX + smallMargin * 2,
+        Rect labelBox = new(labelX + smallMargin * 2,
                                  boundingBox.y + smallMargin,
                                  boundingBox.xMax - (labelX + smallMargin * 3),
                                  constructionListItemLabelHeight);
-        Rect labelHighlight = new Rect(labelX + smallMargin,
+        Rect labelHighlight = new(labelX + smallMargin,
                                        boundingBox.y + smallMargin,
                                        boundingBox.xMax - (labelX + smallMargin * 2),
                                        constructionListItemLabelHeight);
-        Rect timeBox = new Rect(labelBox.x,
+        Rect timeBox = new(labelBox.x,
                                 labelBox.yMax + smallMargin,
                                 labelBox.width,
                                 constructionListItemLabelHeight);
-        Rect progressRect = new Rect(boundingBox.x + smallMargin,
+        Rect progressRect = new(boundingBox.x + smallMargin,
                                      timeBox.yMax + smallMargin,
                                      boundingBox.width - (smallMargin * 2),
                                      constructionListProgressBarHeight);
@@ -1530,23 +1530,23 @@ public sealed class SettlementWindowFc : Window
     {
         Color origColor = GUI.color;
         UIUtil.DrawColoredBox(boundingBox, accentColor);
-        Rect prodBox = new Rect(boundingBox.x + margin, boundingBox.y + margin, boundingBox.width - (margin * 2), boundingBox.height - (margin * 2));
+        Rect prodBox = new(boundingBox.x + margin, boundingBox.y + margin, boundingBox.width - (margin * 2), boundingBox.height - (margin * 2));
         DrawProduction(prodBox);
     }
     public void DrawProduction(Rect boundingBox)
     {
-        Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 30f);
+        Rect header = new(boundingBox.x, boundingBox.y, boundingBox.width, 30f);
         // Costs block reserves the maximum height (with full subtitle slots) unconditionally
         // so the workers / production sections below stay anchored regardless of which
         // subtitles end up being rendered. See DrawCostBreakdown for per-box centering logic.
-        Rect costs = new Rect(boundingBox.x, header.yMax, boundingBox.width, costsH);
-        Rect workers = new Rect(boundingBox.x, costs.yMax + margin, boundingBox.width, 69f);
+        Rect costs = new(boundingBox.x, header.yMax, boundingBox.width, costsH);
+        Rect workers = new(boundingBox.x, costs.yMax + margin, boundingBox.width, 69f);
 
         DrawProductionHeader(header);
         DrawCostBreakdown(costs);
         DrawWorkerBreakdown(workers);
 
-        Rect prodOverview = new Rect(boundingBox.x, workers.yMax + margin, boundingBox.width, boundingBox.yMax - (workers.yMax + margin));
+        Rect prodOverview = new(boundingBox.x, workers.yMax + margin, boundingBox.width, boundingBox.yMax - (workers.yMax + margin));
         DrawProductionOverview(prodOverview);
     }
 
@@ -1592,13 +1592,13 @@ public sealed class SettlementWindowFc : Window
         double liveIncome = settlement.totalIncome;
         double avgUpkeep = settlement.ProjectedUpkeep;
         double liveUpkeep = settlement.totalUpkeep;
-        Color subColor = new Color(0.7f, 0.7f, 0.7f);
+        Color subColor = new(0.7f, 0.7f, 0.7f);
 
         // Profit box: single projected-profit headline (net of upkeep AND tithes), no subtitle.
         // The headline spans the full box so its MiddleRight/MiddleLeft anchors vertically center it.
-        Rect profitBox = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, profitBoxH);
-        Rect profitLabel = new Rect(profitBox.x, profitBox.y, labelWidth, profitBoxH);
-        Rect profitNum = new Rect(profitLabel.xMax + margin, profitLabel.y, labelWidth, profitBoxH);
+        Rect profitBox = new(boundingBox.x, boundingBox.y, boundingBox.width, profitBoxH);
+        Rect profitLabel = new(profitBox.x, profitBox.y, labelWidth, profitBoxH);
+        Rect profitNum = new(profitLabel.xMax + margin, profitLabel.y, labelWidth, profitBoxH);
         UIUtil.DrawColoredHighlight(profitBox, highlightColor);
         Text.Anchor = TextAnchor.MiddleRight;
         UIUtil.ClampedLabel(profitLabel, "FCSettlementProjectedProfit".Translate() + ":");
@@ -1613,13 +1613,13 @@ public sealed class SettlementWindowFc : Window
 
         // Cards row also always reserves the full subtitle slot. Cards that don't render a
         // subtitle center their value vertically in the freed post-label region instead.
-        Rect incomeBox = new Rect(boundingBox.x + (margin * 3), profitBox.yMax + margin, labelWidth, cardH);
-        Rect costsBox = new Rect(incomeBox.xMax + (margin * 3), incomeBox.y, labelWidth, cardH);
-        Rect taxBonusBox = new Rect(costsBox.xMax + (margin * 3), incomeBox.y, labelWidth, cardH);
+        Rect incomeBox = new(boundingBox.x + (margin * 3), profitBox.yMax + margin, labelWidth, cardH);
+        Rect costsBox = new(incomeBox.xMax + (margin * 3), incomeBox.y, labelWidth, cardH);
+        Rect taxBonusBox = new(costsBox.xMax + (margin * 3), incomeBox.y, labelWidth, cardH);
 
-        Rect incomeLabel = new Rect(incomeBox.x, incomeBox.y, incomeBox.width, cardLabelH);
-        Rect costLabel = new Rect(costsBox.x, costsBox.y, costsBox.width, cardLabelH);
-        Rect taxBonusLabel = new Rect(taxBonusBox.x, taxBonusBox.y, taxBonusBox.width, cardLabelH);
+        Rect incomeLabel = new(incomeBox.x, incomeBox.y, incomeBox.width, cardLabelH);
+        Rect costLabel = new(costsBox.x, costsBox.y, costsBox.width, cardLabelH);
+        Rect taxBonusLabel = new(taxBonusBox.x, taxBonusBox.y, taxBonusBox.width, cardLabelH);
 
         UIUtil.DrawColoredHighlight(incomeBox, highlightColor);
         UIUtil.DrawColoredHighlight(costsBox, highlightColor);
@@ -1652,8 +1652,8 @@ public sealed class SettlementWindowFc : Window
         float postLabelHeight = cardBox.yMax - postLabelStart;
         if (thisCardHasSubtitle)
         {
-            Rect numRect = new Rect(cardBox.x, postLabelStart, cardBox.width, postLabelHeight - subtitleH);
-            Rect subRect = new Rect(cardBox.x, numRect.yMax, cardBox.width, subtitleH);
+            Rect numRect = new(cardBox.x, postLabelStart, cardBox.width, postLabelHeight - subtitleH);
+            Rect subRect = new(cardBox.x, numRect.yMax, cardBox.width, subtitleH);
             Text.Anchor = TextAnchor.UpperCenter;
             UIUtil.ClampedLabel(numRect, valueText);
             Color origColor = GUI.color;
@@ -1663,7 +1663,7 @@ public sealed class SettlementWindowFc : Window
         }
         else
         {
-            Rect numRect = new Rect(cardBox.x, postLabelStart, cardBox.width, postLabelHeight);
+            Rect numRect = new(cardBox.x, postLabelStart, cardBox.width, postLabelHeight);
             Text.Anchor = TextAnchor.MiddleCenter;
             UIUtil.ClampedLabel(numRect, valueText);
         }
@@ -1677,17 +1677,17 @@ public sealed class SettlementWindowFc : Window
         float labelHeight = rowHeight - (smallMargin * 2);
         float labelWidth = (boundingBox.width - (margin * 2));
 
-        Rect workerBox = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, rowHeight);
-        Rect overMaxBox = new Rect(boundingBox.x, workerBox.yMax, boundingBox.width, rowHeight);
-        Rect upkeepBox = new Rect(boundingBox.x, overMaxBox.yMax, boundingBox.width, rowHeight);
+        Rect workerBox = new(boundingBox.x, boundingBox.y, boundingBox.width, rowHeight);
+        Rect overMaxBox = new(boundingBox.x, workerBox.yMax, boundingBox.width, rowHeight);
+        Rect upkeepBox = new(boundingBox.x, overMaxBox.yMax, boundingBox.width, rowHeight);
 
-        Rect workerLabel = new Rect(workerBox.x + margin, workerBox.y + smallMargin, labelWidth * 0.75f, labelHeight);
-        Rect overMaxLabel = new Rect(overMaxBox.x + margin, overMaxBox.y + smallMargin, labelWidth * 0.75f, labelHeight);
-        Rect upkeepLabel = new Rect(upkeepBox.x + margin, upkeepBox.y + smallMargin, labelWidth * 0.75f, labelHeight);
+        Rect workerLabel = new(workerBox.x + margin, workerBox.y + smallMargin, labelWidth * 0.75f, labelHeight);
+        Rect overMaxLabel = new(overMaxBox.x + margin, overMaxBox.y + smallMargin, labelWidth * 0.75f, labelHeight);
+        Rect upkeepLabel = new(upkeepBox.x + margin, upkeepBox.y + smallMargin, labelWidth * 0.75f, labelHeight);
 
-        Rect workerNum = new Rect(workerLabel.xMax, workerLabel.y, labelWidth * 0.25f, labelHeight);
-        Rect overMaxNum = new Rect(overMaxLabel.xMax, overMaxLabel.y, labelWidth * 0.25f, labelHeight);
-        Rect upkeepNum = new Rect(upkeepLabel.xMax, upkeepLabel.y, labelWidth * 0.25f, labelHeight);
+        Rect workerNum = new(workerLabel.xMax, workerLabel.y, labelWidth * 0.25f, labelHeight);
+        Rect overMaxNum = new(overMaxLabel.xMax, overMaxLabel.y, labelWidth * 0.25f, labelHeight);
+        Rect upkeepNum = new(upkeepLabel.xMax, upkeepLabel.y, labelWidth * 0.25f, labelHeight);
 
         UIUtil.DrawColoredHighlight(workerBox, highlightColor);
         TooltipHandler.TipRegion(workerBox, BuildWorkerCapacityTooltip());
@@ -1781,7 +1781,7 @@ public sealed class SettlementWindowFc : Window
         Text.Anchor = TextAnchor.MiddleCenter;
         Text.Font = GameFont.Tiny;
         float headerHeight = 44;
-        Rect resourceArea = new Rect(boundingBox.x, boundingBox.y + headerHeight + margin,
+        Rect resourceArea = new(boundingBox.x, boundingBox.y + headerHeight + margin,
             boundingBox.width, boundingBox.yMax - (boundingBox.y + headerHeight + margin));
 
         /* Measure the resource list up-front so the headers AND the columns can be laid out
@@ -1799,17 +1799,17 @@ public sealed class SettlementWindowFc : Window
         /* Header — 9 columns: icon | workers | base | mult | final | total | per-day | accrued | net-income */
         float colWidth = (availableWidth - (margin * 8)) / 9f;
 
-        Rect workersBox = new Rect(boundingBox.x + colWidth + margin, boundingBox.y, colWidth, headerHeight);
-        Rect prodHeaderBox = new Rect(workersBox.xMax + margin, boundingBox.y, colWidth * 3 + margin * 2, headerHeight / 2f);
-        Rect prodBaseBox = new Rect(workersBox.xMax + margin, prodHeaderBox.yMax, colWidth, headerHeight / 2f);
-        Rect prodMultBox = new Rect(prodBaseBox.xMax + margin, prodBaseBox.y, colWidth, prodBaseBox.height);
-        Rect prodFinalBox = new Rect(prodMultBox.xMax + margin, prodMultBox.y, colWidth, prodMultBox.height);
-        Rect prodTotalBox = new Rect(prodHeaderBox.xMax + margin, boundingBox.y, colWidth, headerHeight);
+        Rect workersBox = new(boundingBox.x + colWidth + margin, boundingBox.y, colWidth, headerHeight);
+        Rect prodHeaderBox = new(workersBox.xMax + margin, boundingBox.y, colWidth * 3 + margin * 2, headerHeight / 2f);
+        Rect prodBaseBox = new(workersBox.xMax + margin, prodHeaderBox.yMax, colWidth, headerHeight / 2f);
+        Rect prodMultBox = new(prodBaseBox.xMax + margin, prodBaseBox.y, colWidth, prodBaseBox.height);
+        Rect prodFinalBox = new(prodMultBox.xMax + margin, prodMultBox.y, colWidth, prodMultBox.height);
+        Rect prodTotalBox = new(prodHeaderBox.xMax + margin, boundingBox.y, colWidth, headerHeight);
 
-        Rect incomeBox = new Rect(prodTotalBox.xMax + margin, boundingBox.y, colWidth * 3 + margin * 2, headerHeight / 2f);
-        Rect incomePerDayBox = new Rect(incomeBox.x, incomeBox.yMax, colWidth, headerHeight / 2f);
-        Rect incomeAccruedBox = new Rect(incomePerDayBox.xMax + margin, incomePerDayBox.y, colWidth, headerHeight / 2f);
-        Rect incomeNetBox = new Rect(incomeAccruedBox.xMax + margin, incomeAccruedBox.y, colWidth, headerHeight / 2f);
+        Rect incomeBox = new(prodTotalBox.xMax + margin, boundingBox.y, colWidth * 3 + margin * 2, headerHeight / 2f);
+        Rect incomePerDayBox = new(incomeBox.x, incomeBox.yMax, colWidth, headerHeight / 2f);
+        Rect incomeAccruedBox = new(incomePerDayBox.xMax + margin, incomePerDayBox.y, colWidth, headerHeight / 2f);
+        Rect incomeNetBox = new(incomeAccruedBox.xMax + margin, incomeAccruedBox.y, colWidth, headerHeight / 2f);
 
         UIUtil.DrawColoredHighlight(workersBox, highlightColor);
         UIUtil.ClampedLabel(workersBox, "FCWorkers".Translate());
@@ -1850,8 +1850,8 @@ public sealed class SettlementWindowFc : Window
      * group in its existing order. */
     private float MeasureResources(out List<ResourceFC> incomeResources, out List<ResourceFC> poolResources)
     {
-        incomeResources = new List<ResourceFC>();
-        poolResources = new List<ResourceFC>();
+        incomeResources = [];
+        poolResources = [];
         List<ResourceFC> availableResources = settlement.Resources;
         for (int i = 0; i < availableResources.Count; i++)
         {
@@ -1865,7 +1865,7 @@ public sealed class SettlementWindowFc : Window
                + (poolResources.Count > 0 ? (resourceHeaderRowHeight + margin) : 0f);
     }
 
-    private Vector2 scrollVectorResources = new Vector2();
+    private Vector2 scrollVectorResources = new();
     private void DrawResources(Rect boundingBox, float colWidth, List<ResourceFC> incomeResources, List<ResourceFC> poolResources, float totalHeight)
     {
         bool hasPoolHeader = poolResources.Count > 0;
@@ -1921,10 +1921,10 @@ public sealed class SettlementWindowFc : Window
     {
         float h = yBottom - yTop;
         if (h <= 0f) return;
-        Rect totalProdCol = new Rect(5f * (colWidth + margin), yTop, colWidth, h);
-        Rect incomePerDayCol = new Rect(6f * (colWidth + margin), yTop, colWidth, h);
-        Rect incomeAccruedCol = new Rect(7f * (colWidth + margin), yTop, colWidth, h);
-        Rect incomeNetCol = new Rect(8f * (colWidth + margin), yTop, colWidth, h);
+        Rect totalProdCol = new(5f * (colWidth + margin), yTop, colWidth, h);
+        Rect incomePerDayCol = new(6f * (colWidth + margin), yTop, colWidth, h);
+        Rect incomeAccruedCol = new(7f * (colWidth + margin), yTop, colWidth, h);
+        Rect incomeNetCol = new(8f * (colWidth + margin), yTop, colWidth, h);
         UIUtil.DrawColoredHighlight(totalProdCol, highlightColor);
         UIUtil.DrawColoredHighlight(incomePerDayCol, highlightColor);
         UIUtil.DrawColoredHighlight(incomeAccruedCol, highlightColor);
@@ -1937,7 +1937,7 @@ public sealed class SettlementWindowFc : Window
      * already set to MiddleCenter/Tiny by the caller, so they don't need to be re-set here. */
     private void DrawNonIncomeResourceHeader(float rectY, float viewWidth, float headerRowHeight)
     {
-        Rect headerBox = new Rect(0f, rectY, viewWidth, headerRowHeight);
+        Rect headerBox = new(0f, rectY, viewWidth, headerRowHeight);
         UIUtil.DrawColoredHighlight(headerBox, highlightColor);
         UIUtil.ClampedLabel(headerBox, "FCNonIncomeResourcesHeader".Translate());
         TooltipHandler.TipRegion(headerBox, "FCNonIncomeResourcesDesc".Translate());
@@ -1948,7 +1948,7 @@ public sealed class SettlementWindowFc : Window
         /* Alternating highlights, to make rows easier to read/track */
         if (altHighlight)
         {
-            Rect rowHighlight = new Rect(0f, rectY - (margin / 2f), viewWidth, rowHeight + margin);
+            Rect rowHighlight = new(0f, rectY - (margin / 2f), viewWidth, rowHeight + margin);
             UIUtil.DrawColoredHighlight(rowHighlight, highlightColor);
         }
 
@@ -1957,53 +1957,53 @@ public sealed class SettlementWindowFc : Window
 
         float resourceImgSize = Math.Min(colWidth, rowHeight);
         float resourceImxgX = (colWidth - resourceImgSize) / 2f;
-        Rect resourceImgRect = new Rect(resourceImxgX, rectY, resourceImgSize, resourceImgSize);
+        Rect resourceImgRect = new(resourceImxgX, rectY, resourceImgSize, resourceImgSize);
         Widgets.ButtonImage(resourceImgRect, resource.def.Icon);
         TooltipHandler.TipRegion(resourceImgRect, resource.def.LabelCap);
 
         //Production Efficiency
         float arrowButtonHeight = Math.Min(rowHeight, 20f);
         float arrowButtonY = rectY + ((rowHeight - arrowButtonHeight) / 2f);
-        Rect workersDecArrow = new Rect(colWidth + margin, arrowButtonY, colWidth / 3f, arrowButtonHeight);
-        Rect workersNum = new Rect(workersDecArrow.xMax, rectY, workersDecArrow.width, rowHeight);
-        Rect workersIncArrow = new Rect(workersNum.xMax, arrowButtonY, workersDecArrow.width, arrowButtonHeight);
+        Rect workersDecArrow = new(colWidth + margin, arrowButtonY, colWidth / 3f, arrowButtonHeight);
+        Rect workersNum = new(workersDecArrow.xMax, rectY, workersDecArrow.width, rowHeight);
+        Rect workersIncArrow = new(workersNum.xMax, arrowButtonY, workersDecArrow.width, arrowButtonHeight);
         UIUtil.ClampedLabel(workersNum, resource.assignedWorkers.ToString());
         if (UIUtil.ClampedButtonText(workersDecArrow, "<")) IncreaseWorkers(resource, true);
         if (UIUtil.ClampedButtonText(workersIncArrow, ">")) IncreaseWorkers(resource);
 
         //Base Production
-        Rect baseProd = new Rect(workersIncArrow.xMax + margin, rectY, colWidth, rowHeight);
+        Rect baseProd = new(workersIncArrow.xMax + margin, rectY, colWidth, rowHeight);
         UIUtil.ClampedLabel(baseProd, TextUtil.FloorStat(resource.productionBase));
         TooltipHandler.TipRegion(baseProd, resource.GetProductionAdditivesDesc());
 
         //Modifier
-        Rect multProd = new Rect(baseProd.xMax + margin, rectY, colWidth, rowHeight);
+        Rect multProd = new(baseProd.xMax + margin, rectY, colWidth, rowHeight);
         UIUtil.ClampedLabel(multProd, TextUtil.FloorStat(resource.productionMult));
         TooltipHandler.TipRegion(multProd, resource.GetProductionMultipliersDesc());
 
         //Final Base
-        Rect finalProd = new Rect(multProd.xMax + margin, rectY, colWidth, rowHeight);
+        Rect finalProd = new(multProd.xMax + margin, rectY, colWidth, rowHeight);
         UIUtil.ClampedLabel(finalProd, (TextUtil.FloorStat(resource.production)));
 
         //Total Production
-        Rect totalProd = new Rect(finalProd.xMax + margin, rectY, colWidth, rowHeight);
+        Rect totalProd = new(finalProd.xMax + margin, rectY, colWidth, rowHeight);
         UIUtil.ClampedLabel(totalProd, (TextUtil.FloorStat(resource.rawTotalProduction)));
 
         //Per Day: silver/day for tithe resources, pool points/day (e.g. research) for pool resources
-        Rect incomePerDayBox = new Rect(totalProd.xMax + margin, rectY, colWidth, rowHeight);
+        Rect incomePerDayBox = new(totalProd.xMax + margin, rectY, colWidth, rowHeight);
         UIUtil.ClampedLabel(incomePerDayBox, TextUtil.FloorStat(resource.PerDayIncomeValue));
 
         //Total Accrued: accrued silver (or accrued pool points) this cycle
-        Rect incomeAccruedBox = new Rect(incomePerDayBox.xMax + margin, rectY, colWidth, rowHeight);
+        Rect incomeAccruedBox = new(incomePerDayBox.xMax + margin, rectY, colWidth, rowHeight);
         UIUtil.ClampedLabel(incomeAccruedBox, TextUtil.FloorStat(resource.AccruedIncomeValue));
 
         //Projected Income: accrued so far + per-day rate * days remaining
         double perDay = resource.PerDayIncomeValue;
         double projectedIncome = resource.AccruedIncomeValue + perDay * settlement.DaysRemaining;
-        Rect incomeNetBox = new Rect(incomeAccruedBox.xMax + margin, rectY, colWidth, rowHeight);
+        Rect incomeNetBox = new(incomeAccruedBox.xMax + margin, rectY, colWidth, rowHeight);
         UIUtil.ClampedLabel(incomeNetBox, (TextUtil.FloorStat(projectedIncome)));
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
         sb.AppendLine("FCProjectedIncomeBreakdownAccrued".Translate(TextUtil.FloorStat(resource.AccruedIncomeValue)));
         sb.AppendLine("FCProjectedIncomeBreakdownPerDay".Translate(TextUtil.FloorStat(perDay), settlement.DaysRemaining));
         sb.Append("FCProjectedIncomeBreakdownProjected".Translate(TextUtil.FloorStat(projectedIncome)));

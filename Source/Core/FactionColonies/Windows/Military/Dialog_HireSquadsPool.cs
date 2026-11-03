@@ -16,7 +16,7 @@ namespace FactionColonies;
 /// </summary>
 public class Dialog_HireSquadsPool : Window
 {
-    public override Vector2 InitialSize => new Vector2(620f, 560f);
+    public override Vector2 InitialSize => new(620f, 560f);
 
     /* Card layout constants — mirror Dialog_SquadPicker / MainTabWindow_Squads so every
        squad-listing surface shares the same rhythm. */
@@ -105,7 +105,7 @@ public class Dialog_HireSquadsPool : Window
 
         // Card list (framed)
         float listTop = toolbarY + ToolbarH + 6f;
-        Rect listRect = new Rect(0f, listTop, inRect.width, inRect.height - listTop);
+        Rect listRect = new(0f, listTop, inRect.width, inRect.height - listTop);
         Widgets.DrawMenuSection(listRect);
         DrawCardList(listRect, silver, settlementFull);
 
@@ -115,12 +115,12 @@ public class Dialog_HireSquadsPool : Window
 
     private void DrawCardList(Rect listRect, int silver, bool settlementFull)
     {
-        List<MilSquadFC> templates = mfc?.squads ?? new List<MilSquadFC>();
+        List<MilSquadFC> templates = mfc?.squads ?? [];
 
         // Build the visible set first so the scroll height matches what we draw (the
         // affordable-only filter can hide rows). Null templates guarded defensively, matching
         // MainTabWindow_Squads.
-        List<MilSquadFC> visible = new List<MilSquadFC>();
+        List<MilSquadFC> visible = [];
         for (int i = 0; i < templates.Count; i++)
         {
             MilSquadFC t = templates[i];
@@ -145,7 +145,7 @@ public class Dialog_HireSquadsPool : Window
 
         float innerX = listRect.x + Pad;
         float innerW = listRect.width - Pad * 2f;
-        Rect viewRect = new Rect(innerX, listRect.y + Pad, innerW, listRect.height - Pad * 2f);
+        Rect viewRect = new(innerX, listRect.y + Pad, innerW, listRect.height - Pad * 2f);
         float totalH = visible.Count * (CardH + RowGap);
         Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref scrollPos, totalH);
 
@@ -153,7 +153,7 @@ public class Dialog_HireSquadsPool : Window
         bool alternate = false;
         for (int i = 0; i < visible.Count; i++)
         {
-            Rect cardRect = new Rect(0f, runningY, scrollRect.width, CardH);
+            Rect cardRect = new(0f, runningY, scrollRect.width, CardH);
             if (alternate) Widgets.DrawHighlight(cardRect);
             DrawTemplateCard(cardRect, visible[i], silver, alternate, settlementFull);
             runningY += CardH + RowGap;
@@ -209,7 +209,7 @@ public class Dialog_HireSquadsPool : Window
         // open (browse-and-hire) — next frame re-reads silver.
         const float hireBtnW = 110f;
         float hireBtnX = cardRect.xMax - hireBtnW - 4f;
-        Rect hireRect = new Rect(hireBtnX, btnY, hireBtnW, btnH);
+        Rect hireRect = new(hireBtnX, btnY, hireBtnW, btnH);
         if (UIUtil.ButtonFlat(hireRect, "FCHireSquadButton".Translate(cost),
                 disabled: !canHire, highlighted: isHighlighted))
         {
@@ -238,7 +238,7 @@ public class Dialog_HireSquadsPool : Window
         // Edit button — opens this template in the squad designer and closes the hire window.
         const float editBtnW = 54f;
         float editBtnX = hireBtnX - 4f - editBtnW;
-        Rect editRect = new Rect(editBtnX, btnY, editBtnW, btnH);
+        Rect editRect = new(editBtnX, btnY, editBtnW, btnH);
         if (UIUtil.ButtonFlat(editRect, "FCHireSquadsPoolEdit".Translate(), highlighted: isHighlighted))
         {
             OpenInDesigner(captured);
@@ -300,7 +300,7 @@ public class Dialog_HireSquadsPool : Window
         else
         {
             MilitaryWindow dsw = MilitaryWindowRegistry.CreateSquads(mfc, FindFC.FactionComp);
-            FCWindow_Military newWindow = new FCWindow_Military(dsw, "FCMilitaryTableButtonCreateSquad".Translate());
+            FCWindow_Military newWindow = new(dsw, "FCMilitaryTableButtonCreateSquad".Translate());
             Find.WindowStack.Add(newWindow);
             newWindow.SetActive(template);
         }

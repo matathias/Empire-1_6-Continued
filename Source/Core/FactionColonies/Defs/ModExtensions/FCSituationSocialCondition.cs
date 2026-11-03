@@ -32,7 +32,7 @@ public class FCSocialClause
 public class FCSocialConditionSet
 {
     public FCRequirementMode mode = FCRequirementMode.All;
-    public List<FCSocialClause> clauses = new List<FCSocialClause>();
+    public List<FCSocialClause> clauses = [];
 
     public bool Satisfied(Func<SocialStatType, double> read)
     {
@@ -56,19 +56,19 @@ public class FCSocialConditionSet
 /// </summary>
 public class FCSituationSocialFactionCondition : FCSituationFactionCondition
 {
-    public FCSocialConditionSet spawnWhen = new FCSocialConditionSet();
+    public FCSocialConditionSet spawnWhen = new();
     public FCSocialConditionSet advanceWhen;
 
     private static double Read(FactionFC faction, SocialStatType stat)
     {
-        switch (stat)
+        return stat switch
         {
-            case SocialStatType.Loyalty: return faction.averageLoyalty;
-            case SocialStatType.Unrest: return faction.averageUnrest;
-            case SocialStatType.Happiness: return faction.averageHappiness;
-            case SocialStatType.Prosperity: return faction.averageProsperity;
-            default: return 0d;
-        }
+            SocialStatType.Loyalty => faction.averageLoyalty,
+            SocialStatType.Unrest => faction.averageUnrest,
+            SocialStatType.Happiness => faction.averageHappiness,
+            SocialStatType.Prosperity => faction.averageProsperity,
+            _ => 0d,
+        };
     }
 
     public override bool ShouldSpawn(FactionFC faction) =>
@@ -84,19 +84,19 @@ public class FCSituationSocialFactionCondition : FCSituationFactionCondition
 /// </summary>
 public class FCSituationSocialSettlementCondition : FCSituationSettlementCondition
 {
-    public FCSocialConditionSet spawnWhen = new FCSocialConditionSet();
+    public FCSocialConditionSet spawnWhen = new();
     public FCSocialConditionSet advanceWhen;
 
     private static double Read(WorldSettlementFC settlement, SocialStatType stat)
     {
-        switch (stat)
+        return stat switch
         {
-            case SocialStatType.Loyalty: return settlement.loyalty;
-            case SocialStatType.Unrest: return settlement.unrest;
-            case SocialStatType.Happiness: return settlement.happiness;
-            case SocialStatType.Prosperity: return settlement.prosperity;
-            default: return 0d;
-        }
+            SocialStatType.Loyalty => settlement.loyalty,
+            SocialStatType.Unrest => settlement.unrest,
+            SocialStatType.Happiness => settlement.happiness,
+            SocialStatType.Prosperity => settlement.prosperity,
+            _ => 0d,
+        };
     }
 
     public override bool ShouldSpawn(FactionFC faction, WorldSettlementFC settlement) =>

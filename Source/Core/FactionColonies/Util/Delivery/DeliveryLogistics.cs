@@ -16,7 +16,7 @@ public static class DeliveryLogistics
        pad can never loop the delivery forever. */
     private const int MaxDeliveryReschedules = 3;
 
-    public static TraverseParms DeliveryTraverseParms => new TraverseParms()
+    public static TraverseParms DeliveryTraverseParms => new()
     {
         canBashDoors = false,
         canBashFences = false,
@@ -58,11 +58,11 @@ public static class DeliveryLogistics
             TransportShip transportShip = TransportShipMaker.MakeTransportShip(TransportShipDefOf.Ship_Shuttle, evt.goods, shuttle);
 
             transportShip.ArriveAt(landingCell, playerHomeMap.Parent);
-            transportShip.AddJobs(new ShipJobDef[]
-            {
+            transportShip.AddJobs(
+            [
                             ShipJobDefOf.Unload,
                             ShipJobDefOf.FlyAway
-            });
+            ]);
         }
         else
         {
@@ -130,8 +130,8 @@ public static class DeliveryLogistics
         if (DoDelayCaravanDueToDanger(evt)) return;
 
         DeliveryNotification.MakeDeliveryLetterAndMessage(evt);
-        List<Pawn> pawns = new List<Pawn>();
-        List<Pawn> securityGuards = new List<Pawn>();
+        List<Pawn> pawns = [];
+        List<Pawn> securityGuards = [];
 
         // Generate delivery pawns using allowed xenotypes first. Every iteration consumes exactly one
         // good (carried by a pawn, or placed directly on any failure), so the loop terminates in
@@ -252,10 +252,7 @@ public static class DeliveryLogistics
                     extraPawn = PawnGenerator.GeneratePawn(request);
 
                     // Fallback to simple request
-                    if (extraPawn is null)
-                    {
-                        extraPawn = PawnGenerator.GeneratePawn(FCPawnGenerator.SimpleDeliveryRequest());
-                    }
+                    extraPawn ??= PawnGenerator.GeneratePawn(FCPawnGenerator.SimpleDeliveryRequest());
 
                     if (extraPawn is not null)
                     {
@@ -317,7 +314,7 @@ public static class DeliveryLogistics
             return;
         }
 
-        PawnsArrivalModeWorker_EdgeWalkIn pawnsArrivalModeWorker = new PawnsArrivalModeWorker_EdgeWalkIn();
+        PawnsArrivalModeWorker_EdgeWalkIn pawnsArrivalModeWorker = new();
         IncidentParms parms = StorytellerUtility.DefaultParmsNow(IncidentCategoryDefOf.Misc, playerHomeMap);
         parms.spawnRotation = Rot4.FromAngleFlat((((Map)parms.target).Center - parms.spawnCenter).AngleFlat);
 

@@ -20,7 +20,7 @@ public class TaxDeliveryContext
 
 public static class TaxDeliveryRegistry
 {
-    private static readonly RegistryList<ITaxDeliveryInterceptor> _list = new RegistryList<ITaxDeliveryInterceptor>();
+    private static readonly RegistryList<ITaxDeliveryInterceptor> _list = new();
 
     internal static void Register(ITaxDeliveryInterceptor interceptor) => _list.Register(interceptor);
     internal static void Unregister(ITaxDeliveryInterceptor interceptor) => _list.Unregister(interceptor);

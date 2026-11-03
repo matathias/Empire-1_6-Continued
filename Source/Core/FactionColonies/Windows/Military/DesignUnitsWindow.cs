@@ -63,21 +63,21 @@ public class DesignUnitsWindow : MilitaryWindow
         float contentBottom = rect.yMax - margin;
 
         // Left sidebar: search + unit list + action buttons
-        Rect sidebarRect = new Rect(rect.x + margin, contentTop,
+        Rect sidebarRect = new(rect.x + margin, contentTop,
             SidebarWidth, contentBottom - contentTop);
         DrawSidebar(sidebarRect);
 
         // Content area starts after sidebar + gap
         float contentLeft = sidebarRect.xMax + 10f;
-        Rect gearRect = new Rect(contentLeft, gearTop, GearWidth, 305f);
+        Rect gearRect = new(contentLeft, gearTop, GearWidth, 305f);
 
         if (selectedUnit is not null)
         {
-            Rect headerRect = new Rect(contentLeft, contentTop,
+            Rect headerRect = new(contentLeft, contentTop,
                 rightEdge - contentLeft, 85f);
             DrawUnitHeader(headerRect);
 
-            Rect buttonsRect = new Rect(contentLeft + GearWidth + 10f, belowHighlight,
+            Rect buttonsRect = new(contentLeft + GearWidth + 10f, belowHighlight,
                 rightEdge - contentLeft - GearWidth - 10f, 61f);
             DrawActionButtons(buttonsRect);
 
@@ -86,7 +86,7 @@ public class DesignUnitsWindow : MilitaryWindow
             // The gear panel (left) has fixed-height content, but the loadout panel (the tabbed
             // equipment list) should fill the rest of the window height — otherwise there's dead
             // space below it.
-            Rect loadoutRect = new Rect(gearRect.xMax + 10f, gearRect.y,
+            Rect loadoutRect = new(gearRect.xMax + 10f, gearRect.y,
                 rightEdge - gearRect.xMax - 10f, contentBottom - gearRect.y);
             DrawLoadoutPanel(loadoutRect, selectedUnit);
         }
@@ -105,13 +105,13 @@ public class DesignUnitsWindow : MilitaryWindow
         // Search bar
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new Rect(rect.x, rect.y, rect.width, SearchBarHeight);
+        Rect searchRect = new(rect.x, rect.y, rect.width, SearchBarHeight);
         unitSearchTerm = Widgets.TextField(searchRect, unitSearchTerm);
 
         // Unit list (fills space between search bar and buttons)
         float buttonsHeight = ButtonHeight * 2 + margin;
         float listHeight = rect.yMax - searchRect.yMax - margin - buttonsHeight - margin;
-        Rect listOutRect = new Rect(rect.x, searchRect.yMax + margin, rect.width, listHeight);
+        Rect listOutRect = new(rect.x, searchRect.yMax + margin, rect.width, listHeight);
         Widgets.DrawMenuSection(listOutRect);
 
         List<MilUnitFC> filteredUnits = string.IsNullOrEmpty(unitSearchTerm)
@@ -124,7 +124,7 @@ public class DesignUnitsWindow : MilitaryWindow
         for (int i = 0; i < filteredUnits.Count; i++)
         {
             MilUnitFC unit = filteredUnits[i];
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * RowHeight, scrollViewRect.width, RowHeight);
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + i * RowHeight, scrollViewRect.width, RowHeight);
 
             if (unit == selectedUnit)
                 Widgets.DrawHighlightSelected(row);
@@ -132,13 +132,13 @@ public class DesignUnitsWindow : MilitaryWindow
                 Widgets.DrawHighlight(row);
 
             // Weapon icon
-            Rect iconRect = new Rect(row.x + 2f, row.y + 3f, IconSize, IconSize);
+            Rect iconRect = new(row.x + 2f, row.y + 3f, IconSize, IconSize);
             if (unit.HasWeapon)
                 Widgets.DefIcon(iconRect, unit.weapons[0].thing, unit.weapons[0].stuff);
             // Name label
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new Rect(iconRect.xMax + 4f, row.y, row.xMax - iconRect.xMax - 6f, RowHeight);
+            Rect labelRect = new(iconRect.xMax + 4f, row.y, row.xMax - iconRect.xMax - 6f, RowHeight);
             UIUtil.ClampedLabel(labelRect, unit.name);
 
             if (Widgets.ButtonInvisible(row))
@@ -157,10 +157,10 @@ public class DesignUnitsWindow : MilitaryWindow
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleCenter;
 
-        Rect createBtn = new Rect(rect.x, btnY, buttonW, ButtonHeight);
-        Rect importBtn = new Rect(rect.x + buttonW + margin, btnY, buttonW, ButtonHeight);
-        Rect deleteBtn = new Rect(rect.x, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
-        Rect exportBtn = new Rect(rect.x + buttonW + margin, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
+        Rect createBtn = new(rect.x, btnY, buttonW, ButtonHeight);
+        Rect importBtn = new(rect.x + buttonW + margin, btnY, buttonW, ButtonHeight);
+        Rect deleteBtn = new(rect.x, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
+        Rect exportBtn = new(rect.x + buttonW + margin, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
 
         if (UIUtil.ClampedButtonText(createBtn, "FCCreateNewUnit".Translate()))
         {
@@ -217,18 +217,18 @@ public class DesignUnitsWindow : MilitaryWindow
         TextAnchor anchorBefore = Text.Anchor;
 
         // Highlight banner behind unit name
-        Rect highlightBar = new Rect(rect.x, rect.y, rect.width, 35f);
+        Rect highlightBar = new(rect.x, rect.y, rect.width, 35f);
         Widgets.DrawHighlight(highlightBar);
 
         // Unit name (large label)
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect nameRect = new Rect(rect.x + margin, rect.y, 400f, 30f);
+        Rect nameRect = new(rect.x + margin, rect.y, 400f, 30f);
         UIUtil.ClampedLabel(nameRect, selectedUnit.name);
 
         // Pencil icon to trigger rename
         float nameTextWidth = Text.CalcSize(selectedUnit.name).x;
-        Rect pencilRect = new Rect(rect.x + Mathf.Min(nameTextWidth + 8f + margin, rect.width - 22f), rect.y + 4f, 22f, 22f);
+        Rect pencilRect = new(rect.x + Mathf.Min(nameTextWidth + 8f + margin, rect.width - 22f), rect.y + 4f, 22f, 22f);
         if (Widgets.ButtonImage(pencilRect, TexButton.Rename))
         {
             Find.WindowStack.Add(new FCWindow_Rename(selectedUnit.name, "FCRenameUnit", name => selectedUnit.name = name));
@@ -237,7 +237,7 @@ public class DesignUnitsWindow : MilitaryWindow
         // Race / Xeno info line
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect infoRect = new Rect(rect.x, highlightBar.yMax + margin, rect.width, 20f);
+        Rect infoRect = new(rect.x, highlightBar.yMax + margin, rect.width, 20f);
         string raceName = selectedUnit.pawnKind?.race?.label?.CapitalizeFirst() ?? "Unknown";
         if (ModsConfig.BiotechActive)
         {
@@ -251,7 +251,7 @@ public class DesignUnitsWindow : MilitaryWindow
 
         // Equipment cost
         float totalCost = (float)selectedUnit.getTotalCost;
-        Rect costRect = new Rect(rect.x, infoRect.yMax + margin, rect.width, 20f);
+        Rect costRect = new(rect.x, infoRect.yMax + margin, rect.width, 20f);
         UIUtil.ClampedLabel(costRect, "FCTotalEquipmentCostLabel".Translate() + totalCost.ToString("F0"));
 
         Text.Font = fontBefore;
@@ -310,7 +310,7 @@ public class DesignUnitsWindow : MilitaryWindow
         const float slotGap = 15f;
 
         // Pawn preview centered near the top of the gear area
-        Rect unitIcon = new Rect(
+        Rect unitIcon = new(
             gearArea.x + (gearArea.width - pawnWidth) / 2f,
             gearArea.y + 5f,
             pawnWidth, pawnHeight);
@@ -322,7 +322,7 @@ public class DesignUnitsWindow : MilitaryWindow
         float slotsWidth = showMount ? slotSize * 2 + 20f : slotSize;
         float slotsStartX = gearArea.x + (gearArea.width - slotsWidth) / 2f;
 
-        Rect MountSlot = new Rect(slotsStartX, slotsY, slotSize, slotSize);
+        Rect MountSlot = new(slotsStartX, slotsY, slotSize, slotSize);
         Rect EquipmentWeapon = showMount
             ? new Rect(slotsStartX + slotSize + 20f, slotsY, slotSize, slotSize)
             : new Rect(slotsStartX, slotsY, slotSize, slotSize);
@@ -397,8 +397,8 @@ public class DesignUnitsWindow : MilitaryWindow
 
         // --- Gender control (below the slots) ---
         float genderY = EquipmentWeapon.yMax + 25f;
-        Rect genderLabelRect = new Rect(slotsStartX-10f, genderY, slotsWidth+20f, 16f);
-        Rect genderBtnRect = new Rect(slotsStartX-10f, genderLabelRect.yMax, slotsWidth+20f, 28f);
+        Rect genderLabelRect = new(slotsStartX-10f, genderY, slotsWidth+20f, 16f);
+        Rect genderBtnRect = new(slotsStartX-10f, genderLabelRect.yMax, slotsWidth+20f, 28f);
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.UpperCenter;
         UIUtil.ClampedLabel(genderLabelRect, "fcUnitGender".Translate());
@@ -407,12 +407,12 @@ public class DesignUnitsWindow : MilitaryWindow
         if (UIUtil.ClampedButtonText(genderBtnRect, GenderLabel(selectedUnit.forcedGender)))
         {
             MilUnitFC captured = selectedUnit;
-            List<FloatMenuOption> opts = new List<FloatMenuOption>
-            {
+            List<FloatMenuOption> opts =
+            [
                 new FloatMenuOption("fcGenderAny".Translate(), () => captured.SetForcedGender(null)),
                 new FloatMenuOption("fcGenderMale".Translate(), () => captured.SetForcedGender(Gender.Male)),
                 new FloatMenuOption("fcGenderFemale".Translate(), () => captured.SetForcedGender(Gender.Female)),
-            };
+            ];
             Find.WindowStack.Add(new FloatMenu(opts));
         }
         Text.Font = fontBefore;

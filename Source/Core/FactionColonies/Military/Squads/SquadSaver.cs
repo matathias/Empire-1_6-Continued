@@ -8,9 +8,9 @@ namespace FactionColonies;
 [StaticConstructorOnStartup]
 public static class FactionColoniesMilitary
 {
-    private static List<SavedUnitFC> savedUnits = new List<SavedUnitFC>();
-    private static List<SavedSquadFC> savedSquads = new List<SavedSquadFC>();
-    private static List<SavedFireSupportFC> savedFireSupports = new List<SavedFireSupportFC>();
+    private static List<SavedUnitFC> savedUnits = [];
+    private static List<SavedSquadFC> savedSquads = [];
+    private static List<SavedFireSupportFC> savedFireSupports = [];
     public static IEnumerable<SavedSquadFC> SavedSquads => savedSquads;
     public static IEnumerable<SavedUnitFC> SavedUnits => savedUnits;
     public static IEnumerable<SavedFireSupportFC> SavedFireSupports => savedFireSupports;
@@ -131,7 +131,7 @@ public static class FactionColoniesMilitary
         {
             try
             {
-                SavedFireSupportFC fs = new SavedFireSupportFC();
+                SavedFireSupportFC fs = new();
                 Scribe.loader.InitLoading(path);
                 fs.ExposeData();
                 savedFireSupports.Add(fs);
@@ -284,20 +284,20 @@ public class SavedUnitFC : IExposable
         name = unit.name;
         weapons = new List<SavedThing>(unit.weapons);
         apparel = new List<SavedThing>(unit.apparel);
-        inventory = new List<SavedThing>(unit.inventory ?? new List<SavedThing>());
-        implants = new List<SavedImplant>(unit.implants ?? new List<SavedImplant>());
+        inventory = new List<SavedThing>(unit.inventory ?? []);
+        implants = new List<SavedImplant>(unit.implants ?? []);
         psylinkLevel = unit.psylinkLevel;
-        psycasts = new List<SavedPsycast>(unit.psycasts ?? new List<SavedPsycast>());
+        psycasts = new List<SavedPsycast>(unit.psycasts ?? []);
         isMechanitor = unit.isMechanitor;
-        mechs = new List<SavedMech>(unit.mechs ?? new List<SavedMech>());
-        mechGroupWorkModes = new List<MechWorkModeDef>(unit.mechGroupWorkModes ?? new List<MechWorkModeDef>());
-        animals = new List<SavedAnimal>(unit.animals ?? new List<SavedAnimal>());
+        mechs = new List<SavedMech>(unit.mechs ?? []);
+        mechGroupWorkModes = new List<MechWorkModeDef>(unit.mechGroupWorkModes ?? []);
+        animals = new List<SavedAnimal>(unit.animals ?? []);
         mount = unit.mount;
         pawnKind = unit.pawnKind;
         xenotype = unit.xenotype;
         customXenotypeName = unit.customXenotypeName;
         forcedGender = unit.forcedGender;
-        statModifiers = unit.statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
+        statModifiers = unit.statModifiers?.Select(m => m.Clone()).ToList() ?? [];
     }
 
     public MilUnitFC CreateMilUnit()
@@ -318,26 +318,26 @@ public class SavedUnitFC : IExposable
         unit.name = name;
         // Drop companion rows whose kind failed to resolve (mod removed); mount loads as null and
         // is simply unassigned. Mirrors the mechs/psycasts filtering below.
-        unit.animals = animals?.Where(a => a.kind is not null).ToList() ?? new List<SavedAnimal>();
+        unit.animals = animals?.Where(a => a.kind is not null).ToList() ?? [];
         unit.mount = mount;
         unit.pawnKind = resolvedKind;
         unit.xenotype = xenotype;
         unit.customXenotypeName = customXenotypeName;
         unit.forcedGender = forcedGender;
-        unit.weapons = weapons?.Where(w => w.thing is not null).ToList() ?? new List<SavedThing>();
-        unit.apparel = apparel?.Where(a => a.thing is not null).ToList() ?? new List<SavedThing>();
-        unit.inventory = inventory?.Where(i => i.thing is not null).ToList() ?? new List<SavedThing>();
-        unit.implants = implants?.Where(im => im.IsValid).ToList() ?? new List<SavedImplant>();
+        unit.weapons = weapons?.Where(w => w.thing is not null).ToList() ?? [];
+        unit.apparel = apparel?.Where(a => a.thing is not null).ToList() ?? [];
+        unit.inventory = inventory?.Where(i => i.thing is not null).ToList() ?? [];
+        unit.implants = implants?.Where(im => im.IsValid).ToList() ?? [];
         unit.psylinkLevel = psylinkLevel;
         // Keep def-backed entries (psycast/focus) and aggregate entries that carry a kind
         // (e.g. stat upgrades, which have no defName).
-        unit.psycasts = psycasts?.Where(a => a.IsValid()).ToList() ?? new List<SavedPsycast>();
+        unit.psycasts = psycasts?.Where(a => a.IsValid()).ToList() ?? [];
         unit.isMechanitor = isMechanitor;
-        unit.mechs = mechs?.Where(m => m.kind is not null).ToList() ?? new List<SavedMech>();
+        unit.mechs = mechs?.Where(m => m.kind is not null).ToList() ?? [];
         unit.mechGroupWorkModes = mechGroupWorkModes is not null
             ? new List<MechWorkModeDef>(mechGroupWorkModes)
-            : new List<MechWorkModeDef>();
-        unit.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
+            : [];
+        unit.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? [];
 
         unit.LoadFromSaved(this);
         unit.ChangeTick();
@@ -373,7 +373,7 @@ public class SavedUnitFC : IExposable
         Scribe_Defs.Look(ref legacyAnimal, "animal");
         if (Scribe.mode == LoadSaveMode.LoadingVars)
         {
-            if (animals is null) animals = new List<SavedAnimal>();
+            animals ??= [];
             if (animals.Count == 0 && legacyAnimal is not null) animals.Add(new SavedAnimal(legacyAnimal, 1));
         }
         Scribe_Defs.Look(ref pawnKind, "pawnKind");
@@ -407,7 +407,7 @@ public class SavedUnitFC : IExposable
 
     private void ValidateAfterLoad(XmlNode xmlParent)
     {
-        List<string> missing = new List<string>();
+        List<string> missing = [];
 
         CheckDef(xmlParent, "pawnKind", pawnKind, missing);
         CheckDef(xmlParent, "mount", mount, missing);
@@ -449,8 +449,8 @@ public class SavedUnitFC : IExposable
 public class SavedSquadFC : IExposable
 {
     public string name;
-    public List<SavedUnitFC> unitTemplates = new List<SavedUnitFC>();
-    public List<int> units = new List<int>(30);
+    public List<SavedUnitFC> unitTemplates = [];
+    public List<int> units = new(30);
     public List<PermanentStatModifier> statModifiers;
     public bool IsDegraded => unitTemplates is not null && unitTemplates.Any(u => u.isDegraded);
 
@@ -465,7 +465,7 @@ public class SavedSquadFC : IExposable
 
         unitTemplates = squadTemplates.Select(unit => unit.ToSavedUnit()).ToList();
         units = squad.Units.Select(unit => squadTemplates.IndexOf(unit)).ToList();
-        statModifiers = squad.statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
+        statModifiers = squad.statModifiers?.Select(m => m.Clone()).ToList() ?? [];
     }
 
     public MilSquadFC CreateMilSquad()
@@ -485,7 +485,7 @@ public class SavedSquadFC : IExposable
                 squad.AddUnit(milUnits[i]);
         }
 
-        squad.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
+        squad.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? [];
         squad.LoadFromSaved(this);
         return squad;
     }
@@ -534,17 +534,17 @@ public class SavedFireSupportFC : IExposable
         accuracy = fireSupport.accuracy;
         projectiles = fireSupport.projectiles is not null
             ? new List<ThingDef>(fireSupport.projectiles)
-            : new List<ThingDef>();
+            : [];
         fireSupportType = fireSupport.fireSupportType;
     }
 
     public MilitaryFireSupport CreateFireSupport()
     {
-        MilitaryFireSupport fs = new MilitaryFireSupport();
+        MilitaryFireSupport fs = new();
         fs.name = name;
         fs.accuracy = accuracy;
         fs.fireSupportType = fireSupportType;
-        fs.projectiles = projectiles?.Where(p => p is not null).ToList() ?? new List<ThingDef>();
+        fs.projectiles = projectiles?.Where(p => p is not null).ToList() ?? [];
         fs.SetLoadID();
         return fs;
     }
@@ -574,7 +574,7 @@ public class SavedFireSupportFC : IExposable
 
     private void ValidateAfterLoad(XmlNode xmlParent)
     {
-        List<string> missing = new List<string>();
+        List<string> missing = [];
 
         XmlNode projNode = xmlParent["projectiles"];
         if (projNode is not null)

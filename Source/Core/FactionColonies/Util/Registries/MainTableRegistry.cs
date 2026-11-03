@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class MainTableRegistry
 {
-    private static readonly RegistryList<IMainTabWindowOverview> _list = new RegistryList<IMainTabWindowOverview>();
+    private static readonly RegistryList<IMainTabWindowOverview> _list = new();
 
     internal static void Register(IMainTabWindowOverview tab) => _list.Register(tab);
     internal static void Unregister(IMainTabWindowOverview tab) => _list.Unregister(tab);

@@ -35,14 +35,14 @@ public static class EventCostTests
     [EmpireTest("EventCost")]
     public static void CountAffected_EmptyList_ReturnsOne()
     {
-        var evt = new FCEvent { settlementTraitLocations = new List<WorldSettlementFC>() };
+        var evt = new FCEvent { settlementTraitLocations = [] };
         TestAssert.AreEqual(1, FCEventScalingUtil.CountAffectedSettlements(evt));
     }
 
     [EmpireTest("EventCost")]
     public static void CountAffected_AllNullEntries_FlooredAtOne()
     {
-        var evt = new FCEvent { settlementTraitLocations = new List<WorldSettlementFC> { null, null } };
+        var evt = new FCEvent { settlementTraitLocations = [null, null] };
         TestAssert.AreEqual(1, FCEventScalingUtil.CountAffectedSettlements(evt));
     }
 
@@ -142,12 +142,12 @@ public static class EventCostTests
     {
         var ext = new FCDynamicCostExtension
         {
-            costPerResourceDelta = new List<ResourceProductionDeltaCost>
-            {
-                new ResourceProductionDeltaCost { resource = res, additiveDelta = additiveDelta, coefficient = coeff, framing = framing }
-            }
+            costPerResourceDelta =
+            [
+                new() { resource = res, additiveDelta = additiveDelta, coefficient = coeff, framing = framing }
+            ]
         };
-        return new FCOptionDef { silverCost = 100, modExtensions = new List<DefModExtension> { ext } };
+        return new FCOptionDef { silverCost = 100, modExtensions = [ext] };
     }
 
     [EmpireTest("EventCost")]

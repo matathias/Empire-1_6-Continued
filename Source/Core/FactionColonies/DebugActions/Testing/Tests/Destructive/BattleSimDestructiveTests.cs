@@ -9,7 +9,7 @@ public static class BattleSimDestructiveTests
     private static WorldSettlementFC FirstOrTransientSettlement()
     {
         WorldSettlementFC s = FindFC.Settlements?.FirstOrDefault();
-        if (s is null) s = DestructiveTestUtil.CreateTransientSettlement();
+        s ??= DestructiveTestUtil.CreateTransientSettlement();
         return s;
     }
 

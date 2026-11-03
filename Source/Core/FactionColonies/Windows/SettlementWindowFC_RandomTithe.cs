@@ -6,7 +6,7 @@ public class SettlementWindowFC_RandomTithe : Window
 {
     private ResourceFC resource;
     private WorldSettlementFC settlement;
-    private Vector2 scrollBar = new Vector2();
+    private Vector2 scrollBar = new();
 
     private const int margin = 5;
     private const int smallMargin = 3;
@@ -17,10 +17,10 @@ public class SettlementWindowFC_RandomTithe : Window
     private string thingSearchTerm = "";
 
     private int sortIndex = 0;
-    private static readonly string[] sortLabelKeys = { "FCTitheSortNameAZ", "FCTitheSortNameZA", "FCTitheSortPriceLow", "FCTitheSortPriceHigh" };
+    private static readonly string[] sortLabelKeys = ["FCTitheSortNameAZ", "FCTitheSortNameZA", "FCTitheSortPriceLow", "FCTitheSortPriceHigh"];
 
     private int statusFilter = 0; // 0=All, 1=Enabled, 2=Disabled
-    private static readonly string[] statusFilterKeys = { "FCTitheShowAll", "FCTitheShowEnabled", "FCTitheShowDisabled" };
+    private static readonly string[] statusFilterKeys = ["FCTitheShowAll", "FCTitheShowEnabled", "FCTitheShowDisabled"];
 
     public override Vector2 InitialSize
     {
@@ -49,17 +49,17 @@ public class SettlementWindowFC_RandomTithe : Window
 
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect header = new Rect(boundingBox.x, boundingBox.y, boundingBox.width, 35f);
+        Rect header = new(boundingBox.x, boundingBox.y, boundingBox.width, 35f);
         UIUtil.ClampedLabel(header, "FCRandomTitheSelectionHeader".Translate());
         Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
         Text.Font = GameFont.Small;
-        Rect subHeader = new Rect(boundingBox.x, header.yMax, boundingBox.width, 30f);
+        Rect subHeader = new(boundingBox.x, header.yMax, boundingBox.width, 30f);
         UIUtil.ClampedLabel(subHeader, settlement.Name);
 
-        Rect iconBox = new Rect(boundingBox.x, subHeader.yMax, 30f, 30f);
-        Rect labelHighlight = new Rect(iconBox.xMax + margin, iconBox.y, boundingBox.width - margin - iconBox.width, 30f);
-        Rect labelText = new Rect(labelHighlight.x + smallMargin, labelHighlight.y + smallMargin, labelHighlight.width - (smallMargin * 2), labelHighlight.height - (smallMargin * 2));
+        Rect iconBox = new(boundingBox.x, subHeader.yMax, 30f, 30f);
+        Rect labelHighlight = new(iconBox.xMax + margin, iconBox.y, boundingBox.width - margin - iconBox.width, 30f);
+        Rect labelText = new(labelHighlight.x + smallMargin, labelHighlight.y + smallMargin, labelHighlight.width - (smallMargin * 2), labelHighlight.height - (smallMargin * 2));
 
         Text.Anchor = TextAnchor.MiddleCenter;
         Widgets.DrawHighlight(iconBox);
@@ -67,14 +67,14 @@ public class SettlementWindowFC_RandomTithe : Window
         Text.Anchor = TextAnchor.MiddleLeft;
         Widgets.DrawHighlight(labelHighlight);
         UIUtil.ClampedLabel(labelText, resource.def.LabelCap);
-        Rect iconAccent = new Rect(iconBox.x, iconBox.y, iconBox.width, 3f);
-        Rect labelAccent = new Rect(labelHighlight.x, labelHighlight.y, labelHighlight.width, 3f);
+        Rect iconAccent = new(iconBox.x, iconBox.y, iconBox.width, 3f);
+        Rect labelAccent = new(labelHighlight.x, labelHighlight.y, labelHighlight.width, 3f);
         Widgets.DrawBoxSolid(iconAccent, resource.def.color);
         Widgets.DrawBoxSolid(labelAccent, resource.def.color);
 
         /* Enable All / Disable All buttons */
-        Rect enableAllBox = new Rect(boundingBox.x, iconBox.yMax + margin, boundingBox.width / 2f, 30f);
-        Rect disableAllBox = new Rect(enableAllBox.xMax, enableAllBox.y, boundingBox.width / 2f, 30f);
+        Rect enableAllBox = new(boundingBox.x, iconBox.yMax + margin, boundingBox.width / 2f, 30f);
+        Rect disableAllBox = new(enableAllBox.xMax, enableAllBox.y, boundingBox.width / 2f, 30f);
         if (UIUtil.ClampedButtonText(enableAllBox, "FCTitheEnableAll".Translate()))
         {
             resource.SetAllRandomTitheFilter();
@@ -91,7 +91,7 @@ public class SettlementWindowFC_RandomTithe : Window
         int enabledCount = allThings.Count(t => resource.GetRandomTitheFilterAllow(t));
         int totalCount = allThings.Count;
 
-        Rect countRow = new Rect(boundingBox.x, curY, boundingBox.width, 22f);
+        Rect countRow = new(boundingBox.x, curY, boundingBox.width, 22f);
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(new Rect(countRow.x + smallMargin, countRow.y, 120f, countRow.height),
@@ -99,10 +99,10 @@ public class SettlementWindowFC_RandomTithe : Window
 
         Text.Font = GameFont.Small;
         float filterBtnW = 110f;
-        Rect filterBtn = new Rect(countRow.xMax - filterBtnW - margin, countRow.y, filterBtnW, countRow.height);
+        Rect filterBtn = new(countRow.xMax - filterBtnW - margin, countRow.y, filterBtnW, countRow.height);
         if (UIUtil.ClampedButtonText(filterBtn, "FCTitheShowFilter".Translate(statusFilterKeys[statusFilter].Translate())))
         {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            List<FloatMenuOption> options = [];
             for (int f = 0; f < statusFilterKeys.Length; f++)
             {
                 int captured = f;
@@ -117,16 +117,16 @@ public class SettlementWindowFC_RandomTithe : Window
         curY = countRow.yMax + margin;
 
         // Column header with sort
-        Rect headerRow = new Rect(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
+        Rect headerRow = new(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
         Widgets.DrawHighlight(headerRow);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(new Rect(headerRow.x + margin, headerRow.y, 60f, headerRow.height), "FCItem".Translate());
         float sortBtnW = 120f;
-        Rect sortBtn = new Rect(headerRow.xMax - margin - 65f - margin - 65f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
+        Rect sortBtn = new(headerRow.xMax - margin - 65f - margin - 65f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
         if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[sortIndex].Translate())))
         {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            List<FloatMenuOption> options = [];
             for (int s = 0; s < sortLabelKeys.Length; s++)
             {
                 int captured = s;
@@ -147,7 +147,7 @@ public class SettlementWindowFC_RandomTithe : Window
         curY = headerRow.yMax;
 
         // Search bar
-        Rect searchRect = new Rect(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
+        Rect searchRect = new(boundingBox.x, curY, boundingBox.width, SearchBarHeight);
         thingSearchTerm = Widgets.TextField(searchRect, thingSearchTerm);
         if (string.IsNullOrEmpty(thingSearchTerm))
         {
@@ -174,8 +174,8 @@ public class SettlementWindowFC_RandomTithe : Window
             thingsList = thingsList.Where(t => !resource.GetRandomTitheFilterAllow(t)).ToList();
 
         // Scroll list
-        Rect drawBox = new Rect(boundingBox.x, curY + margin, boundingBox.width, boundingBox.yMax - curY - margin);
-        Rect outerListBox = new Rect(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
+        Rect drawBox = new(boundingBox.x, curY + margin, boundingBox.width, boundingBox.yMax - curY - margin);
+        Rect outerListBox = new(drawBox.x + 2, drawBox.y + 2, drawBox.width - 4, drawBox.height - 4);
         float listHeight = thingsList.Count * rowHeight;
         Widgets.DrawMenuSection(drawBox);
 
@@ -184,12 +184,12 @@ public class SettlementWindowFC_RandomTithe : Window
         for (int i = 0; i < thingsList.Count; i++)
         {
             ThingDef iThing = thingsList[i];
-            Rect row = new Rect(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
-            Rect icon = new Rect(row.x + margin, row.y, rowHeight, rowHeight);
-            Rect info = new Rect(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
-            Rect enableBox = new Rect(row.xMax - margin - 65f, row.y, 65f, rowHeight);
-            Rect valueLabel = new Rect(enableBox.x - margin - 60f, enableBox.y, 60f, rowHeight);
-            Rect label = new Rect(info.xMax + margin, row.y, valueLabel.x - info.xMax - (margin * 2), rowHeight);
+            Rect row = new(innerScrollBox.x, innerScrollBox.y + (i * rowHeight), innerScrollBox.width, rowHeight);
+            Rect icon = new(row.x + margin, row.y, rowHeight, rowHeight);
+            Rect info = new(icon.xMax, row.y + 2, rowHeight - 4, rowHeight - 4);
+            Rect enableBox = new(row.xMax - margin - 65f, row.y, 65f, rowHeight);
+            Rect valueLabel = new(enableBox.x - margin - 60f, enableBox.y, 60f, rowHeight);
+            Rect label = new(info.xMax + margin, row.y, valueLabel.x - info.xMax - (margin * 2), rowHeight);
 
             if (i % 2 == 0)
             {
@@ -232,16 +232,16 @@ public class SettlementWindowFC_RandomTithe : Window
 
     private List<ThingDef> ApplySort(List<ThingDef> list, int sortIndex)
     {
-        switch (sortIndex)
+        return sortIndex switch
         {
-            case 1: // Name Z-A
-                return list.OrderByDescending(t => t.label, StringComparer.OrdinalIgnoreCase).ToList();
-            case 2: // Price Low-High
-                return list.OrderBy(t => t.BaseMarketValue).ToList();
-            case 3: // Price High-Low
-                return list.OrderByDescending(t => t.BaseMarketValue).ToList();
-            default: // 0: Name A-Z
-                return list.OrderBy(t => t.label, StringComparer.OrdinalIgnoreCase).ToList();
-        }
+            // Name Z-A
+            1 => list.OrderByDescending(t => t.label, StringComparer.OrdinalIgnoreCase).ToList(),
+            // Price Low-High
+            2 => list.OrderBy(t => t.BaseMarketValue).ToList(),
+            // Price High-Low
+            3 => list.OrderByDescending(t => t.BaseMarketValue).ToList(),
+            // 0: Name A-Z
+            _ => list.OrderBy(t => t.label, StringComparer.OrdinalIgnoreCase).ToList(),
+        };
     }
 }

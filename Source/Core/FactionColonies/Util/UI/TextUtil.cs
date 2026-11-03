@@ -161,8 +161,8 @@ public static class TextUtil
 
         // Rebuild the raw string up to that many visible characters, copying tags through verbatim and tracking
         // which are still open so we can close them after the ellipsis.
-        List<string> openTags = new List<string>();
-        StringBuilder sb = new StringBuilder(text.Length);
+        List<string> openTags = [];
+        StringBuilder sb = new(text.Length);
         int visibleEmitted = 0;
         int i = 0;
         while (i < text.Length && visibleEmitted < visibleFit)
@@ -186,7 +186,7 @@ public static class TextUtil
                 else if (!inner.EndsWith("/")) // ignore self-closing tags
                 {
                     // Tag name is up to the first space or '=' (e.g. "color=#FF0000FF" -> "color").
-                    int cut = inner.IndexOfAny(new[] { ' ', '=' });
+                    int cut = inner.IndexOfAny([' ', '=']);
                     openTags.Add(cut >= 0 ? inner.Substring(0, cut) : inner);
                 }
                 i = close + 1;

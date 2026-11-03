@@ -171,7 +171,7 @@ public static class BattleCasualtyApplicator
     /// </summary>
     public static List<Pawn> GatherCasualtyCandidates(MercenarySquadFC squad)
     {
-        List<Pawn> candidates = new List<Pawn>();
+        List<Pawn> candidates = [];
         if (squad?.mercenaries is not null)
         {
             foreach (Mercenary m in squad.mercenaries)
@@ -281,7 +281,7 @@ public static class BattleCasualtyApplicator
     public static BodyPartRecord PickWoundablePart(Pawn pawn)
     {
         if (pawn?.health?.hediffSet is null) return null;
-        List<BodyPartRecord> all = new List<BodyPartRecord>();
+        List<BodyPartRecord> all = [];
         foreach (BodyPartRecord p in pawn.health.hediffSet.GetNotMissingParts())
         {
             if (p?.def?.tags is not null && p.def.tags.Contains(BodyPartTagDefOf.ConsciousnessSource)) continue;

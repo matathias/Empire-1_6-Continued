@@ -27,10 +27,10 @@ public class CodexTab_Info : ICodexTab
     private const float AccentBarWidth = CodexUIUtil.AccentBarWidth;
     private const float Margin = CodexUIUtil.Margin;
 
-    private static readonly Color GroupBgColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
-    private static readonly Color CategoryBgColor = new Color(0.15f, 0.15f, 0.15f, 0.4f);
-    private static readonly Color DynamicContentBg = new Color(0.12f, 0.18f, 0.12f, 0.3f);
-    private static readonly Color SeeAlsoColor = new Color(0.4f, 0.6f, 0.9f);
+    private static readonly Color GroupBgColor = new(0.2f, 0.2f, 0.2f, 0.6f);
+    private static readonly Color CategoryBgColor = new(0.15f, 0.15f, 0.15f, 0.4f);
+    private static readonly Color DynamicContentBg = new(0.12f, 0.18f, 0.12f, 0.3f);
+    private static readonly Color SeeAlsoColor = new(0.4f, 0.6f, 0.9f);
 
     /* Data model */
     private List<ModGroup> modGroups;
@@ -55,22 +55,22 @@ public class CodexTab_Info : ICodexTab
     private int currentImageIndex;
 
     /* Expand/collapse state */
-    private readonly HashSet<string> expandedMods = new HashSet<string>();
-    private readonly HashSet<string> expandedCategories = new HashSet<string>();
+    private readonly HashSet<string> expandedMods = [];
+    private readonly HashSet<string> expandedCategories = [];
     private bool dynamicSectionExpanded = true;
 
     private class ModGroup
     {
         public string modId;
         public string modName;
-        public List<CategoryGroup> categories = new List<CategoryGroup>();
+        public List<CategoryGroup> categories = [];
     }
 
     private class CategoryGroup
     {
         public CodexCategoryDef categoryDef;
         public string modId;
-        public List<CodexEntryDef> entries = new List<CodexEntryDef>();
+        public List<CodexEntryDef> entries = [];
     }
 
     public string TabLabel => "FCCodexTabInfo".Translate();
@@ -85,7 +85,7 @@ public class CodexTab_Info : ICodexTab
         if (built) return;
         built = true;
 
-        modGroups = cachedModGroups ?? (cachedModGroups = BuildModGroups());
+        modGroups = (cachedModGroups ??= BuildModGroups());
 
         if (modGroups.Count > 0)
         {
@@ -171,7 +171,7 @@ public class CodexTab_Info : ICodexTab
             bool modExpanded = expandedMods.Contains(mg.modId);
 
             float groupHeight = CodexUIUtil.HeaderHeightFor(mg.modName, viewRect.width - Margin * 2 - IconSize, GroupHeaderHeight, GroupHeaderVPad);
-            Rect groupRect = new Rect(0f, curY, viewRect.width, groupHeight);
+            Rect groupRect = new(0f, curY, viewRect.width, groupHeight);
             Widgets.DrawBoxSolid(groupRect, GroupBgColor);
 
             Text.Font = GameFont.Small;
@@ -179,7 +179,7 @@ public class CodexTab_Info : ICodexTab
             GUI.color = Color.white;
             Widgets.Label(new Rect(groupRect.x + Margin, groupRect.y, groupRect.width - Margin * 2 - IconSize, groupRect.height), mg.modName);
 
-            Rect arrowRect = new Rect(groupRect.xMax - IconSize - 2f, groupRect.y + (groupHeight - IconSize) * 0.5f, IconSize, IconSize);
+            Rect arrowRect = new(groupRect.xMax - IconSize - 2f, groupRect.y + (groupHeight - IconSize) * 0.5f, IconSize, IconSize);
             Widgets.DrawTextureFitted(arrowRect, modExpanded ? TexButton.Collapse : TexButton.Reveal, 1f);
 
             if (Widgets.ButtonInvisible(groupRect))
@@ -199,7 +199,7 @@ public class CodexTab_Info : ICodexTab
                 Color catColor = cg.categoryDef.color;
 
                 float catHeight = CodexUIUtil.HeaderHeightFor(cg.categoryDef.LabelCap, (viewRect.width - 10f) - Margin * 2 - IconSize - 3f, CategoryHeaderHeight, CategoryHeaderVPad);
-                Rect catRect = new Rect(10f, curY, viewRect.width - 10f, catHeight);
+                Rect catRect = new(10f, curY, viewRect.width - 10f, catHeight);
                 Widgets.DrawBoxSolid(catRect, CategoryBgColor);
                 TexLoad.DrawHorizontalGradient(catRect, ColorUtil.TransformA(catColor, 0.2f));
                 Widgets.DrawBoxSolid(new Rect(catRect.x, catRect.y, 3f, catRect.height), catColor);
@@ -211,7 +211,7 @@ public class CodexTab_Info : ICodexTab
                     cg.categoryDef.LabelCap,
                     ColorUtil.TransformRGB(catColor, 1.3f));
 
-                Rect catArrow = new Rect(catRect.xMax - IconSize - 2f, catRect.y + (catHeight - IconSize) * 0.5f, IconSize, IconSize);
+                Rect catArrow = new(catRect.xMax - IconSize - 2f, catRect.y + (catHeight - IconSize) * 0.5f, IconSize, IconSize);
                 Widgets.DrawTextureFitted(catArrow, catExpanded ? TexButton.Collapse : TexButton.Reveal, 1f);
 
                 if (Widgets.ButtonInvisible(catRect))
@@ -226,7 +226,7 @@ public class CodexTab_Info : ICodexTab
 
                 foreach (CodexEntryDef entry in cg.entries)
                 {
-                    Rect entryRect = new Rect(20f, curY, viewRect.width - 20f, EntryRowHeight);
+                    Rect entryRect = new(20f, curY, viewRect.width - 20f, EntryRowHeight);
                     bool isSelected = selectedEntry == entry;
 
                     if (CodexUIUtil.DrawEntryRow(entryRect, entry.LabelCap, catColor, isSelected,
@@ -288,7 +288,7 @@ public class CodexTab_Info : ICodexTab
         float titleTextX = 0f;
         if (selectedEntry.Icon is not null)
         {
-            Rect iconBgRect = new Rect(0f, curY, TitleIconSize, TitleIconSize);
+            Rect iconBgRect = new(0f, curY, TitleIconSize, TitleIconSize);
             Widgets.DrawBoxSolid(iconBgRect, ColorUtil.TransformA(catColor, 0.25f));
             UIUtil.DrawColoredBox(iconBgRect, ColorUtil.TransformA(catColor, 0.6f));
             GUI.DrawTexture(iconBgRect.ContractedBy(3f), selectedEntry.Icon);
@@ -325,7 +325,7 @@ public class CodexTab_Info : ICodexTab
         if (!selectedEntry.description.NullOrEmpty())
         {
             Text.Font = GameFont.Small;
-            Rect descRect = new Rect(0f, curY, contentWidth, 100f);
+            Rect descRect = new(0f, curY, contentWidth, 100f);
             Widgets.LabelCacheHeight(ref descRect, selectedEntry.FormattedDesc);
             curY += descRect.height + Margin;
             CodexUIUtil.ResetText();
@@ -344,7 +344,7 @@ public class CodexTab_Info : ICodexTab
             {
                 if (linked is null) continue;
 
-                Rect linkRect = new Rect(0f, curY, contentWidth, SeeAlsoButtonHeight);
+                Rect linkRect = new(0f, curY, contentWidth, SeeAlsoButtonHeight);
                 Widgets.DrawBoxSolid(linkRect, new Color(0.39f, 0.67f, 1f, 0.06f));
                 Widgets.DrawBoxSolid(new Rect(0f, curY, AccentBarWidth, SeeAlsoButtonHeight), SeeAlsoColor);
 
@@ -397,7 +397,7 @@ public class CodexTab_Info : ICodexTab
             float navWidth = ImageNavButtonSize * 2 + 60f;
             float navX = (width - navWidth) * 0.5f;
 
-            Rect leftBtn = new Rect(navX, curY, ImageNavButtonSize, ImageNavButtonSize);
+            Rect leftBtn = new(navX, curY, ImageNavButtonSize, ImageNavButtonSize);
             if (currentImageIndex > 0 && UIUtil.ClampedButtonText(leftBtn, "<"))
             {
                 currentImageIndex--;
@@ -409,7 +409,7 @@ public class CodexTab_Info : ICodexTab
             UIUtil.ClampedLabel(new Rect(leftBtn.xMax, curY, 60f, ImageNavButtonSize), (currentImageIndex + 1) + " / " + images.Count);
             CodexUIUtil.ResetText();
 
-            Rect rightBtn = new Rect(leftBtn.xMax + 60f, curY, ImageNavButtonSize, ImageNavButtonSize);
+            Rect rightBtn = new(leftBtn.xMax + 60f, curY, ImageNavButtonSize, ImageNavButtonSize);
             if (currentImageIndex < images.Count - 1 && UIUtil.ClampedButtonText(rightBtn, ">"))
             {
                 currentImageIndex++;
@@ -487,9 +487,9 @@ public class CodexTab_Info : ICodexTab
 
                     if (!dynamic.NullOrEmpty())
                     {
-                        Color dynColor = new Color(0.5f, 0.93f, 0.5f);
+                        Color dynColor = new(0.5f, 0.93f, 0.5f);
 
-                        Rect headerRect = new Rect(0f, curY, contentWidth, DynamicHeaderHeight);
+                        Rect headerRect = new(0f, curY, contentWidth, DynamicHeaderHeight);
                         Widgets.DrawBoxSolid(headerRect, new Color(0.17f, 0.17f, 0.17f, 1f));
                         TexLoad.DrawHorizontalGradient(headerRect, ColorUtil.TransformA(dynColor, 0.15f));
                         Widgets.DrawBoxSolid(new Rect(0f, curY, AccentBarWidth, DynamicHeaderHeight), dynColor);

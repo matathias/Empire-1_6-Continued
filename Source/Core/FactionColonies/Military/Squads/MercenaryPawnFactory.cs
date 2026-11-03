@@ -54,7 +54,7 @@ public static class MercenaryPawnFactory
         // AddDirectRelation dereferences otherPawn.relations (mech.relations) to add the reflexive entry,
         // so without this it NREs ("Failed to bond mech ... NRE") and the mech is never actually bonded.
         // Create the tracker up front, exactly as vanilla does (PawnComponentsUtility).
-        if (mech.relations is null) mech.relations = new Pawn_RelationsTracker(mech);
+        mech.relations ??= new Pawn_RelationsTracker(mech);
 
         try
         {
@@ -259,10 +259,10 @@ public static class MercenaryPawnFactory
         if (guardOptions is not null && guardOptions.Any())
         {
             PawnKindDef guardKind = guardOptions.RandomElement();
-            Mercenary guardAnimal = new Mercenary(true);
+            Mercenary guardAnimal = new(true);
             CreateNewAnimal(squad, ref guardAnimal, guardKind);
             guardAnimal.handler = merc;
-            if (merc.animals is null) merc.animals = new List<Mercenary>();
+            merc.animals ??= [];
             merc.animals.Add(guardAnimal);
         }
     }

@@ -99,7 +99,7 @@ public class MilitaryFireSupport : IExposable, ILoadReferenceable
     {
         // return list of thingdefs that can be used as fire support
         ThingSetMaker thingSetMaker = new ThingSetMaker_Count();
-        ThingSetMakerParams param = new ThingSetMakerParams();
+        ThingSetMakerParams param = new();
         param.filter = new ThingFilter();
         param.techLevel = FindFC.TechLevel;
 
@@ -167,7 +167,7 @@ public class MilitaryFireSupport : IExposable, ILoadReferenceable
             LogUtil.Warning($"Fire support ammo {ammoDef.defName} has no projectileWhenLoaded defined");
             return;
         }
-        LocalTargetInfo info = new LocalTargetInfo(spawnCenter);
+        LocalTargetInfo info = new(spawnCenter);
         Projectile projectile = (Projectile)GenSpawn.Spawn(def, sourceLocation, map);
         projectile.Launch(null, info, info, ProjectileHitFlags.All);
     }

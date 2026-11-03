@@ -4,7 +4,7 @@ namespace FactionColonies;
 
 public class SettlementUpgradeWindowFc : Window
 {
-    public override Vector2 InitialSize => new Vector2(380f, 300f);
+    public override Vector2 InitialSize => new(380f, 300f);
 
     private readonly int yspacing = 30;
     private readonly int yoffset = 90;
@@ -49,7 +49,7 @@ public class SettlementUpgradeWindowFc : Window
         //on success (atomic affordability check + payment)
         if (!PaymentUtil.TryPaySilver(settlementUpgradeCost, PaymentUtil.Reason_SettlementUpgrade, settlement))
             return new Message("FCNotEnoughSilverUpgrade".Translate(), MessageTypeDefOf.RejectInput);
-        FCEvent tmp = new FCEvent(true)
+        FCEvent tmp = new(true)
         {
             def = FCEventDefOf.upgradeSettlement,
             tickStarted = Find.TickManager.TicksGame,

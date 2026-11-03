@@ -4,7 +4,7 @@ public abstract class ResourceResearchRestriction
 {
     public TechLevel minTechLevel = TechLevel.Undefined;
     public TechLevel maxTechLevel = TechLevel.Undefined;
-    public List<ResearchProjectDef> researchProjectDefs = new List<ResearchProjectDef>();
+    public List<ResearchProjectDef> researchProjectDefs = [];
     public bool restrictByRecipe = true;
     public bool restrictByThingTechLevel = true;
 

@@ -12,7 +12,7 @@ public static class CrossSystemThrashDestructiveTests
 
         // 1. Settlement
         WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        if (s is null) s = FindFC.Settlements?.FirstOrDefault();
+        s ??= FindFC.Settlements?.FirstOrDefault();
         if (s is null) TestAssert.Skip("No settlement available");
 
         // 2. Hire + assign a squad (best effort)

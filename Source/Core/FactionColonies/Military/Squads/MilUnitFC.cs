@@ -12,7 +12,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
     // Companion animals (Animals tab). Each row is a (kind, count) stack; the total is capped by
     // FCSettings.maxAnimalSubpawns at add time. Companions fight on foot alongside the merc.
-    public List<SavedAnimal> animals = new List<SavedAnimal>();
+    public List<SavedAnimal> animals = [];
 
     // Rideable mount (gear-panel slot, Giddy Up 2 only). When GU2 is active and this is set, the
     // merc spawns already mounted in manual battles / on deployment. Inert when GU2 is absent.
@@ -30,25 +30,25 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     private ThingDef pawnKindRaceHint;
 
     // Def-based equipment storage
-    public List<SavedThing> weapons = new List<SavedThing>();
-    public List<SavedThing> apparel = new List<SavedThing>();
-    public List<SavedThing> inventory = new List<SavedThing>();
-    public List<SavedImplant> implants = new List<SavedImplant>();
+    public List<SavedThing> weapons = [];
+    public List<SavedThing> apparel = [];
+    public List<SavedThing> inventory = [];
+    public List<SavedImplant> implants = [];
     public bool HasWeapon => weapons.Any(w => w.thing is not null);
 
     // Psycast design (Psycasts tab). psylinkLevel gates which psycasts are pickable
     // and is applied the "neuroformer way" at spawn; psycasts carry their owning psycast-system
     // provider's Key so they apply through the right system (base game / VPE) on load.
     public int psylinkLevel;
-    public List<SavedPsycast> psycasts = new List<SavedPsycast>();
+    public List<SavedPsycast> psycasts = [];
 
     // Mechanitor design (Mechs tab, Biotech only). isMechanitor auto-applies a mechlink at spawn
     // (see ApplyMechanitorToPawn); mechs lists the mechanoids bonded to the unit at deploy time,
     // each tagged with a control-group index. mechGroupWorkModes holds the work mode per control
     // group (index = group); all mechs in a group share that mode.
     public bool isMechanitor;
-    public List<SavedMech> mechs = new List<SavedMech>();
-    public List<MechWorkModeDef> mechGroupWorkModes = new List<MechWorkModeDef>();
+    public List<SavedMech> mechs = [];
+    public List<MechWorkModeDef> mechGroupWorkModes = [];
 
     /// <summary>True when this unit is a mechanitor design — flagged as one or carrying
     /// at least one assigned mech. Gates the mechlink apply, the mech spawn block, and cost.</summary>
@@ -63,7 +63,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     /// list, and seeded onto a mercenary's own statModifiers when set as their currentLoadout.
     /// Groundwork for a unit-accolade system.
     /// </summary>
-    public List<PermanentStatModifier> statModifiers = new List<PermanentStatModifier>();
+    public List<PermanentStatModifier> statModifiers = [];
 
     public void AddStatModifier(PermanentStatModifier mod) { statModifiers.Add(mod); }
     public void RemoveStatModifiersBySource(string sourceId) { statModifiers.RemoveAll(m => m.sourceId == sourceId); }
@@ -220,7 +220,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         Scribe_Defs.Look(ref legacyAnimal, "animal");
         if (Scribe.mode == LoadSaveMode.LoadingVars && legacyAnimal is not null)
         {
-            if (animals is null) animals = new List<SavedAnimal>();
+            animals ??= [];
             if (animals.Count == 0) animals.Add(new SavedAnimal(legacyAnimal, 1));
         }
         Scribe_Defs.Look(ref xenotype, "xenotype");
@@ -257,15 +257,15 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (weapons is null) weapons = new List<SavedThing>();
-            if (apparel is null) apparel = new List<SavedThing>();
-            if (inventory is null) inventory = new List<SavedThing>();
-            if (implants is null) implants = new List<SavedImplant>();
-            if (psycasts is null) psycasts = new List<SavedPsycast>();
-            if (mechs is null) mechs = new List<SavedMech>();
-            if (mechGroupWorkModes is null) mechGroupWorkModes = new List<MechWorkModeDef>();
-            if (animals is null) animals = new List<SavedAnimal>();
-            if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+            weapons ??= [];
+            apparel ??= [];
+            inventory ??= [];
+            implants ??= [];
+            psycasts ??= [];
+            mechs ??= [];
+            mechGroupWorkModes ??= [];
+            animals ??= [];
+            statModifiers ??= [];
             // Mutual exclusivity: prefer XenotypeDef if both are set
             if (xenotype is not null && customXenotypeName is not null)
                 customXenotypeName = null;
@@ -513,8 +513,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
             // Empire is an allied NPC faction, not the player, so MechanitorUtility.ShouldBeMechanitor
             // is false for these pawns — PawnComponentsUtility.AddAndRemoveDynamicComponents would
             // refuse to create the tracker (and would even null an existing one). Create it directly.
-            if (target.mechanitor is null)
-                target.mechanitor = new Pawn_MechanitorTracker(target);
+            target.mechanitor ??= new Pawn_MechanitorTracker(target);
         }
         catch (Exception ex)
         {
@@ -874,7 +873,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     public void SetGroupWorkMode(int group, MechWorkModeDef mode)
     {
         if (group < 0) return;
-        if (mechGroupWorkModes is null) mechGroupWorkModes = new List<MechWorkModeDef>();
+        mechGroupWorkModes ??= [];
         while (mechGroupWorkModes.Count <= group) mechGroupWorkModes.Add(MechWorkModeDefOf.Escort);
         mechGroupWorkModes[group] = mode;
         ChangeTick();
@@ -1041,7 +1040,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     public bool AddAnimal(PawnKindDef kind, int count = 1)
     {
         if (kind?.race is null || count <= 0) return false;
-        if (animals is null) animals = new List<SavedAnimal>();
+        animals ??= [];
 
         if (TotalAnimalCount + count > FCSettings.maxAnimalSubpawns)
         {
@@ -1160,13 +1159,13 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         // Force a clean preview pawn WITHOUT implants so we can test each one independently.
         pawnIdentityDirty = true;
         List<SavedImplant> snapshot = implants;
-        implants = new List<SavedImplant>();
+        implants = [];
         Pawn testPawn = PreviewPawn; // rebuilt with no implants
         implants = snapshot;
 
         if (testPawn is null) return;
 
-        List<SavedImplant> kept = new List<SavedImplant>();
+        List<SavedImplant> kept = [];
         foreach (SavedImplant im in snapshot)
         {
             try
@@ -1427,7 +1426,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
 
     /* Creates the appropriate SavedUnitFC (or subclass) snapshot of this unit.
        Subclasses override to return their own SavedUnitFC subtype carrying their extra fields. */
-    public virtual SavedUnitFC ToSavedUnit() => new SavedUnitFC(this);
+    public virtual SavedUnitFC ToSavedUnit() => new(this);
 
     /* Called after base fields have been copied into a new instance during import.
        Subclasses override to pull their extra fields out of the SavedUnitFC subclass. */
@@ -1453,19 +1452,19 @@ public class MilUnitFC : IExposable, ILoadReferenceable
         copy.pawnKind = pawnKind;
         copy.xenotype = xenotype;
         copy.customXenotypeName = customXenotypeName;
-        copy.animals = new List<SavedAnimal>(animals ?? new List<SavedAnimal>());
+        copy.animals = new List<SavedAnimal>(animals ?? []);
         copy.mount = mount;
         copy.forcedGender = forcedGender;
-        copy.weapons = new List<SavedThing>(weapons ?? new List<SavedThing>());
-        copy.apparel = new List<SavedThing>(apparel ?? new List<SavedThing>());
-        copy.inventory = new List<SavedThing>(inventory ?? new List<SavedThing>());
-        copy.implants = new List<SavedImplant>(implants ?? new List<SavedImplant>());
+        copy.weapons = new List<SavedThing>(weapons ?? []);
+        copy.apparel = new List<SavedThing>(apparel ?? []);
+        copy.inventory = new List<SavedThing>(inventory ?? []);
+        copy.implants = new List<SavedImplant>(implants ?? []);
         copy.psylinkLevel = psylinkLevel;
-        copy.psycasts = new List<SavedPsycast>(psycasts ?? new List<SavedPsycast>());
+        copy.psycasts = new List<SavedPsycast>(psycasts ?? []);
         copy.isMechanitor = isMechanitor;
-        copy.mechs = new List<SavedMech>(mechs ?? new List<SavedMech>());
-        copy.mechGroupWorkModes = new List<MechWorkModeDef>(mechGroupWorkModes ?? new List<MechWorkModeDef>());
-        copy.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
+        copy.mechs = new List<SavedMech>(mechs ?? []);
+        copy.mechGroupWorkModes = new List<MechWorkModeDef>(mechGroupWorkModes ?? []);
+        copy.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? [];
         CopyExtraFieldsTo(copy);
         copy.ChangeTick();
         copy.UpdateEquipmentTotalCost();

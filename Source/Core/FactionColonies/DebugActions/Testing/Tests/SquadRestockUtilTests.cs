@@ -13,12 +13,12 @@ public static class SquadRestockUtilTests
         return new ThingDef
         {
             category = ThingCategory.Item,
-            statBases = new List<StatModifier> { new StatModifier { stat = StatDefOf.MarketValue, value = marketValue } }
+            statBases = [new() { stat = StatDefOf.MarketValue, value = marketValue }]
         };
     }
 
     private static List<SavedThing> Design(ThingDef thing, int count) =>
-        new List<SavedThing> { new SavedThing(thing, null, count, null) };
+        [new SavedThing(thing, null, count, null)];
 
     // -*- ComputeConsumption: shortfall billed + queued for refill -*-
 
@@ -65,8 +65,8 @@ public static class SquadRestockUtilTests
         ThingDef med = Item(100f);
         var design = new List<SavedThing>
         {
-            new SavedThing(med, null, 1, null),
-            new SavedThing(med, null, 1, null)
+            new(med, null, 1, null),
+            new(med, null, 1, null)
         };
         var refill = new List<SquadRestockUtil.ConsumedItem>();
         // Wanted 2 total, pawn holds 0 -> 2 consumed @100, aggregated to one refill row.
@@ -116,7 +116,7 @@ public static class SquadRestockUtilTests
     // -*- ComputeEquipmentRestock: repair damaged, replace destroyed -*-
 
     private static SquadRestockUtil.PresentItem Present(ThingDef thing, int hp, int maxHp, object handle = null) =>
-        new SquadRestockUtil.PresentItem
+        new()
         {
             thing = thing, stuff = null, quality = null,
             hitPoints = hp, maxHitPoints = maxHp, handle = handle ?? new object()
@@ -138,7 +138,7 @@ public static class SquadRestockUtilTests
     public static void ComputeEquipmentRestock_Damaged_BillsDurabilityLostAndQueuesRepair()
     {
         ThingDef armor = Item(100f);
-        object handle = new object();
+        object handle = new();
         // 60/100 HP -> 40% durability lost -> 100 * 0.4 = 40.
         var present = new List<SquadRestockUtil.PresentItem> { Present(armor, 60, 100, handle) };
         var r = SquadRestockUtil.ComputeEquipmentRestock(Design(armor, 1), present);
@@ -154,7 +154,7 @@ public static class SquadRestockUtilTests
     {
         ThingDef armor = Item(100f);
         // Design wants the item; pawn no longer has it -> destroyed/lost -> full charge + replace.
-        var r = SquadRestockUtil.ComputeEquipmentRestock(Design(armor, 1), new List<SquadRestockUtil.PresentItem>());
+        var r = SquadRestockUtil.ComputeEquipmentRestock(Design(armor, 1), []);
 
         TestAssert.AreEqual(100.0, r.value);
         TestAssert.AreEqual(1, r.replacements.Count, "missing item queued for replacement");
@@ -199,8 +199,8 @@ public static class SquadRestockUtilTests
         ThingDef b = Item(200f);
         var design = new List<SavedThing>
         {
-            new SavedThing(a, null, 1, null),
-            new SavedThing(b, null, 1, null)
+            new(a, null, 1, null),
+            new(b, null, 1, null)
         };
         // a present at 50% (repair 50), b absent (replace 200) -> 250.
         var present = new List<SquadRestockUtil.PresentItem> { Present(a, 50, 100) };
@@ -214,7 +214,7 @@ public static class SquadRestockUtilTests
     [EmpireTest("SquadRestock")]
     public static void ComputeEquipmentRestock_NullDesign_ReturnsEmpty()
     {
-        var r = SquadRestockUtil.ComputeEquipmentRestock(null, new List<SquadRestockUtil.PresentItem>());
+        var r = SquadRestockUtil.ComputeEquipmentRestock(null, []);
         TestAssert.AreEqual(0.0, r.value);
         TestAssert.AreEqual(0, r.repairHandles.Count);
         TestAssert.AreEqual(0, r.replacements.Count);
@@ -227,10 +227,10 @@ public static class SquadRestockUtilTests
     //     gear above the design quality, so surviving gear was rebilled as destroyed). -*-
 
     private static List<SavedThing> DesignQ(ThingDef thing, QualityCategory quality) =>
-        new List<SavedThing> { new SavedThing(thing, null, 1, quality) };
+        [new SavedThing(thing, null, 1, quality)];
 
     private static SquadRestockUtil.PresentItem PresentQ(ThingDef thing, QualityCategory quality) =>
-        new SquadRestockUtil.PresentItem
+        new()
         {
             thing = thing, stuff = null, quality = quality,
             hitPoints = 100, maxHitPoints = 100, handle = new object()

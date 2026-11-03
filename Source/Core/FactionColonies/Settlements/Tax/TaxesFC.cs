@@ -39,8 +39,8 @@ public class TaxesFC : ILoadReferenceable, IExposable
         this.bill = bill;
         settlement = bill.settlement;
         silverAmount = 0;
-        itemTithes = new List<Thing>();
-        resourcePools = new List<ResourcePool>();
+        itemTithes = [];
+        resourcePools = [];
 
     }
 

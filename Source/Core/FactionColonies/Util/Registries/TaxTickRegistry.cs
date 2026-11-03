@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class TaxTickRegistry
 {
-    private static readonly RegistryList<ITaxTickParticipant> _list = new RegistryList<ITaxTickParticipant>();
+    private static readonly RegistryList<ITaxTickParticipant> _list = new();
 
     internal static void Register(ITaxTickParticipant taxer) => _list.Register(taxer);
     internal static void Unregister(ITaxTickParticipant taxer) => _list.Unregister(taxer);

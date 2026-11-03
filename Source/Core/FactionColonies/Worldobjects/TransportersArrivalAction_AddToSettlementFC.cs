@@ -53,7 +53,7 @@ public class TransportersArrivalAction_AddToSettlementFC : TransportersArrivalAc
 
         // Pull the pawns this comp accepts out of the pod containers so it becomes their sole
         // owner (anything left over is handed to the fallback below and never lost).
-        List<Pawn> accepted = new List<Pawn>();
+        List<Pawn> accepted = [];
         foreach (ActiveTransporterInfo transporter in transporters)
         {
             ThingOwner inner = transporter.innerContainer;
@@ -118,7 +118,7 @@ public class TransportersArrivalAction_AddToSettlementFC : TransportersArrivalAc
 
     private static List<Pawn> ExtractPawns(IEnumerable<IThingHolder> pods)
     {
-        List<Pawn> result = new List<Pawn>();
+        List<Pawn> result = [];
         foreach (IThingHolder pod in pods)
         {
             ThingOwner held = pod.GetDirectlyHeldThings();

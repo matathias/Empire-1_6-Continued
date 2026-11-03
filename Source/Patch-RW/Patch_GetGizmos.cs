@@ -18,7 +18,7 @@ public static class Patch_GetGizmos
     {
         if (__instance.parent is WorldSettlementFC)
         {
-            __result = Enumerable.Empty<Gizmo>();
+            __result = [];
             return false; // skip original. No RimWar gizmos for Empire settlements
         }
         return true;

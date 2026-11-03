@@ -16,7 +16,7 @@ namespace FactionColonies;
 /// </summary>
 public static class SquadPowerRegistry
 {
-    private static readonly List<ISquadPowerModifier> _modifiers = new List<ISquadPowerModifier>();
+    private static readonly List<ISquadPowerModifier> _modifiers = [];
     private static List<ISquadPowerModifier> _sortedCache;
 
     internal static void Register(ISquadPowerModifier modifier)
@@ -124,7 +124,7 @@ public static class SquadPowerRegistry
     private static List<ISquadPowerModifier> GetSortedModifiers()
     {
         if (_sortedCache is not null) return _sortedCache;
-        List<ISquadPowerModifier> copy = new List<ISquadPowerModifier>(_modifiers);
+        List<ISquadPowerModifier> copy = new(_modifiers);
         copy.Sort((a, b) => b.Priority.CompareTo(a.Priority)); // highest first
         _sortedCache = copy;
         return _sortedCache;

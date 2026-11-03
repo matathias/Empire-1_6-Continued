@@ -11,7 +11,7 @@ public class ResourceHilliness
 /// </summary>
 public class ResourceProductionExtension_Hilliness : ResourceProductionExtension
 {
-    public List<ResourceHilliness> resourceHilliness = new List<ResourceHilliness>();
+    public List<ResourceHilliness> resourceHilliness = [];
 
     public ResourceProductionExtension_Hilliness()
     {

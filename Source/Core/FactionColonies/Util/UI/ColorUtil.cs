@@ -8,17 +8,17 @@ namespace FactionColonies;
 /// </summary>
 public static class ColorUtil
 {
-    public static readonly Color Gray9 = new Color(0.9f, 0.9f, 0.9f);
-    public static readonly Color Gray8 = new Color(0.8f, 0.8f, 0.8f);
-    public static readonly Color Gray7 = new Color(0.7f, 0.7f, 0.7f);
-    public static readonly Color Gray6 = new Color(0.6f, 0.6f, 0.6f);
-    public static readonly Color Gray5 = new Color(0.5f, 0.5f, 0.5f);
-    public static readonly Color Gray4 = new Color(0.4f, 0.4f, 0.4f);
-    public static readonly Color Gray3 = new Color(0.3f, 0.3f, 0.3f);
-    public static readonly Color Gray2 = new Color(0.2f, 0.2f, 0.2f);
-    public static readonly Color Gray1 = new Color(0.1f, 0.1f, 0.1f);
+    public static readonly Color Gray9 = new(0.9f, 0.9f, 0.9f);
+    public static readonly Color Gray8 = new(0.8f, 0.8f, 0.8f);
+    public static readonly Color Gray7 = new(0.7f, 0.7f, 0.7f);
+    public static readonly Color Gray6 = new(0.6f, 0.6f, 0.6f);
+    public static readonly Color Gray5 = new(0.5f, 0.5f, 0.5f);
+    public static readonly Color Gray4 = new(0.4f, 0.4f, 0.4f);
+    public static readonly Color Gray3 = new(0.3f, 0.3f, 0.3f);
+    public static readonly Color Gray2 = new(0.2f, 0.2f, 0.2f);
+    public static readonly Color Gray1 = new(0.1f, 0.1f, 0.1f);
 
-    public static readonly Color Gold = new Color(0.83f, 0.68f, 0.21f);
+    public static readonly Color Gold = new(0.83f, 0.68f, 0.21f);
 
     /// <summary>
     /// Returns a new color with each of its rgb/a values multiplied by the provided factors. The post-multiplication values are clamped to the [0,1] range.
@@ -29,7 +29,7 @@ public static class ColorUtil
     /// <param name="bmag">Factor to multiply into <paramref name="c"/>'s blue element</param>
     /// <param name="amag">Factor to multiply into <paramref name="c"/>'s alpha (transparency) element</param>
     /// <returns></returns>
-    public static Color Transform(Color c, float rmag, float gmag, float bmag, float amag) => new Color(Math.Clamp(c.r * rmag, 0f, 1f),
+    public static Color Transform(Color c, float rmag, float gmag, float bmag, float amag) => new(Math.Clamp(c.r * rmag, 0f, 1f),
         Math.Clamp(c.g * gmag, 0f, 1f),
         Math.Clamp(c.b * bmag, 0f, 1f),
         Math.Clamp(c.a * amag, 0f, 1f));
@@ -88,7 +88,7 @@ public static class ColorUtil
     /// <param name="c">Color to transform</param>
     /// <param name="a">Value to set <paramref name="c"/>'s alpha to</param>
     /// <returns></returns>
-    public static Color SetA(Color c, float a) => new Color(c.r, c.g, c.b, a);
+    public static Color SetA(Color c, float a) => new(c.r, c.g, c.b, a);
 
     /// <summary>
     /// Returns a new color with the same rgb values as <paramref name="c"/> and alpha = 1

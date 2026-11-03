@@ -60,8 +60,10 @@ public static class RoadTests
     [EmpireTest("Road")]
     public static void TileEdgeKey_WorksAsDictionaryKey_ReversedLookup()
     {
-        var dict = new Dictionary<TileEdgeKey, float>();
-        dict[new TileEdgeKey(3, 5)] = 1.5f;
+        var dict = new Dictionary<TileEdgeKey, float>
+        {
+            [new TileEdgeKey(3, 5)] = 1.5f
+        };
         TestAssert.IsTrue(dict.TryGetValue(new TileEdgeKey(5, 3), out float v),
             "Lookup with the reversed pair should hit the same entry");
         TestAssert.AreEqual(1.5, v);

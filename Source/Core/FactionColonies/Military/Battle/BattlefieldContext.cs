@@ -37,7 +37,7 @@ public partial class BattlefieldContext : IExposable
     public int battleMapCreatedTick = -1;
 
     /// <summary>Ops currently using this battlefield. The context cannot be destroyed while non-empty.</summary>
-    public List<MilitaryOperation> activeOps = new List<MilitaryOperation>();
+    public List<MilitaryOperation> activeOps = [];
 
     /// <summary>True when the last op has resolved but the player is still on-map.
     /// A new op arriving in this state triggers <see cref="TryReengage"/>.</summary>
@@ -54,20 +54,20 @@ public partial class BattlefieldContext : IExposable
      * owner. Only <c>DeleteMap</c> consumes it.
      */
 
-    public List<Pawn> draftedNPCs = new List<Pawn>();
+    public List<Pawn> draftedNPCs = [];
 
     /* Loose items present on the defense map at generation time -- the settlement's own
      * "stuff". Snapshotted by RecordSettlementLoot() before any pawns spawn, so anything
      * dropped later in the fight (attacker spoils, fallen reinforcements' gear) is absent
      * and remains takeable. Consumed by the caravan-reform restriction patch via
      * IsSettlementLoot(). */
-    public HashSet<Thing> settlementLoot = new HashSet<Thing>();
+    public HashSet<Thing> settlementLoot = [];
 
     /* Non-combatant settlement inhabitants recruited onto this battle map (see
      * RecruitMapInhabitants). Used only to draw their on-map name labels as a dimmed
      * version of the defenders' label color, so the player can tell the fighting squad
      * from civilian filler at a glance. */
-    public HashSet<Pawn> civilianPawns = new HashSet<Pawn>();
+    public HashSet<Pawn> civilianPawns = [];
 
     public bool battleMapInitialized;
     // True once an offensive op has attached to this tile. Distinguishes offense contexts
@@ -91,13 +91,13 @@ public partial class BattlefieldContext : IExposable
     /// <summary>All attacker pawns across every active op at this tile (derived).</summary>
     public IEnumerable<Pawn> attackerPawns =>
         activeOps is null
-            ? Enumerable.Empty<Pawn>()
+            ? []
             : activeOps.SelectMany(o => o?.aggressor?.pawns ?? Enumerable.Empty<Pawn>());
 
     /// <summary>All defender pawns across every active op at this tile (derived).</summary>
     public IEnumerable<Pawn> defenderPawns =>
         activeOps is null
-            ? Enumerable.Empty<Pawn>()
+            ? []
             : activeOps.SelectMany(o => o?.defender?.pawns ?? Enumerable.Empty<Pawn>());
 
     /* Attackers/defenders still able to fight: excludes downed, dead, and truly-gone pawns.
@@ -148,10 +148,10 @@ public partial class BattlefieldContext : IExposable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (activeOps is null) activeOps = new List<MilitaryOperation>();
-            if (draftedNPCs is null) draftedNPCs = new List<Pawn>();
-            if (settlementLoot is null) settlementLoot = new HashSet<Thing>();
-            if (civilianPawns is null) civilianPawns = new HashSet<Pawn>();
+            activeOps ??= [];
+            draftedNPCs ??= [];
+            settlementLoot ??= [];
+            civilianPawns ??= [];
 
             // Repopulate the transient Empire battle-map marker for a save reloaded mid-battle, so
             // vanilla settlement defeat/removal stays suppressed on the reloaded offense map (and
@@ -281,8 +281,7 @@ public partial class BattlefieldContext : IExposable
             if (pawn.RaceProps?.intelligence != Intelligence.Humanlike) continue;
             if (pawn.GetLord() is null)
             {
-                if (battleLord is null)
-                    battleLord = defenderPawns.FirstOrDefault(d => d.GetLord() is not null)?.GetLord();
+                battleLord ??= defenderPawns.FirstOrDefault(d => d.GetLord() is not null)?.GetLord();
                 if (battleLord is not null && !battleLord.ownedPawns.Contains(pawn))
                     battleLord.AddPawn(pawn);
             }
@@ -347,7 +346,7 @@ public partial class BattlefieldContext : IExposable
         if (map is null) return false;
         Faction player = Faction.OfPlayer;
         List<Thing> holders = map.listerThings.ThingsInGroup(ThingRequestGroup.ThingHolder);
-        List<Thing> contained = new List<Thing>();
+        List<Thing> contained = [];
         for (int i = 0; i < holders.Count; i++)
         {
             IThingHolder holder = AsTransporterHolder(holders[i]);
@@ -432,7 +431,7 @@ public partial class BattlefieldContext : IExposable
     public void Join(MilitaryOperation op)
     {
         if (op is null) return;
-        if (activeOps is null) activeOps = new List<MilitaryOperation>();
+        activeOps ??= [];
         if (!activeOps.Contains(op)) activeOps.Add(op);
         awaitingPlayerExit = false;
     }
@@ -552,7 +551,7 @@ public partial class BattlefieldContext : IExposable
         Faction empireFaction = FindFC.EmpireFaction;
         if (player is null) return;
 
-        List<Thing> toDestroy = new List<Thing>();
+        List<Thing> toDestroy = [];
         foreach (Thing thing in map.listerThings.AllThings)
         {
             if (thing.Faction is null) continue;
@@ -586,7 +585,7 @@ public partial class BattlefieldContext : IExposable
         Faction empireFaction = FindFC.EmpireFaction;
         if (empireFaction is null) return;
 
-        List<Thing> toDestroy = new List<Thing>();
+        List<Thing> toDestroy = [];
         foreach (Thing thing in map.listerThings.AllThings)
         {
             if (thing.Faction != empireFaction) continue;
@@ -620,7 +619,7 @@ public partial class BattlefieldContext : IExposable
        which vetoes any un-forbid attempt on these items while the battle map exists. */
     private void RecordSettlementLoot()
     {
-        if (settlementLoot is null) settlementLoot = new HashSet<Thing>();
+        settlementLoot ??= [];
         settlementLoot.Clear();
         if (map is null) return;
 
@@ -856,10 +855,10 @@ public partial class BattlefieldContext : IExposable
         Func<List<Pawn>, IntVec3, PawnsArrivalModeDef, LordJob> lordFactory,
         bool spawnInBaseInterior = false)
     {
-        List<Pawn> spawned = new List<Pawn>();
+        List<Pawn> spawned = [];
         if (map is null || force is null || faction is null || targetPawnList is null) return spawned;
 
-        IncidentParms parms = new IncidentParms
+        IncidentParms parms = new()
         {
             target = map,
             faction = faction,
@@ -1017,7 +1016,7 @@ public partial class BattlefieldContext : IExposable
             else
             {
                 LordMaker.MakeNewLord(FindFC.EmpireFaction,
-                    new LordJob_DefendColony(ourSettlement, new Dictionary<Pawn, Pawn>()),
+                    new LordJob_DefendColony(ourSettlement, []),
                     map, spawnedReinforcements);
             }
 
@@ -1055,7 +1054,7 @@ public partial class BattlefieldContext : IExposable
         if (idleDefenders.Any())
         {
             LordMaker.MakeNewLord(empireFaction,
-                new LordJob_DefendColony(settlement, new Dictionary<Pawn, Pawn>()),
+                new LordJob_DefendColony(settlement, []),
                 map, idleDefenders);
             if (op?.defender?.pawns is not null)
             {
@@ -1086,7 +1085,7 @@ public partial class BattlefieldContext : IExposable
 
         // Remove pawns spawned by KCSG/VBGE that don't belong to Empire or the player.
         Faction empireFaction = FindFC.EmpireFaction;
-        List<Pawn> toRemove = new List<Pawn>();
+        List<Pawn> toRemove = [];
         foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
         {
             if (!pawn.RaceProps.Humanlike) continue;
@@ -1236,7 +1235,7 @@ public partial class BattlefieldContext : IExposable
             }
         }
 
-        if (friendlies is null) friendlies = new List<Pawn>();
+        friendlies ??= [];
 
         var spawnedFriendlies = new List<Pawn>();
         foreach (var friendly in friendlies)
@@ -1323,7 +1322,7 @@ public partial class BattlefieldContext : IExposable
         int cap = MilSquadFC.MaxSquadSize;
 
         // Draw affordable designs (with replacement) until the loadout budget is met, capped at MaxSquadSize
-        MilSquadFC outfit = new MilSquadFC(false);   // not registered in Military.squads; transient
+        MilSquadFC outfit = new(false);   // not registered in Military.squads; transient
         double spent = 0;
         int count = 0;
         while (count < cap && (count == 0 || spent < budget))
@@ -1334,7 +1333,7 @@ public partial class BattlefieldContext : IExposable
             count++;
         }
 
-        MercenarySquadFC militia = new MercenarySquadFC();
+        MercenarySquadFC militia = new();
         militia.settlement = settlement;   // faction colors + per-pawn settlement back-ref
         militia.outfit = outfit;
         // Generate + equip the pawns now. CheckInitialization (called later in the reused squad
@@ -1418,7 +1417,7 @@ public partial class BattlefieldContext : IExposable
         {
             if (inhabitants.Any())
                 defenseLord = LordMaker.MakeNewLord(empireFaction,
-                    new LordJob_DefendColony(settlement, new Dictionary<Pawn, Pawn>()), map, inhabitants);
+                    new LordJob_DefendColony(settlement, []), map, inhabitants);
         }
         else
         {
@@ -1477,7 +1476,7 @@ public partial class BattlefieldContext : IExposable
                 IAutoDefender extDefender = AutoDefenderRegistry.FindByWorldObject(op.externalDefenderSource);
                 if (extDefender is null) continue;
 
-                List<Pawn> survivingPawns = new List<Pawn>();
+                List<Pawn> survivingPawns = [];
                 foreach (Pawn pawn in op.defender.pawns)
                 {
                     if (pawn is not null && !pawn.Dead && !pawn.Destroyed)
@@ -1560,7 +1559,7 @@ public partial class BattlefieldContext : IExposable
         // Pawns aboard a VehiclePawn are not directly spawned, but the vehicle itself
         // is a player-faction Pawn — detecting the vehicle is enough to keep the map
         // alive so the player can drive off and reform the caravan.
-        List<Pawn> playerPawns = new List<Pawn>();
+        List<Pawn> playerPawns = [];
         bool anyMobile = false;
         foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
         {
@@ -1583,7 +1582,7 @@ public partial class BattlefieldContext : IExposable
             foreach (var lord in map.lordManager.lords.ListFullCopy())
                 map.lordManager.RemoveLord(lord);
 
-            List<Pawn> empireDefenders = new List<Pawn>();
+            List<Pawn> empireDefenders = [];
             foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
                 if (pawn.Faction == empireFaction && !pawn.Dead && !pawn.Downed)
                     empireDefenders.Add(pawn);
@@ -1709,7 +1708,7 @@ public partial class BattlefieldContext : IExposable
     public void RegisterPawnsAsDefenders(List<Pawn> pawns, bool assignToLord)
     {
         WorldSettlementFC settlement = ParentSettlement;
-        HashSet<Pawn> defenderSet = new HashSet<Pawn>(defenderPawns);
+        HashSet<Pawn> defenderSet = new(defenderPawns);
 
         if (assignToLord)
         {

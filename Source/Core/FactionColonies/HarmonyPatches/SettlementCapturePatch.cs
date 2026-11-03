@@ -15,8 +15,8 @@ namespace FactionColonies;
 public static class SettlementCaptureTracker
 {
     // Transient (not serialized): a save mid-dialog simply re-prompts on load.
-    public static readonly HashSet<PlanetTile> awaitingDecision = new HashSet<PlanetTile>();
-    public static readonly HashSet<PlanetTile> razeApproved = new HashSet<PlanetTile>();
+    public static readonly HashSet<PlanetTile> awaitingDecision = [];
+    public static readonly HashSet<PlanetTile> razeApproved = [];
 
     // A tile lingering in awaitingDecision across a game switch would make the CheckDefeated
     // prefix suppress the re-prompt forever (stranding the base), so reset with the other
@@ -44,7 +44,7 @@ public static class SettlementCaptureTracker
         string name = factionBase.LabelCap;
         TechLevel tech = factionBase.Faction.def.techLevel;
 
-        Dialog_MessageBox dialog = new Dialog_MessageBox(
+        Dialog_MessageBox dialog = new(
             "FCCaptureOrRazeDesc".Translate(name, FindFC.EmpireName),
             "FCCaptureButton".Translate(), () => ChooseCapture(tile, name, tech, factionBase),
             "FCRazeButton".Translate(), () => ChooseRaze(tile, factionBase),

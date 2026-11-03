@@ -12,7 +12,7 @@ namespace FactionColonies;
 /// </summary>
 public abstract class Dialog_SquadPicker : Window
 {
-    public override Vector2 InitialSize => new Vector2(820f, 600f);
+    public override Vector2 InitialSize => new(820f, 600f);
 
     /* Card layout constants — mirror HireSquadsWindow so all squad-listing surfaces share rhythm. */
     protected const float Pad = 4f;
@@ -66,7 +66,7 @@ public abstract class Dialog_SquadPicker : Window
     protected bool availableOnly = true;
     protected SortMode sort = SortMode.WinChance;
 
-    protected List<RowData> rows = new List<RowData>();
+    protected List<RowData> rows = [];
     protected bool rowsDirty = true;
 
     /* Abstract: subclass renders its own header (title + target/incoming-engagement summary)
@@ -126,7 +126,7 @@ public abstract class Dialog_SquadPicker : Window
         subHeaderY += 4f;
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect squadHeader = new Rect(0, subHeaderY, inRect.width, SquadHeaderH);
+        Rect squadHeader = new(0, subHeaderY, inRect.width, SquadHeaderH);
         Widgets.DrawHighlight(squadHeader);
         UIUtil.ClampedLabel(squadHeader, "FCSquadPickerSelectSquad".Translate());
 
@@ -135,15 +135,15 @@ public abstract class Dialog_SquadPicker : Window
         float toolbarHeight = 24f;
         float sortButtonW = 200f;
         float checkboxW = 160f;
-        Rect sortButton = new Rect(inRect.xMax - sortButtonW - (margin * 2), toolbarY, sortButtonW, toolbarHeight);
-        Rect checkbox = new Rect(sortButton.x - checkboxW - margin, toolbarY, checkboxW, toolbarHeight);
+        Rect sortButton = new(inRect.xMax - sortButtonW - (margin * 2), toolbarY, sortButtonW, toolbarHeight);
+        Rect checkbox = new(sortButton.x - checkboxW - margin, toolbarY, checkboxW, toolbarHeight);
         Text.Anchor = TextAnchor.MiddleLeft;
         bool prevAvailableOnly = availableOnly;
         Widgets.CheckboxLabeled(checkbox, "FCSquadPickerAvailableOnly".Translate(), ref availableOnly);
         if (prevAvailableOnly != availableOnly) rowsDirty = true;
         if (UIUtil.ClampedButtonText(sortButton, "FCSquadPickerSort".Translate(SortLabel(sort))))
         {
-            List<FloatMenuOption> opts = new List<FloatMenuOption>();
+            List<FloatMenuOption> opts = [];
             if (ShowWinChance)
                 opts.Add(new FloatMenuOption(SortLabel(SortMode.WinChance), () => { sort = SortMode.WinChance; rowsDirty = true; }));
             if (ShowTravel)
@@ -157,7 +157,7 @@ public abstract class Dialog_SquadPicker : Window
         float listTop = toolbarY + 32f;
         float buttonsHeight = 36f;
         float listHeight = inRect.height - listTop - buttonsHeight - 6f;
-        Rect listRect = new Rect(0, listTop, inRect.width, listHeight);
+        Rect listRect = new(0, listTop, inRect.width, listHeight);
         Widgets.DrawMenuSection(listRect);
         DrawCardList(listRect);
 
@@ -193,7 +193,7 @@ public abstract class Dialog_SquadPicker : Window
 
         float innerX = listRect.x + Pad;
         float innerW = listRect.width - Pad * 2f;
-        Rect viewRect = new Rect(innerX, listRect.y + Pad, innerW, listRect.height - Pad * 2f);
+        Rect viewRect = new(innerX, listRect.y + Pad, innerW, listRect.height - Pad * 2f);
         float totalH = rows.Count * (CardH + RowGap) + ExtraRowsHeight;
         Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref scrollPos, totalH);
 
@@ -202,7 +202,7 @@ public abstract class Dialog_SquadPicker : Window
         bool alternate = false;
         for (int i = 0; i < rows.Count; i++)
         {
-            Rect cardRect = new Rect(0f, runningY, scrollRect.width, CardH);
+            Rect cardRect = new(0f, runningY, scrollRect.width, CardH);
             if (alternate) Widgets.DrawHighlight(cardRect);
             DrawSquadCard(cardRect, rows[i], now, alternate);
             runningY += CardH + RowGap;
@@ -264,7 +264,7 @@ public abstract class Dialog_SquadPicker : Window
         TextAnchor anchorBefore = Text.Anchor;
         Text.Font = GameFont.Tiny;
 
-        Rect boxRect = new Rect(boxX, cardRect.y + 4f, boxW, cardRect.height - 8f);
+        Rect boxRect = new(boxX, cardRect.y + 4f, boxW, cardRect.height - 8f);
         float powEffW = ShowWinChance ? boxW * 0.5f : boxW;
 
         if (ShowForceMetrics)
@@ -301,9 +301,9 @@ public abstract class Dialog_SquadPicker : Window
             // full-saturation label stays legible even when the color is red.
             float winX = boxX + (ShowForceMetrics ? powEffW : 0f);
             float winW = ShowForceMetrics ? (boxW - powEffW) : boxW;
-            Rect winRect = new Rect(winX, boxRect.y, winW, boxRect.height);
+            Rect winRect = new(winX, boxRect.y, winW, boxRect.height);
             const float gradH = 28f;
-            Rect gradRect = new Rect(winRect.x - 10f, winRect.center.y - gradH * 0.5f, winRect.width + 20f, gradH);
+            Rect gradRect = new(winRect.x - 10f, winRect.center.y - gradH * 0.5f, winRect.width + 20f, gradH);
             Color gradColor = ColorUtil.TransformRGB(winColor, 0.3f);
             TexLoad.DrawHorizontalPeakGradient(gradRect, gradColor);
 
@@ -394,7 +394,7 @@ public abstract class Dialog_SquadPicker : Window
         // Inspect button — bottom of right column, same width as the status badge above.
         // Drawn *before* the whole-card invisible button so its click is consumed first.
         MercenarySquadFC capturedSquad = squad;
-        Rect inspectRect = new Rect(rightColX, detailY + 1f, rightColW, btnH);
+        Rect inspectRect = new(rightColX, detailY + 1f, rightColW, btnH);
         if (UIUtil.ButtonFlat(inspectRect, "FCMilitaryTableInspect".Translate(), highlighted: isHighlighted))
         {
             Find.WindowStack.Add(new Dialog_SquadInspection(capturedSquad));
@@ -491,14 +491,14 @@ public abstract class Dialog_SquadPicker : Window
 
     protected static string SortLabel(SortMode mode)
     {
-        switch (mode)
+        return mode switch
         {
-            case SortMode.WinChance: return "FCSquadColWinChance".Translate();
-            case SortMode.Travel: return "FCSquadColTravel".Translate();
-            case SortMode.Power: return "FCSquadColPower".Translate();
-            case SortMode.Name: return "FCSquadColName".Translate();
-        }
-        return "?";
+            SortMode.WinChance => "FCSquadColWinChance".Translate(),
+            SortMode.Travel => "FCSquadColTravel".Translate(),
+            SortMode.Power => "FCSquadColPower".Translate(),
+            SortMode.Name => "FCSquadColName".Translate(),
+            _ => "?",
+        };
     }
 
     protected void ApplySort()

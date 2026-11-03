@@ -5,30 +5,30 @@ namespace FactionColonies;
 public static class AccentUtil
 {
     // === Profit/Loss (Overview, Bills) ===
-    public static readonly Color Income = new Color(0.2f, 0.85f, 0.3f);
-    public static readonly Color Expense = new Color(1.0f, 0.35f, 0.3f);
+    public static readonly Color Income = new(0.2f, 0.85f, 0.3f);
+    public static readonly Color Expense = new(1.0f, 0.35f, 0.3f);
 
     // === Military Status ===
-    public static readonly Color MilUnderAttack = new Color(1.0f, 0.25f, 0.25f);
-    public static readonly Color MilActiveMission = new Color(1.0f, 0.65f, 0.1f);
-    public static readonly Color MilCooldown = new Color(1.0f, 0.85f, 0.1f);
-    public static readonly Color MilReady = new Color(0.2f, 0.85f, 0.3f);
+    public static readonly Color MilUnderAttack = new(1.0f, 0.25f, 0.25f);
+    public static readonly Color MilActiveMission = new(1.0f, 0.65f, 0.1f);
+    public static readonly Color MilCooldown = new(1.0f, 0.85f, 0.1f);
+    public static readonly Color MilReady = new(0.2f, 0.85f, 0.3f);
     // Blue — for a unit holding a passive watch (e.g. a defensive outpost projecting its aura).
     // Reads as "standing by / shielding", distinct from MilReady's "armed & active" green.
-    public static readonly Color MilDefensive = new Color(0.3f, 0.6f, 0.9f);
-    public static readonly Color MilInactive = new Color(0.65f, 0.65f, 0.65f);
+    public static readonly Color MilDefensive = new(0.3f, 0.6f, 0.9f);
+    public static readonly Color MilInactive = new(0.65f, 0.65f, 0.65f);
     // Bright amber — for squads whose DeploymentCost exceeds settlement budget. Red is
     // reserved for under-attack so this needs to read as "attention" without "danger".
-    public static readonly Color MilUnderfunded = new Color(1.0f, 0.75f, 0.0f);
+    public static readonly Color MilUnderfunded = new(1.0f, 0.75f, 0.0f);
 
     // === Stat Thresholds ===
-    public static readonly Color StatGood = new Color(0.2f, 0.85f, 0.3f);
+    public static readonly Color StatGood = new(0.2f, 0.85f, 0.3f);
     public static readonly Color StatMedGood = Color.yellow;
-    public static readonly Color StatMedBad = new Color(1f, 0.7f, 0.2f);
+    public static readonly Color StatMedBad = new(1f, 0.7f, 0.2f);
     public static readonly Color StatBad = Color.red; //new Color(1f, 0.35f, 0.3f);
 
     // === Generic Color settings ===
-    public static readonly Color Military = new Color(1.0f, 0.25f, 0.25f);
+    public static readonly Color Military = new(1.0f, 0.25f, 0.25f);
 
     public static Color GetSettlementAccent(WorldSettlementFC s)
     {

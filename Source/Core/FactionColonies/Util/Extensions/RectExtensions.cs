@@ -11,7 +11,7 @@ static class RectExtensions
 
     public static Rect CopyAndShift(this Rect rect, float x, float y)
     {
-        Rect newRect = new Rect(rect);
+        Rect newRect = new(rect);
         newRect.x += x;
         newRect.y += y;
 

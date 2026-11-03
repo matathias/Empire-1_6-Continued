@@ -32,7 +32,7 @@ public static class InventoryListWidget
         {
             float cur = displayUnit.CurrentInventoryMass;
             float cap = displayUnit.CarryCapacity;
-            Rect massRect = new Rect(rect.x, btnY, rect.width, headerHeight);
+            Rect massRect = new(rect.x, btnY, rect.width, headerHeight);
             Color colorBefore = GUI.color;
             if (cur > cap + 0.0001f) GUI.color = Color.red;
             Text.Font = GameFont.Tiny;
@@ -43,7 +43,7 @@ public static class InventoryListWidget
             if (opts.canEdit && opts.showHeaderButtons)
             {
                 float addW = 110f;
-                Rect addBtnRect = new Rect(rect.xMax - addW, btnY, addW, headerHeight);
+                Rect addBtnRect = new(rect.xMax - addW, btnY, addW, headerHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 if (UIUtil.ClampedButtonText(addBtnRect, "fcAddInventoryItem".Translate()))
@@ -52,10 +52,10 @@ public static class InventoryListWidget
         }
 
         // List
-        Rect listOutRect = new Rect(rect.x, btnY + headerHeight + 2f, rect.width, rect.height - headerHeight - 4f);
+        Rect listOutRect = new(rect.x, btnY + headerHeight + 2f, rect.width, rect.height - headerHeight - 4f);
 
-        List<SavedThing> weapons = displayUnit?.weapons ?? new List<SavedThing>();
-        List<SavedThing> items = displayUnit?.inventory ?? new List<SavedThing>();
+        List<SavedThing> weapons = displayUnit?.weapons ?? [];
+        List<SavedThing> items = displayUnit?.inventory ?? [];
 
         int weaponRows = 0;
         foreach (SavedThing w in weapons) if (w.thing is not null) weaponRows++;
@@ -70,7 +70,7 @@ public static class InventoryListWidget
         foreach (SavedThing w in weapons)
         {
             if (w.thing is null) continue;
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + drawn * rowHeight, scrollViewRect.width, rowHeight);
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + drawn * rowHeight, scrollViewRect.width, rowHeight);
             Widgets.DrawHighlightSelected(row);
             DrawItemRowCommon(row, w, "fcInventoryWeaponSuffix".Translate());
             drawn++;
@@ -82,7 +82,7 @@ public static class InventoryListWidget
             SavedThing item = items[i];
             if (item.thing is null) continue;
             int index = i;
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + drawn * rowHeight, scrollViewRect.width, rowHeight);
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + drawn * rowHeight, scrollViewRect.width, rowHeight);
             if (drawn % 2 == 0) Widgets.DrawHighlight(row);
             drawn++;
 
@@ -103,20 +103,20 @@ public static class InventoryListWidget
             // Count controls: [ - ] N [ + ]
             float rightEdge = opts.canEdit ? removeRect.x - 4f : row.xMax - 4f;
             float countAreaW = opts.canEdit ? 86f : 30f;
-            Rect countArea = new Rect(rightEdge - countAreaW, row.y, countAreaW, rowHeight);
+            Rect countArea = new(rightEdge - countAreaW, row.y, countAreaW, rowHeight);
             Text.Font = GameFont.Tiny;
             if (opts.canEdit)
             {
-                Rect minus = new Rect(countArea.x, countArea.y + 4f, 20f, rowHeight - 8f);
+                Rect minus = new(countArea.x, countArea.y + 4f, 20f, rowHeight - 8f);
                 if (UIUtil.ClampedButtonText(minus, "-"))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
                     if (target is not null) target.SetInventoryCount(index, Mathf.Max(0, item.count - 1));
                 }
-                Rect num = new Rect(countArea.x + 22f, countArea.y, 40f, rowHeight);
+                Rect num = new(countArea.x + 22f, countArea.y, 40f, rowHeight);
                 Text.Anchor = TextAnchor.MiddleCenter;
                 UIUtil.ClampedLabel(num, item.count.ToString());
-                Rect plus = new Rect(countArea.x + 64f, countArea.y + 4f, 20f, rowHeight - 8f);
+                Rect plus = new(countArea.x + 64f, countArea.y + 4f, 20f, rowHeight - 8f);
                 if (UIUtil.ClampedButtonText(plus, "+"))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
@@ -143,20 +143,20 @@ public static class InventoryListWidget
      * count/remove controls) by passing a narrowed rect. */
     private static void DrawItemRowCommon(Rect row, SavedThing item, string suffix)
     {
-        Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
+        Rect iconRect = new(row.x + 2f, row.y + 2f, IconSize, IconSize);
         Widgets.ThingIcon(iconRect, item.thing, item.stuff);
 
         const float infoBtnSize = 24f;
-        Rect infoRect = new Rect(iconRect.xMax + 2f, row.y + (row.height - infoBtnSize) / 2f, infoBtnSize, infoBtnSize);
+        Rect infoRect = new(iconRect.xMax + 2f, row.y + (row.height - infoBtnSize) / 2f, infoBtnSize, infoBtnSize);
         Widgets.InfoCardButton(infoRect.x, infoRect.y, item.thing, item.stuff);
 
         float massVal = item.thing.GetStatValueAbstract(StatDefOf.Mass, item.stuff) * Mathf.Max(1, item.count);
-        Rect valueRect = new Rect(row.xMax - 100f, row.y, 96f, row.height);
+        Rect valueRect = new(row.xMax - 100f, row.y, 96f, row.height);
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleRight;
         UIUtil.ClampedLabel(valueRect, massVal.ToString("F1") + " kg  $" + item.MarketValue.ToString("F0"));
 
-        Rect labelRect = new Rect(infoRect.xMax + 4f, row.y, valueRect.x - infoRect.xMax - 8f, row.height);
+        Rect labelRect = new(infoRect.xMax + 4f, row.y, valueRect.x - infoRect.xMax - 8f, row.height);
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleLeft;
         string label = item.stuff is not null

@@ -60,7 +60,7 @@ public partial class XenotypeFilter : IExposable
         }
     }
 
-    private Dictionary<ThingDef, List<XenotypeDef>> raceXenoAssociations = new Dictionary<ThingDef, List<XenotypeDef>>();
+    private Dictionary<ThingDef, List<XenotypeDef>> raceXenoAssociations = [];
 
 
     public XenotypeFilter()
@@ -540,7 +540,7 @@ public partial class XenotypeFilter : IExposable
         raceXenoAssociations.Clear();
         foreach (ThingDef race in races.Weights.Keys)
         {
-            List<XenotypeDef> associatedXenotypes = new List<XenotypeDef>();
+            List<XenotypeDef> associatedXenotypes = [];
             foreach (PawnKindDef pawnKind in FactionCache.AllPawnKindDefs)
             {
                 if (pawnKind.race != race || pawnKind.xenotypeSet is null) continue;
@@ -680,7 +680,7 @@ public partial class XenotypeFilter : IExposable
                 // Each list gets its OWN PawnGenOption instance: ReweightPawnGroupMakers rewrites
                 // selectionWeight per list, so a shared object would have the last-written list's
                 // weight leak into every other list it was added to.
-                PawnGenOption Opt() => new PawnGenOption
+                PawnGenOption Opt() => new()
                 {
                     kind = clone,
                     selectionWeight = raceWeight
@@ -724,13 +724,13 @@ public partial class XenotypeFilter : IExposable
         PawnKindTemplateUtil.InvalidateCache();
 
         // Clear existing pawn group makers
-        faction.pawnGroupMakers = new List<PawnGroupMaker>
-        {
-            new PawnGroupMaker { kindDef = PawnGroupKindDefOf.Combat },
-            new PawnGroupMaker { kindDef = PawnGroupKindDefOf.Trader },
-            new PawnGroupMaker { kindDef = PawnGroupKindDefOf.Settlement },
-            new PawnGroupMaker { kindDef = PawnGroupKindDefOf.Peaceful }
-        };
+        faction.pawnGroupMakers =
+        [
+            new() { kindDef = PawnGroupKindDefOf.Combat },
+            new() { kindDef = PawnGroupKindDefOf.Trader },
+            new() { kindDef = PawnGroupKindDefOf.Settlement },
+            new() { kindDef = PawnGroupKindDefOf.Peaceful }
+        ];
         /* Reset the customXenotype cache, just in case xenotypes have been removed or added since the last time we were here */
         ValidateCustomXenotypes();
 
@@ -774,12 +774,7 @@ public partial class XenotypeFilter : IExposable
 
         foreach (MercenarySquadFC mercenarySquadFc in militaryFC.mercenarySquads)
         {
-            List<Mercenary> newMercs = new List<Mercenary>();
-            foreach (Mercenary mercenary in mercenarySquadFc.mercenaries)
-            {
-                // For now, keep existing mercenaries but could be updated to use xenotype system
-                newMercs.Add(mercenary);
-            }
+            List<Mercenary> newMercs = [.. mercenarySquadFc.mercenaries];
             mercenarySquadFc.mercenaries = newMercs;
         }
     }
@@ -819,7 +814,7 @@ public partial class XenotypeFilter : IExposable
     }
     public List<XenotypeDef> GetValidXenotypesForRequest(PawnGenerationRequest request)
     {
-        List<XenotypeDef> output = new List<XenotypeDef>();
+        List<XenotypeDef> output = [];
         if (xenotypes.Count == 0)
         {
             /* We really shouldn't ever end up in this case, but *just* in case, we've included a bail-out. */
@@ -850,7 +845,7 @@ public partial class XenotypeFilter : IExposable
     }
     public List<string> GetValidCustomXenotypesForRequest(PawnGenerationRequest request)
     {
-        List<string> output = new List<string>();
+        List<string> output = [];
         if (customXenotypes.Count == 0)
         {
             return output;

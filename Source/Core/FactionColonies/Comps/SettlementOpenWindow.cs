@@ -36,7 +36,7 @@ public class WorldObjectComp_SettlementOpenWindow : WorldObjectComp
     }
     private Command OpenSettlementWindowAction(WorldSettlementFC worldsettlement)
     {
-        Command_Action openWindow = new Command_Action
+        Command_Action openWindow = new()
         {
             defaultLabel = "FCOpenSettlementWindowDefaultLabel".Translate(),
             defaultDesc = "FCOpenSettlementWindowDefaultDesc".Translate(),

@@ -4,8 +4,8 @@ namespace FactionColonies;
 
 public static class FoundingValidatorRegistry
 {
-    private static readonly RegistryList<ISettlementFoundingValidator> _list = new RegistryList<ISettlementFoundingValidator>();
-    private static readonly List<string> _emptyDescriptions = new List<string>();
+    private static readonly RegistryList<ISettlementFoundingValidator> _list = new();
+    private static readonly List<string> _emptyDescriptions = [];
 
     internal static void Register(ISettlementFoundingValidator validator) => _list.Register(validator);
     internal static void Unregister(ISettlementFoundingValidator validator) => _list.Unregister(validator);
@@ -41,7 +41,7 @@ public static class FoundingValidatorRegistry
     public static List<string> GetCostDescriptions(PlanetTile tile, WorldSettlementDef type, float costMultiplier = 1f)
     {
         if (_list.Count == 0) return _emptyDescriptions;
-        List<string> descriptions = new List<string>();
+        List<string> descriptions = [];
         RegistryDispatch.Each(_list.Items, validator =>
         {
             string desc = validator.GetAdditionalCostDescription(tile, type, costMultiplier);

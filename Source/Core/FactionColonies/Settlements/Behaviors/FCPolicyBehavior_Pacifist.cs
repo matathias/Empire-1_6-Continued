@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public class FCPolicyBehavior_Pacifist : FCPolicyBehavior
 {
-    private CooldownAbility diplomatCooldown = new CooldownAbility();
+    private CooldownAbility diplomatCooldown = new();
 
     public override void PostInitialize()
     {

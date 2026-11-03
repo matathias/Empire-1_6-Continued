@@ -22,7 +22,7 @@ class LordJob_ColonistsIdle : LordJob
 
     public override StateGraph CreateGraph()
     {
-        StateGraph stateGraph = new StateGraph();
+        StateGraph stateGraph = new();
         stateGraph.AddToil(new LordToil_IdleNearby());
         return stateGraph;
     }

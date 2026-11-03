@@ -55,7 +55,7 @@ public static class SquadMapTeardownUtil
         Faction player = Faction.OfPlayer;
         if (map is null || player is null) return;
 
-        List<Pawn> toEvacuate = new List<Pawn>();
+        List<Pawn> toEvacuate = [];
         foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned.ToList())
         {
             if (pawn.Faction != player || pawn.Dead) continue;
@@ -72,7 +72,7 @@ public static class SquadMapTeardownUtil
                 $"missed it. Delivering it home instead of destroying it; please report this as a teardown gap.");
         }
 
-        List<Thing> goods = new List<Thing>(toEvacuate.Count);
+        List<Thing> goods = new(toEvacuate.Count);
         foreach (Pawn pawn in toEvacuate)
         {
             if (pawn.Spawned) pawn.DeSpawn();

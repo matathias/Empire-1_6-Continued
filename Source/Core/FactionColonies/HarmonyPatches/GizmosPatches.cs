@@ -44,7 +44,7 @@ class PawnDraftGizmos
             Pawn pawn = __instance;
             var milComp = settlementFc.MilitaryComp;
 
-            Command_Toggle draftColonists = new Command_Toggle
+            Command_Toggle draftColonists = new()
             {
                 hotKey = KeyBindingDefOf.Command_ColonistDraft,
                 isActive = () => false,
@@ -117,7 +117,7 @@ class PawnDraftGizmos
 
                         if (milComp.defenders.Any())
                         {
-                            List<Pawn> rejoin = new List<Pawn> { found };
+                            List<Pawn> rejoin = [found];
                             if (merc is not null)
                                 foreach (Mercenary sub in merc.SubPawns())
                                     if (sub?.pawn is not null && sub.pawn.Spawned && !sub.pawn.Dead)
@@ -170,7 +170,7 @@ class PawnDraftGizmos
         if (pawn.Faction == empire && FindFC.Military?.FindSubPawnWrapper(pawn) is null)
         {
             Pawn p = pawn;
-            Command_Toggle draft = new Command_Toggle
+            Command_Toggle draft = new()
             {
                 hotKey = KeyBindingDefOf.Command_ColonistDraft,
                 isActive = () => false,
@@ -216,7 +216,7 @@ class PawnDraftGizmos
                         Mercenary merc = FindFC.Military?.FindMercByPawn(found);
                         if (merc is not null) MercenaryPawnFactory.RebindMechs(merc);
 
-                        List<Pawn> rejoin = new List<Pawn> { found };
+                        List<Pawn> rejoin = [found];
                         if (merc is not null)
                             foreach (Mercenary sub in merc.SubPawns())
                                 if (sub?.pawn is not null && sub.pawn.Spawned && !sub.pawn.Dead)

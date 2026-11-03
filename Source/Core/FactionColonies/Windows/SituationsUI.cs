@@ -57,7 +57,7 @@ public static class SituationsUI
         // Line 2: progress bar with stage ticks (left) + stage label & net rate (right)
         float barY = y + 22f;
         float barW = w * 0.55f;
-        Rect barRect = new Rect(x, barY, barW, 16f);
+        Rect barRect = new(x, barY, barW, 16f);
         UIUtil.DrawProgressBarColors(barRect, sit.Progress01, new Color(0.16f, 0.16f, 0.16f), accent);
         DrawStageTicks(barRect, sit.def);
         Text.Anchor = TextAnchor.MiddleCenter;
@@ -71,12 +71,12 @@ public static class SituationsUI
         Color rateColor = rate >= 0f ? new Color(0.6f, 0.85f, 0.6f) : new Color(0.85f, 0.6f, 0.6f);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect infoRect = new Rect(x + barW + Pad, barY, w - barW - Pad, 16f);
+        Rect infoRect = new(x + barW + Pad, barY, w - barW - Pad, 16f);
         UIUtil.DrawColoredLabel(infoRect, stageLabel + "   " + rateText, rateColor);
 
         // Line 3: approach selector
         float ctrlY = barY + 20f;
-        Rect approachRect = new Rect(x, ctrlY, Mathf.Min(240f, w), 20f);
+        Rect approachRect = new(x, ctrlY, Mathf.Min(240f, w), 20f);
         DrawApproachSelector(approachRect, sit, faction);
 
         Text.Font = fontBefore;
@@ -89,7 +89,7 @@ public static class SituationsUI
             foreach (SituationAction action in sit.def.Handler.GetCustomActions(sit))
             {
                 if (action is null) continue;
-                Rect aRect = new Rect(x, ay, Mathf.Min(280f, w), ActionRowHeight - 2f);
+                Rect aRect = new(x, ay, Mathf.Min(280f, w), ActionRowHeight - 2f);
                 bool enabled = action.DisabledReason.NullOrEmpty();
                 if (UIUtil.ClampedButtonText(aRect, action.Label, active: enabled))
                 {
@@ -126,7 +126,7 @@ public static class SituationsUI
 
         if (UIUtil.ClampedButtonText(rect, label))
         {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            List<FloatMenuOption> options = [];
             if (sit.def.approaches is not null)
             {
                 foreach (FCSituationApproachDef approach in sit.def.approaches)

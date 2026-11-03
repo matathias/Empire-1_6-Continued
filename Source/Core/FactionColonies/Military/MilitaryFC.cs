@@ -3,20 +3,20 @@
 //Mil customization class
 public class MilitaryFC : IExposable
 {
-    public List<MilUnitFC> units = new List<MilUnitFC>();
-    public List<MilSquadFC> squads = new List<MilSquadFC>();
+    public List<MilUnitFC> units = [];
+    public List<MilSquadFC> squads = [];
 
-    public List<MercenarySquadFC> mercenarySquads = new List<MercenarySquadFC>();
-    public List<MilitaryFireSupport> fireSupport = new List<MilitaryFireSupport>();
-    public List<MilitaryFireSupport> fireSupportDefs = new List<MilitaryFireSupport>();
+    public List<MercenarySquadFC> mercenarySquads = [];
+    public List<MilitaryFireSupport> fireSupport = [];
+    public List<MilitaryFireSupport> fireSupportDefs = [];
     public MilUnitFC blankUnit;
-    public List<Mercenary> deadPawns = new List<Mercenary>();
+    public List<Mercenary> deadPawns = [];
 
     /* Opt-in: when true, dead squad members are auto-refilled from empire silver after battles
      * and on each tax tick (see TryAutoReplaceSquad). Toggled from the squad-pool header. */
     public bool autoReplaceDeadPawns;
 
-    private HashSet<Pawn> mercenaryPawnSet = new HashSet<Pawn>();
+    private HashSet<Pawn> mercenaryPawnSet = [];
 
     /* ID Counters */
     private int nextUnitId = 1;
@@ -84,41 +84,25 @@ public class MilitaryFC : IExposable
     public MilitaryFC()
     {
         //set load stuff here
-        if (units is null)
-        {
-            units = new List<MilUnitFC>();
-        }
+        units ??= [];
 
-        if (squads is null)
-        {
-            squads = new List<MilSquadFC>();
-        }
+        squads ??= [];
 
         if (blankUnit is null)
         {
             //blankUnit = new MilUnitFC(true);
         }
 
-        if (mercenarySquads is null)
-        {
-            mercenarySquads = new List<MercenarySquadFC>();
-        }
+        mercenarySquads ??= [];
 
-        if (deadPawns is null)
-        {
-            deadPawns = new List<Mercenary>();
-        }
+        deadPawns ??= [];
 
-        if (fireSupportDefs is null)
-        {
-            fireSupportDefs = new List<MilitaryFireSupport>();
-        }
+        fireSupportDefs ??= [];
     }
 
     public void CheckMilitaryUtilForErrors()
     {
-        if (blankUnit is null)
-            blankUnit = MilTemplateFactory.CreateUnit(true);
+        blankUnit ??= MilTemplateFactory.CreateUnit(true);
         if (squads is null) return;
 
         try { ValidateTemplateUnits(); }
@@ -232,7 +216,7 @@ public class MilitaryFC : IExposable
             // Permanent removal — pawn is gone, or merc no longer holds this pawn (was reassigned).
             if (pawn is null || pawn.Destroyed || pawn.Dead || merc?.pawn != pawn)
             {
-                if (toRemove is null) toRemove = new List<Pawn>();
+                toRemove ??= [];
                 toRemove.Add(pawn);
                 continue;
             }
@@ -279,7 +263,7 @@ public class MilitaryFC : IExposable
             bool stillNeeds = isMech ? MechRepairUtility.CanRepair(pawn) : HasInjuries(pawn);
             if (pawn.Dead || pawn.Destroyed || !stillNeeds)
             {
-                if (toRemove is null) toRemove = new List<Pawn>();
+                toRemove ??= [];
                 toRemove.Add(pawn);
             }
         }
@@ -295,7 +279,7 @@ public class MilitaryFC : IExposable
     /// </summary>
     private void RebuildInjuredMercs()
     {
-        injuredMercsByPawn = new Dictionary<Pawn, Mercenary>();
+        injuredMercsByPawn = [];
         foreach (MercenarySquadFC squad in mercenarySquads)
         {
             if (squad.Deployment.IsPhysicallyDeployed()) continue;
@@ -308,7 +292,7 @@ public class MilitaryFC : IExposable
     /// </summary>
     public void RegisterSquadInjuries(MercenarySquadFC squad)
     {
-        if (injuredMercsByPawn is null) injuredMercsByPawn = new Dictionary<Pawn, Mercenary>();
+        injuredMercsByPawn ??= [];
         if (squad.mercenaries is null) return;
         // Register regardless of current spawn state. TickMercenaryHealing decides whether
         // to actually heal each tick, so on-map pawns stay tracked and resume healing on
@@ -450,7 +434,7 @@ public class MilitaryFC : IExposable
 
     public void ResetSquads()
     {
-        squads = new List<MilSquadFC>();
+        squads = [];
     }
 
     /// <summary>Removes <paramref name="unit"/> from the units pool. For every merc that
@@ -469,13 +453,10 @@ public class MilitaryFC : IExposable
             foreach (Mercenary m in squad.mercenaries)
             {
                 if (m is null || m.loadout != unit) continue;
-                if (m.ownedLoadout is null)
-                {
-                    // Prefer the equipped-truth snapshot. Fall back to cloning the
-                    // about-to-be-deleted unit template if currentLoadout was never set
-                    // (empty slot or unmigrated save).
-                    m.ownedLoadout = (m.currentLoadout ?? unit).Clone();
-                }
+                // Prefer the equipped-truth snapshot. Fall back to cloning the
+                // about-to-be-deleted unit template if currentLoadout was never set
+                // (empty slot or unmigrated save).
+                m.ownedLoadout ??= (m.currentLoadout ?? unit).Clone();
                 m.loadout = null;
             }
         }

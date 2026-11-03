@@ -50,19 +50,19 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
             return Math.Min(slots, def.maxBuildingCount);
         }
     }
-    private List<BuildingFC> buildings = new List<BuildingFC>();
-    private List<SettlementBuildingComp> settlementBuildingComps = new List<SettlementBuildingComp>();
+    private List<BuildingFC> buildings = [];
+    private List<SettlementBuildingComp> settlementBuildingComps = [];
     // Subset of settlementBuildingComps whose type overrides Tick(). Derived, not scribed; kept in
     // lockstep with settlementBuildingComps via AddComp/RemoveComp/RebuildTickingList so CompTick can
     // iterate it directly without dispatching to no-op (data-only) building comps.
-    [Unsaved] private List<SettlementBuildingComp> settlementBuildingComps_Ticking = new List<SettlementBuildingComp>();
+    [Unsaved] private List<SettlementBuildingComp> settlementBuildingComps_Ticking = [];
 
     public List<BuildingFC> Buildings => buildings;
 
     public int NumBuildingSlots => WorldSettlement.GetBuildingSlots();
 
     private bool dirtyConstructionCache = true;
-    private List<BuildingFC> constructionCache = new List<BuildingFC>();
+    private List<BuildingFC> constructionCache = [];
 
     private WorldSettlementFC cachedWorldSettlementParent = null;
     public WorldSettlementFC WorldSettlement
@@ -113,7 +113,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
     /// </summary>
     public List<BuildingFCDef> GetBuildingsDependingOn(BuildingFCDef building)
     {
-        List<BuildingFCDef> result = new List<BuildingFCDef>();
+        List<BuildingFCDef> result = [];
         foreach (BuildingFC bfc in buildings)
         {
             if (bfc.def == BuildingFCDefOf.Empty || bfc.def == BuildingFCDefOf.Construction) continue;
@@ -163,7 +163,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
     {
         if (dirtyConstructionCache)
         {
-            List<BuildingFC> list = new List<BuildingFC>();
+            List<BuildingFC> list = [];
             foreach (BuildingFC building in buildings)
             {
                 if (building.def == BuildingFCDefOf.Construction)
@@ -657,25 +657,23 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
 
     private void RebuildFilters()
     {
-        filters = new List<BuildingFilter>();
-
-        filters.Add(new BuildingFilter("FCBuildingFilterAll".Translate(), null, _ => true));
-
-        filters.Add(new BuildingFilter("FCBuildingFilterHappiness".Translate(), TexLoad.iconHappiness, b =>
-            b.statModifiers is not null && b.statModifiers.Any(m =>
-                (m.stat == FCStatDefOf.happinessLostBase || m.stat == FCStatDefOf.happinessGainedBase ||
-                 m.stat == FCStatDefOf.happinessLostMultiplier || m.stat == FCStatDefOf.happinessGainedMultiplier)
-                && m.IsBeneficial())));
-
-        filters.Add(new BuildingFilter("FCBuildingFilterBasetax".Translate(), TexLoad.iconProsperity, b =>
-            b.statModifiers is not null && b.statModifiers.Any(m =>
-                (m.stat == FCStatDefOf.taxBasePercentage || m.stat == FCStatDefOf.taxBaseRandomModifier)
-                && m.IsBeneficial())));
-
-        filters.Add(new BuildingFilter("FCBuildingFilterWorkers".Translate(), null, b =>
-            b.statModifiers is not null && b.statModifiers.Any(m =>
-                (m.stat == FCStatDefOf.workerBaseMax || m.stat == FCStatDefOf.workerBaseOverMax || m.stat == FCStatDefOf.workerBaseCost)
-                && m.IsBeneficial())));
+        filters =
+        [
+            new BuildingFilter("FCBuildingFilterAll".Translate(), null, _ => true),
+            new BuildingFilter("FCBuildingFilterHappiness".Translate(), TexLoad.iconHappiness, b =>
+                b.statModifiers is not null && b.statModifiers.Any(m =>
+                    (m.stat == FCStatDefOf.happinessLostBase || m.stat == FCStatDefOf.happinessGainedBase ||
+                     m.stat == FCStatDefOf.happinessLostMultiplier || m.stat == FCStatDefOf.happinessGainedMultiplier)
+                    && m.IsBeneficial())),
+            new BuildingFilter("FCBuildingFilterBasetax".Translate(), TexLoad.iconProsperity, b =>
+                b.statModifiers is not null && b.statModifiers.Any(m =>
+                    (m.stat == FCStatDefOf.taxBasePercentage || m.stat == FCStatDefOf.taxBaseRandomModifier)
+                    && m.IsBeneficial())),
+            new BuildingFilter("FCBuildingFilterWorkers".Translate(), null, b =>
+                b.statModifiers is not null && b.statModifiers.Any(m =>
+                    (m.stat == FCStatDefOf.workerBaseMax || m.stat == FCStatDefOf.workerBaseOverMax || m.stat == FCStatDefOf.workerBaseCost)
+                    && m.IsBeneficial())),
+        ];
 
         if (WorldSettlement.MilitaryComp is not null)
         {
@@ -802,10 +800,8 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
 
     private void RecoverCompsOnLoad()
     {
-        if (buildings is null)
-            buildings = new List<BuildingFC>();
-        if (settlementBuildingComps is null)
-            settlementBuildingComps = new List<SettlementBuildingComp>();
+        buildings ??= [];
+        settlementBuildingComps ??= [];
         settlementBuildingComps.RemoveAll(c => c is null);
         foreach (SettlementBuildingComp comp in settlementBuildingComps)
         {

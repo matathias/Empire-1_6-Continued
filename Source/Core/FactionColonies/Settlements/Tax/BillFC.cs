@@ -38,8 +38,8 @@ public class BillFC : ILoadReferenceable, IExposable
     public int loadID;
     public int dueTick;
     public string label;
-    public List<BillStatPenalty> unpaidPenalties = new List<BillStatPenalty>();
-    public List<BillStatPenalty> latePaidPenalties = new List<BillStatPenalty>();
+    public List<BillStatPenalty> unpaidPenalties = [];
+    public List<BillStatPenalty> latePaidPenalties = [];
 
     //ref
     public WorldSettlementFC settlement;
@@ -59,8 +59,8 @@ public class BillFC : ILoadReferenceable, IExposable
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
-            if (unpaidPenalties is null) unpaidPenalties = new List<BillStatPenalty>();
-            if (latePaidPenalties is null) latePaidPenalties = new List<BillStatPenalty>();
+            unpaidPenalties ??= [];
+            latePaidPenalties ??= [];
         }
     }
 

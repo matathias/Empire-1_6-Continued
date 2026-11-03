@@ -30,7 +30,7 @@ public class CodexTab_Buildings : ICodexTab
     private static readonly Color HighlightColor = CodexUIUtil.HighlightColor;
 
     /* Tech level colors */
-    private static readonly Dictionary<TechLevel, Color> TechColors = new Dictionary<TechLevel, Color>
+    private static readonly Dictionary<TechLevel, Color> TechColors = new()
     {
         { TechLevel.Undefined, new Color(0.6f, 0.6f, 0.6f) },
         { TechLevel.Neolithic, new Color(0.6f, 0.5f, 0.3f) },
@@ -43,13 +43,13 @@ public class CodexTab_Buildings : ICodexTab
 
     /* Data model */
     private readonly CodexWindow parentWindow;
-    private readonly List<TechGroup> allTechGroups = new List<TechGroup>();
+    private readonly List<TechGroup> allTechGroups = [];
     private bool built;
     private BuildingFCDef selectedBuilding;
     private string searchTerm = "";
 
     /* Upgrade tree root reverse lookup */
-    private readonly Dictionary<BuildingFCDef, BuildingFCDef> upgradeRootMap = new Dictionary<BuildingFCDef, BuildingFCDef>();
+    private readonly Dictionary<BuildingFCDef, BuildingFCDef> upgradeRootMap = [];
 
     /* Scroll state */
     private Vector2 leftScroll;
@@ -57,19 +57,19 @@ public class CodexTab_Buildings : ICodexTab
     private Vector2 rightScroll;
 
     /* Expand/collapse state */
-    private readonly HashSet<TechLevel> expandedGroups = new HashSet<TechLevel>();
+    private readonly HashSet<TechLevel> expandedGroups = [];
 
     /* Truncation cache */
-    private readonly Dictionary<string, string> truncateCacheRight = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> truncateCacheRight = [];
 
     /* Filtered building cache */
     private string lastAppliedSearch = "";
-    private readonly Dictionary<TechLevel, List<BuildingFCDef>> filteredCache = new Dictionary<TechLevel, List<BuildingFCDef>>();
+    private readonly Dictionary<TechLevel, List<BuildingFCDef>> filteredCache = [];
 
     private class TechGroup
     {
         public TechLevel techLevel;
-        public List<BuildingFCDef> buildings = new List<BuildingFCDef>();
+        public List<BuildingFCDef> buildings = [];
     }
 
     public string TabLabel => "FCCodexTabBuildings".Translate();
@@ -89,7 +89,7 @@ public class CodexTab_Buildings : ICodexTab
 
         foreach (var kvp in FactionCache.BuildingDefsByTechLevel.OrderBy(g => (int)g.Key))
         {
-            TechGroup tg = new TechGroup
+            TechGroup tg = new()
             {
                 techLevel = kvp.Key,
                 buildings = kvp.Value
@@ -99,7 +99,7 @@ public class CodexTab_Buildings : ICodexTab
         }
 
         // Build direct-parent map (child -> its immediate parent in the upgrade tree)
-        Dictionary<BuildingFCDef, BuildingFCDef> directParent = new Dictionary<BuildingFCDef, BuildingFCDef>();
+        Dictionary<BuildingFCDef, BuildingFCDef> directParent = [];
         foreach (BuildingFCDef b in DefDatabase<BuildingFCDef>.AllDefsListForReading)
         {
             if (b.upgrades is null) continue;
@@ -154,7 +154,7 @@ public class CodexTab_Buildings : ICodexTab
         filteredCache.Clear();
         foreach (TechGroup tg in allTechGroups)
         {
-            List<BuildingFCDef> visible = new List<BuildingFCDef>();
+            List<BuildingFCDef> visible = [];
             foreach (BuildingFCDef b in tg.buildings)
             {
                 if (MatchesSearch(b))
@@ -202,7 +202,7 @@ public class CodexTab_Buildings : ICodexTab
     {
         EnsureBuilt();
         // Search bar at top
-        Rect searchRect = new Rect(rect.x, rect.y, rect.width, SearchBarHeight);
+        Rect searchRect = new(rect.x, rect.y, rect.width, SearchBarHeight);
         string prevSearch = searchTerm;
         Text.Font = GameFont.Small;
         searchTerm = Widgets.TextField(searchRect, searchTerm);
@@ -222,7 +222,7 @@ public class CodexTab_Buildings : ICodexTab
 
         // Building list below search bar
         float listTop = searchRect.yMax + SmallMargin;
-        Rect listRect = new Rect(rect.x, listTop, rect.width, rect.yMax - listTop);
+        Rect listRect = new(rect.x, listTop, rect.width, rect.yMax - listTop);
         float totalHeight = CalculateLeftPaneHeight(listRect.width);
         Rect viewRect = ScrollUtil.BeginScrollView(listRect, ref leftScroll, totalHeight);
         float curY = 0f;
@@ -236,7 +236,7 @@ public class CodexTab_Buildings : ICodexTab
             Color techColor = GetTechColor(tg.techLevel);
 
             // Group header
-            Rect groupRect = new Rect(0f, curY, viewRect.width, GroupHeaderHeight);
+            Rect groupRect = new(0f, curY, viewRect.width, GroupHeaderHeight);
             if (CodexUIUtil.DrawGroupHeader(groupRect, GetTechLabel(tg.techLevel), techColor, isExpanded, CodexUIUtil.GroupBgColor, 20f))
             {
                 if (isExpanded) expandedGroups.Remove(tg.techLevel);
@@ -250,7 +250,7 @@ public class CodexTab_Buildings : ICodexTab
             // Building entries
             foreach (BuildingFCDef building in visible)
             {
-                Rect entryRect = new Rect(10f, curY, viewRect.width - 10f, EntryRowHeight);
+                Rect entryRect = new(10f, curY, viewRect.width - 10f, EntryRowHeight);
                 bool isSelected = selectedBuilding == building;
 
                 if (CodexUIUtil.DrawEntryRow(entryRect, building.LabelCap, techColor, isSelected,
@@ -311,7 +311,7 @@ public class CodexTab_Buildings : ICodexTab
         float titleTextX = 0f;
         if (selectedBuilding.Icon is not null)
         {
-            Rect iconBgRect = new Rect(0f, curY, TitleIconSize, TitleIconSize);
+            Rect iconBgRect = new(0f, curY, TitleIconSize, TitleIconSize);
             Widgets.DrawBoxSolid(iconBgRect, ColorUtil.TransformA(accent, 0.25f));
             UIUtil.DrawColoredBox(iconBgRect, ColorUtil.TransformA(accent, 0.6f));
             GUI.DrawTexture(iconBgRect.ContractedBy(3f), selectedBuilding.Icon);
@@ -335,7 +335,7 @@ public class CodexTab_Buildings : ICodexTab
         if (!selectedBuilding.desc.NullOrEmpty())
         {
             Text.Font = GameFont.Small;
-            Rect descRect = new Rect(0f, curY, contentWidth, 100f);
+            Rect descRect = new(0f, curY, contentWidth, 100f);
             Widgets.LabelCacheHeight(ref descRect, selectedBuilding.FormattedDesc);
             curY += descRect.height + Margin;
             CodexUIUtil.ResetText();
@@ -456,7 +456,7 @@ public class CodexTab_Buildings : ICodexTab
             {
                 float cx = AccentBarWidth + Margin;
                 float cw = w - cx - Margin;
-                Rect contentRect = new Rect(cx, y, cw, contentHeight);
+                Rect contentRect = new(cx, y, cw, contentHeight);
                 section.DrawSection(selectedBuilding, contentRect);
                 return y + contentHeight;
             });
@@ -482,12 +482,12 @@ public class CodexTab_Buildings : ICodexTab
 
     private float DrawClickableBuilding(float curY, float x, float width, BuildingFCDef building, string prefix = "")
     {
-        Rect rowRect = new Rect(x, curY, width - x - Margin, UpgradeRowHeight);
+        Rect rowRect = new(x, curY, width - x - Margin, UpgradeRowHeight);
         float textX = x;
 
         if (building.Icon is not null)
         {
-            Rect iconRect = new Rect(x, curY + (UpgradeRowHeight - IconSmall) * 0.5f, IconSmall, IconSmall);
+            Rect iconRect = new(x, curY + (UpgradeRowHeight - IconSmall) * 0.5f, IconSmall, IconSmall);
             GUI.DrawTexture(iconRect, building.Icon);
             textX = iconRect.xMax + SmallMargin;
         }
@@ -518,7 +518,7 @@ public class CodexTab_Buildings : ICodexTab
 
         foreach (WorldSettlementDef def in settlements)
         {
-            Rect rowRect = new Rect(x, curY, width - x - Margin, UpgradeRowHeight);
+            Rect rowRect = new(x, curY, width - x - Margin, UpgradeRowHeight);
             bool isHover = Mouse.IsOver(rowRect);
 
             Text.Font = GameFont.Small;
@@ -562,13 +562,13 @@ public class CodexTab_Buildings : ICodexTab
     {
         float indent = depth * IndentWidth;
         float x = baseX + indent;
-        Rect rowRect = new Rect(x, curY, width - x - Margin, UpgradeRowHeight);
+        Rect rowRect = new(x, curY, width - x - Margin, UpgradeRowHeight);
         float textX = x;
         bool isCurrent = building == selectedBuilding;
 
         if (building.Icon is not null)
         {
-            Rect iconRect = new Rect(x, curY + (UpgradeRowHeight - IconSmall) * 0.5f, IconSmall, IconSmall);
+            Rect iconRect = new(x, curY + (UpgradeRowHeight - IconSmall) * 0.5f, IconSmall, IconSmall);
             GUI.DrawTexture(iconRect, building.Icon);
             textX = iconRect.xMax + SmallMargin;
         }

@@ -37,7 +37,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     // The value read from the save on load, before re-stamping. Migration reads this. Not scribed.
     private string loadedModVersion;
     public string LoadedModVersion => loadedModVersion;
-    private Vector2 startingLongLat = new Vector2();
+    private Vector2 startingLongLat = new();
     public Vector2 StartingLongLat => startingLongLat;
     // Latch: the founding longlat is captured once (first session with a player home map) and then frozen.
     // Prevents FirstTick from re-deriving it every load and clobbering it to (0,0) during nomad phase.
@@ -89,16 +89,16 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     /// <summary>
     /// Used by other mods to find our settlements. Move, rename, or otherwise modify at your own peril
     /// </summary>
-    public List<WorldSettlementFC> settlements = new List<WorldSettlementFC>();
+    public List<WorldSettlementFC> settlements = [];
 
     /// <summary>
     /// Maps an Empire trade-caravan Lord (by loadID) to the settlement it counts as "home", computed
     /// once when the caravan spawns (see LordPatches). Used to route a slaughtered caravan's penalty
     /// to the right settlement. Cleaned up when the lord ends; pruned daily as a backstop.
     /// </summary>
-    public Dictionary<int, WorldSettlementFC> caravanHomeSettlements = new Dictionary<int, WorldSettlementFC>();
-    private List<WorldSettlementFC> _caravanHomes = new List<WorldSettlementFC>();
-    private List<int> _caravanHomeIDs = new List<int>();
+    public Dictionary<int, WorldSettlementFC> caravanHomeSettlements = [];
+    private List<WorldSettlementFC> _caravanHomes = [];
+    private List<int> _caravanHomeIDs = [];
 
     /* Timing & Scheduling */
     public int timeStart = Find.TickManager.TicksGame;
@@ -157,58 +157,58 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     /* Faction-level stat cache. Invalidated by InvalidateFactionStatCache (e.g. on policy
      * mutations); read by GetFactionStatValue. Policy/trait/edict/behavior state moved to
      * PolicyManager; access via FindFC.PolicyManager. */
-    private Dictionary<FCStatDef, double> cachedFactionStatValues = new Dictionary<FCStatDef, double>();
+    private Dictionary<FCStatDef, double> cachedFactionStatValues = [];
 
-    public PolicyManager policyManager = new PolicyManager();
+    public PolicyManager policyManager = new();
 
     /* Events & Bills */
-    public FCEventManager eventManager = new FCEventManager();
+    public FCEventManager eventManager = new();
 
     // The canonical read path for the event queue. Delegates to the manager.
     public IReadOnlyList<FCEvent> Events => eventManager.Events;
     public int EventsVersion => eventManager.Version;
 
     /* Situations — long-lived progress meters; effects delegate to the event system. */
-    public FCSituationManager situationManager = new FCSituationManager();
+    public FCSituationManager situationManager = new();
 
     /// <summary>
     /// Holds and indexes all active <see cref="MilitaryOperation"/>s. Single source of truth
     /// for military operation state. <c>SendMilitary</c> / <c>AttackPlayerSettlement</c>
     /// route through <c>CreateOffensiveOp</c> / <c>CreateDefensiveOp</c> on this manager.
     /// </summary>
-    public MilitaryOperationManager militaryOperationManager = new MilitaryOperationManager();
+    public MilitaryOperationManager militaryOperationManager = new();
 
     public float randomEventLastAdded = 0f;
 
     /* Tax / billing: bills list, due timer, autoresolve toggle, ID counters */
-    public TaxLedger taxLedger = new TaxLedger();
+    public TaxLedger taxLedger = new();
 
     /* Resources */
-    public List<ResourcePool> resourcePools = new List<ResourcePool>();
+    public List<ResourcePool> resourcePools = [];
     public ThingWithComps powerOutput;
-    public List<ResourceDisplay> factionResources = new List<ResourceDisplay>();
+    public List<ResourceDisplay> factionResources = [];
     public List<ResourceDisplay> FactionResources => factionResources;
 
     /* Faction-level cooldown for the "Hire Laborers" action (Empire sends temporary laborers). */
-    public CooldownAbility laborerCooldown = new CooldownAbility();
+    public CooldownAbility laborerCooldown = new();
 
     /* Military & Roads */
-    public MilitaryFC military = new MilitaryFC();
-    public EmpireThreatAdaptation threatAdaptation = new EmpireThreatAdaptation();
-    public FCRoadBuilder roadBuilder = new FCRoadBuilder();
+    public MilitaryFC military = new();
+    public EmpireThreatAdaptation threatAdaptation = new();
+    public FCRoadBuilder roadBuilder = new();
 
     /* Enemy settlements the player conquered and chose to capture, awaiting deferred
      * conversion into Empire settlements once they leave the looted base map. */
-    public List<PendingSettlementCapture> pendingCaptures = new List<PendingSettlementCapture>();
+    public List<PendingSettlementCapture> pendingCaptures = [];
 
     /* Caravans */
-    public List<PlanetTile> settlementCaravansList = new List<PlanetTile>(); //list of locations caravans already sent to
+    public List<PlanetTile> settlementCaravansList = []; //list of locations caravans already sent to
     /// <summary>
     /// Player-selected caravan types. Strings are logical identifiers:
     /// resource defNames (e.g. "RTD_Food"), "Exotic", or "Slaver".
     /// Resolved to actual TraderKindDefs in UpdateFactionDef().
     /// </summary>
-    public List<string> enabledCaravanTypes = new List<string>();
+    public List<string> enabledCaravanTypes = [];
 
     /* Leveling */
     public const int MaxFactionLevel = 5;
@@ -244,7 +244,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
     // Pre-FCEventManager events list. Mirrored under the legacy "events" XML key;
     // drained into eventManager during ResolvingCrossRefs. DO NOT READ — use Events.
-    private List<FCEvent> events = new List<FCEvent>();
+    private List<FCEvent> events = [];
 
     // Pre-1.5 MilitaryCustomizationUtil -> MilitaryFC rename. Loaded into this buffer
     // during LoadingVars, swapped onto `military` during PostLoadInit.
@@ -351,34 +351,34 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         if (Scribe.mode == LoadSaveMode.PostLoadInit && settlements is null)
         {
             LogUtil.Warning("Loaded a null 'settlements' list, expected non-null. Recovering with an empty list; save may be corrupted.");
-            settlements = new List<WorldSettlementFC>();
+            settlements = [];
         }
 
         Scribe_Deep.Look(ref policyManager, "policyManager");
-        if (policyManager is null) policyManager = new PolicyManager();
+        policyManager ??= new PolicyManager();
 
         Scribe_Deep.Look(ref eventManager, "eventManager");
-        if (eventManager is null) eventManager = new FCEventManager();
+        eventManager ??= new FCEventManager();
 
         Scribe_Deep.Look(ref situationManager, "situationManager");
-        if (situationManager is null) situationManager = new FCSituationManager();
+        situationManager ??= new FCSituationManager();
 
         Scribe_Deep.Look(ref militaryOperationManager, "militaryOperationManager");
-        if (militaryOperationManager is null) militaryOperationManager = new MilitaryOperationManager();
+        militaryOperationManager ??= new MilitaryOperationManager();
 
         Scribe_Collections.Look(ref settlementCaravansList, "settlementCaravansList", LookMode.Value);
         Scribe_Collections.Look(ref enabledCaravanTypes, "enabledCaravanTypes", LookMode.Value);
         Scribe_Collections.Look(ref caravanHomeSettlements, "caravanHomeSettlements", LookMode.Value, LookMode.Reference, ref _caravanHomeIDs, ref _caravanHomes);
         // Re-init ONLY in PostLoadInit — a reference-valued dictionary re-inited before ResolvingCrossRefs crashes the cross-ref resolve
         if (Scribe.mode == LoadSaveMode.PostLoadInit && caravanHomeSettlements is null)
-            caravanHomeSettlements = new Dictionary<int, WorldSettlementFC>();
+            caravanHomeSettlements = [];
 
         //New Production types
         Scribe_Collections.Look(ref resourcePools, "resourcePools", LookMode.Deep);
         if (resourcePools is null)
         {
             LogUtil.Warning("Loaded a null 'resourcePools' list, expected non-null. Recovering with an empty list; save may be corrupted.");
-            resourcePools = new List<ResourcePool>();
+            resourcePools = [];
         }
         Scribe_References.Look(ref powerOutput, "powerOutput");
 
@@ -396,11 +396,11 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
         //Tax/billing
         Scribe_Deep.Look(ref taxLedger, "taxLedger");
-        if (taxLedger is null) taxLedger = new TaxLedger();
+        taxLedger ??= new TaxLedger();
 
         //Hire-laborers action cooldown
         Scribe_Deep.Look(ref laborerCooldown, "laborerCooldown");
-        if (laborerCooldown is null) laborerCooldown = new CooldownAbility();
+        laborerCooldown ??= new CooldownAbility();
 
         //Road builder
         Scribe_Deep.Look(ref roadBuilder, "roadBuilder");
@@ -412,12 +412,12 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
         //Threat adaptation
         Scribe_Deep.Look(ref threatAdaptation, "threatAdaptation");
-        if (threatAdaptation is null) threatAdaptation = new EmpireThreatAdaptation();
+        threatAdaptation ??= new EmpireThreatAdaptation();
 
         //Pending player-colony settlement captures (deferred conversion)
         Scribe_Collections.Look(ref pendingCaptures, "pendingCaptures", LookMode.Deep);
         if (Scribe.mode == LoadSaveMode.PostLoadInit && pendingCaptures is null)
-            pendingCaptures = new List<PendingSettlementCapture>();
+            pendingCaptures = [];
 
         //Settlement Leveling
         Scribe_Values.Look(ref factionLevel, "factionLevel");
@@ -539,7 +539,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
              * keeps FindFC.Military non-null and hands clones non-colliding loadIDs. */
             // Pre-1.5 military rename swap + new-instance fallback.
             if (military is null && _legacyMilitary is not null) military = _legacyMilitary;
-            if (military is null) military = new MilitaryFC();
+            military ??= new MilitaryFC();
             _legacyMilitary = null;
 
             // ID counters -> military.SeedNextIds
@@ -845,7 +845,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         // Auto-open patch notes for each mod that has new entries exceeding the player's threshold
         if (FCSettings.patchNoteAutoOpenThreshold != PatchNoteType.Undefined)
         {
-            HashSet<string> modIds = new HashSet<string>();
+            HashSet<string> modIds = [];
             foreach (PatchNoteDef def in DefDatabase<PatchNoteDef>.AllDefsListForReading)
                 modIds.Add(def.modId);
 
@@ -1051,28 +1051,18 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
     private static int GetMilitaryTargetWeight(int militaryLevel)
     {
-        switch (militaryLevel)
+        return militaryLevel switch
         {
-            case 0:
-            case 1:
-                return 10;
-            case 2:
-            case 3:
-                return 7;
-            case 4:
-            case 5:
-                return 3;
-            default:
-                return 1;
-        }
+            0 or 1 => 10,
+            2 or 3 => 7,
+            4 or 5 => 3,
+            _ => 1,
+        };
     }
 
     public void FireSupportTick()
     {
-        if (military.fireSupport is null)
-        {
-            military.fireSupport = new List<MilitaryFireSupport>();
-        }
+        military.fireSupport ??= [];
         if (military.fireSupport.Count == 0)
         {
             return;
@@ -1104,7 +1094,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         foreach (BattlefieldContext ctx in mgr.battlefields.Values)
         {
             if (ctx is null || !ctx.isOffense) continue;
-            if (contexts is null) contexts = new List<BattlefieldContext>();
+            contexts ??= [];
             contexts.Add(ctx);
         }
         if (contexts is null) return;
@@ -1189,14 +1179,14 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     }
 
     private static readonly TechLevel[] TechLevelDescending =
-    {
+    [
         TechLevel.Archotech,
         TechLevel.Ultra,
         TechLevel.Spacer,
         TechLevel.Industrial,
         TechLevel.Medieval,
         TechLevel.Neolithic,
-    };
+    ];
 
     private void RecomputeTechLevel()
     {
@@ -1287,7 +1277,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     {
         if (DirtyGrandThingListFlag)
         {
-            grandThingList = new List<ThingDef>();
+            grandThingList = [];
             foreach (WorldSettlementFC settlement in settlements)
             {
                 if (settlement is null) continue;
@@ -2120,7 +2110,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     public void UpdateFactionDef(TechLevel tech, ref Faction faction)
     {
         FactionDef replacingDef;
-        ThingFilter apparelStuffFilter = new ThingFilter();
+        ThingFilter apparelStuffFilter = new();
         FactionDef def = faction.def;
 
         switch (tech)
@@ -2169,7 +2159,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
     private void InitEnabledCaravanTypes()
     {
-        enabledCaravanTypes = new List<string>();
+        enabledCaravanTypes = [];
         foreach (ResourceTypeDef rtd in FactionCache.TitheableResourceTypeDefs)
         {
             if (rtd.ResourceTypeAllowedByTech(_techLevel))
@@ -2204,7 +2194,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     /// </summary>
     private List<TraderKindDef> BuildCaravanTraderKinds(TechLevel tech)
     {
-        List<TraderKindDef> result = new List<TraderKindDef>();
+        List<TraderKindDef> result = [];
         bool isNeolithic = tech <= TechLevel.Medieval;
 
         if (enabledCaravanTypes.NullOrEmpty())
@@ -2357,7 +2347,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         {
             if (kvp.Value is null || !LordStillExists(kvp.Key))
             {
-                if (toRemove is null) toRemove = new List<int>();
+                toRemove ??= [];
                 toRemove.Add(kvp.Key);
             }
         }
@@ -2427,9 +2417,9 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     public bool ValidateSettlementCaravansList()
     {
         bool foundInvalidCaravan = false;
-        List<PlanetTile> matched = new List<PlanetTile>();
-        List<PlanetTile> toAdd = new List<PlanetTile>();
-        List<PlanetTile> toRemove = new List<PlanetTile>();
+        List<PlanetTile> matched = [];
+        List<PlanetTile> toAdd = [];
+        List<PlanetTile> toRemove = [];
 
         foreach (FCEvent evt in Events)
         {
@@ -2568,7 +2558,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
                 if (mil is not null && mil.IsMercenaryPawn(p)) continue; // merc animals / bonded mounts
                 if (p.IsPrisoner || p.HostFaction is not null) continue; // under player custody
 
-                if (toEvict is null) toEvict = new List<Pawn>();
+                toEvict ??= [];
                 toEvict.Add(p);
             }
 

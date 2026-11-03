@@ -19,7 +19,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
     /// Override per-resource in XML when the pool conflates very different value tiers
     /// (e.g. animals + animal products).
     /// </summary>
-    public IntRange varietyRange = new IntRange(15, 25);
+    public IntRange varietyRange = new(15, 25);
 
     /// <summary>
     /// Hard cap on total pawns spawned per generator run. Applies to any race-bearing
@@ -70,7 +70,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
 
         // Aggregate budget and ThingDefs across all settlements for this resource
         double totalBudget = 0;
-        HashSet<ThingDef> allThingDefs = new HashSet<ThingDef>();
+        HashSet<ThingDef> allThingDefs = [];
 
         foreach (WorldSettlementFC settlement in factionComp.settlements)
         {
@@ -129,8 +129,8 @@ public class EmpireCaravanStockGenerator : StockGenerator
         /* Split candidates: any race-bearing ThingDef yields Pawns and is subject to
            maxPawnCount; everything else is an item. Order within each bucket is
            preserved from the already-shuffled candidates. */
-        List<ThingDef> pawnCandidates = new List<ThingDef>();
-        List<ThingDef> itemCandidates = new List<ThingDef>();
+        List<ThingDef> pawnCandidates = [];
+        List<ThingDef> itemCandidates = [];
         foreach (ThingDef td in candidates)
         {
             if (td.race is not null)
@@ -154,7 +154,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
 
         /* Plan pawn yields up to maxPawnCount. Surplus per-item budget is captured
            as divertedBudget for redistribution to items below. */
-        List<KeyValuePair<PawnKindDef, int>> plannedPawns = new List<KeyValuePair<PawnKindDef, int>>();
+        List<KeyValuePair<PawnKindDef, int>> plannedPawns = [];
         int runningPawnTotal = 0;
         float divertedBudget = 0f;
 
@@ -193,7 +193,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
         {
             for (int i = 0; i < entry.Value; i++)
             {
-                PawnGenerationRequest request = new PawnGenerationRequest(entry.Key, null, PawnGenerationContext.NonPlayer);
+                PawnGenerationRequest request = new(entry.Key, null, PawnGenerationContext.NonPlayer);
                 Pawn pawn = PawnGenerator.GeneratePawn(request);
                 if (pawn is not null) yield return pawn;
             }

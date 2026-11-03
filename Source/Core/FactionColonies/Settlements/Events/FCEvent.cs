@@ -2,7 +2,7 @@
 
 public class FCEvent : IExposable, ILoadReferenceable
 {
-    public FCEventDef def = new FCEventDef();
+    public FCEventDef def = new();
     public PlanetTile location = -1;
     public int timeTillTrigger = -1;
     public int timeMinTrigger = -1;
@@ -13,7 +13,7 @@ public class FCEvent : IExposable, ILoadReferenceable
     public bool hasDestination;
     public int buildingSlot = -1;
     public BuildingFCDef building;
-    public List<WorldSettlementFC> settlementTraitLocations = new List<WorldSettlementFC>();
+    public List<WorldSettlementFC> settlementTraitLocations = [];
     /* Frozen cohort of settlements this event actually applied its stat/permanent
      * modifiers to (recorded at Apply time). Removal reverses exactly this set so a
      * settlement founded mid-event is neither buffed nor penalized. */
@@ -22,7 +22,7 @@ public class FCEvent : IExposable, ILoadReferenceable
      * window first opens; populated by FCOptionWindow so the price shown is the price paid
      * and survives save/reload. Recomputes lazily for legacy events that never snapshotted. */
     public Dictionary<string, int> optionCostSnapshots;
-    public List<Thing> goods = new List<Thing>();
+    public List<Thing> goods = [];
     public bool hasCustomDescription;
     public string customDescription = "";
     public bool hasCustomLabel;
@@ -207,7 +207,7 @@ public class FCEvent : IExposable, ILoadReferenceable
     /// </summary>
     public static List<Thing> ConsolidateGoods(List<Thing> goods)
     {
-        List<Thing> consolidated = new List<Thing>();
+        List<Thing> consolidated = [];
 
         foreach (Thing thing in goods)
         {
@@ -235,7 +235,7 @@ public class FCEvent : IExposable, ILoadReferenceable
         }
 
         // Split any over-limit stacks that resulted from absorption
-        List<Thing> result = new List<Thing>();
+        List<Thing> result = [];
         foreach (Thing thing in consolidated)
         {
             // This while *shouldn't* loop infinitely, but just in case, we'll add a break-out case

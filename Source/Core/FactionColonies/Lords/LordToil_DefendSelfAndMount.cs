@@ -41,7 +41,7 @@ public class LordToil_DefendSelfAndMount : LordToil
         {
             Pawn rider = pair.Key;
             if (rider is null) continue;
-            if (rider.jobs is null) rider.jobs = new Pawn_JobTracker(rider);
+            rider.jobs ??= new Pawn_JobTracker(rider);
             GiddyUpUtil.Mount(rider, pair.Value);
         }
     }

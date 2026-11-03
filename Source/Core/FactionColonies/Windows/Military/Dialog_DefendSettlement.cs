@@ -26,7 +26,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
     /* External-defender selection runs in parallel to `selected` (squad). Confirm dispatches
      * one or the other; OnRowSelected clears whichever wasn't picked. */
     private IAutoDefender selectedExternal;
-    private List<ExternalRow> externalRows = new List<ExternalRow>();
+    private List<ExternalRow> externalRows = [];
 
     private struct ExternalRow
     {
@@ -58,7 +58,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
     protected override float DrawHeader(Rect inRect)
     {
         // Title banner (full width)
-        Rect titleRect = new Rect(0, 0, inRect.width, TitleH);
+        Rect titleRect = new(0, 0, inRect.width, TitleH);
         Widgets.DrawHighlight(titleRect);
 
         Text.Font = GameFont.Medium;
@@ -211,7 +211,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
 
             if (hasDefenderForce)
             {
-                BattleForceContext rowCtx = new BattleForceContext
+                BattleForceContext rowCtx = new()
                 {
                     kind = op.kind,
                     targetTile = targetTile,
@@ -250,7 +250,7 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
             string unavailableReason = null;
             if (!available)
             {
-                List<string> reasons = new List<string>();
+                List<string> reasons = [];
                 SquadStatusUtil.AppendIntrinsicUnavailReasons(squad, reasons);
                 unavailableReason = SquadStatusUtil.FormatUnavailTooltip(reasons);
             }
@@ -320,14 +320,14 @@ public class Dialog_DefendSettlement : Dialog_SquadPicker
 
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect headerRect = new Rect(0f, runningY + 4f, viewRect.width, ExternalSectionHeaderH - 4f);
+        Rect headerRect = new(0f, runningY + 4f, viewRect.width, ExternalSectionHeaderH - 4f);
         Widgets.DrawHighlight(headerRect);
         UIUtil.ClampedLabel(headerRect, "FCDefenderPickerExternal".Translate());
         runningY += ExternalSectionHeaderH;
 
         for (int i = 0; i < externalRows.Count; i++)
         {
-            Rect cardRect = new Rect(0f, runningY, viewRect.width, CardH);
+            Rect cardRect = new(0f, runningY, viewRect.width, CardH);
             if (i % 2 == 0) Widgets.DrawHighlight(cardRect);
             DrawExternalCard(cardRect, externalRows[i]);
             runningY += CardH + RowGap;

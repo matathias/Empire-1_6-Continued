@@ -18,7 +18,7 @@ public class CodexWindow : Window
 
     private static readonly Color TitleGold = ColorUtil.Gold;
 
-    public override Vector2 InitialSize => new Vector2(1100f, 650f);
+    public override Vector2 InitialSize => new(1100f, 650f);
 
     private readonly List<ICodexTab> tabs;
     private readonly List<string> tabLabels;
@@ -33,14 +33,14 @@ public class CodexWindow : Window
         draggable = true;
         resizeable = true;
 
-        tabs = new List<ICodexTab>
-        {
+        tabs =
+        [
             new CodexTab_Info(),
             new CodexTab_Settlements(this),
             new CodexTab_Resources(this),
             new CodexTab_Biomes(this),
             new CodexTab_Buildings(this)
-        };
+        ];
         tabLabels = tabs.Select(t => t.TabLabel).ToList();
         activeTabIndex = 0;
         tabs[0].OnTabSelected();
@@ -122,12 +122,12 @@ public class CodexWindow : Window
     public override void DoWindowContents(Rect inRect)
     {
         /* Title header with gold gradient + logo */
-        Rect titleRect = new Rect(inRect.x, inRect.y, inRect.width, TitleHeight);
+        Rect titleRect = new(inRect.x, inRect.y, inRect.width, TitleHeight);
         TexLoad.DrawHorizontalGradient(titleRect, ColorUtil.TransformA(TitleGold, 0.5f));
 
         // Logo
         float logoSize = 24f;
-        Rect logoRect = new Rect(titleRect.x + margin, titleRect.y + (TitleHeight - logoSize) * 0.5f, logoSize, logoSize);
+        Rect logoRect = new(titleRect.x + margin, titleRect.y + (TitleHeight - logoSize) * 0.5f, logoSize, logoSize);
         GUI.DrawTexture(logoRect, TexLoad.codexLogo, ScaleMode.ScaleToFit);
 
         // Title text
@@ -144,7 +144,7 @@ public class CodexWindow : Window
 
         /* Tab row (below title) */
         // Subtract 2 from the width so the right-side border line doesn't get cut off
-        Rect tabArea = new Rect(inRect.x, inRect.y + TitleHeight + margin + 2f, inRect.width - 2f, inRect.height - TitleHeight - margin - 2f);
+        Rect tabArea = new(inRect.x, inRect.y + TitleHeight + margin + 2f, inRect.width - 2f, inRect.height - TitleHeight - margin - 2f);
         int newTab = UIUtil.DrawTabRow(tabArea, tabLabels, activeTabIndex, out Rect contentRect, tabHeight: TabHeight);
         if (newTab != activeTabIndex)
         {
@@ -162,13 +162,13 @@ public class CodexWindow : Window
         float bodyW = bodyRect.width;
         float bodyH = bodyRect.height;
 
-        Rect leftRect = new Rect(bodyX, bodyY, LeftPaneWidth, bodyH);
+        Rect leftRect = new(bodyX, bodyY, LeftPaneWidth, bodyH);
         float divider1X = leftRect.xMax + margin * 0.5f;
 
         float rightPaneW = activeTab.HasRightPane ? RightPaneWidth : 0f;
         float centerW = bodyW - LeftPaneWidth - rightPaneW - (activeTab.HasRightPane ? margin * 2 + DividerWidth * 2 : margin + DividerWidth);
         float centerX = leftRect.xMax + margin + DividerWidth;
-        Rect centerRect2 = new Rect(centerX, bodyY, centerW, bodyH);
+        Rect centerRect2 = new(centerX, bodyY, centerW, bodyH);
 
         /* Draw dividers */
         UIUtil.DrawColoredVerticalLine(divider1X, bodyY, bodyH, Color.gray);

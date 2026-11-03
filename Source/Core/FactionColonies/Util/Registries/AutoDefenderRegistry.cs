@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class AutoDefenderRegistry
 {
-    private static readonly RegistryList<IAutoDefender> _list = new RegistryList<IAutoDefender>();
+    private static readonly RegistryList<IAutoDefender> _list = new();
 
     internal static void Register(IAutoDefender defender) => _list.Register(defender);
     internal static void Unregister(IAutoDefender defender) => _list.Unregister(defender);

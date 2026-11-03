@@ -14,7 +14,7 @@ public static class PolicyManagerScrubTests
         var mgr = new PolicyManager();
         var valid = new FCPolicy { def = FCPolicyDefOf.empty };
         var dead = new FCPolicy { def = null };
-        mgr.policies = new List<FCPolicy> { valid, dead };
+        mgr.policies = [valid, dead];
 
         mgr.ScrubDeadPolicies();
 

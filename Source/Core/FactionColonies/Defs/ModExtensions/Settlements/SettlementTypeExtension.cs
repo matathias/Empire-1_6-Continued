@@ -144,7 +144,7 @@ public class SettlementTypeExtension : DefModExtension
             return fallback;
         }
 
-        List<String> used = new List<string>();
+        List<String> used = [];
         List<Settlement> settlements = Find.WorldObjects.Settlements;
         foreach (Settlement found in settlements)
         {
@@ -228,18 +228,14 @@ public class SettlementTypeExtension : DefModExtension
     /// </summary>
     public virtual string GetSettlementLevelDesc(int level)
     {
-        int compressed;
-        switch (level)
+        int compressed = level switch
         {
-            case 1: compressed = 1; break;
-            case 2: compressed = 2; break;
-            case 3:
-            case 4: compressed = 3; break;
-            case 5:
-            case 6: compressed = 4; break;
-            default: compressed = 5; break;
-        }
-
+            1 => 1,
+            2 => 2,
+            3 or 4 => 3,
+            5 or 6 => 4,
+            _ => 5,
+        };
         string descKey = parentDef?.descriptionKey;
         if (descKey is not null)
         {

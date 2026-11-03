@@ -27,18 +27,18 @@ public static class LoadoutTabStrip
     {
         // Build the list of present tabs in display order, with a parallel label list. Conditional
         // tabs are appended only when enabled, so a hidden tab never shifts another tab's index.
-        List<LoadoutTab> present = new List<LoadoutTab>
-        {
+        List<LoadoutTab> present =
+        [
             LoadoutTab.Apparel,
             LoadoutTab.Inventory,
             LoadoutTab.Implants
-        };
-        List<string> labels = new List<string>
-        {
+        ];
+        List<string> labels =
+        [
             "fcTabApparel".Translate(),
             "fcTabInventory".Translate(),
             "fcTabImplants".Translate()
-        };
+        ];
         if (includeAnimals)
         {
             present.Add(LoadoutTab.Animals);

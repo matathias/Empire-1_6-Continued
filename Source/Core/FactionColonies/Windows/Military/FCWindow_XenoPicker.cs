@@ -18,7 +18,7 @@ public class FCWindow_XenoPicker : Window
     private const float ButtonHeight = 35f;
     private const float margin = 5f;
 
-    public override Vector2 InitialSize => new Vector2(450f, 550f);
+    public override Vector2 InitialSize => new(450f, 550f);
 
     public FCWindow_XenoPicker(MilUnitFC unit)
     {
@@ -60,11 +60,11 @@ public class FCWindow_XenoPicker : Window
         // Search bar
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new Rect(0, 40f, inRect.width, SearchBarHeight);
+        Rect searchRect = new(0, 40f, inRect.width, SearchBarHeight);
         searchTerm = Widgets.TextField(searchRect, searchTerm);
 
         // Build unified xeno list
-        List<XenoOption> xenoOptions = new List<XenoOption>();
+        List<XenoOption> xenoOptions = [];
 
         foreach (XenotypeDef def in FactionCache.ViolentXenotypeDefs)
         {
@@ -106,7 +106,7 @@ public class FCWindow_XenoPicker : Window
         // Scroll view
         float listTop = searchRect.yMax + margin;
         float listHeight = inRect.height - listTop - ButtonHeight - 15f;
-        Rect scrollOutRect = new Rect(0, listTop, inRect.width, listHeight);
+        Rect scrollOutRect = new(0, listTop, inRect.width, listHeight);
         Widgets.DrawMenuSection(scrollOutRect);
 
         float viewHeight = filtered.Count * RowHeight;
@@ -115,7 +115,7 @@ public class FCWindow_XenoPicker : Window
         for (int i = 0; i < filtered.Count; i++)
         {
             XenoOption opt = filtered[i];
-            Rect row = new Rect(0, i * RowHeight, scrollViewRect.width, RowHeight);
+            Rect row = new(0, i * RowHeight, scrollViewRect.width, RowHeight);
 
             bool isSelected = opt.IsCustom
                 ? opt.custom.name == selectedCustomName
@@ -126,13 +126,13 @@ public class FCWindow_XenoPicker : Window
             else if (i % 2 == 0)
                 Widgets.DrawHighlight(row);
 
-            Rect iconRect = new Rect(row.x + 2f, row.y + 3f, IconSize, IconSize);
+            Rect iconRect = new(row.x + 2f, row.y + 3f, IconSize, IconSize);
             if (opt.icon != null)
                 GUI.DrawTexture(iconRect, opt.icon);
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new Rect(iconRect.xMax + 5f, row.y, row.width - IconSize - 10f, RowHeight);
+            Rect labelRect = new(iconRect.xMax + 5f, row.y, row.width - IconSize - 10f, RowHeight);
             string costText = opt.costFactor != 1f ? " (x" + opt.costFactor.ToString("F2") + $" {"FCCost".Translate()})" : "";
             UIUtil.ClampedLabel(labelRect, opt.label + costText);
 
@@ -162,16 +162,16 @@ public class FCWindow_XenoPicker : Window
 
         // Bottom buttons
         float buttonWidth = 120f;
-        Rect buttonBar = new Rect(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
+        Rect buttonBar = new(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
 
-        Rect cancelRect = new Rect(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
+        Rect cancelRect = new(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
         {
             Close();
         }
 
         bool canConfirm = selectedDef is not null || selectedCustomName is not null;
-        Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
+        Rect confirmRect = new(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
         {
             if (canConfirm)

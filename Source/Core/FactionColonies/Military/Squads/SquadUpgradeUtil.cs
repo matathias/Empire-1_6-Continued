@@ -58,14 +58,14 @@ public static class SquadUpgradeUtil
 
     private static UpgradePlan BuildUpgradePlan(MercenarySquadFC squad)
     {
-        UpgradePlan plan = new UpgradePlan
+        UpgradePlan plan = new()
         {
-            Slots = new List<SlotDecision>(),
-            Fires = new List<Mercenary>(),
+            Slots = [],
+            Fires = [],
         };
         if (squad?.outfit?.Units is null || squad.mercenaries is null) return plan;
 
-        List<Mercenary> claimable = new List<Mercenary>();
+        List<Mercenary> claimable = [];
         foreach (Mercenary m in squad.mercenaries)
         {
             if (m?.pawn?.kindDef is not null) claimable.Add(m);
@@ -184,7 +184,7 @@ public static class SquadUpgradeUtil
         HashSet<MilUnitFC> retainable = null;
         if (newTemplate?.Units is not null)
         {
-            retainable = new HashSet<MilUnitFC>();
+            retainable = [];
             foreach (MilUnitFC u in newTemplate.Units)
             {
                 if (u is not null && !u.isBlank) retainable.Add(u);
@@ -229,8 +229,8 @@ public static class SquadUpgradeUtil
 
         // Reset the equipment tracker's snapshots; Equipment.EquipPawn will repopulate
         // them as we re-equip each slot below.
-        squad.Equipment.UsedWeaponList = new List<ThingWithComps>();
-        squad.Equipment.UsedApparelList = new List<Apparel>();
+        squad.Equipment.UsedWeaponList = [];
+        squad.Equipment.UsedApparelList = [];
 
         // Fire pass: strip + destroy each fired merc's pawn. Merc instances are dropped
         // from the rebuilt mercenaries list below.
@@ -246,7 +246,7 @@ public static class SquadUpgradeUtil
         // Slot pass: re-equip claims, fresh-hire fresh slots. The slot order in
         // plan.Slots matches outfit.Units traversal order, so the rebuilt list stays
         // in slot order.
-        List<Mercenary> rebuilt = new List<Mercenary>();
+        List<Mercenary> rebuilt = [];
         foreach (SlotDecision dec in plan.Slots)
         {
             MilUnitFC slotUnit = dec.slotUnit;

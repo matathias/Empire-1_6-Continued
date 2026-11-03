@@ -5,7 +5,7 @@ namespace FactionColonies;
 
 public class CreateColonyWindowFc : Window
 {
-    public sealed override Vector2 InitialSize => new Vector2(300f, 650f);
+    public sealed override Vector2 InitialSize => new(300f, 650f);
 
     public PlanetTile currentTileSelected = PlanetTile.Invalid;
     public PlanetTile oldTileSelected = PlanetTile.Invalid;
@@ -105,7 +105,7 @@ public class CreateColonyWindowFc : Window
         //Draw Label
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect newColonyHeader = new Rect(0, 0, 260, newColonyHeader_height);
+        Rect newColonyHeader = new(0, 0, 260, newColonyHeader_height);
         UIUtil.ClampedLabel(newColonyHeader, "FCSettleANewColony".Translate());
 
         //hori line
@@ -113,7 +113,7 @@ public class CreateColonyWindowFc : Window
 
 
         //Upper menu
-        Rect upperBox = new Rect(5, newColonyHeader.yMax + verticalMargins, 258, upperBox_height);
+        Rect upperBox = new(5, newColonyHeader.yMax + verticalMargins, 258, upperBox_height);
         Widgets.DrawMenuSection(upperBox); //height was originally 220
 
         DrawLabelBox(new Rect(10, newColonyHeader.yMax + verticalMargins, 100, costConstructionBox_height), (currentSettlementType.isConstructed ? "FCConstructionTime".Translate() : "FCTravelTime".Translate()), timeToTravel.ToTimeString());
@@ -142,12 +142,12 @@ public class CreateColonyWindowFc : Window
         //Lower Menu label
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect productionLabelBox = new Rect(0, upperBox.yMax + verticalMargins + additionalCostHeight, 268, productionLabel_height); //0, 270, 268, 40
+        Rect productionLabelBox = new(0, upperBox.yMax + verticalMargins + additionalCostHeight, 268, productionLabel_height); //0, 270, 268, 40
         UIUtil.ClampedLabel(productionLabelBox, "FCBaseProductionStats".Translate());
 
 
         //Lower menu
-        Rect prodBox = new Rect(5, productionLabelBox.yMax + verticalMargins, 258, prodBoxHeight); //5, 210, 258, 220
+        Rect prodBox = new(5, productionLabelBox.yMax + verticalMargins, 258, prodBoxHeight); //5, 210, 258, 220
         Widgets.DrawMenuSection(prodBox);
 
         //Draw production
@@ -278,7 +278,7 @@ public class CreateColonyWindowFc : Window
                 ResourceAvailability settleRes = currentSettlementType.GetSettlementResource(titheType);
 
                 float xMod = 70f;
-                Rect baseRect = new Rect(40, startHeight + i * (5 + baseHeight), 60, baseHeight + 2);
+                Rect baseRect = new(40, startHeight + i * (5 + baseHeight), 60, baseHeight + 2);
 
                 if (biomeRes is null || settleRes is null || !titheType.ResourceTypeAllowedByTech(faction.techLevel))
                 {
@@ -311,7 +311,7 @@ public class CreateColonyWindowFc : Window
                     UIUtil.ClampedLabel(baseRect.CopyAndShift(xMod * 2f, 0f), Math.Round(total, 2).ToString());
 
                     // Breakdown tooltips mirroring SettlementWindowFC.cs.
-                    StringBuilder addSb = new StringBuilder();
+                    StringBuilder addSb = new();
                     if (biomeRes.additive != 0)
                         addSb.Append(TextUtil.ColorizeAdditiveBonus(biomeRes.additive)).Append(" - ").Append(currentBiomeSelected.LabelCap).Append('\n');
                     if (settleRes.additive != 0)
@@ -323,7 +323,7 @@ public class CreateColonyWindowFc : Window
                     titheType.ForEachLandmarkAdditive(currentTileSelected, (label, value) =>
                         addSb.Append(TextUtil.ColorizeAdditiveBonus(value)).Append(" - ").Append(label).Append('\n'));
 
-                    StringBuilder multSb = new StringBuilder();
+                    StringBuilder multSb = new();
                     if (biomeRes.multiplier != 1)
                         multSb.Append(TextUtil.ColorizeMultiplierBonus(biomeRes.multiplier)).Append(" - ").Append(currentBiomeSelected.LabelCap).Append('\n');
                     if (settleRes.multiplier != 1)
@@ -350,7 +350,7 @@ public class CreateColonyWindowFc : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
         int buttonLength = 200;
-        Rect button = new Rect((InitialSize.x - 32 - buttonLength) / 2f, curHeight + verticalMargins, buttonLength, button_height);
+        Rect button = new((InitialSize.x - 32 - buttonLength) / 2f, curHeight + verticalMargins, buttonLength, button_height);
         if (UIUtil.ClampedButtonText(button, currentSettlementType.LabelCap))
         {
             Find.WindowStack.Add(new FCWindow_SettlementTypePicker(delegate (WorldSettlementDef selected)
@@ -370,7 +370,7 @@ public class CreateColonyWindowFc : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
         int available = PaymentUtil.GetSilver();
-        Rect labelRect = new Rect(0, curHeight + verticalMargins, InitialSize.x - 32, button_height);
+        Rect labelRect = new(0, curHeight + verticalMargins, InitialSize.x - 32, button_height);
         // Color red when the player can't cover the current cost (matches PlayerHasEnoughSilver).
         GUI.color = available >= settlementCreationCost ? Color.white : ColorLibrary.RedReadable;
         UIUtil.ClampedLabel(labelRect, "FCAvailableSilver".Translate() + ": " + available);
@@ -383,7 +383,7 @@ public class CreateColonyWindowFc : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
         int buttonLength = 200;
-        Rect button = new Rect((InitialSize.x - 32 - buttonLength) / 2f, curHeight + verticalMargins, buttonLength, button_height);
+        Rect button = new((InitialSize.x - 32 - buttonLength) / 2f, curHeight + verticalMargins, buttonLength, button_height);
 
         // A submod (e.g. EmpireVOE's "found only via outposts" mode) can replace the Settle button
         // with an alternate action — e.g. "Send a Caravan" — instead of founding directly here.
@@ -478,7 +478,7 @@ public class CreateColonyWindowFc : Window
 
     private bool CanCreateSettlementHere(bool silent = false)
     {
-        StringBuilder reason = new StringBuilder();
+        StringBuilder reason = new();
         if (!WorldTileChecker.IsValidTileForNewSettlement(currentTileSelected, currentSettlementType, reason)
             || faction.CheckSettlementCaravansList(currentTileSelected)
             || !PlayerHasEnoughSilver(reason)

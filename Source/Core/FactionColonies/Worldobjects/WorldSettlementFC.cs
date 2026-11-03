@@ -204,13 +204,13 @@ public class WorldSettlementFC : Settlement
         public string sourceLabel;
         public FCStatModifier mod;
     }
-    private List<TaggedStatModifier> statModifiers = new List<TaggedStatModifier>();
+    private List<TaggedStatModifier> statModifiers = [];
 
     /// <summary>
     /// Permanent stat modifiers that survive event expiry and are serialized with the settlement.
     /// Use AddPermanentModifiers/RemovePermanentModifiersBySource to modify.
     /// </summary>
-    private List<PermanentStatModifier> permanentModifiers = new List<PermanentStatModifier>();
+    private List<PermanentStatModifier> permanentModifiers = [];
 
     /// <summary>
     /// Temporary, self-decaying penalties that drip a morale loss over several days.
@@ -218,10 +218,10 @@ public class WorldSettlementFC : Settlement
     /// (happinessLostBase/loyaltyLostBase/unrestGainedBase) and is ticked down once per day in
     /// FactionFC.UpdateSettlementStats. Use AddDecayingPenalty/TickDecayingPenalties to modify.
     /// </summary>
-    private List<DecayingStatPenalty> decayingPenalties = new List<DecayingStatPenalty>();
+    private List<DecayingStatPenalty> decayingPenalties = [];
 
-    private Dictionary<FCStatDef, double> cachedStatValues = new Dictionary<FCStatDef, double>();
-    private Dictionary<FCStatDef, string> cachedStatDescs = new Dictionary<FCStatDef, string>();
+    private Dictionary<FCStatDef, double> cachedStatValues = [];
+    private Dictionary<FCStatDef, string> cachedStatDescs = [];
 
     /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
      * ~          Ticking comp filter        ~ *
@@ -240,7 +240,7 @@ public class WorldSettlementFC : Settlement
 
     private void RebuildTickingComps()
     {
-        tickingComps = new List<WorldObjectComp>();
+        tickingComps = [];
         List<WorldObjectComp> all = AllComps;
         foreach (WorldObjectComp comp in all)
         {
@@ -251,7 +251,7 @@ public class WorldSettlementFC : Settlement
 
     private void RebuildTickIntervalComps()
     {
-        tickIntervalComps = new List<WorldObjectComp>();
+        tickIntervalComps = [];
         List<WorldObjectComp> all = AllComps;
         foreach (WorldObjectComp comp in all)
         {
@@ -306,7 +306,7 @@ public class WorldSettlementFC : Settlement
     internal void DebugLogTickingComps()
     {
         if (tickingComps is null) RebuildTickingComps();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
         sb.AppendLine($"Ticking comps for settlement '{Name}' (Lv{settlementLevel}): "
             + $"{tickingComps.Count} ticking / {AllComps.Count} total");
         List<WorldObjectComp> all = AllComps;
@@ -325,7 +325,7 @@ public class WorldSettlementFC : Settlement
     private List<FCPrisoner> _legacyPrisonerList = null;
 
     public float oneTimeSilverIncome;
-    public List<Thing> tithe = new List<Thing>();
+    public List<Thing> tithe = [];
     public int titheEstimatedIncome;
 
     public string biome;
@@ -415,9 +415,9 @@ public class WorldSettlementFC : Settlement
     public double ProjectedProfit => ProjectedIncome - ProjectedUpkeep - ProjectedTitheValue;
 
     // Jealously guard our resources. Only we can modify them!
-    private List<ResourceFC> resources = new List<ResourceFC>();
+    private List<ResourceFC> resources = [];
     public List<ResourceFC> Resources => resources;
-    private List<ThingDef> grandThingList = new List<ThingDef>();
+    private List<ThingDef> grandThingList = [];
     private bool dirtyGrandThingListFlag = true;
 
     // Comp caching for the most-frequently accessed comps
@@ -479,7 +479,7 @@ public class WorldSettlementFC : Settlement
     {
         get
         {
-            List<MercenarySquadFC> result = new List<MercenarySquadFC>();
+            List<MercenarySquadFC> result = [];
             List<MercenarySquadFC> pool = FindFC.Military?.mercenarySquads;
             if (pool is null) return result;
             for (int i = 0; i < pool.Count; i++)
@@ -705,7 +705,7 @@ public class WorldSettlementFC : Settlement
 
     public new string Name
     {
-        get => name ?? (name = "");
+        get => name ??= "";
         set => name = value;
     }
     public override string Label => Name;
@@ -972,8 +972,8 @@ public class WorldSettlementFC : Settlement
             Scribe_Collections.Look(ref _legacyPrisonerList, "prisonerList", LookMode.Deep);
 
         // We never want permanentModifiers to be null. So just always check it here.
-        if (permanentModifiers is null) permanentModifiers = new List<PermanentStatModifier>();
-        if (decayingPenalties is null) decayingPenalties = new List<DecayingStatPenalty>();
+        permanentModifiers ??= [];
+        decayingPenalties ??= [];
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
@@ -1031,13 +1031,13 @@ public class WorldSettlementFC : Settlement
             WorldObjectComp_SettlementPrisoners pComp = PrisonerComp;
             if (pComp is not null)
             {
-                if (pComp.prisonerList is null) pComp.prisonerList = new List<FCPrisoner>();
+                pComp.prisonerList ??= [];
                 foreach (FCPrisoner p in _legacyPrisonerList)
                 {
                     if (p is null) continue;
                     // Defensive: Scribe_References should already have rebound this, but the
                     // legacy code path didn't always preserve the back-ref cleanly.
-                    if (p.settlement is null) p.settlement = this;
+                    p.settlement ??= this;
                     pComp.prisonerList.Add(p);
                 }
                 LogUtil.MessageForce($"WorldSettlementFC {Name}: migrated {_legacyPrisonerList.Count} legacy prisoners into PrisonerComp.");
@@ -1267,7 +1267,7 @@ public class WorldSettlementFC : Settlement
             LogUtil.Error($"Cannot transition {Name}: {newDef.defName} has no SettlementTypeExtension");
             return false;
         }
-        StringBuilder reason = new StringBuilder();
+        StringBuilder reason = new();
         if (!newExt.TileIsValidForTypeTransition(Tile, reason))
         {
             LogUtil.Warning($"Cannot transition {Name} from {oldDef.defName} to {newDef.defName}: {reason}");
@@ -1305,7 +1305,7 @@ public class WorldSettlementFC : Settlement
             settlementLevel = settlementDef.maxSettlementLevel;
 
         // --- Reconcile resources: remove orphans, then add/dirty via PrepareResources ---
-        HashSet<ResourceTypeDef> newResourceDefs = new HashSet<ResourceTypeDef>();
+        HashSet<ResourceTypeDef> newResourceDefs = [];
         foreach (ResourceAvailability ra in settlementDef.resources)
             newResourceDefs.Add(ra.resourceDef);
         for (int i = resources.Count - 1; i >= 0; i--)
@@ -1347,11 +1347,11 @@ public class WorldSettlementFC : Settlement
     /// </summary>
     private void ReconcileComps(WorldSettlementDef oldDef, WorldSettlementDef newDef)
     {
-        HashSet<Type> oldCompClasses = new HashSet<Type>();
+        HashSet<Type> oldCompClasses = [];
         foreach (WorldObjectCompProperties props in oldDef.comps)
             oldCompClasses.Add(props.compClass);
 
-        HashSet<Type> newCompClasses = new HashSet<Type>();
+        HashSet<Type> newCompClasses = [];
         foreach (WorldObjectCompProperties props in newDef.comps)
             newCompClasses.Add(props.compClass);
 
@@ -1368,7 +1368,7 @@ public class WorldSettlementFC : Settlement
         }
 
         // Add comps that are on the new def but NOT on the old def
-        HashSet<Type> currentCompClasses = new HashSet<Type>();
+        HashSet<Type> currentCompClasses = [];
         foreach (WorldObjectComp comp in compsList)
             currentCompClasses.Add(comp.GetType());
 
@@ -2332,7 +2332,7 @@ public class WorldSettlementFC : Settlement
     }
     public List<ResourceFC> GetTitheableResources()
     {
-        List<ResourceFC> list = new List<ResourceFC>();
+        List<ResourceFC> list = [];
         foreach (ResourceFC res in Resources)
         {
             if (res.canTithe)
@@ -2350,7 +2350,7 @@ public class WorldSettlementFC : Settlement
     {
         if (dirtyGrandThingListFlag)
         {
-            grandThingList = new List<ThingDef>();
+            grandThingList = [];
             foreach (ResourceFC res in resources)
             {
                 if (res.canTithe)
@@ -2413,7 +2413,7 @@ public class WorldSettlementFC : Settlement
     }
     public List<ResourcePool> CreateResourcePools()
     {
-        List<ResourcePool> pools = new List<ResourcePool>();
+        List<ResourcePool> pools = [];
 
         foreach (ResourceFC resource in resources)
         {
@@ -2504,7 +2504,7 @@ public class WorldSettlementFC : Settlement
         settlementDef.GetSettlementTypeExtension()?.PreTax(this);
         TaxTickRegistry.InvokePreSettlementCreateTax(this);
 
-        List<Thing> titheThings = new List<Thing>();
+        List<Thing> titheThings = [];
         // Accrued gross (post-stockpile, pre-tithe) + accrued non-resource income - accrued upkeep + one-time silver.
         double accruedNet = AccruedGrossIncome - AccruedUpkeep;
 

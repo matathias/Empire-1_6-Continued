@@ -68,12 +68,12 @@ public enum FCActionType
 /// </summary>
 public static class FCActionTypeUtil
 {
-    private static readonly HashSet<FCActionType> requiresEnable = new HashSet<FCActionType>
-    {
+    private static readonly HashSet<FCActionType> requiresEnable =
+    [
         FCActionType.SendDiplomat,
         FCActionType.DeployExtraSquad,
         FCActionType.BuildRoadsToAllies
-    };
+    ];
 
     public static bool RequiresEnable(FCActionType action) => requiresEnable.Contains(action);
 }

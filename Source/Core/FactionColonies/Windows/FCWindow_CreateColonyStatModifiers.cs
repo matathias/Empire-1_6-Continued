@@ -18,7 +18,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
     private PlanetTile lastTile = PlanetTile.Invalid;
     private List<StatGroup> cachedGroups;
 
-    public override Vector2 InitialSize => new Vector2(WindowWidth, 320f);
+    public override Vector2 InitialSize => new(WindowWidth, 320f);
 
     public FCWindow_CreateColonyStatModifiers(List<StatGroup> groups)
     {
@@ -86,7 +86,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
         float curY = 0f;
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect titleRect = new Rect(0, curY, inRect.width, 30f);
+        Rect titleRect = new(0, curY, inRect.width, 30f);
         UIUtil.ClampedLabel(titleRect, "FCCreateColonyTileModifiersTitle".Translate());
         curY += 30f + Padding;
 
@@ -140,7 +140,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
 
     private static List<StatGroup> CollectGroups(PlanetTile tile, BiomeResourceDef biome = null)
     {
-        List<StatGroup> groups = new List<StatGroup>();
+        List<StatGroup> groups = [];
         if (tile == PlanetTile.Invalid) return groups;
         Tile worldTile = tile.Tile;
         if (worldTile is null) return groups;
@@ -180,7 +180,7 @@ public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWind
 
     private static List<FCStatModifier> FilterNonResourceLinked(List<FCStatModifier> src)
     {
-        List<FCStatModifier> result = new List<FCStatModifier>();
+        List<FCStatModifier> result = [];
         if (src is null) return result;
         foreach (FCStatModifier mod in src)
         {

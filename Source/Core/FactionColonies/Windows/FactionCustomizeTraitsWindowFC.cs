@@ -9,17 +9,17 @@ public class FactionCustomizeTraitsWindowFC : Window
     private const float margin = 5f;
     private const float smallMargin = 3f;
     private const float traitRowHeight = 30f;
-    public override Vector2 InitialSize => new Vector2(fullwidth, fullheight);
+    public override Vector2 InitialSize => new(fullwidth, fullheight);
 
     private FactionFC faction;
     public string header;
     string alertText = "";
 
-    List<FCPolicyDef> selectedTraits = new List<FCPolicyDef>();
+    List<FCPolicyDef> selectedTraits = [];
     private FCPolicyDef hoveredTrait;
 
     private Vector2 traitListScroll;
-    static List<Vector2> traitScrollBars = new List<Vector2>();
+    static List<Vector2> traitScrollBars = [];
 
     private const int slotCount = 5;
 
@@ -47,7 +47,7 @@ public class FactionCustomizeTraitsWindowFC : Window
         hoveredTrait = null;
 
         // Header
-        Rect labelHeader = new Rect(0, 0, 200, 40);
+        Rect labelHeader = new(0, 0, 200, 40);
         float headerHeight = labelHeader.yMax + (margin * 4);
 
         Text.Anchor = TextAnchor.MiddleLeft;
@@ -58,19 +58,19 @@ public class FactionCustomizeTraitsWindowFC : Window
         Text.Font = GameFont.Small;
 
         // Confirm button
-        Rect buttonConfirm = new Rect((inRect.xMax - 200) / 2f, inRect.yMax - 50, 200, 30);
+        Rect buttonConfirm = new((inRect.xMax - 200) / 2f, inRect.yMax - 50, 200, 30);
 
         // Alert text
-        Rect alertRect = new Rect(inRect.x + margin, buttonConfirm.y - 25, inRect.width - (margin * 2), 20);
+        Rect alertRect = new(inRect.x + margin, buttonConfirm.y - 25, inRect.width - (margin * 2), 20);
 
         // Left panel
         float traitWidth = inRect.width * 0.25f;
-        Rect leftPanel = new Rect(inRect.x, headerHeight, traitWidth, alertRect.y - headerHeight - margin);
+        Rect leftPanel = new(inRect.x, headerHeight, traitWidth, alertRect.y - headerHeight - margin);
 
         // Right panel
-        Rect centerPanel = new Rect(leftPanel.xMax + margin, headerHeight, inRect.width - (traitWidth * 2) - (margin * 2), alertRect.y - headerHeight - margin);
+        Rect centerPanel = new(leftPanel.xMax + margin, headerHeight, inRect.width - (traitWidth * 2) - (margin * 2), alertRect.y - headerHeight - margin);
 
-        Rect rightPanel = new Rect(centerPanel.xMax + margin, headerHeight, traitWidth, leftPanel.height);
+        Rect rightPanel = new(centerPanel.xMax + margin, headerHeight, traitWidth, leftPanel.height);
 
         DrawTraitSlots(leftPanel);
         DrawAvailableTraitsList(rightPanel);
@@ -125,7 +125,7 @@ public class FactionCustomizeTraitsWindowFC : Window
     private void DrawTraitSlots(Rect inRect)
     {
         // Section A: Current slot status
-        Rect slotHeader = new Rect(inRect.x, inRect.y, inRect.width, 22f);
+        Rect slotHeader = new(inRect.x, inRect.y, inRect.width, 22f);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         Widgets.DrawHighlight(slotHeader);
@@ -137,7 +137,7 @@ public class FactionCustomizeTraitsWindowFC : Window
         int newTraitIndex = 0;
         for (int slot = 0; slot < slotCount; slot++)
         {
-            Rect row = new Rect(inRect.x, y, inRect.width, traitRowHeight);
+            Rect row = new(inRect.x, y, inRect.width, traitRowHeight);
             if (slot % 2 == 0) Widgets.DrawHighlight(row);
 
             FCPolicy existing = FindFC.PolicyManager.factionTraits[slot];
@@ -184,7 +184,7 @@ public class FactionCustomizeTraitsWindowFC : Window
 
     private void DrawAvailableTraitsList(Rect inRect)
     {
-        Rect listHeader = new Rect(inRect.x, inRect.y, inRect.width, 22f);
+        Rect listHeader = new(inRect.x, inRect.y, inRect.width, 22f);
         Widgets.DrawHighlight(listHeader);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
@@ -197,7 +197,7 @@ public class FactionCustomizeTraitsWindowFC : Window
         float listHeight = inRect.yMax - listY;
         float contentHeight = available.Count * (traitRowHeight + smallMargin);
 
-        Rect viewRect = new Rect(inRect.x, listY, inRect.width, listHeight);
+        Rect viewRect = new(inRect.x, listY, inRect.width, listHeight);
 
         Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref traitListScroll, Mathf.Max(contentHeight, listHeight));
 
@@ -205,7 +205,7 @@ public class FactionCustomizeTraitsWindowFC : Window
         {
             FCPolicyDef trait = available[i];
             bool isSelected = selectedTraits.Contains(trait);
-            Rect row = new Rect(scrollRect.x, scrollRect.y + i * (traitRowHeight + smallMargin), scrollRect.width, traitRowHeight);
+            Rect row = new(scrollRect.x, scrollRect.y + i * (traitRowHeight + smallMargin), scrollRect.width, traitRowHeight);
 
             string buttonLabel = isSelected ? ">> " + trait.LabelCap + " <<" : trait.LabelCap;
 
@@ -264,17 +264,17 @@ public class FactionCustomizeTraitsWindowFC : Window
         }
 
         float innerMargin = margin * 2;
-        Rect inner = new Rect(inRect.x + innerMargin, inRect.y + innerMargin,
+        Rect inner = new(inRect.x + innerMargin, inRect.y + innerMargin,
                               inRect.width - (innerMargin * 2), inRect.height - (innerMargin * 2));
 
         // Trait name
-        Rect nameRect = new Rect(inner.x, inner.y, inner.width, 30f);
+        Rect nameRect = new(inner.x, inner.y, inner.width, 30f);
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(nameRect, displayTrait.LabelCap);
 
         // Description
-        Rect descRect = new Rect(inner.x, nameRect.yMax + margin, inner.width, inner.yMax - nameRect.yMax - margin);
+        Rect descRect = new(inner.x, nameRect.yMax + margin, inner.width, inner.yMax - nameRect.yMax - margin);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.UpperLeft;
 

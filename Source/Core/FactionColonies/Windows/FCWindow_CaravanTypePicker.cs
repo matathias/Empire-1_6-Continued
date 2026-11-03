@@ -8,7 +8,7 @@ public class FCWindow_CaravanTypePicker : Window
     private List<CaravanTypeEntry> entries;
     private Vector2 scrollPos;
 
-    public override Vector2 InitialSize => new Vector2(450f, 520f);
+    public override Vector2 InitialSize => new(450f, 520f);
 
     private const float RowHeight = 30f;
     private const int margin = 5;
@@ -65,13 +65,13 @@ public class FCWindow_CaravanTypePicker : Window
         // Header
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect header = new Rect(inRect.x, inRect.y, inRect.width, 35f);
+        Rect header = new(inRect.x, inRect.y, inRect.width, 35f);
         UIUtil.ClampedLabel(header, "FCCaravanTypes".Translate());
         Widgets.DrawLineHorizontal(header.x, header.yMax, header.width);
 
         // Sub-header
         Text.Font = GameFont.Tiny;
-        Rect subHeader = new Rect(inRect.x, header.yMax, inRect.width, 20f);
+        Rect subHeader = new(inRect.x, header.yMax, inRect.width, 20f);
         UIUtil.ClampedLabel(subHeader, "FCCaravanTypesDesc".Translate(FindFC.EmpireName));
 
         float bottomY = inRect.yMax - CloseButSize.y - margin;
@@ -82,7 +82,7 @@ public class FCWindow_CaravanTypePicker : Window
         {
             string errorText = "FCCaravanNoneError".Translate();
             float textHeight = Text.CalcHeight(errorText, inRect.width - (margin * 2));
-            Rect errorBox = new Rect(inRect.x, bottomY - textHeight - (margin * 2), inRect.width,
+            Rect errorBox = new(inRect.x, bottomY - textHeight - (margin * 2), inRect.width,
                 textHeight + (margin * 2));
             Widgets.DrawHighlight(errorBox);
             Text.Font = GameFont.Small;
@@ -93,8 +93,8 @@ public class FCWindow_CaravanTypePicker : Window
         }
 
         // Enable All / Disable All buttons
-        Rect enableButton = new Rect(inRect.x, bottomY - bigRowHeight, inRect.width / 2f, bigRowHeight);
-        Rect disableButton = new Rect(enableButton.xMax, enableButton.y, enableButton.width, enableButton.height);
+        Rect enableButton = new(inRect.x, bottomY - bigRowHeight, inRect.width / 2f, bigRowHeight);
+        Rect disableButton = new(enableButton.xMax, enableButton.y, enableButton.width, enableButton.height);
         if (UIUtil.ClampedButtonText(enableButton, "FCAnimalEnableAll".Translate()))
         {
             foreach (CaravanTypeEntry entry in entries)
@@ -113,10 +113,10 @@ public class FCWindow_CaravanTypePicker : Window
         // Scrollable list
         float listTop = subHeader.yMax + margin;
         float listHeight = bottomY - listTop;
-        Rect scrollOutRect = new Rect(inRect.x, listTop, inRect.width, listHeight);
+        Rect scrollOutRect = new(inRect.x, listTop, inRect.width, listHeight);
         Widgets.DrawMenuSection(scrollOutRect);
 
-        Rect innerRect = new Rect(scrollOutRect.x + 2, scrollOutRect.y + 2, scrollOutRect.width - 4,
+        Rect innerRect = new(scrollOutRect.x + 2, scrollOutRect.y + 2, scrollOutRect.width - 4,
             scrollOutRect.height - 4);
         float viewHeight = entries.Count * RowHeight;
 
@@ -126,20 +126,20 @@ public class FCWindow_CaravanTypePicker : Window
         for (int i = 0; i < entries.Count; i++)
         {
             CaravanTypeEntry entry = entries[i];
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width,
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width,
                 RowHeight);
 
             if (i % 2 == 0)
                 Widgets.DrawHighlight(row);
 
             // Icon
-            Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
+            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
             if (entry.icon is not null)
                 GUI.DrawTexture(iconRect, entry.icon);
 
             // Checkbox
             float checkboxSize = 24f;
-            Rect checkRect = new Rect(row.xMax - margin - checkboxSize,
+            Rect checkRect = new(row.xMax - margin - checkboxSize,
                 row.y + (RowHeight - checkboxSize) / 2f, checkboxSize, checkboxSize);
 
             if (entry.locked)
@@ -156,7 +156,7 @@ public class FCWindow_CaravanTypePicker : Window
             }
 
             // Label
-            Rect labelRect = new Rect(iconRect.xMax + margin, row.y, checkRect.x - iconRect.xMax - margin * 2,
+            Rect labelRect = new(iconRect.xMax + margin, row.y, checkRect.x - iconRect.xMax - margin * 2,
                 RowHeight);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -183,7 +183,7 @@ public class FCWindow_CaravanTypePicker : Window
 
     private void BuildEntries()
     {
-        entries = new List<CaravanTypeEntry>();
+        entries = [];
 
         // Resource-based entries
         TechLevel tech = faction.techLevel;

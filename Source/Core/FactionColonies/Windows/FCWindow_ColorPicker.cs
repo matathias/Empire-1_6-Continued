@@ -23,7 +23,7 @@ public class FCWindow_ColorPicker : Window
     private const float SectionGap = 6f;
     private const float LabelHeight = 20f;
 
-    public override Vector2 InitialSize => new Vector2(620f, 600f);
+    public override Vector2 InitialSize => new(620f, 600f);
 
     public FCWindow_ColorPicker(string title, Color initialColor, Action<Color> onAccept)
     {
@@ -44,7 +44,7 @@ public class FCWindow_ColorPicker : Window
 
     private void BuildPresetColors()
     {
-        presetColors = new List<Color> { Color.white, Color.black };
+        presetColors = [Color.white, Color.black];
         foreach (ColorDef cd in DefDatabase<ColorDef>.AllDefsListForReading)
         {
             if (cd.colorType == ColorType.Ideo)
@@ -71,7 +71,7 @@ public class FCWindow_ColorPicker : Window
         float topY = y;
 
         // HSV Wheel
-        Rect wheelRect = new Rect(inRect.x, topY, WheelSize, WheelSize);
+        Rect wheelRect = new(inRect.x, topY, WheelSize, WheelSize);
         Widgets.HSVColorWheel(wheelRect, ref color, ref hsvWheelDragging, null, "fcColorWheel");
 
         // Right side: preview + textfields (all using fixed positions, not advancing y)
@@ -102,14 +102,14 @@ public class FCWindow_ColorPicker : Window
         float fieldsY = previewY + previewRowHeight + 8f;
 
         // RGB column
-        RectAggregator rgbAgg = new RectAggregator(new Rect(rightX, fieldsY, 125f, 0f), 827364);
+        RectAggregator rgbAgg = new(new Rect(rightX, fieldsY, 125f, 0f), 827364);
         Widgets.ColorTextfields(ref rgbAgg, ref color, ref textfieldBuffers,
             ref textfieldColorBuffer, previousFocusedControlName, "fcColorTextfields",
             Widgets.ColorComponents.Red | Widgets.ColorComponents.Green | Widgets.ColorComponents.Blue,
             Widgets.ColorComponents.Red | Widgets.ColorComponents.Green | Widgets.ColorComponents.Blue);
 
         // HSV column
-        RectAggregator hsvAgg = new RectAggregator(new Rect(rightX + 140f, fieldsY, 125f, 0f), 827365);
+        RectAggregator hsvAgg = new(new Rect(rightX + 140f, fieldsY, 125f, 0f), 827365);
         Widgets.ColorTextfields(ref hsvAgg, ref color, ref textfieldBuffers,
             ref textfieldColorBuffer, previousFocusedControlName, "fcColorTextfieldsHSV",
             Widgets.ColorComponents.Hue | Widgets.ColorComponents.Sat | Widgets.ColorComponents.Value,
@@ -202,7 +202,7 @@ public class FCWindow_ColorPicker : Window
             Color ideoColor = ideo.Color;
             if (ideoColor == Color.white) continue;
 
-            Rect swatchRect = new Rect(
+            Rect swatchRect = new(
                 startX + col * (SwatchSize + SwatchPadding),
                 y,
                 SwatchSize, SwatchSize);
@@ -242,7 +242,7 @@ public class FCWindow_ColorPicker : Window
         UIUtil.ClampedLabel(new Rect(x, y, width, LabelHeight), "fcColorPickerPresets".Translate());
         y += LabelHeight;
 
-        Rect selectorRect = new Rect(x, y, width, 200f);
+        Rect selectorRect = new(x, y, width, 200f);
         float selectorHeight;
         Widgets.ColorSelector(selectorRect, ref color, presetColors, out selectorHeight);
         y += selectorHeight + SectionGap;
@@ -263,7 +263,7 @@ public class FCWindow_ColorPicker : Window
         for (int i = 0; i < saved.Count; i++)
         {
             Color savedColor = saved[i];
-            Rect swatchRect = new Rect(
+            Rect swatchRect = new(
                 startX + col * (SwatchSize + SwatchPadding),
                 y,
                 SwatchSize, SwatchSize);
@@ -310,7 +310,7 @@ public class FCWindow_ColorPicker : Window
         // Save Current button on its own row
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleCenter;
-        Rect saveBtn = new Rect(x, y, 90f, SwatchSize);
+        Rect saveBtn = new(x, y, 90f, SwatchSize);
         if (UIUtil.ClampedButtonText(saveBtn, "fcColorPickerSaveCurrent".Translate()))
         {
             if (saved.Count >= FCSettings.MaxSavedPickerColors)

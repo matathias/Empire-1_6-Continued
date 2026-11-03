@@ -18,15 +18,15 @@
 // Both are rebuilt on load and maintained automatically by all mutation methods.
 public class FCEventManager : IExposable
 {
-    private List<FCEvent> events = new List<FCEvent>();
-    private Dictionary<FCEventDef, int> eventCooldowns = new Dictionary<FCEventDef, int>();
-    private Dictionary<FCEventDef, int> eventFireCounts = new Dictionary<FCEventDef, int>();
+    private List<FCEvent> events = [];
+    private Dictionary<FCEventDef, int> eventCooldowns = [];
+    private Dictionary<FCEventDef, int> eventFireCounts = [];
     private int version;
     private int nextEventId = 1;
 
     /* Indexes (not serialized — rebuilt on load) */
-    private Dictionary<FCEventDef, List<FCEvent>> defIndex = new Dictionary<FCEventDef, List<FCEvent>>();
-    private Dictionary<DefTileKey, List<FCEvent>> defLocationIndex = new Dictionary<DefTileKey, List<FCEvent>>();
+    private Dictionary<FCEventDef, List<FCEvent>> defIndex = [];
+    private Dictionary<DefTileKey, List<FCEvent>> defLocationIndex = [];
 
     private static readonly IReadOnlyList<FCEvent> EmptyEventList = new List<FCEvent>();
 
@@ -41,7 +41,7 @@ public class FCEventManager : IExposable
 
         if (!defIndex.TryGetValue(evt.def, out List<FCEvent> defList))
         {
-            defList = new List<FCEvent>();
+            defList = [];
             defIndex[evt.def] = defList;
         }
         defList.Add(evt);
@@ -49,7 +49,7 @@ public class FCEventManager : IExposable
         var key = new DefTileKey(evt.def, evt.location);
         if (!defLocationIndex.TryGetValue(key, out List<FCEvent> locList))
         {
-            locList = new List<FCEvent>();
+            locList = [];
             defLocationIndex[key] = locList;
         }
         locList.Add(evt);
@@ -246,7 +246,7 @@ public class FCEventManager : IExposable
         {
             if (!events[i].IsQueued) continue;
             if (events[i].timeTillTrigger > currentTick) continue;
-            if (due is null) due = new List<FCEvent>();
+            due ??= [];
             due.Add(events[i]);
         }
         return due;
@@ -300,11 +300,11 @@ public class FCEventManager : IExposable
     public void ExposeData()
     {
         Scribe_Collections.Look(ref events, "events", LookMode.Deep);
-        if (events is null) events = new List<FCEvent>();
+        events ??= [];
         Scribe_Collections.Look(ref eventCooldowns, "eventCooldowns", LookMode.Def, LookMode.Value);
-        if (eventCooldowns is null) eventCooldowns = new Dictionary<FCEventDef, int>();
+        eventCooldowns ??= [];
         Scribe_Collections.Look(ref eventFireCounts, "eventFireCounts", LookMode.Def, LookMode.Value);
-        if (eventFireCounts is null) eventFireCounts = new Dictionary<FCEventDef, int>();
+        eventFireCounts ??= [];
         Scribe_Values.Look(ref nextEventId, "nextEventId", 1);
 
         // Indexes are transient — rebuild as soon as the events list is populated.

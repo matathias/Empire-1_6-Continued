@@ -9,9 +9,9 @@ namespace FactionColonies;
 /// </summary>
 public class FCSituationManager : IExposable
 {
-    private List<FCSituation> situations = new List<FCSituation>();
+    private List<FCSituation> situations = [];
     /* Spawn key -> tick a situation of that (def, target) was last removed; drives cooldownDays. */
-    private Dictionary<string, int> cooldowns = new Dictionary<string, int>();
+    private Dictionary<string, int> cooldowns = [];
     private int version;
     private int nextSituationId = 1;
 
@@ -41,7 +41,7 @@ public class FCSituationManager : IExposable
             return null;
         }
 
-        FCSituation sit = new FCSituation
+        FCSituation sit = new()
         {
             def = def,
             progress = def.startProgress,
@@ -49,7 +49,7 @@ public class FCSituationManager : IExposable
             activeApproach = def.defaultApproach,
             loadID = NextSituationId(),
             tickStarted = Find.TickManager.TicksGame,
-            firedStageLatches = new HashSet<string>()
+            firedStageLatches = []
         };
         sit.currentStage = def.StageAt(sit.progress);
         situations.Add(sit);
@@ -184,9 +184,9 @@ public class FCSituationManager : IExposable
     public void ExposeData()
     {
         Scribe_Collections.Look(ref situations, "situations", LookMode.Deep);
-        if (situations is null) situations = new List<FCSituation>();
+        situations ??= [];
         Scribe_Collections.Look(ref cooldowns, "cooldowns", LookMode.Value, LookMode.Value);
-        if (cooldowns is null) cooldowns = new Dictionary<string, int>();
+        cooldowns ??= [];
         Scribe_Values.Look(ref nextSituationId, "nextSituationId", 1);
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)

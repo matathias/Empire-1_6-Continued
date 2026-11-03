@@ -19,13 +19,13 @@ public class ResourceFilterExtension_NaturalSource : ResourceFilterExtension
     public bool checkRockTypes = true;
 
     /// <summary>Per-thing biome gate: each entry's thing is allowed only in the listed biomes.</summary>
-    public List<BiomeThingRestriction> biomeAllowList = new List<BiomeThingRestriction>();
+    public List<BiomeThingRestriction> biomeAllowList = [];
 
     /// <summary>Things always allowed regardless of tile (unconditional exception, applied last).</summary>
-    public List<ThingDef> forceAllow = new List<ThingDef>();
+    public List<ThingDef> forceAllow = [];
 
     /// <summary>Things always blocked regardless of tile (unconditional exception, applied last).</summary>
-    public List<ThingDef> forceBlock = new List<ThingDef>();
+    public List<ThingDef> forceBlock = [];
 
     public override void SetFilter(ThingFilter filter, TechLevel techlevel, ResourceFC resource = null)
     {
@@ -105,5 +105,5 @@ public class ResourceFilterExtension_NaturalSource : ResourceFilterExtension
 public class BiomeThingRestriction
 {
     public ThingDef thing;
-    public List<BiomeDef> biomes = new List<BiomeDef>();
+    public List<BiomeDef> biomes = [];
 }

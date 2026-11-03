@@ -73,10 +73,8 @@ internal static class BattleArchiveUtil
             result.attackerFactionName = op.aggressor?.faction?.Name ?? "?";
         if (result.defenderFactionName.NullOrEmpty())
             result.defenderFactionName = op.defender?.faction?.Name ?? "?";
-        if (result.attackerFaction is null)
-            result.attackerFaction = op.aggressor?.faction;
-        if (result.defenderFaction is null)
-            result.defenderFaction = op.defender?.faction;
+        result.attackerFaction ??= op.aggressor?.faction;
+        result.defenderFaction ??= op.defender?.faction;
         if (!result.targetTile.Valid)
             result.targetTile = op.targetTile;
     }

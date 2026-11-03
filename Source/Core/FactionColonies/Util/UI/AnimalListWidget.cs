@@ -31,14 +31,14 @@ public static class AnimalListWidget
 
         bool editable = opts.canEdit && opts.showHeaderButtons;
 
-        List<SavedAnimal> items = displayUnit?.animals ?? new List<SavedAnimal>();
+        List<SavedAnimal> items = displayUnit?.animals ?? [];
         int total = displayUnit?.TotalAnimalCount ?? 0;
         int cap = FCSettings.maxAnimalSubpawns;
 
         // --- Header: "Animals (N / cap)" + Add Animal button ---
-        Rect header = new Rect(rect.x, rect.y, rect.width, headerHeight);
+        Rect header = new(rect.x, rect.y, rect.width, headerHeight);
         const float addW = 90f;
-        Rect addBtnRect = new Rect(header.xMax - addW - 2f, header.y + 1f, addW, headerHeight - 2f);
+        Rect addBtnRect = new(header.xMax - addW - 2f, header.y + 1f, addW, headerHeight - 2f);
 
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
@@ -60,7 +60,7 @@ public static class AnimalListWidget
 
         // --- List ---
         float listTop = header.yMax + 4f;
-        Rect listOutRect = new Rect(rect.x, listTop, rect.width, rect.height - (listTop - rect.y));
+        Rect listOutRect = new(rect.x, listTop, rect.width, rect.height - (listTop - rect.y));
         float viewHeight = items.Count * rowHeight;
         Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref scrollPos, viewHeight);
 
@@ -70,13 +70,13 @@ public static class AnimalListWidget
             SavedAnimal item = items[index];
             if (item.kind?.race is null) { y += rowHeight; continue; }
 
-            Rect row = new Rect(scrollViewRect.x, y, scrollViewRect.width, rowHeight);
+            Rect row = new(scrollViewRect.x, y, scrollViewRect.width, rowHeight);
             Widgets.DrawHighlightIfMouseover(row);
 
-            Rect iconRect = new Rect(row.x + 6f, row.y + 2f, IconSize, IconSize);
+            Rect iconRect = new(row.x + 6f, row.y + 2f, IconSize, IconSize);
             Widgets.ThingIcon(iconRect, item.kind.race);
 
-            Rect infoRect = new Rect(iconRect.xMax + 2f, row.y + 2f, IconSize - 2f, IconSize - 2f);
+            Rect infoRect = new(iconRect.xMax + 2f, row.y + 2f, IconSize - 2f, IconSize - 2f);
             Widgets.InfoCardButton(infoRect, item.kind.race);
 
             float cursorRight = row.xMax - 4f;
@@ -84,7 +84,7 @@ public static class AnimalListWidget
             // Remove button (far right)
             if (editable)
             {
-                Rect removeRect = new Rect(cursorRight - removeButtonSize, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
+                Rect removeRect = new(cursorRight - removeButtonSize, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 if (UIUtil.ClampedButtonText(removeRect, "X"))
@@ -98,9 +98,9 @@ public static class AnimalListWidget
             // Count steppers ( - N + )
             if (editable)
             {
-                Rect plusRect = new Rect(cursorRight - stepperButtonW, row.y + (rowHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
-                Rect countRect = new Rect(plusRect.x - 26f, row.y, 26f, rowHeight);
-                Rect minusRect = new Rect(countRect.x - stepperButtonW, plusRect.y, stepperButtonW, stepperButtonW);
+                Rect plusRect = new(cursorRight - stepperButtonW, row.y + (rowHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
+                Rect countRect = new(plusRect.x - 26f, row.y, 26f, rowHeight);
+                Rect minusRect = new(countRect.x - stepperButtonW, plusRect.y, stepperButtonW, stepperButtonW);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 if (UIUtil.ClampedButtonText(minusRect, "-"))
@@ -118,7 +118,7 @@ public static class AnimalListWidget
             }
             else
             {
-                Rect countRect = new Rect(cursorRight - 30f, row.y, 30f, rowHeight);
+                Rect countRect = new(cursorRight - 30f, row.y, 30f, rowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
                 UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
@@ -127,14 +127,14 @@ public static class AnimalListWidget
 
             // Cost (per animal)
             double cost = Math.Floor(item.kind.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
-            Rect costRect = new Rect(cursorRight - 55f, row.y, 55f, rowHeight);
+            Rect costRect = new(cursorRight - 55f, row.y, 55f, rowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleRight;
             UIUtil.ClampedLabel(costRect, "$" + cost.ToString("F0"));
 
             // Label
             string label = item.kind.LabelCap;
-            Rect labelRect = new Rect(infoRect.xMax + 6f, row.y, costRect.x - infoRect.xMax - 10f, rowHeight);
+            Rect labelRect = new(infoRect.xMax + 6f, row.y, costRect.x - infoRect.xMax - 10f, rowHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);

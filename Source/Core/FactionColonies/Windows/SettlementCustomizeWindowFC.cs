@@ -11,7 +11,7 @@ public class SettlementCustomizeWindowFc : Window
     private string name;
     private string shortName;
 
-    public override Vector2 InitialSize => new Vector2(445f, 280f);
+    public override Vector2 InitialSize => new(445f, 280f);
 
     public SettlementCustomizeWindowFc(WorldSettlementFC settlement)
     {
@@ -39,17 +39,17 @@ public class SettlementCustomizeWindowFc : Window
 
     public override void DoWindowContents(Rect inRect)
     {
-        Rect headerLabelRect = new Rect(inRect.position, new Vector2(inRect.width, StandardHeight));
+        Rect headerLabelRect = new(inRect.position, new Vector2(inRect.width, StandardHeight));
 
-        Rect fullNameLabelRect = new Rect(StandardMargin, StandardHeight, inRect.width / 4, StandardHeight);
-        Rect shortNameLabelRect = new Rect(StandardMargin, StandardMargin + StandardHeight * 2, inRect.width / 4, StandardHeight);
+        Rect fullNameLabelRect = new(StandardMargin, StandardHeight, inRect.width / 4, StandardHeight);
+        Rect shortNameLabelRect = new(StandardMargin, StandardMargin + StandardHeight * 2, inRect.width / 4, StandardHeight);
 
         float x = StandardMargin + inRect.width / 4;
-        Rect fullNameInputRect = new Rect(x, StandardHeight, inRect.width - x - StandardMargin - StandardHeight, StandardHeight);
-        Rect shortNameInputRect = new Rect(x, StandardMargin + StandardHeight * 2, inRect.width - x - StandardMargin - StandardHeight, StandardHeight);
+        Rect fullNameInputRect = new(x, StandardHeight, inRect.width - x - StandardMargin - StandardHeight, StandardHeight);
+        Rect shortNameInputRect = new(x, StandardMargin + StandardHeight * 2, inRect.width - x - StandardMargin - StandardHeight, StandardHeight);
 
-        Rect resetFullNameButtonRect = new Rect(inRect.width - StandardHeight, StandardHeight, StandardHeight, StandardHeight);
-        Rect resetShortNameButtonRect = new Rect(inRect.width - StandardHeight, StandardMargin + StandardHeight * 2, StandardHeight, StandardHeight);
+        Rect resetFullNameButtonRect = new(inRect.width - StandardHeight, StandardHeight, StandardHeight, StandardHeight);
+        Rect resetShortNameButtonRect = new(inRect.width - StandardHeight, StandardMargin + StandardHeight * 2, StandardHeight, StandardHeight);
 
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;

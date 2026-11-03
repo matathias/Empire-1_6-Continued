@@ -61,14 +61,10 @@ public static class SquadHealthUtil
         if (squad is null) return;
         foreach (Pawn merc in squad.AllEquippedMercenaryPawns)
         {
-            if (merc.health is null)
-                merc.health = new Pawn_HealthTracker(merc);
-            if (merc.needs is null)
-                merc.needs = new Pawn_NeedsTracker(merc);
-            if (merc.needs.food is null)
-                merc.needs.food = new Need_Food(merc);
-            if (merc.needs.rest is null)
-                merc.needs.rest = new Need_Rest(merc);
+            merc.health ??= new Pawn_HealthTracker(merc);
+            merc.needs ??= new Pawn_NeedsTracker(merc);
+            merc.needs.food ??= new Need_Food(merc);
+            merc.needs.rest ??= new Need_Rest(merc);
             if (merc.RaceProps is null)
             {
                 LogUtil.Warning($"ResetNeeds encountered merc ({merc.Name}) with null RaceProps. Skipping");

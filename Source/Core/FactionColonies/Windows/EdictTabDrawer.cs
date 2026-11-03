@@ -10,14 +10,14 @@ namespace FactionColonies;
 public static class EdictTabDrawer
 {
     private static readonly FCPolicyCategory[] EdictCategories =
-    {
+    [
         FCPolicyCategory.Social,
         FCPolicyCategory.Tax,
         FCPolicyCategory.Doctrine,
         FCPolicyCategory.Military
-    };
+    ];
 
-    private static Dictionary<FCPolicyCategory, Vector2> columnScrollPositions = new Dictionary<FCPolicyCategory, Vector2>();
+    private static Dictionary<FCPolicyCategory, Vector2> columnScrollPositions = [];
 
     private const float Margin = 5f;
     private const float ColumnGap = 8f;
@@ -38,14 +38,14 @@ public static class EdictTabDrawer
 
     private static string GetCategoryLabel(FCPolicyCategory category)
     {
-        switch (category)
+        return category switch
         {
-            case FCPolicyCategory.Social: return "FCEdictCategorySocial".Translate();
-            case FCPolicyCategory.Tax: return "FCEdictCategoryTax".Translate();
-            case FCPolicyCategory.Military: return "FCEdictCategoryMilitary".Translate();
-            case FCPolicyCategory.Doctrine: return "FCEdictCategoryDoctrine".Translate();
-            default: return category.ToString();
-        }
+            FCPolicyCategory.Social => "FCEdictCategorySocial".Translate(),
+            FCPolicyCategory.Tax => "FCEdictCategoryTax".Translate(),
+            FCPolicyCategory.Military => "FCEdictCategoryMilitary".Translate(),
+            FCPolicyCategory.Doctrine => "FCEdictCategoryDoctrine".Translate(),
+            _ => category.ToString(),
+        };
     }
 
     private static void GetColumnColors(FCPolicyCategory category, out Color bodyColor, out Color headerColor)
@@ -80,7 +80,7 @@ public static class EdictTabDrawer
         // Description header
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.UpperLeft;
-        Rect descRect = new Rect(rect.x + Margin, rect.y + Margin, rect.width - Margin * 2, 22f);
+        Rect descRect = new(rect.x + Margin, rect.y + Margin, rect.width - Margin * 2, 22f);
         UIUtil.ClampedLabel(descRect, "FCEdictsDesc".Translate());
 
         float topY = descRect.yMax + Margin;
@@ -93,7 +93,7 @@ public static class EdictTabDrawer
         {
             FCPolicyCategory category = EdictCategories[i];
             float colX = rect.x + Margin + i * (columnWidth + ColumnGap);
-            Rect colRect = new Rect(colX, topY, columnWidth, columnsHeight);
+            Rect colRect = new(colX, topY, columnWidth, columnsHeight);
             DrawColumn(colRect, category, FactionCache.GetPoliciesByCategory(category), faction);
         }
 
@@ -116,7 +116,7 @@ public static class EdictTabDrawer
         PolicyManager.EdictCategoryUnlockLevels.TryGetValue(category, out requiredLevel);
 
         // Header
-        Rect headerRect = new Rect(rect.x, rect.y, rect.width, HeaderHeight);
+        Rect headerRect = new(rect.x, rect.y, rect.width, HeaderHeight);
         Widgets.DrawBoxSolid(headerRect, headerColor);
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
@@ -129,7 +129,7 @@ public static class EdictTabDrawer
             // Locked state
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Rect lockedRect = new Rect(rect.x + Margin, contentY, rect.width - Margin * 2, 40f);
+            Rect lockedRect = new(rect.x + Margin, contentY, rect.width - Margin * 2, 40f);
             UIUtil.DrawColoredLabel(lockedRect, "FCEdictLockedUntilLevel".Translate(requiredLevel), Color.gray);
             Text.Anchor = TextAnchor.UpperLeft;
             return;
@@ -137,7 +137,7 @@ public static class EdictTabDrawer
 
         // Active edict status
         FCPolicy activeEdict = FindFC.PolicyManager.GetActiveEdict(category);
-        Rect statusRect = new Rect(rect.x + CategoryPadding, contentY, rect.width - CategoryPadding * 2, 22f);
+        Rect statusRect = new(rect.x + CategoryPadding, contentY, rect.width - CategoryPadding * 2, 22f);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
 
@@ -150,7 +150,7 @@ public static class EdictTabDrawer
             if (!activeEdict.IsFullyActive)
             {
                 contentY = statusRect.yMax;
-                Rect activatingRect = new Rect(rect.x + CategoryPadding, contentY, rect.width - CategoryPadding * 2, 22f);
+                Rect activatingRect = new(rect.x + CategoryPadding, contentY, rect.width - CategoryPadding * 2, 22f);
                 float daysRemaining = (activeEdict.def.enactDuration - (Find.TickManager.TicksGame - activeEdict.timeEnacted)) / 60000f;
                 UIUtil.DrawColoredLabel(activatingRect, "FCEdictActivating".Translate(daysRemaining.ToString("F1")), Color.yellow);
                 contentY = activatingRect.yMax;
@@ -168,7 +168,7 @@ public static class EdictTabDrawer
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.UpperLeft;
                 float effectsHeight = Text.CalcHeight(effectsText, effectsWidth);
-                Rect effectsRect = new Rect(rect.x + CategoryPadding, contentY + 2f, effectsWidth, effectsHeight);
+                Rect effectsRect = new(rect.x + CategoryPadding, contentY + 2f, effectsWidth, effectsHeight);
                 if (!activeEdict.IsFullyActive)
                     GUI.color = Color.gray;
                 Widgets.Label(effectsRect, effectsText);
@@ -178,7 +178,7 @@ public static class EdictTabDrawer
             }
 
             // Revoke button
-            Rect revokeRect = new Rect(rect.x + CategoryPadding, contentY, rect.width - CategoryPadding * 2, 24f);
+            Rect revokeRect = new(rect.x + CategoryPadding, contentY, rect.width - CategoryPadding * 2, 24f);
             if (UIUtil.ClampedButtonText(revokeRect, "FCEdictRevoke".Translate()))
             {
                 FCPolicy edictToRevoke = activeEdict;
@@ -204,7 +204,7 @@ public static class EdictTabDrawer
 
         // Edict list with scroll view
         float listHeight = rect.yMax - contentY;
-        Rect listOuterRect = new Rect(rect.x + CategoryPadding, contentY, rect.width - CategoryPadding * 2, listHeight);
+        Rect listOuterRect = new(rect.x + CategoryPadding, contentY, rect.width - CategoryPadding * 2, listHeight);
         // Use scrollbar-adjusted width for height calculation to avoid underestimating
         // when the scrollbar narrows the view and causes more text wrapping
         float textWidthForLayout = listOuterRect.width - RadioSize - Margin - 16f;
@@ -228,7 +228,7 @@ public static class EdictTabDrawer
         foreach (FCPolicyDef def in edicts)
         {
             float rowHeight = GetEdictRowHeight(def, actualTextWidth);
-            Rect rowRect = new Rect(listViewRect.x, rowY, listViewRect.width, rowHeight);
+            Rect rowRect = new(listViewRect.x, rowY, listViewRect.width, rowHeight);
             DrawEdictRow(rowRect, def, faction, activeEdict);
             rowY = rowRect.yMax + 2f;
         }
@@ -274,13 +274,13 @@ public static class EdictTabDrawer
             Widgets.DrawHighlight(rect);
 
         // Radio button visual (display only, not the click target)
-        Rect radioRect = new Rect(rect.x, rect.y + (rect.height - RadioSize) / 2f, RadioSize, RadioSize);
+        Rect radioRect = new(rect.x, rect.y + (rect.height - RadioSize) / 2f, RadioSize, RadioSize);
 
         // Label and description
         float textX = radioRect.xMax + Margin;
         float textWidth = rect.width - RadioSize - Margin;
 
-        Rect labelRect = new Rect(textX, rect.y + 2f, textWidth, 22f);
+        Rect labelRect = new(textX, rect.y + 2f, textWidth, 22f);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
 
@@ -291,13 +291,13 @@ public static class EdictTabDrawer
 
         // Description — fills remaining space between label and upkeep
         float descHeight = rect.height - LabelHeight - UpkeepHeight - RowPadding;
-        Rect descRect = new Rect(textX, labelRect.yMax, textWidth, descHeight);
+        Rect descRect = new(textX, labelRect.yMax, textWidth, descHeight);
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.UpperLeft;
         Widgets.Label(descRect, def.FormattedDesc);
 
         // Upkeep
-        Rect upkeepRect = new Rect(textX, descRect.yMax, textWidth, 20f);
+        Rect upkeepRect = new(textX, descRect.yMax, textWidth, 20f);
         UIUtil.DrawColoredLabel(upkeepRect,
             "FCEdictUpkeep".Translate(def.upkeepSilver),
             available ? new Color(1f, 0.85f, 0.4f) : Color.gray);
@@ -355,7 +355,7 @@ public static class EdictTabDrawer
 
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect upkeepLabelRect = new Rect(rect.x + Margin, rect.y, rect.width - Margin * 2, rect.height);
+        Rect upkeepLabelRect = new(rect.x + Margin, rect.y, rect.width - Margin * 2, rect.height);
         UIUtil.ClampedLabel(upkeepLabelRect, "FCEdictTotalUpkeep".Translate(totalUpkeep));
         Text.Anchor = TextAnchor.UpperLeft;
     }

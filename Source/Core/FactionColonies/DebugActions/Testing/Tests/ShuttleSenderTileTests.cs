@@ -29,7 +29,7 @@ public static class ShuttleSenderTileTests
         PlanetLayer orbit = grid.Orbit;
         if (orbit is null || orbit.IsRootSurface) TestAssert.Skip("World has no non-surface orbit layer");
 
-        PlanetTile orbitTile = new PlanetTile(0, orbit);
+        PlanetTile orbitTile = new(0, orbit);
         var sender = new ProbeShuttleSender(orbitTile);
 
         TestAssert.IsFalse(sender.TileForTest.Layer.IsRootSurface,
@@ -46,7 +46,7 @@ public static class ShuttleSenderTileTests
     public static void ShuttleSender_PreservesSurfaceTileIdentity()
     {
         // Layer-agnostic sanity check that always runs: a surface origin round-trips exactly.
-        PlanetTile surfaceTile = new PlanetTile(42);
+        PlanetTile surfaceTile = new(42);
         var sender = new ProbeShuttleSender(surfaceTile);
 
         TestAssert.IsTrue(sender.TileForTest == surfaceTile, "surface origin must round-trip");
@@ -65,7 +65,7 @@ public static class ShuttleSenderTileTests
         // An orbital shuttle port targeting the surface tile directly beneath it: the tiles are on
         // different layers, so without canTraverseLayers the distance is int.MaxValue and the target
         // is wrongly rejected. The surface projection sits at distance ~0, well within range.
-        PlanetTile orbitTile = new PlanetTile(0, orbit);
+        PlanetTile orbitTile = new(0, orbit);
         var sender = new ProbeShuttleSender(orbitTile);
         PlanetTile surfaceTarget = grid.Surface.GetClosestTile_NewTemp(orbitTile);
 

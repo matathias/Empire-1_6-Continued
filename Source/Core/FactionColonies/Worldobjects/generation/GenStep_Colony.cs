@@ -38,14 +38,14 @@ public class GenStep_Colony : GenStep_Scatterer
         Settlement = LookupSettlement(map);
 
         int middle = 36 + Settlement.settlementLevel * 2;
-        IntRange range = new IntRange(middle - 2, middle + 2);
+        IntRange range = new(middle - 2, middle + 2);
         int randomInRange1 = range.RandomInRange;
         int randomInRange2 = range.RandomInRange;
-        CellRect cellRect = new CellRect(c.x - randomInRange1 / 2, c.z - randomInRange2 / 2, randomInRange1,
+        CellRect cellRect = new(c.x - randomInRange1 / 2, c.z - randomInRange2 / 2, randomInRange1,
             randomInRange2);
         Faction faction = FindFC.EmpireFaction;
         cellRect.ClipInsideMap(map);
-        ResolveParams resolveParams = new ResolveParams();
+        ResolveParams resolveParams = new();
         if (Settlement.settlementLevel >= 7)
         {
             resolveParams.filthDef = null;

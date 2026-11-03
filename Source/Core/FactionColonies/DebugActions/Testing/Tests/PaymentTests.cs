@@ -236,7 +236,7 @@ public static class PaymentTests
     [EmpireTest("Payment")]
     public static void ReturnValueOfTithe_EmptyList_ReturnsZero()
     {
-        double value = PaymentUtil.ReturnValueOfTithe(new List<Thing>());
+        double value = PaymentUtil.ReturnValueOfTithe([]);
         TestAssert.AreEqual(0.0, value, message: "Empty list should return 0");
     }
 

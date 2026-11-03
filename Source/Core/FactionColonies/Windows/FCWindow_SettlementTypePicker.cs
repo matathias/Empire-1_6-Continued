@@ -19,7 +19,7 @@ public class FCWindow_SettlementTypePicker : Window
     private const float TitleHeight = 35f;
     private const float SeparatorHeight = 1f;
 
-    public override Vector2 InitialSize => new Vector2(480f, 550f);
+    public override Vector2 InitialSize => new(480f, 550f);
 
     /// <summary>Picker over all available settlement types.</summary>
     public FCWindow_SettlementTypePicker(Action<WorldSettlementDef> onSelect)
@@ -59,7 +59,7 @@ public class FCWindow_SettlementTypePicker : Window
         // Scroll view
         float listTop = TitleHeight + SettlementCardDrawer.margin;
         float listHeight = inRect.height - listTop;
-        Rect scrollOutRect = new Rect(0, listTop, inRect.width, listHeight);
+        Rect scrollOutRect = new(0, listTop, inRect.width, listHeight);
 
         float contentWidth = scrollOutRect.width - 16f;
         float totalHeight = 0f;
@@ -75,7 +75,7 @@ public class FCWindow_SettlementTypePicker : Window
         {
             WorldSettlementDef def = allTypes[i];
             float rowHeight = GetRowHeight(def, contentWidth);
-            Rect rowRect = new Rect(0, curY, contentWidth, rowHeight);
+            Rect rowRect = new(0, curY, contentWidth, rowHeight);
 
             if (rowRect.yMax >= scrollPos.y && rowRect.y <= scrollPos.y + listHeight)
             {

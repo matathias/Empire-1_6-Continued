@@ -15,7 +15,7 @@ namespace FactionColonies;
 /// </summary>
 public static class AnimalBiomeUtil
 {
-    private static readonly BiomeDef[] EmptyBiomes = new BiomeDef[0];
+    private static readonly BiomeDef[] EmptyBiomes = [];
 
     /* kind -> biomes (sorted by label) whose allowedPackAnimals include the animal's race.
        Built lazily per kind and never invalidated (biome/animal defs are static after load).
@@ -23,7 +23,7 @@ public static class AnimalBiomeUtil
        IsPackAnimal() calls this to decide pack eligibility, and AllPackAnimalKinds is built from
        IsPackAnimal() - prebuilding off that list would recurse. */
     private static readonly Dictionary<PawnKindDef, List<BiomeDef>> _packAnimalBiomes =
-        new Dictionary<PawnKindDef, List<BiomeDef>>();
+        [];
 
     /// <summary>The biomes in which the given animal can serve as a caravan carrier (its race is
     /// in that biome's allowedPackAnimals). This is the criterion vanilla trade-caravan generation

@@ -11,7 +11,7 @@ public static class SquadInspectionRegistry
         public ISquadInspectionSection section;
         public int regIndex;
     }
-    private static readonly List<Entry> _entries = new List<Entry>();
+    private static readonly List<Entry> _entries = [];
     private static int _nextRegIndex = 0;
     private static List<ISquadInspectionSection> _sortedCache;
 
@@ -52,14 +52,14 @@ public static class SquadInspectionRegistry
         {
             if (_sortedCache is null)
             {
-                List<Entry> copy = new List<Entry>(_entries);
+                List<Entry> copy = new(_entries);
                 copy.Sort((a, b) =>
                 {
                     int byOrder = a.section.Order.CompareTo(b.section.Order);
                     if (byOrder != 0) return byOrder;
                     return a.regIndex.CompareTo(b.regIndex);
                 });
-                List<ISquadInspectionSection> result = new List<ISquadInspectionSection>(copy.Count);
+                List<ISquadInspectionSection> result = new(copy.Count);
                 for (int i = 0; i < copy.Count; i++) result.Add(copy[i].section);
                 _sortedCache = result;
             }

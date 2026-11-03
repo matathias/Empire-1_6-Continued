@@ -50,7 +50,7 @@ public static class FoundingScreenHooks
         if (main is null) return;
 
         const float gap = 10f;
-        List<Window> companions = new List<Window>();
+        List<Window> companions = [];
         foreach (Window w in Find.WindowStack.Windows)
             if (w is IFoundingCompanionWindow) companions.Add(w);
 

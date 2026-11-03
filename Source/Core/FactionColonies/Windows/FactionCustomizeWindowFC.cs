@@ -15,7 +15,7 @@ public class FactionCustomizeWindowFc : Window
     private const float rowHeight = 60f;
     private const float bottomRowHeight = 80f;
 
-    public override Vector2 InitialSize => new Vector2(fullwidth, fullheight);
+    public override Vector2 InitialSize => new(fullwidth, fullheight);
 
     private FactionFC faction;
 
@@ -112,16 +112,16 @@ public class FactionCustomizeWindowFc : Window
 
         // 2. Name / Title Row
         float halfWidth = (inRect.width - cardGap) / 2f;
-        Rect nameCard = new Rect(inRect.x, y, halfWidth, rowHeight);
-        Rect titleCard = new Rect(inRect.x + halfWidth + cardGap, y, halfWidth, rowHeight);
+        Rect nameCard = new(inRect.x, y, halfWidth, rowHeight);
+        Rect titleCard = new(inRect.x + halfWidth + cardGap, y, halfWidth, rowHeight);
         DrawNameCard(nameCard);
         DrawTitleCard(titleCard);
         y += rowHeight + cardGap;
 
         // 3. Icon + Colors Row
         float iconCardWidth = 80f;
-        Rect iconCard = new Rect(inRect.x, y, iconCardWidth, colorsRowHeight);
-        Rect colorsCard = new Rect(inRect.x + iconCardWidth + cardGap, y, inRect.width - iconCardWidth - cardGap, colorsRowHeight);
+        Rect iconCard = new(inRect.x, y, iconCardWidth, colorsRowHeight);
+        Rect colorsCard = new(inRect.x + iconCardWidth + cardGap, y, inRect.width - iconCardWidth - cardGap, colorsRowHeight);
         DrawIconCard(iconCard);
         DrawColorsCard(colorsCard);
         y += colorsRowHeight + cardGap;
@@ -130,22 +130,22 @@ public class FactionCustomizeWindowFc : Window
         bool showXenoCard = ModsConfig.BiotechActive || FactionCache.HumanlikeRacesCount > 1;
         if (showXenoCard)
         {
-            Rect xenoCard = new Rect(inRect.x, y, halfWidth, bottomRowHeight);
-            Rect policyCard = new Rect(inRect.x + halfWidth + cardGap, y, halfWidth, bottomRowHeight);
+            Rect xenoCard = new(inRect.x, y, halfWidth, bottomRowHeight);
+            Rect policyCard = new(inRect.x + halfWidth + cardGap, y, halfWidth, bottomRowHeight);
             DrawXenotypesCard(xenoCard);
             DrawPoliciesCard(policyCard);
         }
         else
         {
-            Rect policyCard = new Rect(inRect.x, y, inRect.width, bottomRowHeight);
+            Rect policyCard = new(inRect.x, y, inRect.width, bottomRowHeight);
             DrawPoliciesCard(policyCard);
         }
         y += bottomRowHeight + cardGap;
 
         // 5. Animals & Caravan Types Row
         float halfBottomWidth = (inRect.width - cardGap) / 2f;
-        Rect animalCard = new Rect(inRect.x, y, halfBottomWidth, bottomRowHeight);
-        Rect caravanCard = new Rect(inRect.x + halfBottomWidth + cardGap, y, halfBottomWidth, bottomRowHeight);
+        Rect animalCard = new(inRect.x, y, halfBottomWidth, bottomRowHeight);
+        Rect caravanCard = new(inRect.x + halfBottomWidth + cardGap, y, halfBottomWidth, bottomRowHeight);
         DrawAnimalsCard(animalCard);
         DrawCaravanTypesCard(caravanCard);
         y += bottomRowHeight + cardGap;
@@ -153,7 +153,7 @@ public class FactionCustomizeWindowFc : Window
         // 6. Confirm Button
         float confirmWidth = 200f;
         float confirmHeight = 30f;
-        Rect confirmRect = new Rect((inRect.width - confirmWidth) / 2f, inRect.yMax - confirmHeight - margin, confirmWidth, confirmHeight);
+        Rect confirmRect = new((inRect.width - confirmWidth) / 2f, inRect.yMax - confirmHeight - margin, confirmWidth, confirmHeight);
         Text.Font = GameFont.Small;
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirmChanges".Translate()))
         {
@@ -171,7 +171,7 @@ public class FactionCustomizeWindowFc : Window
         DrawCardLabel(rect, "FCFactionName".Translate());
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect fieldRect = new Rect(rect.x + cardPadding, rect.y + cardPadding + 18f, rect.width - cardPadding * 2, 28f);
+        Rect fieldRect = new(rect.x + cardPadding, rect.y + cardPadding + 18f, rect.width - cardPadding * 2, 28f);
         tempName = Widgets.TextField(fieldRect, tempName);
     }
 
@@ -181,7 +181,7 @@ public class FactionCustomizeWindowFc : Window
         DrawCardLabel(rect, "FCFactionTitle".Translate());
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect fieldRect = new Rect(rect.x + cardPadding, rect.y + cardPadding + 18f, rect.width - cardPadding * 2, 28f);
+        Rect fieldRect = new(rect.x + cardPadding, rect.y + cardPadding + 18f, rect.width - cardPadding * 2, 28f);
         tempTitle = Widgets.TextField(fieldRect, tempTitle);
         TooltipHandler.TipRegion(fieldRect, "FCFactionTitleDesc".Translate());
     }
@@ -191,7 +191,7 @@ public class FactionCustomizeWindowFc : Window
         DrawCard(rect);
         DrawCardLabel(rect, "fcInsignia".Translate());
         float btnSize = 36f;
-        Rect btnRect = new Rect(rect.x + (rect.width - btnSize) / 2f, rect.y + cardPadding + 20f, btnSize, btnSize);
+        Rect btnRect = new(rect.x + (rect.width - btnSize) / 2f, rect.y + cardPadding + 20f, btnSize, btnSize);
         if (Widgets.ButtonImage(btnRect, tempFactionIcon))
         {
             List<FloatMenuOption> list = TexLoad.factionIcons.Select(texture => new FloatMenuOption(texture.name, delegate
@@ -213,7 +213,7 @@ public class FactionCustomizeWindowFc : Window
         float swatchGroupX = rect.x + cardPadding;
 
         // Primary swatch
-        Rect primarySwatchRect = new Rect(swatchGroupX, contentY, swatchSize, swatchSize);
+        Rect primarySwatchRect = new(swatchGroupX, contentY, swatchSize, swatchSize);
         DrawColorSwatch(primarySwatchRect, tempPrimaryColor, tempHasPrimaryColor);
         if (Widgets.ButtonInvisible(primarySwatchRect))
         {
@@ -223,12 +223,12 @@ public class FactionCustomizeWindowFc : Window
         // Primary label + action
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.UpperCenter;
-        Rect primaryLabelRect = new Rect(primarySwatchRect.x - 10f, primarySwatchRect.yMax + 2f, swatchSize + 20f, 18f);
+        Rect primaryLabelRect = new(primarySwatchRect.x - 10f, primarySwatchRect.yMax + 2f, swatchSize + 20f, 18f);
         UIUtil.DrawColoredLabel(primaryLabelRect, "fcPrimaryColor".Translate(), ColorUtil.Gray6);
 
         if (tempHasPrimaryColor)
         {
-            Rect clearRect = new Rect(primarySwatchRect.x, primaryLabelRect.yMax, swatchSize, 18f);
+            Rect clearRect = new(primarySwatchRect.x, primaryLabelRect.yMax, swatchSize, 18f);
             GUI.color = new Color(0.72f, 0.53f, 0.04f);
             if (UIUtil.ClampedButtonText(clearRect, "FCClear".Translate(), drawBackground: false))
             {
@@ -242,7 +242,7 @@ public class FactionCustomizeWindowFc : Window
         }
         else
         {
-            Rect notSetRect = new Rect(primarySwatchRect.x - 8f, primaryLabelRect.yMax, swatchSize + 16f, 18f);
+            Rect notSetRect = new(primarySwatchRect.x - 8f, primaryLabelRect.yMax, swatchSize + 16f, 18f);
             UIUtil.DrawColoredLabel(notSetRect, "fcColorNotSet".Translate(), ColorUtil.Gray5);
         }
 
@@ -250,7 +250,7 @@ public class FactionCustomizeWindowFc : Window
 
         // Secondary swatch
         float secondaryX = swatchGroupX + swatchSize + 24f;
-        Rect secondarySwatchRect = new Rect(secondaryX, contentY, swatchSize, swatchSize);
+        Rect secondarySwatchRect = new(secondaryX, contentY, swatchSize, swatchSize);
         bool secondaryDisabled = !tempHasPrimaryColor;
 
         DrawColorSwatch(secondarySwatchRect, tempSecondaryColor, tempHasSecondaryColor);
@@ -270,12 +270,12 @@ public class FactionCustomizeWindowFc : Window
         // Secondary label + action
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.UpperCenter;
-        Rect secondaryLabelRect = new Rect(secondarySwatchRect.x - 12f, secondarySwatchRect.yMax + 2f, swatchSize + 24f, 18f);
+        Rect secondaryLabelRect = new(secondarySwatchRect.x - 12f, secondarySwatchRect.yMax + 2f, swatchSize + 24f, 18f);
         UIUtil.DrawColoredLabel(secondaryLabelRect, "fcSecondaryColor".Translate(), ColorUtil.Gray6);
 
         if (tempHasSecondaryColor)
         {
-            Rect clearRect = new Rect(secondarySwatchRect.x, secondaryLabelRect.yMax, swatchSize, 18f);
+            Rect clearRect = new(secondarySwatchRect.x, secondaryLabelRect.yMax, swatchSize, 18f);
             GUI.color = new Color(0.72f, 0.53f, 0.04f);
             if (UIUtil.ClampedButtonText(clearRect, "FCClear".Translate(), drawBackground: false))
             {
@@ -286,7 +286,7 @@ public class FactionCustomizeWindowFc : Window
         }
         else
         {
-            Rect notSetRect = new Rect(secondarySwatchRect.x - 8f, secondaryLabelRect.yMax, swatchSize + 16f, 18f);
+            Rect notSetRect = new(secondarySwatchRect.x - 8f, secondaryLabelRect.yMax, swatchSize + 16f, 18f);
             UIUtil.DrawColoredLabel(notSetRect, "fcColorNotSet".Translate(), ColorUtil.Gray5);
         }
 
@@ -306,7 +306,7 @@ public class FactionCustomizeWindowFc : Window
             float infoWidth = rect.xMax - cardPadding - infoX;
             if (infoWidth > 40f)
             {
-                Rect infoRect = new Rect(infoX, contentY, infoWidth, swatchSize + 16f);
+                Rect infoRect = new(infoX, contentY, infoWidth, swatchSize + 16f);
                 Widgets.DrawBoxSolid(infoRect, new Color(0.18f, 0.14f, 0.10f, 0.6f));
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
@@ -326,7 +326,7 @@ public class FactionCustomizeWindowFc : Window
 
             // Green checkmark badge (top-right)
             float badgeSize = 12f;
-            Rect badge = new Rect(rect.xMax - badgeSize + 3f, rect.y - 3f, badgeSize, badgeSize);
+            Rect badge = new(rect.xMax - badgeSize + 3f, rect.y - 3f, badgeSize, badgeSize);
             Widgets.DrawBoxSolid(badge, new Color(0.2f, 0.7f, 0.2f));
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
@@ -347,7 +347,7 @@ public class FactionCustomizeWindowFc : Window
         DrawCardLabel(rect, "FCAllowedXenotypes".Translate());
         float btnWidth = rect.width - cardPadding * 2;
         float btnHeight = 28f;
-        Rect btnRect = new Rect(rect.x + cardPadding, rect.y + (rect.height - btnHeight) / 2f + 8f, btnWidth, btnHeight);
+        Rect btnRect = new(rect.x + cardPadding, rect.y + (rect.height - btnHeight) / 2f + 8f, btnWidth, btnHeight);
         if (UIUtil.ButtonFlat(btnRect, "fcConfigure".Translate()))
         {
             Find.WindowStack.Add(new FCCustomizeXenotypesWindow());
@@ -360,7 +360,7 @@ public class FactionCustomizeWindowFc : Window
         DrawCardLabel(rect, "FCAllowedAnimals".Translate());
         float btnWidth = rect.width - cardPadding * 2;
         float btnHeight = 28f;
-        Rect btnRect = new Rect(rect.x + cardPadding, rect.y + (rect.height - btnHeight) / 2f + 8f, btnWidth, btnHeight);
+        Rect btnRect = new(rect.x + cardPadding, rect.y + (rect.height - btnHeight) / 2f + 8f, btnWidth, btnHeight);
         if (UIUtil.ButtonFlat(btnRect, "fcConfigure".Translate()))
         {
             Find.WindowStack.Add(new FCWindow_AnimalFilter());
@@ -373,7 +373,7 @@ public class FactionCustomizeWindowFc : Window
         DrawCardLabel(rect, "FCCaravanTypes".Translate());
         float btnWidth = rect.width - cardPadding * 2;
         float btnHeight = 28f;
-        Rect btnRect = new Rect(rect.x + cardPadding, rect.y + (rect.height - btnHeight) / 2f + 8f, btnWidth, btnHeight);
+        Rect btnRect = new(rect.x + cardPadding, rect.y + (rect.height - btnHeight) / 2f + 8f, btnWidth, btnHeight);
         if (UIUtil.ButtonFlat(btnRect, "fcConfigure".Translate()))
         {
             Find.WindowStack.Add(new FCWindow_CaravanTypePicker());
@@ -398,7 +398,7 @@ public class FactionCustomizeWindowFc : Window
             for (int i = 0; i < FindFC.PolicyManager.policies.Count; i++)
             {
                 FCPolicy policy = FindFC.PolicyManager.policies[i];
-                Rect iconRect = new Rect(startX + i * (32f + 5f), contentY, 32f, 32f);
+                Rect iconRect = new(startX + i * (32f + 5f), contentY, 32f, 32f);
                 Widgets.DrawBoxSolid(iconRect, new Color(0.15f, 0.15f, 0.15f));
 
                 Texture2D icon = policy.def.IconLight;
@@ -431,7 +431,7 @@ public class FactionCustomizeWindowFc : Window
 
             for (int i = 0; i < slotCount; i++)
             {
-                Rect slotRect = new Rect(startX + i * (slotSize + 5f), contentY, slotSize, slotSize);
+                Rect slotRect = new(startX + i * (slotSize + 5f), contentY, slotSize, slotSize);
                 UIUtil.DrawColoredBox(slotRect, ColorUtil.Gray3, 2);
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;

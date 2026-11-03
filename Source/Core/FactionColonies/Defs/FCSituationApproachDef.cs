@@ -19,14 +19,14 @@ public class FCSituationApproachDef : Def
     public int upkeepSilver = 0;
 
     /* Gating — reuses the FCOptionDef policy-gate shape. */
-    public List<FCPolicyDef> requiredPolicies = new List<FCPolicyDef>();
+    public List<FCPolicyDef> requiredPolicies = [];
     public FCRequirementMode requirementMode = FCRequirementMode.All;
 
     /* Research gate — declared directly here (requiredResearch lives on FCEventDef, not FCOptionDef). */
-    public List<ResearchProjectDef> requiredResearch = new List<ResearchProjectDef>();
+    public List<ResearchProjectDef> requiredResearch = [];
 
     /* Applied while this approach is active. */
-    public List<FCStatModifier> statModifiers = new List<FCStatModifier>();
+    public List<FCStatModifier> statModifiers = [];
 
     /// <summary>
     /// Whether this approach's static gates (policies + research) are currently satisfied.
@@ -61,7 +61,7 @@ public class FCSituationApproachDef : Def
             return false;
         }
 
-        List<string> missing = new List<string>();
+        List<string> missing = [];
         foreach (FCPolicyDef required in requiredPolicies)
             if (!HasPolicyOrTrait(required)) missing.Add(required.label);
 

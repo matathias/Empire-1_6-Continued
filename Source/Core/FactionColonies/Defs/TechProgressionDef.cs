@@ -12,13 +12,13 @@ public enum TechBarrierMode
 
 public class TechProgressionDef : Def
 {
-    public List<TechLevelBarrier> barriers = new List<TechLevelBarrier>();
+    public List<TechLevelBarrier> barriers = [];
 }
 
 public class TechLevelBarrier
 {
     public TechLevel techLevel = TechLevel.Undefined;
-    public List<ResearchProjectDef> researchProjects = new List<ResearchProjectDef>();
+    public List<ResearchProjectDef> researchProjects = [];
     public TechBarrierMode mode = TechBarrierMode.All;
 
     public bool IsSatisfied()
@@ -55,7 +55,7 @@ public class TechLevelBarrier
             if (researchProjects.NullOrEmpty()) return null;
             if (researchProjects.Count == 1) return researchProjects[0]?.label;
             string sep = mode == TechBarrierMode.All ? " + " : " / ";
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             bool first = true;
             foreach (ResearchProjectDef rp in researchProjects)
             {

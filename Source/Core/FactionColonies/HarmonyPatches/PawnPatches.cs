@@ -28,7 +28,7 @@ class MercenaryDied
                     // the strict-manual outfit refactor; the merc's slot is left as an empty
                     // placeholder (pawn = null) and the player must explicitly use
                     // "Fill Empty Slots" in the inspection window to refill it.
-                    MercenaryDeathEvent deathEvt = new MercenaryDeathEvent(merc, squad, squad.settlement);
+                    MercenaryDeathEvent deathEvt = new(merc, squad, squad.settlement);
                     LifecycleRegistry.InvokeOnMercenaryDeath(deathEvt);
 
                     // Mark the slot empty — keep the Mercenary entry so its loadout reference

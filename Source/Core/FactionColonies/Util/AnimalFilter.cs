@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public class AnimalFilter : IExposable
 {
-    private HashSet<PawnKindDef> allowedAnimals = new HashSet<PawnKindDef>();
+    private HashSet<PawnKindDef> allowedAnimals = [];
     private bool _initialized;
 
     private List<PawnKindDef> _cachedAllowed = null;
@@ -16,8 +16,8 @@ public class AnimalFilter : IExposable
     {
         get
         {
-            return _cachedAllowed ?? (_cachedAllowed =
-                FactionCache.AllAnimalKindDefs.Where(k => allowedAnimals.Contains(k)).ToList());
+            return _cachedAllowed ??=
+                FactionCache.AllAnimalKindDefs.Where(k => allowedAnimals.Contains(k)).ToList();
         }
     }
 
@@ -25,8 +25,8 @@ public class AnimalFilter : IExposable
     {
         get
         {
-            return _cachedAllowedCombat ?? (_cachedAllowedCombat =
-                FactionCache.AllCombatAnimalKindDefs.Where(k => allowedAnimals.Contains(k)).ToList());
+            return _cachedAllowedCombat ??=
+                FactionCache.AllCombatAnimalKindDefs.Where(k => allowedAnimals.Contains(k)).ToList();
         }
     }
 
@@ -34,8 +34,8 @@ public class AnimalFilter : IExposable
     {
         get
         {
-            return _cachedAllowedPack ?? (_cachedAllowedPack =
-                FactionCache.AllPackAnimalKinds.Where(k => allowedAnimals.Contains(k)).ToList());
+            return _cachedAllowedPack ??=
+                FactionCache.AllPackAnimalKinds.Where(k => allowedAnimals.Contains(k)).ToList();
         }
     }
 
@@ -70,13 +70,13 @@ public class AnimalFilter : IExposable
     {
         allowedAnimals.Clear();
         PawnKindDef[] defaults =
-        {
+        [
             AnimalFilterDefOf.Husky, AnimalFilterDefOf.Wolf_Timber, AnimalFilterDefOf.Wolf_Arctic,
             AnimalFilterDefOf.Lynx, AnimalFilterDefOf.Cougar,
             AnimalFilterDefOf.Muffalo, AnimalFilterDefOf.Dromedary, AnimalFilterDefOf.Horse,
             AnimalFilterDefOf.Donkey, AnimalFilterDefOf.Elephant, AnimalFilterDefOf.Yak
-        };
-        HashSet<PawnKindDef> valid = new HashSet<PawnKindDef>(FactionCache.AllAnimalKindDefs);
+        ];
+        HashSet<PawnKindDef> valid = new(FactionCache.AllAnimalKindDefs);
         foreach (PawnKindDef def in defaults)
         {
             if (def is not null && valid.Contains(def))

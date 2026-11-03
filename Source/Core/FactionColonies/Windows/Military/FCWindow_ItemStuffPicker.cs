@@ -20,7 +20,7 @@ public class FCWindow_ItemStuffPicker : Window
     private ThingDef selectedStuff;
     private QualityCategory? selectedQuality = null;
     private QualityCategory SelectedQuality => selectedQuality ?? QualityCategory.Normal;
-    private List<ThingDef> currentStuffs = new List<ThingDef>();
+    private List<ThingDef> currentStuffs = [];
     private int selectedCount = 1;
     private string countBuffer;
 
@@ -42,7 +42,7 @@ public class FCWindow_ItemStuffPicker : Window
     private int stuffFilterCacheSort = -1;
     private ThingDef stuffCacheItem;
     private QualityCategory? stuffCacheQuality;
-    private static readonly string[] sortLabelKeys = { "FCTitheSortNameAZ", "FCTitheSortNameZA", "FCTitheSortPriceLow", "FCTitheSortPriceHigh" };
+    private static readonly string[] sortLabelKeys = ["FCTitheSortNameAZ", "FCTitheSortNameZA", "FCTitheSortPriceLow", "FCTitheSortPriceHigh"];
 
     private Vector2 itemScrollPos;
     private Vector2 stuffScrollPos;
@@ -54,7 +54,7 @@ public class FCWindow_ItemStuffPicker : Window
     private const float PanelGap = 10f;
     private const float margin = 5f;
 
-    public override Vector2 InitialSize => new Vector2(700f, 550f);
+    public override Vector2 InitialSize => new(700f, 550f);
 
     public FCWindow_ItemStuffPicker(
         List<ThingDef> items,
@@ -115,11 +115,11 @@ public class FCWindow_ItemStuffPicker : Window
         float panelWidth = (inRect.width - PanelGap) / 2f;
 
         // Left panel: Items
-        Rect itemPanelRect = new Rect(0, contentTop, panelWidth, contentHeight);
+        Rect itemPanelRect = new(0, contentTop, panelWidth, contentHeight);
         DrawItemPanel(itemPanelRect);
 
         // Right panel: Stuff
-        Rect stuffPanelRect = new Rect(panelWidth + PanelGap, contentTop, panelWidth, contentHeight);
+        Rect stuffPanelRect = new(panelWidth + PanelGap, contentTop, panelWidth, contentHeight);
         if (selectedItem is not null && selectedItem.MadeFromStuff)
         {
             DrawStuffPanel(stuffPanelRect);
@@ -132,13 +132,13 @@ public class FCWindow_ItemStuffPicker : Window
         }
 
         // Selection summary
-        Rect summaryBox = new Rect(inRect.x, contentTop + contentHeight + 5f, inRect.width, summaryHeight);
-        Rect summaryRect = new Rect(summaryBox.x + margin, contentTop + contentHeight + 5f, inRect.width - (margin * 2), summaryHeight);
+        Rect summaryBox = new(inRect.x, contentTop + contentHeight + 5f, inRect.width, summaryHeight);
+        Rect summaryRect = new(summaryBox.x + margin, contentTop + contentHeight + 5f, inRect.width - (margin * 2), summaryHeight);
         Widgets.DrawHighlight(summaryBox);
         DrawSummary(summaryRect);
 
         // Bottom buttons
-        Rect buttonBar = new Rect(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
+        Rect buttonBar = new(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
         DrawButtons(buttonBar);
 
         Text.Font = fontBefore;
@@ -150,15 +150,15 @@ public class FCWindow_ItemStuffPicker : Window
         Text.Font = GameFont.Small;
 
         // Title bar with sort + price label
-        Rect titleBox = new Rect(panelRect.x, panelRect.y, panelRect.width, SearchBarHeight);
+        Rect titleBox = new(panelRect.x, panelRect.y, panelRect.width, SearchBarHeight);
         Widgets.DrawHighlight(titleBox);
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(new Rect(titleBox.x + margin, titleBox.y, 60f, titleBox.height), "FCItem".Translate());
         float sortBtnW = 120f;
-        Rect sortBtn = new Rect(titleBox.xMax - margin - 75f - margin - sortBtnW, titleBox.y + 2, sortBtnW, titleBox.height - 4);
+        Rect sortBtn = new(titleBox.xMax - margin - 75f - margin - sortBtnW, titleBox.y + 2, sortBtnW, titleBox.height - 4);
         if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[itemSortIndex].Translate())))
         {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            List<FloatMenuOption> options = [];
             for (int s = 0; s < sortLabelKeys.Length; s++)
             {
                 int captured = s;
@@ -173,7 +173,7 @@ public class FCWindow_ItemStuffPicker : Window
 
         Text.Anchor = TextAnchor.MiddleLeft;
         // Search bar
-        Rect searchRect = new Rect(panelRect.x, titleBox.yMax + margin, panelRect.width, SearchBarHeight);
+        Rect searchRect = new(panelRect.x, titleBox.yMax + margin, panelRect.width, SearchBarHeight);
         itemSearchTerm = Widgets.TextField(searchRect, itemSearchTerm);
         if (string.IsNullOrEmpty(itemSearchTerm))
         {
@@ -185,7 +185,7 @@ public class FCWindow_ItemStuffPicker : Window
         }
 
         // Scroll view
-        Rect scrollOutRect = new Rect(panelRect.x, searchRect.yMax + 5f,
+        Rect scrollOutRect = new(panelRect.x, searchRect.yMax + 5f,
             panelRect.width, panelRect.height - (SearchBarHeight * 2) - (margin * 2));
         Widgets.DrawMenuSection(scrollOutRect);
 
@@ -206,7 +206,7 @@ public class FCWindow_ItemStuffPicker : Window
         for (int i = firstRow; i < lastRow; i++)
         {
             ThingDef item = filtered[i];
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width, RowHeight);
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width, RowHeight);
 
             string conflictTip = conflictTooltipFunc is not null ? conflictTooltipFunc(item) : null;
             bool hasConflict = !string.IsNullOrEmpty(conflictTip);
@@ -222,14 +222,14 @@ public class FCWindow_ItemStuffPicker : Window
                 TooltipHandler.TipRegion(row, conflictTip);
 
             // Row layout: Icon | Info | Label | Cost
-            Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
+            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
             Widgets.ThingIcon(iconRect, item);
 
-            Rect infoRect = new Rect(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
+            Rect infoRect = new(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
             Widgets.InfoCardButton(infoRect, item);
 
-            Rect costRect = new Rect(row.xMax - margin - 70f, row.y, 60f, RowHeight);
-            Rect labelRect = new Rect(infoRect.xMax + margin, row.y,
+            Rect costRect = new(row.xMax - margin - 70f, row.y, 60f, RowHeight);
+            Rect labelRect = new(infoRect.xMax + margin, row.y,
                 costRect.x - infoRect.xMax - (margin * 2), RowHeight);
 
             Text.Font = GameFont.Small;
@@ -267,15 +267,15 @@ public class FCWindow_ItemStuffPicker : Window
         Text.Font = GameFont.Small;
 
         // Title bar with sort + price label
-        Rect titleBox = new Rect(panelRect.x, panelRect.y, panelRect.width, SearchBarHeight);
+        Rect titleBox = new(panelRect.x, panelRect.y, panelRect.width, SearchBarHeight);
         Widgets.DrawHighlight(titleBox);
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(new Rect(titleBox.x + margin, titleBox.y, 60f, titleBox.height), "FCStuff".Translate());
         float sortBtnW = 120f;
-        Rect sortBtn = new Rect(titleBox.xMax - margin - 75f - margin - sortBtnW, titleBox.y + 2, sortBtnW, titleBox.height - 4);
+        Rect sortBtn = new(titleBox.xMax - margin - 75f - margin - sortBtnW, titleBox.y + 2, sortBtnW, titleBox.height - 4);
         if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[stuffSortIndex].Translate())))
         {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            List<FloatMenuOption> options = [];
             for (int s = 0; s < sortLabelKeys.Length; s++)
             {
                 int captured = s;
@@ -290,7 +290,7 @@ public class FCWindow_ItemStuffPicker : Window
 
         Text.Anchor = TextAnchor.MiddleLeft;
         // Search bar
-        Rect searchRect = new Rect(panelRect.x, titleBox.yMax + margin, panelRect.width, SearchBarHeight);
+        Rect searchRect = new(panelRect.x, titleBox.yMax + margin, panelRect.width, SearchBarHeight);
         stuffSearchTerm = Widgets.TextField(searchRect, stuffSearchTerm);
         if (string.IsNullOrEmpty(stuffSearchTerm))
         {
@@ -302,7 +302,7 @@ public class FCWindow_ItemStuffPicker : Window
         }
 
         // Scroll view
-        Rect scrollOutRect = new Rect(panelRect.x, searchRect.yMax + 5f,
+        Rect scrollOutRect = new(panelRect.x, searchRect.yMax + 5f,
             panelRect.width, panelRect.height - (SearchBarHeight * 2) - (margin * 2));
         Widgets.DrawMenuSection(scrollOutRect);
 
@@ -323,7 +323,7 @@ public class FCWindow_ItemStuffPicker : Window
         for (int i = firstRow; i < lastRow; i++)
         {
             ThingDef stuff = filtered[i];
-            Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width, RowHeight);
+            Rect row = new(scrollViewRect.x, scrollViewRect.y + (i * RowHeight), scrollViewRect.width, RowHeight);
 
             if (stuff == selectedStuff)
                 Widgets.DrawHighlightSelected(row);
@@ -331,14 +331,14 @@ public class FCWindow_ItemStuffPicker : Window
                 Widgets.DrawHighlight(row);
 
             // Row layout: Icon | Info | Label | Cost
-            Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
+            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
             Widgets.ThingIcon(iconRect, stuff);
 
-            Rect infoRect = new Rect(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
+            Rect infoRect = new(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
             Widgets.InfoCardButton(infoRect, stuff);
 
-            Rect costRect = new Rect(row.xMax - margin - 70f, row.y, 60f, RowHeight);
-            Rect labelRect = new Rect(infoRect.xMax + margin, row.y,
+            Rect costRect = new(row.xMax - margin - 70f, row.y, 60f, RowHeight);
+            Rect labelRect = new(infoRect.xMax + margin, row.y,
                 costRect.x - infoRect.xMax - (margin * 2), RowHeight);
 
             Text.Font = GameFont.Small;
@@ -380,12 +380,12 @@ public class FCWindow_ItemStuffPicker : Window
             labelRect = new Rect(rect.x, rect.y, rect.width - countBlockW - 8f, rect.height);
 
             float x = rect.xMax - countBlockW;
-            Rect lblRect = new Rect(x, rect.y, 50f, rect.height);
+            Rect lblRect = new(x, rect.y, 50f, rect.height);
             Text.Anchor = TextAnchor.MiddleLeft;
             UIUtil.ClampedLabel(lblRect, "fcInventoryCount".Translate());
             x += 52f;
 
-            Rect minusRect = new Rect(x, rect.y + 1f, 24f, rect.height - 2f);
+            Rect minusRect = new(x, rect.y + 1f, 24f, rect.height - 2f);
             if (UIUtil.ClampedButtonText(minusRect, "-"))
             {
                 selectedCount = Mathf.Max(1, selectedCount - 1);
@@ -393,11 +393,11 @@ public class FCWindow_ItemStuffPicker : Window
             }
             x += 26f;
 
-            Rect fieldRect = new Rect(x, rect.y + 1f, 40f, rect.height - 2f);
+            Rect fieldRect = new(x, rect.y + 1f, 40f, rect.height - 2f);
             Widgets.TextFieldNumeric(fieldRect, ref selectedCount, ref countBuffer, 1, 99999);
             x += 42f;
 
-            Rect plusRect = new Rect(x, rect.y + 1f, 24f, rect.height - 2f);
+            Rect plusRect = new(x, rect.y + 1f, 24f, rect.height - 2f);
             if (UIUtil.ClampedButtonText(plusRect, "+"))
             {
                 selectedCount++;
@@ -410,10 +410,10 @@ public class FCWindow_ItemStuffPicker : Window
         if (CraftUtil.ThingHasQuality(selectedItem))
         {
             const float qualityBlockW = 130f;
-            Rect qualityRect = new Rect(labelRect.x, labelRect.y + 1f, qualityBlockW, labelRect.height - 2f);
+            Rect qualityRect = new(labelRect.x, labelRect.y + 1f, qualityBlockW, labelRect.height - 2f);
             if (UIUtil.ClampedButtonText(qualityRect, TextUtil.GetQualityLabelCap(SelectedQuality)))
             {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
+                List<FloatMenuOption> options = [];
                 foreach (QualityCategory cat in Enum.GetValues(typeof(QualityCategory)))
                 {
                     QualityCategory captured = cat;
@@ -438,7 +438,7 @@ public class FCWindow_ItemStuffPicker : Window
         // Unequip (left)
         if (onUnequip is not null)
         {
-            Rect unequipRect = new Rect(bar.x, bar.y, buttonWidth, bar.height);
+            Rect unequipRect = new(bar.x, bar.y, buttonWidth, bar.height);
             if (UIUtil.ClampedButtonText(unequipRect, "FCUnitActionUnequipThing".Translate()))
             {
                 onUnequip();
@@ -447,14 +447,14 @@ public class FCWindow_ItemStuffPicker : Window
         }
 
         // Cancel (right)
-        Rect cancelRect = new Rect(bar.xMax - buttonWidth, bar.y, buttonWidth, bar.height);
+        Rect cancelRect = new(bar.xMax - buttonWidth, bar.y, buttonWidth, bar.height);
         if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
         {
             Close();
         }
 
         // Confirm (left of cancel)
-        Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, bar.y, buttonWidth, bar.height);
+        Rect confirmRect = new(cancelRect.x - buttonWidth - 10f, bar.y, buttonWidth, bar.height);
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate()))
         {
             if (selectedItem is null)

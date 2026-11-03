@@ -8,7 +8,7 @@
 public abstract class SettlementBuildingComp : IExposable
 {
     public WorldSettlementFC settlement;
-    public List<int> buildingSlots = new List<int>();
+    public List<int> buildingSlots = [];
     public bool CanDestroy => buildingSlots.Count == 0;
     public WorldObjectComp_SettlementBuildings parentComp => settlement.GetComponent<WorldObjectComp_SettlementBuildings>();
     public virtual void ExposeData()

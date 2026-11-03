@@ -909,7 +909,7 @@ public static class RegistryTests
     [EmpireTest("Registry")]
     public static void AnimalPickerFilter_Register_AppearsInFilters()
     {
-        StubAnimalPickerFilter filter = new StubAnimalPickerFilter();
+        StubAnimalPickerFilter filter = new();
         EmpireRegistry.Register(filter);
         try
         {
@@ -923,7 +923,7 @@ public static class RegistryTests
     {
         // AND semantics: one disallowing filter gates the kind regardless of any others.
         bool baseline = AnimalPickerFilterRegistry.IsAllowed(null);
-        StubAnimalPickerFilter filter = new StubAnimalPickerFilter { Allow = false };
+        StubAnimalPickerFilter filter = new() { Allow = false };
         EmpireRegistry.Register(filter);
         try
         {
@@ -1369,7 +1369,7 @@ public static class RegistryTests
         WorldSettlementFC settlement = GetFirstSettlement();
         if (settlement is null) TestAssert.Skip("No settlements");
 
-        MultiInterfaceParticipant p = new MultiInterfaceParticipant();
+        MultiInterfaceParticipant p = new();
         EmpireRegistry.Register(p);
         try
         {
@@ -1394,7 +1394,7 @@ public static class RegistryTests
         WorldSettlementFC settlement = GetFirstSettlement();
         if (settlement is null) TestAssert.Skip("No settlements");
 
-        MultiInterfaceParticipant p = new MultiInterfaceParticipant();
+        MultiInterfaceParticipant p = new();
         EmpireRegistry.Register(p);
         EmpireRegistry.Unregister(p);
 
@@ -1410,7 +1410,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void EmpireRegistry_ClearAll_ClearsEveryFacadeManagedRegistry()
     {
-        MultiInterfaceParticipant p = new MultiInterfaceParticipant();
+        MultiInterfaceParticipant p = new();
         EmpireRegistry.Register(p);
         EmpireRegistry.ClearAll();
 
@@ -1433,7 +1433,7 @@ public static class RegistryTests
         // Passing an object that implements zero registered interfaces should
         // log a warning but not throw. We don't capture the log here; just
         // verify no exception escapes and no domain registry is affected.
-        NonParticipant junk = new NonParticipant();
+        NonParticipant junk = new();
         TestAssert.DoesNotThrow(() => EmpireRegistry.Register(junk));
         TestAssert.DoesNotThrow(() => EmpireRegistry.Unregister(junk));
     }

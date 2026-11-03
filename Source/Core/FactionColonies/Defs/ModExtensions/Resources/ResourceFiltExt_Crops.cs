@@ -22,7 +22,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
     /// Harvest outputs falling under any of these thing categories are excluded, keeping this
     /// resource mutually exclusive with whichever resource owns those categories (e.g. Medicine/Drugs).
     /// </summary>
-    public List<ThingCategoryDef> blockedCategories = new List<ThingCategoryDef>();
+    public List<ThingCategoryDef> blockedCategories = [];
 
     /// <summary>
     /// Each crop output mapped to one sow-research prerequisite set per producing plant. A null or
@@ -30,7 +30,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
     /// <see cref="ResearchProjectDef.IsFinished"/> checks happen per call.
     /// </summary>
     private Dictionary<ThingDef, List<List<ResearchProjectDef>>> _cropOutputs;
-    private Dictionary<ThingDef, List<List<ResearchProjectDef>>> CropOutputs => _cropOutputs ?? (_cropOutputs = BuildCropOutputs());
+    private Dictionary<ThingDef, List<List<ResearchProjectDef>>> CropOutputs => _cropOutputs ??= BuildCropOutputs();
 
     public override void SetFilter(ThingFilter filter, TechLevel techlevel, ResourceFC resource = null)
     {
@@ -54,7 +54,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
             List<ResearchProjectDef> requirement = MinimalRequirement(crop.Value);
             if (requirement is not null)
             {
-                TitheRestrictionInfo info = new TitheRestrictionInfo();
+                TitheRestrictionInfo info = new();
                 info.researchProjects = requirement;
                 restrictions[crop.Key] = info;
             }
@@ -98,7 +98,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
 
     private Dictionary<ThingDef, List<List<ResearchProjectDef>>> BuildCropOutputs()
     {
-        HashSet<ThingDef> blocked = new HashSet<ThingDef>();
+        HashSet<ThingDef> blocked = [];
         foreach (ThingCategoryDef category in blockedCategories)
         {
             if (category is null) continue;
@@ -108,7 +108,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
             }
         }
 
-        Dictionary<ThingDef, List<List<ResearchProjectDef>>> outputs = new Dictionary<ThingDef, List<List<ResearchProjectDef>>>();
+        Dictionary<ThingDef, List<List<ResearchProjectDef>>> outputs = [];
         foreach (ThingDef def in DefDatabase<ThingDef>.AllDefs)
         {
             PlantProperties plant = def.plant;
@@ -138,7 +138,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
             }
             else
             {
-                prereqs = new List<ResearchProjectDef>();
+                prereqs = [];
                 if (!plant.sowResearchPrerequisites.NullOrEmpty()) prereqs.AddRange(plant.sowResearchPrerequisites);
                 prereqs.Add(FCResearchDefOf.Hydroponics);
             }
@@ -146,7 +146,7 @@ public class ResourceFilterExtension_Crops : ResourceFilterExtension
             List<List<ResearchProjectDef>> producers;
             if (!outputs.TryGetValue(harvest, out producers))
             {
-                producers = new List<List<ResearchProjectDef>>();
+                producers = [];
                 outputs[harvest] = producers;
             }
             producers.Add(prereqs);

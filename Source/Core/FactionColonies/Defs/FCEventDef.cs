@@ -16,7 +16,7 @@ public class FCEventDef : Def
     // settings enable/disable list so the player can toggle it.
     public bool includeInSettingsList = false;
     public int requiredWealth = 0;
-    public IntRange rangeSettlementsAffected = new IntRange(0, 0);
+    public IntRange rangeSettlementsAffected = new(0, 0);
     public bool targetAllSettlements = false;
     public bool settlementsCarryOver = true;
     public bool useProximity = true;
@@ -31,12 +31,12 @@ public class FCEventDef : Def
     public int minimumProsperity = 0;
     public int maximumProsperity = 100;
     public ResourceTypeDef requiredResource;
-    public List<ResearchProjectDef> requiredResearch = new List<ResearchProjectDef>();
+    public List<ResearchProjectDef> requiredResearch = [];
     public TechLevel minTechLevel = TechLevel.Undefined;
     public TechLevel maxTechLevel = TechLevel.Undefined;
-    public List<WorldSettlementDef> allowedSettlementTypes = new List<WorldSettlementDef>();
-    public List<WorldSettlementDef> blockedSettlementTypes = new List<WorldSettlementDef>();
-    public List<FCEventDef> incompatibleEvents = new List<FCEventDef>();
+    public List<WorldSettlementDef> allowedSettlementTypes = [];
+    public List<WorldSettlementDef> blockedSettlementTypes = [];
+    public List<FCEventDef> incompatibleEvents = [];
     public int cooldownTicks = 0;
     public int maxFireCount = -1;
     public int minSettlements = 0;
@@ -44,7 +44,7 @@ public class FCEventDef : Def
     public int minDaysSinceFounded = 0;
 
     //Options
-    public List<FCOptionDef> options = new List<FCOptionDef>();
+    public List<FCOptionDef> options = [];
     public string optionDescription = "";
 
     //Event chain
@@ -59,18 +59,18 @@ public class FCEventDef : Def
     public bool HasFollowUp => eventFollows || splitEventFollows;
 
     //Rewards
-    public List<ThingDef> loot = new List<ThingDef>();
+    public List<ThingDef> loot = [];
     public int randomThingValue = 0;
     public ResourceEventRewardDef randomThingRewardDef;
     public int prosperityLost = 0;
-    public List<string> applicableBiomes = new List<string>();
-    public List<string> restrictedBiomes = new List<string>();
+    public List<string> applicableBiomes = [];
+    public List<string> restrictedBiomes = [];
 
     //Stat modifiers during event (removed when event expires)
-    public List<FCStatModifier> statModifiers = new List<FCStatModifier>();
+    public List<FCStatModifier> statModifiers = [];
 
     //Permanent stat modifiers (persist on settlement after event expires)
-    public List<FCStatModifier> permanentStatModifiers = new List<FCStatModifier>();
+    public List<FCStatModifier> permanentStatModifiers = [];
 
     public bool isMilitaryEvent = false;
     public bool isNegative = false;

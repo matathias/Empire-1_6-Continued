@@ -9,7 +9,7 @@ public class FCWindow_Rename : Window
     private string curName;
     private bool focusedField;
 
-    public override Vector2 InitialSize => new Vector2(300f, 175f);
+    public override Vector2 InitialSize => new(300f, 175f);
 
     public FCWindow_Rename(string currentName, string titleKey, Action<string> onConfirm)
     {
@@ -35,7 +35,7 @@ public class FCWindow_Rename : Window
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
         GUI.SetNextControlName("RenameField");
-        Rect fieldRect = new Rect(0, 45f, inRect.width, 35f);
+        Rect fieldRect = new(0, 45f, inRect.width, 35f);
         string text = Widgets.TextField(fieldRect, curName);
         if (text.Length <= 28) curName = text;
 
@@ -50,7 +50,7 @@ public class FCWindow_Rename : Window
                 || Event.current.keyCode == KeyCode.KeypadEnter);
         if (enterPressed) Event.current.Use();
 
-        Rect okBtn = new Rect(15f, inRect.height - 45f, inRect.width - 30f, 35f);
+        Rect okBtn = new(15f, inRect.height - 45f, inRect.width - 30f, 35f);
         if (UIUtil.ClampedButtonText(okBtn, "OK".Translate()) || enterPressed)
         {
             if (curName.Length > 0)

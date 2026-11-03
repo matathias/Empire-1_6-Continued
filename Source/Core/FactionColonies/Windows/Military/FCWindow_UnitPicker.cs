@@ -15,7 +15,7 @@ public class FCWindow_UnitPicker : Window
     private const float ButtonHeight = 35f;
     private const float margin = 5f;
 
-    public override Vector2 InitialSize => new Vector2(450f, 550f);
+    public override Vector2 InitialSize => new(450f, 550f);
 
     public FCWindow_UnitPicker(MilitaryFC mfc, Action<MilUnitFC> onSelect)
     {
@@ -40,7 +40,7 @@ public class FCWindow_UnitPicker : Window
         // Search bar
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new Rect(0, 40f, inRect.width, SearchBarHeight);
+        Rect searchRect = new(0, 40f, inRect.width, SearchBarHeight);
         searchTerm = Widgets.TextField(searchRect, searchTerm);
 
         // Filter
@@ -51,7 +51,7 @@ public class FCWindow_UnitPicker : Window
         // Scroll view
         float listTop = searchRect.yMax + margin;
         float listHeight = inRect.height - listTop - ButtonHeight - 15f;
-        Rect scrollOutRect = new Rect(0, listTop, inRect.width, listHeight);
+        Rect scrollOutRect = new(0, listTop, inRect.width, listHeight);
         Widgets.DrawMenuSection(scrollOutRect);
 
         float viewHeight = filtered.Count * RowHeight;
@@ -60,7 +60,7 @@ public class FCWindow_UnitPicker : Window
         for (int i = 0; i < filtered.Count; i++)
         {
             MilUnitFC unit = filtered[i];
-            Rect row = new Rect(0, i * RowHeight, scrollViewRect.width, RowHeight);
+            Rect row = new(0, i * RowHeight, scrollViewRect.width, RowHeight);
 
             if (unit == selectedUnit)
                 Widgets.DrawHighlightSelected(row);
@@ -68,9 +68,9 @@ public class FCWindow_UnitPicker : Window
                 Widgets.DrawHighlight(row);
 
             // Row layout: Icon | Label | Cost
-            Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
-            Rect costRect = new Rect(row.xMax - margin - 70f, row.y, 60f, RowHeight);
-            Rect labelRect = new Rect(iconRect.xMax + margin, row.y,
+            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
+            Rect costRect = new(row.xMax - margin - 70f, row.y, 60f, RowHeight);
+            Rect labelRect = new(iconRect.xMax + margin, row.y,
                 costRect.x - iconRect.xMax - (margin * 2), RowHeight);
 
             // Icon: weapon icon if available, else race icon
@@ -103,17 +103,17 @@ public class FCWindow_UnitPicker : Window
 
         // Bottom buttons
         float buttonWidth = 120f;
-        Rect buttonBar = new Rect(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
+        Rect buttonBar = new(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
 
         // Cancel (right)
-        Rect cancelRect = new Rect(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
+        Rect cancelRect = new(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
         {
             Close();
         }
 
         // Confirm (left of cancel)
-        Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
+        Rect confirmRect = new(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: selectedUnit is not null))
         {
             if (selectedUnit is not null)

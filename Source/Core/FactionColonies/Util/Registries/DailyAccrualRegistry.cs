@@ -2,7 +2,7 @@ namespace FactionColonies;
 
 public static class DailyAccrualRegistry
 {
-    private static readonly RegistryList<IDailyAccrualParticipant> _list = new RegistryList<IDailyAccrualParticipant>();
+    private static readonly RegistryList<IDailyAccrualParticipant> _list = new();
 
     internal static void Register(IDailyAccrualParticipant p) => _list.Register(p);
     internal static void Unregister(IDailyAccrualParticipant p) => _list.Unregister(p);

@@ -21,7 +21,7 @@ public class FCWindow_MountPicker : Window
     private const float ButtonHeight = 35f;
     private const float margin = 5f;
 
-    public override Vector2 InitialSize => new Vector2(450f, 550f);
+    public override Vector2 InitialSize => new(450f, 550f);
 
     public FCWindow_MountPicker(PawnKindDef initialMount, Action<PawnKindDef> onConfirm, Action onUnequip)
     {
@@ -55,7 +55,7 @@ public class FCWindow_MountPicker : Window
         // Search bar
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new Rect(0, 40f, inRect.width, SearchBarHeight);
+        Rect searchRect = new(0, 40f, inRect.width, SearchBarHeight);
         searchTerm = Widgets.TextField(searchRect, searchTerm);
 
         // Build the list of mountable animal kinds (GU2 rules), gated by any submod animal filter
@@ -71,7 +71,7 @@ public class FCWindow_MountPicker : Window
         // Scroll view
         float listTop = searchRect.yMax + margin;
         float listHeight = inRect.height - listTop - ButtonHeight - 15f;
-        Rect scrollOutRect = new Rect(0, listTop, inRect.width, listHeight);
+        Rect scrollOutRect = new(0, listTop, inRect.width, listHeight);
         Widgets.DrawMenuSection(scrollOutRect);
 
         float viewHeight = animals.Count * RowHeight;
@@ -80,17 +80,17 @@ public class FCWindow_MountPicker : Window
         for (int i = 0; i < animals.Count; i++)
         {
             PawnKindDef animal = animals[i];
-            Rect row = new Rect(0, i * RowHeight, scrollViewRect.width, RowHeight);
+            Rect row = new(0, i * RowHeight, scrollViewRect.width, RowHeight);
 
             if (animal == selectedDef)
                 Widgets.DrawHighlightSelected(row);
             else if (i % 2 == 0)
                 Widgets.DrawHighlight(row);
 
-            Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
-            Rect infoRect = new Rect(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
-            Rect costRect = new Rect(row.xMax - margin - 70f, row.y, 60f, RowHeight);
-            Rect labelRect = new Rect(infoRect.xMax + margin, row.y,
+            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
+            Rect infoRect = new(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
+            Rect costRect = new(row.xMax - margin - 70f, row.y, 60f, RowHeight);
+            Rect labelRect = new(infoRect.xMax + margin, row.y,
                 costRect.x - infoRect.xMax - (margin * 2), RowHeight);
 
             Widgets.ThingIcon(iconRect, animal.race);
@@ -120,10 +120,10 @@ public class FCWindow_MountPicker : Window
 
         // Bottom buttons
         float buttonWidth = 120f;
-        Rect buttonBar = new Rect(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
+        Rect buttonBar = new(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
 
         // Unequip (left)
-        Rect unequipRect = new Rect(buttonBar.x, buttonBar.y, buttonWidth, buttonBar.height);
+        Rect unequipRect = new(buttonBar.x, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(unequipRect, "FCUnitActionUnequipThing".Translate()))
         {
             if (onUnequip is not null) onUnequip();
@@ -131,7 +131,7 @@ public class FCWindow_MountPicker : Window
         }
 
         // Cancel (right)
-        Rect cancelRect = new Rect(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
+        Rect cancelRect = new(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
         {
             Close();
@@ -139,7 +139,7 @@ public class FCWindow_MountPicker : Window
 
         // Confirm (left of cancel)
         bool canConfirm = selectedDef is not null;
-        Rect confirmRect = new Rect(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
+        Rect confirmRect = new(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
         if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
         {
             if (canConfirm)

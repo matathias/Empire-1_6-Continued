@@ -51,8 +51,7 @@ public class CodexCategoryDef : Def
                 bannerLookedUp = true;
                 if (!bannerPath.NullOrEmpty())
                     bannerCached = ContentFinder<Texture2D>.Get(bannerPath, false);
-                if (bannerCached is null)
-                    bannerCached = ModContentPack?.ModMetaData?.PreviewImage;
+                bannerCached ??= ModContentPack?.ModMetaData?.PreviewImage;
             }
             return bannerCached;
         }

@@ -20,8 +20,8 @@ public class BuildingFCDef : Def
     public double cost;
     public int constructionDuration;
     public TechLevel techLevel = TechLevel.Undefined;
-    public List<FCStatModifier> statModifiers = new List<FCStatModifier>();
-    public List<string> applicableBiomes = new List<string>();
+    public List<FCStatModifier> statModifiers = [];
+    public List<string> applicableBiomes = [];
     public int upkeep;
     /// <summary>
     /// True if this def's upkeep is authored at the post-rework per-day scale. Base-mod defs set this
@@ -36,12 +36,12 @@ public class BuildingFCDef : Def
     public bool isMilitary = false;
     public string iconPath = "GUI/unrest";
     public Texture2D iconLoaded;
-    public List<WorldSettlementDef> settlementTypeBlockList = new List<WorldSettlementDef>();
-    public List<WorldSettlementDef> settlementTypeAllowList = new List<WorldSettlementDef>();
+    public List<WorldSettlementDef> settlementTypeBlockList = [];
+    public List<WorldSettlementDef> settlementTypeAllowList = [];
     public Hilliness minhilliness = Hilliness.Undefined;
     public Hilliness maxhilliness = Hilliness.Undefined;
-    public List<TileMutatorDef> tileMutatorAllowList = new List<TileMutatorDef>();
-    public List<TileMutatorDef> tileMutatorBlockList = new List<TileMutatorDef>();
+    public List<TileMutatorDef> tileMutatorAllowList = [];
+    public List<TileMutatorDef> tileMutatorBlockList = [];
     /// <summary>
     /// Determines if the building can be built directly from the building window, into an empty building slot.
     /// </summary>
@@ -49,11 +49,11 @@ public class BuildingFCDef : Def
     /// <summary>
     /// A list of buildings that this building can upgrade into.
     /// </summary>
-    public List<BuildingFCDef> upgrades = new List<BuildingFCDef>();
+    public List<BuildingFCDef> upgrades = [];
     /// <summary>
     /// Buildings that must already be built in the settlement before this building can be constructed.
     /// </summary>
-    public List<BuildingFCDef> requiredBuildings = new List<BuildingFCDef>();
+    public List<BuildingFCDef> requiredBuildings = [];
 
     private bool didCacheBuildingAttributeDesc = false;
     private TaggedString cachedBuildingAttributeDesc = "";
@@ -176,7 +176,7 @@ public class BuildingFCDef : Def
         {
             if (cachedCompatibleSettlements is null)
             {
-                cachedCompatibleSettlements = new List<WorldSettlementDef>();
+                cachedCompatibleSettlements = [];
                 foreach (WorldSettlementDef def in FactionCache.AvailableWorldSettlementDefs)
                 {
                     if (CanBeBuiltForSettlementType(def))
@@ -201,13 +201,12 @@ public class BuildingFCDef : Def
     /// </summary>
     private bool MeetsResourceRequirement(WorldSettlementDef settlement)
     {
-        if (resourceMatchCache is null)
-            resourceMatchCache = new Dictionary<BuildingFCDef, Dictionary<WorldSettlementDef, bool>>();
+        resourceMatchCache ??= [];
 
         Dictionary<WorldSettlementDef, bool> inner;
         if (!resourceMatchCache.TryGetValue(this, out inner))
         {
-            inner = new Dictionary<WorldSettlementDef, bool>();
+            inner = [];
             resourceMatchCache[this] = inner;
         }
 
@@ -260,8 +259,8 @@ public class BuildingFCDef : Def
 
     private static bool HasCycle(BuildingFCDef start, Func<BuildingFCDef, List<BuildingFCDef>> getChildren)
     {
-        HashSet<BuildingFCDef> visited = new HashSet<BuildingFCDef>();
-        Stack<BuildingFCDef> stack = new Stack<BuildingFCDef>();
+        HashSet<BuildingFCDef> visited = [];
+        Stack<BuildingFCDef> stack = new();
         stack.Push(start);
         while (stack.Count > 0)
         {

@@ -29,7 +29,7 @@ public class WorldObjectCompProperties_SettlementPrisoners : WorldObjectCompProp
    caravan (GetCaravanGizmos) and selecting the settlement (GetGizmos). */
 public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPawnArrival
 {
-    public List<FCPrisoner> prisonerList = new List<FCPrisoner>();
+    public List<FCPrisoner> prisonerList = [];
     public WorldSettlementFC WorldSettlement => parent as WorldSettlementFC;
 
     /* Per-settlement override of FactionFC.defaultPrisonerWorkload. When
@@ -41,7 +41,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
     {
         base.PostExposeData();
         Scribe_Collections.Look(ref prisonerList, "prisoners", LookMode.Deep);
-        if (prisonerList is null) prisonerList = new List<FCPrisoner>();
+        prisonerList ??= [];
         Scribe_Values.Look(ref hasDefaultWorkloadOverride, "hasDefaultWorkloadOverride", false);
         Scribe_Values.Look(ref defaultWorkloadOverride, "defaultWorkloadOverride", FCWorkLoad.Light);
     }
@@ -86,7 +86,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
             p.AdjustHealth(p.workload);
             if (p.IsDead)
             {
-                if (dead is null) dead = new List<FCPrisoner>();
+                dead ??= [];
                 dead.Add(p);
             }
         }
@@ -98,8 +98,8 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
             Faction empire = FindFC.EmpireFaction;
             const int goodwillPerDeath = -2;
 
-            List<string> deadNames = new List<string>(dead.Count);
-            Dictionary<Faction, int> goodwillByFaction = new Dictionary<Faction, int>();
+            List<string> deadNames = new(dead.Count);
+            Dictionary<Faction, int> goodwillByFaction = [];
 
             for (int i = 0; i < dead.Count; i++)
             {
@@ -168,7 +168,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
         }
         else
         {
-            StringBuilder header = new StringBuilder();
+            StringBuilder header = new();
             header.AppendLine("FCPrisonersHaveDiedBody".Translate(deadNames.Count, settlementName));
             header.AppendLine();
             foreach (string deadname in deadNames)
@@ -179,7 +179,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
 
         if (goodwillByFaction.Count > 0)
         {
-            StringBuilder sb = new StringBuilder(body);
+            StringBuilder sb = new(body);
             sb.AppendLine();
             sb.AppendLine();
             sb.AppendLine("FCPrisonerDeathGoodwillHeader".Translate());
@@ -204,7 +204,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
         {
             Find.WorldPawns.RemovePawn(pawn);
         }
-        FCPrisoner created = new FCPrisoner(pawn, settlement);
+        FCPrisoner created = new(pawn, settlement);
         created.workload = GetEffectiveDefaultWorkload();
         prisonerList.Add(created);
         settlement.DirtyStatsCache();
@@ -220,7 +220,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
         {
             if (p?.prisoner is null)
             {
-                if (toRemove is null) toRemove = new List<FCPrisoner>();
+                toRemove ??= [];
                 toRemove.Add(p);
             }
         }
@@ -256,7 +256,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
      * apparel and wielded equipment are intentionally left on the pawn. */
     private static List<Thing> ExtractCarriedInventory(Pawn pawn)
     {
-        List<Thing> items = new List<Thing>();
+        List<Thing> items = [];
         ThingOwner inner = pawn?.inventory?.innerContainer;
         if (inner is null) return items;
         for (int i = inner.Count - 1; i >= 0; i--)
@@ -292,7 +292,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
     {
         if (caravan is null) return;
 
-        List<FloatMenuOption> list = new List<FloatMenuOption>();
+        List<FloatMenuOption> list = [];
         List<Pawn> pawns = caravan.PawnsListForReading;
         for (int i = 0; i < pawns.Count; i++)
         {
@@ -340,15 +340,14 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
         if (!HealthUtility.TryAnesthetize(p.prisoner))
             HealthUtility.DamageUntilDowned(p.prisoner, false);
 
-        if (p.prisoner.guest is null)
-            p.prisoner.guest = new Pawn_GuestTracker(p.prisoner);
+        p.prisoner.guest ??= new Pawn_GuestTracker(p.prisoner);
         p.prisoner.guest.SetGuestStatus(Find.FactionManager.OfPlayer, GuestStatus.Prisoner);
 
         DeliveryEvent.CreateDeliveryEvent(new FCEvent
         {
             location = playerHome.Tile,
             source = s.Tile,
-            goods = new List<Thing> { p.prisoner },
+            goods = [p.prisoner],
             customDescription = "FCAPrisonerIsBeingDeliveredToYou".Translate(),
             timeTillTrigger = Find.TickManager.TicksGame + TravelUtil.ReturnTicksToArrive(s.Tile, playerHome.Tile)
         });
@@ -359,7 +358,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
     public void DoActionsMenu(FCPrisoner p, Action onRemoved)
     {
         if (p is null) return;
-        List<FloatMenuOption> list = new List<FloatMenuOption>();
+        List<FloatMenuOption> list = [];
 
         if (FindFC.FactionComp.IsActionAllowed(FCActionType.SellPrisoner))
         {

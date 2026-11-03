@@ -11,8 +11,8 @@ public class TaxLedger : IExposable
 {
     /* Owned state. UI checkbox widgets pass these by ref (autoResolve,
      * allowLatePayments) — that's why they're public fields, not properties. */
-    internal List<BillFC> bills = new List<BillFC>();
-    internal List<BillFC> oldBills = new List<BillFC>();
+    internal List<BillFC> bills = [];
+    internal List<BillFC> oldBills = [];
     public bool autoResolve;
     public bool allowLatePayments = true;
     public int nextTaxDueTick = Find.TickManager.TicksGame;
@@ -107,7 +107,7 @@ public class TaxLedger : IExposable
                 List<ResourcePool> billResourcePools = settlement.CreateResourcePools();
                 List<Thing> list = settlement.CreateTax(out int silverAmount);
 
-                BillFC bill = new BillFC(settlement);
+                BillFC bill = new(settlement);
                 bill.label = "FCBillKindTax".Translate();
                 bill.taxes.resourcePools = billResourcePools;
                 bill.taxes.itemTithes.AddRange(list);
@@ -153,7 +153,7 @@ public class TaxLedger : IExposable
     /// Called from FactionFC.WorldComponentTick.</summary>
     public void ProcessBills()
     {
-        List<WorldSettlementFC> latePaidSettlements = new List<WorldSettlementFC>();
+        List<WorldSettlementFC> latePaidSettlements = [];
         int currentTick = Find.TickManager.TicksGame;
 
         for (int i = bills.Count - 1; i >= 0; i--)
@@ -292,8 +292,8 @@ public class TaxLedger : IExposable
 
     private (List<BillFC>, List<BillFC>) ReturnBillTypes()
     {
-        List<BillFC> positive = new List<BillFC>();
-        List<BillFC> negative = new List<BillFC>();
+        List<BillFC> positive = [];
+        List<BillFC> negative = [];
         foreach (BillFC b in bills)
         {
             if (b.taxes.silverAmount >= 0) positive.Add(b);
@@ -321,7 +321,7 @@ public class TaxLedger : IExposable
         }
 
         int lifespanTicks = Math.Max(1, FCSettings.deploymentBillLifespan_days) * GenDate.TicksPerDay;
-        BillFC bill = new BillFC(home, lifespanTicks);
+        BillFC bill = new(home, lifespanTicks);
         bill.label = "FCBillKindSquadDeployment".Translate();
         bill.taxes.silverAmount = -cost;
         /* silverAmount must be set BEFORE the Scaled helpers — they read it for
@@ -350,7 +350,7 @@ public class TaxLedger : IExposable
         }
 
         int lifespanTicks = Math.Max(1, FCSettings.deploymentBillLifespan_days) * GenDate.TicksPerDay;
-        BillFC bill = new BillFC(home, lifespanTicks);
+        BillFC bill = new(home, lifespanTicks);
         bill.label = "FCBillKindSquadRestock".Translate();
         bill.taxes.silverAmount = -cost;
         /* silverAmount must be set BEFORE the Scaled helpers — they read it for
@@ -372,8 +372,8 @@ public class TaxLedger : IExposable
         Scribe_Values.Look(ref nextBillId, "nextBillId", 1);
         Scribe_Collections.Look(ref bills, "bills", LookMode.Deep);
         Scribe_Collections.Look(ref oldBills, "oldBills", LookMode.Deep);
-        if (bills is null) bills = new List<BillFC>();
-        if (oldBills is null) oldBills = new List<BillFC>();
+        bills ??= [];
+        oldBills ??= [];
     }
 
     /* True iff the ledger is at first-construction defaults. Used by the
