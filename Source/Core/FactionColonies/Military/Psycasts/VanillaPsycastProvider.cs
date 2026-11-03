@@ -4,8 +4,9 @@ namespace FactionColonies;
 /// Base-game (Royalty) psycast provider. Mirrors vanilla exactly: there is no selection UI — the
 /// player only sets a psylink level, and the base game grants one <em>random</em> psycast per level
 /// when the pawn gains psylink (<see cref="Hediff_Psylink.TryGiveAbilityOfLevel"/>). Stores no
-/// psycasts, so <see cref="SupportsExplicitSelection"/> is false and the psycast-grant/display
-/// methods are no-ops.
+/// psycasts, so it keeps the interface's no-op defaults for
+/// <see cref="IPsycastSystemProvider.SupportsExplicitSelection"/> (false), the editor, the
+/// psycast-grant/display methods and the point budget.
 /// </summary>
 public class VanillaPsycastProvider : IPsycastSystemProvider
 {
@@ -14,18 +15,7 @@ public class VanillaPsycastProvider : IPsycastSystemProvider
     public string Key => ProviderKey;
     public string Label => "Royalty";
     public bool IsActive => ModLister.RoyaltyInstalled;
-    public int Priority => 0;
     public int MaxPsylinkLevel => 6;
-    public bool SupportsExplicitSelection => false;
-
-    // No custom editor / no stored psycasts.
-    public void OpenEditor(MilUnitFC unit, Action onClosed) { }
-
-    public bool TryGetDisplay(SavedPsycast entry, out PsycastPickEntry display)
-    {
-        display = null;
-        return false;
-    }
 
     /// <summary>
     /// Raises the pawn's psylink to <paramref name="level"/> the neuroformer way. As in vanilla,
@@ -48,19 +38,6 @@ public class VanillaPsycastProvider : IPsycastSystemProvider
         int target = Math.Min(level, MaxPsylinkLevel);
         if (target > current)
             pawn.ChangePsylinkLevel(target - current, false);
-    }
-
-    // Base game stores no chosen psycasts; psycasts are the random grants from ApplyPsylink.
-    public void GrantPsycast(Pawn pawn, SavedPsycast entry) { }
-
-    // No point economy and no stored selections — nothing to trim or summarize.
-    public List<SavedPsycast> ClampSelectionsToBudget(List<SavedPsycast> selections, int psylinkLevel) => selections;
-
-    public bool TryGetPointBudget(MilUnitFC unit, out int spent, out int budget)
-    {
-        spent = 0;
-        budget = 0;
-        return false;
     }
 
     /* Cost of the unit's psylink levels, mirroring the psylink neuroformer item's value

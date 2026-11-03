@@ -12,5 +12,9 @@ public interface ISquadAssignmentValidator
     /// Returns true if <paramref name="squad"/> can be assigned to <paramref name="settlement"/>.
     /// If false, <paramref name="reason"/> is shown to the player as a rejection message.
     /// </summary>
-    bool CanAssign(WorldSettlementFC settlement, MercenarySquadFC squad, out string reason);
+    bool CanAssign(WorldSettlementFC settlement, MercenarySquadFC squad, out string reason)
+    {
+        reason = null;
+        return true;
+    }
 }

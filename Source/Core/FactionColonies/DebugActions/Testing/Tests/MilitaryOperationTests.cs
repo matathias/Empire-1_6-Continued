@@ -133,16 +133,8 @@ public static class MilitaryOperationTests
         public bool completeCalled;
 
         public WorldObject WorldObject => worldObject;
-        public int MilitaryLevel => 0;
-        public int Range => 0;
-        public bool CanAutoDefend => false;
-        public MilitaryForce CreateDefendingForce() => null;
-        public void OnDefensePledged(WorldObject target) { }
-        public void OnDefenseStarted(WorldObject target) { }
         public void OnDefenseComplete(bool won, BattleResult result) { completeCalled = true; }
         public void OnDefenseReplaced() { replacedCalled = true; }
-        public List<Pawn> GetDefendingPawns() => null;
-        public void ReturnDefendingPawns(List<Pawn> pawns) { }
     }
 
     // -*- BuildBattleContext -*-

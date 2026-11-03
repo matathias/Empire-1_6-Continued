@@ -23,7 +23,8 @@ public static class RaidTargetResolutionTests
 
         public WorldObject WorldObject => _obj;
         public string Name => "TestCountingRaidTarget";
-        public PlanetTile Tile => PlanetTile.Invalid;
+        // Any valid tile: RaidTargetRegistry skips targets with an invalid Tile.
+        public PlanetTile Tile => new(0);
         public int MilitaryLevel => 1;
         public bool IsUnderAttack { get; set; }
 

@@ -26,6 +26,11 @@ public class MainTabWindow_EmpireExtensions : MainTabWindow
             {
                 itab.PreOpenWindow(faction);
                 string name = itab.TabName();
+                if (name.NullOrEmpty())
+                {
+                    LogUtil.ErrorOnce($"IMainTabWindowOverview {itab.GetType().FullName} returned no TabName; skipping its tab.");
+                    continue;
+                }
                 tabs.Add(new TabRecord(name, delegate
                 {
                     curTab = name;

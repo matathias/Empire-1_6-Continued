@@ -9,5 +9,5 @@ namespace FactionColonies;
 public interface IDailyAccrualParticipant
 {
     /// <summary>Called once per day, after the faction's daily accrual loop completes.</summary>
-    void PostDailyAccrual(FactionFC faction);
+    void PostDailyAccrual(FactionFC faction) { }
 }

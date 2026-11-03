@@ -15,5 +15,5 @@ public interface ICodexDynamicProvider
     /// below the static entry text. Called at render time — values are always current.
     /// <para>Return null or empty to show nothing.</para>
     /// </summary>
-    string GetDynamicContent(FactionFC faction);
+    string GetDynamicContent(FactionFC faction) => null;
 }

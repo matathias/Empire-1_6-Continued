@@ -48,7 +48,6 @@ public static class SquadPowerRegistryTests
 
     private class ThrowingModifier : ISquadPowerModifier
     {
-        public int Priority => 0;
         public SquadPower ModifyPower(MercenarySquadFC squad, SquadPower currentPower)
         {
             throw new System.InvalidOperationException("test");

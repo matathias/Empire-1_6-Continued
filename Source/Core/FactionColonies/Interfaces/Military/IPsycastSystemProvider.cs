@@ -31,19 +31,19 @@ public class PsycastPickEntry
 public interface IPsycastSystemProvider
 {
     /// <summary>Stable identifier persisted on every <c>SavedPsycast</c> this provider produces.</summary>
-    string Key { get; }
+    string Key => null;
 
     /// <summary>Human-readable name (for empty-state text / tooltips).</summary>
-    string Label { get; }
+    string Label => null;
 
     /// <summary>True when this system's mod(s) are loaded and the system is usable.</summary>
-    bool IsActive { get; }
+    bool IsActive => false;
 
     /// <summary>Higher wins when multiple providers are active. Vanilla is lowest.</summary>
-    int Priority { get; }
+    int Priority => 0;
 
     /// <summary>Maximum psylink level this system supports (caps the tab's stepper).</summary>
-    int MaxPsylinkLevel { get; }
+    int MaxPsylinkLevel => 0;
 
     /// <summary>
     /// When true (VPE), the player explicitly chooses psycasts: the tab shows an "Edit Psycasts"
@@ -51,37 +51,41 @@ public interface IPsycastSystemProvider
     /// false (base game), psycasts are granted randomly at spawn from the psylink level — no
     /// picker, no stored psycasts — exactly as base RimWorld does.
     /// </summary>
-    bool SupportsExplicitSelection { get; }
+    bool SupportsExplicitSelection => false;
 
     /// <summary>
     /// Opens the provider-owned editor (only when <see cref="SupportsExplicitSelection"/>). The
     /// editor writes the chosen psycasts back into <paramref name="unit"/>.psycasts; it should
     /// invoke <paramref name="onClosed"/> when done so the tab can refresh cost/preview.
     /// </summary>
-    void OpenEditor(MilUnitFC unit, Action onClosed);
+    void OpenEditor(MilUnitFC unit, Action onClosed) { }
 
     /// <summary>
     /// Resolves a saved entry's display data (label/icon/cost) for list rendering. The entry is
     /// opaque to the core — the provider interprets its <c>kind</c>/<c>psycastDef</c>/<c>count</c>
     /// (e.g. VPE distinguishes psycasts, meditation foci, and stat upgrades).
     /// </summary>
-    bool TryGetDisplay(SavedPsycast entry, out PsycastPickEntry display);
+    bool TryGetDisplay(SavedPsycast entry, out PsycastPickEntry display)
+    {
+        display = null;
+        return false;
+    }
 
     /// <summary>Grants psylink of the given level to a freshly generated pawn (the neuroformer way).</summary>
-    void ApplyPsylink(Pawn pawn, int level);
+    void ApplyPsylink(Pawn pawn, int level) { }
 
     /// <summary>
     /// Silver cost of raising a unit to the given psylink level, folded into the unit's
     /// <c>equipmentTotalCost</c>. Base game charges per psylink level (its psycasts are free random
     /// grants); VPE returns 0 — its balance lever is the per-psycast / focus / stat cost instead.
     /// </summary>
-    double PsylinkCost(int level);
+    double PsylinkCost(int level) => 0;
 
     /// <summary>
     /// Forces the end-state of one saved entry onto a freshly generated pawn. The provider owns
     /// interpretation of the entry's <c>kind</c> (psycast, meditation focus, stat upgrade, ...).
     /// </summary>
-    void GrantPsycast(Pawn pawn, SavedPsycast entry);
+    void GrantPsycast(Pawn pawn, SavedPsycast entry) { }
 
     /// <summary>
     /// Returns the subset of <paramref name="selections"/> (in order) that fits this system's point
@@ -89,13 +93,18 @@ public interface IPsycastSystemProvider
     /// game stores no selections and returns the list unchanged; VPE trims from the end to its point
     /// budget. May mutate/return a new list; callers should assign the result back.
     /// </summary>
-    List<SavedPsycast> ClampSelectionsToBudget(List<SavedPsycast> selections, int psylinkLevel);
+    List<SavedPsycast> ClampSelectionsToBudget(List<SavedPsycast> selections, int psylinkLevel) => selections;
 
     /// <summary>
     /// Point-economy summary for the unit's current selections, for display ("spent / budget").
     /// Returns false for systems without a point economy (base game), leaving the outs at 0.
     /// </summary>
-    bool TryGetPointBudget(MilUnitFC unit, out int spent, out int budget);
+    bool TryGetPointBudget(MilUnitFC unit, out int spent, out int budget)
+    {
+        spent = 0;
+        budget = 0;
+        return false;
+    }
 
     /// <summary>
     /// Brings a LIVE (already-spawned) pawn's psycasts in line with <paramref name="desired"/> for the
@@ -105,5 +114,5 @@ public interface IPsycastSystemProvider
     /// surprise. VPE wipes and re-applies (its grants are deterministic, so nothing is lost). Must
     /// tolerate a pawn with no existing psylink.
     /// </summary>
-    void ReconcilePsycasts(Pawn pawn, MilUnitFC desired);
+    void ReconcilePsycasts(Pawn pawn, MilUnitFC desired) { }
 }

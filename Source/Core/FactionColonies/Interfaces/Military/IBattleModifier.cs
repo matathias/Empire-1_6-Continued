@@ -18,5 +18,5 @@ public interface IBattleModifier
     /// for an estimate display, where side effects (logging, history, persistence) would
     /// be incorrect. Op lifecycle hooks are the place for those.
     /// </summary>
-    void ModifyForce(BattleForceContext ctx, MilitaryForce force, bool isAttacker);
+    void ModifyForce(BattleForceContext ctx, MilitaryForce force, bool isAttacker) { }
 }

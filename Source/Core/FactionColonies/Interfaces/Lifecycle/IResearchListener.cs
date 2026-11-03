@@ -7,5 +7,5 @@ namespace FactionColonies;
 /// </summary>
 public interface IResearchListener
 {
-    void OnResearchCompleted(ResearchProjectDef project);
+    void OnResearchCompleted(ResearchProjectDef project) { }
 }

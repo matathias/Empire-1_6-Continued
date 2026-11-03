@@ -14,19 +14,19 @@ public interface IResourceProductionModifier
     /// <summary>
     /// Returns an additive production bonus for the given resource. Return 0 for no effect.
     /// </summary>
-    double GetResourceAdditiveModifier(ResourceFC resource);
+    double GetResourceAdditiveModifier(ResourceFC resource) => 0;
     /// <summary>
     /// Returns a multiplicative production modifier for the given resource. Return 1 for no effect.
     /// </summary>
-    double GetResourceMultiplierModifier(ResourceFC resource);
+    double GetResourceMultiplierModifier(ResourceFC resource) => 1;
     /// <summary>
     /// Returns a description of this comp's additive contribution for the additive tooltip.
     /// Return null or empty if not contributing additively to this resource.
     /// </summary>
-    string GetResourceAdditiveDesc(ResourceFC resource);
+    string GetResourceAdditiveDesc(ResourceFC resource) => null;
     /// <summary>
     /// Returns a description of this comp's multiplier contribution for the multiplier tooltip.
     /// Return null or empty if not contributing a multiplier to this resource.
     /// </summary>
-    string GetResourceMultiplierDesc(ResourceFC resource);
+    string GetResourceMultiplierDesc(ResourceFC resource) => null;
 }

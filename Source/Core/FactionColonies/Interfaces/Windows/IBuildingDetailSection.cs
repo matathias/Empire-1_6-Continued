@@ -12,22 +12,22 @@ namespace FactionColonies;
 public interface IBuildingDetailSection
 {
     /// <summary>Header label for the section (rendered by the caller in standard style).</summary>
-    string SectionLabel { get; }
+    string SectionLabel => null;
 
     /// <summary>
     /// Total height needed for section content (excluding the header). Return 0 to hide the section entirely.
     /// </summary>
-    float GetSectionHeight(BuildingFCDef def, float width);
+    float GetSectionHeight(BuildingFCDef def, float width) => 0f;
 
     /// <summary>
     /// Draws section content into <paramref name="contentRect"/>. The header is drawn by the caller;
     /// implementors only draw below it.
     /// </summary>
-    void DrawSection(BuildingFCDef def, Rect contentRect);
+    void DrawSection(BuildingFCDef def, Rect contentRect) { }
 
     /// <summary>
     /// Short description appended to building card text in the left panel and tooltips.
     /// Return null or empty to add nothing.
     /// </summary>
-    string GetCardDescription(BuildingFCDef def);
+    string GetCardDescription(BuildingFCDef def) => null;
 }

@@ -10,8 +10,6 @@ namespace FactionColonies;
 /// </summary>
 public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWindow
 {
-    public int CompanionOrder => 0;
-
     private const float WindowWidth = 280f;
     private const float Padding = 8f;
 

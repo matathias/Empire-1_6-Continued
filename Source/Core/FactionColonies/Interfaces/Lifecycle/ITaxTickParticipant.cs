@@ -5,14 +5,14 @@ namespace FactionColonies;
 /// </summary>
 public interface ITaxTickParticipant
 {
-    void PreTaxResolution(FactionFC faction);
-    void PostTaxResolution(FactionFC faction);
+    void PreTaxResolution(FactionFC faction) { }
+    void PostTaxResolution(FactionFC faction) { }
     /// <summary>
     /// Called at the start of tax collection, after pre-tax preparation (cache invalidation, resource pruning) and SettlementTypeExtension.PreTax.
     /// </summary>
-    void PreSettlementCreateTax(WorldSettlementFC settlement);
+    void PreSettlementCreateTax(WorldSettlementFC settlement) { }
     /// <summary>
     /// Called at the end of tax collection, after all calculations are complete and SettlementTypeExtension.PostTax.
     /// </summary>
-    void PostSettlementCreateTax(WorldSettlementFC settlement, ref int silverAmount, List<Thing> titheThings);
+    void PostSettlementCreateTax(WorldSettlementFC settlement, ref int silverAmount, List<Thing> titheThings) { }
 }

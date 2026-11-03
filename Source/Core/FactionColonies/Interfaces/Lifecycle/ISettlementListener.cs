@@ -8,10 +8,10 @@ namespace FactionColonies;
 /// </summary>
 public interface ISettlementListener
 {
-    void OnSettlementCreated(WorldSettlementFC settlement);
-    void OnSettlementRemoved(WorldSettlementFC settlement);
-    void OnSettlementUpgraded(WorldSettlementFC settlement, int oldLevel, int newLevel);
-    void OnSettlementTypeChanged(WorldSettlementFC settlement, WorldSettlementDef oldDef, WorldSettlementDef newDef);
-    void OnBuildingConstructed(WorldSettlementFC settlement, BuildingFCDef building, int slot);
-    void OnBuildingDeconstructed(WorldSettlementFC settlement, BuildingFCDef building, int slot);
+    void OnSettlementCreated(WorldSettlementFC settlement) { }
+    void OnSettlementRemoved(WorldSettlementFC settlement) { }
+    void OnSettlementUpgraded(WorldSettlementFC settlement, int oldLevel, int newLevel) { }
+    void OnSettlementTypeChanged(WorldSettlementFC settlement, WorldSettlementDef oldDef, WorldSettlementDef newDef) { }
+    void OnBuildingConstructed(WorldSettlementFC settlement, BuildingFCDef building, int slot) { }
+    void OnBuildingDeconstructed(WorldSettlementFC settlement, BuildingFCDef building, int slot) { }
 }

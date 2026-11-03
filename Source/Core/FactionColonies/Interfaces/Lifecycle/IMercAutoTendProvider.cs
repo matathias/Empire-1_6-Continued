@@ -13,12 +13,12 @@ public interface IMercAutoTendProvider
     /// the base default (no doctor). The doctor does not need to be spawned — vanilla only
     /// reads the doctor's stats. First non-null return wins; later providers do not run.
     /// </summary>
-    Pawn ProvideTendingDoctor(Mercenary patient, WorldSettlementFC settlement);
+    Pawn ProvideTendingDoctor(Mercenary patient, WorldSettlementFC settlement) => null;
 
     /// <summary>
     /// Override the medicine ThingDef. Receives the running choice as <paramref name="currentChoice"/>
     /// (initially the base mod's tech-level pick); return that to defer or any other ThingDef
     /// to override. Return null to force no-medicine tending. Chains across all providers.
     /// </summary>
-    ThingDef OverrideTendingMedicine(Mercenary patient, WorldSettlementFC settlement, ThingDef currentChoice);
+    ThingDef OverrideTendingMedicine(Mercenary patient, WorldSettlementFC settlement, ThingDef currentChoice) => currentChoice;
 }

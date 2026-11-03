@@ -1602,11 +1602,6 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         policyManager.ForEachBehavior(b => b.OnResearchCompleted(this, project));
     }
 
-    void IMercenarySquadListener.OnMercenaryDeath(MercenaryDeathEvent evt)
-    {
-        // No policy behavior hook for merc death currently — submods handle this via their own listener
-    }
-
     /* -*-*-*-*- Military hooks -*-*-*-*-
      * The comp's military-related properties (militaryBusy / militaryJob / militaryLocation /
      * militaryEnemy / isUnderAttack) are read-only and derived from MilitaryOperationManager's

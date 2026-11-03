@@ -10,5 +10,5 @@ namespace FactionColonies;
 /// </summary>
 public interface IFactionPowerModifier
 {
-    void ModifyFactionPower(Faction faction, EnemyPower power);
+    void ModifyFactionPower(Faction faction, EnemyPower power) { }
 }

@@ -7,14 +7,17 @@ public static class AutoDefenderRegistry
     internal static void Register(IAutoDefender defender) => _list.Register(defender);
     internal static void Unregister(IAutoDefender defender) => _list.Unregister(defender);
     internal static void ClearAll() => _list.ClearAll();
-    public static IReadOnlyList<IAutoDefender> Defenders => _list.Items;
+    /// <summary>Registered defenders with a non-null <see cref="IAutoDefender.WorldObject"/>; entries
+    /// without one are skipped (logged once).</summary>
+    public static IReadOnlyList<IAutoDefender> Defenders
+        => _list.Valid(d => d.WorldObject is not null, "has a null WorldObject");
 
     /// <summary>
     /// Finds the strongest available <see cref="IAutoDefender"/> that can defend the given tile
     /// and is stronger than <paramref name="minMilitaryLevel"/>.
     /// </summary>
     public static IAutoDefender FindBestDefender(PlanetTile targetTile, int minMilitaryLevel)
-        => RegistryDispatch.Aggregate<IAutoDefender, IAutoDefender>(_list.Items, null, (best, defender) =>
+        => RegistryDispatch.Aggregate<IAutoDefender, IAutoDefender>(Defenders, null, (best, defender) =>
         {
             if (!defender.CanAutoDefend) return best;
             if (defender.MilitaryLevel <= minMilitaryLevel) return best;
@@ -32,6 +35,6 @@ public static class AutoDefenderRegistry
     public static IAutoDefender FindByWorldObject(WorldObject obj)
     {
         if (obj is null) return null;
-        return RegistryDispatch.First(_list.Items, d => d.WorldObject == obj, nameof(IAutoDefender.WorldObject));
+        return RegistryDispatch.First(Defenders, d => d.WorldObject == obj, nameof(IAutoDefender.WorldObject));
     }
 }

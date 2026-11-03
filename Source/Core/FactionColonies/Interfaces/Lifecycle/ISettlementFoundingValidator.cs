@@ -13,7 +13,11 @@ public interface ISettlementFoundingValidator
     /// <para><paramref name="costMultiplier"/> scales any resource/cost requirement
     /// (1 = full cost; e.g. 0.5 for a discounted founding such as an outpost conversion).</para>
     /// </summary>
-    bool CanFoundSettlement(PlanetTile tile, WorldSettlementDef type, out string reason, float costMultiplier);
+    bool CanFoundSettlement(PlanetTile tile, WorldSettlementDef type, out string reason, float costMultiplier)
+    {
+        reason = null;
+        return true;
+    }
 
     /// <summary>
     /// Returns additional cost text to display in the settlement creation UI,
@@ -22,7 +26,7 @@ public interface ISettlementFoundingValidator
     /// <para><paramref name="costMultiplier"/> scales the displayed amounts to match
     /// what will actually be charged.</para>
     /// </summary>
-    string GetAdditionalCostDescription(PlanetTile tile, WorldSettlementDef type, float costMultiplier);
+    string GetAdditionalCostDescription(PlanetTile tile, WorldSettlementDef type, float costMultiplier) => null;
 
     /// <summary>
     /// Called in DoFoundSettlement() after silver payment succeeds.
@@ -30,5 +34,5 @@ public interface ISettlementFoundingValidator
     /// <para>Note that at this point, the settlement has not actually been created yet.</para>
     /// <para><paramref name="costMultiplier"/> scales the resources consumed (1 = full cost).</para>
     /// </summary>
-    void OnSettlementFounded(PlanetTile tile, WorldSettlementDef type, float costMultiplier);
+    void OnSettlementFounded(PlanetTile tile, WorldSettlementDef type, float costMultiplier) { }
 }

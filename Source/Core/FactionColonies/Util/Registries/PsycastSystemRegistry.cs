@@ -16,9 +16,20 @@ public static class PsycastSystemRegistry
     private static readonly List<IPsycastSystemProvider> _providers =
         [_vanilla];
 
+    /// <summary>
+    /// Adds <paramref name="provider"/>. A provider without a <see cref="IPsycastSystemProvider.Key"/>
+    /// is rejected with an error: saved psycasts resolve back to their provider by that key, so a
+    /// keyless provider's entries could never be applied after a reload.
+    /// </summary>
     public static void Register(IPsycastSystemProvider provider)
     {
-        if (provider is not null && !_providers.Contains(provider)) _providers.Add(provider);
+        if (provider is null || _providers.Contains(provider)) return;
+        if (string.IsNullOrEmpty(provider.Key))
+        {
+            LogUtil.Error($"IPsycastSystemProvider {provider.GetType().FullName} has no Key; not registering it.");
+            return;
+        }
+        _providers.Add(provider);
     }
 
     public static void Unregister(IPsycastSystemProvider provider)

@@ -14,5 +14,5 @@ public interface IRoadNodeProvider
 {
     /// <summary>Tiles to add as road-network nodes. Called on the main thread during
     /// road queue recalculation.</summary>
-    IEnumerable<PlanetTile> GetRoadNodeTiles();
+    IEnumerable<PlanetTile> GetRoadNodeTiles() => [];
 }

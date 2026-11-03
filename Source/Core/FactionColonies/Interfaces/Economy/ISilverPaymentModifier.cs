@@ -14,5 +14,5 @@ public interface ISilverPaymentModifier
     /// is also invoked for pure affordability queries (PaymentUtil.CanAfford), where commit actions
     /// are never run.</para>
     /// </summary>
-    void ModifyPayment(SilverPaymentContext context);
+    void ModifyPayment(SilverPaymentContext context) { }
 }

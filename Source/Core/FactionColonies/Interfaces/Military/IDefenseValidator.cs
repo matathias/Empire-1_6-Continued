@@ -11,5 +11,5 @@ public interface IDefenseValidator
     /// Returns true if <paramref name="defender"/> is allowed to defend <paramref name="target"/>.
     /// Return false to exclude it from the defender list or auto-defend selection.
     /// </summary>
-    bool CanDefend(WorldSettlementFC defender, WorldSettlementFC target);
+    bool CanDefend(WorldSettlementFC defender, WorldSettlementFC target) => true;
 }

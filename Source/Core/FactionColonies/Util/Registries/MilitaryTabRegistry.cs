@@ -7,5 +7,8 @@ public static class MilitaryTabRegistry
     internal static void Register(IMilitaryTabEntry entry) => _list.Register(entry);
     internal static void Unregister(IMilitaryTabEntry entry) => _list.Unregister(entry);
     internal static void ClearAll() => _list.ClearAll();
-    public static IReadOnlyList<IMilitaryTabEntry> Entries => _list.Items;
+    /// <summary>Registered entries with a non-null <see cref="IMilitaryTabEntry.WorldObject"/>; entries
+    /// without one are skipped (logged once).</summary>
+    public static IReadOnlyList<IMilitaryTabEntry> Entries
+        => _list.Valid(e => e.WorldObject is not null, "has a null WorldObject");
 }

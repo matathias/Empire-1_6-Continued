@@ -16,10 +16,10 @@ public interface ITitheBudgetModifier
     /// Returns additional tithe budget (in silver value) for the given resource, per day (sampled daily).
     /// Return 0 for no effect.
     /// </summary>
-    double GetDailyExternalTitheBudget(ResourceFC resource);
+    double GetDailyExternalTitheBudget(ResourceFC resource) => 0;
 
     /// <summary>
     /// Description text for the tithe budget breakdown tooltip. Return null or empty for no entry.
     /// </summary>
-    string GetExternalTitheBudgetDesc(ResourceFC resource);
+    string GetExternalTitheBudgetDesc(ResourceFC resource) => null;
 }

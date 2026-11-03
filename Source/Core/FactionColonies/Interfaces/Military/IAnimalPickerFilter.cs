@@ -16,5 +16,5 @@ public interface IAnimalPickerFilter
     /// pickers. Called per-kind during the picker's redraw, so keep it cheap (back it
     /// with a cached set). Return true to allow.
     /// </summary>
-    bool IsAnimalAllowed(PawnKindDef animal);
+    bool IsAnimalAllowed(PawnKindDef animal) => true;
 }

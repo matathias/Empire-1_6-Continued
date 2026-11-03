@@ -28,12 +28,7 @@ public static class RegistryTests
         public int ResearchCompletedCount;
         public void OnSettlementCreated(WorldSettlementFC s) => SettlementCreatedCount++;
         public void OnSettlementRemoved(WorldSettlementFC s) => SettlementRemovedCount++;
-        public void OnSettlementUpgraded(WorldSettlementFC s, int oldLevel, int newLevel) { }
-        public void OnSettlementTypeChanged(WorldSettlementFC s, WorldSettlementDef oldDef, WorldSettlementDef newDef) { }
         public void OnBuildingConstructed(WorldSettlementFC s, BuildingFCDef b, int slot) => BuildingConstructedCount++;
-        public void OnBuildingDeconstructed(WorldSettlementFC s, BuildingFCDef b, int slot) { }
-        public void OnOperationCreated(MilitaryOperation op) { }
-        public void OnOperationResolved(MilitaryOperation op) { }
         public void OnBattleResolved(MilitaryOperation op, bool victory, BattleResult result) => BattleResolvedCount++;
         public void OnResearchCompleted(ResearchProjectDef p) => ResearchCompletedCount++;
     }
@@ -122,8 +117,6 @@ public static class RegistryTests
         public int PostTaxCount;
         public void PreTaxResolution(FactionFC f) => PreTaxCount++;
         public void PostTaxResolution(FactionFC f) => PostTaxCount++;
-        public void PreSettlementCreateTax(WorldSettlementFC s) { }
-        public void PostSettlementCreateTax(WorldSettlementFC s, ref int a, List<Thing> t) { }
     }
 
     private class ThrowingTaxTicker : ITaxTickParticipant
@@ -157,18 +150,12 @@ public static class RegistryTests
     private class TestMainTab : IMainTabWindowOverview
     {
         public int PostCloseCount;
-        public void PreOpenWindow(FactionFC f) { }
-        public void OnTabSwitch() { }
-        public void DrawOverviewTab(Rect b) { }
         public void PostCloseWindow() => PostCloseCount++;
         public string TabName() => "TestTab";
     }
 
     private class ThrowingMainTab : IMainTabWindowOverview
     {
-        public void PreOpenWindow(FactionFC f) { }
-        public void OnTabSwitch() { }
-        public void DrawOverviewTab(Rect b) { }
         public void PostCloseWindow() => throw new InvalidOperationException("test");
         public string TabName() => "ThrowingTab";
     }
@@ -1121,15 +1108,14 @@ public static class RegistryTests
 
     private class StubRaidTarget : IRaidTarget
     {
-        private readonly WorldObject _obj;
-        public StubRaidTarget(WorldObject obj = null) { _obj = obj; }
+        // Bare WorldObject sentinel: RaidTargetRegistry skips targets without one (or without a
+        // valid Tile), and FindByWorldObject matches by reference.
+        private readonly WorldObject _obj = new();
         public WorldObject WorldObject => _obj;
         public string Name => "TestRaidTarget";
-        public PlanetTile Tile => PlanetTile.Invalid;
+        public PlanetTile Tile => new(0);
         public int MilitaryLevel => 1;
         public bool IsUnderAttack { get; set; }
-        public void OnRaidWon(BattleResult result) { }
-        public void OnRaidLost(BattleResult result) { }
     }
 
     private class ThrowingRaidTarget : IRaidTarget
@@ -1139,8 +1125,6 @@ public static class RegistryTests
         public PlanetTile Tile => throw new InvalidOperationException("test");
         public int MilitaryLevel => throw new InvalidOperationException("test");
         public bool IsUnderAttack { get => throw new InvalidOperationException("test"); set => throw new InvalidOperationException("test"); }
-        public void OnRaidWon(BattleResult result) { }
-        public void OnRaidLost(BattleResult result) { }
     }
 
     [EmpireTest("Registry")]
@@ -1184,15 +1168,12 @@ public static class RegistryTests
     [EmpireTest("Registry")]
     public static void RaidTarget_FindByWorldObject_NullObj_ReturnsNull()
     {
-        // FindByWorldObject with a null object should not match a target whose WorldObject is null.
-        var t = new StubRaidTarget(null);
+        // A target that leaves WorldObject at its null default must not match a null lookup.
+        var t = new BareParticipant();
         RaidTargetRegistry.Register(t);
         try
         {
-            // We pass null; the iteration compares against WorldObject == null, which would match
-            // — but FindByWorldObject's behavior depends on the implementation. We accept either
-            // null result or t; just verify it doesn't crash.
-            TestAssert.DoesNotThrow(() => RaidTargetRegistry.FindByWorldObject(null));
+            TestAssert.IsNull(RaidTargetRegistry.FindByWorldObject(null));
         }
         finally { RaidTargetRegistry.Unregister(t); }
     }
@@ -1204,7 +1185,8 @@ public static class RegistryTests
         RaidTargetRegistry.Register(bad);
         try
         {
-            TestAssert.DoesNotThrow(() => RaidTargetRegistry.FindByWorldObject(null));
+            TestAssert.DoesNotThrow(() => RaidTargetRegistry.FindByWorldObject(new WorldObject()));
+            TestAssert.IsFalse(RaidTargetRegistry.Targets.Contains(bad), "A target whose identity check throws is skipped");
         }
         finally { RaidTargetRegistry.Unregister(bad); }
     }
@@ -1219,19 +1201,12 @@ public static class RegistryTests
         public int _range = 999;
         public bool _canAutoDefend = true;
 
-        // The interface demands that we define WorldObject, but we don't actually need it.
-        //  Hence, null.
-        public WorldObject WorldObject => null;
+        // Bare WorldObject sentinel: AutoDefenderRegistry skips defenders without one.
+        private readonly WorldObject _obj = new();
+        public WorldObject WorldObject => _obj;
         public int MilitaryLevel => _militaryLevel;
         public int Range => _range;
         public bool CanAutoDefend => _canAutoDefend;
-        public MilitaryForce CreateDefendingForce() => null;
-        public void OnDefensePledged(WorldObject target) { }
-        public void OnDefenseStarted(WorldObject target) { }
-        public void OnDefenseComplete(bool won, BattleResult result) { }
-        public void OnDefenseReplaced() { }
-        public List<Verse.Pawn> GetDefendingPawns() => null;
-        public void ReturnDefendingPawns(List<Verse.Pawn> pawns) { }
     }
 
     [EmpireTest("Registry")]
@@ -1335,19 +1310,11 @@ public static class RegistryTests
         public int PreTax;
         public int CanDefendCalls;
 
-        // ISettlementListener (only OnSettlementCreated is interesting; others are stubs)
+        // ISettlementListener
         public void OnSettlementCreated(WorldSettlementFC s) => SettlementCreated++;
-        public void OnSettlementRemoved(WorldSettlementFC s) { }
-        public void OnSettlementUpgraded(WorldSettlementFC s, int oldLevel, int newLevel) { }
-        public void OnSettlementTypeChanged(WorldSettlementFC s, WorldSettlementDef oldDef, WorldSettlementDef newDef) { }
-        public void OnBuildingConstructed(WorldSettlementFC s, BuildingFCDef b, int slot) { }
-        public void OnBuildingDeconstructed(WorldSettlementFC s, BuildingFCDef b, int slot) { }
 
         // ITaxTickParticipant
         public void PreTaxResolution(FactionFC f) => PreTax++;
-        public void PostTaxResolution(FactionFC f) { }
-        public void PreSettlementCreateTax(WorldSettlementFC s) { }
-        public void PostSettlementCreateTax(WorldSettlementFC s, ref int a, List<Thing> t) { }
 
         // IDefenseValidator
         public bool CanDefend(WorldSettlementFC defender, WorldSettlementFC target)
@@ -1504,5 +1471,273 @@ public static class RegistryTests
         TestAssert.IsTrue(result, "no predicate returned false");
         TestAssert.AreEqual(1, a.InvokeCount);
         TestAssert.AreEqual(1, b.InvokeCount, "later validators still run after a mid-callback unregister");
+    }
+
+    // ============================
+    // Default interface members
+    // ============================
+    // Every extensibility interface member has a default body that leaves the game unaffected.
+    // BareParticipant implements every interface and overrides nothing, so it exercises the
+    // defaults alone. A new interface or member must be added here too.
+
+    private class BareParticipant :
+        IDailyAccrualParticipant, ISilverPaymentModifier, ITaxDeliveryInterceptor,
+        IMercAutoTendProvider, IMercenarySquadListener, IMilitaryOperationListener, IResearchListener,
+        ISettlementFoundingValidator, ISettlementListener, ISettlementPostLoadInit, ITaxTickParticipant,
+        IAnimalPickerFilter, IBattleModifier, IDefenseValidator, IFactionPowerModifier,
+        ISettlementPowerModifier, ISquadAssignmentValidator, ISquadPowerModifier, IPsycastSystemProvider,
+        IProfitContributor, IResourceProductionModifier, IStatModifierProvider, ITitheBudgetModifier,
+        IAutoDefender, IRaidTarget, IRaidWeightProvider, IThreatScalingContributor, IRoadNodeProvider,
+        IBuildingDetailSection, ISquadInspectionSection, ICodexDynamicProvider, IFoundingCompanionWindow,
+        IMainTabWindowOverview, ISettlementWindowOverview, IMilitaryTabEntry, ISettlementWindowButton
+    { }
+
+    [EmpireTest("Registry")]
+    public static void DefaultMembers_BareParticipant_EveryMemberIsInert()
+    {
+        var bare = new BareParticipant();
+        var additiveStat = new FCStatDef { aggregation = FCStatAggregation.Additive };
+        var multStat = new FCStatDef { aggregation = FCStatAggregation.Multiplicative };
+        var power = new SquadPower(3, 0.8);
+        var selections = new List<SavedPsycast>();
+        int silver = 100;
+        string reason = "unset";
+
+        TestAssert.DoesNotThrow(() =>
+        {
+            /* Economy */
+            ((IDailyAccrualParticipant)bare).PostDailyAccrual(null);
+            ((ISilverPaymentModifier)bare).ModifyPayment(null);
+            ((ITaxDeliveryInterceptor)bare).OnTaxEventCreated(null);
+            TestAssert.IsFalse(((ITaxDeliveryInterceptor)bare).TryDeliverGoods(null), "TryDeliverGoods");
+
+            /* Lifecycle */
+            IMercAutoTendProvider tend = bare;
+            TestAssert.IsNull(tend.ProvideTendingDoctor(null, null), "ProvideTendingDoctor");
+            TestAssert.AreEqual(ThingDefOf.MedicineIndustrial, tend.OverrideTendingMedicine(null, null, ThingDefOf.MedicineIndustrial), "OverrideTendingMedicine passes through");
+
+            IMercenarySquadListener squads = bare;
+            squads.OnMercenaryDeath(null);
+            squads.OnSquadHired(null);
+            squads.OnSquadDismissed(null);
+            squads.OnSquadUpgraded(null);
+
+            IMilitaryOperationListener ops = bare;
+            ops.OnOperationCreated(null);
+            ops.OnOperationResolved(null);
+            ops.OnBattleResolved(null, true, null);
+
+            ((IResearchListener)bare).OnResearchCompleted(null);
+
+            ISettlementFoundingValidator founding = bare;
+            TestAssert.IsTrue(founding.CanFoundSettlement(PlanetTile.Invalid, null, out reason, 1f), "CanFoundSettlement");
+            TestAssert.IsNull(reason, "CanFoundSettlement reason");
+            TestAssert.IsNull(founding.GetAdditionalCostDescription(PlanetTile.Invalid, null, 1f), "GetAdditionalCostDescription");
+            founding.OnSettlementFounded(PlanetTile.Invalid, null, 1f);
+
+            ISettlementListener settlements = bare;
+            settlements.OnSettlementCreated(null);
+            settlements.OnSettlementRemoved(null);
+            settlements.OnSettlementUpgraded(null, 1, 2);
+            settlements.OnSettlementTypeChanged(null, null, null);
+            settlements.OnBuildingConstructed(null, null, 0);
+            settlements.OnBuildingDeconstructed(null, null, 0);
+
+            ((ISettlementPostLoadInit)bare).PostSettlementLoadInit(null);
+
+            ITaxTickParticipant tax = bare;
+            tax.PreTaxResolution(null);
+            tax.PostTaxResolution(null);
+            tax.PreSettlementCreateTax(null);
+            tax.PostSettlementCreateTax(null, ref silver, null);
+            TestAssert.AreEqual(100, silver, "PostSettlementCreateTax leaves silver untouched");
+
+            /* Military */
+            TestAssert.IsTrue(((IAnimalPickerFilter)bare).IsAnimalAllowed(null), "IsAnimalAllowed");
+            ((IBattleModifier)bare).ModifyForce(null, null, true);
+            TestAssert.IsTrue(((IDefenseValidator)bare).CanDefend(null, null), "CanDefend");
+            ((IFactionPowerModifier)bare).ModifyFactionPower(null, null);
+            ((ISettlementPowerModifier)bare).ModifySettlementPower(null, null);
+
+            reason = "unset";
+            TestAssert.IsTrue(((ISquadAssignmentValidator)bare).CanAssign(null, null, out reason), "CanAssign");
+            TestAssert.IsNull(reason, "CanAssign reason");
+
+            ISquadPowerModifier squadPower = bare;
+            TestAssert.AreEqual(0, squadPower.Priority, "ISquadPowerModifier.Priority");
+            SquadPower modified = squadPower.ModifyPower(null, power);
+            TestAssert.AreEqual(power.militaryLevel, modified.militaryLevel, message: "ModifyPower level passes through");
+            TestAssert.AreEqual(power.militaryEfficiency, modified.militaryEfficiency, message: "ModifyPower efficiency passes through");
+
+            IPsycastSystemProvider psy = bare;
+            TestAssert.IsNull(psy.Key, "Key");
+            TestAssert.IsNull(psy.Label, "Label");
+            TestAssert.IsFalse(psy.IsActive, "IsActive");
+            TestAssert.AreEqual(0, psy.Priority, "IPsycastSystemProvider.Priority");
+            TestAssert.AreEqual(0, psy.MaxPsylinkLevel, "MaxPsylinkLevel");
+            TestAssert.IsFalse(psy.SupportsExplicitSelection, "SupportsExplicitSelection");
+            psy.OpenEditor(null, null);
+            TestAssert.IsFalse(psy.TryGetDisplay(default, out PsycastPickEntry display), "TryGetDisplay");
+            TestAssert.IsNull(display, "TryGetDisplay display");
+            psy.ApplyPsylink(null, 1);
+            TestAssert.AreEqual(0.0, psy.PsylinkCost(3), message: "PsylinkCost");
+            psy.GrantPsycast(null, default);
+            TestAssert.IsTrue(ReferenceEquals(selections, psy.ClampSelectionsToBudget(selections, 1)), "ClampSelectionsToBudget passes through");
+            TestAssert.IsFalse(psy.TryGetPointBudget(null, out int spent, out int budget), "TryGetPointBudget");
+            TestAssert.AreEqual(0, spent, "TryGetPointBudget spent");
+            TestAssert.AreEqual(0, budget, "TryGetPointBudget budget");
+            psy.ReconcilePsycasts(null, null);
+
+            /* Production */
+            IProfitContributor profit = bare;
+            TestAssert.AreEqual(0.0, profit.GetDailyUpkeepContribution(), message: "GetDailyUpkeepContribution");
+            TestAssert.IsNull(profit.GetDailyUpkeepContributionDesc(), "GetDailyUpkeepContributionDesc");
+            TestAssert.AreEqual(0.0, profit.GetDailyIncomeContribution(), message: "GetDailyIncomeContribution");
+            TestAssert.IsNull(profit.GetDailyIncomeContributionDesc(), "GetDailyIncomeContributionDesc");
+
+            IResourceProductionModifier production = bare;
+            TestAssert.AreEqual(0.0, production.GetResourceAdditiveModifier(null), message: "GetResourceAdditiveModifier");
+            TestAssert.AreEqual(1.0, production.GetResourceMultiplierModifier(null), message: "GetResourceMultiplierModifier");
+            TestAssert.IsNull(production.GetResourceAdditiveDesc(null), "GetResourceAdditiveDesc");
+            TestAssert.IsNull(production.GetResourceMultiplierDesc(null), "GetResourceMultiplierDesc");
+
+            IStatModifierProvider stats = bare;
+            TestAssert.AreEqual(0.0, stats.GetStatModifier(additiveStat), message: "GetStatModifier additive identity");
+            TestAssert.AreEqual(1.0, stats.GetStatModifier(multStat), message: "GetStatModifier multiplicative identity");
+            TestAssert.IsNull(stats.GetStatModifierDesc(additiveStat), "GetStatModifierDesc");
+
+            ITitheBudgetModifier tithe = bare;
+            TestAssert.AreEqual(0.0, tithe.GetDailyExternalTitheBudget(null), message: "GetDailyExternalTitheBudget");
+            TestAssert.IsNull(tithe.GetExternalTitheBudgetDesc(null), "GetExternalTitheBudgetDesc");
+
+            /* Raid */
+            IAutoDefender defender = bare;
+            TestAssert.IsNull(defender.WorldObject, "IAutoDefender.WorldObject");
+            TestAssert.AreEqual(0, defender.MilitaryLevel, "IAutoDefender.MilitaryLevel");
+            TestAssert.AreEqual(0, defender.Range, "Range");
+            TestAssert.IsFalse(defender.CanAutoDefend, "CanAutoDefend");
+            TestAssert.IsNull(defender.CreateDefendingForce(), "CreateDefendingForce");
+            defender.OnDefensePledged(null);
+            defender.OnDefenseStarted(null);
+            defender.OnDefenseComplete(true, null);
+            defender.OnDefenseReplaced();
+            TestAssert.IsNull(defender.GetDefendingPawns(), "GetDefendingPawns");
+            defender.ReturnDefendingPawns(null);
+
+            IRaidTarget target = bare;
+            TestAssert.IsNull(target.WorldObject, "IRaidTarget.WorldObject");
+            TestAssert.IsNull(target.Name, "IRaidTarget.Name");
+            TestAssert.IsFalse(target.Tile.Valid, "IRaidTarget.Tile");
+            TestAssert.AreEqual(0, target.MilitaryLevel, "IRaidTarget.MilitaryLevel");
+            target.IsUnderAttack = true;
+            TestAssert.IsFalse(target.IsUnderAttack, "IRaidTarget.IsUnderAttack");
+            target.OnRaidWon(null);
+            target.OnRaidLost(null);
+
+            TestAssert.AreEqual(1.0, ((IRaidWeightProvider)bare).GetSettlementRaidWeight(null, null), message: "GetSettlementRaidWeight");
+
+            IThreatScalingContributor threat = bare;
+            TestAssert.AreEqual(0.0, threat.GetAdditiveContribution(null), message: "GetAdditiveContribution");
+            TestAssert.AreEqual(1.0, threat.GetMultiplicativeContribution(null), message: "GetMultiplicativeContribution");
+
+            /* Roads */
+            TestAssert.IsFalse(((IRoadNodeProvider)bare).GetRoadNodeTiles().Any(), "GetRoadNodeTiles");
+
+            /* Windows */
+            IBuildingDetailSection buildingSection = bare;
+            TestAssert.IsNull(buildingSection.SectionLabel, "IBuildingDetailSection.SectionLabel");
+            TestAssert.AreEqual(0.0, buildingSection.GetSectionHeight(null, 100f), message: "IBuildingDetailSection.GetSectionHeight");
+            buildingSection.DrawSection(null, Rect.zero);
+            TestAssert.IsNull(buildingSection.GetCardDescription(null), "GetCardDescription");
+
+            ISquadInspectionSection squadSection = bare;
+            TestAssert.IsNull(squadSection.SectionLabel, "ISquadInspectionSection.SectionLabel");
+            TestAssert.AreEqual(0.0, squadSection.GetSectionHeight(null, 100f), message: "ISquadInspectionSection.GetSectionHeight");
+            squadSection.DrawSection(null, Rect.zero);
+            TestAssert.AreEqual(0, squadSection.Order, "Order");
+
+            TestAssert.IsNull(((ICodexDynamicProvider)bare).GetDynamicContent(null), "GetDynamicContent");
+            TestAssert.AreEqual(0, ((IFoundingCompanionWindow)bare).CompanionOrder, "CompanionOrder");
+
+            IMainTabWindowOverview mainTab = bare;
+            mainTab.PreOpenWindow(null);
+            mainTab.OnTabSwitch();
+            mainTab.DrawOverviewTab(Rect.zero);
+            mainTab.PostCloseWindow();
+            TestAssert.IsNull(mainTab.TabName(), "TabName");
+
+            ISettlementWindowOverview settlementTab = bare;
+            settlementTab.PreOpenWindow(null);
+            settlementTab.OnTabSwitch();
+            settlementTab.DrawOverviewTab(Rect.zero);
+            settlementTab.PostCloseWindow();
+            TestAssert.IsNull(settlementTab.OverviewTabName(), "OverviewTabName");
+            TestAssert.IsFalse(settlementTab.ShouldShowOverviewTab(null), "ShouldShowOverviewTab");
+
+            IMilitaryTabEntry tabEntry = bare;
+            TestAssert.IsNull(tabEntry.WorldObject, "IMilitaryTabEntry.WorldObject");
+            TestAssert.IsNull(tabEntry.Name, "IMilitaryTabEntry.Name");
+            TestAssert.AreEqual(0, tabEntry.MilitaryLevel, "IMilitaryTabEntry.MilitaryLevel");
+            tabEntry.AutoDefend = true;
+            TestAssert.IsFalse(tabEntry.AutoDefend, "AutoDefend");
+            TestAssert.IsFalse(tabEntry.IsUnderAttack, "IMilitaryTabEntry.IsUnderAttack");
+            TestAssert.IsFalse(tabEntry.IsBusy, "IsBusy");
+            TestAssert.IsNull(tabEntry.StatusLabel, "StatusLabel");
+            TestAssert.IsTrue(tabEntry.AccentColor == Color.white, "AccentColor");
+
+            ISettlementWindowButton button = bare;
+            TestAssert.IsNull(button.Label(null), "Label");
+            button.OnClick(null);
+            TestAssert.IsTrue(button.IsEnabled(null), "IsEnabled");
+            TestAssert.IsFalse(button.IsVisible(null), "IsVisible");
+        }, "default interface members must not throw");
+    }
+
+    [EmpireTest("Registry")]
+    public static void DefaultMembers_BareParticipant_RegisteredChangesNothing()
+    {
+        FactionFC faction = FindFC.FactionComp;
+        WorldSettlementFC settlement = GetFirstSettlement();
+        if (faction is null || settlement is null) TestAssert.Skip("No faction or settlements");
+
+        PawnKindDef animal = DefDatabase<PawnKindDef>.AllDefs.FirstOrDefault(k => k.RaceProps?.Animal ?? false);
+
+        double additiveBefore = ThreatScalingRegistry.InvokeGetAdditiveContributions(faction);
+        double multBefore = ThreatScalingRegistry.InvokeGetMultiplierContributions(faction);
+        bool canDefendBefore = DefenseValidatorRegistry.CanDefend(settlement, settlement);
+        bool animalBefore = AnimalPickerFilterRegistry.IsAllowed(animal);
+        int costLinesBefore = FoundingValidatorRegistry.GetCostDescriptions(settlement.Tile, settlement.settlementDef).Count;
+        HashSet<int> roadTilesBefore = [];
+        RoadNodeProviderRegistry.CollectInto(roadTilesBefore);
+
+        var bare = new BareParticipant();
+        EmpireRegistry.Register(bare);
+        PsycastSystemRegistry.Register(bare);
+        try
+        {
+            // Identity-filtered views skip an implementer that left WorldObject/Tile/Key at their defaults.
+            TestAssert.IsFalse(RaidTargetRegistry.Targets.Contains(bare), "RaidTargetRegistry skips a target with no WorldObject");
+            TestAssert.IsFalse(AutoDefenderRegistry.Defenders.Contains(bare), "AutoDefenderRegistry skips a defender with no WorldObject");
+            TestAssert.IsFalse(MilitaryTabRegistry.Entries.Contains(bare), "MilitaryTabRegistry skips an entry with no WorldObject");
+            TestAssert.IsFalse(PsycastSystemRegistry.Providers.Contains(bare), "PsycastSystemRegistry rejects a provider with no Key");
+            TestAssert.IsNull(RaidTargetRegistry.FindByWorldObject(null), "FindByWorldObject(null)");
+
+            // Aggregating registries produce the same result with the bare implementer present.
+            TestAssert.AreEqual(additiveBefore, ThreatScalingRegistry.InvokeGetAdditiveContributions(faction), message: "ETL additive");
+            TestAssert.AreEqual(multBefore, ThreatScalingRegistry.InvokeGetMultiplierContributions(faction), message: "ETL multiplier");
+            TestAssert.AreEqual(canDefendBefore, DefenseValidatorRegistry.CanDefend(settlement, settlement), "CanDefend");
+            TestAssert.AreEqual(animalBefore, AnimalPickerFilterRegistry.IsAllowed(animal), "IsAllowed");
+            TestAssert.AreEqual(costLinesBefore, FoundingValidatorRegistry.GetCostDescriptions(settlement.Tile, settlement.settlementDef).Count, "founding cost lines");
+            HashSet<int> roadTilesAfter = [];
+            RoadNodeProviderRegistry.CollectInto(roadTilesAfter);
+            TestAssert.IsTrue(roadTilesBefore.SetEquals(roadTilesAfter), "road node tiles");
+
+            TestAssert.DoesNotThrow(MainTableRegistry.InvokePostCloseWindow, "InvokePostCloseWindow");
+        }
+        finally
+        {
+            EmpireRegistry.Unregister(bare);
+            PsycastSystemRegistry.Unregister(bare);
+        }
     }
 }

@@ -7,9 +7,9 @@ namespace FactionColonies;
 /// </summary>
 public interface IMainTabWindowOverview
 {
-    void PreOpenWindow(FactionFC faction);
-    void OnTabSwitch();
-    void DrawOverviewTab(Rect boundingBox);
-    void PostCloseWindow();
-    string TabName();
+    void PreOpenWindow(FactionFC faction) { }
+    void OnTabSwitch() { }
+    void DrawOverviewTab(Rect boundingBox) { }
+    void PostCloseWindow() { }
+    string TabName() => null;
 }

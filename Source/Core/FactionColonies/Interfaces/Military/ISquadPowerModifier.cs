@@ -14,9 +14,9 @@ public interface ISquadPowerModifier
 {
     /// <summary>Higher priorities run first. Modifiers see the power after all
     /// higher-priority modifiers have run.</summary>
-    int Priority { get; }
+    int Priority => 0;
     /// <summary>Returns the squad's adjusted power. Implementations may consult
     /// <c>squad.outfit</c>, mercs, custom data, etc. Throw-safe: exceptions are
     /// logged and the modifier is skipped (running power is preserved).</summary>
-    SquadPower ModifyPower(MercenarySquadFC squad, SquadPower currentPower);
+    SquadPower ModifyPower(MercenarySquadFC squad, SquadPower currentPower) => currentPower;
 }

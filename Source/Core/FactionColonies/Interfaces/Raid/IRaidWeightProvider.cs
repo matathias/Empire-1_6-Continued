@@ -13,5 +13,5 @@ public interface IRaidWeightProvider
     /// Return 1.0 for no effect. Return &gt; 1.0 to make the settlement more likely to be targeted.
     /// Return &lt; 1.0 (but &gt; 0) to make it less likely. Return 0 to completely exclude it.
     /// </summary>
-    float GetSettlementRaidWeight(WorldSettlementFC settlement, RimWorld.Faction attackingFaction);
+    float GetSettlementRaidWeight(WorldSettlementFC settlement, RimWorld.Faction attackingFaction) => 1f;
 }

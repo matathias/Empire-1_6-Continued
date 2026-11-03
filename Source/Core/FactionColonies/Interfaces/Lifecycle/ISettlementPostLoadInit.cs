@@ -10,5 +10,5 @@ namespace FactionColonies;
 /// </summary>
 public interface ISettlementPostLoadInit
 {
-    void PostSettlementLoadInit(WorldSettlementFC settlement);
+    void PostSettlementLoadInit(WorldSettlementFC settlement) { }
 }

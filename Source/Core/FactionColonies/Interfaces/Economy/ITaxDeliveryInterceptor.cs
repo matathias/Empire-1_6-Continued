@@ -14,12 +14,12 @@ public interface ITaxDeliveryInterceptor
     /// <c>context.Event.timeTillTrigger</c> to redirect the delivery destination.
     /// Set <c>context.Redirected = true</c> to prevent further interceptors from running.
     /// </summary>
-    void OnTaxEventCreated(TaxDeliveryContext context);
+    void OnTaxEventCreated(TaxDeliveryContext context) { }
 
     /// <summary>
     /// Called when a taxColony event fires and goods are about to be delivered.
     /// Return true to consume the delivery (this interceptor handled the goods).
     /// Return false to let the next interceptor or default delivery logic handle it.
     /// </summary>
-    bool TryDeliverGoods(TaxDeliveryContext context);
+    bool TryDeliverGoods(TaxDeliveryContext context) => false;
 }

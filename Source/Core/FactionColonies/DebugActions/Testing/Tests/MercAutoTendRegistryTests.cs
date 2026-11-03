@@ -10,14 +10,12 @@ public static class MercAutoTendRegistryTests
         private readonly Pawn _doctor;
         public FixedDoctorProvider(Pawn doctor) { _doctor = doctor; }
         public Pawn ProvideTendingDoctor(Mercenary patient, WorldSettlementFC settlement) => _doctor;
-        public ThingDef OverrideTendingMedicine(Mercenary patient, WorldSettlementFC settlement, ThingDef currentChoice) => currentChoice;
     }
 
     private class FixedMedicineProvider : IMercAutoTendProvider
     {
         private readonly ThingDef _medicine;
         public FixedMedicineProvider(ThingDef medicine) { _medicine = medicine; }
-        public Pawn ProvideTendingDoctor(Mercenary patient, WorldSettlementFC settlement) => null;
         public ThingDef OverrideTendingMedicine(Mercenary patient, WorldSettlementFC settlement, ThingDef currentChoice) => _medicine;
     }
 
@@ -40,7 +38,6 @@ public static class MercAutoTendRegistryTests
             DoctorProbed = true;
             return null;
         }
-        public ThingDef OverrideTendingMedicine(Mercenary patient, WorldSettlementFC settlement, ThingDef currentChoice) => currentChoice;
     }
 
     private static Pawn AnyPawn()

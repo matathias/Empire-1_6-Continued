@@ -85,8 +85,15 @@ public sealed class SettlementWindowFc : Window
             {
                 if (!overview.ShouldShowOverviewTab(settlement)) continue;
                 overview.PreOpenWindow(settlement);
+                string tabName = overview.OverviewTabName();
+                if (tabName.NullOrEmpty())
+                {
+                    LogUtil.ErrorOnce($"ISettlementWindowOverview {overview.GetType().FullName} returned no OverviewTabName; skipping its tab.");
+                    overview.PostCloseWindow();
+                    continue;
+                }
                 overviews.Add(overview);
-                overviewTabs.Add(overview.OverviewTabName());
+                overviewTabs.Add(tabName);
             }
         }
     }
@@ -1067,19 +1074,31 @@ public sealed class SettlementWindowFc : Window
         Find.WindowStack.TryRemove(this);
         ColonyUtil.RemovePlayerSettlement(settlement);
     }
+    // Per-frame scratch lists for DrawMainButtons, reused to avoid allocating every frame.
+    private readonly List<ISettlementWindowButton> visibleButtons = [];
+    private readonly List<string> visibleButtonLabels = [];
+
     private void DrawMainButtons(Rect boundingBox)
     {
         Text.Anchor = TextAnchor.MiddleCenter;
         Text.Font = GameFont.Tiny;
 
-        IReadOnlyList<ISettlementWindowButton> registered = SettlementButtonRegistry.Entries;
-        int visibleRegistered = 0;
-        foreach (var t in registered)
+        visibleButtons.Clear();
+        visibleButtonLabels.Clear();
+        foreach (ISettlementWindowButton button in SettlementButtonRegistry.Entries)
         {
-            if (t.IsVisible(settlement)) visibleRegistered++;
+            if (!button.IsVisible(settlement)) continue;
+            string label = button.Label(settlement);
+            if (label.NullOrEmpty())
+            {
+                LogUtil.ErrorOnce($"ISettlementWindowButton {button.GetType().FullName} is visible but returned no Label; skipping it.");
+                continue;
+            }
+            visibleButtons.Add(button);
+            visibleButtonLabels.Add(label);
         }
         // 4 main built-ins + registered + 1 delete
-        int totalCount = mainButtons.Length + visibleRegistered + 1;
+        int totalCount = mainButtons.Length + visibleButtons.Count + 1;
         float size = (boundingBox.height - ((totalCount - 1) * margin)) / totalCount;
         int drawn = 0;
 
@@ -1090,10 +1109,9 @@ public sealed class SettlementWindowFc : Window
         }
 
         // Registered submod buttons
-        for (int i = 0; i < registered.Count; i++)
+        for (int i = 0; i < visibleButtons.Count; i++)
         {
-            ISettlementWindowButton button = registered[i];
-            if (!button.IsVisible(settlement)) continue;
+            ISettlementWindowButton button = visibleButtons[i];
 
             Rect buttonRect = new(boundingBox.x, boundingBox.y + ((size + margin) * drawn), boundingBox.width, size);
             drawn++;
@@ -1101,7 +1119,7 @@ public sealed class SettlementWindowFc : Window
             bool enabled = button.IsEnabled(settlement);
             if (!enabled) GUI.color = Color.gray;
 
-            if (UIUtil.ClampedButtonText(buttonRect, button.Label(settlement), active: enabled))
+            if (UIUtil.ClampedButtonText(buttonRect, visibleButtonLabels[i], active: enabled))
             {
                 button.OnClick(settlement);
             }

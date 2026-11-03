@@ -9,12 +9,12 @@ namespace FactionColonies;
 /// </summary>
 public interface IMilitaryTabEntry
 {
-    WorldObject WorldObject { get; }
-    string Name { get; }
-    int MilitaryLevel { get; }
-    bool AutoDefend { get; set; }
-    bool IsUnderAttack { get; }
-    bool IsBusy { get; }
-    string StatusLabel { get; }
-    Color AccentColor { get; }
+    WorldObject WorldObject => null;
+    string Name => null;
+    int MilitaryLevel => 0;
+    bool AutoDefend { get => false; set { } }
+    bool IsUnderAttack => false;
+    bool IsBusy => false;
+    string StatusLabel => null;
+    Color AccentColor => Color.white;
 }

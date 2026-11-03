@@ -32,6 +32,56 @@ The facade routes that single call to `LifecycleRegistry`, `TaxTickRegistry`, an
 
 ---
 
+## Default member implementations
+
+Every member of every Empire extensibility interface has a default body. Implement only the members you care about; the rest do nothing. (The interface listings below show signatures only.) Because the defaults live on the interface, Empire can also add new members later without breaking submods that are already compiled.
+
+Each default leaves an implementer that doesn't override it **inert**: it doesn't affect the game and doesn't block anything.
+
+| Member kind | Default |
+|---|---|
+| `void` members (listeners, hooks, draw calls) | Empty body |
+| Validators (`CanDefend`, `CanAssign`, `CanFoundSettlement`, `IsAnimalAllowed`, `IsEnabled`) | `true`, with `reason = null` |
+| `Try*` members (`TryDeliverGoods`, `TryGetDisplay`, `TryGetPointBudget`) | `false`, with outputs left at their defaults, so Empire uses its own behavior |
+| Additive values (upkeep, income, tithe budget, additive modifiers, ETL additive) | `0` |
+| Multiplicative values (resource multiplier, ETL multiplier) | `1` |
+| `GetSettlementRaidWeight` | `1` (weights are multiplied together) |
+| `IStatModifierProvider.GetStatModifier` | The stat's identity: `0` for additive stats, `1` for multiplicative |
+| Pass-through values (`ModifyPower`, `OverrideTendingMedicine`, `ClampSelectionsToBudget`) | Return their input unchanged |
+| Description and tooltip strings | `null` (no line is added) |
+| Order and priority values | `0` |
+| `GetDefendingPawns` | `null` (Empire generates defenders from force points) |
+| `GetRoadNodeTiles` | An empty sequence |
+| `IMilitaryTabEntry.AccentColor` | `Color.white` |
+
+### Members you must override
+
+Some defaults are deliberately "off":
+
+- **`ISettlementWindowOverview.ShouldShowOverviewTab` and `ISettlementWindowButton.IsVisible` default to `false`.** Override them to return `true`, or your tab or button stays hidden.
+- **Identity members default to null or invalid.** Empire skips an entry whose identity is missing and logs an error once, naming your type:
+  - `IRaidTarget`: `WorldObject` must be non-null and `Tile` must be valid.
+  - `IAutoDefender` and `IMilitaryTabEntry`: `WorldObject` must be non-null.
+  - `IPsycastSystemProvider`: `Key` must be non-empty, or `PsycastSystemRegistry.Register` rejects the provider.
+  - `IMainTabWindowOverview.TabName`, `ISettlementWindowOverview.OverviewTabName` and `ISettlementWindowButton.Label` must return text, or that tab or button is skipped.
+- Members such as `IAutoDefender.CanAutoDefend` (`false`) and `IPsycastSystemProvider.IsActive` (`false`) also default to off. A defender or psycast system has to override them to take part.
+
+### Implement members explicitly
+
+With defaults in place, a member with a misspelled name or the wrong parameters no longer causes a compile error. It just becomes an extra method that Empire never calls, and the default runs instead. To keep the compiler checking your signatures, implement interface members **explicitly**:
+
+```csharp
+public class MyListener : ISettlementListener
+{
+    // Explicit: a typo in the name or a wrong parameter list is a compile error.
+    void ISettlementListener.OnSettlementCreated(WorldSettlementFC settlement) { /* ... */ }
+}
+```
+
+Explicit members, and members you didn't implement at all, can only be called through the interface type, e.g. `((ISettlementListener)this).OnSettlementCreated(s)`, not `this.OnSettlementCreated(s)`.
+
+---
+
 ## Registry-Based Interfaces
 
 ### Lifecycle listener interfaces
@@ -39,7 +89,7 @@ The facade routes that single call to `LifecycleRegistry`, `TaxTickRegistry`, an
 **Registry**: `LifecycleRegistry`
 **Purpose**: Hook into settlement, military operation, mercenary squad, and research events.
 
-Four domain-specific listener interfaces. Implement only the ones you care about — a single class can implement multiple, and a single `EmpireRegistry.Register(this)` call adds it to every matching dispatch list.
+Four domain-specific listener interfaces. Implement only the ones you care about (and only the members you need; the rest default to no-ops) — a single class can implement multiple, and a single `EmpireRegistry.Register(this)` call adds it to every matching dispatch list.
 
 ```csharp
 public interface ISettlementListener
@@ -572,7 +622,7 @@ public interface ISettlementWindowButton
 | `Label` | Translated button text. Called every frame, so dynamic labels (e.g., with counts) work. |
 | `OnClick` | Called when the button is clicked. Open windows, show float menus, etc. |
 | `IsEnabled` | Return `true` if clickable. Disabled buttons are drawn grayed out. |
-| `IsVisible` | Return `true` to show the button. Hidden buttons take no space. |
+| `IsVisible` | Return `true` to show the button. Hidden buttons take no space. Defaults to `false`, so you must override it. |
 
 **Usage example**:
 
@@ -581,12 +631,12 @@ public class MySettlementButton : ISettlementWindowButton
 {
     public string Label(WorldSettlementFC settlement) => "MyButtonLabel".Translate();
     public void OnClick(WorldSettlementFC settlement) => Find.WindowStack.Add(new MyWindow(settlement));
-    public bool IsEnabled(WorldSettlementFC settlement) => true;
+    // IsEnabled defaults to true, so it's left out.
     public bool IsVisible(WorldSettlementFC settlement) => settlement.HasMyComp();
 }
 
 // In your mod's initialization:
-SettlementButtonRegistry.Register(new MySettlementButton());
+EmpireRegistry.Register(new MySettlementButton());
 ```
 
 ---
@@ -681,10 +731,11 @@ public interface ISettlementWindowOverview
     void DrawOverviewTab(Rect boundingBox);
     void PostCloseWindow();
     string OverviewTabName();
+    bool ShouldShowOverviewTab(WorldSettlementFC settlement);
 }
 ```
 
-Must be implemented by a `WorldObjectComp` attached to the settlement. The settlement window discovers it at open time and adds the tab.
+Must be implemented by a `WorldObjectComp` attached to the settlement. The settlement window discovers it at open time and adds the tab if `ShouldShowOverviewTab` returns `true`. That member defaults to `false`, so override it.
 
 ---
 

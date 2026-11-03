@@ -29,7 +29,7 @@ The base settlement types are:
 
 ## Empire Interfaces for Comps
 
-Your `WorldObjectComp` can implement any combination of these Empire interfaces. The base mod discovers them by iterating `settlement.AllComps` and checking for interface implementation.
+Your `WorldObjectComp` can implement any combination of these Empire interfaces. The base mod discovers them by iterating `settlement.AllComps` and checking for interface implementation. Every interface member has a no-op default, so implement only the members you need. See [Default member implementations](interfaces-and-registries.md#default-member-implementations).
 
 ### ISettlementWindowOverview
 
@@ -39,14 +39,15 @@ Adds a tab to the settlement window.
 public class MyComp : WorldObjectComp, ISettlementWindowOverview
 {
     public void PreOpenWindow(WorldSettlementFC settlement) { /* initialize UI state */ }
-    public void OnTabSwitch() { /* user clicked your tab */ }
     public void DrawOverviewTab(Rect boundingBox) { /* draw your tab content */ }
-    public void PostCloseWindow() { /* cleanup */ }
     public string OverviewTabName() => "My Tab";
+    // Defaults to false: override it, or the tab stays hidden.
+    public bool ShouldShowOverviewTab(WorldSettlementFC settlement) => true;
+    // OnTabSwitch and PostCloseWindow are optional; they default to no-ops.
 }
 ```
 
-**Discovery**: `SettlementWindowFc.PreOpen()` iterates `settlement.AllComps`, casts each to `ISettlementWindowOverview`, and adds non-null results as additional tabs. Tabs appear after the built-in Overview and Tithing tabs.
+**Discovery**: `SettlementWindowFc.PreOpen()` iterates `settlement.AllComps`, casts each to `ISettlementWindowOverview`, and adds a tab for each one whose `ShouldShowOverviewTab` returns `true` and whose `OverviewTabName` is non-empty. Tabs appear after the built-in Overview and Tithing tabs.
 
 ### IStatModifierProvider
 

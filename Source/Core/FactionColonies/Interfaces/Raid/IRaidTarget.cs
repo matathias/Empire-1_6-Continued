@@ -9,13 +9,13 @@ namespace FactionColonies;
 public interface IRaidTarget
 {
     /// <summary>The world object this target wraps (for serialization and <see cref="LookTargets"/>).</summary>
-    WorldObject WorldObject { get; }
-    string Name { get; }
-    PlanetTile Tile { get; }
+    WorldObject WorldObject => null;
+    string Name => null;
+    PlanetTile Tile => PlanetTile.Invalid;
     /// <summary>Virtual military level used for targeting weight and auto-defend comparison.</summary>
-    int MilitaryLevel { get; }
+    int MilitaryLevel => 0;
     /// <summary>Set by the attack system to prevent duplicate attacks. Cleared on resolution.</summary>
-    bool IsUnderAttack { get; set; }
-    void OnRaidWon(BattleResult result);
-    void OnRaidLost(BattleResult result);
+    bool IsUnderAttack { get => false; set { } }
+    void OnRaidWon(BattleResult result) { }
+    void OnRaidLost(BattleResult result) { }
 }

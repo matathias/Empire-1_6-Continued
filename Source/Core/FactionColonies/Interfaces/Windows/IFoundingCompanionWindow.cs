@@ -8,5 +8,5 @@ namespace FactionColonies;
 /// </summary>
 public interface IFoundingCompanionWindow
 {
-    int CompanionOrder { get; }
+    int CompanionOrder => 0;
 }

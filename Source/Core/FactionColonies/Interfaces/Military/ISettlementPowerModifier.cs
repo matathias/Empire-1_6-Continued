@@ -11,5 +11,5 @@ namespace FactionColonies;
 /// </summary>
 public interface ISettlementPowerModifier
 {
-    void ModifySettlementPower(Settlement settlement, EnemyPower power);
+    void ModifySettlementPower(Settlement settlement, EnemyPower power) { }
 }

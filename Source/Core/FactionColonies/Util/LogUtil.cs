@@ -54,4 +54,6 @@ public static class LogUtil
         if (suppressThisThread) return;
         Log.ErrorOnce($"{slug}[ERRONCE] {message}", key);
     }
+    /// <summary>Logs <paramref name="message"/> once per session, keyed by the message text itself.</summary>
+    public static void ErrorOnce(string message) => ErrorOnce(message, message.GetHashCode());
 }

@@ -24,7 +24,6 @@ public class WorldObjectComp_Situations : WorldObjectComp, ISettlementWindowOver
 
     public void PreOpenWindow(WorldSettlementFC settlement) => scroll = Vector2.zero;
     public void OnTabSwitch() => scroll = Vector2.zero;
-    public void PostCloseWindow() { }
     public string OverviewTabName() => "FCSituationsTab".Translate();
 
     public bool ShouldShowOverviewTab(WorldSettlementFC settlement)

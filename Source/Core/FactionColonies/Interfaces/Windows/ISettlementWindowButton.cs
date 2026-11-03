@@ -11,23 +11,24 @@ public interface ISettlementWindowButton
     /// Returns the translated label to display on the button.
     /// Called every frame, so dynamic labels (e.g., with counts) are supported.
     /// </summary>
-    string Label(WorldSettlementFC settlement);
+    string Label(WorldSettlementFC settlement) => null;
 
     /// <summary>
     /// Called when the button is clicked. Open windows, show float menus, etc.
     /// </summary>
-    void OnClick(WorldSettlementFC settlement);
+    void OnClick(WorldSettlementFC settlement) { }
 
     /// <summary>
     /// Returns true if the button should be enabled (clickable). Disabled buttons
     /// are drawn grayed out. Called every frame.
     /// </summary>
-    bool IsEnabled(WorldSettlementFC settlement);
+    bool IsEnabled(WorldSettlementFC settlement) => true;
 
     /// <summary>
     /// Returns true if the button should be visible at all for this settlement.
-    /// Return false to hide the button entirely (it takes no space).
+    /// Return false to hide the button entirely (it takes no space). Defaults to false, so
+    /// implementers must override this to show the button.
     /// Called every frame.
     /// </summary>
-    bool IsVisible(WorldSettlementFC settlement);
+    bool IsVisible(WorldSettlementFC settlement) => false;
 }

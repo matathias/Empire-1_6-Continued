@@ -9,16 +9,16 @@ namespace FactionColonies;
 public interface ISquadInspectionSection
 {
     /// <summary>Header label for the section.</summary>
-    string SectionLabel { get; }
+    string SectionLabel => null;
 
     /// <summary>Total height needed for the section (excluding the header drawn by the caller).
     /// Return 0 to hide the section entirely.</summary>
-    float GetSectionHeight(MercenarySquadFC squad, float width);
+    float GetSectionHeight(MercenarySquadFC squad, float width) => 0f;
 
     /// <summary>Draws the section content into <paramref name="contentRect"/>. The header is
     /// drawn by the caller — only draw below it.</summary>
-    void DrawSection(MercenarySquadFC squad, Rect contentRect);
+    void DrawSection(MercenarySquadFC squad, Rect contentRect) { }
 
     /// <summary>Lower values render earlier; ties broken by registration order.</summary>
-    int Order { get; }
+    int Order => 0;
 }
