@@ -22,6 +22,9 @@ public static class LogUtil
         set { suppressThisThread = value; }
     }
 
+    /// <summary>True when <see cref="Message(string)"/> output would be logged on this thread.</summary>
+    internal static bool DebugEnabled => !suppressThisThread && FCSettings.PrintDebug;
+
     public static void Message(string message)
     {
         if (suppressThisThread) return;
@@ -29,6 +32,18 @@ public static class LogUtil
         {
             Log.Message($"{slug} {message}");
         }
+    }
+
+    /// <summary>
+    /// Debug message from an interpolated string. The compiler picks this overload for every
+    /// <c>Message($"...")</c> call; when debug logging is off, the string's holes are never evaluated
+    /// and nothing is allocated. <see cref="Message(string)"/> stays for plain strings and for
+    /// already-compiled submods that bind to it.
+    /// </summary>
+    public static void Message(ref DebugLogHandler message)
+    {
+        if (!message.Enabled) return;
+        Log.Message($"{slug} {message.ToStringAndClear()}");
     }
     /// <summary>
     /// Prints a non-warning, non-error message to the log even if the user has disabled Verbose Logging.
