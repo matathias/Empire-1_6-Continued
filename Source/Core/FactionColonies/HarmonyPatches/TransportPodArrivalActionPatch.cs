@@ -9,11 +9,11 @@ class WorldSettlementTransportersArrivePatch
     [ThreadStatic]
     private static List<Pawn> pendingPawns;
 
-    private static void Prefix(TransportersArrivalAction_LandInSpecificCell __instance,
-        List<ActiveTransporterInfo> transporters)
+    // ___mapParent: Harmony injects the private TransportersArrivalAction_LandInSpecificCell.mapParent field.
+    private static void Prefix(MapParent ___mapParent, List<ActiveTransporterInfo> transporters)
     {
         pendingPawns = null;
-        if (Traverse.Create(__instance).Field("mapParent").GetValue() is not WorldSettlementFC)
+        if (___mapParent is not WorldSettlementFC)
             return;
 
         List<Pawn> pawns = [];
@@ -29,14 +29,13 @@ class WorldSettlementTransportersArrivePatch
             pendingPawns = pawns;
     }
 
-    private static void Postfix(TransportersArrivalAction_LandInSpecificCell __instance,
-        PlanetTile tile)
+    private static void Postfix(MapParent ___mapParent, PlanetTile tile)
     {
         List<Pawn> pawns = pendingPawns;
         pendingPawns = null;
         if (pawns is null || pawns.Count == 0) return;
 
-        if (Traverse.Create(__instance).Field("mapParent").GetValue() is WorldSettlementFC settlement)
+        if (___mapParent is WorldSettlementFC settlement)
         {
             settlement.MilitaryComp?.AddToDefenceFromList(pawns, tile);
         }

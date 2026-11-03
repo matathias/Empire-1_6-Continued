@@ -14,13 +14,6 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     public Texture2D factionIcon = TexLoad.factionIcons[0];
     public string factionIconPath = TexLoad.factionIcons[0].name;
 
-    /* Reflection handle to RimWorld's private FactionDef.factionIcon texture cache.
-     * The cache is lazy-loaded once by the FactionIcon getter and never re-read, so we
-     * must null it whenever we reassign factionIconPath on the shared PColony def
-     * (otherwise the previous save's icon leaks into the next load). */
-    private static readonly System.Reflection.FieldInfo factionDefIconCache =
-        typeof(FactionDef).GetField("factionIcon",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
     public Color factionColorPrimary = Color.white;
     public Color factionColorSecondary = Color.white;
     public bool hasFactionColor;
@@ -2081,11 +2074,13 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         if (faction?.def is not null)
         {
             faction.def.factionIconPath = iconPath;
-            factionDefIconCache?.SetValue(faction.def, null);
+            // FactionDef caches the loaded icon and never re-reads factionIconPath, so null the cache
+            // on the shared PColony def (otherwise the previous save's icon leaks into the next load).
+            PrivateFieldUtil.FactionIconCache(faction.def) = null;
         }
         if (settlements.Any() && settlements[0]?.def is not null && UnityData.IsInMainThread)
         {
-            WorldSettlementFC.traitCachedIcon.SetValue(settlements[0].def, ContentFinder<Texture2D>.Get(iconPath));
+            PrivateFieldUtil.ExpandingIconCache(settlements[0].def) = ContentFinder<Texture2D>.Get(iconPath);
         }
 
         foreach (WorldSettlementFC settlement in settlements)
@@ -2097,7 +2092,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
             if (settlement?.Faction?.def is not null)
             {
                 settlement.Faction.def.factionIconPath = iconPath;
-                factionDefIconCache?.SetValue(settlement.Faction.def, null);
+                PrivateFieldUtil.FactionIconCache(settlement.Faction.def) = null;
             }
         }
     }

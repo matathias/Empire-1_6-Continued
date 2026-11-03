@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-
+﻿
 namespace FactionColonies;
 
 /// <summary>
@@ -11,7 +10,6 @@ namespace FactionColonies;
 public static class FactionCache
 {
     private static List<PawnKindDef> _cachedPawnKindDefs = null;
-    private static Dictionary<(Type, string), FieldInfo> _cachedFields = [];
     private static List<XenotypeDef> _cachedXenotypeList = null;
     private static List<XenotypeDef> _cachedViolentXenotypeList = null;
     private static List<CustomXenotype> _cachedCustomXenotypeList = null;
@@ -73,21 +71,6 @@ public static class FactionCache
             }
             return _cachedPawnKindDefs;
         }
-    }
-    public static Dictionary<(Type, string), FieldInfo> FieldCache => _cachedFields;
-    public static FieldInfo GetFieldCacheValue(Type typ, string field)
-    {
-        if (FieldCache.TryGetValue((typ, field), out FieldInfo fieldInfo))
-        {
-            return fieldInfo;
-        }
-        fieldInfo = typ.GetField(field);
-        if (fieldInfo is null)
-        {
-            LogUtil.Warning($"FactionCache.GetFieldCacheValue: field '{field}' not found on type '{typ.FullName}'");
-        }
-        FieldCache.Add((typ, field), fieldInfo);
-        return fieldInfo;
     }
 
     /// <summary>FCSituationDefs that are faction-scoped and carry a faction condition extension —
@@ -981,7 +964,6 @@ public static class FactionCache
     {
         LogUtil.Message("Invalidating FactionCache...");
         _cachedPawnKindDefs = null;
-        _cachedFields.Clear();
         _cachedRaceList = null;
         _cachedXenotypeList = null;
         _cachedViolentXenotypeList = null;

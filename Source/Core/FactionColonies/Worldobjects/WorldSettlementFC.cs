@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using UnityEngine;
 
 namespace FactionColonies;
@@ -691,12 +690,6 @@ public class WorldSettlementFC : Settlement
         set => cachedlocationText = value;
     }
 
-    public static readonly FieldInfo traitCachedIcon = typeof(WorldObjectDef).GetField("expandingIconTextureInt",
-        BindingFlags.NonPublic | BindingFlags.Instance);
-
-    public static readonly FieldInfo traitCachedMaterial = typeof(WorldObjectDef).GetField("material",
-        BindingFlags.NonPublic | BindingFlags.Instance);
-
     /// <summary>
     ///     A flag meant to indicate whether or not this settlement is meant for actual destruction; used to override
     ///     WorldObject.Destroy() for compatibility purposes
@@ -830,7 +823,7 @@ public class WorldSettlementFC : Settlement
 
         UpdateTechIcon();
         def.expandingIconTexture = "FactionIcons/" + faction.factionIconPath;
-        traitCachedIcon.SetValue(def, ContentFinder<Texture2D>.Get(def.expandingIconTexture));
+        PrivateFieldUtil.ExpandingIconCache(def) = ContentFinder<Texture2D>.Get(def.expandingIconTexture);
         base.PostMake();
 
         LogUtil.Message($"Created world settlement {Name} with def {def}");
@@ -1074,8 +1067,8 @@ public class WorldSettlementFC : Settlement
         else
             def.texture = "World/WorldObjects/DefaultSettlement";
 
-        traitCachedMaterial.SetValue(def, MaterialPool.MatFrom(def.texture,
-            ShaderDatabase.WorldOverlayTransparentLit, WorldMaterials.WorldObjectRenderQueue));
+        PrivateFieldUtil.MaterialCache(def) = MaterialPool.MatFrom(def.texture,
+            ShaderDatabase.WorldOverlayTransparentLit, WorldMaterials.WorldObjectRenderQueue);
     }
 
     /* Caravan gizmos for this settlement. We deliberately do NOT chain to base:
@@ -1324,7 +1317,7 @@ public class WorldSettlementFC : Settlement
         // --- Update icon/texture ---
         UpdateTechIcon();
         def.expandingIconTexture = "FactionIcons/" + FindFC.FactionComp.factionIconPath;
-        traitCachedIcon.SetValue(def, ContentFinder<Texture2D>.Get(def.expandingIconTexture));
+        PrivateFieldUtil.ExpandingIconCache(def) = ContentFinder<Texture2D>.Get(def.expandingIconTexture);
 
         // --- Invalidate all caches ---
         InvalidateCache();
