@@ -45,7 +45,7 @@ public static class TexLoad
     public static readonly Texture2D gradientHorizontal;
     public static readonly Texture2D gradientVertical;
 
-    // Scrollbar textures (1x1 solid color, used by ScrollUtil GUIStyles)
+    // Scrollbar textures (1x1 solid color, drawn by ScrollUtil)
     public static readonly Texture2D scrollTrack;
     public static readonly Texture2D scrollThumb;
     public static readonly Texture2D scrollThumbHover;
