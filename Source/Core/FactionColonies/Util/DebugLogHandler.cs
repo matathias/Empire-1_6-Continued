@@ -3,15 +3,27 @@
 namespace FactionColonies;
 
 /// <summary>
-/// Interpolated-string handler behind <see cref="LogUtil.Message(ref DebugLogHandler)"/>. When debug
-/// logging is off (or suppressed on this thread), the constructor reports <c>shouldAppend = false</c>,
-/// so the compiler skips every Append call: the holes in <c>LogUtil.Message($"...")</c> are never
-/// evaluated and no string is built. Holes must therefore not have side effects the game relies on.
-/// When logging is on, formatting is delegated to <see cref="DefaultInterpolatedStringHandler"/>, so
-/// the output is identical to an ordinary interpolated string.
+/// Says whether debug logging is on for one logger. Each logger declares a small struct implementing
+/// this (Empire's is <see cref="LogUtil.DebugGate"/>; submods point theirs at their own debug setting)
+/// and takes a <see cref="DebugLogHandler{TGate}"/> of that struct.
 /// </summary>
+public interface IDebugLogGate
+{
+    static abstract bool Enabled { get; }
+}
+
+/// <summary>
+/// Interpolated-string handler behind debug <c>Message($"...")</c> overloads such as
+/// <see cref="LogUtil.Message(ref DebugLogHandler{LogUtil.DebugGate})"/>. When <typeparamref name="TGate"/>
+/// reports logging off, the constructor reports <c>shouldAppend = false</c>, so the compiler skips every
+/// Append call: the holes are never evaluated and no string is built. Holes must therefore not have side
+/// effects the game relies on. When logging is on, formatting is delegated to
+/// <see cref="DefaultInterpolatedStringHandler"/>, so the output is identical to an ordinary interpolated
+/// string.
+/// </summary>
+/// <typeparam name="TGate">The logger's gate, which decides whether the message is built at all.</typeparam>
 [InterpolatedStringHandler]
-public ref struct DebugLogHandler
+public ref struct DebugLogHandler<TGate> where TGate : IDebugLogGate
 {
     private DefaultInterpolatedStringHandler inner;
 
@@ -20,7 +32,7 @@ public ref struct DebugLogHandler
 
     public DebugLogHandler(int literalLength, int formattedCount, out bool shouldAppend)
     {
-        Enabled = shouldAppend = LogUtil.DebugEnabled;
+        Enabled = shouldAppend = TGate.Enabled;
         inner = Enabled ? new DefaultInterpolatedStringHandler(literalLength, formattedCount) : default;
     }
 
@@ -40,5 +52,5 @@ public ref struct DebugLogHandler
     public void AppendFormatted(object value, int alignment = 0, string format = null) => inner.AppendFormatted(value, alignment, format);
 
     /// <summary>Returns the built message and releases the pooled buffer. Only valid when <see cref="Enabled"/>.</summary>
-    internal string ToStringAndClear() => inner.ToStringAndClear();
+    public string ToStringAndClear() => inner.ToStringAndClear();
 }

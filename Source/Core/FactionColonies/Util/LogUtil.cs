@@ -25,6 +25,12 @@ public static class LogUtil
     /// <summary>True when <see cref="Message(string)"/> output would be logged on this thread.</summary>
     internal static bool DebugEnabled => !suppressThisThread && FCSettings.PrintDebug;
 
+    /// <summary>Gates <see cref="Message(ref DebugLogHandler{DebugGate})"/> on <see cref="DebugEnabled"/>.</summary>
+    public readonly struct DebugGate : IDebugLogGate
+    {
+        public static bool Enabled => DebugEnabled;
+    }
+
     public static void Message(string message)
     {
         if (suppressThisThread) return;
@@ -40,7 +46,7 @@ public static class LogUtil
     /// and nothing is allocated. <see cref="Message(string)"/> stays for plain strings and for
     /// already-compiled submods that bind to it.
     /// </summary>
-    public static void Message(ref DebugLogHandler message)
+    public static void Message(ref DebugLogHandler<DebugGate> message)
     {
         if (!message.Enabled) return;
         Log.Message($"{slug} {message.ToStringAndClear()}");
