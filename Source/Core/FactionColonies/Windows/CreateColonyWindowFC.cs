@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 
 namespace FactionColonies;
@@ -523,6 +524,7 @@ public class CreateColonyWindowFc : Window
         UIUtil.ClampedLabel(new Rect(rect.x, rect.y + rect.height / 2, rect.width, rect.height / 2f), text2);
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)] // Harmony-patched by SupplyChain; an inlined copy would bypass the patch
     public override void PreClose()
     {
         base.PreClose();
@@ -540,6 +542,7 @@ public class CreateColonyWindowFc : Window
     /// <summary>
     /// A stub for harmony patch targeting
     /// </summary>
+    [MethodImpl(MethodImplOptions.NoInlining)] // Harmony-patched by SupplyChain; an inlined copy would bypass the patch
     public override void PostOpen()
     {
         base.PostOpen();

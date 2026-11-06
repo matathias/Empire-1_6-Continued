@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 
 namespace FactionColonies;
@@ -1970,6 +1971,7 @@ public class WorldSettlementFC : Settlement
     /// Adds stat modifiers from a source (building, settlement type, etc).
     /// Resource production bonuses are now handled via FCStatDef's linkedResource on ResourceFC.
     /// </summary>
+    [MethodImpl(MethodImplOptions.NoInlining)] // Harmony-patched by UrbanRural; an inlined copy would bypass the patch
     public void AddStatModifiers(List<FCStatModifier> mods, string sourceId, string sourceLabel = null)
     {
         if (mods is not null)
@@ -1985,6 +1987,7 @@ public class WorldSettlementFC : Settlement
     /// mods must be the exact same FCStatModifier object references that were passed to
     /// AddStatModifiers, since removal uses reference equality (the def's objects stored via AddRange).
     /// </summary>
+    [MethodImpl(MethodImplOptions.NoInlining)] // Harmony-patched by UrbanRural; an inlined copy would bypass the patch
     public void RemoveStatModifiers(List<FCStatModifier> mods, string sourceId)
     {
         if (mods is not null)
