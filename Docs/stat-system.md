@@ -25,7 +25,7 @@ See [ExampleDefs/FCStatDef.xml](ExampleDefs/FCStatDef.xml) for an annotated XML 
 
 ### Built-in Stats (FCStatDefOf)
 
-The base mod defines many stats (see `1.6/Defs/FCStatDefs/`). The categories below are illustrative, not exhaustive:
+The base mod defines many stats (see `1.7/Defs/FCStatDefs/`). The categories below are illustrative, not exhaustive:
 
 | Category | Stats |
 |----------|-------|

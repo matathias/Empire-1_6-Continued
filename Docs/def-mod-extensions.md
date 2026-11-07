@@ -191,7 +191,7 @@ These values feed into the resource production formula's "dictionary" sources (t
 | `multiplier` | `double` | `1` | Multiplicative production bonus. |
 | `label` | `string` | `null` | Optional display label for breakdown tooltips. |
 
-Applied via `PatchOperationAdd` on vanilla TileMutatorDefs. See `1.6/Patches/TileMutators.xml` for examples.
+Applied via `PatchOperationAdd` on vanilla TileMutatorDefs. See `1.7/Patches/TileMutators.xml` for examples.
 
 ---
 
@@ -207,7 +207,7 @@ Applied via `PatchOperationAdd` on vanilla TileMutatorDefs. See `1.6/Patches/Til
 | `bonuses` | `List<TileResourceBonus>` | Per-resource `{resource, additive, multiplier, label}` entries. Consumed by `ResourceTypeDef.GetLandmarkAdditives` / `GetLandmarkMultipliers`. |
 | `statModifiers` | `List<FCStatModifier>` | General stat modifiers applied to settlements on tiles with this landmark. |
 
-Uses the same `TileResourceBonus` helper class as TileMutatorResourceExtension. See `1.6/Patches/Landmarks.xml` for examples.
+Uses the same `TileResourceBonus` helper class as TileMutatorResourceExtension. See `1.7/Patches/Landmarks.xml` for examples.
 
 ---
 
