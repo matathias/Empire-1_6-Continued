@@ -68,13 +68,20 @@ public static class ForcedStateTestUtilA
             $"Settlement '{settlement.Name}' has no titheable resource");
 
     /// <summary>Assigns workers to <paramref name="resource"/> until it has at least
-    /// <paramref name="count"/>, failing the test if the settlement's worker cap prevents it.</summary>
+    /// <paramref name="count"/>. When the settlement is at its worker cap, workers are moved off other
+    /// resources first; the test fails only if the cap itself is below <paramref name="count"/>.</summary>
     public static void EnsureWorkers(WorldSettlementFC settlement, ResourceFC resource, int count = 1)
     {
-        int missing = count - resource.assignedWorkers;
-        if (missing <= 0) return;
-        TestAssert.IsTrue(settlement.IncreaseWorkers(resource, missing),
-            $"Could not assign {missing} worker(s) to {resource.def?.defName} in '{settlement.Name}'");
+        while (resource.assignedWorkers < count)
+        {
+            if (settlement.IncreaseWorkers(resource, 1)) continue;
+
+            ResourceFC donor = settlement.Resources.FirstOrDefault(r => r != resource && r.assignedWorkers > 0);
+            if (donor is null || !settlement.IncreaseWorkers(donor, -1) || !settlement.IncreaseWorkers(resource, 1))
+                TestAssert.Fail($"Could not assign {count} worker(s) to {resource.def?.defName} in '{settlement.Name}' "
+                    + $"(has {resource.assignedWorkers}, settlement cap {settlement.workersUltraMax})");
+            donor.SetDirtyCache();
+        }
         resource.SetDirtyCache();
     }
 }
