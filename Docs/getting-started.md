@@ -11,7 +11,6 @@ All Empire code lives under the `FactionColonies` namespace:
 ```
 FactionColonies          — Primary namespace (defs, comps, settlements, military, windows)
 FactionColonies.util     — Utilities, extensions, registries
-FactionColonies.PatchNote — Patch note subsystem (internal)
 ```
 
 Your submod can use any namespace. Reference `FactionColonies` types directly.

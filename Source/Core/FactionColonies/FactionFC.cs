@@ -838,13 +838,9 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         // Auto-open patch notes for each mod that has new entries exceeding the player's threshold
         if (FCSettings.patchNoteAutoOpenThreshold != PatchNoteType.Undefined)
         {
-            HashSet<string> modIds = [];
-            foreach (PatchNoteDef def in DefDatabase<PatchNoteDef>.AllDefsListForReading)
-                modIds.Add(def.modId);
-
-            foreach (string modId in modIds)
+            foreach (string modId in PatchNoteDatabase.ModIds)
             {
-                PatchNoteDef latest = PatchNoteDef.GetLatestForMod(modId);
+                PatchNote latest = PatchNoteDatabase.LatestForMod(modId);
                 if (latest is null) continue;
                 FCSettings.GetLastSeenVersion(modId, out int maj, out int min, out int pat);
                 if (latest.IsNewerThan(maj, min, pat)

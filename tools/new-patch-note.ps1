@@ -1,15 +1,18 @@
 # new-patch-note.ps1
-# Interactive script to add a new PatchNoteDef and update About.xml modVersion
-# Run from the Empire/ directory (the one containing About/, 1.7/, etc.)
+# Interactive script to add a new patch note entry to PatchNotes/ and update About.xml modVersion
+# Run from the Empire/ directory (the one containing About/, PatchNotes/, etc.)
 
 $ErrorActionPreference = "Stop"
 
-$defsDir = "1.7\Defs\FCPatchNoteDefs"
+$root = (Get-Location).Path
+$notesDir = Join-Path $root "PatchNotes"
+$modInfoPath = Join-Path $notesDir "_mod.md"
 $aboutPath = "About\About.xml"
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
 
 # Verify we're in the right directory
-if (-not (Test-Path $defsDir) -or -not (Test-Path $aboutPath)) {
-    Write-Host "ERROR: Run this script from the Empire/ directory (the one containing About/ and 1.7/)." -ForegroundColor Red
+if (-not (Test-Path $modInfoPath) -or -not (Test-Path $aboutPath)) {
+    Write-Host "ERROR: Run this script from the Empire/ directory (the one containing About/ and PatchNotes/_mod.md)." -ForegroundColor Red
     exit 1
 }
 
@@ -34,7 +37,17 @@ $versionParts = $version -split '\.'
 $major = [int]$versionParts[0]
 $minor = [int]$versionParts[1]
 $patch = [int]$versionParts[2]
-$defName = "${major}_${minor}_${patch}"
+$version = "$major.$minor.$patch"
+
+$targetFile = Join-Path $notesDir "v$major.$minor.md"
+$existing = $null
+if (Test-Path $targetFile) {
+    $existing = [System.IO.File]::ReadAllText($targetFile)
+    if ($existing -match "(?m)^##\s+$([regex]::Escape($version))\s+-") {
+        Write-Host "ERROR: $targetFile already has an entry for $version." -ForegroundColor Red
+        exit 1
+    }
+}
 
 # Label
 do {
@@ -72,7 +85,7 @@ $changeLines = @()
 while ($true) {
     $line = Read-Host ">"
     if ([string]::IsNullOrWhiteSpace($line)) { break }
-    $changeLines += $line
+    $changeLines += $line.Trim()
 }
 
 if ($changeLines.Count -eq 0) {
@@ -84,42 +97,48 @@ if ($changeLines.Count -eq 0) {
 $today = Get-Date
 $releaseDateStr = $today.ToString("yyyy-MM-dd")
 
-# --- Build XML block ---
-$indent = "`t"
+# --- Build the markdown entry ---
+# A text line starting with '#', '-' or '\' would read as markdown structure; a leading '\' escapes it
+function Escape-Line([string]$text) {
+    $text = $text.Trim()
+    if ($text -match '^[#\-\\]') { return "\$text" }
+    return $text
+}
 
-$changeLinesXml = ($changeLines | ForEach-Object { "${indent}${indent}<li>$([System.Security.SecurityElement]::Escape($_))</li>" }) -join "`n"
-$authorsXml = ($authors | ForEach-Object { "${indent}${indent}<li>$([System.Security.SecurityElement]::Escape($_))</li>" }) -join "`n"
+$entryLines = @(
+    "## $version - $($label.Trim())",
+    "- Date: $releaseDateStr",
+    "- Type: $patchNoteType",
+    "- Authors: $($authors -join ', ')",
+    "",
+    (Escape-Line $description),
+    "",
+    "### Changes"
+)
+foreach ($change in $changeLines) {
+    if ($change.StartsWith('\')) { $change = "\$change" }
+    $entryLines += "- $change"
+}
+$entry = ($entryLines -join "`n") + "`n"
 
-$xmlBlock = @"
-
-${indent}<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
-${indent}${indent}<defName>$defName</defName>
-${indent}${indent}<label>$([System.Security.SecurityElement]::Escape($label))</label>
-${indent}${indent}<description>$([System.Security.SecurityElement]::Escape($description))</description>
-${indent}${indent}<releaseDate>$releaseDateStr</releaseDate>
-${indent}${indent}<patchNoteType>$patchNoteType</patchNoteType>
-${indent}${indent}<patchNoteLines>
-$changeLinesXml
-${indent}${indent}</patchNoteLines>
-${indent}${indent}<authors>
-$authorsXml
-${indent}${indent}</authors>
-${indent}</FactionColonies.PatchNoteDef>
-"@
-
-# --- Insert into the correct version file ---
-$targetFile = "$defsDir\PatchNoteDefs_v$major.$minor.xml"
-
-if (Test-Path $targetFile) {
-    # Append to existing file: insert new def before </Defs>
-    $content = Get-Content $targetFile -Raw
-    $content = $content -replace '</Defs>', "$xmlBlock`n</Defs>"
-    Set-Content $targetFile -Value $content -NoNewline
-    Write-Host "  Appended to existing file: $targetFile" -ForegroundColor Cyan
+# --- Insert into the version file, newest entry first ---
+if ($null -ne $existing) {
+    $content = $existing -replace "`r`n", "`n"
+    $headingMatch = [regex]::Match($content, '(?m)^## ')
+    if ($headingMatch.Success) {
+        $content = $content.Substring(0, $headingMatch.Index) + $entry + "`n" + $content.Substring($headingMatch.Index)
+    } else {
+        $content = $content.TrimEnd() + "`n`n" + $entry
+    }
+    [System.IO.File]::WriteAllText($targetFile, $content, $utf8NoBom)
+    Write-Host "  Added to existing file: $targetFile" -ForegroundColor Cyan
 } else {
-    # Create new file for this minor version
-    $fileContent = "<?xml version=`"1.0`" encoding=`"utf-8`" ?>`n<Defs>$xmlBlock`n</Defs>`n"
-    Set-Content $targetFile -Value $fileContent -NoNewline
+    # New minor version: title the file after the mod name in _mod.md
+    $modName = "Empire"
+    $titleMatch = [regex]::Match([System.IO.File]::ReadAllText($modInfoPath), '(?m)^#\s+(.+?)\s*$')
+    if ($titleMatch.Success) { $modName = $titleMatch.Groups[1].Value }
+    $content = "# $modName v$major.$minor`n`n" + $entry
+    [System.IO.File]::WriteAllText($targetFile, $content, $utf8NoBom)
     Write-Host "  Created new file: $targetFile" -ForegroundColor Cyan
 }
 
@@ -152,7 +171,7 @@ if (Test-Path $csprojPath) {
 # --- Summary ---
 Write-Host ""
 Write-Host "Done!" -ForegroundColor Green
-Write-Host "  PatchNoteDef '$defName' added to $targetFile"
+Write-Host "  Patch note $version added to $targetFile"
 Write-Host "  About.xml modVersion updated: $currentVersion -> $version"
 Write-Host "  AssemblyVersion: $major.$minor.$patch.0"
 Write-Host "  Type: $patchNoteType | Date: $releaseDateStr"
