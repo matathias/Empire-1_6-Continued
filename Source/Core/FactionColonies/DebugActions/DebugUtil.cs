@@ -7,7 +7,7 @@ namespace FactionColonies;
 public static class DebugUtil
 {
 
-    [DebugAction("Empire", "Force destroy settlement",
+    [EmpireDebugAction("Empire", "Force destroy settlement",
         actionType = DebugActionType.ToolWorld, allowedGameStates = AllowedGameStates.PlayingOnWorld)]
     private static void ForceDestroyEmpireSettlement()
     {
@@ -39,7 +39,7 @@ public static class DebugUtil
         }
     }
 
-    [DebugAction("Empire", "Force auto-resolve round now", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Force auto-resolve round now", allowedGameStates = AllowedGameStates.Playing)]
     private static void ForceAutoResolveRoundNow()
     {
         MilitaryOperationManager mgr = FindFC.MilitaryManager;
@@ -63,7 +63,7 @@ public static class DebugUtil
         LogUtil.MessageForce($"Bumped {bumped} autoResolveBattleRound event(s) to fire next tick.");
     }
 
-    [DebugAction("Empire", "View Events and ticks till", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "View Events and ticks till", allowedGameStates = AllowedGameStates.Playing)]
     private static void ViewEventsAndLog()
     {
         foreach (FCEvent e in FindFC.Events)
@@ -86,7 +86,7 @@ public static class DebugUtil
         Find.TickManager.DebugSetTicksGame(Find.TickManager.TicksGame + GenDate.TicksPerYear);
     }
 
-    [DebugAction("Empire", "Kill & Regen Leader", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Kill & Regen Leader", allowedGameStates = AllowedGameStates.Playing)]
     private static void DebugKillAndRegenLeader()
     {
         Faction faction = FindFC.EmpireFaction;
@@ -117,7 +117,7 @@ public static class DebugUtil
         }
     }
 
-    [DebugAction("Empire", "Reset Empire-Player Relations to Ally", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Reset Empire-Player Relations to Ally", allowedGameStates = AllowedGameStates.Playing)]
     private static void ResetEmpirePlayerRelations()
     {
         Faction empire = FindFC.EmpireFaction;
@@ -143,7 +143,7 @@ public static class DebugUtil
             $"{empire.RelationKindWith(player)} ({afterGoodwill}).");
     }
 
-    [DebugAction("Empire", "Print Races", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Print Races", allowedGameStates = AllowedGameStates.Playing)]
     private static void PrintRaces()
     {
         FindFC.EmpireFaction.def.pawnGroupMakers.ForEach(maker =>
@@ -157,7 +157,7 @@ public static class DebugUtil
         });
     }
 
-    [DebugAction("Empire", "Send Pawn To Settlement", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+    [EmpireDebugAction("Empire", "Send Pawn To Settlement", allowedGameStates = AllowedGameStates.PlayingOnMap)]
     private static void SendPawnToSettlement()
     {
         List<Pawn> selected = Find.Selector.SelectedPawns;
@@ -192,7 +192,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Clear faction traits and policies", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Clear faction traits and policies", allowedGameStates = AllowedGameStates.Playing)]
     private static void ClearFactionTraitsAndPolicies()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -214,7 +214,7 @@ public static class DebugUtil
         LogUtil.Message("Cleared faction traits and policies.");
     }
 
-    [DebugAction("Empire", "Make Random Event", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Make Random Event", allowedGameStates = AllowedGameStates.Playing)]
     private static void MakeRandomEvent()
     {
         List<DebugMenuOption> list = [];
@@ -250,7 +250,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Start situation", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Start situation", allowedGameStates = AllowedGameStates.Playing)]
     private static void StartSituation()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -298,7 +298,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Remove all situations", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Remove all situations", allowedGameStates = AllowedGameStates.Playing)]
     private static void RemoveAllSituations()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -316,7 +316,7 @@ public static class DebugUtil
         LogUtil.MessageForce($"Debug - Removed {removed} situation(s).");
     }
 
-    [DebugAction("Empire", "Adjust situation progress", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Adjust situation progress", allowedGameStates = AllowedGameStates.Playing)]
     private static void AdjustSituationProgress()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -368,14 +368,14 @@ public static class DebugUtil
         }));
     }
 
-    [DebugAction("Empire", "Proc MilitaryTimeDue", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Proc MilitaryTimeDue", allowedGameStates = AllowedGameStates.Playing)]
     private static void ProcMilitaryTimeDue()
     {
         LogUtil.MessageForce("Debug - Proc MilitaryTimeDue");
         FindFC.FactionComp.militaryTimeDue = Find.TickManager.TicksGame + 1;
     }
 
-    [DebugAction("Empire", "Attack Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Attack Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
     private static void AttackPlayerSettlement()
     {
         List<DebugMenuOption> list = [];
@@ -413,7 +413,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Instant Attack Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Instant Attack Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
     private static void InstantAttackPlayerSettlement()
     {
         List<DebugMenuOption> list = [];
@@ -473,7 +473,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Force Attack + Event Same Tick", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Force Attack + Event Same Tick", allowedGameStates = AllowedGameStates.Playing)]
     private static void ForceAttackAndEventSameTick()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -497,7 +497,7 @@ public static class DebugUtil
         LogUtil.MessageForce($"Debug - Attack timer and random event aligned to tick {nextDayBoundary}. Unpause to trigger both on the same tick.");
     }
 
-    [DebugAction("Empire", "Change Settlement Defending Force", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Change Settlement Defending Force", allowedGameStates = AllowedGameStates.Playing)]
     private static void ChangeAttackPlayerSettlementMilitaryForce()
     {
         FactionFC worldcomp = FindFC.FactionComp;
@@ -545,10 +545,10 @@ public static class DebugUtil
         }
     }
 
-    [DebugAction("Empire", "Upgrade Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Upgrade Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
     private static void UpgradePlayerSettlementx1() => UpgradePlayerSettlement();
 
-    [DebugAction("Empire", "Upgrade Player Settlement x5", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Upgrade Player Settlement x5", allowedGameStates = AllowedGameStates.Playing)]
     private static void UpgradePlayerSettlementx5() => UpgradePlayerSettlement(5);
 
     private static void UpgradePlayerSettlement(int times = 1)
@@ -574,21 +574,21 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Flag Road Queue Update", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Flag Road Queue Update", allowedGameStates = AllowedGameStates.Playing)]
     private static void FlagRoadQueueUpdate()
     {
         LogUtil.MessageForce("Debug - Flag Road Queue Update");
         FindFC.RoadBuilder.FlagUpdateRoadQueues();
     }
 
-    [DebugAction("Empire", "De-Level Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "De-Level Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
     private static void DelevelPlayerSettlement() => UpgradePlayerSettlement(-1);
 
-    [DebugAction("Empire", "Dump settlement ticking comps", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Dump settlement ticking comps", allowedGameStates = AllowedGameStates.Playing)]
     private static void DumpTickingComps()
         => WithSettlementChoice(s => s.DebugLogTickingComps());
 
-    [DebugAction("Empire", "Reset All Military Squads", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Reset All Military Squads", allowedGameStates = AllowedGameStates.Playing)]
     private static void ResetMilitarySquads()
     {
         LogUtil.MessageForce("Debug - Reset All Military Squads");
@@ -621,7 +621,7 @@ public static class DebugUtil
         util.CheckMilitaryUtilForErrors();
     }
 
-    [DebugAction("Empire", "Reset All Squad Cooldowns", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Reset All Squad Cooldowns", allowedGameStates = AllowedGameStates.Playing)]
     private static void ResetAllSquadCooldowns()
     {
         LogUtil.MessageForce("Debug - Reset All Squad Cooldowns");
@@ -668,7 +668,7 @@ public static class DebugUtil
             $"{eventsCleared} traveling event(s), reset {squadsCleared} squad cooldown(s)");
     }
 
-    [DebugAction("Empire", "Reset Hire Laborers Cooldown", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Reset Hire Laborers Cooldown", allowedGameStates = AllowedGameStates.Playing)]
     private static void ResetLaborerCooldown()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -677,19 +677,19 @@ public static class DebugUtil
         LogUtil.MessageForce("Debug - Reset Hire Laborers cooldown");
     }
 
-    [DebugAction("Empire", "Clear Old Bills", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Clear Old Bills", allowedGameStates = AllowedGameStates.Playing)]
     private static void ClearOldBills()
     {
         FindFC.TaxLedger.ClearOldBills();
     }
 
-    [DebugAction("Empire", "Clear All Events", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Clear All Events", allowedGameStates = AllowedGameStates.Playing)]
     private static void ClearAllEvents()
     {
         FindFC.EventManager?.Clear();
     }
 
-    [DebugAction("Empire", "Clear All Bills", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Clear All Bills", allowedGameStates = AllowedGameStates.Playing)]
     private static void ClearAllBills()
     {
         FindFC.TaxLedger.ClearAllBills();
@@ -752,11 +752,11 @@ public static class DebugUtil
     }
 
 
-    [DebugAction("Empire", "Call In Allied Forces", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+    [EmpireDebugAction("Empire", "Call In Allied Forces", allowedGameStates = AllowedGameStates.PlayingOnMap)]
     private static void CallInAlliedForcesDebug() => CallInAlliedForcesSelect();
 
 
-    [DebugAction("Empire", "Level Up Faction", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Level Up Faction", allowedGameStates = AllowedGameStates.Playing)]
     private static void LevelUpFaction()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -809,7 +809,7 @@ public static class DebugUtil
     // Settlement Debug Actions
     // ============================
 
-    [DebugAction("Empire", "Instant Build Building", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Instant Build Building", allowedGameStates = AllowedGameStates.Playing)]
     private static void InstantBuildBuilding()
     {
         WithSettlementChoice(settlement =>
@@ -843,7 +843,7 @@ public static class DebugUtil
         });
     }
 
-    [DebugAction("Empire", "Log Settlement Stats", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Log Settlement Stats", allowedGameStates = AllowedGameStates.Playing)]
     private static void LogSettlementStats()
     {
         foreach (WorldSettlementFC s in FindFC.Settlements)
@@ -852,7 +852,7 @@ public static class DebugUtil
         }
     }
 
-    [DebugAction("Empire", "Set Settlement Stat", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Set Settlement Stat", allowedGameStates = AllowedGameStates.Playing)]
     private static void SetSettlementStat()
     {
         WithSettlementChoice(settlement =>
@@ -887,7 +887,7 @@ public static class DebugUtil
         });
     }
 
-    [DebugAction("Empire", "Set Settlement Stat (All Settlements)", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Set Settlement Stat (All Settlements)", allowedGameStates = AllowedGameStates.Playing)]
     private static void SetSettlementStatAll()
     {
         if (FindFC.Settlements.NullOrEmpty())
@@ -930,7 +930,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(stats));
     }
 
-    [DebugAction("Empire", "Create Settlement (Instant)", allowedGameStates = AllowedGameStates.PlayingOnWorld)]
+    [EmpireDebugAction("Empire", "Create Settlement (Instant)", allowedGameStates = AllowedGameStates.PlayingOnWorld)]
     private static void CreateSettlementInstant()
     {
         List<WorldSettlementDef> defs = DefDatabase<WorldSettlementDef>.AllDefsListForReading;
@@ -999,7 +999,7 @@ public static class DebugUtil
         );
     }
 
-    [DebugAction("Empire", "Create 10 Random Settlements", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Create 10 Random Settlements", allowedGameStates = AllowedGameStates.Playing)]
     private static void CreateTenRandomSettlements()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1026,7 +1026,7 @@ public static class DebugUtil
         LogUtil.MessageForce($"Debug - Created {created}/10 random settlements.");
     }
 
-    [DebugAction("Empire", "Create Settlement Per Resource (L5, workers maxed)", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Create Settlement Per Resource (L5, workers maxed)", allowedGameStates = AllowedGameStates.Playing)]
     private static void CreateSettlementPerResource()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1106,7 +1106,7 @@ public static class DebugUtil
         LogUtil.MessageForce($"Debug - Create Settlement Per Resource: created {created} settlement(s) ({specialtyCount} on specialty biomes, {skipped} skipped).\n{summary}");
     }
 
-    [DebugAction("Empire", "Remove Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Remove Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
     private static void RemovePlayerSettlement()
     {
         WithSettlementChoice(settlement =>
@@ -1116,7 +1116,7 @@ public static class DebugUtil
         });
     }
 
-    [DebugAction("Empire", "Add Stat Modifier", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Add Stat Modifier", allowedGameStates = AllowedGameStates.Playing)]
     private static void AddStatModifier()
     {
         WithSettlementChoice(settlement =>
@@ -1152,7 +1152,7 @@ public static class DebugUtil
         });
     }
 
-    [DebugAction("Empire", "Clear Debug Stat Modifiers", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Clear Debug Stat Modifiers", allowedGameStates = AllowedGameStates.Playing)]
     private static void ClearDebugStatModifiers()
     {
         WithSettlementChoice(settlement =>
@@ -1162,7 +1162,7 @@ public static class DebugUtil
         });
     }
 
-    [DebugAction("Empire", "Log All Stat Values", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Log All Stat Values", allowedGameStates = AllowedGameStates.Playing)]
     private static void LogAllStatValues()
     {
         WithSettlementChoice(settlement =>
@@ -1202,7 +1202,7 @@ public static class DebugUtil
         });
     }
 
-    [DebugAction("Empire", "Log Stat Breakdown", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Log Stat Breakdown", allowedGameStates = AllowedGameStates.Playing)]
     private static void LogStatBreakdown()
     {
         WithSettlementChoice(settlement =>
@@ -1273,7 +1273,7 @@ public static class DebugUtil
         });
     }
 
-    [DebugAction("Empire", "Log Faction Stats", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Log Faction Stats", allowedGameStates = AllowedGameStates.Playing)]
     private static void LogFactionStatValues()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1299,7 +1299,7 @@ public static class DebugUtil
     // Military Debug Actions
     // ============================
 
-    [DebugAction("Empire", "Log Military Status", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Log Military Status", allowedGameStates = AllowedGameStates.Playing)]
     private static void LogMilitaryStatus()
     {
         foreach (WorldSettlementFC s in FindFC.Settlements)
@@ -1329,7 +1329,7 @@ public static class DebugUtil
         }
     }
 
-    [DebugAction("Empire", "Force Return Settlement Military", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Force Return Settlement Military", allowedGameStates = AllowedGameStates.Playing)]
     private static void ForceReturnSettlementMilitary()
     {
         WithSettlementChoice(settlement =>
@@ -1346,7 +1346,7 @@ public static class DebugUtil
         });
     }
 
-    [DebugAction("Empire", "Clear Orphaned Deployments", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Clear Orphaned Deployments", allowedGameStates = AllowedGameStates.Playing)]
     private static void ForceCheckOrphanedDeploys()
     {
         int cleared = 0;
@@ -1365,7 +1365,7 @@ public static class DebugUtil
         LogUtil.MessageForce($"Clear Orphaned Deployments: cleared {cleared}.");
     }
 
-    [DebugAction("Empire", "Run Military Error Check", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Run Military Error Check", allowedGameStates = AllowedGameStates.Playing)]
     private static void RunMilitaryErrorCheck()
     {
         LogUtil.MessageForce("Debug - Running military error check");
@@ -1373,7 +1373,7 @@ public static class DebugUtil
         LogUtil.MessageForce("Debug - Military error check complete");
     }
 
-    [DebugAction("Empire", "Heal Squad to Full", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Heal Squad to Full", allowedGameStates = AllowedGameStates.Playing)]
     private static void HealSquadToFull()
     {
         WithSquadChoice(squad =>
@@ -1397,7 +1397,7 @@ public static class DebugUtil
     // Faction / Economy Debug Actions
     // ============================
 
-    [DebugAction("Empire", "Log Faction Status", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Log Faction Status", allowedGameStates = AllowedGameStates.Playing)]
     private static void LogFactionStatus()
     {
         FactionFC f = FindFC.FactionComp;
@@ -1416,7 +1416,7 @@ public static class DebugUtil
         }
     }
 
-    [DebugAction("Empire", "Add Faction XP", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Add Faction XP", allowedGameStates = AllowedGameStates.Playing)]
     private static void AddFactionXP()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1439,17 +1439,17 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Proc Tax Due", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Proc Tax Due", allowedGameStates = AllowedGameStates.Playing)]
     private static void ProcTaxDue()
     {
         LogUtil.MessageForce("Debug - Proc TaxTimeDue");
         FindFC.TaxLedger.nextTaxDueTick = Find.TickManager.TicksGame + 1;
     }
 
-    [DebugAction("Empire", "Invoke Daily Accrual", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Invoke Daily Accrual", allowedGameStates = AllowedGameStates.Playing)]
     private static void InvokeDailyAccrualNow() => RunDailyAccrual(1);
 
-    [DebugAction("Empire", "Invoke Daily Accrual x10", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Invoke Daily Accrual x10", allowedGameStates = AllowedGameStates.Playing)]
     private static void InvokeDailyAccrualx10() => RunDailyAccrual(10);
 
     private static void RunDailyAccrual(int times)
@@ -1478,7 +1478,7 @@ public static class DebugUtil
         LogUtil.MessageForce($"Debug - Complete All Research ({count} projects finished)");
     }
 
-    [DebugAction("Empire", "Log Resource Production", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Log Resource Production", allowedGameStates = AllowedGameStates.Playing)]
     private static void LogResourceProduction()
     {
         WithSettlementChoice(settlement =>
@@ -1495,7 +1495,7 @@ public static class DebugUtil
     // Events Debug Actions
     // ============================
 
-    [DebugAction("Empire", "Force Trigger Event", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Force Trigger Event", allowedGameStates = AllowedGameStates.Playing)]
     private static void ForceTriggerEvent()
     {
         List<DebugMenuOption> list = [];
@@ -1516,7 +1516,7 @@ public static class DebugUtil
 
     /* Mirror of "Force Trigger Event" that lets you pick which follow-up of a queued
      * chain event to spawn, bypassing the random roll in FCEventMaker.ProcessEvents. */
-    [DebugAction("Empire", "Force Trigger Followup", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Force Trigger Followup", allowedGameStates = AllowedGameStates.Playing)]
     private static void ForceTriggerFollowup()
     {
         List<DebugMenuOption> list = [];
@@ -1580,7 +1580,7 @@ public static class DebugUtil
     // Road Debug Actions
     // ============================
 
-    [DebugAction("Empire", "Build Road Segment Now", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Build Road Segment Now", allowedGameStates = AllowedGameStates.Playing)]
     private static void BuildRoadSegmentNow()
     {
         var rb = FindFC.RoadBuilder;
@@ -1600,7 +1600,7 @@ public static class DebugUtil
         LogUtil.MessageForce($"Debug - Build Road Segment Now: {(built ? "segment built" : "no segment to build")}");
     }
 
-    [DebugAction("Empire", "Build 10 Road Segments", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Build 10 Road Segments", allowedGameStates = AllowedGameStates.Playing)]
     private static void BuildTenRoadSegments()
     {
         var rb = FindFC.RoadBuilder;
@@ -1630,7 +1630,7 @@ public static class DebugUtil
     // Policy Debug Actions
     // ============================
 
-    [DebugAction("Empire", "Enact Policy (Debug)", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Enact Policy (Debug)", allowedGameStates = AllowedGameStates.Playing)]
     private static void EnactPolicyDebug()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1654,7 +1654,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Enact Trait (Debug)", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Enact Trait (Debug)", allowedGameStates = AllowedGameStates.Playing)]
     private static void EnactTraitDebug()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1692,7 +1692,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(traitList));
     }
 
-    [DebugAction("Empire", "Instantly Enact Edict", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Instantly Enact Edict", allowedGameStates = AllowedGameStates.Playing)]
     private static void InstantlyEnactEdict()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1722,7 +1722,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Log Policy Behavior State", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Log Policy Behavior State", allowedGameStates = AllowedGameStates.Playing)]
     private static void LogPolicyBehaviorState()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1785,7 +1785,7 @@ public static class DebugUtil
         }
     }
 
-    [DebugAction("Empire", "Force Policy Cooldowns Ready", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Force Policy Cooldowns Ready", allowedGameStates = AllowedGameStates.Playing)]
     private static void ForcePolicyCooldownsReady()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1802,7 +1802,7 @@ public static class DebugUtil
         LogUtil.MessageForce($"Debug - Reset {count} policy cooldowns to ready");
     }
 
-    [DebugAction("Empire", "Trigger Policy Hook", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Trigger Policy Hook", allowedGameStates = AllowedGameStates.Playing)]
     private static void TriggerPolicyHook()
     {
         FactionFC faction = FindFC.FactionComp;
@@ -1865,7 +1865,7 @@ public static class DebugUtil
     // Road Debug Actions
     // ============================
 
-    [DebugAction("Empire", "Log Road Builder Status", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Log Road Builder Status", allowedGameStates = AllowedGameStates.Playing)]
     private static void LogRoadBuilderStatus()
     {
         var rb = FindFC.RoadBuilder;
@@ -1881,14 +1881,14 @@ public static class DebugUtil
         }
     }
 
-    [DebugAction("Empire", "Validate Settlement Caravan List", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Validate Settlement Caravan List", allowedGameStates = AllowedGameStates.Playing)]
     private static void DebugValidateSettlementCaravanList()
     {
         LogUtil.MessageForce($"Validating settlement caravan list...");
         FindFC.FactionComp?.ValidateSettlementCaravansList();
     }
 
-    [DebugAction("Empire", "Fire Support (Pick Source)", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+    [EmpireDebugAction("Empire", "Fire Support (Pick Source)", allowedGameStates = AllowedGameStates.PlayingOnMap)]
     private static void FireSupportPickSource()
     {
         MilitaryFC util = FindFC.Military;
@@ -1938,7 +1938,7 @@ public static class DebugUtil
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
     }
 
-    [DebugAction("Empire", "Force Restock Settlement Trader", allowedGameStates = AllowedGameStates.Playing)]
+    [EmpireDebugAction("Empire", "Force Restock Settlement Trader", allowedGameStates = AllowedGameStates.Playing)]
     private static void DebugForceRestockSettlementTrader()
     {
         List<DebugMenuOption> options = [];
