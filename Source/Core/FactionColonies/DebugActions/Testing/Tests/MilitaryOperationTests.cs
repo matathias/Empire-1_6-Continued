@@ -4,7 +4,7 @@ namespace FactionColonies;
    as standalone ops (no manager registration, no game state mutation). */
 public static class MilitaryOperationTests
 {
-    private static MilitaryOperation Make(MilitaryOperationPhase phase = MilitaryOperationPhase.Scheduled)
+    internal static MilitaryOperation Make(MilitaryOperationPhase phase = MilitaryOperationPhase.Scheduled)
     {
         var op = new MilitaryOperation(-1, null, PlanetTile.Invalid, null);
         op.phase = phase;
@@ -164,30 +164,6 @@ public static class MilitaryOperationTests
         var op = Make();
         TestAssert.IsFalse(op.IsDefensive);
         TestAssert.IsFalse(op.IsOffensive);
-    }
-
-    [EmpireTest("Military")]
-    public static void IsDefensive_PlayerFactionAsDefender_True()
-    {
-        if (FindFC.EmpireFaction is null)
-            TestAssert.Skip("No player colony faction");
-
-        var op = Make();
-        op.defender.faction = FindFC.EmpireFaction;
-        TestAssert.IsTrue(op.IsDefensive);
-        TestAssert.IsFalse(op.IsOffensive);
-    }
-
-    [EmpireTest("Military")]
-    public static void IsOffensive_PlayerFactionAsAggressor_True()
-    {
-        if (FindFC.EmpireFaction is null)
-            TestAssert.Skip("No player colony faction");
-
-        var op = Make();
-        op.aggressor.faction = FindFC.EmpireFaction;
-        TestAssert.IsTrue(op.IsOffensive);
-        TestAssert.IsFalse(op.IsDefensive);
     }
 
     // -*- HasMapPresence -*-

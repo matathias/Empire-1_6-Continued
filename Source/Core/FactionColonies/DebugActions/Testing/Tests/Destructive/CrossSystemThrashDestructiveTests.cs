@@ -11,18 +11,11 @@ public static class CrossSystemThrashDestructiveTests
         FactionFC f = DestructiveTestUtil.RequireFaction();
 
         // 1. Settlement
-        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        s ??= FindFC.Settlements?.FirstOrDefault();
-        if (s is null) TestAssert.Skip("No settlement available");
+        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement() ?? DestructiveTestUtil.EnsureSettlement();
 
-        // 2. Hire + assign a squad (best effort)
-        MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template is not null)
-        {
-            MercenarySquadFC squad = null;
-            TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), "HireSquad threw");
-            if (squad is not null) FindFC.Military.Assign(squad, s, true);
-        }
+        // 2. Hire + assign a squad
+        MercenarySquadFC hired = DestructiveTestUtil.EnsureHiredSquad();
+        FindFC.Military.Assign(hired, s, true);
 
         // 3. Tax cycle
         TestAssert.DoesNotThrow(() => FindFC.TaxLedger.AddTax(f), "AddTax threw");
@@ -69,22 +62,15 @@ public static class CrossSystemThrashDestructiveTests
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
 
-        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        if (s is null) TestAssert.Skip("No valid tile found for a new settlement");
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
 
-        // Best-effort: stand up a deploy op against the settlement so removal must cancel it.
-        MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template is not null)
-        {
-            MercenarySquadFC squad = null;
-            TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), "HireSquad threw");
-            if (squad is not null)
-            {
-                FindFC.Military.Assign(squad, s, true);
-                PlanetTile tile = s.Tile;
-                TestAssert.DoesNotThrow(() => FindFC.MilitaryManager.CreateDeployOp(squad, tile), "CreateDeployOp threw");
-            }
-        }
+        // Stand up a deploy op from the settlement so removal must cancel it.
+        MercenarySquadFC squad = DestructiveTestUtil.EnsureHiredSquad();
+        FindFC.Military.Assign(squad, s, true);
+        PlanetTile tile = s.Tile;
+        MilitaryOperation op = null;
+        TestAssert.DoesNotThrow(() => op = FindFC.MilitaryManager.CreateDeployOp(squad, tile), "CreateDeployOp threw");
+        TestAssert.NotNull(op, "CreateDeployOp rejected a deploy from a freshly founded settlement");
 
         // Remove the settlement out from under any op referencing it.
         DestructiveTestUtil.SafeRemoveSettlement(s);
@@ -106,9 +92,8 @@ public static class CrossSystemThrashDestructiveTests
 
         for (int round = 0; round < 3; round++)
         {
-            WorldSettlementFC a = DestructiveTestUtil.CreateTransientSettlement();
-            WorldSettlementFC b = DestructiveTestUtil.CreateTransientSettlement();
-            if (a is null && b is null) TestAssert.Skip($"No valid tiles found on round {round}");
+            WorldSettlementFC a = DestructiveTestUtil.RequireTransientSettlement();
+            WorldSettlementFC b = DestructiveTestUtil.RequireTransientSettlement();
 
             TestAssert.DoesNotThrow(() => FindFC.TaxLedger.AddTax(f), $"AddTax threw on round {round}");
 

@@ -30,4 +30,10 @@ internal static class PrivateFieldUtil
     /// </summary>
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "material")]
     internal static extern ref Material MaterialCache(WorldObjectDef def);
+
+    /// <summary>
+    /// <c>ResearchManager.anomalyKnowledge</c>: Anomaly knowledge progress per project, saved by def name.
+    /// </summary>
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "anomalyKnowledge")]
+    internal static extern ref Dictionary<ResearchProjectDef, float> AnomalyKnowledge(ResearchManager manager);
 }

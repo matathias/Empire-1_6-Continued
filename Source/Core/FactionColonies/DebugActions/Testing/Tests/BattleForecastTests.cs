@@ -195,23 +195,6 @@ public static class BattleForecastTests
             $"Expected {expected} for a={rawAttacker}, b={defenderHP}, n={n}, got {result}");
     }
 
-    [EmpireTest("Battle")]
-    public static void Forecast_OneForceFairCoin_CorrectValue()
-    {
-        // Attacker force 1, defender force 1, equal efficiency → p = 0.5
-        // defenderHP = Round(1 * defAdv). If defAdv < 1.5, this rounds to 1.
-        int defenderHP = (int)Math.Max(1, Math.Round(1.0 * FCSettings.defenderAdvantage));
-        if (defenderHP != 1) TestAssert.Skip("defenderAdvantage rounds force 1 to != 1, skip exact check");
-
-        // a=1, b=1, n=1: P(atk wins) = C(1,1) * 0.5 = 0.5 → defender chance = 0.5
-        var attacker = CreateForce(1, 1.0, 1);
-        var defender = CreateForce(1, 1.0, 1);
-        double result = SimulateBattleFc.CalculateDefenderWinChance(attacker, defender);
-
-        TestAssert.AreEqual(0.5, result, 0.001,
-            $"1v1 fair coin should be 50/50, got {result}");
-    }
-
     // ============================
     // Consistency with simulation
     // ============================

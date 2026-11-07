@@ -5,8 +5,8 @@ namespace FactionColonies;
      pawn's entry), and
    - ResetSessionState clearing the wiped-caravan set (whose Lord loadIDs collide across saves loaded
      in one session, which would otherwise suppress a repeated pack-animal-wipe penalty).
-   Pure static-state tests. Non-destructive: each test clears only the fresh keys it adds; the
-   ResetSessionState test gates itself on the live set being empty so it never clobbers real entries.
+   Pure static-state tests. Non-destructive: each test clears only the fresh keys it adds. The
+   ResetSessionState test wipes the live set, so it lives in EmpireDeathPenaltyUtilDestructiveTests.
    Category "DeathPenalty". */
 public static class EmpireDeathPenaltyUtilTests
 {
@@ -63,25 +63,5 @@ public static class EmpireDeathPenaltyUtilTests
             EmpireDeathPenaltyUtil.ClearHandledByKillPrefix(a);
             EmpireDeathPenaltyUtil.ClearHandledByKillPrefix(b);
         }
-    }
-
-    // -*- Fix 2: ResetSessionState drops wiped-caravan loadIDs so they don't leak across saves -*-
-
-    [EmpireTest("DeathPenalty")]
-    public static void ResetSessionState_ClearsWipedCaravanLords()
-    {
-        // ResetSessionState wipes the whole set, so only run when it's already empty — otherwise we'd
-        // clobber genuine mid-session entries and violate the non-destructive contract.
-        if (EmpireDeathPenaltyUtil.WipedCaravanCountForTest != 0)
-            TestAssert.Skip("Wiped-caravan set is non-empty in the live session; skipping to avoid clobbering it.");
-
-        EmpireDeathPenaltyUtil.MarkCaravanWipedForTest(42);
-        TestAssert.IsTrue(EmpireDeathPenaltyUtil.IsCaravanWiped(42), "seeded loadID is recorded");
-
-        EmpireDeathPenaltyUtil.ResetSessionState();
-
-        TestAssert.IsFalse(EmpireDeathPenaltyUtil.IsCaravanWiped(42),
-            "ResetSessionState must clear the wiped-caravan set so a colliding loadID in the next save isn't skipped");
-        // Set is now empty again — exactly as found.
     }
 }

@@ -6,18 +6,22 @@ namespace FactionColonies;
  * (raceWeight / optionsInThatList) clobber the weight for every other list it was
  * added to, over-producing civilians in the Settlement group.
  *
- * Read-only invariant check over the live faction's populated pawnGroupMakers:
- * no PawnGenOption reference may appear in more than one of the lists that
- * SetPawnGroupMakers writes to. Non-destructive; mutates nothing.
+ * DESTRUCTIVE: rebuilds the live empire faction def's pawnGroupMakers through the
+ * real refresh path, then checks that no PawnGenOption reference appears in more
+ * than one of the lists SetPawnGroupMakers writes to.
  *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
-public static class XenotypeFilterReweightTests
+public static class XenotypeFilterReweightDestructiveTests
 {
-    [EmpireTest("Xenotype")]
+    [EmpireDestructiveTest("Destructive.Xenotype")]
     public static void PawnGroupMakers_NoSharedOptionInstanceAcrossLists()
     {
-        FactionDef def = FindFC.EmpireFactionDef;
-        if (def?.pawnGroupMakers is null || def.pawnGroupMakers.Count < 4)
-            TestAssert.Skip("Empire faction pawnGroupMakers not populated");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        XenotypeFilter filter = TestAssert.NotNull(faction.xenotypeFilter, "FactionFC has no XenotypeFilter");
+        TestAssert.DoesNotThrow(filter.RefreshPawnGroupMakers, "RefreshPawnGroupMakers threw");
+
+        FactionDef def = TestAssert.NotNull(FindFC.EmpireFactionDef, "No empire FactionDef");
+        TestAssert.IsTrue(def.pawnGroupMakers is { Count: >= 4 },
+            $"RefreshPawnGroupMakers should build 4 pawnGroupMakers, got {def.pawnGroupMakers?.Count ?? 0}");
 
         // The lists SetPawnGroupMakers populates and later reweights per-list.
         var lists = new List<List<PawnGenOption>>
@@ -43,8 +47,7 @@ public static class XenotypeFilterReweightTests
             }
         }
 
-        if (total == 0) TestAssert.Skip("No pawn group options populated yet");
-
+        TestAssert.GreaterThan(total, 0, "RefreshPawnGroupMakers produced no pawn group options");
         TestAssert.AreEqual(total, seen.Count,
             "each pawnGroupMaker list must hold its own PawnGenOption instances " +
             "(a shared reference means per-list reweighting cross-contaminates)");

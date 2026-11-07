@@ -255,9 +255,8 @@ public static class PaymentTests
     [EmpireTest("Payment")]
     public static void GenerateRewardThings_ValidDef_ProducesThings()
     {
-        ResourceEventRewardDef rewardDef = DefDatabase<ResourceEventRewardDef>.AllDefsListForReading
-            .FirstOrDefault();
-        if (rewardDef is null) TestAssert.Skip("No ResourceEventRewardDef found");
+        ResourceEventRewardDef rewardDef = TestAssert.NotNull(DefDatabase<ResourceEventRewardDef>.AllDefsListForReading
+            .FirstOrDefault(), "Empire ships ResourceEventRewardDefs, but none are loaded");
 
         List<Thing> result = PaymentUtil.GenerateRewardThings(500, rewardDef);
 

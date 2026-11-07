@@ -19,7 +19,7 @@ public static class FactionStateDestructiveTests
     public static void GainHappiness_StaysClamped()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        if (f.settlements.Count == 0) TestAssert.Skip("No settlements");
+        DestructiveTestUtil.EnsureSettlement();
 
         TestAssert.DoesNotThrow(() => f.GainHappiness(100000), "GainHappiness(+) threw");
         TestAssert.DoesNotThrow(() => f.GainHappiness(-100000), "GainHappiness(-) threw");
@@ -35,7 +35,7 @@ public static class FactionStateDestructiveTests
     public static void GainUnrest_StaysClamped()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        if (f.settlements.Count == 0) TestAssert.Skip("No settlements");
+        DestructiveTestUtil.EnsureSettlement();
 
         var msg = new Message("Empire destructive test", MessageTypeDefOf.NeutralEvent);
         TestAssert.DoesNotThrow(() => f.GainUnrestForReason(msg, 100000), "GainUnrestForReason threw");

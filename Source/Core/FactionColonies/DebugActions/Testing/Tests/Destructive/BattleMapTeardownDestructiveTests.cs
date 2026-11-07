@@ -8,8 +8,9 @@ namespace FactionColonies;
          with the pawn inside) down at battle end.
 
    These are the suite's first map-generating tests. Generating a real defense map, spawning pawns,
-   and loading a transporter are all volatile, so every risky step is guarded (DoesNotThrow / Skip)
-   per the destructive-test contract: it may leave the game messy, but it must never crash. State is
+   and loading a transporter are all volatile, so every risky step is guarded (DoesNotThrow, or a
+   cleanup-then-Fail when a setup step yields nothing) per the destructive-test contract: it may
+   leave the game messy, but it must never crash. State is
    cleaned up best-effort at the end (map removed, settlement removed, invariants checked). */
 public static class BattleMapTeardownDestructiveTests
 {
@@ -17,21 +18,20 @@ public static class BattleMapTeardownDestructiveTests
     public static void EvacuatePlayerPawns_DeliversNotDestroys()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC settlement = DestructiveTestUtil.CreateTransientSettlement();
-        if (settlement is null) TestAssert.Skip("Could not create a transient settlement");
+        WorldSettlementFC settlement = DestructiveTestUtil.RequireTransientSettlement();
 
         BattlefieldContext ctx = FindFC.MilitaryManager?.GetOrCreateBattlefield(settlement.Tile);
         if (ctx is null)
         {
             DestructiveTestUtil.SafeRemoveSettlement(settlement);
-            TestAssert.Skip("No battlefield context");
+            TestAssert.Fail("GetOrCreateBattlefield returned no battlefield context");
         }
 
         Map map = TryGenerateMap(ctx);
-        if (map is null) { Teardown(f, settlement, ctx); TestAssert.Skip("Battle map not generated"); }
+        if (map is null) { Teardown(f, settlement, ctx); TestAssert.Fail("Battle map was not generated"); }
 
         Pawn pawn = TrySpawnPlayerColonist(map);
-        if (pawn is null) { Teardown(f, settlement, ctx); TestAssert.Skip("Could not spawn test colonist"); }
+        if (pawn is null) { Teardown(f, settlement, ctx); TestAssert.Fail("Could not spawn the test colonist on the battle map"); }
 
         TestAssert.DoesNotThrow(() => SquadMapTeardownUtil.EvacuatePlayerPawns(map),
             "EvacuatePlayerPawns threw");
@@ -52,25 +52,24 @@ public static class BattleMapTeardownDestructiveTests
     public static void DeleteMap_KeepsMap_WhenPlayerPawnContainerized()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC settlement = DestructiveTestUtil.CreateTransientSettlement();
-        if (settlement is null) TestAssert.Skip("Could not create a transient settlement");
+        WorldSettlementFC settlement = DestructiveTestUtil.RequireTransientSettlement();
 
         BattlefieldContext ctx = FindFC.MilitaryManager?.GetOrCreateBattlefield(settlement.Tile);
         if (ctx is null)
         {
             DestructiveTestUtil.SafeRemoveSettlement(settlement);
-            TestAssert.Skip("No battlefield context");
+            TestAssert.Fail("GetOrCreateBattlefield returned no battlefield context");
         }
 
         Map map = TryGenerateMap(ctx);
-        if (map is null) { Teardown(f, settlement, ctx); TestAssert.Skip("Battle map not generated"); }
+        if (map is null) { Teardown(f, settlement, ctx); TestAssert.Fail("Battle map was not generated"); }
 
         // Control: a fresh map with no player pawns has none containerized.
         TestAssert.IsFalse(BattlefieldContext.AnyLivePlayerPawnInMapContainers(map),
             "Fresh map should have no containerized player pawns");
 
         Pawn pawn = TrySpawnPlayerColonist(map);
-        if (pawn is null) { Teardown(f, settlement, ctx); TestAssert.Skip("Could not spawn test colonist"); }
+        if (pawn is null) { Teardown(f, settlement, ctx); TestAssert.Fail("Could not spawn the test colonist on the battle map"); }
 
         // Control: a spawned (not containerized) pawn must NOT trip the container scan.
         TestAssert.IsFalse(BattlefieldContext.AnyLivePlayerPawnInMapContainers(map),
@@ -81,7 +80,7 @@ public static class BattleMapTeardownDestructiveTests
         {
             if (!pawn.Destroyed) pawn.Destroy();
             Teardown(f, settlement, ctx);
-            TestAssert.Skip("Could not build a loaded transporter");
+            TestAssert.Fail("Could not load the test colonist into a transport pod");
         }
 
         // The fix's core: the containerized (unspawned) player pawn is detected.

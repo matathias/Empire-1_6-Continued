@@ -10,8 +10,7 @@ public static class SettlementLifecycleDestructiveTests
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
 
-        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        if (s is null) TestAssert.Skip("No valid tile found for a new settlement");
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
 
         TestAssert.IsTrue(f.settlements.Contains(s), "New settlement should be in faction.settlements");
         TestAssert.IsTrue(Find.WorldObjects.Contains(s), "New settlement should be a registered world object");
@@ -23,8 +22,7 @@ public static class SettlementLifecycleDestructiveTests
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
 
-        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        if (s is null) TestAssert.Skip("No valid tile found for a new settlement");
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
 
         DestructiveTestUtil.SafeRemoveSettlement(s);
 
@@ -48,8 +46,7 @@ public static class SettlementLifecycleDestructiveTests
 
         for (int i = 0; i < 5; i++)
         {
-            WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-            if (s is null) TestAssert.Skip($"No valid tile found on cycle {i}");
+            WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
             TestAssert.AreEqual(baseline + 1, f.settlements.Count, $"Cycle {i}: count should rise by 1");
             DestructiveTestUtil.SafeRemoveSettlement(s);
             TestAssert.AreEqual(baseline, f.settlements.Count, $"Cycle {i}: count should return to baseline");
@@ -61,7 +58,7 @@ public static class SettlementLifecycleDestructiveTests
     public static void RemoveSettlement_SetCapitalSurvives()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        if (f.settlements.Count == 0) TestAssert.Skip("No settlements to remove");
+        DestructiveTestUtil.EnsureSettlement();
 
         // NOTE: the faction "capital" (capitalLocation) is a player-colony tile set by the Capital
         // Spot building — it is never an Empire settlement tile, so there is no capital-settlement to

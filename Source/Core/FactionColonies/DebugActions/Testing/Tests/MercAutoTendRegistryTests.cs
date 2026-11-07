@@ -40,12 +40,9 @@ public static class MercAutoTendRegistryTests
         }
     }
 
-    private static Pawn AnyPawn()
-    {
-        // Find any alive pawn — colonist, world pawn, doesn't matter (we use it as a reference
-        // token only). Skip if none.
-        return Find.WorldPawns?.AllPawnsAlive?.FirstOrDefault();
-    }
+    // A bare, never-generated Pawn instance: the registry only passes the reference through,
+    // so a detached object is enough and nothing is added to the world.
+    private static Pawn TokenPawn() => new();
 
     // -*- PickDoctor -*-
 
@@ -77,8 +74,7 @@ public static class MercAutoTendRegistryTests
     [EmpireTest("Registry")]
     public static void PickDoctor_FirstNonNullWins()
     {
-        Pawn token = AnyPawn();
-        if (token is null) TestAssert.Skip("No world pawns available as reference token");
+        Pawn token = TokenPawn();
 
         // First provider returns null; second returns the token; we expect the token back.
         var nullProvider = new FixedDoctorProvider(null);
@@ -101,8 +97,7 @@ public static class MercAutoTendRegistryTests
     [EmpireTest("Registry")]
     public static void PickDoctor_FirstNonNullShortCircuits()
     {
-        Pawn token = AnyPawn();
-        if (token is null) TestAssert.Skip("No world pawns available as reference token");
+        Pawn token = TokenPawn();
 
         // First provider returns the token; the spy sentinel is registered after it. If PickDoctor
         // short-circuits on the first non-null, the sentinel is never probed (DoctorProbed stays false).
@@ -127,8 +122,7 @@ public static class MercAutoTendRegistryTests
     [EmpireTest("Registry")]
     public static void PickDoctor_Exception_FallsThrough()
     {
-        Pawn token = AnyPawn();
-        if (token is null) TestAssert.Skip("No world pawns available as reference token");
+        Pawn token = TokenPawn();
 
         // Throwing provider first; legitimate provider second. The chain should survive the
         // exception and return the second provider's pawn.
@@ -158,8 +152,9 @@ public static class MercAutoTendRegistryTests
         // For default Industrial-tech factions that's MedicineIndustrial. We don't pin the
         // expected value (faction tech may vary in dev sessions); we only require that the
         // result is non-null and is one of the recognized medicine defs.
-        ThingDef result = MercAutoTendRegistry.PickMedicine(null, null);
-        if (result is null) TestAssert.Skip("No tech-default medicine resolvable (likely Animal tech-level faction)");
+        // Only an Animal tech level maps to no medicine, and the empire faction is never Animal-tech.
+        ThingDef result = TestAssert.NotNull(MercAutoTendRegistry.PickMedicine(null, null),
+            $"No tech-default medicine for empire tech level {FindFC.EmpireFaction?.def?.techLevel}");
 
         bool recognized = result == ThingDefOf.MedicineHerbal
                        || result == ThingDefOf.MedicineIndustrial

@@ -4,24 +4,17 @@ namespace FactionColonies;
    creates/unregisters real deploy operations. Not reverted. */
 public static class MilitaryDestructiveTests
 {
-    private static WorldSettlementFC FirstOrTransientSettlement()
-    {
-        WorldSettlementFC s = FindFC.Settlements?.FirstOrDefault();
-        s ??= DestructiveTestUtil.CreateTransientSettlement();
-        return s;
-    }
-
     [EmpireDestructiveTest("Destructive.Military")]
     public static void HireSquad_AddsMercenarySquad()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template is null) TestAssert.Skip("No squad templates designed");
+        MilSquadFC template = DestructiveTestUtil.EnsureSquadTemplate();
+        DestructiveTestUtil.EnsureSilverToHire(template);
 
         int before = FindFC.Military.mercenarySquads.Count;
         MercenarySquadFC squad = null;
         TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), "HireSquad threw");
-        if (squad is null) TestAssert.Skip("Could not afford to hire a squad");
+        TestAssert.NotNull(squad, "HireSquad returned null despite enough silver for the hire cost");
 
         TestAssert.AreEqual(before + 1, FindFC.Military.mercenarySquads.Count, "Hiring should add one squad");
         TestAssert.IsTrue(FindFC.Military.mercenarySquads.Contains(squad), "Hired squad should be in the pool");
@@ -32,12 +25,7 @@ public static class MilitaryDestructiveTests
     public static void DismissSquad_RemovesIt()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template is null) TestAssert.Skip("No squad templates designed");
-
-        MercenarySquadFC squad = null;
-        TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), "HireSquad threw");
-        if (squad is null) TestAssert.Skip("Could not afford to hire a squad");
+        MercenarySquadFC squad = DestructiveTestUtil.EnsureHiredSquad();
 
         bool dismissed = false;
         TestAssert.DoesNotThrow(() => dismissed = FindFC.Military.DismissSquad(squad), "DismissSquad threw");
@@ -50,19 +38,15 @@ public static class MilitaryDestructiveTests
     public static void AssignUnassign_RoundTrips()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC settlement = FirstOrTransientSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement available");
-        if (settlement.MilitaryComp is null) TestAssert.Skip("Settlement has no MilitaryComp");
+        MercenarySquadFC squad = DestructiveTestUtil.EnsureHiredSquad();
 
-        MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template is null) TestAssert.Skip("No squad templates designed");
-        MercenarySquadFC squad = null;
-        TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), "HireSquad threw");
-        if (squad is null) TestAssert.Skip("Could not afford to hire a squad");
+        // A settlement with a free billet slot (a fresh one if every existing billet is full).
+        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement(s =>
+            s.MilitaryComp is not null && SquadAssignmentRegistry.CanAssign(s, squad, out _));
 
         bool assigned = false;
         TestAssert.DoesNotThrow(() => assigned = FindFC.Military.AttemptToAssign(squad, settlement), "AttemptToAssign threw");
-        if (!assigned) TestAssert.Skip("Assignment rejected by registry validators");
+        TestAssert.IsTrue(assigned, "AttemptToAssign should succeed at a settlement whose validators accept the squad");
 
         TestAssert.IsTrue(squad.settlement == settlement, "Squad should be billeted at the settlement");
         bool unassigned = false;
@@ -76,20 +60,16 @@ public static class MilitaryDestructiveTests
     public static void CreateDeployOp_RegistersThenUnregister()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC settlement = FirstOrTransientSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement available");
+        // Deploys from a morale-locked settlement are rejected, so use one that is not locked.
+        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement(s => !s.SquadDeploymentLocked);
 
-        MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template is null) TestAssert.Skip("No squad templates designed");
-        MercenarySquadFC squad = null;
-        TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), "HireSquad threw");
-        if (squad is null) TestAssert.Skip("Could not afford to hire a squad");
+        MercenarySquadFC squad = DestructiveTestUtil.EnsureHiredSquad();
         FindFC.Military.Assign(squad, settlement, true); // ensure source.settlement is set
 
         MilitaryOperation op = null;
         PlanetTile tile = settlement.Tile;
         TestAssert.DoesNotThrow(() => op = FindFC.MilitaryManager.CreateDeployOp(squad, tile), "CreateDeployOp threw");
-        if (op is null) TestAssert.Skip("Deploy rejected (morale lock?)");
+        TestAssert.NotNull(op, "CreateDeployOp rejected a deploy from a settlement that is not morale-locked");
 
         TestAssert.IsTrue(FindFC.MilitaryManager.Active.Contains(op), "Deploy op should be registered as active");
         TestAssert.DoesNotThrow(() => FindFC.MilitaryManager.Unregister(op), "Unregister threw");
@@ -106,7 +86,7 @@ public static class MilitaryDestructiveTests
     public static void EquippedMercenaries_IncludesUnarmedUnarmoredMerc()
     {
         DestructiveTestUtil.RequireFaction();
-        if (FindFC.Military?.blankUnit is null) TestAssert.Skip("No blank unit available");
+        TestAssert.NotNull(FindFC.Military?.blankUnit, "MilitaryFC has no blank unit");
 
         // A real, non-blank loadout that carries nothing. MilUnitFC(false) already has empty
         // apparel/weapon lists and a valid pawnKind; ClearAllEquipment makes the intent explicit.
@@ -119,7 +99,7 @@ public static class MilitaryDestructiveTests
         TestAssert.DoesNotThrow(() => MercenaryPawnFactory.CreateNewPawn(squad, ref merc,
             loadout.pawnKind, loadout.xenotype, loadout.customXenotypeName, loadout),
             "CreateNewPawn threw");
-        if (merc?.pawn is null) TestAssert.Skip("Could not create test pawn");
+        TestAssert.NotNull(merc?.pawn, "CreateNewPawn did not produce a pawn");
         merc.loadout = loadout;              // non-blank loadout => deployable == true
         squad.mercenaries.Add(merc);
 
@@ -150,14 +130,14 @@ public static class MilitaryDestructiveTests
     public static void HireDismiss_Repeated_x5()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template is null) TestAssert.Skip("No squad templates designed");
+        MilSquadFC template = DestructiveTestUtil.EnsureSquadTemplate();
 
         for (int i = 0; i < 5; i++)
         {
+            DestructiveTestUtil.EnsureSilverToHire(template);
             MercenarySquadFC squad = null;
             TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), $"HireSquad threw on cycle {i}");
-            if (squad is null) TestAssert.Skip($"Could not afford to hire on cycle {i}");
+            TestAssert.NotNull(squad, $"HireSquad returned null on cycle {i} despite enough silver for the hire cost");
             TestAssert.DoesNotThrow(() => FindFC.Military.DismissSquad(squad), $"DismissSquad threw on cycle {i}");
             DestructiveTestUtil.AssertEmpireInvariants(f, $"HireDismiss cycle {i}");
         }

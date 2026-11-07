@@ -90,9 +90,9 @@ public static class EventSystemTests
     [EmpireTest("EventSystem")]
     public static void IsValidRandomEvent_NonRandomEvent_ReturnsFalse()
     {
-        FCEventDef nonRandom = DefDatabase<FCEventDef>.AllDefsListForReading
-            .FirstOrDefault(d => !d.isRandomEvent);
-        if (nonRandom is null) TestAssert.Skip("All events are random events");
+        // Empire ships many non-random (chained / scripted) events.
+        FCEventDef nonRandom = TestAssert.NotNull(DefDatabase<FCEventDef>.AllDefsListForReading
+            .FirstOrDefault(d => !d.isRandomEvent), "No non-random FCEventDef is loaded");
 
         TestAssert.IsFalse(FCEventMaker.IsValidRandomEvent(nonRandom),
             $"{nonRandom.defName}: non-random event should be rejected");
@@ -105,8 +105,7 @@ public static class EventSystemTests
     [EmpireTest("EventSystem")]
     public static void ReturnRandomEvent_DoesNotThrow()
     {
-        FactionFC faction = FindFC.FactionComp;
-        if (faction is null) TestAssert.Skip("No faction");
+        DestructiveTestUtil.RequireFaction();
 
         TestAssert.DoesNotThrow(() => FCEventMaker.ReturnRandomEvent());
     }
@@ -114,8 +113,7 @@ public static class EventSystemTests
     [EmpireTest("EventSystem")]
     public static void ReturnRandomEvent_Result_IsValidOrNull()
     {
-        FactionFC faction = FindFC.FactionComp;
-        if (faction is null) TestAssert.Skip("No faction");
+        DestructiveTestUtil.RequireFaction();
 
         FCEventDef result = FCEventMaker.ReturnRandomEvent();
         if (result is null) return; // null is valid (no eligible events)
@@ -158,9 +156,9 @@ public static class EventSystemTests
     [EmpireTest("EventSystem")]
     public static void MakeEvent_SetsTimeTillTrigger()
     {
-        FCEventDef def = DefDatabase<FCEventDef>.AllDefsListForReading
-            .FirstOrDefault(d => d.timeTillTrigger > 0);
-        if (def is null) TestAssert.Skip("No event def with positive timeTillTrigger");
+        // Empire ships many timed events (timeTillTrigger > 0).
+        FCEventDef def = TestAssert.NotNull(DefDatabase<FCEventDef>.AllDefsListForReading
+            .FirstOrDefault(d => d.timeTillTrigger > 0), "No FCEventDef with a positive timeTillTrigger is loaded");
 
         FCEvent evt = FCEventMaker.MakeEvent(def);
 

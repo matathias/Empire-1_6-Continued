@@ -85,11 +85,6 @@ public static class PolicyTestHelper
 
 public static class PolicyTests
 {
-    private static FactionFC GetFaction()
-    {
-        return FindFC.FactionComp;
-    }
-
     // ============================
     // Stat Aggregation Tests
     // ============================
@@ -97,8 +92,7 @@ public static class PolicyTests
     [EmpireTest("Policy")]
     public static void StatAggregation_AdditiveDefault_IsZero()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -114,122 +108,6 @@ public static class PolicyTests
         }
     }
 
-    [EmpireTest("Policy")]
-    public static void StatAggregation_MultiplicativeDefault_IsOne()
-    {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
-
-        var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
-        try
-        {
-            PolicyTestHelper.ClearAll(faction);
-            // ClearAll removes policies but not active edicts / faction-wide events, which also feed
-            // GetFactionStatValue (all four shipped edicts modify happinessGainedMultiplier). With no
-            // policies the value should equal the stat's identity; if it doesn't, an edict/event is
-            // contributing and the clean-slate premise does not hold — skip.
-            // happinessGainedMultiplier is multiplicative with IdentityValue 1
-            double val = faction.GetFactionStatValue(FCStatDefOf.happinessGainedMultiplier);
-            if (System.Math.Abs(val - FCStatDefOf.happinessGainedMultiplier.IdentityValue) > 0.001)
-                TestAssert.Skip("Active edict/event modifies happinessGainedMultiplier; clean-slate premise does not hold");
-            TestAssert.AreEqual(1.0, val, 0.001, "Multiplicative stat with no policies should be 1");
-        }
-        finally
-        {
-            PolicyTestHelper.RestorePolicies(faction, snapshot);
-        }
-    }
-
-    [EmpireTest("Policy")]
-    public static void StatAggregation_PolicyModifiers_Applied()
-    {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
-
-        var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
-        try
-        {
-            PolicyTestHelper.ClearAll(faction);
-
-            // Find a policy with known statModifiers
-            FCPolicyDef testDef = FCPolicyDefOf.militaristic;
-            if (testDef.statModifiers.Count == 0)
-                TestAssert.Skip("militaristic has no XML stat modifiers");
-
-            // ClearAll leaves active edicts/events in place; if one already modifies a stat this policy
-            // touches, its post-clear baseline won't be the stat identity and the exact expected value
-            // won't hold — skip rather than falsely fail.
-            foreach (FCStatModifier mod in testDef.statModifiers)
-            {
-                if (System.Math.Abs(faction.GetFactionStatValue(mod.stat) - mod.stat.IdentityValue) > 0.001)
-                    TestAssert.Skip($"Active edict/event modifies {mod.stat.defName}; clean-slate premise does not hold");
-            }
-
-            PolicyTestHelper.EnactPolicy(faction, testDef);
-
-            // Check each stat modifier is reflected
-            foreach (FCStatModifier mod in testDef.statModifiers)
-            {
-                double expected;
-                if (mod.stat.aggregation == FCStatAggregation.Additive)
-                    expected = mod.stat.IdentityValue + mod.value;
-                else
-                    expected = mod.stat.IdentityValue * mod.value;
-
-                double actual = faction.GetFactionStatValue(mod.stat);
-                TestAssert.AreEqual(expected, actual, 0.001,
-                    $"Stat {mod.stat.defName} should reflect policy modifier");
-            }
-        }
-        finally
-        {
-            PolicyTestHelper.RestorePolicies(faction, snapshot);
-        }
-    }
-
-    [EmpireTest("Policy")]
-    public static void StatAggregation_MultiplePolicies_Stack()
-    {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
-
-        var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
-        try
-        {
-            PolicyTestHelper.ClearAll(faction);
-
-            // Find two policies that share an additive stat
-            FCStatDef sharedStat = FCStatDefOf.militaryBaseLevel;
-            var defs = DefDatabase<FCPolicyDef>.AllDefsListForReading
-                .Where(d => d.statModifiers.Any(m => m.stat == sharedStat
-                    && sharedStat.aggregation == FCStatAggregation.Additive))
-                .Take(2).ToList();
-
-            if (defs.Count < 2)
-                TestAssert.Skip("Not enough policies modifying militaryBaseLevel");
-
-            // ClearAll leaves active edicts/events in place; if one already modifies militaryBaseLevel
-            // its post-clear baseline won't be the stat identity and the exact stacked value won't hold.
-            if (System.Math.Abs(faction.GetFactionStatValue(sharedStat) - sharedStat.IdentityValue) > 0.001)
-                TestAssert.Skip("Active edict/event modifies militaryBaseLevel; clean-slate premise does not hold");
-
-            PolicyTestHelper.EnactPolicy(faction, defs[0]);
-            PolicyTestHelper.EnactPolicy(faction, defs[1]);
-
-            double mod0 = defs[0].statModifiers.First(m => m.stat == sharedStat).value;
-            double mod1 = defs[1].statModifiers.First(m => m.stat == sharedStat).value;
-            double expected = sharedStat.IdentityValue + mod0 + mod1;
-
-            double actual = faction.GetFactionStatValue(sharedStat);
-            TestAssert.AreEqual(expected, actual, 0.001,
-                $"Two additive policy modifiers should stack: {mod0} + {mod1}");
-        }
-        finally
-        {
-            PolicyTestHelper.RestorePolicies(faction, snapshot);
-        }
-    }
-
     // ============================
     // Behavior Lifecycle Tests
     // ============================
@@ -237,8 +115,7 @@ public static class PolicyTests
     [EmpireTest("Policy")]
     public static void BehaviorCache_RebuildAfterPolicyAdd()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -261,8 +138,7 @@ public static class PolicyTests
     [EmpireTest("Policy")]
     public static void BehaviorCache_RebuildAfterClear()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -283,8 +159,7 @@ public static class PolicyTests
     [EmpireTest("Policy")]
     public static void BehaviorCache_OrderPoliciesBeforeTraits()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -368,34 +243,9 @@ public static class PolicyTests
     // ============================
 
     [EmpireTest("Policy")]
-    public static void Egalitarian_WorkerProductionMultiplier_10Pct()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
-        try
-        {
-            PolicyTestHelper.ClearAll(faction);
-            PolicyTestHelper.EnactPolicy(faction, FCPolicyDefOf.egalitarian);
-
-            WorldSettlementFC settlement = faction.settlements.First();
-            double mult = faction.GetStatValue(FCStatDefOf.workerProductionMultiplier, settlement);
-            TestAssert.AreEqual(1.1, mult, 0.01,
-                $"Egalitarian should boost worker production by 10% (got {mult})");
-        }
-        finally
-        {
-            PolicyTestHelper.RestorePolicies(faction, snapshot);
-        }
-    }
-
-    [EmpireTest("Policy")]
     public static void Expansionist_SettlementCost_Discount()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -416,53 +266,6 @@ public static class PolicyTests
     // NOTE: a former Expansionist_ThreatScaling_Increased test was removed here — Expansionist no
     // longer carries a threatScalingMultiplier modifier (its stats are settlementCostMultiplier and
     // unrestGainedBase), so the +10% threat-scaling assertion no longer describes the policy.
-
-    [EmpireTest("Policy")]
-    public static void Militaristic_BuildingUpkeep_Discount()
-    {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
-        if (!faction.settlements.Any()) TestAssert.Skip("Need settlements");
-
-        var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
-        try
-        {
-            PolicyTestHelper.ClearAll(faction);
-            var policy = PolicyTestHelper.EnactPolicy(faction, FCPolicyDefOf.militaristic);
-
-            TestAssert.IsNotNull(policy.behavior as FCPolicyBehavior_Militaristic, "Militaristic should have a behavior");
-
-            var settlement = faction.settlements.First();
-
-            // The Militaristic discount is the buildingUpkeepBase_Military stat (-10 post-rework), applied
-            // via the live GetBuildingUpkeep path. Military classification is the explicit isMilitary flag.
-            BuildingFCDef milBuilding = DefDatabase<BuildingFCDef>.AllDefsListForReading
-                .FirstOrDefault(b => b.isMilitary && b.Upkeep > 0);
-
-            if (milBuilding is null)
-                TestAssert.Skip("No military buildings with upkeep found");
-
-            TestAssert.AreEqual(Math.Max(milBuilding.Upkeep - 10, 0.0),
-                settlement.BuildingsComp.GetBuildingUpkeep(milBuilding), 0.001,
-                $"Military building '{milBuilding.defName}' upkeep should be discounted by 10 (base {milBuilding.Upkeep})");
-
-            // Non-military (unflagged) building should not be discounted
-            BuildingFCDef civBuilding = DefDatabase<BuildingFCDef>.AllDefsListForReading
-                .FirstOrDefault(b => !b.isMilitary && b.Upkeep > 0
-                    && b != BuildingFCDefOf.Empty && b != BuildingFCDefOf.Construction);
-
-            if (civBuilding is not null)
-            {
-                TestAssert.AreEqual(civBuilding.Upkeep,
-                    settlement.BuildingsComp.GetBuildingUpkeep(civBuilding), 0.001,
-                    $"Civilian building '{civBuilding.defName}' upkeep should not be discounted");
-            }
-        }
-        finally
-        {
-            PolicyTestHelper.RestorePolicies(faction, snapshot);
-        }
-    }
 
     // ============================
     // ConfigError Validation
@@ -500,8 +303,7 @@ public static class PolicyTests
     [EmpireTest("Policy")]
     public static void AllPolicies_StatValues_AreFinite()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try

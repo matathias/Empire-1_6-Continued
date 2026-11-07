@@ -22,20 +22,4 @@ public static class LogUtilTests
         }
         finally { LogUtil.SuppressOnThisThread = wasSuppressed; }
     }
-
-    [EmpireTest("Util")]
-    public static void Message_Interpolated_LoggingOn_EvaluatesHolesOnce()
-    {
-        if (!FCSettings.PrintDebug) TestAssert.Skip("Debug logging is off; enable it to test the logging-on path");
-
-        bool wasSuppressed = LogUtil.SuppressOnThisThread;
-        holeEvaluations = 0;
-        try
-        {
-            LogUtil.SuppressOnThisThread = false;
-            LogUtil.Message($"LogUtilTests probe (expected in log) {CountEvaluation()}");
-            TestAssert.AreEqual(1, holeEvaluations, "each hole is evaluated exactly once when logging is on");
-        }
-        finally { LogUtil.SuppressOnThisThread = wasSuppressed; }
-    }
 }

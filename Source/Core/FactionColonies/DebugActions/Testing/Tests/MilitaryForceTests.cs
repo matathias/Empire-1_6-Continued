@@ -76,126 +76,13 @@ public static class MilitaryForceTests
     }
 
     // ============================
-    // Factory Methods (game state)
+    // EnemyPower
     // ============================
-
-    private static WorldSettlementFC GetSettlement()
-    {
-        FactionFC faction = FindFC.FactionComp;
-        if (faction is null || faction.settlements.Count == 0) return null;
-        return faction.settlements.FirstOrDefault(s => s.MilitaryComp is not null);
-    }
-
-    [EmpireTest("MilitaryForce")]
-    public static void CreateFromSettlement_IsFiniteAndPositive()
-    {
-        WorldSettlementFC settlement = GetSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement with MilitaryComp");
-
-        MilitaryForce force = MilitaryForce.CreateMilitaryForceFromSettlement(settlement);
-
-        TestAssert.IsFalse(double.IsNaN(force.forceRemaining), "forceRemaining should not be NaN");
-        TestAssert.IsFalse(double.IsInfinity(force.forceRemaining), "forceRemaining should not be infinite");
-        TestAssert.IsTrue(force.forceRemaining >= 0, $"forceRemaining should be >= 0, got {force.forceRemaining}");
-        TestAssert.IsTrue(force.militaryLevel >= 0, "militaryLevel should be >= 0");
-        TestAssert.GreaterThan(force.militaryEfficiency, 0, "militaryEfficiency should be > 0");
-    }
-
-    [EmpireTest("MilitaryForce")]
-    public static void CreateFromSettlement_AttackingVsDefending_DifferByStats()
-    {
-        WorldSettlementFC settlement = GetSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement with MilitaryComp");
-
-        MilitaryForce attacking = MilitaryForce.CreateMilitaryForceFromSettlement(settlement, isAttacking: true);
-        MilitaryForce defending = MilitaryForce.CreateMilitaryForceFromSettlement(settlement, isAttacking: false);
-
-        // Both should be valid; they may differ if attack/defense stat bonuses differ
-        TestAssert.IsFalse(double.IsNaN(attacking.forceRemaining), "Attacking force should not be NaN");
-        TestAssert.IsFalse(double.IsNaN(defending.forceRemaining), "Defending force should not be NaN");
-    }
-
-    [EmpireTest("MilitaryForce")]
-    public static void CreateFromSquad_ForceIsResolvedPlusDefendingBonus()
-    {
-        // A defending squad force = the squad's resolved power level + the defending-level bonus
-        // (faction + settlement + squad scopes, aggregated by GetStatValue). The settlement scope
-        // was intentionally excluded until militaryLevelBonusDefending became appliesToSettlements
-        // (so a Military governor / cavern biome could feed defense). The invariant here is the
-        // EXACT composition — in particular that the raw settlementMilitaryLevel is NOT added on top.
-        FactionFC faction = FindFC.FactionComp;
-        if (faction is null) TestAssert.Skip("No FactionFC");
-
-        MercenarySquadFC squad = null;
-        foreach (WorldSettlementFC s in faction.settlements)
-        {
-            foreach (MercenarySquadFC stationed in s.StationedSquads)
-            {
-                if (stationed?.settlement is not null) { squad = stationed; break; }
-            }
-            if (squad is not null) break;
-        }
-        if (squad is null) TestAssert.Skip("No stationed squad available");
-
-        double resolvedLevel = SquadPowerRegistry.Resolve(squad).militaryLevel;
-        MilitaryForce force = MilitaryForce.CreateMilitaryForceFromSquad(squad);
-
-        TestAssert.IsNotNull(force, "Force should be created for a stationed squad");
-
-        // CombineForce (defending) adds exactly the aggregated militaryLevelBonusDefending for the
-        // anchor settlement + squad on top of the resolved level.
-        double defendingBonus = faction.GetStatValue(
-            FCStatDefOf.militaryLevelBonusDefending, squad.settlement, squad);
-        double expectedLevel = resolvedLevel + defendingBonus;
-        TestAssert.AreEqual(expectedLevel, force.militaryLevel,
-            message: $"defending force should be resolved({resolvedLevel}) + defending bonus({defendingBonus}), " +
-                     $"not include raw settlementMilitaryLevel ({squad.settlement.settlementMilitaryLevel})");
-    }
-
-    [EmpireTest("MilitaryForce")]
-    public static void EnemyPower_BaselineReflectsTechLevel()
-    {
-        Settlement enemy = Find.WorldObjects.Settlements
-            .FirstOrDefault(s => s is not WorldSettlementFC
-                && s.Faction is not null && s.Faction != Faction.OfPlayer
-                && s.Faction != FindFC.EmpireFaction);
-        if (enemy is null) TestAssert.Skip("No enemy settlement on world map");
-
-        WorldComponent_EnemyPower registry = FindFC.EnemyPower;
-        if (registry is null) TestAssert.Skip("EnemyPower registry not available");
-
-        EnemyPower entry = registry.GetOrCompute(enemy);
-        TestAssert.IsNotNull(entry, "Registry should produce an entry for an enemy settlement");
-
-        // Baseline structure: efficiency clamped at 0.1, level at 1, variance default applied.
-        TestAssert.IsTrue(entry.efficiency >= 0.1,
-            $"Efficiency floor not respected: got {entry.efficiency}");
-        TestAssert.IsTrue(entry.level >= 1,
-            $"Level floor not respected: got {entry.level}");
-
-        // Variances now sourced from EnemyPowerTechDef + (optional) EnemyPowerFactionDef.
-        // Pull the resolved tech-def variances and compare; faction overrides may shift them.
-        MilitaryDeploymentUtil.GetTechLevelBaseline(enemy.Faction.def.techLevel,
-            out double _, out double _, out double techLvlVar, out double techEffVar);
-        EnemyPowerFactionDef factionDef = registry.GetFactionDef(enemy.Faction.def);
-        double expectedLvlVar = (factionDef is not null && factionDef.levelVariance.HasValue)
-            ? factionDef.levelVariance.Value : techLvlVar;
-        double expectedEffVar = (factionDef is not null && factionDef.efficiencyVariance.HasValue)
-            ? factionDef.efficiencyVariance.Value : techEffVar;
-        TestAssert.AreEqual(expectedLvlVar, entry.levelVariance,
-            "Level variance from def applied");
-        TestAssert.AreEqual(expectedEffVar, entry.efficiencyVariance,
-            "Efficiency variance from def applied");
-
-        TestAssert.IsTrue(entry.MaxForceRemaining >= entry.MinForceRemaining,
-            "Max bound must be >= min bound");
-    }
 
     [EmpireTest("MilitaryForce")]
     public static void EnemyPower_NoEntryForPlayerOrEmpire()
     {
-        WorldComponent_EnemyPower registry = FindFC.EnemyPower;
-        if (registry is null) TestAssert.Skip("EnemyPower registry not available");
+        WorldComponent_EnemyPower registry = TestAssert.NotNull(FindFC.EnemyPower, "No EnemyPower world component in a loaded game");
 
         // The player and the allied empire faction must never get an enemy estimate; the
         // world-map inspect line keys off this null to stay off player/empire settlements.

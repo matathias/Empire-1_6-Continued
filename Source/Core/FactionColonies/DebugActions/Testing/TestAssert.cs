@@ -5,16 +5,22 @@ public class TestFailedException : Exception
     public TestFailedException(string message) : base(message) { }
 }
 
-public class TestSkippedException : Exception
-{
-    public TestSkippedException(string reason) : base(reason) { }
-}
-
 public static class TestAssert
 {
-    public static void Skip(string reason)
+    /// <summary>Fails unconditionally. Use when a test cannot force its own starting conditions:
+    /// tests never skip (only the runner does, on a game-state mismatch), so setup that cannot be
+    /// built is a failure the test author must see.</summary>
+    public static void Fail(string message)
     {
-        throw new TestSkippedException(reason);
+        throw new TestFailedException(message);
+    }
+
+    /// <summary>Returns <paramref name="obj"/> after asserting it is non-null; for one-line setup
+    /// such as <c>var s = TestAssert.NotNull(DestructiveTestUtil.EnsureSettlement(), "...")</c>.</summary>
+    public static T NotNull<T>(T obj, string message) where T : class
+    {
+        if (obj is null) throw new TestFailedException(message);
+        return obj;
     }
 
     public static void AreEqual(double expected, double actual, double tolerance = 0.001, string message = null)

@@ -2,11 +2,6 @@ namespace FactionColonies;
 
 public static class ActionTypeTests
 {
-    private static FactionFC GetFaction()
-    {
-        return FindFC.FactionComp;
-    }
-
     // ============================
     // FCActionTypeUtil.RequiresEnable
     // ============================
@@ -48,8 +43,7 @@ public static class ActionTypeTests
     [EmpireTest("ActionType")]
     public static void IsActionAllowed_OptOutAction_AllowedByDefault()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -67,8 +61,7 @@ public static class ActionTypeTests
     [EmpireTest("ActionType")]
     public static void IsActionAllowed_OptInAction_DisabledByDefault()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -94,8 +87,7 @@ public static class ActionTypeTests
     [EmpireTest("ActionType")]
     public static void IsActionAllowed_BlockedAction_Blocked()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -116,8 +108,7 @@ public static class ActionTypeTests
     [EmpireTest("ActionType")]
     public static void IsActionAllowed_EnabledAction_Enabled()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -138,8 +129,7 @@ public static class ActionTypeTests
     [EmpireTest("ActionType")]
     public static void IsActionAllowed_BlockTakesPrecedence()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         // Find an opt-in action that one policy enables and another blocks.
         // Militaristic enables DeployExtraSquad; if we can find another that blocks it, test precedence.
@@ -174,8 +164,7 @@ public static class ActionTypeTests
     [EmpireTest("ActionType")]
     public static void ActionCache_RebuildOnPolicyChange()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try

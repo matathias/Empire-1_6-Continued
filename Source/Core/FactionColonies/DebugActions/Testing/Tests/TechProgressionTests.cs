@@ -30,38 +30,8 @@ public static class TechProgressionTests
             "Empty Any-mode barrier should be unsatisfied (nothing can satisfy it)");
     }
 
-    // Regression guard: a knowledge-cost project (baseCost == 0, knowledgeCost > 0) with no
-    // progress must leave its All-mode barrier UNsatisfied. Skipped when Anomaly is active
-    // because reading IsFinished then routes through ResearchManager.GetProgress, which would
-    // insert this synthetic def into the live anomalyKnowledge dict (a non-destructive test
-    // must leave game state untouched). The arithmetic under test is DLC-independent — Cost
-    // falls back to knowledgeCost either way — so exercising it without Anomaly is faithful.
-    [EmpireTest("TechProgression")]
-    public static void Barrier_KnowledgeCostProject_NotSatisfiedWhileUnresearched()
-    {
-        if (Current.Game is null || Find.ResearchManager is null)
-            TestAssert.Skip("No ResearchManager (no active game)");
-        if (ModsConfig.AnomalyActive)
-            TestAssert.Skip("Anomaly active — skipped to avoid mutating live anomalyKnowledge");
-
-        var proj = new ResearchProjectDef
-        {
-            defName = "EmpireTest_KnowledgeCostProj",
-            baseCost = 0f,
-            knowledgeCost = 100f
-        };
-        var barrier = new TechLevelBarrier
-        {
-            techLevel = TechLevel.Industrial,
-            researchProjects = [proj],
-            mode = TechBarrierMode.All
-        };
-
-        TestAssert.IsFalse(proj.IsFinished,
-            "A knowledge-cost project with zero progress should not be finished");
-        TestAssert.IsFalse(barrier.IsSatisfied(),
-            "Barrier requiring an unresearched knowledge-cost project should NOT be satisfied");
-    }
+    // The knowledge-cost regression guard reads ResearchManager progress, which under Anomaly writes
+    // into live state, so it lives in TechProgressionDestructiveTests.
 
     // Contrast: a genuinely costless project (baseCost == 0 AND knowledgeCost == 0) has nothing
     // to research, so it reads as finished and its All-mode barrier is satisfied. GetProgress
@@ -69,9 +39,6 @@ public static class TechProgressionTests
     [EmpireTest("TechProgression")]
     public static void Barrier_ZeroCostProject_IsSatisfied()
     {
-        if (Current.Game is null || Find.ResearchManager is null)
-            TestAssert.Skip("No ResearchManager (no active game)");
-
         var proj = new ResearchProjectDef
         {
             defName = "EmpireTest_ZeroCostProj",

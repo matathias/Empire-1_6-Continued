@@ -2,11 +2,6 @@ namespace FactionColonies;
 
 public static class MilitaryJobTests
 {
-    private static FactionFC GetFaction()
-    {
-        return FindFC.FactionComp;
-    }
-
     // ============================
     // MilitaryJobDef validation
     // ============================
@@ -156,8 +151,7 @@ public static class MilitaryJobTests
     [EmpireTest("MilitaryJob")]
     public static void DefaultEnabledJob_AllowedByDefault()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -177,8 +171,7 @@ public static class MilitaryJobTests
     [EmpireTest("MilitaryJob")]
     public static void DefaultDisabledJob_BlockedByDefault()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -196,8 +189,7 @@ public static class MilitaryJobTests
     [EmpireTest("MilitaryJob")]
     public static void EnabledMilitaryJob_OverridesDefault()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -218,8 +210,7 @@ public static class MilitaryJobTests
     [EmpireTest("MilitaryJob")]
     public static void BlockedMilitaryJob_Blocks()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -240,8 +231,7 @@ public static class MilitaryJobTests
     [EmpireTest("MilitaryJob")]
     public static void BlockedOverridesEnabled_ForJobs()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         // Isolationist blocks Capture (a default-enabled job). Verify it stays blocked
         // even though Capture's defaultEnabled is true — the blockedMilitaryJobs list
@@ -278,8 +268,7 @@ public static class MilitaryJobTests
     [EmpireTest("MilitaryJob")]
     public static void Pacifist_BlocksActionNotJobs()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try
@@ -306,8 +295,7 @@ public static class MilitaryJobTests
     [EmpireTest("MilitaryJob")]
     public static void Authoritarian_EnablesEnslave_JobLevel()
     {
-        var faction = GetFaction();
-        if (faction is null) TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         var snapshot = PolicyTestHelper.SnapshotPolicies(faction);
         try

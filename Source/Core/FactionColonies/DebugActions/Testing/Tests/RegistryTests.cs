@@ -5,17 +5,6 @@ namespace FactionColonies;
 public static class RegistryTests
 {
     // ============================
-    // Helpers
-    // ============================
-
-    private static WorldSettlementFC GetFirstSettlement()
-    {
-        var settlements = FindFC.Settlements;
-        if (settlements is null || settlements.Count == 0) return null;
-        return settlements[0];
-    }
-
-    // ============================
     // Test Doubles
     // ============================
 
@@ -167,8 +156,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void Lifecycle_Register_InvokesSettlementCreated()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        var settlement = DestructiveTestUtil.EnsureSettlement();
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -183,8 +171,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void Lifecycle_Register_InvokesSettlementRemoved()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        var settlement = DestructiveTestUtil.EnsureSettlement();
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -199,8 +186,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void Lifecycle_Register_InvokesBuildingConstructed()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        var settlement = DestructiveTestUtil.EnsureSettlement();
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -215,8 +201,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void Lifecycle_Register_InvokesBattleResolved()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        var settlement = DestructiveTestUtil.EnsureSettlement();
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -244,8 +229,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void Lifecycle_Unregister_StopsInvocations()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        var settlement = DestructiveTestUtil.EnsureSettlement();
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -257,8 +241,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void Lifecycle_DuplicateRegister_Ignored()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        var settlement = DestructiveTestUtil.EnsureSettlement();
 
         var p = new TestLifecycleParticipant();
         LifecycleRegistry.Register(p);
@@ -274,8 +257,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void Lifecycle_Exception_DoesNotCrash()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        var settlement = DestructiveTestUtil.EnsureSettlement();
 
         var bad = new ThrowingLifecycleParticipant();
         LifecycleRegistry.Register(bad);
@@ -289,8 +271,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void Lifecycle_MultipleParticipants_AllInvoked()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        var settlement = DestructiveTestUtil.EnsureSettlement();
 
         var p1 = new TestLifecycleParticipant();
         var p2 = new TestLifecycleParticipant();
@@ -312,8 +293,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void Lifecycle_ExceptionDoesNotBlockOthers()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        var settlement = DestructiveTestUtil.EnsureSettlement();
 
         var bad = new ThrowingLifecycleParticipant();
         var good = new TestLifecycleParticipant();
@@ -398,8 +378,7 @@ public static class RegistryTests
     [EmpireTest("Registry")]
     public static void FactionPowerModifier_RegistersAndInvokes()
     {
-        RimWorld.Faction faction = FindFC.EmpireFaction;
-        if (faction is null) TestAssert.Skip("No player colony faction");
+        RimWorld.Faction faction = Find.FactionManager.OfPlayer;
 
         var modifier = new TestFactionPowerModifier { LevelBonus = 3.0 };
         BattleModifierRegistry.Register(modifier);
@@ -416,8 +395,7 @@ public static class RegistryTests
     [EmpireTest("Registry")]
     public static void FactionPowerModifier_Unregister_NoEffect()
     {
-        RimWorld.Faction faction = FindFC.EmpireFaction;
-        if (faction is null) TestAssert.Skip("No player colony faction");
+        RimWorld.Faction faction = Find.FactionManager.OfPlayer;
 
         var modifier = new TestFactionPowerModifier { LevelBonus = 3.0 };
         BattleModifierRegistry.Register(modifier);
@@ -432,8 +410,7 @@ public static class RegistryTests
     [EmpireTest("Registry")]
     public static void FactionPowerModifier_Exception_DoesNotCrash()
     {
-        RimWorld.Faction faction = FindFC.EmpireFaction;
-        if (faction is null) TestAssert.Skip("No player colony faction");
+        RimWorld.Faction faction = Find.FactionManager.OfPlayer;
 
         var bad = new ThrowingFactionPowerModifier();
         BattleModifierRegistry.Register(bad);
@@ -506,8 +483,7 @@ public static class RegistryTests
         // We use distinct test doubles per interface here (no class implements both),
         // but the lists themselves must stay independent. Verify by registering on two
         // chains and confirming both fire.
-        var faction = FindFC.EmpireFaction;
-        if (faction is null) TestAssert.Skip("No player colony faction");
+        var faction = Find.FactionManager.OfPlayer;
 
         var battleMod = new TestBattleModifier { LevelBonus = 1 };
         var factionMod = new TestFactionPowerModifier { LevelBonus = 2 };
@@ -1020,18 +996,6 @@ public static class RegistryTests
     }
 
     [EmpireTest("Registry")]
-    public static void RaidWeight_NoProviders_ReturnsOne()
-    {
-        // Premise: no providers registered. A live submod (e.g. VOE) may register one, which
-        // would make the combined weight != 1; skip rather than falsely fail.
-        if (RaidWeightRegistry.Providers.Count > 0)
-            TestAssert.Skip("Live raid-weight providers registered; identity-weight premise does not hold");
-
-        // Default identity weight when no provider is registered.
-        TestAssert.AreEqual(1.0, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001);
-    }
-
-    [EmpireTest("Registry")]
     public static void RaidWeight_SingleProvider_Multiplies()
     {
         var p = new FixedRaidWeightProvider(2.5f);
@@ -1255,18 +1219,6 @@ public static class RegistryTests
     }
 
     [EmpireTest("Registry")]
-    public static void AutoDefender_FindBestDefender_NoDefenders_ReturnsNull()
-    {
-        // Premise: no auto-defenders registered. A live submod (e.g. VOE outposts) may register
-        // one, which could make FindBestDefender return non-null; skip rather than falsely fail.
-        if (AutoDefenderRegistry.Defenders.Count > 0)
-            TestAssert.Skip("Live auto-defenders registered; no-defenders premise does not hold");
-
-        // With no defenders registered, FindBestDefender returns null.
-        TestAssert.IsNull(AutoDefenderRegistry.FindBestDefender(RimWorld.Planet.PlanetTile.Invalid, 0));
-    }
-
-    [EmpireTest("Registry")]
     public static void AutoDefender_FindBestDefender_CannotAutoDefend_Skipped()
     {
         // The CanAutoDefend == false branch short-circuits before any tile lookup, so this
@@ -1333,8 +1285,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void EmpireRegistry_Register_RoutesToAllMatchingDomains()
     {
-        WorldSettlementFC settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
 
         MultiInterfaceParticipant p = new();
         EmpireRegistry.Register(p);
@@ -1358,8 +1309,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void EmpireRegistry_Unregister_RemovesFromAllMatchingDomains()
     {
-        WorldSettlementFC settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlements");
+        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
 
         MultiInterfaceParticipant p = new();
         EmpireRegistry.Register(p);
@@ -1377,6 +1327,7 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void EmpireRegistry_ClearAll_ClearsEveryFacadeManagedRegistry()
     {
+        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
         MultiInterfaceParticipant p = new();
         EmpireRegistry.Register(p);
         EmpireRegistry.ClearAll();
@@ -1384,8 +1335,7 @@ public static class RegistryTests
         // After ClearAll, none of the domain registries should still hold p.
         // We can't easily enumerate every list, but we can verify that none of
         // p's hooks fire after ClearAll.
-        WorldSettlementFC settlement = GetFirstSettlement();
-        if (settlement is not null) LifecycleRegistry.InvokeOnSettlementCreated(settlement);
+        LifecycleRegistry.InvokeOnSettlementCreated(settlement);
         TaxTickRegistry.InvokePreTaxResolution(null);
         DefenseValidatorRegistry.CanDefend(null, null);
 
@@ -1480,7 +1430,7 @@ public static class RegistryTests
     // BareParticipant implements every interface and overrides nothing, so it exercises the
     // defaults alone. A new interface or member must be added here too.
 
-    private class BareParticipant :
+    internal class BareParticipant :
         IDailyAccrualParticipant, ISilverPaymentModifier, ITaxDeliveryInterceptor,
         IMercAutoTendProvider, IMercenarySquadListener, IMilitaryOperationListener, IResearchListener,
         ISettlementFoundingValidator, ISettlementListener, ISettlementPostLoadInit, ITaxTickParticipant,
@@ -1691,53 +1641,5 @@ public static class RegistryTests
             TestAssert.IsTrue(button.IsEnabled(null), "IsEnabled");
             TestAssert.IsFalse(button.IsVisible(null), "IsVisible");
         }, "default interface members must not throw");
-    }
-
-    [EmpireTest("Registry")]
-    public static void DefaultMembers_BareParticipant_RegisteredChangesNothing()
-    {
-        FactionFC faction = FindFC.FactionComp;
-        WorldSettlementFC settlement = GetFirstSettlement();
-        if (faction is null || settlement is null) TestAssert.Skip("No faction or settlements");
-
-        PawnKindDef animal = DefDatabase<PawnKindDef>.AllDefs.FirstOrDefault(k => k.RaceProps?.Animal ?? false);
-
-        double additiveBefore = ThreatScalingRegistry.InvokeGetAdditiveContributions(faction);
-        double multBefore = ThreatScalingRegistry.InvokeGetMultiplierContributions(faction);
-        bool canDefendBefore = DefenseValidatorRegistry.CanDefend(settlement, settlement);
-        bool animalBefore = AnimalPickerFilterRegistry.IsAllowed(animal);
-        int costLinesBefore = FoundingValidatorRegistry.GetCostDescriptions(settlement.Tile, settlement.settlementDef).Count;
-        HashSet<int> roadTilesBefore = [];
-        RoadNodeProviderRegistry.CollectInto(roadTilesBefore);
-
-        var bare = new BareParticipant();
-        EmpireRegistry.Register(bare);
-        PsycastSystemRegistry.Register(bare);
-        try
-        {
-            // Identity-filtered views skip an implementer that left WorldObject/Tile/Key at their defaults.
-            TestAssert.IsFalse(RaidTargetRegistry.Targets.Contains(bare), "RaidTargetRegistry skips a target with no WorldObject");
-            TestAssert.IsFalse(AutoDefenderRegistry.Defenders.Contains(bare), "AutoDefenderRegistry skips a defender with no WorldObject");
-            TestAssert.IsFalse(MilitaryTabRegistry.Entries.Contains(bare), "MilitaryTabRegistry skips an entry with no WorldObject");
-            TestAssert.IsFalse(PsycastSystemRegistry.Providers.Contains(bare), "PsycastSystemRegistry rejects a provider with no Key");
-            TestAssert.IsNull(RaidTargetRegistry.FindByWorldObject(null), "FindByWorldObject(null)");
-
-            // Aggregating registries produce the same result with the bare implementer present.
-            TestAssert.AreEqual(additiveBefore, ThreatScalingRegistry.InvokeGetAdditiveContributions(faction), message: "ETL additive");
-            TestAssert.AreEqual(multBefore, ThreatScalingRegistry.InvokeGetMultiplierContributions(faction), message: "ETL multiplier");
-            TestAssert.AreEqual(canDefendBefore, DefenseValidatorRegistry.CanDefend(settlement, settlement), "CanDefend");
-            TestAssert.AreEqual(animalBefore, AnimalPickerFilterRegistry.IsAllowed(animal), "IsAllowed");
-            TestAssert.AreEqual(costLinesBefore, FoundingValidatorRegistry.GetCostDescriptions(settlement.Tile, settlement.settlementDef).Count, "founding cost lines");
-            HashSet<int> roadTilesAfter = [];
-            RoadNodeProviderRegistry.CollectInto(roadTilesAfter);
-            TestAssert.IsTrue(roadTilesBefore.SetEquals(roadTilesAfter), "road node tiles");
-
-            TestAssert.DoesNotThrow(MainTableRegistry.InvokePostCloseWindow, "InvokePostCloseWindow");
-        }
-        finally
-        {
-            EmpireRegistry.Unregister(bare);
-            PsycastSystemRegistry.Unregister(bare);
-        }
     }
 }

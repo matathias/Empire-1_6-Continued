@@ -1,28 +1,23 @@
 namespace FactionColonies;
 
-public static class TitheIncomeTests
+/* DESTRUCTIVE: tithe-income math against a live settlement. Creates a transient settlement when the
+   player has none and may assign a worker to force a precondition. Test modifiers and tithe entries
+   are removed in finally blocks; created settlements and assigned workers are not. */
+public static class TitheIncomeDestructiveTests
 {
     // ============================
     // Helpers
     // ============================
 
-    private static WorldSettlementFC GetFirstSettlement()
+    /// <summary>A settlement with a titheable resource (creating one if needed), and that resource.</summary>
+    private static (WorldSettlementFC settlement, ResourceFC resource) RequireTitheTarget()
     {
-        var settlements = FindFC.Settlements;
-        if (settlements is null || settlements.Count == 0)
-            return null;
-        return settlements[0];
+        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement(s => s.Resources.Any(r => r.canTithe));
+        return (settlement, ForcedStateTestUtilA.RequireTitheableResource(settlement));
     }
 
-    private static ResourceFC GetFirstNonPoolResource(WorldSettlementFC settlement)
+    private static void WithSettlementModifier(WorldSettlementFC settlement, FCStatDef stat, double value, Action action)
     {
-        return settlement.Resources.FirstOrDefault(r => r.canTithe);
-    }
-
-    private static void WithFactionModifier(FCStatDef stat, double value, Action action)
-    {
-        FactionFC faction = FindFC.FactionComp;
-        var settlement = faction.settlements[0];
         var mods = new List<FCStatModifier> { new() { stat = stat, value = value } };
         settlement.AddStatModifiers(mods, "titheTest");
         try
@@ -39,14 +34,11 @@ public static class TitheIncomeTests
     // Tests
     // ============================
 
-    [EmpireTest("TitheIncome")]
+    [EmpireDestructiveTest("Destructive.TitheIncome")]
     public static void TitheModifierPerWorker_MatchesStatPlusSetting()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement");
-
-        ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource is null) TestAssert.Skip("No non-pool resource");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        (WorldSettlementFC settlement, ResourceFC resource) = RequireTitheTarget();
 
         double expected = settlement.GetStatValue(FCStatDefOf.taxBaseRandomModifier)
                         + FCSettings.productionTitheMod;
@@ -54,16 +46,14 @@ public static class TitheIncomeTests
 
         TestAssert.AreEqual(expected, actual,
             message: "GetTitheModifierPerWorker should equal taxBaseRandomModifier stat + productionTitheMod setting");
+        DestructiveTestUtil.AssertEmpireInvariants(faction, "TitheModifierPerWorker_MatchesStatPlusSetting");
     }
 
-    [EmpireTest("TitheIncome")]
+    [EmpireDestructiveTest("Destructive.TitheIncome")]
     public static void TitheIncome_ZeroWorkers_EqualsBaseTimesMultiplier()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement");
-
-        ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource is null) TestAssert.Skip("No non-pool resource");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        (WorldSettlementFC settlement, ResourceFC resource) = RequireTitheTarget();
 
         int savedWorkers = resource.assignedWorkers;
         try
@@ -71,7 +61,7 @@ public static class TitheIncomeTests
             resource.assignedWorkers = 0;
             resource.SetDirtyCache();
 
-            double multForTotal = FindFC.FactionComp.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
+            double multForTotal = faction.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
             double expected = resource.taxableProductionMarketValue * multForTotal + resource.DailyExternalTitheBudget;
             double actual = resource.GetTitheIncome();
 
@@ -83,46 +73,46 @@ public static class TitheIncomeTests
             resource.assignedWorkers = savedWorkers;
             resource.SetDirtyCache();
         }
+        DestructiveTestUtil.AssertEmpireInvariants(faction, "TitheIncome_ZeroWorkers_EqualsBaseTimesMultiplier");
     }
 
-    [EmpireTest("TitheIncome")]
+    [EmpireDestructiveTest("Destructive.TitheIncome")]
     public static void TitheIncome_FormulaConsistency()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement");
-
-        ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource is null) TestAssert.Skip("No non-pool resource");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        (WorldSettlementFC settlement, ResourceFC resource) = RequireTitheTarget();
 
         // Manually compute using the same formula that GetTitheIncome should use
         double workerMod = resource.GetTitheModifierPerWorker() * resource.assignedWorkers;
-        double multForTotal = FindFC.FactionComp.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
+        double multForTotal = faction.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
         double expected = (resource.taxableProductionMarketValue + workerMod) * multForTotal + resource.DailyExternalTitheBudget;
         double actual = resource.GetTitheIncome();
 
         TestAssert.AreEqual(expected, actual,
             message: "GetTitheIncome should equal (taxableMarketValue + workerMod) * titheValueMultiplier + DailyExternalTitheBudget");
+        DestructiveTestUtil.AssertEmpireInvariants(faction, "TitheIncome_FormulaConsistency");
     }
 
-    [EmpireTest("TitheIncome")]
+    [EmpireDestructiveTest("Destructive.TitheIncome")]
     public static void TitheIncome_MultForTotal_ChangesWithStat()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement");
-
-        ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource is null) TestAssert.Skip("No non-pool resource");
-        if (resource.assignedWorkers == 0) TestAssert.Skip("Resource has 0 workers");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        (WorldSettlementFC settlement, ResourceFC resource) = RequireTitheTarget();
+        ForcedStateTestUtilA.EnsureWorkers(settlement, resource);
 
         double incomeBefore = resource.GetTitheIncome();
 
         // titheValueMultiplier is multiplicative, so adding 1.5 means multiplying by 1.5
-        WithFactionModifier(FCStatDefOf.titheValueMultiplier, 1.5, () =>
+        WithSettlementModifier(settlement, FCStatDefOf.titheValueMultiplier, 1.5, () =>
         {
             resource.SetDirtyCache();
             double incomeAfter = resource.GetTitheIncome();
 
-            if (incomeBefore != 0)
+            // The multiplier scales everything except the external budget, so income can only rise,
+            // and must strictly rise when there is a multiplied part to scale.
+            TestAssert.IsTrue(incomeAfter >= incomeBefore,
+                $"Tithe income should not drop with higher titheValueMultiplier (before={incomeBefore:F2}, after={incomeAfter:F2})");
+            if (incomeBefore - resource.DailyExternalTitheBudget > 0)
             {
                 TestAssert.GreaterThan(incomeAfter, incomeBefore,
                     $"Tithe income should increase with higher titheValueMultiplier (before={incomeBefore:F2}, after={incomeAfter:F2})");
@@ -133,32 +123,28 @@ public static class TitheIncomeTests
         double incomeRestored = resource.GetTitheIncome();
         TestAssert.AreEqual(incomeBefore, incomeRestored,
             message: "Tithe income should restore after removing modifier");
+        DestructiveTestUtil.AssertEmpireInvariants(faction, "TitheIncome_MultForTotal_ChangesWithStat");
     }
 
-    [EmpireTest("TitheIncome")]
+    [EmpireDestructiveTest("Destructive.TitheIncome")]
     public static void GetTitheValueMultiplier_MatchesStat()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        (WorldSettlementFC settlement, ResourceFC resource) = RequireTitheTarget();
 
-        ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource is null) TestAssert.Skip("No non-pool resource");
-
-        double expected = FindFC.FactionComp.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
+        double expected = faction.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
         double actual = resource.GetTitheValueMultiplier();
 
         TestAssert.AreEqual(expected, actual,
             message: "GetTitheValueMultiplier should equal the titheValueMultiplier stat for the settlement");
+        DestructiveTestUtil.AssertEmpireInvariants(faction, "GetTitheValueMultiplier_MatchesStat");
     }
 
-    [EmpireTest("TitheIncome")]
+    [EmpireDestructiveTest("Destructive.TitheIncome")]
     public static void TitheIncome_PostMultiplierComponents_Reconcile()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement");
-
-        ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource is null) TestAssert.Skip("No non-pool resource");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        (_, ResourceFC resource) = RequireTitheTarget();
 
         // Mirrors how the tithing screen header now displays its three numbers:
         // each shown post-multiplier, summing (with external budget) to the total tithe budget.
@@ -170,14 +156,14 @@ public static class TitheIncomeTests
 
         TestAssert.AreEqual(expected, actual,
             message: "Post-multiplier production + worker components + external budget should reconcile to GetTitheIncome");
+        DestructiveTestUtil.AssertEmpireInvariants(faction, "TitheIncome_PostMultiplierComponents_Reconcile");
     }
 
-    [EmpireTest("TitheIncome")]
+    [EmpireDestructiveTest("Destructive.TitheIncome")]
     public static void TitheIncome_AllResources_NonNegative()
     {
-        var faction = FindFC.FactionComp;
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        DestructiveTestUtil.EnsureSettlement();
 
         foreach (var settlement in faction.settlements)
         {
@@ -190,15 +176,14 @@ public static class TitheIncomeTests
                     $"{settlement.Name}/{resource.def?.defName}: tithe income should not be NaN");
             }
         }
+        DestructiveTestUtil.AssertEmpireInvariants(faction, "TitheIncome_AllResources_NonNegative");
     }
 
-    [EmpireTest("TitheIncome")]
+    [EmpireDestructiveTest("Destructive.TitheIncome")]
     public static void TitheList_AddAndReorder_PreservesOrder()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement");
-        ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource is null) TestAssert.Skip("No non-pool resource");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        (_, ResourceFC resource) = RequireTitheTarget();
 
         int before = resource.Tithes.Count;
         var a = new ThingQualityTuple { thingDef = RimWorld.ThingDefOf.MealSimple };
@@ -222,15 +207,14 @@ public static class TitheIncomeTests
         }
         // Verify cleanup outside finally so an in-body failure isn't masked by this assertion.
         TestAssert.AreEqual(before, resource.Tithes.Count, message: "cleanup should restore the list");
+        DestructiveTestUtil.AssertEmpireInvariants(faction, "TitheList_AddAndReorder_PreservesOrder");
     }
 
-    [EmpireTest("TitheIncome")]
+    [EmpireDestructiveTest("Destructive.TitheIncome")]
     public static void TitheList_AllowsDuplicateEntries()
     {
-        var settlement = GetFirstSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement");
-        ResourceFC resource = GetFirstNonPoolResource(settlement);
-        if (resource is null) TestAssert.Skip("No non-pool resource");
+        FactionFC faction = DestructiveTestUtil.RequireFaction();
+        (_, ResourceFC resource) = RequireTitheTarget();
 
         int before = resource.Tithes.Count;
         var a = new ThingQualityTuple { thingDef = RimWorld.ThingDefOf.MealSimple };
@@ -255,5 +239,6 @@ public static class TitheIncomeTests
         }
         // Verify cleanup outside finally so an in-body failure isn't masked by this assertion.
         TestAssert.AreEqual(before, resource.Tithes.Count, message: "cleanup should restore the list");
+        DestructiveTestUtil.AssertEmpireInvariants(faction, "TitheList_AllowsDuplicateEntries");
     }
 }

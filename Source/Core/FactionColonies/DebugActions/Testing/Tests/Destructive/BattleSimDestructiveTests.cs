@@ -6,13 +6,6 @@ namespace FactionColonies;
    linger, but the side effects of applied results are NOT reverted. */
 public static class BattleSimDestructiveTests
 {
-    private static WorldSettlementFC FirstOrTransientSettlement()
-    {
-        WorldSettlementFC s = FindFC.Settlements?.FirstOrDefault();
-        s ??= DestructiveTestUtil.CreateTransientSettlement();
-        return s;
-    }
-
     private static Faction AnyOtherFaction()
     {
         return Find.FactionManager?.AllFactionsListForReading
@@ -23,25 +16,21 @@ public static class BattleSimDestructiveTests
     public static void CreateOffensiveOp_Guarded()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC home = FirstOrTransientSettlement();
-        if (home is null) TestAssert.Skip("No home settlement available");
+        // Offensive ops from a morale-locked settlement are rejected, so launch from one that is not.
+        WorldSettlementFC home = DestructiveTestUtil.EnsureSettlement(s => !s.SquadDeploymentLocked);
 
-        MilSquadFC template = DestructiveTestUtil.FirstHireableTemplate();
-        if (template is null) TestAssert.Skip("No squad templates designed");
-        MercenarySquadFC squad = null;
-        TestAssert.DoesNotThrow(() => squad = FindFC.Military.HireSquad(template), "HireSquad threw");
-        if (squad is null) TestAssert.Skip("Could not afford to hire a squad");
+        MercenarySquadFC squad = DestructiveTestUtil.EnsureHiredSquad();
         FindFC.Military.Assign(squad, home, true); // CreateOffensiveOp requires source.settlement
 
-        Settlement enemy = Find.WorldObjects.Settlements
-            .FirstOrDefault(s => s.Faction is not null && s.Faction.HostileTo(FindFC.EmpireFaction));
-        if (enemy is null) TestAssert.Skip("No hostile settlement to raid");
+        // The launch gate refuses a tile that already has an active op or a live map.
+        Settlement enemy = DestructiveTestUtil.EnsureHostileSettlement(s =>
+            FindFC.MilitaryManager.CanLaunchOffensiveAt(s.Tile, out _));
 
         MilitaryOperation op = null;
         TestAssert.DoesNotThrow(() => op = FindFC.MilitaryManager.CreateOffensiveOp(
             squad, enemy, MilitaryJobDefOf.RaidEnemySettlement, enemy.Faction, GenDate.TicksPerDay),
             "CreateOffensiveOp threw");
-        if (op is null) TestAssert.Skip("Offensive op rejected (morale lock?)");
+        TestAssert.NotNull(op, "CreateOffensiveOp rejected a launch from an unlocked settlement at a launchable target");
 
         TestAssert.IsTrue(FindFC.MilitaryManager.Active.Contains(op), "Offensive op should be registered");
         DestructiveTestUtil.ResolveAndSweepOp(op); // cancel the in-transit raid so it doesn't spawn a real battle later
@@ -76,8 +65,7 @@ public static class BattleSimDestructiveTests
     public static void CompleteBattle_DefensiveLoss_AppliesToSettlement()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC settlement = FirstOrTransientSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement available");
+        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
 
         var op = new MilitaryOperation(-1, MilitaryJobDefOf.DefendOwnSettlement, settlement.Tile, settlement);
         op.defender.faction = FindFC.EmpireFaction;
@@ -99,8 +87,7 @@ public static class BattleSimDestructiveTests
     public static void CreateDefensiveOp_Guarded()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC settlement = FirstOrTransientSettlement();
-        if (settlement is null) TestAssert.Skip("No settlement available");
+        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
 
         Faction attacker = AnyOtherFaction();
         var attackerForce = new MilitaryForce(8.0, 1.0, null, attacker);
@@ -108,11 +95,9 @@ public static class BattleSimDestructiveTests
         MilitaryOperation op = null;
         TestAssert.DoesNotThrow(() => op = FindFC.MilitaryManager.CreateDefensiveOp(settlement, attackerForce, attacker),
             "CreateDefensiveOp threw");
-        if (op is not null)
-        {
-            TestAssert.IsTrue(FindFC.MilitaryManager.Active.Contains(op), "Defensive op should be registered");
-            DestructiveTestUtil.ResolveAndSweepOp(op);
-        }
+        TestAssert.IsNotNull(op, "CreateDefensiveOp returned null with a live FactionFC");
+        TestAssert.IsTrue(FindFC.MilitaryManager.Active.Contains(op), "Defensive op should be registered");
+        DestructiveTestUtil.ResolveAndSweepOp(op);
         DestructiveTestUtil.AssertEmpireInvariants(f, "CreateDefensiveOp_Guarded");
     }
 
@@ -120,8 +105,7 @@ public static class BattleSimDestructiveTests
     public static void BeginEngagement_ResolvesDefenderForce_NoCrash()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        Faction enemy = AnyOtherFaction();
-        if (enemy is null) TestAssert.Skip("No other faction to fight");
+        Faction enemy = TestAssert.NotNull(AnyOtherFaction(), "The world has no non-player faction besides the empire");
 
         var op = new MilitaryOperation(-1, MilitaryJobDefOf.RaidEnemySettlement, PlanetTile.Invalid, null);
         op.aggressor.faction = FindFC.EmpireFaction;

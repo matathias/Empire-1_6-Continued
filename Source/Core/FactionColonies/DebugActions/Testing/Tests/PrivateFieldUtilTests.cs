@@ -35,4 +35,15 @@ public static class PrivateFieldUtilTests
         PrivateFieldUtil.MaterialCache(def) = BaseContent.WhiteMat;
         TestAssert.IsTrue(def.Material == BaseContent.WhiteMat, "Material returns the material written through the accessor");
     }
+
+    [EmpireTest("Util")]
+    public static void AnomalyKnowledge_AliasesAnomalyKnowledgeField()
+    {
+        // A detached manager: the field initializer creates the dictionary, so the alias must see it.
+        var manager = new ResearchManager();
+        Dictionary<ResearchProjectDef, float> knowledge = PrivateFieldUtil.AnomalyKnowledge(manager);
+        TestAssert.IsNotNull(knowledge, "anomalyKnowledge is created by its field initializer");
+        TestAssert.IsTrue(ReferenceEquals(knowledge, PrivateFieldUtil.AnomalyKnowledge(manager)),
+            "the accessor returns the same dictionary instance on every call");
+    }
 }

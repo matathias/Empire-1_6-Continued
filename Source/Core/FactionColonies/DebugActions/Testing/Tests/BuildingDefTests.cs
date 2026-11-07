@@ -6,14 +6,13 @@ public static class BuildingDefTests
     // CanBeBuiltForSettlementType
     // ============================
 
+    // The four list-semantics tests use standalone defs (never registered) so they do not depend on
+    // which shipped buildings happen to carry allow/block lists.
+
     [EmpireTest("BuildingDef")]
     public static void CanBeBuilt_NoLists_ReturnsTrue()
     {
-        // Find a building with empty allow and block lists
-        BuildingFCDef building = DefDatabase<BuildingFCDef>.AllDefsListForReading
-            .FirstOrDefault(b => (b.settlementTypeAllowList is null || b.settlementTypeAllowList.Count == 0)
-                && (b.settlementTypeBlockList is null || b.settlementTypeBlockList.Count == 0));
-        if (building is null) TestAssert.Skip("No building with empty allow/block lists");
+        var building = new BuildingFCDef { defName = "EmpireTest_NoLists" };
 
         WorldSettlementDef settlementDef = WorldSettlementDefOf.WorldSettlementDef_Surface;
         TestAssert.IsTrue(building.CanBeBuiltForSettlementType(settlementDef),
@@ -24,9 +23,7 @@ public static class BuildingDefTests
     public static void CanBeBuilt_InBlockList_ReturnsFalse()
     {
         WorldSettlementDef settlementDef = WorldSettlementDefOf.WorldSettlementDef_Surface;
-        BuildingFCDef building = DefDatabase<BuildingFCDef>.AllDefsListForReading
-            .FirstOrDefault(b => b.settlementTypeBlockList is not null && b.settlementTypeBlockList.Contains(settlementDef));
-        if (building is null) TestAssert.Skip("No building blocks Surface settlement type");
+        var building = new BuildingFCDef { defName = "EmpireTest_BlocksSurface", settlementTypeBlockList = [settlementDef] };
 
         TestAssert.IsFalse(building.CanBeBuiltForSettlementType(settlementDef),
             $"{building.defName} should be blocked for Surface");
@@ -36,9 +33,7 @@ public static class BuildingDefTests
     public static void CanBeBuilt_InAllowList_ReturnsTrue()
     {
         WorldSettlementDef settlementDef = WorldSettlementDefOf.WorldSettlementDef_Surface;
-        BuildingFCDef building = DefDatabase<BuildingFCDef>.AllDefsListForReading
-            .FirstOrDefault(b => b.settlementTypeAllowList is not null && b.settlementTypeAllowList.Contains(settlementDef));
-        if (building is null) TestAssert.Skip("No building has Surface in allow list");
+        var building = new BuildingFCDef { defName = "EmpireTest_AllowsSurface", settlementTypeAllowList = [settlementDef] };
 
         TestAssert.IsTrue(building.CanBeBuiltForSettlementType(settlementDef),
             $"{building.defName} should be allowed for Surface");
@@ -47,15 +42,12 @@ public static class BuildingDefTests
     [EmpireTest("BuildingDef")]
     public static void CanBeBuilt_AllowList_ExcludesUnlisted()
     {
-        // Find a building with a non-empty allow list, then test with a settlement type NOT in it
-        BuildingFCDef building = DefDatabase<BuildingFCDef>.AllDefsListForReading
-            .FirstOrDefault(b => b.settlementTypeAllowList is not null && b.settlementTypeAllowList.Count > 0);
-        if (building is null) TestAssert.Skip("No building has an allow list");
+        // The allow list names only a standalone settlement type, so Surface (which neither is
+        // nor derives from it) is unlisted.
+        var listedOnly = new WorldSettlementDef { defName = "EmpireTest_ListedSettlementType" };
+        var building = new BuildingFCDef { defName = "EmpireTest_AllowsOther", settlementTypeAllowList = [listedOnly] };
 
-        WorldSettlementDef excluded = DefDatabase<WorldSettlementDef>.AllDefsListForReading
-            .FirstOrDefault(sd => !building.settlementTypeAllowList.Contains(sd));
-        if (excluded is null) TestAssert.Skip("All settlement types are in the allow list");
-
+        WorldSettlementDef excluded = WorldSettlementDefOf.WorldSettlementDef_Surface;
         TestAssert.IsFalse(building.CanBeBuiltForSettlementType(excluded),
             $"{building.defName} should NOT be buildable for {excluded.defName} (not in allow list)");
     }

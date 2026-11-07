@@ -1,8 +1,8 @@
 namespace FactionColonies;
 
 /* Tests for SquadPowerRegistry: LevelFromCost pure math, default SquadPower for null/unassigned
-   squads, and chained-modifier ordering for stationed squads. The chaining tests Skip when
-   no stationed squad is available. */
+   squads, and chained-modifier ordering. The modifier chain runs for any non-null squad, so the
+   chaining tests use a detached, unpooled squad and never touch live military state. */
 public static class SquadPowerRegistryTests
 {
     /* Test doubles for the priority-ordering tests. Each modifier records the running power
@@ -52,20 +52,6 @@ public static class SquadPowerRegistryTests
         {
             throw new System.InvalidOperationException("test");
         }
-    }
-
-    private static MercenarySquadFC FindStationedSquad()
-    {
-        FactionFC faction = FindFC.FactionComp;
-        if (faction is null) return null;
-        foreach (WorldSettlementFC s in faction.settlements)
-        {
-            foreach (MercenarySquadFC squad in s.StationedSquads)
-            {
-                if (squad?.settlement is not null) return squad;
-            }
-        }
-        return null;
     }
 
     // -*- LevelFromCost (pure math) -*-
@@ -148,13 +134,12 @@ public static class SquadPowerRegistryTests
         TestAssert.AreEqual(1.0, p.militaryEfficiency);
     }
 
-    // -*- Resolve: chained modifiers (game-state-dependent) -*-
+    // -*- Resolve: chained modifiers -*-
 
     [EmpireTest("Registry")]
     public static void Resolve_SingleProvider_AppliesModification()
     {
-        MercenarySquadFC squad = FindStationedSquad();
-        if (squad is null) TestAssert.Skip("No stationed squad");
+        MercenarySquadFC squad = new();
 
         double basePower = SquadPowerRegistry.Resolve(squad).militaryLevel;
         var modifier = new AddLevelModifier(100, 5);
@@ -170,8 +155,7 @@ public static class SquadPowerRegistryTests
     [EmpireTest("Registry")]
     public static void Resolve_MultipleProviders_RunsInDescendingPriority()
     {
-        MercenarySquadFC squad = FindStationedSquad();
-        if (squad is null) TestAssert.Skip("No stationed squad");
+        MercenarySquadFC squad = new();
 
         // High-priority first: double the level. Low-priority second: add 10.
         // Descending order means doubling happens BEFORE the addition.
@@ -205,8 +189,7 @@ public static class SquadPowerRegistryTests
     [EmpireTest("Registry")]
     public static void Resolve_DuplicateRegister_Ignored()
     {
-        MercenarySquadFC squad = FindStationedSquad();
-        if (squad is null) TestAssert.Skip("No stationed squad");
+        MercenarySquadFC squad = new();
 
         var modifier = new AddLevelModifier(100, 5);
         SquadPowerRegistry.Register(modifier);
@@ -234,8 +217,7 @@ public static class SquadPowerRegistryTests
     [EmpireTest("Registry")]
     public static void Resolve_ExceptionInProvider_DoesNotCrash()
     {
-        MercenarySquadFC squad = FindStationedSquad();
-        if (squad is null) TestAssert.Skip("No stationed squad");
+        MercenarySquadFC squad = new();
 
         var bad = new ThrowingModifier();
         SquadPowerRegistry.Register(bad);
@@ -251,8 +233,7 @@ public static class SquadPowerRegistryTests
     {
         // A throwing modifier between two well-behaved ones should not break the chain — the
         // running power survives the thrower's exception per the try/catch in Resolve.
-        MercenarySquadFC squad = FindStationedSquad();
-        if (squad is null) TestAssert.Skip("No stationed squad");
+        MercenarySquadFC squad = new();
 
         var first = new AddLevelModifier(200, 5);
         var bad = new ThrowingModifier();
@@ -279,8 +260,7 @@ public static class SquadPowerRegistryTests
     [EmpireTest("Registry")]
     public static void Resolve_Unregister_RemovesProvider()
     {
-        MercenarySquadFC squad = FindStationedSquad();
-        if (squad is null) TestAssert.Skip("No stationed squad");
+        MercenarySquadFC squad = new();
 
         var modifier = new AddLevelModifier(100, 5);
         double basePower = SquadPowerRegistry.Resolve(squad).militaryLevel;

@@ -8,7 +8,7 @@ public static class TaxEconomyDestructiveTests
     public static void AddTax_GeneratesBills()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        if (f.settlements.Count == 0) TestAssert.Skip("No settlements to tax");
+        DestructiveTestUtil.EnsureSettlement();
 
         int before = FindFC.TaxLedger.Bills.Count;
         TestAssert.DoesNotThrow(() => FindFC.TaxLedger.AddTax(f), "AddTax threw");
@@ -21,7 +21,7 @@ public static class TaxEconomyDestructiveTests
     public static void ProcessBills_AndAutoresolve_NoDangling()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        if (f.settlements.Count == 0) TestAssert.Skip("No settlements to tax");
+        DestructiveTestUtil.EnsureSettlement();
 
         TestAssert.DoesNotThrow(() => FindFC.TaxLedger.AddTax(f), "AddTax threw");
         TestAssert.DoesNotThrow(() => FindFC.TaxLedger.AutoresolveBills(), "AutoresolveBills threw");
@@ -34,7 +34,7 @@ public static class TaxEconomyDestructiveTests
     public static void TaxTick_AfterReschedule_Advances()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        if (FindFC.EmpireFaction is null) TestAssert.Skip("No Empire faction");
+        DestructiveTestUtil.EnsureEmpireFaction();
 
         FindFC.TaxLedger.Reschedule(0); // due now
         int now = Find.TickManager.TicksGame;
@@ -49,8 +49,7 @@ public static class TaxEconomyDestructiveTests
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
 
-        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        if (s is null) TestAssert.Skip("No valid tile found for a new settlement");
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
 
         TestAssert.DoesNotThrow(() => FindFC.TaxLedger.AddTax(f), "AddTax threw");
         // The new settlement should now have at least one bill.
@@ -70,7 +69,7 @@ public static class TaxEconomyDestructiveTests
     /// random-tithe path deterministically: all other resources are paused (their production
     /// becomes plain silver, no RNG goods), the target's specified tithes are cleared, and the
     /// target has workers so it actually produces. Returns null if no positive-production
-    /// tithe-able resource could be prepared (caller skips).
+    /// tithe-able resource could be prepared (caller fails).
     /// </summary>
     private static ResourceFC PrepareEscrowTarget(WorldSettlementFC s)
     {
@@ -107,12 +106,11 @@ public static class TaxEconomyDestructiveTests
     public static void RandomTitheRollover_WithholdsFromSilver_NotStoreAndPay()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        if (s is null) TestAssert.Skip("No valid tile for a settlement");
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
         try
         {
-            ResourceFC target = PrepareEscrowTarget(s);
-            if (target is null) TestAssert.Skip("No positive-production tithe-able resource");
+            ResourceFC target = TestAssert.NotNull(PrepareEscrowTarget(s),
+                "No tithe-able resource reached positive production after assigning workers");
 
             const int days = 3;
 
@@ -156,12 +154,11 @@ public static class TaxEconomyDestructiveTests
     public static void RandomTitheDisburse_PaysEscrowExactlyOnce()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        if (s is null) TestAssert.Skip("No valid tile for a settlement");
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
         try
         {
-            ResourceFC target = PrepareEscrowTarget(s);
-            if (target is null) TestAssert.Skip("No positive-production tithe-able resource");
+            ResourceFC target = TestAssert.NotNull(PrepareEscrowTarget(s),
+                "No tithe-able resource reached positive production after assigning workers");
 
             const int days = 2;
             const double stock = 500;
@@ -199,12 +196,11 @@ public static class TaxEconomyDestructiveTests
     public static void RandomTitheBudget_ScalesWithAccruedDays()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        if (s is null) TestAssert.Skip("No valid tile for a settlement");
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
         try
         {
-            ResourceFC target = PrepareEscrowTarget(s);
-            if (target is null) TestAssert.Skip("No positive-production tithe-able resource");
+            ResourceFC target = TestAssert.NotNull(PrepareEscrowTarget(s),
+                "No tithe-able resource reached positive production after assigning workers");
 
             target.hasRandomTithe = true;
             target.autoMaxRandomTithe = true;
@@ -241,12 +237,11 @@ public static class TaxEconomyDestructiveTests
     public static void RandomTitheEscrow_AccumulatesAcrossCycles()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        WorldSettlementFC s = DestructiveTestUtil.CreateTransientSettlement();
-        if (s is null) TestAssert.Skip("No valid tile for a settlement");
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
         try
         {
-            ResourceFC target = PrepareEscrowTarget(s);
-            if (target is null) TestAssert.Skip("No positive-production tithe-able resource");
+            ResourceFC target = TestAssert.NotNull(PrepareEscrowTarget(s),
+                "No tithe-able resource reached positive production after assigning workers");
 
             target.hasRandomTithe = true;
             target.autoMaxRandomTithe = true;

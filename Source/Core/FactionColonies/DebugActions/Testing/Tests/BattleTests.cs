@@ -18,7 +18,7 @@ public static class BattleTests
         public int Range(int min, int maxExclusive) => _value;
     }
 
-    private class AlternatingRandProvider : IRandProvider
+    internal class AlternatingRandProvider : IRandProvider
     {
         private readonly int _valueA;
         private readonly int _valueB;
@@ -38,7 +38,7 @@ public static class BattleTests
         }
     }
 
-    private static MilitaryForce CreateForce(double level, double efficiency, double remaining)
+    internal static MilitaryForce CreateForce(double level, double efficiency, double remaining)
     {
         return new MilitaryForce
         {
@@ -86,25 +86,6 @@ public static class BattleTests
         // Tie goes to defender (attacker loses)
         TestAssert.AreEqual(4.0, mfa.forceRemaining);
         TestAssert.AreEqual(5.0, mfb.forceRemaining);
-    }
-
-    [EmpireTest("Battle")]
-    public static void FightRound_HigherEfficiency_CompensatesLowerRoll()
-    {
-        // A rolls 6 * DampenEff(2.0), B rolls 8 * DampenEff(1.0)=8. DampenEff(2.0)=1+efficiencyDamping,
-        // so A only overcomes the lower roll while efficiencyDamping > 1/3 (default 0.5). Skip otherwise.
-        if (6.0 * (1.0 + FCSettings.efficiencyDamping) <= 8.0)
-            TestAssert.Skip($"efficiencyDamping={FCSettings.efficiencyDamping} too low for higher efficiency to overcome the lower roll");
-
-        var mfa = CreateForce(5, 2.0, 5); // 2x efficiency
-        var mfb = CreateForce(5, 1.0, 5);
-        // A rolls 6 * DampenEff(2.0)=1.5 = 9, B rolls 8 * DampenEff(1.0)=1.0 = 8 → A wins
-        var rand = new AlternatingRandProvider(6, 8);
-
-        SimulateBattleFc.FightRound(mfa, mfb, rand);
-
-        TestAssert.AreEqual(5.0, mfa.forceRemaining);
-        TestAssert.AreEqual(4.0, mfb.forceRemaining);
     }
 
     [EmpireTest("Battle")]
@@ -211,28 +192,5 @@ public static class BattleTests
         TestAssert.IsNotNull(result.rounds);
         TestAssert.AreEqual(result.totalRounds, result.rounds.Count,
             "totalRounds should always match rounds.Count");
-    }
-
-    [EmpireTest("Battle")]
-    public static void AutoResolve_DefenderAdvantage_BoostsDefender()
-    {
-        // With defender advantage > 1, the defender's forceRemaining is multiplied
-        // before combat. Verify that a marginally weaker defender can win thanks to it.
-        double advantage = FCSettings.defenderAdvantage;
-        if (advantage <= 1.0) TestAssert.Skip("defenderAdvantage is not > 1");
-
-        // Defender has fewer raw troops but advantage should compensate
-        var mfa = CreateForce(5, 1.0, 5);
-        var mfb = CreateForce(5, 1.0, 4); // slightly fewer
-        // Rolls alternate evenly — outcome depends on force remaining
-        var rand = new AlternatingRandProvider(10, 11);
-
-        BattleResult result = SimulateBattleFc.ResolveSynchronously(mfa, mfb, rand);
-
-        // After advantage, defender's 4 becomes Round(4 * advantage).
-        // With default 1.1, that's 4 → 4. So we mainly test it doesn't crash
-        // and the advantage is actually applied (defenderInitialForce > raw).
-        TestAssert.IsTrue(result.defenderInitialForce >= 4.0,
-            $"Defender initial force ({result.defenderInitialForce}) should be >= raw 4 after advantage");
     }
 }

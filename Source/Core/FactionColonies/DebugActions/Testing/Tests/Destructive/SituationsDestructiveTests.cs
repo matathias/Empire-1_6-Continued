@@ -3,8 +3,7 @@ namespace FactionColonies;
 /* DESTRUCTIVE: starts, advances, switches, and removes real situations on the live faction
    situation manager, and charges upkeep against real player silver. The upkeep cases spend or
    drain silver and are NOT restored (the unaffordable case drains down to upkeep-1). Backed by
-   the dormant EmpireTestSituation_* demo defs; each test skips cleanly if those defs are absent
-   or there is no active game. */
+   the dormant EmpireTestSituation_* demo defs, which the mod ships, so their absence fails the test. */
 public static class SituationsDestructiveTests
 {
     private const string FactionDefName = "EmpireTestSituation_Faction";
@@ -14,12 +13,12 @@ public static class SituationsDestructiveTests
     private static FCSituationDef RequireFactionDef()
     {
         FCSituationDef def = DefDatabase<FCSituationDef>.GetNamedSilentFail(FactionDefName);
-        if (def is null) TestAssert.Skip($"Demo def '{FactionDefName}' not found");
-        return def;
+        return TestAssert.NotNull(def, $"Shipped demo def '{FactionDefName}' is not loaded");
     }
 
     private static FCSituationApproachDef ApproachOf(FCSituationDef def, string defName)
-        => def.approaches.FirstOrDefault(a => a.defName == defName);
+        => TestAssert.NotNull(def.approaches.FirstOrDefault(a => a.defName == defName),
+            $"Shipped demo approach '{defName}' is missing from '{def.defName}'");
 
     [EmpireDestructiveTest("Destructive.Situations")]
     public static void StartSituation_AddsToManager()
@@ -75,7 +74,6 @@ public static class SituationsDestructiveTests
         FCSituationDef def = RequireFactionDef();
         FCSituationManager mgr = f.situationManager;
         FCSituationApproachDef crackdown = ApproachOf(def, CrackdownDefName);
-        if (crackdown is null) TestAssert.Skip($"Approach '{CrackdownDefName}' not found");
 
         FCSituation sit = mgr.StartSituation(def, null);
         TestAssert.IsNotNull(sit, "StartSituation should return an instance");
@@ -120,10 +118,8 @@ public static class SituationsDestructiveTests
         FCSituationDef def = RequireFactionDef();
         FCSituationManager mgr = f.situationManager;
         FCSituationApproachDef crackdown = ApproachOf(def, CrackdownDefName);
-        if (crackdown is null) TestAssert.Skip($"Approach '{CrackdownDefName}' not found");
-        if (crackdown.upkeepSilver <= 0) TestAssert.Skip("Crackdown approach has no upkeep to charge");
-        if (PaymentUtil.GetSilver() < crackdown.upkeepSilver)
-            TestAssert.Skip("Insufficient silver to test the affordable-upkeep path");
+        TestAssert.GreaterThan(crackdown.upkeepSilver, 0, $"Shipped demo approach '{CrackdownDefName}' should charge upkeep");
+        DestructiveTestUtil.EnsureSilver(crackdown.upkeepSilver);
 
         FCSituation sit = mgr.StartSituation(def, null);
         TestAssert.IsNotNull(sit, "StartSituation should return an instance");
@@ -149,8 +145,7 @@ public static class SituationsDestructiveTests
         FCSituationDef def = RequireFactionDef();
         FCSituationManager mgr = f.situationManager;
         FCSituationApproachDef crackdown = ApproachOf(def, CrackdownDefName);
-        if (crackdown is null) TestAssert.Skip($"Approach '{CrackdownDefName}' not found");
-        if (crackdown.upkeepSilver <= 0) TestAssert.Skip("Crackdown approach has no upkeep to charge");
+        TestAssert.GreaterThan(crackdown.upkeepSilver, 0, $"Shipped demo approach '{CrackdownDefName}' should charge upkeep");
 
         // Drain silver to just below the upkeep so the charge is guaranteed to fail. DESTRUCTIVE:
         // removes player silver down to (upkeep - 1) and does not restore it.
@@ -177,12 +172,11 @@ public static class SituationsDestructiveTests
     public static void SettlementScoped_LifecycleAndCleanup()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        FCSituationDef def = DefDatabase<FCSituationDef>.GetNamedSilentFail(SettlementDefName);
-        if (def is null) TestAssert.Skip($"Demo def '{SettlementDefName}' not found");
+        FCSituationDef def = TestAssert.NotNull(DefDatabase<FCSituationDef>.GetNamedSilentFail(SettlementDefName),
+            $"Shipped demo def '{SettlementDefName}' is not loaded");
         FCSituationManager mgr = f.situationManager;
 
-        WorldSettlementFC settlement = DestructiveTestUtil.CreateTransientSettlement();
-        if (settlement is null) TestAssert.Skip("Could not create a transient settlement");
+        WorldSettlementFC settlement = DestructiveTestUtil.RequireTransientSettlement();
 
         FCSituation sit = null;
         try

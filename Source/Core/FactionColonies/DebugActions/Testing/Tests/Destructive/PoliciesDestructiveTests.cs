@@ -4,10 +4,12 @@ namespace FactionColonies;
    tax-cycle edict-upkeep deduction (which can RevokeAllEdicts when upkeep goes unpaid). Not reverted. */
 public static class PoliciesDestructiveTests
 {
-    /// <summary>Enacts the first edict def that actually sticks (respecting locks, level, and
-    /// incompatibilities). Returns the enacted def, or null if none could be enacted.</summary>
+    /// <summary>Raises the faction to max level so every edict category is unlocked, then enacts
+    /// the first edict def that actually sticks (respecting incompatibilities and prerequisites).
+    /// Returns the enacted def, or null if none could be enacted.</summary>
     private static FCPolicyDef EnactFirstAvailableEdict()
     {
+        DestructiveTestUtil.EnsureFactionLevel(FactionFC.MaxFactionLevel);
         foreach (FCPolicyDef d in DefDatabase<FCPolicyDef>.AllDefsListForReading.Where(p => p.IsEdict))
         {
             if (FindFC.PolicyManager.HasEdict(d)) continue;
@@ -24,7 +26,7 @@ public static class PoliciesDestructiveTests
 
         FCPolicyDef enacted = null;
         TestAssert.DoesNotThrow(() => enacted = EnactFirstAvailableEdict(), "EnactEdict threw");
-        if (enacted is null) TestAssert.Skip("No edict could be enacted (all locked/incompatible)");
+        TestAssert.NotNull(enacted, "No edict could be enacted at max faction level (all incompatible or unmet prerequisites)");
 
         TestAssert.IsTrue(FindFC.PolicyManager.HasEdict(enacted), "Edict should be active after enacting");
         TestAssert.DoesNotThrow(() => FindFC.PolicyManager.RevokeEdict(enacted.category), "RevokeEdict threw");
@@ -38,6 +40,7 @@ public static class PoliciesDestructiveTests
         FactionFC f = DestructiveTestUtil.RequireFaction();
 
         // Best-effort: enact whatever edicts will stick across the available categories.
+        DestructiveTestUtil.EnsureFactionLevel(FactionFC.MaxFactionLevel);
         TestAssert.DoesNotThrow(() =>
         {
             foreach (FCPolicyDef d in DefDatabase<FCPolicyDef>.AllDefsListForReading.Where(p => p.IsEdict).Take(8))
@@ -56,11 +59,13 @@ public static class PoliciesDestructiveTests
     public static void AddTax_WithEdictUpkeep_NoCrash()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        if (FindFC.EmpireFaction is null) TestAssert.Skip("No Empire faction");
+        DestructiveTestUtil.EnsureEmpireFaction();
 
         // Enacting an edict means AddTax exercises the upkeep-deduction branch, which on a
         // shortfall calls RevokeAllEdicts. We assert the cycle survives, not the specific outcome.
-        TestAssert.DoesNotThrow(() => EnactFirstAvailableEdict(), "EnactEdict threw");
+        FCPolicyDef enacted = null;
+        TestAssert.DoesNotThrow(() => enacted = EnactFirstAvailableEdict(), "EnactEdict threw");
+        TestAssert.NotNull(enacted, "No edict could be enacted at max faction level (all incompatible or unmet prerequisites)");
         TestAssert.DoesNotThrow(() => FindFC.TaxLedger.AddTax(f), "AddTax (with edict upkeep) threw");
         TestAssert.DoesNotThrow(() => FindFC.PolicyManager.RebuildBehaviorCache(), "RebuildBehaviorCache threw");
         DestructiveTestUtil.AssertEmpireInvariants(f, "AddTax_WithEdictUpkeep_NoCrash");

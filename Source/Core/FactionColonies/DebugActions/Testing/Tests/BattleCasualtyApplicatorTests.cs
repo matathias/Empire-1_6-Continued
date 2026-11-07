@@ -3,10 +3,8 @@ namespace FactionColonies;
 /* Tests for BattleCasualtyApplicator's pure-math seams: ComputeCasualtyRate,
    ComputeDeathChance, ComputeVictimCount. Stat multipliers depend on FindFC.FactionComp
    and default to 1.0 when no contributing policy/building/event is active, so the math tests
-   below work whether or not a faction is loaded.
-
-   Game-state-dependent tests (Apply* orchestrator) require live mercs and are marked Skip
-   when the prerequisites aren't met. */
+   below work whether or not a faction is loaded. Death-chance tests that need a specific
+   threshold pin it in BattleCasualtyApplicatorDestructiveTests. */
 public static class BattleCasualtyApplicatorTests
 {
     // -*- ComputeCasualtyRate -*-
@@ -60,49 +58,12 @@ public static class BattleCasualtyApplicatorTests
     // -*- ComputeDeathChance -*-
 
     [EmpireTest("BattleCasualty")]
-    public static void ComputeDeathChance_RateBelowThreshold_ReturnsZero()
-    {
-        // Derive the sample from the (player-adjustable) threshold rather than hard-coding 0.5.
-        float threshold = FCSettings.autoResolveCasualtyDeathThreshold;
-        if (threshold <= 0f) TestAssert.Skip("threshold is at floor; no rate below it");
-        double belowRate = threshold / 2.0;
-        double chance = BattleCasualtyApplicator.ComputeDeathChance(null, belowRate, null);
-        TestAssert.AreEqual(0.0, chance);
-    }
-
-    [EmpireTest("BattleCasualty")]
     public static void ComputeDeathChance_RateAtThreshold_ReturnsZero()
     {
         // Strict `>` in ComputeDeathChance means equal-to-threshold yields 0.
         float threshold = FCSettings.autoResolveCasualtyDeathThreshold;
         double chance = BattleCasualtyApplicator.ComputeDeathChance(null, threshold, null);
         TestAssert.AreEqual(0.0, chance);
-    }
-
-    [EmpireTest("BattleCasualty")]
-    public static void ComputeDeathChance_RateFull_ReturnsMaxDeathFraction()
-    {
-        // rate = 1.0 → ramp produces exactly maxDeathFraction (assuming threshold < 1).
-        float threshold = FCSettings.autoResolveCasualtyDeathThreshold;
-        if (threshold >= 1f) TestAssert.Skip("threshold is at ceiling; ramp test would divide by zero");
-
-        float maxFrac = FCSettings.autoResolveCasualtyMaxDeathFraction;
-        double chance = BattleCasualtyApplicator.ComputeDeathChance(null, 1.0, null);
-        TestAssert.AreEqual(maxFrac, chance, tolerance: 0.001);
-    }
-
-    [EmpireTest("BattleCasualty")]
-    public static void ComputeDeathChance_RatePartiallyAboveThreshold_RampsLinearly()
-    {
-        // Midway between threshold and 1.0 → half of maxDeathFraction.
-        float threshold = FCSettings.autoResolveCasualtyDeathThreshold;
-        float maxFrac = FCSettings.autoResolveCasualtyMaxDeathFraction;
-        if (threshold >= 1f) TestAssert.Skip("threshold is at ceiling; ramp test would divide by zero");
-
-        double midpoint = (threshold + 1.0) / 2.0;
-        double expected = ((midpoint - threshold) / (1.0 - threshold)) * maxFrac;
-        double chance = BattleCasualtyApplicator.ComputeDeathChance(null, midpoint, null);
-        TestAssert.AreEqual(expected, chance, tolerance: 0.001);
     }
 
     [EmpireTest("BattleCasualty")]

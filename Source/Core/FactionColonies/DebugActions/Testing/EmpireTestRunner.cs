@@ -5,21 +5,25 @@ namespace FactionColonies;
 
 public static class EmpireTestRunner
 {
+    // The debug actions use AllowedGameStates.Invalid (no constraint) so they are listed both on
+    // the main menu and in a loaded game; the runner then skips tests whose TestGameState does
+    // not match. AllowedGameStates flags are ANDed, so Entry | Playing would never be allowed.
+
     /*-*-*- Standard (non-destructive) tier -*-*-*/
 
-    [DebugAction("Empire", "Run All Tests", allowedGameStates = AllowedGameStates.Playing)]
+    [DebugAction("Empire", "Run All Tests", allowedGameStates = AllowedGameStates.Invalid)]
     public static void RunAll() => RunTests(null, destructive: false);
 
-    [DebugAction("Empire", "Run Tests by Category", allowedGameStates = AllowedGameStates.Playing)]
+    [DebugAction("Empire", "Run Tests by Category", allowedGameStates = AllowedGameStates.Invalid)]
     public static void RunByCategory() => ShowCategoryMenu(destructive: false);
 
     /*-*-*- Destructive tier (save-first, mutates live state) -*-*-*/
 
-    [DebugAction("Empire", "Run Destructive Tests", allowedGameStates = AllowedGameStates.Playing)]
+    [DebugAction("Empire", "Run Destructive Tests", allowedGameStates = AllowedGameStates.Invalid)]
     public static void RunAllDestructive() =>
         ConfirmDestructive(() => RunTests(null, destructive: true));
 
-    [DebugAction("Empire", "Run Destructive Tests by Category", allowedGameStates = AllowedGameStates.Playing)]
+    [DebugAction("Empire", "Run Destructive Tests by Category", allowedGameStates = AllowedGameStates.Invalid)]
     public static void RunDestructiveByCategory() =>
         ConfirmDestructive(() => ShowCategoryMenu(destructive: true));
 
@@ -53,6 +57,27 @@ public static class EmpireTestRunner
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(options));
     }
 
+    /// <summary>
+    /// The skip reason for running a test in the current program state, or null if it may run.
+    /// A game-state mismatch is the only valid reason to skip a test; the submod runners call this
+    /// too so the rule is enforced in one place.
+    /// </summary>
+    public static string GameStateSkipReason(EmpireTestAttribute attr)
+    {
+        bool playing = Current.ProgramState == ProgramState.Playing;
+        return attr.GameState switch
+        {
+            TestGameState.Playing when !playing => "needs a loaded game, but no game is running",
+            TestGameState.MainMenu when playing => "needs the main menu, but a game is running",
+            _ => null,
+        };
+    }
+
+    /// <summary>False when the test is about a DLC or mod that is not active, so it is left out of the
+    /// suite entirely. The submod runners' discovery calls this too.</summary>
+    public static bool IsInSuite(EmpireTestAttribute attr) =>
+        attr.RequiresPackageId is null || ModsConfig.IsActive(attr.RequiresPackageId);
+
     public static void RunTests(string category, bool destructive = false)
     {
         var tests = DiscoverTests().Where(t => t.attr.Destructive == destructive);
@@ -67,17 +92,19 @@ public static class EmpireTestRunner
         foreach (var (method, attr) in list)
         {
             string testName = $"[{attr.Category}] {method.DeclaringType.Name}.{method.Name}";
+            string skipReason = GameStateSkipReason(attr);
+            if (skipReason is not null)
+            {
+                skipped++;
+                LogUtil.Message($"SKIP: {testName} -- {skipReason}");
+                skipDetails.Add($"  SKIP: {testName} -- {skipReason}");
+                continue;
+            }
             try
             {
                 method.Invoke(null, null);
                 passed++;
                 LogUtil.Message($"PASS: {testName}");
-            }
-            catch (TargetInvocationException tie) when (tie.InnerException is TestSkippedException tse)
-            {
-                skipped++;
-                LogUtil.Message($"SKIP: {testName} -- {tse.Message}");
-                skipDetails.Add($"  SKIP: {testName} -- {tse.Message}");
             }
             catch (TargetInvocationException tie) when (tie.InnerException is TestFailedException tfe)
             {
@@ -124,7 +151,7 @@ public static class EmpireTestRunner
             .GetTypes()
             .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.Static))
             .Select(m => (method: m, attr: m.GetCustomAttribute<EmpireTestAttribute>()))
-            .Where(pair => pair.attr is not null)
+            .Where(pair => pair.attr is not null && IsInSuite(pair.attr))
             .OrderBy(pair => pair.attr.Category)
             .ThenBy(pair => pair.method.Name)
             .ToList();

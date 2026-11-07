@@ -20,11 +20,6 @@ public static class ThreatScalingTests
         public double GetMultiplicativeContribution(FactionFC f) => throw new InvalidOperationException("test");
     }
 
-    private static FactionFC GetFaction()
-    {
-        return FindFC.FactionComp;
-    }
-
     // ============================
     // Tier 1: Registry (no game state needed)
     // ============================
@@ -201,191 +196,8 @@ public static class ThreatScalingTests
             "threatScalingMultiplier should not apply to settlements");
     }
 
-    // ============================
-    // Tier 3: ETL Computation (requires active faction)
-    // DORMANT — ComputeEmpireThreatLevel is no longer in the live raid path (removed in the
-    // 2026-06-14 threat-scaling simplification); retained for a future threat-scaling submod.
-    // The live raid path is covered by Tier 7 / Tier 8 below.
-    // ============================
-
-    [EmpireTest("ThreatScaling")]
-    public static void ETL_WithSettlements_IsAtLeastOne()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
-        TestAssert.IsTrue(etl >= 1.0,
-            $"ETL should be >= 1.0, got {etl}");
-    }
-
-    [EmpireTest("ThreatScaling")]
-    public static void ETL_WithSettlements_IsCappedByMaxThreatMultiplier()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
-        TestAssert.LessThanOrEqual(etl, FCSettings.maxThreatMultiplier,
-            $"ETL should be <= maxThreatMultiplier ({FCSettings.maxThreatMultiplier}), got {etl}");
-    }
-
-    [EmpireTest("ThreatScaling")]
-    public static void ETL_IsFiniteNumber()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
-        TestAssert.IsFalse(double.IsNaN(etl), "ETL should not be NaN");
-        TestAssert.IsFalse(double.IsInfinity(etl), "ETL should not be infinite");
-    }
-
-    [EmpireTest("ThreatScaling")]
-    public static void ETL_LoweredCap_ClampsProperly()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        float original = FCSettings.maxThreatMultiplier;
-        try
-        {
-            FCSettings.maxThreatMultiplier = 1.0f;
-            double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
-            TestAssert.AreEqual(1.0, etl,
-                message: $"ETL should be clamped to 1.0 when cap is 1.0, got {etl}");
-        }
-        finally
-        {
-            FCSettings.maxThreatMultiplier = original;
-        }
-    }
-
-    [EmpireTest("ThreatScaling")]
-    public static void ETL_RegistryAdditive_IncreasesETL()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        double baseline = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
-        var c = new TestContributor { Additive = 0.5 };
-        ThreatScalingRegistry.Register(c);
-        try
-        {
-            double boosted = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
-            TestAssert.IsTrue(boosted >= baseline,
-                $"ETL with additive contributor ({boosted}) should be >= baseline ({baseline})");
-        }
-        finally
-        {
-            ThreatScalingRegistry.Unregister(c);
-        }
-    }
-
-    [EmpireTest("ThreatScaling")]
-    public static void ETL_RegistryMultiplicative_IncreasesETL()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        double baseline = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
-        var c = new TestContributor { Multiplicative = 1.5 };
-        ThreatScalingRegistry.Register(c);
-        try
-        {
-            double boosted = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
-            TestAssert.IsTrue(boosted >= baseline,
-                $"ETL with multiplicative contributor ({boosted}) should be >= baseline ({baseline})");
-        }
-        finally
-        {
-            ThreatScalingRegistry.Unregister(c);
-        }
-    }
-
-    // ============================
-    // Tier 4: Handicap Cap (requires active faction)
-    // DORMANT — ComputeHandicapCap is no longer in the live raid path (incoming raids use the
-    // early-game raid cap, covered in Tier 8); retained for a future threat-scaling submod.
-    // ============================
-
-    [EmpireTest("ThreatScaling")]
-    public static void HandicapCap_IsAtLeastTwo()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        double cap = ThreatScalingUtil.ComputeHandicapCap(faction);
-        TestAssert.IsTrue(cap >= 2.0,
-            $"Handicap cap should be >= 2.0, got {cap}");
-    }
-
-    [EmpireTest("ThreatScaling")]
-    public static void HandicapCap_IsFiniteNumber()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        double cap = ThreatScalingUtil.ComputeHandicapCap(faction);
-        TestAssert.IsFalse(double.IsNaN(cap), "Handicap cap should not be NaN");
-        TestAssert.IsFalse(double.IsInfinity(cap), "Handicap cap should not be infinite");
-    }
-
-    // ============================
-    // Tier 5: Frequency Scaling (requires active faction)
-    // ============================
-
-    [EmpireTest("ThreatScaling")]
-    public static void AttackInterval_RespectsMinBound()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        int interval = ThreatScalingUtil.ComputeScaledAttackInterval(faction);
-        TestAssert.IsTrue(interval >= FCSettings.minMaxDaysTillMilitaryAction.min,
-            $"Interval ({interval}) should be >= min ({FCSettings.minMaxDaysTillMilitaryAction.min})");
-    }
-
-    [EmpireTest("ThreatScaling")]
-    public static void AttackInterval_RespectsMaxBound()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        int interval = ThreatScalingUtil.ComputeScaledAttackInterval(faction);
-        TestAssert.IsTrue(interval <= FCSettings.minMaxDaysTillMilitaryAction.max,
-            $"Interval ({interval}) should be <= max ({FCSettings.minMaxDaysTillMilitaryAction.max})");
-    }
-
-    [EmpireTest("ThreatScaling")]
-    public static void AttackInterval_RunMultiple_AllWithinBounds()
-    {
-        var faction = GetFaction();
-        if (faction is null || faction.settlements.Count == 0)
-            TestAssert.Skip("No faction/settlements");
-
-        int min = FCSettings.minMaxDaysTillMilitaryAction.min;
-        int max = FCSettings.minMaxDaysTillMilitaryAction.max;
-
-        for (int i = 0; i < 20; i++)
-        {
-            int interval = ThreatScalingUtil.ComputeScaledAttackInterval(faction);
-            TestAssert.IsTrue(interval >= min,
-                $"Iteration {i}: interval ({interval}) below min ({min})");
-            TestAssert.IsTrue(interval <= max,
-                $"Iteration {i}: interval ({interval}) above max ({max})");
-        }
-    }
+    // Tiers 3-5 (ETL, handicap cap, attack interval) need a settlement and live in
+    // ThreatScalingDestructiveTests.
 
     // ============================
     // Tier 6: Adaptation (requires storyteller)
@@ -394,9 +206,7 @@ public static class ThreatScalingTests
     [EmpireTest("ThreatScaling")]
     public static void Adaptation_ThreatFactor_IsFinite()
     {
-        var faction = GetFaction();
-        if (faction is null)
-            TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         double factor = faction.threatAdaptation.ThreatFactor;
         TestAssert.IsFalse(double.IsNaN(factor), "ThreatFactor should not be NaN");
@@ -406,9 +216,7 @@ public static class ThreatScalingTests
     [EmpireTest("ThreatScaling")]
     public static void Adaptation_ThreatFactor_IsPositive()
     {
-        var faction = GetFaction();
-        if (faction is null)
-            TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         double factor = faction.threatAdaptation.ThreatFactor;
         TestAssert.GreaterThan(factor, 0.0,
@@ -418,9 +226,7 @@ public static class ThreatScalingTests
     [EmpireTest("ThreatScaling")]
     public static void Adaptation_NotNull_OnFaction()
     {
-        var faction = GetFaction();
-        if (faction is null)
-            TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         TestAssert.IsNotNull(faction.threatAdaptation,
             "threatAdaptation field should never be null");
@@ -494,9 +300,7 @@ public static class ThreatScalingTests
     [EmpireTest("ThreatScaling")]
     public static void EarlyGameRaidCap_RespectsFloor()
     {
-        var faction = GetFaction();
-        if (faction is null)
-            TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         double cap = ThreatScalingUtil.ComputeEarlyGameRaidCap(faction);
         TestAssert.IsTrue(cap >= 2.0,
@@ -506,9 +310,7 @@ public static class ThreatScalingTests
     [EmpireTest("ThreatScaling")]
     public static void EarlyGameRaidCap_IsFiniteNumber()
     {
-        var faction = GetFaction();
-        if (faction is null)
-            TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         double cap = ThreatScalingUtil.ComputeEarlyGameRaidCap(faction);
         TestAssert.IsFalse(double.IsNaN(cap), "Early-game raid cap should not be NaN");
@@ -518,9 +320,7 @@ public static class ThreatScalingTests
     [EmpireTest("ThreatScaling")]
     public static void PickWeightedEnemyFaction_DoesNotThrow()
     {
-        var faction = GetFaction();
-        if (faction is null)
-            TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         TestAssert.DoesNotThrow(() => ThreatScalingUtil.PickWeightedEnemyFaction(faction));
     }
@@ -528,9 +328,7 @@ public static class ThreatScalingTests
     [EmpireTest("ThreatScaling")]
     public static void PickWeightedEnemyFaction_ReturnsHostileOrNull()
     {
-        var faction = GetFaction();
-        if (faction is null)
-            TestAssert.Skip("No faction");
+        var faction = DestructiveTestUtil.RequireFaction();
 
         Faction picked = ThreatScalingUtil.PickWeightedEnemyFaction(faction);
         bool anyEligible = Find.FactionManager.AllFactionsVisible
