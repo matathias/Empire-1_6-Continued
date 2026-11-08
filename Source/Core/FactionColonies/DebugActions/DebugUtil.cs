@@ -594,6 +594,37 @@ public static class DebugUtil
         LogUtil.MessageForce("Debug - Reset All Military Squads");
         MilitaryFC util = FindFC.Military;
 
+        // Resolve every op that still references a squad about to be removed, and drop its
+        // scheduled events, so no op or event is left pointing at a destroyed squad. Snapshot
+        // first: Resolve() unregisters the op, which mutates the manager's active list.
+        MilitaryOperationManager mgr = FindFC.MilitaryManager;
+        if (mgr is not null)
+        {
+            HashSet<MercenarySquadFC> removing = [.. util.mercenarySquads];
+            HashSet<int> eventIds = [];
+            int opsResolved = 0;
+            foreach (MilitaryOperation op in new List<MilitaryOperation>(mgr.active))
+            {
+                if (op is null) continue;
+                bool usesSquad = (op.aggressor?.squad is not null && removing.Contains(op.aggressor.squad))
+                                 || (op.defender?.squad is not null && removing.Contains(op.defender.squad));
+                if (!usesSquad) continue;
+                if (op.sourceEvents is not null)
+                {
+                    foreach (FCEvent e in op.sourceEvents)
+                    {
+                        if (e is not null) eventIds.Add(e.loadID);
+                    }
+                }
+                op.Resolve();
+                opsResolved++;
+            }
+            int eventsCleared = eventIds.Count > 0
+                ? FindFC.FactionComp?.RemoveEventsWhere(e => eventIds.Contains(e.loadID)) ?? 0
+                : 0;
+            LogUtil.MessageForce($"Debug - Resolved {opsResolved} military operation(s), removed {eventsCleared} event(s).");
+        }
+
         for (int i = util.mercenarySquads.Count - 1; i >= 0; i--)
         {
             MercenarySquadFC squad = util.mercenarySquads[i];
@@ -1642,9 +1673,15 @@ public static class DebugUtil
             if (def == FCPolicyDefOf.empty) continue;
             if (def.category != FCPolicyCategory.Core) continue;
             FCPolicyDef local = def;
-            string status = FindFC.PolicyManager.policies.Any(p => p.def == local) ? " [ACTIVE]" : "";
+            bool active = FindFC.PolicyManager.policies.Any(p => p.def == local);
+            string status = active ? " [ACTIVE]" : "";
             list.Add(new DebugMenuOption($"{local.defName}{status}", DebugMenuOptionMode.Action, () =>
             {
+                if (active)
+                {
+                    LogUtil.MessageForce($"Debug - Policy {local.defName} is already active; not enacting it again.");
+                    return;
+                }
                 var policy = new FCPolicy(local);
                 FindFC.PolicyManager.policies.Add(policy);
                 FindFC.PolicyManager.RebuildBehaviorCache();

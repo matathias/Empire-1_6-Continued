@@ -169,30 +169,34 @@ public class CreateColonyWindowFc : Window
 
     private void GetTileData()
     {
+        /* oldTileSelected holds the raw selection; currentTileSelected may be remapped by the
+         * settlement type below (e.g. surface -> orbit), so the two are compared separately. */
         PlanetTile selectedTile = Find.WorldSelector.SelectedTile;
-        if (selectedTile.Valid && selectedTile != currentTileSelected)
+        PlanetTile rawTile = oldTileSelected;
+        if (selectedTile.Valid && selectedTile != oldTileSelected)
         {
-            currentTileSelected = selectedTile;
+            rawTile = selectedTile;
         }
         else /* If a WorldObject is selected, then get the tile underneath it. */
         {
             WorldObject obj = Find.WorldSelector.SingleSelectedObject;
             if (obj is not null && obj.Tile.Valid)
             {
-                currentTileSelected = obj.Tile;
+                rawTile = obj.Tile;
             }
         }
-        if (currentTileSelected == PlanetTile.Invalid)
+        if (!rawTile.Valid)
         {
             return;
         }
         /* No need to keep redoing all of the below calculations if the selected tile or settlement type hasn't changed */
-        if (currentTileSelected == oldTileSelected &&
+        if (rawTile == oldTileSelected &&
             currentSettlementType == oldSettlementType)
         {
             return;
         }
-        oldTileSelected = currentTileSelected;
+        oldTileSelected = rawTile;
+        currentTileSelected = rawTile;
         oldSettlementType = currentSettlementType;
         LogUtil.Message($"Called GetTileData on tile {selectedTile}. Valid: {selectedTile.Valid} layer: {selectedTile.Layer} tileid: {selectedTile.tileId}");
 
@@ -413,30 +417,34 @@ public class CreateColonyWindowFc : Window
                     costToPay,
                     () =>
                     {
-                        DoFoundSettlement(costToPay);
-                        Close();
+                        if (DoFoundSettlement(costToPay)) Close();
                     },
                     dontShow => FCSettings.showSettleConfirm = !dontShow));
             }
-            else
+            else if (DoFoundSettlement(costToPay))
             {
-                DoFoundSettlement(costToPay);
+                Close();
             }
         }
         return button.yMax;
     }
 
-    private void DoFoundSettlement(int costToPay)
+    /// <summary>Pays for and queues the founding event. Returns false when the tile, silver or
+    /// founding-validator checks no longer pass.</summary>
+    private bool DoFoundSettlement(int costToPay)
     {
         LogUtil.Message($"DrawCreateSettlementButton: creating settleNewColony event");
 
-        // Atomic affordability + payment. CanCreateSettlementHere validated this on the button
-        // click; re-checking here guards the confirm-dialog path, where the balance could shift
-        // between opening the confirmation and accepting it.
+        // CanCreateSettlementHere validated this on the button click; re-checking here guards the
+        // confirm-dialog path, where silver or founding-validator resources could shift between
+        // opening the confirmation and accepting it.
+        if (!CanCreateSettlementHere()) return false;
+
+        // Atomic affordability + payment.
         if (!PaymentUtil.TryPaySilver(costToPay, PaymentUtil.Reason_SettlementCreation))
         {
             Messages.Message("FCNotEnoughSilverToSettle".Translate(), MessageTypeDefOf.RejectInput);
-            return;
+            return false;
         }
         FoundingValidatorRegistry.NotifyFounded(currentTileSelected, currentSettlementType);
 
@@ -465,6 +473,7 @@ public class CreateColonyWindowFc : Window
                          (evt.timeTillTrigger - Find.TickManager.TicksGame).ToTimeString() + "!", MessageTypeDefOf.PositiveEvent);
 
         DoPostEventCreationTraitThings();
+        return true;
     }
 
     /// <summary>

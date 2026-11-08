@@ -16,7 +16,8 @@ public class MilitaryFireSupport : IExposable, ILoadReferenceable
     public IntVec3 sourceLocation;
     public List<ThingDef> projectiles;
 
-    public bool ShouldBeOver => ticksTillEnd <= Find.TickManager.TicksGame;
+    // A strike also ends once its target map is gone (battle map removed, or a null map ref after load).
+    public bool ShouldBeOver => ticksTillEnd <= Find.TickManager.TicksGame || map is null || !Find.Maps.Contains(map);
 
     public MilitaryFireSupport()
     {

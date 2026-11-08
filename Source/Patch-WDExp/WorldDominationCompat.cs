@@ -66,8 +66,8 @@ public static class Patch_ExecuteTravelerRaid
         if (empireSettlement is null) return true;
         if (traveler.Faction is null) return true;
 
-        // WD's traveler strength dictates the military level
-        double wdMilitaryLevel = traveler.travelerStrength / WDStrengthSettlementModifier.SCALE_FACTOR;
+        // WD's traveler strength dictates the military level (floored at Empire's minimum of 1)
+        double wdMilitaryLevel = Math.Max(1.0, traveler.travelerStrength / WDStrengthSettlementModifier.SCALE_FACTOR);
         MilitaryForce attackingForce = MilitaryOperationsUtil.BuildAttackForce(traveler.Faction, wdMilitaryLevel);
 
         // Route through Empire's defense system (1-day warning + auto-battle/manual)
@@ -128,7 +128,8 @@ public class WDStrengthSettlementModifier : SettlementPowerModifierBase
         float totalDefense = comp.GetTotalLocalDefensePower();
         if (totalDefense <= 0f) return false;
 
-        level = totalDefense / SCALE_FACTOR;
+        // Level 1 is the floor of Empire's force scale (battles never roll below it).
+        level = Math.Max(1.0, totalDefense / SCALE_FACTOR);
         return true;
     }
 }
@@ -208,14 +209,19 @@ public static class Patch_GetWorldPowerStats
 // non-player settlements. PColony is not IsPlayer, so Empire
 // settlements would be destroyed and replaced with ruins/outpost
 // opportunities. This prefix-on-the-prefix skips WD's logic
-// for WorldSettlementFC, letting Empire's own base patch handle it.
+// for WorldSettlementFC. WD's method is a bool prefix on
+// CheckDefeated, so skipping it means choosing its return value:
+// false, which also skips vanilla CheckDefeated (vanilla would turn
+// a WorldSettlementFC into a DestroyedSettlement and crash).
 // ================================================================
 [HarmonyPatch(typeof(Patch_InterceptDefeat), "Prefix")]
 public static class Fix_WD_InterceptDefeat
 {
     [HarmonyPriority(Priority.First)]
-    private static bool Prefix(Settlement factionBase)
+    private static bool Prefix(Settlement factionBase, ref bool __result)
     {
-        return factionBase is not WorldSettlementFC;
+        if (factionBase is not WorldSettlementFC) return true;
+        __result = false;
+        return false;
     }
 }

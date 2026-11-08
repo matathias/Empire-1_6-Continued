@@ -316,14 +316,31 @@ public static class DeliveryLogistics
 
         PawnsArrivalModeWorker_EdgeWalkIn pawnsArrivalModeWorker = new();
         IncidentParms parms = StorytellerUtility.DefaultParmsNow(IncidentCategoryDefOf.Misc, playerHomeMap);
-        parms.spawnRotation = Rot4.FromAngleFlat((((Map)parms.target).Center - parms.spawnCenter).AngleFlat);
-
-        RCellFinder.TryFindRandomPawnEntryCell(out parms.spawnCenter, playerHomeMap, CellFinder.EdgeRoadChance_Friendly);
+        if (!RCellFinder.TryFindRandomPawnEntryCell(out parms.spawnCenter, playerHomeMap, CellFinder.EdgeRoadChance_Friendly))
+        {
+            // No edge cell to walk in from: hand the carried goods back and place them directly.
+            LogUtil.Warning("No entry cell found for the delivery caravan. All items delivered via direct placement.");
+            foreach (Pawn pawn in pawns)
+            {
+                ThingOwner carried = pawn.carryTracker?.innerContainer;
+                if (carried is not null)
+                {
+                    foreach (Thing thing in carried.ToList())
+                    {
+                        carried.Remove(thing);
+                        PaymentUtil.PlaceThing(thing);
+                    }
+                }
+                Find.WorldPawns.PassToWorld(pawn, PawnDiscardDecideMode.Discard);
+            }
+            return;
+        }
+        parms.spawnRotation = Rot4.FromAngleFlat((playerHomeMap.Center - parms.spawnCenter).AngleFlat);
 
         pawnsArrivalModeWorker.Arrive(pawns, parms);
 
         // Create the lord and ensure all pawns (including animals) are properly assigned
-        var lord = LordMaker.MakeNewLord(FCPawnGenerator.WorkerOrMilitaryRequest().Faction, new LordJob_DeliverSupplies(parms.spawnCenter), playerHomeMap, pawns);
+        var lord = LordMaker.MakeNewLord(FindFC.EmpireFaction, new LordJob_DeliverSupplies(parms.spawnCenter), playerHomeMap, pawns);
 
         // Ensure all guard animals are properly assigned to the lord and will follow the caravan
         foreach (var guard in securityGuards)
@@ -378,7 +395,7 @@ public static class DeliveryLogistics
             if (intVec3.IsValid && intVec3.InBounds(map))
             {
                 if (CellFinder.TryFindRandomReachableNearbyCell(intVec3, map, i, traverseParms,
-                    cell => cell.IsValid && cell.InBounds(map) && map.thingGrid.ThingsAt(cell) is not null,
+                    cell => cell.IsValid && cell.InBounds(map) && cell.Standable(map),
                     null, out IntVec3 foundCell))
                 {
                     if (foundCell.IsValid)

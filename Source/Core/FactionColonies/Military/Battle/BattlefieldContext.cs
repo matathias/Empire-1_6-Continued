@@ -1157,8 +1157,9 @@ public partial class BattlefieldContext : IExposable
                 foreach (var sub in squad.AllSubPawns())
                 {
                     if (sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
-                    if (sub.handler?.pawn is not null)
-                        riders.Add(sub.handler.pawn, sub.pawn);
+                    // Skip a mount whose rider stays home (downed riders are not spawnable).
+                    if (sub.handler?.pawn is not null && friendlies.Contains(sub.handler.pawn))
+                        riders.TryAdd(sub.handler.pawn, sub.pawn);
                 }
             }
             else
@@ -1228,17 +1229,23 @@ public partial class BattlefieldContext : IExposable
                     rider = pair.Key;
                 }
 
-                if (rider is not null)
+                if (rider is not null && rider.Spawned && rider.Map == map)
                 {
-                    // A mount: spawn it next to its rider so GU2 can mount them together.
-                    CellFinder.TryFindRandomCellInsideWith(new CellRect((int)rider.DrawPos.x - 5,
-                            (int)rider.DrawPos.z - 5, 10, 10),
+                    // A mount: spawn it next to its rider so GU2 can mount them together, or
+                    // anywhere in the normal zone when no cell near the rider qualifies.
+                    if (!CellFinder.TryFindRandomCellInsideWith(new CellRect(rider.Position.x - 5,
+                            rider.Position.z - 5, 10, 10).ClipInsideMap(map),
                         testing => testing.Standable(map) && map.reachability.CanReachMapEdge(testing,
-                            TraverseParms.For(TraverseMode.PassDoors)), out loc);
+                            TraverseParms.For(TraverseMode.PassDoors)), out loc))
+                    {
+                        tryFindLoc(out loc, friendly);
+                    }
                 }
                 else
                 {
-                    // A companion animal (not a mount): spawns standalone and fights on foot.
+                    // A companion animal, or a mount whose rider failed to spawn: spawns
+                    // standalone and fights on foot.
+                    if (rider is not null) riders.Remove(rider);
                     tryFindLoc(out loc, friendly);
                 }
             }
@@ -1801,7 +1808,7 @@ public partial class BattlefieldContext : IExposable
     /// the one whose nearest enemy is farthest away (max-min distance). Falls back to plain
     /// <see cref="FindNearEdgeCell"/> when there are no spawned enemies (e.g. all attackers
     /// still in drop pods) or no valid candidate is sampled.</summary>
-    private IntVec3 FindEdgeCellAwayFromEnemies(Map map)
+    public IntVec3 FindEdgeCellAwayFromEnemies(Map map)
     {
         // Only spawned pawns have a meaningful Position; pod-bound attackers (!Spawned,
         // ParentHolder is object) have no on-map position yet, so exclude them. If every

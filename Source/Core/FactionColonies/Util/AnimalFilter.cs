@@ -129,5 +129,12 @@ public class AnimalFilter : IExposable
     public void ExposeData()
     {
         Scribe_Collections.Look(ref allowedAnimals, "allowedAnimals", LookMode.Def);
+        if (Scribe.mode == LoadSaveMode.PostLoadInit)
+        {
+            // A missing node loads as null; defs from a removed mod load as a null entry.
+            allowedAnimals ??= [];
+            allowedAnimals.Remove(null);
+            InvalidateCache();
+        }
     }
 }

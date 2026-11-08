@@ -50,6 +50,10 @@ public class FCWindow_Pay_Silver : Window
 
     }
 
+    /// <summary>Most silver that still has an effect; the slider stops here so the player
+    /// can't pay for more than the effect can absorb.</summary>
+    public virtual int MaxUsefulSilver => int.MaxValue;
+
     public override void DoWindowContents(Rect inRect)
     {
         //grab before anchor/font
@@ -64,7 +68,9 @@ public class FCWindow_Pay_Silver : Window
         UIUtil.ClampedLabel(label_Upper, "FCSendingXSilver".Translate(selectedSilver));
 
 
-        selectedSilver = (int)Widgets.HorizontalSlider(slider, selectedSilver, 0, silverCount, roundTo: 1);
+        int sliderMax = Math.Max(0, Math.Min(silverCount, MaxUsefulSilver));
+        selectedSilver = Math.Min(selectedSilver, sliderMax);
+        selectedSilver = (int)Widgets.HorizontalSlider(slider, selectedSilver, 0, sliderMax, roundTo: 1);
 
         UIUtil.ClampedLabel(label_Lower, stringEffect.Translate(ReturnValue(selectedSilver)));
 

@@ -134,7 +134,7 @@ public static class MilitaryDeploymentUtil
 
         if (squad is null)
         {
-            LogUtil.Warning($"Attempted to call in allied forces for settlement {settlement.Name} with NULL MilitaryComp. Skipping");
+            LogUtil.Warning($"Attempted to call in allied forces for settlement {settlement?.Name} with no squad. Skipping");
             return;
         }
 
@@ -161,6 +161,16 @@ public static class MilitaryDeploymentUtil
             if (dropPosition.CloseToEdge(curMap, 10))
             {
                 Messages.Message("FCSelectedPosTooCloseToEdge".Translate(), MessageTypeDefOf.RejectInput);
+                return;
+            }
+
+            // Morale can drop while the placement tool is open. The deploy op checks the squad's own
+            // settlement, so check it here too, before any silver is taken or a bill is created.
+            WorldSettlementFC lockSettlement = squad.settlement ?? settlement;
+            if (lockSettlement is not null && lockSettlement.TryGetSquadDeploymentBlock(out string clickLockReason))
+            {
+                Messages.Message(clickLockReason, MessageTypeDefOf.RejectInput);
+                DebugTools.curTool = null;
                 return;
             }
 
@@ -231,6 +241,8 @@ public static class MilitaryDeploymentUtil
                     List<ThingDef> projectiles = new(support.projectiles);
                     MilitaryFireSupport fireSupport = new("fireSupport", map, target.Cell,
                         projectiles.Count() * 15, 600, support.accuracy, projectiles, settlement.Tile);
+                    // Active strikes are deep-saved as load-referenceables, so each needs its own ID.
+                    fireSupport.SetLoadID();
                     FindFC.Military.fireSupport.Add(fireSupport);
 
                     Messages.Message("FCFireSupportNameWillBeFiredOnPosition".Translate(support.name), MessageTypeDefOf.ThreatSmall);

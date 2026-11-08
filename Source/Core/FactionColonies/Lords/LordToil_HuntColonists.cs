@@ -15,7 +15,8 @@ public class LordToil_HuntColonists : LordToil
         LessonAutoActivator.TeachOpportunity(ConceptDefOf.Drafting, OpportunityType.Critical);
         // One-time on assault entry: wake the defense lord and announce. Init runs once per
         // toil entry (not on load or duty refresh), so this can't re-broadcast per refresh.
-        Find.SignalManager.SendSignal(new Signal("startAssault"));
+        if (lord?.Map is not null)
+            Find.SignalManager.SendSignal(new Signal(LordJob_DefendColony.AssaultSignalTag(lord.Map)));
         Messages.Message(new Message("FCAssaultBeginning".Translate(), MessageTypeDefOf.ThreatSmall));
     }
 

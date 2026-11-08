@@ -67,15 +67,19 @@ public static class BuildFactionMap_Patch
 /// <summary>
 /// Prefix on FTV's InterceptBaseDestroyedLetterPatch.Prefix.
 /// Prevents FTV from attempting vassalage processing on Empire settlements.
+/// FTV's method is itself a bool prefix on SettlementDefeatUtility.CheckDefeated, so skipping
+/// it means choosing its return value: false, which also skips vanilla CheckDefeated (vanilla
+/// would turn a WorldSettlementFC into a DestroyedSettlement and crash).
 /// </summary>
 [HarmonyPatch(typeof(InterceptBaseDestroyedLetterPatch))]
 [HarmonyPatch("Prefix")]
 public static class InterceptPrefix_Guard
 {
-    private static bool Prefix(Settlement factionBase)
+    private static bool Prefix(Settlement factionBase, ref bool __result)
     {
         if (factionBase is WorldSettlementFC)
         {
+            __result = false;
             return false;
         }
         return true;

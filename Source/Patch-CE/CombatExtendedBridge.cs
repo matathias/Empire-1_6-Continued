@@ -40,6 +40,7 @@ public class CombatExtendedBridge : ICombatExtendedBridge
 
     public bool LaunchFireSupportProjectile(ThingDef ammoDef, Map map, IntVec3 source, IntVec3 target)
     {
+        ProjectileCE projectile = null;
         try
         {
             ThingDef projectileDef = ResolveAmmoProjectile(ammoDef);
@@ -65,12 +66,17 @@ public class CombatExtendedBridge : ICombatExtendedBridge
             float shotRotation = ceProps.TrajectoryWorker.ShotRotation(ceProps, source3D, target3D);
             float shotAngle = ceProps.TrajectoryWorker.ShotAngle(ceProps, source3D, target3D, shotSpeed);
 
-            var projectile = (ProjectileCE)GenSpawn.Spawn(projectileDef, source, map);
+            // CE's Launch dereferences the launcher (an unspawned world pawn is fine), so resolve one
+            // before anything is spawned.
+            Thing launcher = ResolveLauncher();
+            if (launcher is null) return false;
+
+            projectile = (ProjectileCE)GenSpawn.Spawn(projectileDef, source, map);
             if (projectile is null) return false;
             projectile.canTargetSelf = false;
 
             projectile.Launch(
-FindFC.EmpireFaction?.leader,
+                launcher,
                 new Vector2(source.x, source.z),
                 shotAngle,
                 shotRotation,
@@ -87,8 +93,23 @@ FindFC.EmpireFaction?.leader,
         catch (Exception e)
         {
             LogUtil.Error($"CE fire support launch failed: {e}");
+            // A half-launched projectile has no velocity or destination; don't leave it on the map.
+            if (projectile is not null && projectile.Spawned) projectile.Destroy();
             return false;
         }
+    }
+
+    /// <summary>The Empire leader, or any living Empire pawn if the faction has no leader right now.</summary>
+    private static Thing ResolveLauncher()
+    {
+        Faction empire = FindFC.EmpireFaction;
+        if (empire is null) return null;
+        if (empire.leader is not null) return empire.leader;
+        foreach (Pawn pawn in Find.WorldPawns.AllPawnsAlive)
+        {
+            if (pawn.Faction == empire) return pawn;
+        }
+        return null;
     }
 
     public bool IsIndirectFireAmmo(ThingDef ammoDef)

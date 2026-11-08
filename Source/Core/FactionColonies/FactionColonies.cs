@@ -943,6 +943,19 @@ public class FCSettings : ModSettings
     string workerCost_buffer;
     string settlementMaxLevel_buffer;
 
+    // Value each text buffer was last synced from. A buffer is only rebuilt when its value was
+    // changed from outside its field (preset, reset button, clamp), so a field being edited can
+    // hold an empty or half-typed entry.
+    int laborerCostPerDay_synced, silverPerResource_synced, timeBetweenTaxes_synced,
+        productionTitheMod_synced, workerCost_synced, settlementMaxLevel_synced;
+
+    private static void SyncIntBuffer(int value, ref int synced, ref string buffer)
+    {
+        if (buffer is not null && value == synced) return;
+        buffer = value.ToString();
+        synced = value;
+    }
+
     private static int timeBetweenTaxes_lastSeen = DEFAULT_TAX_INTERVAL_DAYS;
 
     private Vector2 scrollVectorGeneral = new();
@@ -1054,12 +1067,13 @@ public class FCSettings : ModSettings
 
     private void DoGeneralTab(Rect rect)
     {
-        silverPerResource_buffer = silverPerResource.ToString();
-        timeBetweenTaxes_buffer = timeBetweenTaxes_days.ToString();
+        SyncIntBuffer(laborerCostPerDay, ref laborerCostPerDay_synced, ref laborerCostPerDay_buffer);
+        SyncIntBuffer(silverPerResource, ref silverPerResource_synced, ref silverPerResource_buffer);
+        SyncIntBuffer(timeBetweenTaxes_days, ref timeBetweenTaxes_synced, ref timeBetweenTaxes_buffer);
         timeBetweenTaxes_lastSeen = timeBetweenTaxes_days;
-        productionTitheMod_buffer = productionTitheMod.ToString();
-        workerCost_buffer = workerCost.ToString();
-        settlementMaxLevel_buffer = settlementMaxLevel.ToString();
+        SyncIntBuffer(productionTitheMod, ref productionTitheMod_synced, ref productionTitheMod_buffer);
+        SyncIntBuffer(workerCost, ref workerCost_synced, ref workerCost_buffer);
+        SyncIntBuffer(settlementMaxLevel, ref settlementMaxLevel_synced, ref settlementMaxLevel_buffer);
 
         minMaxDaysTillMilitaryAction = new IntRange(minDaysTillMilitaryAction, maxDaysTillMilitaryAction);
         minMaxDaysTillRandomEvent = new IntRange(minDaysTillRandomEvent, maxDaysTillRandomEvent);
@@ -1076,7 +1090,8 @@ public class FCSettings : ModSettings
 
         // Worker-production bonuses feed the cached production base/mult, so a mid-game change here
         // must invalidate resource caches (unlike the live-read economy settings). Track the values
-        // across the difficulty section and invalidate below only if they actually changed.
+        // across the whole tab (difficulty presets and the reset buttons at the bottom) and
+        // invalidate at the end only if they actually changed.
         float prevWorkerProdBaseBonus = workerProductionBaseBonus;
         float prevWorkerProdMultBonus = workerProductionMultBonus;
 
@@ -1154,11 +1169,6 @@ public class FCSettings : ModSettings
             ls.Label($"FCSettingWorkerCost".Translate() + ": " + workerCost);
             ls.Label("FCSettingWorkerProductionBaseBonus".Translate() + ": " + workerProductionBaseBonus.ToString("0.0"));
             ls.Label("FCSettingWorkerProductionMultBonus".Translate() + ": " + workerProductionMultBonus.ToString("0.00") + "x");
-        }
-
-        if (prevWorkerProdBaseBonus != workerProductionBaseBonus || prevWorkerProdMultBonus != workerProductionMultBonus)
-        {
-            FindFC.FactionComp?.InvalidateFactionStatCache();
         }
 
         ls.Label("FCSettingMaxSettlementLevel".Translate());
@@ -1251,6 +1261,11 @@ public class FCSettings : ModSettings
         if (ls.ButtonText("FCSettingResetButton".Translate()))
         {
             ResetAllToDefaults();
+        }
+
+        if (prevWorkerProdBaseBonus != workerProductionBaseBonus || prevWorkerProdMultBonus != workerProductionMultBonus)
+        {
+            FindFC.FactionComp?.InvalidateFactionStatCache();
         }
 
         contentHeightGeneral = ls.CurHeight + 12f;

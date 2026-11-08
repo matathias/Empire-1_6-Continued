@@ -58,7 +58,7 @@ static class MapCellAndTileExtensions
     /// </summary>
     /// <param name="tile"></param>
     /// <returns>true if the tile >= 0, false otherwise</returns>
-    public static bool IsValidTile(this PlanetTile tile) => tile != PlanetTile.Invalid;
+    public static bool IsValidTile(this PlanetTile tile) => tile.Valid;
 
     /// <summary>
     /// Checks if all <paramref name="tiles"/> in a touple are valid tiles

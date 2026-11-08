@@ -43,8 +43,34 @@ public static class PsycastSystemRegistry
     /// The highest-priority active provider, or null when no psycast system is available
     /// (e.g. no Royalty and no VPE). The Psycasts tab keys its UI off this.
     /// </summary>
-    public static IPsycastSystemProvider Active =>
-        _providers.Where(p => p.IsActive).OrderByDescending(p => p.Priority).FirstOrDefault();
+    public static IPsycastSystemProvider Active
+    {
+        get
+        {
+            // A provider that throws is logged once and skipped; ties keep registration order.
+            IPsycastSystemProvider best = null;
+            int bestPriority = int.MinValue;
+            foreach (IPsycastSystemProvider provider in _providers)
+            {
+                try
+                {
+                    if (!provider.IsActive) continue;
+                    int priority = provider.Priority;
+                    if (best is null || priority > bestPriority)
+                    {
+                        best = provider;
+                        bestPriority = priority;
+                    }
+                }
+                catch (Exception e)
+                {
+                    LogUtil.ErrorOnce($"IPsycastSystemProvider {provider.GetType().Name} threw in Active: {e}",
+                        provider.GetType().GetHashCode() ^ 0x5C7A11);
+                }
+            }
+            return best;
+        }
+    }
 
     /// <summary>
     /// Resolves the provider that produced a saved psycast (by its persisted <c>systemKey</c>),
@@ -54,6 +80,6 @@ public static class PsycastSystemRegistry
     public static IPsycastSystemProvider ByKey(string key)
     {
         if (string.IsNullOrEmpty(key)) return null;
-        return _providers.FirstOrDefault(p => p.Key == key);
+        return RegistryDispatch.First(_providers, p => p.Key == key, nameof(IPsycastSystemProvider.Key));
     }
 }

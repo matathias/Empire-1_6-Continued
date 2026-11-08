@@ -38,6 +38,15 @@ public static class Patch_CaravanDefend_Vehicle
         WorldObjectComp_SettlementMilitary comp,
         VehicleCaravan vehicleCaravan)
     {
+        // No battle map (e.g. an auto-resolved battle): there is nowhere to spawn the vehicles, and
+        // destroying a VehicleCaravan destroys every vehicle still inside it. Leave the caravan intact.
+        Map map = comp.Map;
+        if (map is null)
+        {
+            LogUtil.Warning($"VF compat: no map at {comp.WorldSettlement?.Name ?? "null"}; vehicle caravan {vehicleCaravan.Name} did not join the defense.");
+            return;
+        }
+
         // Snapshot vehicles and dismounted pawns from the caravan.
         List<VehiclePawn> vehicles = vehicleCaravan.VehiclesListForReading.ListFullCopy();
         List<Pawn> dismounted = vehicleCaravan.DismountedPawnsListForReading.ListFullCopy();
@@ -63,8 +72,11 @@ public static class Patch_CaravanDefend_Vehicle
         // Track vehicles in defenders, but skip the lord.
         comp.AddToDefenceFromList(vehiclePawns, vehicleCaravan.Tile, assignToLord: false);
 
-        Map map = comp.Map;
-        IntVec3 enterCell = BattlefieldContext.FindNearEdgeCell(map);
+        // Enter from the map edge farthest from the attackers, as non-vehicle caravans do.
+        BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(map.Tile);
+        IntVec3 enterCell = bf is not null
+            ? bf.FindEdgeCellAwayFromEnemies(map)
+            : BattlefieldContext.FindNearEdgeCell(map);
 
         // Spawn vehicles BEFORE destroying the caravan. VehicleCaravan.Destroy()
         // explicitly calls vehicle.Destroy() on every VehiclePawn still inside,

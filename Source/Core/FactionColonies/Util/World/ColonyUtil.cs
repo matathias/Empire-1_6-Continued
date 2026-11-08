@@ -167,7 +167,10 @@ public static class ColonyUtil
         faction.roadBuilder.FlagUpdateRoadQueues();
         Messages.Message("FCSettlementRemoved".Translate(settlement.Name), MessageTypeDefOf.NegativeEvent);
 
-        Find.WorldObjects.Remove(Find.World.worldObjects.WorldObjectOfDefAt(DefDatabase<WorldObjectDef>.GetNamed(settlement.def.defName), settlement.Tile));
+        // A full Destroy (not just unlisting) marks the object destroyed, runs comp PostDestroy
+        // and sends quest "Destroyed" signals, so anything still holding a reference sees it gone.
+        // destroyFlag is set above, so WorldSettlementFC.Destroy skips its combat-loss handling.
+        if (!settlement.Destroyed) settlement.Destroy();
 
         // Cancel any military operation involving this settlement. Walk the manager's ops
         // by participant rather than scanning FCEvents, since the op is the canonical owner
@@ -235,7 +238,7 @@ public static class ColonyUtil
                 if (evt.source == settlement.Tile) toRemove.Add(evt);
             }
 
-            if (evt.def.isRandomEvent && evt.settlementTraitLocations.Count > 0)
+            if (evt.def.isRandomEvent && evt.settlementTraitLocations?.Count > 0)
             {
                 if (evt.settlementTraitLocations.Contains(settlement))
                 {

@@ -25,19 +25,8 @@ public class FCPolicyBehavior_ScorchedEarth : FCPolicyBehavior
 
         if (damaged.Count == 0) return;
 
-        // Sort so dependent buildings are demolished first (same logic as LoseBattle)
-        damaged.Sort((a, b) =>
-        {
-            BuildingFCDef defA = settlement.BuildingsComp.GetBuildingInSlot(a);
-            BuildingFCDef defB = settlement.BuildingsComp.GetBuildingInSlot(b);
-            bool aRequiresB = FactionCache.SatisfiesAnyRequirement(defB, defA.requiredBuildings);
-            bool bRequiresA = FactionCache.SatisfiesAnyRequirement(defA, defB.requiredBuildings);
-            if (aRequiresB) return -1;
-            if (bRequiresA) return 1;
-            int aReqCount = defA.requiredBuildings?.Count ?? 0;
-            int bReqCount = defB.requiredBuildings?.Count ?? 0;
-            return bReqCount.CompareTo(aReqCount);
-        });
+        // Demolish dependent buildings before the buildings they require (same order as LoseBattle)
+        damaged = BuildingDemolitionUtil.DependentsFirst(settlement.BuildingsComp, damaged);
 
         string msg = "FCScorchedEarthCollateralHeader".Translate(settlement.Name);
         foreach (int k in damaged)

@@ -129,15 +129,15 @@ public static class LoadoutUpgradeUtil
         return true;
     }
 
-    /* Per-group work mode equality. Trailing entries that resolve to the default (Escort/null)
-     * don't count as a difference, so a longer-but-equivalent list still matches. */
+    /* Per-group work mode equality. Missing and null entries resolve to Escort (as in
+     * MilUnitFC.GetGroupWorkMode), so a longer-but-equivalent list still matches. */
     private static bool GroupWorkModesEquivalent(List<MechWorkModeDef> a, List<MechWorkModeDef> b)
     {
         int n = Math.Max(a?.Count ?? 0, b?.Count ?? 0);
         for (int i = 0; i < n; i++)
         {
-            MechWorkModeDef ma = (a is not null && i < a.Count) ? a[i] : null;
-            MechWorkModeDef mb = (b is not null && i < b.Count) ? b[i] : null;
+            MechWorkModeDef ma = (a is not null && i < a.Count ? a[i] : null) ?? MechWorkModeDefOf.Escort;
+            MechWorkModeDef mb = (b is not null && i < b.Count ? b[i] : null) ?? MechWorkModeDefOf.Escort;
             if (ma != mb) return false;
         }
         return true;

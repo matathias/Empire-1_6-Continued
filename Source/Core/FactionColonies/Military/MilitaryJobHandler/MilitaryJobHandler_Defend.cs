@@ -216,22 +216,8 @@ internal static class DefensiveBattleEffects
                 candidates.Add(k);
             }
 
-            // Sort so buildings that depend on other buildings are demolished first.
-            candidates.Sort((a, b) =>
-            {
-                BuildingFCDef defA = settlement.BuildingsComp.GetBuildingInSlot(a);
-                BuildingFCDef defB = settlement.BuildingsComp.GetBuildingInSlot(b);
-                // candidates is pre-filtered to building slots, so these are normally
-                // non-null. Guard anyway since the comparator dereferences both.
-                if (defA is null || defB is null) return 0;
-                bool aRequiresB = FactionCache.SatisfiesAnyRequirement(defB, defA.requiredBuildings);
-                bool bRequiresA = FactionCache.SatisfiesAnyRequirement(defA, defB.requiredBuildings);
-                if (aRequiresB) return -1;
-                if (bRequiresA) return 1;
-                int aReqCount = defA.requiredBuildings?.Count ?? 0;
-                int bReqCount = defB.requiredBuildings?.Count ?? 0;
-                return bReqCount.CompareTo(aReqCount);
-            });
+            // Demolish dependent buildings before the buildings they require.
+            candidates = BuildingDemolitionUtil.DependentsFirst(settlement.BuildingsComp, candidates);
 
             foreach (int k in candidates)
             {

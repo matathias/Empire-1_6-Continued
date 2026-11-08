@@ -1,4 +1,5 @@
 using GiddyUp;
+using HarmonyLib;
 using GiddyUp.Jobs;
 using GiddyUpCore.Core;
 
@@ -15,8 +16,6 @@ namespace FactionColonies.GiddyUpCompat;
 /// </summary>
 public class GiddyUpBridge : IGiddyUpBridge
 {
-    private static bool _allowedJobsConfigured;
-
     public bool IsMountable(PawnKindDef kind)
     {
         if (kind?.race is null) return false;
@@ -29,7 +28,6 @@ public class GiddyUpBridge : IGiddyUpBridge
     public void Mount(Pawn rider, Pawn mount)
     {
         if (rider is null || mount is null) return;
-        EnsureMountedIdleJobsAllowed();
         // Skip only when FULLY mounted: GU2's mounted state is set AND the animal is actually running
         // its Mounted job. A draft/undraft faction switch runs ClearMind on the mount, which ends the
         // Mounted job while leaving the mounted state set — fall through so GoMount(Instant) re-issues
@@ -44,25 +42,38 @@ public class GiddyUpBridge : IGiddyUpBridge
         // lacks the rider node and the rider goes invisible. Rebuild it (same call the Mount job uses).
         MountedRiderRenderNodeUtility.RefreshMountedAnimalGraphics(mount);
     }
+}
 
-    /// <summary>
-    /// Keeps a mount from auto-dismounting when its rider is idle / holding position / wandering —
-    /// e.g. when the player drafts an Empire pawn (job becomes Wait_Combat) or undrafts it back into a
-    /// lord's wander/defend duty (Wait_Wander / GotoWander). GU2's RiderShouldDismount dismounts when
-    /// the rider's current job isn't in its AllowedJobs set and the rider is near its destination;
-    /// <see cref="JobDriver_Mounted.SetAllowedJob"/> is GU2's public hook to extend that set. Movement
-    /// (Goto) and forbidden-area dismounts are unaffected — those are handled separately. Done lazily
-    /// (first mount) so GU2 has already built its job cache (Setup.BuildAllowedJobsCache) by then; the
-    /// cache isn't cleared on rebuild, so a one-time add sticks.
-    /// </summary>
-    private static void EnsureMountedIdleJobsAllowed()
+/// <summary>
+/// Keeps an Empire merc's mount from auto-dismounting when the rider is idle / holding position /
+/// wandering, e.g. when the player drafts the merc (job becomes Wait_Combat) or undrafts it back into a
+/// lord's wander/defend duty (Wait_Wander / GotoWander). GU2's RiderShouldDismount parks the mount when
+/// the rider's current job isn't in its global AllowedJobs set and the rider is near its destination.
+/// Adding the jobs to that set permanently would change the behavior for every rider in the game, so
+/// the job is added only for the duration of the check, and only when the rider is a merc.
+/// Movement (Goto) and forbidden-area dismounts are unaffected.
+/// </summary>
+[HarmonyPatch(typeof(JobDriver_Mounted), nameof(JobDriver_Mounted.RiderShouldDismount))]
+public static class Patch_RiderShouldDismount_MercIdleJobs
+{
+    private static bool IsMercIdleJob(JobDef def) =>
+        def == JobDefOf.Wait_Combat || def == JobDefOf.Wait || def == JobDefOf.Wait_MaintainPosture ||
+        def == JobDefOf.Wait_Wander || def == JobDefOf.GotoWander;
+
+    private static void Prefix(JobDriver_Mounted __instance, out JobDef __state)
     {
-        if (_allowedJobsConfigured) return;
-        _allowedJobsConfigured = true;
-        JobDriver_Mounted.SetAllowedJob(JobDefOf.Wait_Combat, false);
-        JobDriver_Mounted.SetAllowedJob(JobDefOf.Wait, false);
-        JobDriver_Mounted.SetAllowedJob(JobDefOf.Wait_MaintainPosture, false);
-        JobDriver_Mounted.SetAllowedJob(JobDefOf.Wait_Wander, false);
-        JobDriver_Mounted.SetAllowedJob(JobDefOf.GotoWander, false);
+        __state = null;
+        JobDef def = __instance.Rider?.CurJobDef;
+        if (def is null || !IsMercIdleJob(def)) return;
+        if (JobDriver_Mounted.AllowedJobs.ContainsKey(def)) return;
+        if (FindFC.Military?.IsMercenaryPawn(__instance.Rider) != true) return;
+        JobDriver_Mounted.AllowedJobs[def] = false;
+        __state = def;
+    }
+
+    private static Exception Finalizer(Exception __exception, JobDef __state)
+    {
+        if (__state is not null) JobDriver_Mounted.AllowedJobs.Remove(__state);
+        return __exception;
     }
 }

@@ -474,6 +474,9 @@ public static class FCEventMaker
         // Phase 2: process collected events
         foreach (var evt in due)
         {
+            // Set once the construct/upgrade action has been reached, so a later exception
+            // does not make the recovery path apply it a second time.
+            bool primaryActionAttempted = false;
             try
             {
                 // Guard against accidental re-fires
@@ -579,6 +582,7 @@ public static class FCEventMaker
                                 settlement = faction.ReturnSettlementByLocation(evt.source);
                                 if (settlement is not null)
                                 {
+                                    primaryActionAttempted = true;
                                     settlement.ConstructBuilding(evt.building, evt.buildingSlot);
                                     Messages.Message("FCBuildingEventCompletedMsg".Translate(evt.building.LabelCap, settlement.Name), MessageTypeDefOf.PositiveEvent);
                                 }
@@ -593,6 +597,7 @@ public static class FCEventMaker
                                     {
                                         //if settlement is not null
                                         settlement = faction.ReturnSettlementByLocation(evt.location);
+                                        primaryActionAttempted = true;
                                         settlement.UpgradeSettlement(setFlags: true);
                                         Find.LetterStack.ReceiveLetter("FCUpgradeSettlement".Translate(),
                                             "FCUpgradeEventCompletedDesc".Translate(settlement.Name, settlement.settlementLevel, "FCUpgradeColonyDesc".Translate()),
@@ -701,7 +706,8 @@ public static class FCEventMaker
             {
                 LogUtil.Error($"ProcessEvents: exception processing event '{evt.def?.defName ?? "NULL"}' " +
                     $"(loadID={evt.loadID}): {ex}");
-                TryRecoverFailedEvent(evt, faction);
+                if (!primaryActionAttempted)
+                    TryRecoverFailedEvent(evt, faction);
             }
 
             // Force out of Fired phase. Handlers that wanted persistence transitioned to

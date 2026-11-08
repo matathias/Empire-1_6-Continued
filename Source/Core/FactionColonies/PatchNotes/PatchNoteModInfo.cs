@@ -44,9 +44,12 @@ public class PatchNoteModInfo
 
     public List<string> Tooltips => field ??= links.Select(link => link.tooltip).ToList();
 
-    /// <summary>Icons of the link buttons, loaded on first use (textures can only load on the main thread).</summary>
+    /// <summary>Icons of the link buttons, loaded on first use (textures can only load on the main thread).
+    /// A link without an icon (the parser already warned about it) gets the placeholder texture.</summary>
     public List<Texture2D> LinkButtonImages
-        => linkButtonImagesCached ??= links.Select(link => ContentFinder<Texture2D>.Get(link.iconPath)).ToList();
+        => linkButtonImagesCached ??= links.Select(link => link.iconPath.NullOrEmpty()
+            ? BaseContent.BadTex
+            : ContentFinder<Texture2D>.Get(link.iconPath)).ToList();
 
     /// <summary>The banner texture, or null if no banner is set.</summary>
     public Texture2D BannerImage

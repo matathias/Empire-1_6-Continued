@@ -24,8 +24,17 @@ public class LordJob_DefendColony : LordJob
     {
         base.ExposeData();
         Scribe_References.Look(ref settlement, "settlement");
+        // Dead or destroyed pawns save as null references, which break the dictionary on load.
+        if (Scribe.mode == LoadSaveMode.Saving)
+            mounts?.RemoveAll(kv => kv.Key is null || kv.Key.Destroyed || kv.Value is null || kv.Value.Destroyed);
         Scribe_Collections.Look(ref mounts, "mounts", LookMode.Reference, LookMode.Reference, ref mountsKeys, ref mountsValues);
     }
+
+    /// <summary>
+    /// Signal tag sent when an attacker group on <paramref name="map"/> starts its assault.
+    /// Scoped to the map so an assault on one battle map does not wake defenders on another.
+    /// </summary>
+    public static string AssaultSignalTag(Map map) => $"startAssault_{map.uniqueID}";
 
     public override bool AddFleeToil => false;
     public override bool AllowStartNewGatherings => false;
@@ -49,7 +58,7 @@ public class LordJob_DefendColony : LordJob
         LordToil defendColony = new LordToil_DefendColony();
         stateGraph.AddToil(defendColony);
         Transition startDefending = new(defendSelf, defendColony);
-        startDefending.AddTrigger(new Trigger_Signal("startAssault"));
+        startDefending.AddTrigger(new Trigger_MapAssaultSignal());
         stateGraph.AddTransition(startDefending);
         return stateGraph;
     }
@@ -74,5 +83,16 @@ public class LordJob_DefendColony : LordJob
         if (pawn.IsMercenary() && pawn.Faction != FindFC.EmpireFaction) pawn.SetFaction(FindFC.EmpireFaction);
 
         settlement?.MilitaryComp?.RemoveDefender(pawn);
+    }
+}
+
+/// <summary>Fires when an assault starts on the lord's own map (see <see cref="LordJob_DefendColony.AssaultSignalTag"/>).</summary>
+public class Trigger_MapAssaultSignal : Trigger
+{
+    public override bool ActivateOn(Lord lord, TriggerSignal signal)
+    {
+        return signal.type == TriggerSignalType.Signal
+            && lord?.Map is not null
+            && signal.signal.tag == LordJob_DefendColony.AssaultSignalTag(lord.Map);
     }
 }

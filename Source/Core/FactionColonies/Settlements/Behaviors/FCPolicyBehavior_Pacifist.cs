@@ -23,10 +23,10 @@ public class FCPolicyBehavior_Pacifist : FCPolicyBehavior
         diplomatCooldown.Use();
 
         var ext = Ext<FCPolicyBehaviorExt_Pacifist>();
-        int random = Rand.Range(1, ext.successRollMax);
+        int random = Rand.RangeInclusive(1, ext.successRollMax);
         if (random > ext.successThreshold)
         {
-            int relationImprovement = Rand.Range(ext.relationImprovementMin, ext.relationImprovementMax);
+            int relationImprovement = Rand.RangeInclusive(ext.relationImprovementMin, ext.relationImprovementMax);
             targetFaction.TryAffectGoodwillWith(Find.FactionManager.OfPlayer, relationImprovement);
             Find.LetterStack.ReceiveLetter("FCRelationImproved".Translate(),
                 "FCRelationImprovedText".Translate(targetFaction.Name, relationImprovement),

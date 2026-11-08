@@ -114,18 +114,18 @@ public static class MilitaryOperationsUtil
         MilitaryForce newForce;
         if (settlementOfMilitaryForce == homeSettlement)
         {
-            newForce = MilitaryForce.CreateMilitaryForceFromSettlement(homeSettlement);
             op.defender.homeSettlement = homeSettlement;
-            op.defender.squad = PickFirstAvailableStationedSquad(homeSettlement);
+            op.defender.squad = MilitaryOperationManager.PickPrimaryDefendingSquad(homeSettlement);
+            newForce = CreateDefendingForce(op.defender.squad, homeSettlement);
             op.defender.force = newForce;
             op.externalDefenderSource = null;
             Messages.Message("FCDefendingMilitaryReset".Translate(), MessageTypeDefOf.NeutralEvent);
         }
         else
         {
-            newForce = MilitaryForce.CreateMilitaryForceFromSettlement(settlementOfMilitaryForce);
             op.defender.homeSettlement = settlementOfMilitaryForce;
-            op.defender.squad = PickFirstAvailableStationedSquad(settlementOfMilitaryForce);
+            op.defender.squad = MilitaryOperationManager.PickPrimaryDefendingSquad(settlementOfMilitaryForce);
+            newForce = CreateDefendingForce(op.defender.squad, settlementOfMilitaryForce);
             op.defender.force = newForce;
             op.externalDefenderSource = null;
 
@@ -266,19 +266,13 @@ public static class MilitaryOperationsUtil
         return FindFC.FactionComp.FindAllEventsByDefAndLocation(FCEventDefOf.settlementBeingAttacked, location);
     }
 
-    /// <summary>Returns the first available squad stationed at <paramref name="settlement"/>,
-    /// or <c>null</c> if none qualify. Used when wiring an op's defender squad after a
-    /// manual defender swap.</summary>
-    private static MercenarySquadFC PickFirstAvailableStationedSquad(WorldSettlementFC settlement)
+    /// <summary>Forecast force for a defender: the squad when one is available, else the
+    /// settlement's unstaffed billet, matching how the battle refreshes the force at engagement.
+    /// Falls back to the settlement-level force when the settlement has no squad capacity.</summary>
+    private static MilitaryForce CreateDefendingForce(MercenarySquadFC squad, WorldSettlementFC settlement)
     {
-        if (settlement is null) return null;
-        foreach (MercenarySquadFC squad in settlement.StationedSquads)
-        {
-            if (squad is null) continue;
-            if (squad.IsAvailable) return squad;
-        }
-        // Fall back to the first stationed squad even if busy (rare: caller manually swapped).
-        List<MercenarySquadFC> stationed = settlement.StationedSquads;
-        return stationed.Count > 0 ? stationed[0] : null;
+        return (squad is not null ? MilitaryForce.CreateMilitaryForceFromSquad(squad) : null)
+            ?? MilitaryForce.CreateMilitaryForceFromUnstaffedBillet(settlement)
+            ?? MilitaryForce.CreateMilitaryForceFromSettlement(settlement);
     }
 }

@@ -45,6 +45,11 @@ public class MainTabWindow_Colony : MainTabWindow
     // ===== SETTLEMENT SORT =====
     private int currentSettlementSortIndex = 0;
 
+    /* Display-only copy of faction.settlements, sorted by the player's chosen sort so the
+     * persisted settlement list keeps its order. Null until the player picks a sort. */
+    private Comparison<WorldSettlementFC> appliedSettlementSort;
+    private List<WorldSettlementFC> sortedSettlementsView;
+
     // ===== MILITARY STATE =====
     private Vector2 militaryScroll;
     private MilitaryFC militaryFC;
@@ -747,6 +752,33 @@ public class MainTabWindow_Colony : MainTabWindow
         CompareUtil.CompareSettlementFoundingDate
     ];
 
+    /// <summary>The settlements in display order. The sort is a snapshot taken when the player
+    /// picks it, and is re-applied only when settlements are added or removed.</summary>
+    private List<WorldSettlementFC> GetSettlementsView()
+    {
+        List<WorldSettlementFC> source = faction.settlements;
+        if (appliedSettlementSort is null) return source;
+
+        bool stale = sortedSettlementsView is null || sortedSettlementsView.Count != source.Count;
+        if (!stale)
+        {
+            for (int i = 0; i < sortedSettlementsView.Count; i++)
+            {
+                if (!source.Contains(sortedSettlementsView[i]))
+                {
+                    stale = true;
+                    break;
+                }
+            }
+        }
+        if (stale)
+        {
+            sortedSettlementsView = [.. source];
+            sortedSettlementsView.Sort(appliedSettlementSort);
+        }
+        return sortedSettlementsView;
+    }
+
     private void DrawSettlementsTable(Rect tableRect)
     {
         const float rowH = 44f;
@@ -781,7 +813,8 @@ public class MainTabWindow_Colony : MainTabWindow
                 options.Add(new FloatMenuOption(settlementSortLabels[i].Translate(), () =>
                 {
                     currentSettlementSortIndex = captured;
-                    faction.settlements.Sort(settlementSortActions[captured]);
+                    appliedSettlementSort = settlementSortActions[captured];
+                    sortedSettlementsView = null;
                 }));
             }
             Find.WindowStack.Add(new FloatMenu(options));
@@ -799,7 +832,7 @@ public class MainTabWindow_Colony : MainTabWindow
         float viewH = tableRect.yMax - listY - pad;
         Rect viewRect = new(innerX, listY, innerW, viewH);
         // Accent strip: green = profit, red = loss
-        UIUtil.DrawAccentRowList(viewRect, faction.settlements, rowH, rowGap, ref settlementScroll,
+        UIUtil.DrawAccentRowList(viewRect, GetSettlementsView(), rowH, rowGap, ref settlementScroll,
             AccentUtil.GetSettlementAccent, (s, row) =>
         {
             int i = row.Index;

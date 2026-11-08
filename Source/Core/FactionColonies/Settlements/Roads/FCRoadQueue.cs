@@ -325,8 +325,12 @@ public class FCRoadQueue : IExposable
         catch (Exception e)
         {
             pendingLogMessage = $"Road MST background computation failed: {e}";
-            computedMSTEdges = [];
-            completedGeneration = generation;
+            // A stale generation must not overwrite the result of a newer one.
+            if (generation == mstGeneration)
+            {
+                computedMSTEdges = [];
+                completedGeneration = generation;
+            }
         }
     }
 

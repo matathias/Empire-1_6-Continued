@@ -212,13 +212,8 @@ public class FCEventManager : IExposable
         if (value > nextEventId) nextEventId = value;
     }
 
-    public void Clear()
-    {
-        if (events.Count == 0) return;
-        events.Clear();
-        IndexClear();
-        version++;
-    }
+    /// <summary>Removes every event, running each one's expiry so its stat modifiers come off.</summary>
+    public void Clear() => RemoveWhere(_ => true);
 
     /// <summary>Drops events whose def failed to resolve on load (removed/renamed
     /// FCEventDef). Such events carry no label/desc/handler and only crash display

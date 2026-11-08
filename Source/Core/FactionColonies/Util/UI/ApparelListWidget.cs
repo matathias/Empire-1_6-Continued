@@ -77,7 +77,7 @@ public static class ApparelListWidget
 
         List<SavedThing> sortedApparel = displayUnit?.apparel
             ?.Where(a => a.thing is not null)
-            .OrderByDescending(a => a.thing.apparel.layers.Max(l => l.drawOrder))
+            .OrderByDescending(a => a.thing.apparel?.layers?.Count > 0 ? a.thing.apparel.layers.Max(l => l.drawOrder) : 0)
             .ThenBy(a => a.thing.label)
             .ToList() ?? [];
 

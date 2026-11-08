@@ -204,12 +204,12 @@ public static class MilitaryMigrationUtil
                         // Legacy flat lists fold into the primary op's per-side pawn lists.
                         if (comp._legacyAttackers is not null)
                         {
-                            defensiveOp.aggressor.pawns.AddRange(comp._legacyAttackers);
+                            AddDistinct(defensiveOp.aggressor.pawns, comp._legacyAttackers);
                             defensiveOp.aggressor.initialPawnCount += comp._legacyAttackers.Count;
                         }
                         if (comp._legacyDefenders is not null)
                         {
-                            defensiveOp.defender.pawns.AddRange(comp._legacyDefenders);
+                            AddDistinct(defensiveOp.defender.pawns, comp._legacyDefenders);
                         }
                         // initialDefenderCount goes onto the primary op's defender side
                         // (matches the comp.EndBattle path that used the flat field for
@@ -221,13 +221,14 @@ public static class MilitaryMigrationUtil
 
                         // EndAttack walks ops to return external defender pawns; without this,
                         // an outpost-defended migrated battle would fail to return its survivors.
+                        // Old saves listed every wave pawn in the flat lists too, so skip repeats.
                         if (comp._legacyActiveWaves is not null)
                         {
                             foreach (DefenseWave wave in comp._legacyActiveWaves)
                             {
                                 if (wave is null) continue;
-                                if (wave.waveAttackers is not null) defensiveOp.aggressor.pawns.AddRange(wave.waveAttackers);
-                                if (wave.waveDefenders is not null) defensiveOp.defender.pawns.AddRange(wave.waveDefenders);
+                                if (wave.waveAttackers is not null) AddDistinct(defensiveOp.aggressor.pawns, wave.waveAttackers);
+                                if (wave.waveDefenders is not null) AddDistinct(defensiveOp.defender.pawns, wave.waveDefenders);
                             }
                         }
                     }
@@ -340,6 +341,14 @@ public static class MilitaryMigrationUtil
 
         manager.Register(op);
         return op;
+    }
+
+    private static void AddDistinct(List<Pawn> into, List<Pawn> from)
+    {
+        foreach (Pawn pawn in from)
+        {
+            if (pawn is not null && !into.Contains(pawn)) into.Add(pawn);
+        }
     }
 
     private static bool HasLegacyBattleState(WorldObjectComp_SettlementMilitary comp)

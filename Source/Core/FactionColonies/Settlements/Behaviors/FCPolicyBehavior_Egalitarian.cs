@@ -73,14 +73,17 @@ public class FCPolicyBehavior_Egalitarian : FCPolicyBehavior
         if (Find.TickManager.TicksGame % 250 != 0) return;
         int currentTick = Find.TickManager.TicksGame;
         int durationTicks = GenDate.TicksPerDay * Ext<FCPolicyBehaviorExt_Egalitarian>().taxBreakDurationDays;
-        foreach (var kvp in taxBreaks)
+        // Drop expired breaks and breaks whose settlement is gone, so a settlement later founded
+        // on the same tile does not inherit them.
+        taxBreaks.RemoveAll(kvp =>
         {
-            if (kvp.Value.enabled && (kvp.Value.startTick + durationTicks) <= currentTick)
-            {
-                kvp.Value.enabled = false;
-                faction.ReturnSettlementByLocation(kvp.Key)?.InvalidateStatCache();
-            }
-        }
+            WorldSettlementFC settlement = faction.ReturnSettlementByLocation(kvp.Key);
+            if (settlement is null) return true;
+            if (kvp.Value.enabled && (kvp.Value.startTick + durationTicks) > currentTick) return false;
+            if (kvp.Value.enabled)
+                settlement.InvalidateStatCache();
+            return true;
+        });
     }
 
     private bool IsOnTaxBreak(PlanetTile tile) => taxBreaks.TryGetValue(tile, out var d) && d.enabled;

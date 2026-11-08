@@ -61,6 +61,7 @@ public static class MercenaryPawnFactory
         // Create the tracker up front, exactly as vanilla does (PawnComponentsUtility).
         mech.relations ??= new Pawn_RelationsTracker(mech);
 
+        bool bonded = false;
         try
         {
             // Bond the mech to its overseer with the Overseer direct relation. This drives bandwidth
@@ -69,17 +70,28 @@ public static class MercenaryPawnFactory
             // Empire mechanitors aren't the player faction, so PawnRelationWorker_Overseer.OnRelationCreated
             // won't auto-assign a control group (IsMechanitor gates on player faction).
             overseer.relations.AddDirectRelation(PawnRelationDefOf.Overseer, mech);
-
-            // Assign the mech to its designed control group + work mode now, so the design's grouping is
-            // honored from creation rather than being clobbered by the vanilla auto-assign-to-group-0 that
-            // fires when the merc is later drafted. This is safe off-map: an unspawned mech's think tree
-            // enters the Despawned subtree (JobGiver_IdleWhileDespawned), so the job re-evaluation inside
-            // AssignPawnControlGroup never touches the (null) map.
-            AssignMechToControlGroup(overseer.mechanitor, mech, groupIndex, workMode);
+            bonded = true;
         }
         catch (Exception ex)
         {
             LogUtil.Warning($"Failed to bond mech {mechKind.defName} to {overseer.LabelShortCap}: {ex}");
+        }
+
+        if (bonded)
+        {
+            try
+            {
+                // Assign the mech to its designed control group + work mode now, so the design's grouping is
+                // honored from creation rather than being clobbered by the vanilla auto-assign-to-group-0 that
+                // fires when the merc is later drafted. This is safe off-map: an unspawned mech's think tree
+                // enters the Despawned subtree (JobGiver_IdleWhileDespawned), so the job re-evaluation inside
+                // AssignPawnControlGroup never touches the (null) map.
+                AssignMechToControlGroup(overseer.mechanitor, mech, groupIndex, workMode);
+            }
+            catch (Exception ex)
+            {
+                LogUtil.Warning($"Failed to assign mech {mechKind.defName} to a control group of {overseer.LabelShortCap}: {ex}");
+            }
         }
 
         merc.squad = squad;
@@ -94,8 +106,10 @@ public static class MercenaryPawnFactory
     /// <summary>Assigns <paramref name="mech"/> to control group <paramref name="groupIndex"/> on
     /// <paramref name="tracker"/> with <paramref name="workMode"/>, lazily creating the groups and
     /// clamping the index into range. This runs vanilla job-determination (CheckForJobOverride)
-    /// internally, so it is only safe for a SPAWNED mech whose overseer is spawned — it NREs in the
-    /// think-tree's error-recovery path otherwise. Callers gate on Spawned.</summary>
+    /// internally. That is safe for a mech that is not spawned (its think tree takes the Despawned
+    /// subtree and never touches a map), as at creation. For a SPAWNED mech, its overseer must be
+    /// spawned too, or it NREs in the think-tree's error-recovery path; callers with spawned mechs
+    /// gate on that.</summary>
     private static void AssignMechToControlGroup(Pawn_MechanitorTracker tracker, Pawn mech, int groupIndex, MechWorkModeDef workMode)
     {
         if (tracker is null || mech is null) return;

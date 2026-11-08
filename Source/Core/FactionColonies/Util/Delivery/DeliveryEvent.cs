@@ -87,7 +87,12 @@ public static class DeliveryEvent
         catch (Exception e)
         {
             LogUtil.ErrorOnce("Critical delivery failure, spawning things on tax spot instead! Message: " + e.Message + " StackTrace: " + e.StackTrace + " Source: " + e.Source, 77239232);
-            evt.goods.ForEach(thing => PaymentUtil.PlaceThing(thing));
+            // Skip goods a pod, shuttle or caravan pawn already took before the failure.
+            foreach (Thing thing in evt.goods.ToList())
+            {
+                if (thing is null || thing.Destroyed || thing.Spawned || thing.holdingOwner is not null) continue;
+                PaymentUtil.PlaceThing(thing);
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Verse.Sound;
 
 namespace FactionColonies;
 
@@ -8,56 +7,11 @@ class Searchable_FloatMenu : FloatMenu
     private readonly List<FloatMenuOption> filteredOptions;
     private readonly char ignoreBeforeChar;
     private readonly bool useIgnoreBeforeChar;
-    private readonly bool canBeForcedOpen;
 
     private string searchTerm = "";
     private Color baseColor = Color.white;
-    private int noRemovalOnTick = 0;
 
     private readonly Vector2 SearchBarOffset = new(25f, -27f);
-    private bool canClose = true;
-    private bool stayOpenOptionClicked = false;
-
-    /// <summary>
-    /// Creates a floatmenuoption that allows the player to lock the Floatmenu open
-    /// </summary>
-    private FloatMenuOption ForceOpenOption
-    {
-        get
-        {
-            FloatMenuOption option = new("FCSMFForceOpen".Translate(), delegate
-            {
-                canClose = !canClose;
-                stayOpenOptionClicked = true;
-                SoundDefOf.Click.PlayOneShotOnCamera();
-            }, canClose ? Widgets.CheckboxOffTex : Widgets.CheckboxOnTex, Color.white);
-
-            option.SetSizeMode(SizeMode);
-
-            return option;
-        }
-    }
-
-    /// <summary>
-    /// Decides if the window should close
-    /// </summary>
-    public bool CanBeClosed
-    {
-        get
-        {
-            if (noRemovalOnTick == Find.TickManager.TicksGame) return false;
-
-            if (stayOpenOptionClicked)
-            {
-                stayOpenOptionClicked = false;
-                filteredOptions[0] = ForceOpenOption;
-                noRemovalOnTick = Find.TickManager.TicksGame;
-                return false;
-            }
-
-            return canClose;
-        }
-    }
 
     /// <summary>
     /// Calculates the required Width dynamically
@@ -89,30 +43,12 @@ class Searchable_FloatMenu : FloatMenu
     /// <param name="options"></param>
     /// <param name="ignoreBeforeChar"></param>
     /// <param name="useIgnoreBeforeChar"></param>
-    public Searchable_FloatMenu(List<FloatMenuOption> options, bool canBeForcedOpen = false, bool useIgnoreBeforeChar = true, char ignoreBeforeChar = '-') : base(FakeAddStayOpenOption(options, canBeForcedOpen))
+    public Searchable_FloatMenu(List<FloatMenuOption> options, bool useIgnoreBeforeChar = true, char ignoreBeforeChar = '-') : base(options)
     {
         this.useIgnoreBeforeChar = useIgnoreBeforeChar;
         this.ignoreBeforeChar = ignoreBeforeChar;
-        this.canBeForcedOpen = canBeForcedOpen;
 
-        //options = AddForceOpenOption(options);
         filteredOptions = options.ListFullCopy();
-
-        options.Clear();
-    }
-
-    /// <summary>
-    /// Adds a fake option to the <paramref name="options"/>, only need this for the base constructor
-    /// </summary>
-    /// <param name="options"></param>
-    /// <returns></returns>
-    private static List<FloatMenuOption> FakeAddStayOpenOption(List<FloatMenuOption> options, bool canBeForcedOpen)
-    {
-        List<FloatMenuOption> returnOptions = [];
-        if (canBeForcedOpen) returnOptions.Add(new FloatMenuOption("", null));
-
-        returnOptions.AddRange(options);
-        return returnOptions;
     }
 
     /// <summary>
@@ -124,12 +60,6 @@ class Searchable_FloatMenu : FloatMenu
         Vector2 vector = new(windowRect.x, windowRect.y);
         Text.Font = GameFont.Small;
         Rect searchRect = new(vector.x - SearchBarOffset.x, vector.y + SearchBarOffset.y, ColumnWidth + SearchBarOffset.x, 27f);
-
-        if (stayOpenOptionClicked)
-        {
-            stayOpenOptionClicked = false;
-            options[0] = ForceOpenOption;
-        }
 
         Find.WindowStack.ImmediateWindow(6830963, searchRect, WindowLayer.Super, delegate
         {
@@ -177,7 +107,7 @@ class Searchable_FloatMenu : FloatMenu
             {
                 UIUtil.ClampedLabel(labelRect, $" {"FCFloatMenuSearchable".Translate()}");
                 options = filteredOptions.ToList();
-                vanishIfMouseDistant = CanBeClosed;
+                vanishIfMouseDistant = true;
             }
 
             Text.Anchor = TextAnchor.UpperLeft;

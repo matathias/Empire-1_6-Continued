@@ -40,7 +40,6 @@ public class FCCustomizeXenotypesWindow : Window
         if (faction is null)
         {
             LogUtil.Error("Null FactionFC WorldComponent when opening FCCustomizeXenotypesWindow");
-            Close();
             return;
         }
         allXenotypes = FactionCache.XenotypeDefs;
@@ -74,11 +73,18 @@ public class FCCustomizeXenotypesWindow : Window
     {
         base.PostClose();
         FactionDefDescriptionPatch.Invalidate();
-        filter.CullWeights();
+        filter?.CullWeights();
     }
 
     public override void DoWindowContents(Rect boundingBox)
     {
+        // PreOpen can't close the window (it isn't in the stack yet), so close here.
+        if (faction is null)
+        {
+            Close();
+            return;
+        }
+
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
 

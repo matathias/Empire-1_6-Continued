@@ -72,6 +72,8 @@ public sealed class SettlementWindowFc : Window
     public override void PreOpen()
     {
         base.PreOpen();
+        // DoWindowContents closes the window on its first frame when there is no settlement.
+        if (settlement is null) return;
         maxScroll = (settlement.Resources.Count * ScrollSpacing) - ScrollHeight;
         factionfc = FindFC.FactionComp;
         Color baseColor = settlement.settlementDef.accentColor ?? Color.white;
@@ -134,12 +136,6 @@ public sealed class SettlementWindowFc : Window
 
     public SettlementWindowFc(WorldSettlementFC settlement)
     {
-        if (settlement is null)
-        {
-            Close();
-            return;
-        }
-
         this.settlement = settlement;
         forcePause = false;
         draggable = true;
@@ -148,8 +144,22 @@ public sealed class SettlementWindowFc : Window
     }
 
 
+    /// <summary>False once the settlement is gone (destroyed, seceded, conquered or
+    /// deleted elsewhere), so the window can close instead of drawing a dead object.</summary>
+    internal static bool SettlementStillActive(WorldSettlementFC settlement) =>
+        settlement is not null && !settlement.Destroyed
+        && FindFC.FactionComp?.settlements?.Contains(settlement) == true;
+
     public override void DoWindowContents(Rect inRect)
     {
+        // Close() only works once the window is in the stack, so the check lives here
+        // rather than in the constructor or PreOpen.
+        if (!SettlementStillActive(settlement))
+        {
+            Close();
+            return;
+        }
+
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
 

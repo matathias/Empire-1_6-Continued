@@ -16,7 +16,7 @@ namespace FactionColonies.util;
  * loadout, so a weakness on one side is not a real cost when the other side is strong.
  *
  * No clamping happens during aggregation or scoring. The final factor is clamped
- * only by ApplyCap (floor at MIN_FACTOR = 0.1, optional ceiling from FCSettings).
+ * only by ApplyCap (floor at MIN_FACTOR = 0.25, optional ceiling from FCSettings).
  *
  * Scored profiles cache per-xenotype (immutable defs) and per custom xenotype name
  * (invalidated via FactionCache.InvalidateCustomXenotypeCache). FCSettings weights
@@ -206,13 +206,14 @@ public static class GeneValuationUtil
 
     private static float ApplyCap(float factor)
     {
+        /* Round to nearest 0.25 so xenotype prices snap to clean quarter steps, then clamp,
+         * so the configured ceiling is never exceeded by rounding up past it. */
+        factor = (float)(Math.Round((double)factor * 4.0, MidpointRounding.AwayFromZero) / 4.0);
         if (!FCSettings.geneValueFactorUnlimited)
         {
             float cap = FCSettings.geneValueMaxFactor;
             if (factor > cap) factor = cap;
         }
-        /* Round to nearest 0.25 so xenotype prices snap to clean quarter steps. */
-        factor = (float)(Math.Round((double)factor * 4.0, MidpointRounding.AwayFromZero) / 4.0);
         if (factor < MIN_FACTOR) factor = MIN_FACTOR;
         return factor;
     }

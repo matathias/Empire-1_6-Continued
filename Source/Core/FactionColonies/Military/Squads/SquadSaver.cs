@@ -163,9 +163,24 @@ public static class FactionColoniesMilitary
         return (T)Activator.CreateInstance(type);
     }
 
-    public static string GetUnitPath(string name) => Path.Combine(EmpireMilitaryUnitFolder, $"{name}.xml");
-    public static string GetSquadPath(string name) => Path.Combine(EmpireMilitarySquadFolder, $"{name}.xml");
-    public static string GetFireSupportPath(string name) => Path.Combine(EmpireMilitaryFireSupportFolder, $"{name}.xml");
+    // Names are player-entered: replace characters the OS rejects in file names (including path
+    // separators, so a name cannot point outside the folder). Names that were already valid map
+    // to the same file as before.
+    private static string SafeFileName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return name;
+        char[] invalid = Path.GetInvalidFileNameChars();
+        char[] chars = name.ToCharArray();
+        for (int i = 0; i < chars.Length; i++)
+        {
+            if (Array.IndexOf(invalid, chars[i]) >= 0) chars[i] = '_';
+        }
+        return new string(chars);
+    }
+
+    public static string GetUnitPath(string name) => Path.Combine(EmpireMilitaryUnitFolder, $"{SafeFileName(name)}.xml");
+    public static string GetSquadPath(string name) => Path.Combine(EmpireMilitarySquadFolder, $"{SafeFileName(name)}.xml");
+    public static string GetFireSupportPath(string name) => Path.Combine(EmpireMilitaryFireSupportFolder, $"{SafeFileName(name)}.xml");
 
     public static void SaveSquad(SavedSquadFC squad)
     {
@@ -175,12 +190,14 @@ public static class FactionColoniesMilitary
         }
 
         string path = GetSquadPath(squad.name);
+        bool saved = false;
         try
         {
             Scribe.saver.InitSaving(path, "squad");
             int version = 0;
             Scribe_Values.Look(ref version, "version");
             squad.ExposeData();
+            saved = true;
         }
         catch (Exception e)
         {
@@ -190,7 +207,7 @@ public static class FactionColoniesMilitary
         {
             Scribe.saver.FinalizeSaving();
         }
-
+        if (!saved) return;
         savedSquads.RemoveAll(s => s.name == squad.name);
         savedSquads.Add(squad);
     }
@@ -203,12 +220,14 @@ public static class FactionColoniesMilitary
         }
 
         string path = GetUnitPath(unit.name);
+        bool saved = false;
         try
         {
             Scribe.saver.InitSaving(path, "unit");
             int version = 0;
             Scribe_Values.Look(ref version, "version");
             unit.ExposeData();
+            saved = true;
         }
         catch (Exception e)
         {
@@ -218,6 +237,7 @@ public static class FactionColoniesMilitary
         {
             Scribe.saver.FinalizeSaving();
         }
+        if (!saved) return;
         savedUnits.RemoveAll(u => u.name == unit.name);
         savedUnits.Add(unit);
     }
@@ -230,12 +250,14 @@ public static class FactionColoniesMilitary
         }
 
         string path = GetFireSupportPath(fireSupport.name);
+        bool saved = false;
         try
         {
             Scribe.saver.InitSaving(path, "fireSupport");
             int version = 0;
             Scribe_Values.Look(ref version, "version");
             fireSupport.ExposeData();
+            saved = true;
         }
         catch (Exception e)
         {
@@ -245,12 +267,14 @@ public static class FactionColoniesMilitary
         {
             Scribe.saver.FinalizeSaving();
         }
+        if (!saved) return;
         savedFireSupports.RemoveAll(f => f.name == fireSupport.name);
         savedFireSupports.Add(fireSupport);
     }
 
-    public static void SaveAllUnits() => savedUnits.ForEach(SaveUnit);
-    public static void SaveAllSquads() => savedSquads.ForEach(SaveSquad);
+    // Snapshot first: each save removes and re-adds its entry in the list being iterated.
+    public static void SaveAllUnits() => savedUnits.ToList().ForEach(SaveUnit);
+    public static void SaveAllSquads() => savedSquads.ToList().ForEach(SaveSquad);
 }
 
 public class SavedUnitFC : IExposable

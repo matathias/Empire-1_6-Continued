@@ -65,11 +65,21 @@ public class Dialog_SquadInspection : Window
         preventCameraMotion = false;
     }
 
+    /// <summary>True while the squad is still one of the empire's mercenary squads.</summary>
+    private bool SquadStillActive => FindFC.Military?.mercenarySquads?.Contains(squad) == true;
+
     public override void DoWindowContents(Rect inRect)
     {
         if (squad is null)
         {
             UIUtil.ClampedLabel(inRect, "FCSquadInspectionNoSquad".Translate());
+            return;
+        }
+
+        // The squad can be dismissed from another window while this one stays open.
+        if (!SquadStillActive)
+        {
+            Close();
             return;
         }
 
@@ -968,17 +978,33 @@ public class Dialog_SquadInspection : Window
     private void FillSingleSlot(Mercenary merc, int cost, MilUnitFC blueprint)
     {
         if (blueprint is null || blueprint.isBlank) return;
-        if (cost > 0 && !PaymentUtil.TryPaySilver(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement))
+        if (!TryHireIntoSlot(merc, cost, blueprint)) return;
+        FindFC.Military?.RebuildMercenaryPawnSet();
+    }
+
+    /// <summary>Generates a pawn for <paramref name="slot"/> from <paramref name="blueprint"/>
+    /// and charges <paramref name="cost"/> only once the pawn exists. Returns false, with
+    /// nothing charged, when the player can't afford it or pawn generation fails.</summary>
+    private bool TryHireIntoSlot(Mercenary slot, int cost, MilUnitFC blueprint)
+    {
+        if (cost > 0 && !PaymentUtil.CanAfford(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement))
         {
             Messages.Message("FCSquadFillSlotsInsufficient".Translate(cost),
                 MessageTypeDefOf.RejectInput, false);
-            return;
+            return false;
         }
-        Mercenary slot = merc;
         MercenaryPawnFactory.CreateNewPawn(squad, ref slot, blueprint.pawnKind, blueprint.xenotype, blueprint.customXenotypeName, blueprint);
-        if (slot.pawn is not null) squad.Equipment.EquipPawn(slot, blueprint);
+        if (slot.pawn is null)
+        {
+            Messages.Message("FCSquadInspectionHireFailed".Translate(),
+                MessageTypeDefOf.RejectInput, false);
+            return false;
+        }
+        // Affordability was checked above in the same call, so the unchecked payment is safe.
+        if (cost > 0) PaymentUtil.PaySilver(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement);
+        squad.Equipment.EquipPawn(slot, blueprint);
         slot.currentLoadout = blueprint.Clone();
-        FindFC.Military?.RebuildMercenaryPawnSet();
+        return true;
     }
 
     /*-*-*-*-* Template menu *-*-*-*-*/
@@ -1027,7 +1053,7 @@ public class Dialog_SquadInspection : Window
     private void AddUnitToSquad(MilUnitFC blueprint, int cost)
     {
         if (blueprint is null || blueprint.isBlank) return;
-        if (squad.IsBusy) return;
+        if (squad.IsBusy || !SquadStillActive) return;
 
         Mercenary target = null;
         if (squad.mercenaries is not null)
@@ -1044,19 +1070,16 @@ public class Dialog_SquadInspection : Window
             return;
         }
 
-        if (cost > 0 && !PaymentUtil.TryPaySilver(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement))
-        {
-            Messages.Message("FCSquadFillSlotsInsufficient".Translate(cost),
-                MessageTypeDefOf.RejectInput, false);
-            return;
-        }
-
+        MilUnitFC priorLoadout = target.loadout;
+        MilUnitFC priorOwnedLoadout = target.ownedLoadout;
         target.loadout = blueprint;
         target.ownedLoadout = null;
-        Mercenary slot = target;
-        MercenaryPawnFactory.CreateNewPawn(squad, ref slot, blueprint.pawnKind, blueprint.xenotype, blueprint.customXenotypeName, blueprint);
-        if (slot.pawn is not null) squad.Equipment.EquipPawn(slot, blueprint);
-        slot.currentLoadout = blueprint.Clone();
+        if (!TryHireIntoSlot(target, cost, blueprint))
+        {
+            target.loadout = priorLoadout;
+            target.ownedLoadout = priorOwnedLoadout;
+            return;
+        }
 
         if (squad.outfit is not null) SquadUpgradeUtil.SwapTemplate(squad, null);
         FindFC.Military?.RebuildMercenaryPawnSet();

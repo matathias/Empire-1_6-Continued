@@ -151,6 +151,16 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
         pawnName    = p.prisoner?.Name?.ToString() ?? "";
         homeFaction = p.prisoner?.Faction;
         RemovePrisoner(p);
+
+        // This comp is the pawn's only owner, so kill it for real: relatives get their death
+        // memories and the pawn passes to WorldPawns instead of vanishing with dangling relations.
+        // The vanilla death letter is suppressed because SendDeathLetter reports the death.
+        Pawn pawn = p.prisoner;
+        if (pawn is not null && !pawn.Dead && !pawn.Destroyed)
+        {
+            pawn.forceNoDeathNotification = true;
+            pawn.Kill(null);
+        }
     }
 
     private static void SendDeathLetter(
@@ -322,8 +332,15 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
     public void SellPrisoner(FCPrisoner p)
     {
         if (p?.prisoner is null) return;
-        WorldSettlement?.AddOneTimeSilverIncome(p.prisoner.MarketValue);
+        Pawn pawn = p.prisoner;
+        WorldSettlement?.AddOneTimeSilverIncome(pawn.MarketValue);
         RemovePrisoner(p);
+
+        // Hand the sold pawn back to WorldPawns, which this comp took it from, so relations
+        // pointing at it still resolve; the world-pawn GC decides whether to keep it.
+        pawn.guest?.SetGuestStatus(null);
+        if (!pawn.Destroyed && !pawn.Spawned && !Find.WorldPawns.Contains(pawn))
+            Find.WorldPawns.PassToWorld(pawn);
     }
 
     public void ReturnPrisonerToPlayer(FCPrisoner p)

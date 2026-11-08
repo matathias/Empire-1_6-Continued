@@ -85,7 +85,8 @@ public class WDStrengthSettlementModifier : SettlementPowerModifierBase
         CompViralSpread comp = settlement.GetComponent<CompViralSpread>();
         if (comp is null || comp.strength <= 0f) return false;
 
-        level = comp.strength / SCALE_FACTOR;
+        // Level 1 is the floor of Empire's force scale (battles never roll below it).
+        level = Math.Max(1.0, comp.strength / SCALE_FACTOR);
         return true;
     }
 }

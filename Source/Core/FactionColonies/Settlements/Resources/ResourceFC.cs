@@ -560,7 +560,7 @@ public class ResourceFC : IExposable
     /// <summary>
     /// Populates both <see cref="productionAdditives"/> and <see cref="productionMultipliers"/> from
     /// the biome, settlement type, and any <see cref="ResourceProductionExtension"/>s on the resource def.
-    /// Called once at construction.
+    /// Called at construction and from <see cref="RebuildBaseResourceBonuses"/>.
     /// </summary>
     private void SetBaseResourceBonuses()
     {
@@ -645,6 +645,37 @@ public class ResourceFC : IExposable
             }
         }
     }
+
+    /// <summary>
+    /// Drops the bonuses <see cref="SetBaseResourceBonuses"/> derived from biome, settlement type,
+    /// resource extensions, landmark and mutators, then derives them again from the current defs.
+    /// Called on load (so XML rebalances and renames reach existing saves) and after a settlement
+    /// type transition. Bonuses added under any other id are kept.
+    /// </summary>
+    public void RebuildBaseResourceBonuses()
+    {
+        if (settlement is null || def is null) return;
+
+        string[] basePrefixes =
+        [
+            $"{def.defName}_biome_",
+            $"{def.defName}_settle_",
+            $"{def.defName}_ext_",
+            $"{def.defName}_landmark_",
+            $"{def.defName}_mutator_",
+        ];
+        bool IsBaseId(string id) => id is not null && basePrefixes.Any(prefix => id.StartsWith(prefix, StringComparison.Ordinal));
+
+        productionAdditives ??= [];
+        productionMultipliers ??= [];
+        productionAdditives.RemoveAll(kv => IsBaseId(kv.Key));
+        productionMultipliers.RemoveAll(kv => IsBaseId(kv.Key));
+        SetDirtyCacheProdBase();
+        SetDirtyCacheProdMult();
+
+        SetBaseResourceBonuses();
+    }
+
     public void AddProductionAdditive(string id, double value, string desc)
     {
         ProductionBonus additive = new(value, desc);
@@ -983,16 +1014,8 @@ public class ResourceFC : IExposable
     }
     public List<QualityCategory> GetValidTitheQualities(QualityCategory maxQuality)
     {
-        List<QualityCategory> list = QualityUtility.AllQualityCategories;
-        for (int i = list.Count - 1; i > 0; i--)
-        {
-            if (list[i] > maxQuality)
-            {
-                list.RemoveAt(i);
-            }
-        }
-
-        return list;
+        // AllQualityCategories is a shared static list used by vanilla quality generation: filter a copy.
+        return QualityUtility.AllQualityCategories.Where(q => q <= maxQuality).ToList();
     }
     public bool CanSetTitheStuff()
     {
@@ -1066,6 +1089,20 @@ public class ResourceFC : IExposable
         }
         return maxthing;
     }
+    /// <summary>
+    /// Tax-time counterpart of the stock disbursement in <see cref="GenerateTithe"/> for a resource
+    /// whose tithes are paused (GenerateTithe is skipped then). Pays the escrowed stock's withheld
+    /// silver back once and returns it; returns 0 if nothing is to be disbursed.
+    /// </summary>
+    public int DisburseTitheStockWhilePaused()
+    {
+        if (!tithesPaused || !disburseTitheStock || randomTitheStock <= 0) return 0;
+        int silver = (int)randomTitheStockSilver;
+        randomTitheStock = 0;
+        randomTitheStockSilver = 0;
+        return silver;
+    }
+
     public List<Thing> GenerateTithe(out int extraSilver)
     {
         int outSilver = 0;
@@ -1175,7 +1212,9 @@ public class ResourceFC : IExposable
                     List<Thing> randomTitheList = [];
                     ThingSetMaker thingSetMaker = new ThingSetMaker_MarketValue();
                     ThingSetMakerParams param = new();
-                    param.totalMarketValueRange = new FloatRange((float)effectiveRandomBudget, (float)(effectiveRandomBudget + GetTotalTitheModifierForWorkers()));
+                    // Aim at the budget itself: CreateTax bills the delivered market value, so any value
+                    // generated above the budget would be charged in silver.
+                    param.totalMarketValueRange = new FloatRange((float)effectiveRandomBudget, (float)effectiveRandomBudget);
                     param.filter = randomTitheFilter;
                     param.techLevel = FindFC.EmpireFaction.def.techLevel;
 

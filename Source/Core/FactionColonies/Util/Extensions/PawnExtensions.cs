@@ -63,14 +63,14 @@ static class PawnExtensions
 
         for (int i = num; i < pawn.ideo.Ideo.RequiredScars; i++)
         {
-            IEnumerable<BodyPartRecord> partsToApplyOn = JobDriver_Scarify.GetPartsToApplyOn(pawn);
-            List<BodyPartRecord> list = partsToApplyOn.Where((BodyPartRecord p) => JobDriver_Scarify.AvailableOnNow(pawn, p)).ToList();
-            BodyPartRecord part = list.RandomElement();
-            Hediff hediff = HediffMaker.MakeHediff(HediffDefOf.Scarification, pawn, part);
-            HediffComp_GetsPermanent hediffComp_GetsPermanent = hediff.TryGetComp<HediffComp_GetsPermanent>();
-            hediffComp_GetsPermanent.IsPermanent = true;
-            hediffComp_GetsPermanent.SetPainCategory(JobDriver_Scarify.InjuryPainCategories.RandomElementByWeight((HealthTuning.PainCategoryWeighted e) => e.weight).category);
-            pawn.health.AddHediff(hediff, null, null, null);
+            // Only the per-part safety checks from JobDriver_Scarify.AvailableOnNow: its other gate
+            // looks at the player faction's ideos, but the scars here come from the pawn's own ideo.
+            List<BodyPartRecord> list = JobDriver_Scarify.GetPartsToApplyOn(pawn)
+                .Where(p => !pawn.health.WouldDieAfterAddingHediff(HediffDefOf.Scarification, p, 1f)
+                    && !pawn.health.WouldLosePartAfterAddingHediff(HediffDefOf.Scarification, p, 1f))
+                .ToList();
+            if (list.Count == 0) return;
+            JobDriver_Scarify.Scarify(pawn, list.RandomElement());
         }
     }
 

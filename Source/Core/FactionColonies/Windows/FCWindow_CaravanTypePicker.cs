@@ -32,7 +32,6 @@ public class FCWindow_CaravanTypePicker : Window
         if (faction is null)
         {
             LogUtil.Error("Null FactionFC when opening FCWindow_CaravanTypePicker");
-            Close();
             return;
         }
 
@@ -59,6 +58,13 @@ public class FCWindow_CaravanTypePicker : Window
 
     public override void DoWindowContents(Rect inRect)
     {
+        // PreOpen can't close the window (it isn't in the stack yet), so close here.
+        if (faction is null)
+        {
+            Close();
+            return;
+        }
+
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
 

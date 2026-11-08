@@ -1,3 +1,6 @@
+using HarmonyLib;
+using System.Reflection;
+
 namespace FactionColonies.GiddyUpCompat;
 
 /// <summary>
@@ -11,6 +14,7 @@ public static class GiddyUpInit
     static GiddyUpInit()
     {
         GiddyUpUtil.Bridge = new GiddyUpBridge();
+        new Harmony("com.Matathias.Empire.GiddyUp").PatchEachClass(Assembly.GetExecutingAssembly());
         LogUtil.MessageForce("Giddy Up 2 compatibility module loaded.");
     }
 }

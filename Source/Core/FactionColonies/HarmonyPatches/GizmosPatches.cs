@@ -38,11 +38,13 @@ class PawnDraftGizmos
         // / bonded mechs) aren't individually draftable — they follow their owning merc's faction
         // automatically (see MercSubPawnsFollowFaction) — so exclude them (checked last so the
         // squad scan only runs for Empire pawns mid-battle).
+        // A battlefield must exist: it owns the drafted-NPC list that restores the pawn to the
+        // Empire after the battle, so drafting without one would hand the player a free colonist.
+        BattlefieldContext defBf = FindFC.MilitaryManager?.GetBattlefield(settlementFc.Tile);
         if (__instance.Faction == playerColonyFaction && settlementFc.MilitaryComp?.isUnderAttack == true
-            && FindFC.Military?.FindSubPawnWrapper(__instance) is null)
+            && defBf is not null && FindFC.Military?.FindSubPawnWrapper(__instance) is null)
         {
             Pawn pawn = __instance;
-            var milComp = settlementFc.MilitaryComp;
 
             Command_Toggle draftColonists = new()
             {
@@ -67,8 +69,8 @@ class PawnDraftGizmos
                         RemountMerc(drafted);
                     }
                     // Track drafted NPC for faction restoration after battle
-                    if (milComp is not null && !milComp.draftedNPCs.Contains(pawn))
-                        milComp.draftedNPCs.Add(pawn);
+                    if (!defBf.draftedNPCs.Contains(pawn))
+                        defBf.draftedNPCs.Add(pawn);
                 },
                 defaultDesc = "CommandToggleDraftDesc".Translate(),
                 icon = TexCommand.Draft,

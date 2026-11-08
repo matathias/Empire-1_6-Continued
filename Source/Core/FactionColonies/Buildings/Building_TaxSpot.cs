@@ -25,8 +25,6 @@ public class Building_TaxSpot : Building
         // Find all other tax spots and disable their delivery function
         foreach (Map map in Find.Maps)
         {
-            if (!map.IsPlayerHome) continue;
-
             foreach (Building building in map.listerBuildings.allBuildingsColonist)
             {
                 if (building is Building_TaxSpot otherTaxSpot && otherTaxSpot != this)
@@ -50,7 +48,7 @@ public class Building_TaxSpot : Building
             yield return gizmo;
         }
 
-        if (Faction.OfPlayer.IsPlayer)
+        if (Faction == Faction.OfPlayer)
         {
             yield return new Command_Toggle
             {

@@ -69,13 +69,6 @@ public class ThingQualityTuple : IExposable, IEquatable<ThingQualityTuple>
         }
         return t1.Equals(t2);
     }
-    public static bool operator !=(ThingQualityTuple t1, ThingQualityTuple t2)
-    {
-        if (t1 is null)
-        {
-            return t2 is null;
-        }
-        return !t1.Equals(t2);
-    }
+    public static bool operator !=(ThingQualityTuple t1, ThingQualityTuple t2) => !(t1 == t2);
     /* IEquatable functions end */
 }

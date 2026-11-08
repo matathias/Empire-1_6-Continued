@@ -29,10 +29,6 @@ public class SettlementWindowFC_RandomTithe : Window
 
     public SettlementWindowFC_RandomTithe(WorldSettlementFC settlement, ResourceFC resource)
     {
-        if (resource is null || settlement is null)
-        {
-            Close();
-        }
         this.settlement = settlement;
         forcePause = false;
         draggable = true;
@@ -44,6 +40,13 @@ public class SettlementWindowFC_RandomTithe : Window
 
     public override void DoWindowContents(Rect boundingBox)
     {
+        // The constructor can't close the window (it isn't in the stack yet), so close here.
+        if (resource is null || settlement is null)
+        {
+            Close();
+            return;
+        }
+
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
 

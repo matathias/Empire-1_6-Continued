@@ -84,10 +84,12 @@ public class FCRoadBuilder : IExposable
             return;
         }
 
-        if (!hasRoadBuildersBoost && FindFC.FactionComp.IsActionAllowed(FCActionType.BuildRoadsToAllies))
+        // Re-check every tick so the boost (and the ally targets) go away when the policy is dropped.
+        bool boostAllowed = faction.IsActionAllowed(FCActionType.BuildRoadsToAllies);
+        if (boostAllowed != hasRoadBuildersBoost)
         {
             FlagUpdateRoadQueues();
-            hasRoadBuildersBoost = true;
+            hasRoadBuildersBoost = boostAllowed;
         }
 
         // Interval is driven by the global mod setting; re-sync every tick so

@@ -264,6 +264,14 @@ public static class BattleCasualtyApplicator
             float applied = Math.Min(rolled, budget);
             if (applied <= 0) break;
 
+            // Destroying a vital part (heart, liver, core part, or a part holding one)
+            // kills the pawn outside the death roll, so leave such parts at 1 HP or more.
+            if (ShouldAvoidDestroyingPart(part, pawn))
+            {
+                applied = Math.Min(applied, pawn.health.hediffSet.GetPartHealth(part) - 1f);
+                if (applied <= 0) continue;
+            }
+
             Hediff hediff = HediffMaker.MakeHediff(HediffDefOf.Cut, pawn, part);
             hediff.Severity = applied;
             pawn.health.AddHediff(hediff, part, null, null);
@@ -288,6 +296,22 @@ public static class BattleCasualtyApplicator
             all.Add(p);
         }
         return all.Count == 0 ? null : all.RandomElement();
+    }
+
+    /// <summary>
+    /// True when losing <paramref name="part"/> would kill the pawn: the core part, a part
+    /// with a vital tag, or a part with such a part below it. Mirrors the check vanilla uses
+    /// to keep random surgery injuries from destroying parts.
+    /// </summary>
+    private static bool ShouldAvoidDestroyingPart(BodyPartRecord part, Pawn pawn)
+    {
+        if (part == pawn.RaceProps.body.corePart) return true;
+        if (part.def?.tags is not null && part.def.tags.Any(t => t.vital)) return true;
+        for (int i = 0; i < part.parts.Count; i++)
+        {
+            if (ShouldAvoidDestroyingPart(part.parts[i], pawn)) return true;
+        }
+        return false;
     }
 
     /// <summary>

@@ -37,7 +37,8 @@ public static class EmpireCacheUtil
         FactionDefDescriptionPatch.Invalidate();
         SettlementCaptureTracker.Reset();
 
-        foreach (KeyValuePair<string, Action> entry in _invalidators)
+        // Snapshot: a callback may register or unregister invalidators.
+        foreach (KeyValuePair<string, Action> entry in _invalidators.ToList())
         {
             try { entry.Value(); }
             catch (Exception e) { LogUtil.Error($"Cache invalidator '{entry.Key}' threw: {e}"); }

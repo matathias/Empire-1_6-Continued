@@ -17,6 +17,11 @@ public class Building_CapitalSpot : Building
                 // Set this location as the empire capital
                 SetAsEmpireCapital();
             }
+            else if (!value && isActiveCapitalSpot)
+            {
+                // Turning the active spot off removes its capital, the same as destroying it.
+                ClearEmpireCapital();
+            }
             isActiveCapitalSpot = value;
         }
     }
@@ -26,8 +31,6 @@ public class Building_CapitalSpot : Building
         // Find all other capital spots and disable them
         foreach (Map map in Find.Maps)
         {
-            if (!map.IsPlayerHome) continue;
-
             foreach (Building building in map.listerBuildings.allBuildingsColonist)
             {
                 if (building is Building_CapitalSpot otherCapitalSpot && otherCapitalSpot != this)
@@ -55,6 +58,19 @@ public class Building_CapitalSpot : Building
         else
         {
             LogUtil.Error($"Capital Building: Failed to set capital - faction={faction is not null}, Map={Map is not null}");
+        }
+    }
+
+    private void ClearEmpireCapital()
+    {
+        FactionFC faction = FindFC.FactionComp;
+        if (faction is null) return;
+        // Only clear the capital if it still points at this spot's tile.
+        PlanetTile spotTile = Map?.Parent?.Tile ?? lastKnownTile;
+        if (spotTile.Valid && faction.capitalLocation == spotTile)
+        {
+            faction.capitalLocation = PlanetTile.Invalid;
+            LogUtil.Message($"Capital Building: Cleared Empire capital at tile {spotTile}");
         }
     }
 
@@ -135,7 +151,7 @@ public class Building_CapitalSpot : Building
             yield return gizmo;
         }
 
-        if (Faction.OfPlayer.IsPlayer)
+        if (Faction == Faction.OfPlayer)
         {
             yield return new Command_Toggle
             {

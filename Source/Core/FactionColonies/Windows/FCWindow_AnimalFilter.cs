@@ -38,7 +38,6 @@ public class FCWindow_AnimalFilter : Window
         if (faction is null)
         {
             LogUtil.Error("Null FactionFC WorldComponent when opening FCWindow_AnimalFilter");
-            Close();
             return;
         }
 
@@ -46,7 +45,6 @@ public class FCWindow_AnimalFilter : Window
         if (filter is null)
         {
             LogUtil.Error("Null animalFilter when opening FCWindow_AnimalFilter");
-            Close();
             return;
         }
 
@@ -59,6 +57,7 @@ public class FCWindow_AnimalFilter : Window
     public override void PostClose()
     {
         base.PostClose();
+        if (filter is null) return;
         filter.Validate();
         faction.xenotypeFilter?.RefreshPawnGroupMakers();
         FactionDefDescriptionPatch.Invalidate();
@@ -66,6 +65,13 @@ public class FCWindow_AnimalFilter : Window
 
     public override void DoWindowContents(Rect inRect)
     {
+        // PreOpen can't close the window (it isn't in the stack yet), so close here.
+        if (filter is null)
+        {
+            Close();
+            return;
+        }
+
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
 

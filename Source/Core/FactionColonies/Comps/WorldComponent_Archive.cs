@@ -82,8 +82,9 @@ public class WorldComponent_Archive : WorldComponent
     }
 
     /// <summary>
-    /// Newest-first enumeration of archived battle reports. Snapshot — safe to mutate
-    /// the archive while iterating.
+    /// Newest-first enumeration of archived battle reports. This is a lazy walk over the live
+    /// archive, not a snapshot: copy it (e.g. <c>[.. RecentBattleReports]</c>) before recording
+    /// new reports while iterating.
     /// </summary>
     public IEnumerable<BattleResult> RecentBattleReports
     {

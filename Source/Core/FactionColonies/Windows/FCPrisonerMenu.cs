@@ -4,7 +4,7 @@ namespace FactionColonies;
 
 class FCPrisonerMenu : Window
 {
-    public List<FCPrisoner> prisoners;
+    private static readonly List<FCPrisoner> NoPrisoners = [];
     public WorldSettlementFC settlement;
     public FactionFC faction;
 
@@ -20,7 +20,6 @@ class FCPrisonerMenu : Window
         this.faction = FindFC.FactionComp;
         this.settlement = settlement;
         settlement.PrisonerComp?.CullNullPrisoners();
-        this.prisoners = settlement.PrisonerComp?.prisonerList ?? [];
 
         this.forcePause = false;
         this.draggable = true;
@@ -39,6 +38,8 @@ class FCPrisonerMenu : Window
         const float btnRowGap = 4f;
         float btnW = (inRect.width - btnGap) / 2f;
         WorldObjectComp_SettlementPrisoners comp = settlement.PrisonerComp;
+        // Read the live list each frame: the comp can be added or its list replaced while open.
+        List<FCPrisoner> prisoners = comp?.prisonerList ?? NoPrisoners;
 
         Rect countRect = new(inRect.xMax - countBadgeW, inRect.y, countBadgeW, titleHeight);
         Rect titleRect = new(inRect.x, inRect.y, countRect.x - inRect.x, titleHeight);
@@ -109,7 +110,7 @@ class FCPrisonerMenu : Window
             for (int i = 0; i < prisoners.Count; i++)
             {
                 Rect rowBox = ls.GetRect(PrisonerUtil.RowHeight);
-                PrisonerUtil.DrawPrisonerRow(rowBox, prisoners[i], settlement, i, WindowUpdate);
+                PrisonerUtil.DrawPrisonerRow(rowBox, prisoners[i], settlement, i, null);
             }
             ls.End();
             ScrollUtil.EndScrollView();

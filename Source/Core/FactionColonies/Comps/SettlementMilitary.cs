@@ -155,14 +155,14 @@ public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPo
      * continues to compile and read correctly. Internal mutations live on BattlefieldContext.
      */
 
-    private static readonly List<Pawn> _emptyPawnList = [];
-
     private BattlefieldContext Battlefield
         => FindFC.MilitaryManager?.GetBattlefield(WorldSettlement?.Tile ?? PlanetTile.Invalid);
 
     public IEnumerable<Pawn> attackers => Battlefield?.attackerPawns ?? [];
     public IEnumerable<Pawn> defenders => Battlefield?.defenderPawns ?? [];
-    public List<Pawn> draftedNPCs => Battlefield?.draftedNPCs ?? _emptyPawnList;
+    // Without a battlefield this is a fresh throwaway list, so a stray Add can't leak into a
+    // shared instance that every other settlement would then read.
+    public List<Pawn> draftedNPCs => Battlefield?.draftedNPCs ?? [];
 
     /* -*-*-*-*- Computed properties (derived from manager state) -*-*-*-*- */
 

@@ -488,7 +488,7 @@ public static class FactionCache
                 {
                     if (building.upgrades is null || building.upgrades.Count == 0) continue;
                     List<BuildingUpgradeEntry> tree = [];
-                    CollectUpgradeTree(building, 0, null, tree);
+                    CollectUpgradeTree(building, 0, null, tree, []);
                     _cachedUpgradeTrees[building] = tree;
                 }
             }
@@ -496,14 +496,20 @@ public static class FactionCache
         }
     }
 
-    private static void CollectUpgradeTree(BuildingFCDef building, int depth, BuildingFCDef parent, List<BuildingUpgradeEntry> result)
+    // ancestors holds the defs on the current path, so a cyclic upgrade chain (already reported
+    // by BuildingFCDef.ConfigErrors) is cut instead of recursing until the stack overflows.
+    private static void CollectUpgradeTree(BuildingFCDef building, int depth, BuildingFCDef parent,
+        List<BuildingUpgradeEntry> result, HashSet<BuildingFCDef> ancestors)
     {
         if (building.upgrades is null) return;
+        ancestors.Add(building);
         foreach (BuildingFCDef upgrade in building.upgrades)
         {
+            if (ancestors.Contains(upgrade)) continue;
             result.Add(new BuildingUpgradeEntry { def = upgrade, depth = depth, parent = parent ?? building });
-            CollectUpgradeTree(upgrade, depth + 1, upgrade, result);
+            CollectUpgradeTree(upgrade, depth + 1, upgrade, result, ancestors);
         }
+        ancestors.Remove(building);
     }
 
     /// <summary>

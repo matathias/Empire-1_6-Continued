@@ -736,7 +736,10 @@ public class WorldSettlementFC : Settlement
             return;
         }
 
-        MilitaryComp?.EndBattle(false, 0);
+        // Only a hostile destroy during an attack counts as losing the battle. A deliberate
+        // removal, or a destroy with no attack running, has no battle to end.
+        if (!destroyFlag && MilitaryComp?.isUnderAttack == true)
+            MilitaryComp.EndBattle(false, 0);
 
         if (destroyFlag)
         {
@@ -753,6 +756,8 @@ public class WorldSettlementFC : Settlement
         checkedBuildingsComp = false;
         cachedMilitaryComp = null;
         checkedMilitaryComp = false;
+        cachedPrisonerComp = null;
+        checkedPrisonerComp = false;
     }
     public void InvalidateStatCache()
     {
@@ -1002,6 +1007,12 @@ public class WorldSettlementFC : Settlement
         BuildingsComp?.ReapplyBuildingStatModifiers();
         // AddStatModifiers calls InvalidateStatCache -> DirtyStatsCache, so values recompute on first access
         AddStatModifiers(settlementDef.statModifiers, "settlementType", settlementDef.label);
+
+        // Production bonuses from biome/type/landmark/mutators are saved with the resource;
+        // re-derive them so def changes since the save take effect.
+        if (resources is not null)
+            foreach (ResourceFC resource in resources)
+                resource?.RebuildBaseResourceBonuses();
 
         // Re-apply active event stat modifiers that target this settlement.
         // Cross-references are resolved before DoAllPostLoadInits, so
@@ -1298,6 +1309,8 @@ public class WorldSettlementFC : Settlement
 
         // --- Reconcile comps ---
         ReconcileComps(oldDef, newDef);
+        // Drop cached comp pointers now, so the steps below see the reconciled comp set.
+        InvalidateCache();
 
         // --- Clamp level ---
         if (settlementLevel > settlementDef.maxSettlementLevel)
@@ -1313,6 +1326,9 @@ public class WorldSettlementFC : Settlement
                 resources.RemoveAt(i);
         }
         PrepareResources(FindFC.TechLevel);
+        // Resources shared by both types still carry the old type's production bonuses.
+        foreach (ResourceFC resource in resources)
+            resource.RebuildBaseResourceBonuses();
 
         // --- Apply new stat modifiers ---
         AddStatModifiers(settlementDef.statModifiers, "settlementType", settlementDef.label);
@@ -2507,6 +2523,11 @@ public class WorldSettlementFC : Settlement
                         fulfilledTitheValue += t.MarketValue * t.stackCount;
                 }
                 accruedNet += resExtraSilver; // random-tithe stock disbursement, post-tax hook silver
+            }
+            else if (resource.canTithe)
+            {
+                // Paused tithes skip GenerateTithe, but a requested stock disbursement still pays out.
+                accruedNet += resource.DisburseTitheStockWhilePaused();
             }
         }
 

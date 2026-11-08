@@ -24,7 +24,12 @@ public class FCPolicyBehavior_Feudal : FCPolicyBehavior
             if (!mercenaryCooldown.TryUseOrShowCooldown())
                 return;
 
-            mercenaryCooldown.Use();
+            Map map = Find.CurrentMap;
+            if (map is null)
+            {
+                Messages.Message("FCRequestMercenaryNoMap".Translate(), MessageTypeDefOf.RejectInput);
+                return;
+            }
 
             PawnGenerationRequest request = FCPawnGenerator.WorkerOrMilitaryRequest();
             request.ColonistRelationChanceFactor = Ext<FCPolicyBehaviorExt_Feudal>().relationChanceFactor;
@@ -32,7 +37,7 @@ public class FCPolicyBehavior_Feudal : FCPolicyBehavior
 
             IncidentParms parms = new()
             {
-                target = Find.CurrentMap,
+                target = map,
                 faction = FindFC.EmpireFaction,
                 points = 999,
                 raidArrivalModeForQuickMilitaryAid = true,
@@ -44,6 +49,8 @@ public class FCPolicyBehavior_Feudal : FCPolicyBehavior
             PawnsArrivalModeWorker_EdgeWalkIn worker = new();
             worker.TryResolveRaidSpawnCenter(parms);
             worker.Arrive([pawn], parms);
+            // Consumed only once the mercenary has arrived, so a failed request keeps the cooldown.
+            mercenaryCooldown.Use();
 
             Find.LetterStack.ReceiveLetter(
                 "FCMercenaryJoined".Translate(),

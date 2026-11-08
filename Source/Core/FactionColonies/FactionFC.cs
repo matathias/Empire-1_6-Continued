@@ -1143,21 +1143,23 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         double avgUnrest = 0;
         double avgProsperity = 0;
 
-        if (settlements.Count > 0)
+        int count = 0;
+        foreach (WorldSettlementFC settlement in settlements)
         {
-            foreach (WorldSettlementFC settlement in settlements)
-            {
-                if (settlement is null) continue;
-                avgHappiness += settlement.happiness;
-                avgLoyalty += settlement.loyalty;
-                avgUnrest += settlement.unrest;
-                avgProsperity += settlement.prosperity;
-            }
+            if (settlement is null) continue;
+            count++;
+            avgHappiness += settlement.happiness;
+            avgLoyalty += settlement.loyalty;
+            avgUnrest += settlement.unrest;
+            avgProsperity += settlement.prosperity;
+        }
 
-            avgHappiness /= settlements.Count;
-            avgLoyalty /= settlements.Count;
-            avgUnrest /= settlements.Count;
-            avgProsperity /= settlements.Count;
+        if (count > 0)
+        {
+            avgHappiness /= count;
+            avgLoyalty /= count;
+            avgUnrest /= count;
+            avgProsperity /= count;
         }
 
         _averageHappiness = avgHappiness;
@@ -2052,16 +2054,15 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
             // on the shared PColony def (otherwise the previous save's icon leaks into the next load).
             PrivateFieldUtil.FactionIconCache(faction.def) = null;
         }
-        if (settlements.Any() && settlements[0]?.def is not null && UnityData.IsInMainThread)
-        {
-            PrivateFieldUtil.ExpandingIconCache(settlements[0].def) = ContentFinder<Texture2D>.Get(iconPath);
-        }
-
+        // Settlement types (surface, orbital, submod types) each have their own def and icon cache.
+        Texture2D icon = settlements.Any() && UnityData.IsInMainThread ? ContentFinder<Texture2D>.Get(iconPath) : null;
         foreach (WorldSettlementFC settlement in settlements)
         {
             if (settlement?.def is not null)
             {
                 settlement.def.expandingIconTexture = iconPath;
+                if (icon != null)
+                    PrivateFieldUtil.ExpandingIconCache(settlement.def) = icon;
             }
             if (settlement?.Faction?.def is not null)
             {

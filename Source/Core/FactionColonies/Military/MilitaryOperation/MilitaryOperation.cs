@@ -42,6 +42,10 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
      * After CompleteBattle this points to the same object as <see cref="result"/>. */
     public BattleResult battleResult;
 
+    /* True when result and battleResult are one object: it is saved once and both fields point
+     * to it again after load. Kept as a field so every Scribe pass sees the loaded value. */
+    private bool battleResultIsResult;
+
     /* Wakeup events scheduled by this op (arrival, cooldown, ...). */
     public List<FCEvent> sourceEvents = [];
 
@@ -103,8 +107,12 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         Scribe_Deep.Look(ref aggressor, "aggressor");
         Scribe_Deep.Look(ref defender, "defender");
         Scribe_References.Look(ref externalDefenderSource, "externalDefenderSource");
+        if (Scribe.mode == LoadSaveMode.Saving)
+            battleResultIsResult = result is not null && ReferenceEquals(result, battleResult);
+        Scribe_Values.Look(ref battleResultIsResult, "battleResultIsResult", false);
         Scribe_Deep.Look(ref result, "result");
-        Scribe_Deep.Look(ref battleResult, "battleResult");
+        if (!battleResultIsResult)
+            Scribe_Deep.Look(ref battleResult, "battleResult");
         Scribe_Collections.Look(ref sourceEvents, "sourceEvents", LookMode.Reference);
         Scribe_Values.Look(ref battlefieldRef, "battlefieldRef", PlanetTile.Invalid);
 
@@ -113,6 +121,7 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
             aggressor ??= new MilitaryOperationParticipant();
             defender ??= new MilitaryOperationParticipant();
             sourceEvents ??= [];
+            if (battleResultIsResult) battleResult = result;
         }
     }
 

@@ -237,6 +237,7 @@
 
 	<!-- Mercenary -->
 	<FCRequestMercenary>Request Mercenary</FCRequestMercenary>
+	<FCRequestMercenaryNoMap>There is no colony for the mercenary to arrive at.</FCRequestMercenaryNoMap>
 	<FCActionMercenaryRefreshed>The Request Mercenary action is available for use</FCActionMercenaryRefreshed>
 	<FCActionMercenaryOnCooldown>You cannot use that action for until another {0}</FCActionMercenaryOnCooldown>
 

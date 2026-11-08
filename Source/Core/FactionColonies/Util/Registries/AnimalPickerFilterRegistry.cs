@@ -15,15 +15,8 @@ public static class AnimalPickerFilterRegistry
     internal static void ClearAll() => _list.ClearAll();
     public static IReadOnlyList<IAnimalPickerFilter> Filters => _list.Items;
 
-    /// <summary>True if every registered filter allows the kind. No filters => allowed.</summary>
-    public static bool IsAllowed(PawnKindDef animal)
-    {
-        IReadOnlyList<IAnimalPickerFilter> filters = _list.Items;
-        foreach (IAnimalPickerFilter filter in filters)
-        {
-            if (!filter.IsAnimalAllowed(animal))
-                return false;
-        }
-        return true;
-    }
+    /// <summary>True if every registered filter allows the kind. No filters => allowed.
+    /// A filter that throws is logged and treated as allowing the kind.</summary>
+    public static bool IsAllowed(PawnKindDef animal) =>
+        RegistryDispatch.All(_list.Items, filter => filter.IsAnimalAllowed(animal), nameof(IAnimalPickerFilter.IsAnimalAllowed));
 }

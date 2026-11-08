@@ -494,6 +494,7 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCSquadInspectionAddUnitBusy>Cannot add a unit while the squad is busy.</FCSquadInspectionAddUnitBusy>
 	<FCSquadInspectionAddUnitNoBlueprints>No saved unit blueprints. Design one in the Unit Templates window first.</FCSquadInspectionAddUnitNoBlueprints>
 	<FCSquadInspectionAddUnitFull>Squad has no empty slots. Dismiss a unit first.</FCSquadInspectionAddUnitFull>
+	<FCSquadInspectionHireFailed>Could not generate a pawn for this slot. No silver was charged.</FCSquadInspectionHireFailed>
 
 	<!-- Per-pawn loadout dialog -->
 	<FCDialogPawnLoadoutTitle>Edit pawn: {0}</FCDialogPawnLoadoutTitle>

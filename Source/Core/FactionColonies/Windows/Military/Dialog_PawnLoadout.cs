@@ -85,7 +85,8 @@ public class Dialog_PawnLoadout : Window
 
     public override void DoWindowContents(Rect inRect)
     {
-        if (merc is null) { Close(); return; }
+        // Close if the squad was dismissed while this dialog was open.
+        if (merc is null || FindFC.Military?.mercenarySquads?.Contains(squad) != true) { Close(); return; }
 
         EnsurePreviewPawn();
         RefreshPreviewIfStale();

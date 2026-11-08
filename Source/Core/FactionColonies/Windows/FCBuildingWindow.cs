@@ -88,10 +88,7 @@ class FCBuildingWindow : Window
     {
         base.PreOpen();
         if (settlement.BuildingsComp is null)
-        {
             LogUtil.Warning($"Attempted to open buildings window for settlement {settlement.Name} with NULL BuildingsComp");
-            this.Close();
-        }
     }
 
     #region Layout Calculation
@@ -319,6 +316,14 @@ class FCBuildingWindow : Window
 
     public override void DoWindowContents(Rect inRect)
     {
+        // Close() only works once the window is in the stack, so the guard lives here
+        // rather than in PreOpen. Also closes when the settlement is removed while open.
+        if (settlement.BuildingsComp is null || !SettlementWindowFc.SettlementStillActive(settlement))
+        {
+            Close();
+            return;
+        }
+
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
 

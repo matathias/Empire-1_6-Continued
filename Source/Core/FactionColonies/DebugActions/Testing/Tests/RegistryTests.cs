@@ -251,7 +251,8 @@ public static class RegistryTests
             LifecycleRegistry.InvokeOnSettlementCreated(settlement);
             TestAssert.AreEqual(1, p.SettlementCreatedCount, "Duplicate should be ignored");
         }
-        finally { LifecycleRegistry.Unregister(p); }
+        // Unregister twice so a dedup regression can't leak a test double for the session.
+        finally { LifecycleRegistry.Unregister(p); LifecycleRegistry.Unregister(p); }
     }
 
     [EmpireDestructiveTest("Registry")]
@@ -683,7 +684,8 @@ public static class RegistryTests
             TaxTickRegistry.InvokePreTaxResolution(null);
             TestAssert.AreEqual(1, c.PreTaxCount, "Should only invoke once");
         }
-        finally { TaxTickRegistry.Unregister(c); }
+        // Unregister twice so a dedup regression can't leak a test double for the session.
+        finally { TaxTickRegistry.Unregister(c); TaxTickRegistry.Unregister(c); }
     }
 
     [EmpireDestructiveTest("Registry")]

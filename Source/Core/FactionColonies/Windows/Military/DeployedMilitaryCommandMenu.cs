@@ -129,12 +129,15 @@ public class DeployedMilitaryCommandMenu : Window
             if (merc?.pawn?.Map is not null)
             {
                 merc.pawn.Destroy();
+                // Empty the slot so the squad does not keep a destroyed pawn as a live member.
+                merc.pawn = null;
             }
         }
 
         try
         {
-            foreach (Pawn pawn in Find.CurrentMap.mapPawns.SpawnedPawnsInFaction(FindFC.EmpireFaction))
+            // Snapshot: destroying a pawn removes it from the live spawned-pawns list.
+            foreach (Pawn pawn in Find.CurrentMap.mapPawns.SpawnedPawnsInFaction(FindFC.EmpireFaction).ToList())
             {
                 pawn.Destroy();
             }

@@ -8,7 +8,7 @@ class TradeHarmonyPatchEnoughSilver
 {
     static void Postfix(ref bool __result)
     {
-        if (TradeSession.trader.TraderKind.defName == "FCResearchTrader")
+        if (TradeSession.trader?.TraderKind == FCTraderKindDefOf.FCResearchTrader)
         {
             __result = true;
         }
@@ -21,7 +21,7 @@ class TradeHarmonyPatchItemPrice
 {
     static void Postfix(ref Tradeable __instance, ref float __result)
     {
-        if (TradeSession.trader.TraderKind.defName == "FCResearchTrader")
+        if (TradeSession.trader?.TraderKind == FCTraderKindDefOf.FCResearchTrader)
         {
             __result = __instance.AnyThing.MarketValue;
         }
@@ -35,7 +35,7 @@ class TradeHarmonyPatchFinishedTrade
     static void Postfix(ref TradeDeal __instance, ref bool __result)
     {
 
-        if (TradeSession.trader.TraderKind.defName == "FCResearchTrader")
+        if (TradeSession.trader?.TraderKind == FCTraderKindDefOf.FCResearchTrader)
         {
             FactionFC faction = FindFC.FactionComp;
             if (faction is not null && __result == true && faction.tradedAmount != 0)

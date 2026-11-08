@@ -27,8 +27,20 @@ public class SquadEquipmentTracker : IExposable
 
     public void ExposeData()
     {
+        // Gear gets destroyed (stripped, dismissed, lost in battle) while its entry stays behind;
+        // destroyed things save as null references, so prune them before saving and after loading.
+        if (Scribe.mode == LoadSaveMode.Saving)
+        {
+            UsedWeaponList?.RemoveAll(t => t is null || t.Destroyed);
+            UsedApparelList?.RemoveAll(t => t is null || t.Destroyed);
+        }
         Scribe_Collections.Look(ref UsedWeaponList, "UsedWeaponList", LookMode.Reference);
         Scribe_Collections.Look(ref UsedApparelList, "UsedApparelList", LookMode.Reference);
+        if (Scribe.mode == LoadSaveMode.PostLoadInit)
+        {
+            UsedWeaponList?.RemoveAll(t => t is null);
+            UsedApparelList?.RemoveAll(t => t is null);
+        }
     }
 
     /// <summary>Re-equips every mercenary slot from <paramref name="outfit"/>'s units,

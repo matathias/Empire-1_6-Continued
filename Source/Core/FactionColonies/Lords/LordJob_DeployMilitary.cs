@@ -188,6 +188,9 @@ public class LordJob_DeployMilitary : LordJob
         Scribe_Values.Look(ref finalized, "finalized");
         Scribe_Values.Look(ref leaveOrderStartTick, "leaveOrderStartTick", -1);
         Scribe_Values.Look(ref mountsApplied, "mountsApplied", false);
+        // Dead or destroyed pawns save as null references, which break the dictionary on load.
+        if (Scribe.mode == LoadSaveMode.Saving)
+            mounts?.RemoveAll(kv => kv.Key is null || kv.Key.Destroyed || kv.Value is null || kv.Value.Destroyed);
         Scribe_Collections.Look(ref mounts, "mounts", LookMode.Reference, LookMode.Reference, ref mountsKeys, ref mountsValues);
 
         //PostLoadInit is the last loading pass
