@@ -35,4 +35,11 @@ public interface ISettlementFoundingValidator
     /// <para><paramref name="costMultiplier"/> scales the resources consumed (1 = full cost).</para>
     /// </summary>
     void OnSettlementFounded(PlanetTile tile, WorldSettlementDef type, float costMultiplier) { }
+
+    /// <summary>
+    /// Called when a founding that <see cref="OnSettlementFounded"/> was already told about failed
+    /// before the settlement could be created (its silver is refunded by the caller). Give back
+    /// whatever that call consumed for the same <paramref name="tile"/>.
+    /// </summary>
+    void OnFoundingCancelled(PlanetTile tile, WorldSettlementDef type) { }
 }

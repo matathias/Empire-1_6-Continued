@@ -1076,6 +1076,15 @@ public class ResourceFC : IExposable
         return silver;
     }
 
+    /// <summary>The market value CreateTax bills for these goods.</summary>
+    private static double DeliveredValue(List<Thing> things)
+    {
+        double total = 0;
+        foreach (Thing t in things)
+            total += t.MarketValue * t.stackCount;
+        return total;
+    }
+
     public List<Thing> GenerateTithe(out int extraSilver)
     {
         int outSilver = 0;
@@ -1154,7 +1163,10 @@ public class ResourceFC : IExposable
             }
         }
 
-        double specifiedSpent = AccruedTitheBudget - budgetRemaining;
+        // CreateTax bills the delivered market value, which can come in under the budgeted ThingValue
+        // (and a delivery above it is billed in full), so the specified tithe counts what it delivered,
+        // capped at what it was budgeted.
+        double specifiedSpent = Math.Min(DeliveredValue(titheItems), AccruedTitheBudget - budgetRemaining);
         double randomSpent = 0; // this cycle's budget consumed by the random tithe (delivered or escrowed)
         bool randomEscrowed = false;
 
@@ -1206,13 +1218,18 @@ public class ResourceFC : IExposable
                             LogUtil.Message($"  randomTitheList[{i}]: {randomTitheList[i].LabelCap}");
                         }
                         titheItems.AddRange(randomTitheList);
-                        // Goods are billed in full via CreateTax.fulfilledTitheValue, including the
-                        // stock-funded portion — which was already withheld when it accrued, so
-                        // un-escrow priorStock here to avoid charging it twice.
-                        outSilver += (int)priorStock;
-                        randomSpent = effectiveRandomBudget - priorStock;
-                        randomTitheStock = 0;
-                        randomTitheStockSilver = 0;
+                        // The generator usually lands a little under its target, so the stock and this
+                        // cycle's budget are charged only for the value actually delivered. The stock
+                        // pays first; CreateTax bills the goods in full, but the stock's share was
+                        // already withheld when it accrued, so refund that part here. Unused stock
+                        // stays in escrow with its share of the withheld silver.
+                        double delivered = DeliveredValue(randomTitheList);
+                        double stockUsed = Math.Min(delivered, priorStock);
+                        outSilver += (int)stockUsed;
+                        randomSpent = Math.Min(delivered - stockUsed, effectiveRandomBudget - priorStock);
+                        double stockLeft = priorStock - stockUsed;
+                        randomTitheStockSilver = priorStock > 0 ? randomTitheStockSilver * (stockLeft / priorStock) : 0;
+                        randomTitheStock = stockLeft;
                     }
                 }
                 else
@@ -1234,9 +1251,14 @@ public class ResourceFC : IExposable
         double consumed = specifiedSpent + randomSpent;
         double charged = Math.Min(Math.Max(0, consumed - AccruedExternalTitheBudget), AccruedTaxableValue);
         outSilver += (int)(consumed - charged);
-        // The escrow records only its share of the charge, so disbursing it can't pay out the bonus.
-        if (randomEscrowed && consumed > 0)
-            randomTitheStockSilver += randomSpent * (charged / consumed);
+        // The escrow records only its share of the charge, so disbursing it can't pay out the bonus. The
+        // specified tithe is paid first, so it uses up the external budget first; the random tithe's
+        // share is whatever the specified tithe left of the charge.
+        if (randomEscrowed)
+        {
+            double specifiedCharged = Math.Min(Math.Max(0, specifiedSpent - AccruedExternalTitheBudget), AccruedTaxableValue);
+            randomTitheStockSilver += charged - specifiedCharged;
+        }
 
         // Post-tax generation hook
         def.GetModExtension<ResourceTaxExtension>()?.OnPostTaxGeneration(this, settlement, titheItems, ref outSilver);

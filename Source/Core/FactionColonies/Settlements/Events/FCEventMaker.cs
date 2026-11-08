@@ -553,8 +553,8 @@ public static class FCEventMaker
                                 if (settlement is not null)
                                 {
                                     primaryActionAttempted = true;
-                                    settlement.ConstructBuilding(evt.building, evt.buildingSlot);
-                                    Messages.Message("FCBuildingEventCompletedMsg".Translate(evt.building.LabelCap, settlement.Name), MessageTypeDefOf.PositiveEvent);
+                                    if (settlement.ConstructBuilding(evt.building, evt.buildingSlot))
+                                        Messages.Message("FCBuildingEventCompletedMsg".Translate(evt.building.LabelCap, settlement.Name), MessageTypeDefOf.PositiveEvent);
                                 }
                                 else
                                 {

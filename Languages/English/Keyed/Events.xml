@@ -43,6 +43,7 @@
 	<!-- Building Events -->
 	<FCBuildingEventDesc>{0} is under construction at {1}. Estimated completion: {2}.</FCBuildingEventDesc>
 	<FCBuildingEventCompletedMsg>{0} has been constructed at {1}!</FCBuildingEventCompletedMsg>
+	<FCBuildingNoSlotRefunded>{0} could not be built at {1}: its building slot was removed when the slot limit was lowered, and no other slot is free. Its cost has been refunded.</FCBuildingNoSlotRefunded>
 
 	<!-- Pawn Events -->
 	<FCDeathOfFactionPawn>Your incompetence has led to the death of a pawn from your settlements! Unrest has grown in your subject settlements.</FCDeathOfFactionPawn>

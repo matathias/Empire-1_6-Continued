@@ -26,9 +26,9 @@ public static class EmpireRegistry
     public static void RegisterPersistent(object participant)
     {
         if (participant is null) return;
-        if (!persistent.Contains(participant))
+        // One that matches no registry is warned about once here, not again on every ClearAll.
+        if (TryRegister(participant) && !persistent.Contains(participant))
             persistent.Add(participant);
-        Register(participant);
     }
 
     /* One row per facade-managed registry: how to clear it, and each participant type it accepts
@@ -109,9 +109,12 @@ public static class EmpireRegistry
         Row<IAnimalPickerFilter>(AnimalPickerFilterRegistry.Register, AnimalPickerFilterRegistry.Unregister, AnimalPickerFilterRegistry.ClearAll),
     ];
 
-    public static void Register(object participant)
+    public static void Register(object participant) => TryRegister(participant);
+
+    /// <summary>Registers into every matching registry; false (with a warning) when none matched.</summary>
+    private static bool TryRegister(object participant)
     {
-        if (participant is null) return;
+        if (participant is null) return false;
         bool any = false;
 
         foreach (RegistryRow row in rows)
@@ -128,6 +131,7 @@ public static class EmpireRegistry
         {
             LogUtil.Warning($"EmpireRegistry.Register: {participant.GetType().Name} matched no registry; ignored");
         }
+        return any;
     }
 
     public static void Unregister(object participant)

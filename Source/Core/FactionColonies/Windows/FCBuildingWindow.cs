@@ -87,6 +87,8 @@ class FCBuildingWindow : Window
     public override void PreOpen()
     {
         base.PreOpen();
+        // DoWindowContents closes the window when the settlement is missing; just don't fail first.
+        if (settlement is null) return;
         if (settlement.BuildingsComp is null)
             LogUtil.Warning($"Attempted to open buildings window for settlement {settlement.Name} with NULL BuildingsComp");
     }

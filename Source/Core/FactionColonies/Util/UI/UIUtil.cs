@@ -649,8 +649,8 @@ public readonly struct AccentRow(Rect rect, int index, Color accent)
     public Rect Rect { get; } = rect;
     public int Index { get; } = index;
     public Color Accent { get; } = accent;
-    public float ContentX => AccentW + 6f;
-    public float ContentW => Rect.width - ContentX - 4f;
+    public float ContentX => Rect.x + AccentW + 6f;
+    public float ContentW => Rect.xMax - ContentX - 4f;
     public float TopY => Rect.y;
     public float LineH => Rect.height / 2f;
     public float BotY => Rect.y + LineH;

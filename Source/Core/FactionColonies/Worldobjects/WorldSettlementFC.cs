@@ -72,7 +72,10 @@ public class WorldSettlementFC : Settlement
 
     public int GetBuildingSlots()
     {
-        int slots = settlementDef.GetSettlementTypeExtension().GetBuildingSlots(settlementLevel, settlementDef.maxBuildingCount);
+        // Capped like the slot list itself (WorldObjectComp_SettlementBuildings.FC_MAX_BUILDINGS): a
+        // settlement above a lowered max-level setting keeps its level but not the extra slots.
+        int level = Math.Min(settlementLevel, Math.Min(FCSettings.settlementMaxLevel, settlementDef.maxSettlementLevel));
+        int slots = settlementDef.GetSettlementTypeExtension().GetBuildingSlots(level, settlementDef.maxBuildingCount);
         return Math.Min(slots, settlementDef.maxBuildingCount);
     }
 
@@ -2281,9 +2284,9 @@ public class WorldSettlementFC : Settlement
     }
 
 
-    public void ConstructBuilding(BuildingFCDef building, int buildingSlot)
+    public bool ConstructBuilding(BuildingFCDef building, int buildingSlot)
     {
-        BuildingsComp?.ConstructBuilding(building, buildingSlot);
+        return BuildingsComp?.ConstructBuilding(building, buildingSlot) == true;
     }
 
     public ResourceFC ReturnResource(string defName) //used to return the correct resource based on string name

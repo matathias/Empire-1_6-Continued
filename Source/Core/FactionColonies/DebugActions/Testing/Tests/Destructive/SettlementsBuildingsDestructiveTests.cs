@@ -250,8 +250,7 @@ public static class SettlementsBuildingsDestructiveTests
             int withTithe = AccrueAndTax(s, days, out List<Thing> things);
 
             TestAssert.AreEqual(baseline, withTithe, tolerance: 2,
-                message: $"An externally funded random tithe must leave silver unchanged (baseline {baseline}, with tithe {withTithe}, "
-                    + $"budget {perDay * days:F0}, delivered {TotalValue(things):F0} in {things?.Count ?? 0} item(s))");
+                message: $"An externally funded random tithe must leave silver unchanged (baseline {baseline}, with tithe {withTithe}, budget {perDay * days:F0}, delivered {TotalValue(things):F0} in {things?.Count ?? 0} item(s))");
         }
         finally
         {
@@ -259,6 +258,50 @@ public static class SettlementsBuildingsDestructiveTests
             DestructiveTestUtil.SafeRemoveSettlement(s);
         }
         DestructiveTestUtil.AssertEmpireInvariants(f, "ExternalBudget_RandomTitheUnderfilled");
+    }
+
+    /// <summary>
+    /// The specified tithe is paid first, so it uses up the external budget; a random tithe escrowed
+    /// in the same cycle is then funded entirely by the settlement, and the escrow must record all
+    /// of that as withheld silver so a later disburse pays it all back.
+    /// </summary>
+    [EmpireDestructiveTest("Destructive.Tax")]
+    public static void ExternalBudget_SpecifiedTitheAbsorbsIt_EscrowRecordsOwnFundedShare()
+    {
+        FactionFC f = DestructiveTestUtil.RequireFaction();
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
+        FixedTitheBudgetComp comp = null;
+        try
+        {
+            (ResourceFC target, ThingDef thing) = RequireTitheResourceWith(s, IsPlainThing, "a thing without quality or stuff");
+            Isolate(s, target, workers: 3);
+            const int days = 2;
+            TestAssert.GreaterThan(target.taxableProductionMarketValue, 0, "The target resource should produce");
+
+            double unit = CraftUtil.ThingValue(new ThingQualityTuple { thingDef = thing });
+            double perDay = unit * 2; // the specified tithe below spends exactly this over the cycle
+            comp = AttachExternalBudget(s, target, perDay);
+            target.AddTitheEntry(new ThingQualityTuple { thingDef = thing }, 2 * days);
+            target.hasRandomTithe = true;
+            target.autoMaxRandomTithe = true;
+            target.randomTitheFilter.SetDisallowAll(); // the random share rolls into escrow
+            target.SetDirtyCache();
+
+            double ownValue = target.taxableProductionMarketValue * days;
+            AccrueAndTax(s, days);
+
+            // The settlement pays for at most its own production; any multiplier bonus above that is free.
+            double expected = Math.Min(target.randomTitheStock, ownValue);
+            TestAssert.GreaterThan(target.randomTitheStock, 0, "The random tithe should have escrowed its budget");
+            TestAssert.AreEqual(expected, target.randomTitheStockSilver, tolerance: Math.Max(2, ownValue * 0.01),
+                message: $"With the external budget spent on the specified tithe, the escrow's own-funded share is withheld in full (stock {target.randomTitheStock:F0}, own value {ownValue:F0}, withheld {target.randomTitheStockSilver:F0})");
+        }
+        finally
+        {
+            Detach(s, comp);
+            DestructiveTestUtil.SafeRemoveSettlement(s);
+        }
+        DestructiveTestUtil.AssertEmpireInvariants(f, "ExternalBudget_SpecifiedTitheAbsorbsIt_EscrowRecordsOwnFundedShare");
     }
 
     [EmpireDestructiveTest("Destructive.Tax")]

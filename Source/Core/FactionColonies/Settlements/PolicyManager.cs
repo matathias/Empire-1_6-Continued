@@ -62,10 +62,7 @@ public class PolicyManager : IExposable
             edicts ??= [];
             pendingEdictActivations = [];
             ScrubDeadPolicies();
-            // Not saved: re-derive it so edicts saved mid-enactment still activate.
-            foreach (KeyValuePair<FCPolicyCategory, FCPolicy> kv in edicts)
-                if (kv.Value?.def is not null && !kv.Value.IsFullyActive)
-                    pendingEdictActivations.Add(kv.Key);
+            // Not saved; FactionFC.RebuildPendingEdictActivations re-derives it once the load is done.
         }
     }
 

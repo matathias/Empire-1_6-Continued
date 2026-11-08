@@ -58,4 +58,13 @@ public static class FoundingValidatorRegistry
         => RegistryDispatch.Each(_list.Items,
             v => v.OnSettlementFounded(tile, type, costMultiplier),
             nameof(ISettlementFoundingValidator.OnSettlementFounded));
+
+    /// <summary>
+    /// Notifies all validators that a founding reported through <see cref="NotifyFounded"/> failed
+    /// before its settlement was created, so they can undo its side effects.
+    /// </summary>
+    public static void NotifyFoundingCancelled(PlanetTile tile, WorldSettlementDef type)
+        => RegistryDispatch.Each(_list.Items,
+            v => v.OnFoundingCancelled(tile, type),
+            nameof(ISettlementFoundingValidator.OnFoundingCancelled));
 }

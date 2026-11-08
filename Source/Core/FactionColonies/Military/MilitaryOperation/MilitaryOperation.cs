@@ -660,8 +660,11 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
         LifecycleRegistry.InvokeOnOperationResolved(this);
         FindFC.MilitaryManager?.Unregister(this);
 
-        // A Militaristic extra squad exists only for this one deployment.
-        if (aggressor?.squad is { isExtraSquad: true } extra) mfc?.RemoveExtraSquad(extra);
+        // A Militaristic extra squad exists only for this one deployment. If its pawns are still on a
+        // map (the op was resolved early, e.g. its settlement was abandoned mid-deploy), the deploy
+        // lord still needs the squad; that lord drops it once it has despawned them.
+        if (aggressor?.squad is { isExtraSquad: true } extra && !extra.Deployment.IsPhysicallyDeployed())
+            mfc?.RemoveExtraSquad(extra);
     }
 
     /// <summary>

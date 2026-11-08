@@ -51,6 +51,10 @@ public class MilitaryFC : IExposable
     /// freshly bonded mech not yet followed by a RebuildMercenaryPawnSet) can never make a consumer —
     /// the death patch, the PassToWorld guard, the faction cascade — treat a live squad pawn as a
     /// stranger (which is what let battle-end cleanup wrongly destroy mechs).</summary>
+    /// <summary>The cached half of <see cref="IsMercenaryPawn"/>: a set lookup with no squad scan, for
+    /// per-tick callers. A merc the set has not picked up yet answers false.</summary>
+    public bool IsKnownMercenaryPawn(Pawn pawn) => pawn is not null && mercenaryPawnSet.Contains(pawn);
+
     public bool IsMercenaryPawn(Pawn pawn)
     {
         if (pawn is null) return false;
@@ -668,7 +672,7 @@ public class MilitaryFC : IExposable
     /// placement tool, or piled up by saves from before extra squads were cleaned up.</summary>
     public void RemoveIdleExtraSquads()
     {
-        if (mercenarySquads.RemoveAll(s => s is { isExtraSquad: true, IsBusy: false }) > 0)
+        if (mercenarySquads.RemoveAll(s => s is { isExtraSquad: true, IsBusy: false } && !s.Deployment.IsPhysicallyDeployed()) > 0)
             RebuildMercenaryPawnSet();
     }
 

@@ -66,7 +66,13 @@ public static class Patch_RiderShouldDismount_MercIdleJobs
         JobDef def = __instance.Rider?.CurJobDef;
         if (def is null || !IsMercIdleJob(def)) return;
         if (JobDriver_Mounted.AllowedJobs.ContainsKey(def)) return;
-        if (FindFC.Military?.IsMercenaryPawn(__instance.Rider) != true) return;
+        // This runs every tick for every mounted rider. The cached merc set answers cheaply; the full
+        // squad scan behind it is only worth paying for an Empire-faction rider the set has missed.
+        MilitaryFC military = FindFC.Military;
+        if (military is null) return;
+        Pawn rider = __instance.Rider;
+        if (!military.IsKnownMercenaryPawn(rider)
+            && (rider.Faction != FindFC.EmpireFaction || !military.IsMercenaryPawn(rider))) return;
         JobDriver_Mounted.AllowedJobs[def] = false;
         __state = def;
     }

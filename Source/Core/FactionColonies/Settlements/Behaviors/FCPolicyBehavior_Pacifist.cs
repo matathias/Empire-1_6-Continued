@@ -26,7 +26,7 @@ public class FCPolicyBehavior_Pacifist : FCCooldownPolicyBehavior
         int random = Rand.RangeInclusive(1, ext.successRollMax);
         if (random > ext.successThreshold)
         {
-            int relationImprovement = Rand.RangeInclusive(ext.relationImprovementMin, ext.relationImprovementMax);
+            int relationImprovement = Rand.Range(ext.relationImprovementMin, ext.relationImprovementMax);
             targetFaction.TryAffectGoodwillWith(Find.FactionManager.OfPlayer, relationImprovement);
             Find.LetterStack.ReceiveLetter("FCRelationImproved".Translate(),
                 "FCRelationImprovedText".Translate(targetFaction.Name, relationImprovement),

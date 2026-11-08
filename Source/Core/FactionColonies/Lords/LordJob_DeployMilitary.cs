@@ -392,6 +392,10 @@ public class LordJob_DeployMilitary : LordJob
             }
             squad.Deployment.Map = null;
             if (squad.Deployment.Lord == lord) squad.Deployment.Lord = null;
+
+            // An extra squad whose op already resolved while its pawns were still here was kept for
+            // this lord; it has no further use now that they are gone.
+            if (squad.isExtraSquad && !squad.IsBusy) FindFC.Military?.RemoveExtraSquad(squad);
         }
     }
 

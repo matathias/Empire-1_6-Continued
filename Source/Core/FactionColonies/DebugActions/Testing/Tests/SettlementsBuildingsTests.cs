@@ -284,9 +284,7 @@ public static class SettlementsBuildingsTests
     public static void CooldownBehavior_LoadsSaveWrittenByThePerClassField()
     {
         // The node layout an older save has: the per-class cooldown field under its own name.
-        string legacy = "<saveable Class=\"FactionColonies.FCPolicyBehavior_Militaristic\">"
-            + "<extraSquadCooldown><tickLastUsed>777</tickLastUsed><cooldownTicks>60000</cooldownTicks></extraSquadCooldown>"
-            + "</saveable>";
+        const string legacy = """<saveable Class="FactionColonies.FCPolicyBehavior_Militaristic"><extraSquadCooldown><tickLastUsed>777</tickLastUsed><cooldownTicks>60000</cooldownTicks></extraSquadCooldown></saveable>""";
         FCPolicyBehavior_Militaristic loaded = TestAssert.NotNull(
             LoadSaveable<FCPolicyBehavior_Militaristic>(legacy), "Loading returned null");
 

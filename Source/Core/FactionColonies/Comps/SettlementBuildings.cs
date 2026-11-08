@@ -397,8 +397,24 @@ public class WorldObjectComp_SettlementBuildings : WorldSettlementCompBase
     /// <summary>
     /// <para>Handles any special processing when a building is first constructed.</para>
     /// </summary>
-    public void ConstructBuilding(BuildingFCDef building, int buildingSlot)
+    /// <summary>
+    /// Builds <paramref name="building"/> in <paramref name="buildingSlot"/>. A construction queued
+    /// before the slot cap was lowered can point past the end of the slot list: it moves to the first
+    /// empty slot, or, with none free, is refunded. Returns false when nothing was built.
+    /// </summary>
+    public bool ConstructBuilding(BuildingFCDef building, int buildingSlot)
     {
+        if (buildingSlot < 0 || buildingSlot >= buildings.Count)
+        {
+            int freeSlot = buildings.FindIndex(b => b.def == BuildingFCDefOf.Empty);
+            if (freeSlot < 0)
+            {
+                RefundConstruction(building);
+                return false;
+            }
+            buildingSlot = freeSlot;
+        }
+
         DeconstructBuilding(buildingSlot);
 
         LogUtil.Message($"Constructing building {building.defName} in slot {buildingSlot} in settlement {WorldSettlement.Name}");
@@ -413,6 +429,21 @@ public class WorldObjectComp_SettlementBuildings : WorldSettlementCompBase
 
         HandleOnConstructionComps(building, buildingSlot);
         LifecycleRegistry.InvokeOnBuildingConstructed(WorldSettlement, building, buildingSlot);
+        return true;
+    }
+
+    private void RefundConstruction(BuildingFCDef building)
+    {
+        int amount = GetBuildingCost(building);
+        LogUtil.Warning($"No building slot left for {building.defName} at {WorldSettlement.Name}; refunding {amount} silver");
+        while (amount > 0)
+        {
+            Thing silver = ThingMaker.MakeThing(ThingDefOf.Silver);
+            silver.stackCount = Math.Min(amount, ThingDefOf.Silver.stackLimit);
+            amount -= silver.stackCount;
+            PaymentUtil.PlaceThing(silver);
+        }
+        Messages.Message("FCBuildingNoSlotRefunded".Translate(building.LabelCap, WorldSettlement.Name), MessageTypeDefOf.NeutralEvent);
     }
     /// <summary>
     /// <para>Handles any special processing when a building is deconstructed.</para>

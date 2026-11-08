@@ -85,9 +85,9 @@ public static class CoreWorldobjectsDestructiveTests
         DestructiveTestUtil.AssertEmpireInvariants(f, "BuildingCap_Lowered_SaveLoadPadsOnly_TickDestroysExtras");
     }
 
-    /* Expected to FAIL against the current code: the slot list is trimmed to the cap computed from
-       the lowered max level, but NumBuildingSlots still comes from the settlement's own (unclamped)
-       level, so every "for k < NumBuildingSlots" loop indexes past the end of the list. */
+    /* The slot list is trimmed to the cap computed from the lowered max level, so NumBuildingSlots
+       must be capped the same way even though the settlement keeps its own higher level; otherwise
+       every "for k < NumBuildingSlots" loop indexes past the end of the list. */
     [EmpireDestructiveTest("Destructive.Settlement")]
     public static void BuildingCap_Lowered_UnlockedSlotsNeverExceedSlotList()
     {
@@ -116,6 +116,29 @@ public static class CoreWorldobjectsDestructiveTests
         });
 
         DestructiveTestUtil.AssertEmpireInvariants(f, "BuildingCap_Lowered_UnlockedSlotsNeverExceedSlotList");
+    }
+
+    [EmpireDestructiveTest("Destructive.Settlement")]
+    public static void ConstructBuilding_SlotPastTheList_MovesToFirstEmptySlot()
+    {
+        FactionFC f = DestructiveTestUtil.RequireFaction();
+        WorldSettlementFC s = DestructiveTestUtil.RequireTransientSettlement();
+        WorldObjectComp_SettlementBuildings comp = TestAssert.NotNull(s.BuildingsComp, "the settlement has a buildings comp");
+        List<BuildingFCDef> buildable = BuildableFor(s);
+        TestAssert.IsNotEmpty(buildable, $"no building can be built on {s.settlementDef.defName}");
+
+        comp.ReinitBuildings();
+        int freeSlot = comp.Buildings.FindIndex(b => b.def == BuildingFCDefOf.Empty);
+        TestAssert.GreaterThan(freeSlot, -1, "the transient settlement has an empty slot");
+
+        // A construction queued for a slot a lowered cap has since removed.
+        bool built = comp.ConstructBuilding(buildable[0], comp.Buildings.Count + 2);
+
+        TestAssert.IsTrue(built, "a free slot was available, so the building should be built");
+        TestAssert.IsTrue(comp.GetBuildingInSlot(freeSlot) == buildable[0], "the building lands in the first empty slot");
+        TestAssert.AreEqual(comp.FC_MAX_BUILDINGS, comp.Buildings.Count, "the slot list keeps its size");
+
+        DestructiveTestUtil.AssertEmpireInvariants(f, "ConstructBuilding_SlotPastTheList_MovesToFirstEmptySlot");
     }
 
     /*-*-*-*-*/

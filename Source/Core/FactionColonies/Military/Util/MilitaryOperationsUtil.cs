@@ -3,13 +3,6 @@ namespace FactionColonies;
 public static class MilitaryOperationsUtil
 {
     /// <summary>
-    /// Schedules a defensive operation against an Empire settlement: creates a
-    /// <see cref="MilitaryOperation"/> via the manager, runs auto-defender selection,
-    /// and queues the 24-hour <c>settlementBeingAttacked</c> warning event linked back
-    /// to the op. Returns true on success, false if the attack was rejected
-    /// (no MilitaryComp or MilitaryManager unavailable).
-    /// </summary>
-    /// <summary>
     /// An attack force for <paramref name="faction"/> at military <paramref name="level"/>, for
     /// attacks whose strength comes from another mod (RimWar points, World Domination traveler
     /// strength). Samples the faction's force through EnemyPower so faction-level efficiency
@@ -32,6 +25,13 @@ public static class MilitaryOperationsUtil
         return force;
     }
 
+    /// <summary>
+    /// Schedules a defensive operation against an Empire settlement: creates a
+    /// <see cref="MilitaryOperation"/> via the manager, runs auto-defender selection,
+    /// and queues the 24-hour <c>settlementBeingAttacked</c> warning event linked back
+    /// to the op. Returns true on success, false if the attack was rejected
+    /// (no MilitaryComp or MilitaryManager unavailable).
+    /// </summary>
     public static bool AttackPlayerSettlement(MilitaryForce attackingForce, WorldSettlementFC settlement, Faction enemyFaction)
     {
         if (settlement?.MilitaryComp is null)
