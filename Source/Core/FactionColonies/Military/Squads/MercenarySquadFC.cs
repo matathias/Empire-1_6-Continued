@@ -283,10 +283,12 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
     public bool IsAssigned => settlement is not null;
 
     /// <summary>True when the squad is assigned, not in any active op, not underfunded
-    /// at its settlement, and past its post-op cooldown. Canonical "can launch a new
-    /// op" gate.</summary>
+    /// at its settlement, past its post-op cooldown, and has no merc still on a map. Canonical
+    /// "can launch a new op" gate. The map check covers a battle map kept open after its op
+    /// resolved (the player is still on it): the op is gone, but the mercs are not home yet.</summary>
     public bool IsAvailable
-        => IsAssigned && !IsBusy && !IsUnderfunded && nextAvailableTick <= Find.TickManager.TicksGame;
+        => IsAssigned && !IsBusy && !IsUnderfunded && nextAvailableTick <= Find.TickManager.TicksGame
+           && !Deployment.IsPhysicallyDeployed();
 
     /* The squad's billet. settlement is the canonical source of truth in the squad-first
      * model; the property exists only as a stable accessor for external callers. */
@@ -417,7 +419,11 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
         {
             if (m?.pawn is null) continue; // owner must be alive to restore its sub-pawns
             foreach (Mercenary sub in m.SubPawns())
-                if (sub.IsMissingSubPawn) yield return sub;
+            {
+                // A kind that no longer resolves (its mod was removed) can't be recreated, so it is
+                // neither charged for nor refilled.
+                if (sub.IsMissingSubPawn && sub.subPawnKind is not null) yield return sub;
+            }
         }
     }
 
@@ -481,17 +487,26 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
                 MilUnitFC blueprint = m.BlueprintLoadout;
                 if (blueprint is null || blueprint.isBlank) continue;
                 Mercenary slot = m;
-                MercenaryPawnFactory.CreateNewPawn(this, ref slot, blueprint.pawnKind, blueprint.xenotype, blueprint.customXenotypeName, blueprint);
-                if (slot.pawn is not null)
+                // Silver is already paid, so one failed slot must not stop the rest of the refill
+                // or the pawn-set rebuild below.
+                try
                 {
-                    Equipment.EquipPawn(slot, blueprint);
-                    // Refilling a dead merc rebuilds its whole unit from the blueprint (whose cost
-                    // already covers the animal + mechs), so reconcile both — not just mechs.
-                    Equipment.ReconcileAnimal(slot, blueprint);
-                    Equipment.ReconcileMechs(slot, blueprint);
+                    MercenaryPawnFactory.CreateNewPawn(this, ref slot, blueprint.pawnKind, blueprint.xenotype, blueprint.customXenotypeName, blueprint);
+                    if (slot.pawn is not null)
+                    {
+                        Equipment.EquipPawn(slot, blueprint);
+                        // Refilling a dead merc rebuilds its whole unit from the blueprint (whose cost
+                        // already covers the animal + mechs), so reconcile both — not just mechs.
+                        Equipment.ReconcileAnimal(slot, blueprint);
+                        Equipment.ReconcileMechs(slot, blueprint);
+                    }
+                    // Sync currentLoadout with what we just equipped — re-snap from the blueprint.
+                    slot.currentLoadout = blueprint.Clone();
                 }
-                // Sync currentLoadout with what we just equipped — re-snap from the blueprint.
-                slot.currentLoadout = blueprint.Clone();
+                catch (Exception e)
+                {
+                    LogUtil.Error($"FillEmptySlots: failed to refill a slot in {DisplayName}: {e}");
+                }
             }
         }
 
@@ -499,7 +514,14 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
         // ReplaceSubPawn repopulates the wrapper's pawn, dropping it out of MissingSubPawns.
         foreach (Mercenary sub in MissingSubPawns().ToList())
         {
-            ReplaceSubPawn(sub);
+            try
+            {
+                ReplaceSubPawn(sub);
+            }
+            catch (Exception e)
+            {
+                LogUtil.Error($"FillEmptySlots: failed to replace a {sub.subPawnKind?.defName} in {DisplayName}: {e}");
+            }
         }
 
         FindFC.Military?.RebuildMercenaryPawnSet();

@@ -157,8 +157,9 @@ public static class BattleForecastTests
     [EmpireTest("Battle")]
     public static void Forecast_EqualEfficiency_MatchesBinomialFormula()
     {
-        // With equal efficiency 1.0, DampenEfficiency returns 1.0, so p = 0.5 exactly.
-        // P(attacker wins) = Σ(k=b to n) C(n,k) / 2^n where n = a+b-1.
+        // With equal efficiency 1.0, DampenEfficiency returns 1.0. The attacker wins a round on 190 of
+        // the 400 d20 pairs (ties go to the defender), so p = 0.475.
+        // P(attacker wins) = Σ(k=b to n) C(n,k) p^k q^(n-k) where n = a+b-1.
         // We compute expected by hand accounting for defenderAdvantage.
         int rawAttacker = 3;
         int rawDefender = 3;
@@ -166,7 +167,7 @@ public static class BattleForecastTests
         int n = rawAttacker + defenderHP - 1;
 
         // Compute expected binomial tail sum at p=0.5
-        double expected = BinomialTailHalf(n, defenderHP);
+        double expected = BinomialTail(n, defenderHP, EqualEfficiencyRoundWin);
 
         var attacker = CreateForce(rawAttacker, 1.0, rawAttacker);
         var defender = CreateForce(rawDefender, 1.0, rawDefender);
@@ -179,13 +180,13 @@ public static class BattleForecastTests
     [EmpireTest("Battle")]
     public static void Forecast_AsymmetricForce_MatchesBinomialFormula()
     {
-        // Attacker has 2 force, defender has 5 force, equal efficiency → p = 0.5
+        // Attacker has 2 force, defender has 5 force, equal efficiency → p = 0.475
         int rawAttacker = 2;
         int rawDefender = 5;
         int defenderHP = (int)Math.Max(1, Math.Round(rawDefender * FCSettings.defenderAdvantage));
         int n = rawAttacker + defenderHP - 1;
 
-        double expected = BinomialTailHalf(n, defenderHP);
+        double expected = BinomialTail(n, defenderHP, EqualEfficiencyRoundWin);
 
         var attacker = CreateForce(rawAttacker, 1.0, rawAttacker);
         var defender = CreateForce(rawDefender, 1.0, rawDefender);
@@ -227,21 +228,41 @@ public static class BattleForecastTests
             $"Forecast {forecast:F3} differs from empirical {empirical:F3} (margin {margin}) over {trials} trials");
     }
 
+    /// <summary>The attacker's round-win chance at equal efficiency: 190 winning d20 pairs of 400.</summary>
+    private const double EqualEfficiencyRoundWin = 190.0 / 400.0;
+
     /// <summary>
-    /// Computes P(defender wins) = 1 - Σ(k=b to n) C(n,k) / 2^n for the fair-coin case (p=0.5).
+    /// Computes P(defender wins) = 1 - Σ(k=b to n) C(n,k) p^k q^(n-k), summed term by term.
     /// </summary>
-    private static double BinomialTailHalf(int n, int b)
+    private static double BinomialTail(int n, int b, double p)
     {
         double sum = 0;
-        double term = 1.0; // C(n, n) * (0.5)^n = (0.5)^n; start with term = (0.5)^n
-        for (int i = 0; i < n; i++) term *= 0.5;
-
-        sum = term; // k = n
-        for (int k = n - 1; k >= b; k--)
-        {
-            term *= (k + 1.0) / (n - k); // C(n,k) / C(n,k+1) = (k+1)/(n-k) ; p/q = 1 for p=0.5
-            sum += term;
-        }
+        for (int k = b; k <= n; k++)
+            sum += Choose(n, k) * Math.Pow(p, k) * Math.Pow(1 - p, n - k);
         return Math.Max(0.0, Math.Min(1.0, 1.0 - sum));
+    }
+
+    private static double Choose(int n, int k)
+    {
+        double c = 1;
+        for (int i = 1; i <= k; i++) c = c * (n - k + i) / i;
+        return c;
+    }
+
+    [EmpireTest("Battle")]
+    public static void Forecast_EqualEfficiency_RoundChanceCountsTiesForDefender()
+    {
+        // One HP each and no defender advantage reduces the race to a single round.
+        float savedAdvantage = FCSettings.defenderAdvantage;
+        FCSettings.defenderAdvantage = 1f;
+        try
+        {
+            var attacker = CreateForce(1, 1.0, 1);
+            var defender = CreateForce(1, 1.0, 1);
+            double result = SimulateBattleFc.CalculateDefenderWinChance(attacker, defender);
+            TestAssert.AreEqual(1.0 - EqualEfficiencyRoundWin, result, 0.0001,
+                $"A single equal round should go to the defender 52.5% of the time, got {result}");
+        }
+        finally { FCSettings.defenderAdvantage = savedAdvantage; }
     }
 }

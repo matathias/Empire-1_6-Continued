@@ -46,6 +46,14 @@ public static class SquadStatusUtil
             return;
         }
 
+        // The op resolved, but the battle map is still open with the squad's mercs on it
+        if (squad.Deployment.IsPhysicallyDeployed())
+        {
+            label = "FCSquadStatusOnBattleMap".Translate();
+            color = AccentUtil.MilActiveMission;
+            return;
+        }
+
         // Travel cooldown: squad is post-op and still returning home. Distinct from the
         // old long cooldown; this is just travel time (24h defense / TravelUtil offense).
         if (squad.nextAvailableTick > now)
@@ -102,6 +110,10 @@ public static class SquadStatusUtil
             && op.phase != MilitaryOperationPhase.CooldownPending)
         {
             reasons.Add(BusyReason(squad));
+        }
+        else if (squad.Deployment.IsPhysicallyDeployed())
+        {
+            reasons.Add("FCSquadUnavailOnBattleMap".Translate());
         }
         if (squad.nextAvailableTick > now)
         {

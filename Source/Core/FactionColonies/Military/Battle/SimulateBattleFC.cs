@@ -165,6 +165,25 @@ public class SimulateBattleFc
         return 1.0 + (efficiency - 1.0) * FCSettings.efficiencyDamping;
     }
 
+    /// <summary>
+    /// P(attacker wins one round), exactly as <see cref="SimulateRound"/> decides it: each side
+    /// rolls a d20 (1..20) times its dampened efficiency, and a tie goes to the defender. Counts the
+    /// winning pairs among all 400, with the same double comparison the round uses.
+    /// </summary>
+    private static double RoundWinChance(double attackerEfficiency, double defenderEfficiency)
+    {
+        int wins = 0;
+        for (int rawA = 1; rawA <= 20; rawA++)
+        {
+            double scoreA = rawA * attackerEfficiency;
+            for (int rawB = 1; rawB <= 20; rawB++)
+            {
+                if (scoreA > rawB * defenderEfficiency) wins++;
+            }
+        }
+        return wins / 400.0;
+    }
+
     /// <summary>Mirror of <see cref="CalculateDefenderWinChance"/> from the attacker's side.
     /// Returns the probability that the attacker depletes the defender's HP before being
     /// depleted itself. Stable across calls (deterministic given the two force snapshots).</summary>
@@ -196,12 +215,7 @@ public class SimulateBattleFc
         double attackerEfficiency = DampenEfficiency(attacker.militaryEfficiency);
         double defenderEfficiency = DampenEfficiency(defender.militaryEfficiency);
 
-        // P(attacker wins a single round) for Uniform(0, 20*attackerEfficiency) vs Uniform(0, 20*defenderEfficiency)
-        double p;
-        if (attackerEfficiency <= defenderEfficiency)
-            p = attackerEfficiency / (2.0 * defenderEfficiency);
-        else
-            p = 1.0 - defenderEfficiency / (2.0 * attackerEfficiency);
+        double p = RoundWinChance(attackerEfficiency, defenderEfficiency);
 
         if (p <= 0.0) return 1.0;
         if (p >= 1.0) return 0.0;

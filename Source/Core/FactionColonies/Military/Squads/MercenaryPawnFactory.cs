@@ -14,6 +14,11 @@ public static class MercenaryPawnFactory
     /// the owning merc's <c>animals</c> list and setting <c>merc.handler</c>.</summary>
     public static void CreateNewAnimal(MercenarySquadFC squad, ref Mercenary merc, PawnKindDef race)
     {
+        if (race is null)
+        {
+            LogUtil.Warning($"CreateNewAnimal: no animal kind for a sub-pawn in {squad?.DisplayName}; leaving the slot empty.");
+            return;
+        }
         Pawn newPawn = PawnGenerator.GeneratePawn(FCPawnGenerator.AnimalRequest(race));
 
         merc.squad = squad;

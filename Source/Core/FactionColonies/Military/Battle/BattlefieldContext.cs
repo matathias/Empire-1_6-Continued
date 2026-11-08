@@ -1114,7 +1114,9 @@ public partial class BattlefieldContext : IExposable
 
         if (friendlies is null || friendlies.Count == 0)
         {
-            WorldSettlementFC homeSettlement = force.homeSettlement;
+            // An external defender (a VOE outpost) has no home settlement; a militia fielded in its
+            // place takes its level from the settlement being defended.
+            WorldSettlementFC homeSettlement = force.homeSettlement ?? settlement;
             // Use the squad recorded on the op, set at op creation by PickPrimaryDefendingSquad
             // (target's own squad) or ApplyAutoDefenderSelection (foreign auto-defender).
             // A squad only counts as usable here if it isn't already physically deployed (e.g.
@@ -1148,12 +1150,7 @@ public partial class BattlefieldContext : IExposable
                 // wave — they stay at base instead of being dropped into a fight they can't
                 // participate in.
                 friendlies = squad.SpawnableMercenaryPawns.ToList();
-
-                double efficiency = force.militaryEfficiency;
-                foreach (Pawn merc in friendlies)
-                {
-                    MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(merc, efficiency);
-                }
+                SquadSpawnUtil.ApplyCombatEfficiency(friendlies, force.militaryEfficiency);
 
                 // Only mounts are ridden (LordToil_DefendSelfAndMount mounts each rider). Companion
                 // animals (subPawnType == Animal) are NOT added here, so they spawn and fight on foot.
