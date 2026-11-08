@@ -38,12 +38,35 @@ public static class MilitaryDestructiveTests
     public static void AssignUnassign_RoundTrips()
     {
         FactionFC f = DestructiveTestUtil.RequireFaction();
-        MercenarySquadFC squad = DestructiveTestUtil.EnsureHiredSquad();
+        // A one-unit squad: the player's own first template can be too big for any settlement's budget.
+        (MilSquadFC template, MilUnitFC unit) = DestructiveTestUtil.CreateSingleUnitSquadTemplate();
+        WorldSettlementFC created = null;
+        try
+        {
+            MercenarySquadFC squad = DestructiveTestUtil.EnsureHiredSquad(template);
 
-        // A settlement with a free billet slot (a fresh one if every existing billet is full).
-        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement(s =>
-            s.MilitaryComp is not null && SquadAssignmentRegistry.CanAssign(s, squad, out _));
+            // A settlement with a free billet slot (a fresh one if every existing billet is full).
+            WorldSettlementFC settlement = f.settlements.FirstOrDefault(s =>
+                s?.MilitaryComp is not null && SquadAssignmentRegistry.CanAssign(s, squad, out _));
+            if (settlement is null)
+            {
+                settlement = created = DestructiveTestUtil.RequireTransientSettlement();
+                TestAssert.IsTrue(SquadAssignmentRegistry.CanAssign(settlement, squad, out string reason),
+                    $"A new settlement '{settlement.Name}' rejects a one-unit squad: {reason}");
+            }
 
+            AssertAssignUnassignRoundTrip(squad, settlement);
+        }
+        finally
+        {
+            DestructiveTestUtil.RemoveSquadTemplate(template, unit);
+            DestructiveTestUtil.SafeRemoveSettlement(created);
+        }
+        DestructiveTestUtil.AssertEmpireInvariants(f, "AssignUnassign_RoundTrips");
+    }
+
+    private static void AssertAssignUnassignRoundTrip(MercenarySquadFC squad, WorldSettlementFC settlement)
+    {
         bool assigned = false;
         TestAssert.DoesNotThrow(() => assigned = FindFC.Military.AttemptToAssign(squad, settlement), "AttemptToAssign threw");
         TestAssert.IsTrue(assigned, "AttemptToAssign should succeed at a settlement whose validators accept the squad");
@@ -53,7 +76,6 @@ public static class MilitaryDestructiveTests
         TestAssert.DoesNotThrow(() => unassigned = FindFC.Military.Unassign(squad), "Unassign threw");
         TestAssert.IsTrue(unassigned, "Unassign should succeed for a non-busy squad");
         TestAssert.IsNull(squad.settlement, "Squad should have no billet after unassign");
-        DestructiveTestUtil.AssertEmpireInvariants(f, "AssignUnassign_RoundTrips");
     }
 
     [EmpireDestructiveTest("Destructive.Military")]

@@ -6,9 +6,18 @@ namespace FactionColonies;
 /// field inside a per-domain registry; the registry exposes <c>Register / Unregister /
 /// ClearAll</c> as thin delegating wrappers.
 /// </summary>
-internal class RegistryList<T> where T : class
+internal class RegistryList<T> : RegistryListBase where T : class
 {
     private readonly List<T> _items = [];
+
+    internal override object Capture() => new List<T>(_items);
+
+    internal override void Restore(object state)
+    {
+        _items.Clear();
+        if (state is List<T> items) _items.AddRange(items);
+        Version++;
+    }
 
     /// <summary>Bumped on every change to the list, so a registry can cache a derived view
     /// (e.g. a sorted copy) and rebuild it only when this differs from the value it cached at.</summary>

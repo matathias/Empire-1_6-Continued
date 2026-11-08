@@ -738,77 +738,93 @@ public static class RegistryTests
 
     // NOTE: EmpireCacheUtil.InvalidateAll() calls EmpireRegistry.ClearAll(), which wipes every
     // live registry (FactionFC listeners, built-in validators, submod hooks) that only
-    // re-registers on save load. These CacheInvalidator tests are therefore DESTRUCTIVE: a
-    // pass still leaves the session's registries gutted until a reload.
+    // re-registers on save load. These tests run inside TestUtil.WithRegistriesRestored, which
+    // puts the registries back afterwards; they stay DESTRUCTIVE because InvalidateAll also
+    // drops every cache in the session.
     [EmpireDestructiveTest("Registry")]
     public static void CacheInvalidator_Register_InvokesOnInvalidateAll()
     {
-        int count = 0;
-        EmpireCacheUtil.RegisterCacheInvalidator("_test", () => count++);
-        try
+        TestUtil.WithRegistriesRestored(() =>
         {
-            EmpireCacheUtil.InvalidateAll();
-            TestAssert.AreEqual(1, count);
-        }
-        finally { EmpireCacheUtil.UnregisterCacheInvalidator("_test"); }
+            int count = 0;
+            EmpireCacheUtil.RegisterCacheInvalidator("_test", () => count++);
+            try
+            {
+                EmpireCacheUtil.InvalidateAll();
+                TestAssert.AreEqual(1, count);
+            }
+            finally { EmpireCacheUtil.UnregisterCacheInvalidator("_test"); }
+        });
     }
 
     [EmpireDestructiveTest("Registry")]
     public static void CacheInvalidator_SurvivesInvalidateAll()
     {
-        int count = 0;
-        EmpireCacheUtil.RegisterCacheInvalidator("_test", () => count++);
-        try
+        TestUtil.WithRegistriesRestored(() =>
         {
-            EmpireCacheUtil.InvalidateAll();
-            EmpireCacheUtil.InvalidateAll();
-            TestAssert.AreEqual(2, count, "Callback should survive across InvalidateAll calls");
-        }
-        finally { EmpireCacheUtil.UnregisterCacheInvalidator("_test"); }
+            int count = 0;
+            EmpireCacheUtil.RegisterCacheInvalidator("_test", () => count++);
+            try
+            {
+                EmpireCacheUtil.InvalidateAll();
+                EmpireCacheUtil.InvalidateAll();
+                TestAssert.AreEqual(2, count, "Callback should survive across InvalidateAll calls");
+            }
+            finally { EmpireCacheUtil.UnregisterCacheInvalidator("_test"); }
+        });
     }
 
     [EmpireDestructiveTest("Registry")]
     public static void CacheInvalidator_DuplicateKey_ReplacesOld()
     {
-        int oldCount = 0;
-        int newCount = 0;
-        EmpireCacheUtil.RegisterCacheInvalidator("_test", () => oldCount++);
-        EmpireCacheUtil.RegisterCacheInvalidator("_test", () => newCount++);
-        try
+        TestUtil.WithRegistriesRestored(() =>
         {
-            EmpireCacheUtil.InvalidateAll();
-            TestAssert.AreEqual(0, oldCount, "Old callback should not fire");
-            TestAssert.AreEqual(1, newCount, "New callback should fire");
-        }
-        finally { EmpireCacheUtil.UnregisterCacheInvalidator("_test"); }
+            int oldCount = 0;
+            int newCount = 0;
+            EmpireCacheUtil.RegisterCacheInvalidator("_test", () => oldCount++);
+            EmpireCacheUtil.RegisterCacheInvalidator("_test", () => newCount++);
+            try
+            {
+                EmpireCacheUtil.InvalidateAll();
+                TestAssert.AreEqual(0, oldCount, "Old callback should not fire");
+                TestAssert.AreEqual(1, newCount, "New callback should fire");
+            }
+            finally { EmpireCacheUtil.UnregisterCacheInvalidator("_test"); }
+        });
     }
 
     [EmpireDestructiveTest("Registry")]
     public static void CacheInvalidator_Exception_DoesNotBlockOthers()
     {
-        int count = 0;
-        EmpireCacheUtil.RegisterCacheInvalidator("_test_bad", () => throw new InvalidOperationException("test"));
-        EmpireCacheUtil.RegisterCacheInvalidator("_test_good", () => count++);
-        try
+        TestUtil.WithRegistriesRestored(() =>
         {
-            TestAssert.DoesNotThrow(() => EmpireCacheUtil.InvalidateAll());
-            TestAssert.AreEqual(1, count, "Good callback should still fire after bad one throws");
-        }
-        finally
-        {
-            EmpireCacheUtil.UnregisterCacheInvalidator("_test_bad");
-            EmpireCacheUtil.UnregisterCacheInvalidator("_test_good");
-        }
+            int count = 0;
+            EmpireCacheUtil.RegisterCacheInvalidator("_test_bad", () => throw new InvalidOperationException("test"));
+            EmpireCacheUtil.RegisterCacheInvalidator("_test_good", () => count++);
+            try
+            {
+                TestAssert.DoesNotThrow(() => EmpireCacheUtil.InvalidateAll());
+                TestAssert.AreEqual(1, count, "Good callback should still fire after bad one throws");
+            }
+            finally
+            {
+                EmpireCacheUtil.UnregisterCacheInvalidator("_test_bad");
+                EmpireCacheUtil.UnregisterCacheInvalidator("_test_good");
+            }
+        });
     }
 
     [EmpireDestructiveTest("Registry")]
     public static void CacheInvalidator_Unregister_StopsInvocations()
     {
-        int count = 0;
-        EmpireCacheUtil.RegisterCacheInvalidator("_test", () => count++);
-        EmpireCacheUtil.UnregisterCacheInvalidator("_test");
-        EmpireCacheUtil.InvalidateAll();
-        TestAssert.AreEqual(0, count, "Callback should not fire after unregister");
+        TestUtil.WithRegistriesRestored(() =>
+        {
+            int count = 0;
+            EmpireCacheUtil.RegisterCacheInvalidator("_test", () => count++);
+            EmpireCacheUtil.UnregisterCacheInvalidator("_test");
+            EmpireCacheUtil.InvalidateAll();
+            TestAssert.AreEqual(0, count, "Callback should not fire after unregister");
+        });
     }
 
     // ============================
@@ -1038,40 +1054,46 @@ public static class RegistryTests
     [EmpireDestructiveTest("Registry")]
     public static void EmpireRegistry_ClearAll_ClearsEveryFacadeManagedRegistry()
     {
-        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
-        MultiInterfaceParticipant p = new();
-        EmpireRegistry.Register(p);
-        EmpireRegistry.ClearAll();
+        TestUtil.WithRegistriesRestored(() =>
+        {
+            WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
+            MultiInterfaceParticipant p = new();
+            EmpireRegistry.Register(p);
+            EmpireRegistry.ClearAll();
 
-        // After ClearAll, none of the domain registries should still hold p.
-        // We can't easily enumerate every list, but we can verify that none of
-        // p's hooks fire after ClearAll.
-        LifecycleRegistry.InvokeOnSettlementCreated(settlement);
-        TaxTickRegistry.InvokePreTaxResolution(null);
-        DefenseValidatorRegistry.CanDefend(null, null);
+            // After ClearAll, none of the domain registries should still hold p.
+            // We can't easily enumerate every list, but we can verify that none of
+            // p's hooks fire after ClearAll.
+            LifecycleRegistry.InvokeOnSettlementCreated(settlement);
+            TaxTickRegistry.InvokePreTaxResolution(null);
+            DefenseValidatorRegistry.CanDefend(null, null);
 
-        TestAssert.AreEqual(0, p.SettlementCreated, "Settlement hook cleared");
-        TestAssert.AreEqual(0, p.PreTax, "Tax hook cleared");
-        TestAssert.AreEqual(0, p.CanDefendCalls, "Defense validator cleared");
+            TestAssert.AreEqual(0, p.SettlementCreated, "Settlement hook cleared");
+            TestAssert.AreEqual(0, p.PreTax, "Tax hook cleared");
+            TestAssert.AreEqual(0, p.CanDefendCalls, "Defense validator cleared");
+        });
     }
 
     [EmpireDestructiveTest("Registry")]
     public static void EmpireRegistry_RegisterPersistent_SurvivesClearAll()
     {
-        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
-        MultiInterfaceParticipant p = new();
-        EmpireRegistry.RegisterPersistent(p);
-        try
+        TestUtil.WithRegistriesRestored(() =>
         {
+            WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
+            MultiInterfaceParticipant p = new();
+            EmpireRegistry.RegisterPersistent(p);
+            try
+            {
+                EmpireRegistry.ClearAll();
+                LifecycleRegistry.InvokeOnSettlementCreated(settlement);
+                TestAssert.AreEqual(1, p.SettlementCreated, "Persistent participant re-registered after ClearAll");
+            }
+            finally { EmpireRegistry.Unregister(p); }
+
             EmpireRegistry.ClearAll();
             LifecycleRegistry.InvokeOnSettlementCreated(settlement);
-            TestAssert.AreEqual(1, p.SettlementCreated, "Persistent participant re-registered after ClearAll");
-        }
-        finally { EmpireRegistry.Unregister(p); }
-
-        EmpireRegistry.ClearAll();
-        LifecycleRegistry.InvokeOnSettlementCreated(settlement);
-        TestAssert.AreEqual(1, p.SettlementCreated, "Unregister drops the persistent hold");
+            TestAssert.AreEqual(1, p.SettlementCreated, "Unregister drops the persistent hold");
+        });
     }
 
     [EmpireTest("Registry")]

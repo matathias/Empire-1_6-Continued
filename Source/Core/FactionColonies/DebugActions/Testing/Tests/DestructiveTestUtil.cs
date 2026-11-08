@@ -212,6 +212,40 @@ public static class DestructiveTestUtil
         return squad;
     }
 
+    /// <summary>
+    /// A new one-unit squad template (and its unit), added to the faction's template lists so a
+    /// squad can be hired from it. Unlike <see cref="EnsureSquadTemplate"/>, which takes the player's
+    /// first template whatever its size, this one is small enough for a freshly founded settlement's
+    /// squad budget. Pass both to <see cref="RemoveSquadTemplate"/> when done.
+    /// </summary>
+    public static (MilSquadFC squad, MilUnitFC unit) CreateSingleUnitSquadTemplate()
+    {
+        RequireFaction();
+        EnsureEmpireFaction();
+        MilitaryFC mil = TestAssert.NotNull(FindFC.Military, "No MilitaryFC on the faction");
+        if (mil.squads is null) mil.ResetSquads();
+
+        MilUnitFC unit = MilTemplateFactory.CreateUnit(false);
+        unit.name = "Test Unit (single)";
+        mil.units.Add(unit);
+
+        MilSquadFC squad = MilTemplateFactory.CreateSquad(true);
+        squad.name = "Test Squad (single)";
+        squad.NewSquad();
+        squad.SetUnit(0, unit);
+        mil.squads.Add(squad);
+        return (squad, unit);
+    }
+
+    /// <summary>Takes a template made by <see cref="CreateSingleUnitSquadTemplate"/> off the faction's lists.</summary>
+    public static void RemoveSquadTemplate(MilSquadFC squad, MilUnitFC unit)
+    {
+        MilitaryFC mil = FindFC.Military;
+        if (mil is null) return;
+        if (squad is not null) mil.squads?.Remove(squad);
+        if (unit is not null) mil.units?.Remove(unit);
+    }
+
     /// <summary>Tops up stored silver so <see cref="MilitaryFC.HireSquad"/> can afford
     /// <paramref name="template"/>, for tests that call HireSquad themselves.</summary>
     public static void EnsureSilverToHire(MilSquadFC template) =>

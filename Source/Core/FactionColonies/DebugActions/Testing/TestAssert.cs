@@ -30,6 +30,14 @@ public static class TestAssert
                 $"Expected {expected}, got {actual}" + FormatMessage(message));
     }
 
+    /// <summary>
+    /// Numeric comparison for a call written as <c>AreEqual(-120, someFloat, "message")</c>: without
+    /// this overload the string argument rules out the tolerance overload, and the call would bind to
+    /// the <see cref="object"/> one, which compares a boxed int with a boxed float and never matches.
+    /// </summary>
+    public static void AreEqual(double expected, double actual, string message) =>
+        AreEqual(expected, actual, 0.001, message);
+
     public static void AreEqual(int expected, int actual, string message = null)
     {
         if (expected != actual)

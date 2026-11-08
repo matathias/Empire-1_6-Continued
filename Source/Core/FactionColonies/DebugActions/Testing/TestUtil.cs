@@ -14,4 +14,17 @@ public static class TestUtil
         try { body(); }
         finally { set(original); }
     }
+
+    /// <summary>
+    /// Runs <paramref name="body"/>, then puts every Empire registry back exactly as it was. For tests
+    /// that call <see cref="EmpireRegistry.ClearAll"/> or <see cref="EmpireCacheUtil.InvalidateAll"/>:
+    /// per-game participants only register on load, so without this the rest of the session (and
+    /// every later test) would run with them missing.
+    /// </summary>
+    public static void WithRegistriesRestored(Action body)
+    {
+        List<(RegistryListBase list, object state)> snapshot = RegistryListBase.CaptureAll();
+        try { body(); }
+        finally { RegistryListBase.RestoreAll(snapshot); }
+    }
 }

@@ -1,9 +1,9 @@
 namespace FactionColonies;
 
-/* DESTRUCTIVE: calls EmpireRegistry.ClearAll, which empties every facade-managed registry. Live
-   participants registered with RegisterPersistent come back; the rest (FactionFC listeners,
-   built-in validators, submod hooks registered per game) stay gone until the save is reloaded.
-   Also generates and discards one throwaway pawn. */
+/* DESTRUCTIVE: calls EmpireRegistry.ClearAll, which empties every facade-managed registry. Each
+   test runs inside TestUtil.WithRegistriesRestored, so the live registrations (FactionFC listeners,
+   built-in validators, submod hooks registered per game) are put back when it ends. Also generates
+   and discards one throwaway pawn. */
 public static class RegistryPersistenceDestructiveTests
 {
     private class Participant : ITaxTickParticipant, IDefenseValidator, IRaidWeightProvider { }
@@ -15,60 +15,69 @@ public static class RegistryPersistenceDestructiveTests
     [EmpireDestructiveTest("Destructive.Registry")]
     public static void RegisterPersistent_RepeatedRegistrationAndClears_StayRegisteredOnce()
     {
-        Participant p = new();
-        try
+        TestUtil.WithRegistriesRestored(() =>
         {
-            EmpireRegistry.RegisterPersistent(p);
-            EmpireRegistry.RegisterPersistent(p);
-            TestAssert.AreEqual(1, TaxTickCount(p), "Registering persistently twice registers once");
+            Participant p = new();
+            try
+            {
+                EmpireRegistry.RegisterPersistent(p);
+                EmpireRegistry.RegisterPersistent(p);
+                TestAssert.AreEqual(1, TaxTickCount(p), "Registering persistently twice registers once");
 
-            EmpireRegistry.ClearAll();
-            EmpireRegistry.ClearAll();
-            TestAssert.AreEqual(1, TaxTickCount(p), "TaxTick: back exactly once after repeated ClearAll");
-            TestAssert.AreEqual(1, DefenseCount(p), "DefenseValidator: back exactly once after repeated ClearAll");
-            TestAssert.AreEqual(1, RaidWeightCount(p), "RaidWeight: back exactly once after repeated ClearAll");
-        }
-        finally { EmpireRegistry.Unregister(p); }
+                EmpireRegistry.ClearAll();
+                EmpireRegistry.ClearAll();
+                TestAssert.AreEqual(1, TaxTickCount(p), "TaxTick: back exactly once after repeated ClearAll");
+                TestAssert.AreEqual(1, DefenseCount(p), "DefenseValidator: back exactly once after repeated ClearAll");
+                TestAssert.AreEqual(1, RaidWeightCount(p), "RaidWeight: back exactly once after repeated ClearAll");
+            }
+            finally { EmpireRegistry.Unregister(p); }
 
-        TestAssert.AreEqual(0, TaxTickCount(p), "Unregister removes it now");
-        EmpireRegistry.ClearAll();
-        TestAssert.AreEqual(0, TaxTickCount(p), "and it does not come back on the next ClearAll");
+            TestAssert.AreEqual(0, TaxTickCount(p), "Unregister removes it now");
+            EmpireRegistry.ClearAll();
+            TestAssert.AreEqual(0, TaxTickCount(p), "and it does not come back on the next ClearAll");
+        });
     }
 
     [EmpireDestructiveTest("Destructive.Registry")]
     public static void RegisterPersistent_OnlyPersistentParticipantsSurviveClearAll()
     {
-        Participant persistent = new();
-        Participant perGame = new();
-        try
+        TestUtil.WithRegistriesRestored(() =>
         {
-            EmpireRegistry.RegisterPersistent(persistent);
-            EmpireRegistry.Register(perGame);
-            EmpireRegistry.ClearAll();
+            Participant persistent = new();
+            Participant perGame = new();
+            try
+            {
+                EmpireRegistry.RegisterPersistent(persistent);
+                EmpireRegistry.Register(perGame);
+                EmpireRegistry.ClearAll();
 
-            TestAssert.AreEqual(1, TaxTickCount(persistent), "A persistent participant is re-registered");
-            TestAssert.AreEqual(0, TaxTickCount(perGame), "A plain registration is cleared");
+                TestAssert.AreEqual(1, TaxTickCount(persistent), "A persistent participant is re-registered");
+                TestAssert.AreEqual(0, TaxTickCount(perGame), "A plain registration is cleared");
 
-            // A later plain Register of a persistent participant must not double it up.
-            EmpireRegistry.Register(persistent);
-            EmpireRegistry.ClearAll();
-            TestAssert.AreEqual(1, TaxTickCount(persistent), "Still registered once");
-        }
-        finally
-        {
-            EmpireRegistry.Unregister(persistent);
-            EmpireRegistry.Unregister(perGame);
-        }
+                // A later plain Register of a persistent participant must not double it up.
+                EmpireRegistry.Register(persistent);
+                EmpireRegistry.ClearAll();
+                TestAssert.AreEqual(1, TaxTickCount(persistent), "Still registered once");
+            }
+            finally
+            {
+                EmpireRegistry.Unregister(persistent);
+                EmpireRegistry.Unregister(perGame);
+            }
+        });
     }
 
     [EmpireDestructiveTest("Destructive.Registry")]
     public static void RegisterPersistent_Null_IsIgnored()
     {
-        TestAssert.DoesNotThrow(() =>
+        TestUtil.WithRegistriesRestored(() =>
         {
-            EmpireRegistry.RegisterPersistent(null);
-            EmpireRegistry.ClearAll();
-        }, "A null persistent participant is ignored, also on ClearAll");
+            TestAssert.DoesNotThrow(() =>
+            {
+                EmpireRegistry.RegisterPersistent(null);
+                EmpireRegistry.ClearAll();
+            }, "A null persistent participant is ignored, also on ClearAll");
+        });
     }
 
     [EmpireDestructiveTest("Destructive.Registry")]

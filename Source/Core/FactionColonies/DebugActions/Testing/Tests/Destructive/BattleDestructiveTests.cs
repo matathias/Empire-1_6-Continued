@@ -49,14 +49,15 @@ public static class BattleDestructiveTests
     [EmpireDestructiveTest("Destructive.Battle")]
     public static void Forecast_OneForceFairCoin_CorrectValue()
     {
-        // Attacker force 1, defender force 1, equal efficiency → p = 0.5.
+        // Attacker force 1, defender force 1, equal efficiency. A tied roll goes to the defender, so
+        // the attacker wins 190 of the 400 d20 pairs: p = 0.475, and the defender's chance is 0.525.
         // defenderHP = Round(1 * defAdv), so pin defAdv to 1 to make the defender exactly 1 HP.
         float originalAdvantage = FCSettings.defenderAdvantage;
         double result;
         try
         {
             FCSettings.defenderAdvantage = 1f;
-            // a=1, b=1, n=1: P(atk wins) = C(1,1) * 0.5 = 0.5 → defender chance = 0.5
+            // a=1, b=1, n=1: P(atk wins) = C(1,1) * 0.475 = 0.475 → defender chance = 0.525
             var attacker = BattleTests.CreateForce(1, 1.0, 1);
             var defender = BattleTests.CreateForce(1, 1.0, 1);
             result = SimulateBattleFc.CalculateDefenderWinChance(attacker, defender);
@@ -66,7 +67,7 @@ public static class BattleDestructiveTests
             FCSettings.defenderAdvantage = originalAdvantage;
         }
 
-        TestAssert.AreEqual(0.5, result, 0.001,
-            $"1v1 fair coin should be 50/50, got {result}");
+        TestAssert.AreEqual(0.525, result, 0.001,
+            $"1v1 at equal efficiency should give the defender 0.525 (ties go to the defender), got {result}");
     }
 }

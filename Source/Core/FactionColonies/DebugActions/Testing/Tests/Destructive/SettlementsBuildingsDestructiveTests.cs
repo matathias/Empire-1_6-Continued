@@ -645,7 +645,7 @@ public static class SettlementsBuildingsDestructiveTests
             TestAssert.NotNull(bill, "A positive cost should make a bill");
 
             TestAssert.AreEqual(home, bill.settlement, "The bill should be charged to the squad's home");
-            TestAssert.AreEqual(-120, bill.taxes.silverAmount, "The bill should charge the cost");
+            TestAssert.AreEqual(-120.0, bill.taxes.silverAmount, message: "The bill should charge the cost");
             TestAssert.AreEqual("FCBillKindSquadRestock".Translate().ToString(), bill.label, "The bill should carry the restock label");
             TestAssert.Contains(FindFC.TaxLedger.Bills, bill, "The bill should be on the ledger");
 
