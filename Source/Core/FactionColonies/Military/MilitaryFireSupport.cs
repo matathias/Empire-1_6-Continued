@@ -24,7 +24,7 @@ public class MilitaryFireSupport : IExposable, ILoadReferenceable
     }
 
     public MilitaryFireSupport(string fireSupportType, Map map, IntVec3 location, int ticksTillEnd, int startupTime,
-        float accuracy, List<ThingDef> projectiles = null, int settlementTile = -1)
+        float accuracy, List<ThingDef> projectiles = null, PlanetTile? settlementTile = null)
     {
         this.fireSupportType = fireSupportType;
         this.ticksTillEnd = Find.TickManager.TicksGame + ticksTillEnd + startupTime;
@@ -32,9 +32,11 @@ public class MilitaryFireSupport : IExposable, ILoadReferenceable
         this.map = map;
         this.location = location;
         this.startupTime = startupTime;
-        if (settlementTile >= 0)
+        // The strike comes in from the settlement's side of the map. A settlement on another layer
+        // (orbit vs surface) has no meaningful direction, so it falls back to a random edge.
+        if (settlementTile is { Valid: true } sourceTile && sourceTile.Layer == map.Tile.Layer)
         {
-            Rot4 direction = Find.WorldGrid.GetRotFromTo(map.Tile, settlementTile);
+            Rot4 direction = Find.WorldGrid.GetRotFromTo(map.Tile, sourceTile);
             sourceLocation = CellFinder.RandomEdgeCell(direction, map);
         }
         else

@@ -75,14 +75,11 @@ public static class Patch_ExecuteTravelerRaid
 
         if (queued)
         {
-            LogUtil.Message("WD raid on Empire settlement " + empireSettlement.Name +
-                " intercepted (WD strength " + traveler.travelerStrength.ToString("F0") +
-                " -> Empire force " + attackingForce.forceRemaining + ")");
+            LogUtil.Message($"WD raid on Empire settlement {empireSettlement.Name} intercepted (WD strength {traveler.travelerStrength:F0} -> Empire force {attackingForce.forceRemaining})");
         }
         else
         {
-            LogUtil.Message("WD raid on Empire settlement " + empireSettlement.Name +
-                " dropped (helper rejected — likely missing MilitaryComp or MilitaryManager).");
+            LogUtil.Message($"WD raid on Empire settlement {empireSettlement.Name} dropped (helper rejected: likely missing MilitaryComp or MilitaryManager).");
         }
 
         return false;

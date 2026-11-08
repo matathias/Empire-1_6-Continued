@@ -38,8 +38,7 @@ public static class Patch_ResolveWarObjectAttack
 
         MilitaryOperationsUtil.AttackPlayerSettlement(attackingForce, empireSettlement, attacker.Faction);
 
-        LogUtil.Message("RW attack on " + empireSettlement.Name + " by " + attacker.Faction.Name
-            + " (pts=" + attacker.RimWarPoints + " -> level=" + level.ToString("F1") + ")");
+        LogUtil.Message($"RW attack on {empireSettlement.Name} by {attacker.Faction.Name} (pts={attacker.RimWarPoints} -> level={level:F1})");
 
         return false; // skip original; don't add to RimWar's AttackingUnits
     }
