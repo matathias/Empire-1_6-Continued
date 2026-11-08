@@ -185,7 +185,7 @@
 	
   <FCDisburseAccruedRandomTithe>Verser le budget cumulé</FCDisburseAccruedRandomTithe>
 	
-  <FCDisburseAccruedRandomTitheDesc>Si cette option est cochée, le budget cumulé sera versé en argent brut au moment de la taxe. Il ne comptera pas dans le budget de dîme aléatoire.</FCDisburseAccruedRandomTitheDesc>
+  <FCDisburseAccruedRandomTitheDesc>Si cette option est cochée, le budget cumulé sera versé en argent brut au moment de la taxe. Il ne comptera pas dans le budget de dîme aléatoire. Seul l'argent initialement retenu pour ce budget est versé ; toute part financée par les bonus de dîme ne peut être dépensée qu'en marchandises.</FCDisburseAccruedRandomTitheDesc>
 	
   <FCNoTitheLetterLabel>Pas de dîme : {0}</FCNoTitheLetterLabel>
 	

@@ -190,15 +190,46 @@ public static class UIUtil
         for (int i = 0; i < items.Count; i++)
         {
             T item = items[i];
-            Rect rowRect = new(0f, i * (rowH + rowGap), scrollRect.width, rowH);
-            if (i % 2 == 0)
-                Widgets.DrawHighlight(rowRect);
-            Color color = accent(item);
-            Widgets.DrawBoxSolid(new Rect(0f, rowRect.y, AccentRow.AccentW, rowH), color);
-            if (!drawRow(item, new AccentRow(rowRect, i, color)))
+            AccentRow row = DrawAccentRowFrame(new Rect(0f, i * (rowH + rowGap), scrollRect.width, rowH), i, accent(item));
+            if (!drawRow(item, row))
                 break;
         }
         ScrollUtil.EndScrollView();
+    }
+
+    /// <summary>
+    /// Draws one accent-list row's frame (the alternating highlight and the accent strip down its
+    /// left edge) and returns its layout. For lists whose rows differ in height, which
+    /// <see cref="DrawAccentRowList{T}"/> can't lay out.
+    /// </summary>
+    public static AccentRow DrawAccentRowFrame(Rect rowRect, int index, Color accent)
+    {
+        if (index % 2 == 0)
+            Widgets.DrawHighlight(rowRect);
+        Widgets.DrawBoxSolid(new Rect(rowRect.x, rowRect.y, AccentRow.AccentW, rowRect.height), accent);
+        return new AccentRow(rowRect, index, accent);
+    }
+
+    /// <summary>
+    /// Draws a highlighted notice sized to fit <paramref name="text"/>, with its bottom edge at
+    /// <paramref name="bottomY"/>, then moves <paramref name="bottomY"/> above it by
+    /// <paramref name="gap"/>, so a window can stack warnings upward from its buttons.
+    /// <paramref name="padding"/> insets the text horizontally, and vertically too when
+    /// <paramref name="padVertically"/> is set. Leaves the font Small and the anchor MiddleLeft.
+    /// </summary>
+    public static void DrawNoticeAbove(float x, float width, ref float bottomY, string text, Color? color = null,
+        float padding = 3f, bool padVertically = true, float gap = 5f)
+    {
+        Text.Font = GameFont.Small;
+        Text.Anchor = TextAnchor.MiddleLeft;
+        float textHeight = Text.CalcHeight(text, width - padding * 2);
+        float vpad = padVertically ? padding : 0f;
+        Rect box = new(x, bottomY - textHeight - vpad * 2, width, textHeight + vpad * 2);
+        Rect label = new(box.x + padding, box.y + vpad, box.width - padding * 2, textHeight);
+
+        Widgets.DrawHighlight(box);
+        Widgets.Label(label, color is Color c ? text.Colorize(c) : text);
+        bottomY -= box.height + gap;
     }
 
     /// <summary>Draws the gray, centered "nothing here" message used by empty lists and tables.</summary>

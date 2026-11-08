@@ -2156,26 +2156,12 @@ public class WorldSettlementFC : Settlement
 
         double value = stat.IdentityValue;
 
-        foreach (TaggedStatModifier tagged in statModifiers)
+        foreach ((double modValue, _, bool decaying) in ListedStatModifiers(stat))
         {
-            if (tagged.mod.stat == stat)
-            {
-                if (stat.aggregation == FCStatAggregation.Additive)
-                    value += tagged.mod.value;
-                else
-                    value *= tagged.mod.value;
-            }
-        }
-
-        foreach (PermanentStatModifier perm in permanentModifiers)
-        {
-            if (perm.stat == stat)
-            {
-                if (stat.aggregation == FCStatAggregation.Additive)
-                    value += perm.value;
-                else
-                    value *= perm.value;
-            }
+            if (decaying || stat.aggregation == FCStatAggregation.Additive)
+                value += modValue;
+            else
+                value *= modValue;
         }
 
         foreach (WorldObjectComp comp in AllComps)
@@ -2190,15 +2176,32 @@ public class WorldSettlementFC : Settlement
             }
         }
 
-        // Decaying penalties only ever target Additive loss stats, contributing their per-day slice.
+        cachedStatValues[stat] = value;
+        return value;
+    }
+
+    /* The settlement's own listed modifiers for a stat, in breakdown order: tagged (buildings,
+       settlement type, events), permanent (persist after event expiry), then decaying penalties
+       (pawn/caravan-loss drips), each with the label it shows in the stat breakdown. Decaying
+       penalties only ever target Additive loss stats and contribute their current per-day slice. */
+    private IEnumerable<(double value, string label, bool decaying)> ListedStatModifiers(FCStatDef stat)
+    {
+        foreach (TaggedStatModifier tagged in statModifiers)
+        {
+            if (tagged.mod.stat == stat)
+                yield return (tagged.mod.value, tagged.sourceLabel, false);
+        }
+        foreach (PermanentStatModifier perm in permanentModifiers)
+        {
+            if (perm.stat == stat)
+                yield return (perm.value, perm.sourceLabel + " (permanent)", false);
+        }
         foreach (DecayingStatPenalty penalty in decayingPenalties)
         {
             if (penalty.stat == stat)
-                value += penalty.CurrentValue;
+                yield return (penalty.CurrentValue,
+                    penalty.sourceLabel + " (" + "FCDecayingPenaltyDaysLeft".Translate(penalty.DaysLeft) + ")", true);
         }
-
-        cachedStatValues[stat] = value;
-        return value;
     }
 
     /// <summary>
@@ -2228,33 +2231,15 @@ public class WorldSettlementFC : Settlement
             // keep "harmful modifier = red". Additive-only; multiplier lines aren't sign-flipped.
             bool colorInvert = invert ^ hardinvert;
 
-            // Settlement-level modifiers (buildings, settlement type, events)
-            foreach (TaggedStatModifier tagged in statModifiers)
+            // The settlement's own listed modifiers; decaying penalties show their per-day slice
+            foreach ((double modValue, string label, bool decaying) in ListedStatModifiers(stat))
             {
-                if (tagged.mod.stat != stat) continue;
-                if (isAdditive)
-                    desc += TextUtil.ColorizeAdditiveBonus(tagged.mod.value, invert: colorInvert, hardinvert: hardinvert) + " - " + tagged.sourceLabel + "\n";
+                if (decaying)
+                    desc += TextUtil.AdditiveBonusLine(modValue, label, invert: colorInvert, hardinvert: hardinvert) + "\n";
+                else if (isAdditive)
+                    desc += TextUtil.ColorizeAdditiveBonus(modValue, invert: colorInvert, hardinvert: hardinvert) + " - " + label + "\n";
                 else
-                    desc += TextUtil.ColorizeMultiplierBonus(tagged.mod.value, invert: invert) + " - " + tagged.sourceLabel + "\n";
-            }
-
-            // Permanent modifiers (persist after event expiry)
-            foreach (PermanentStatModifier perm in permanentModifiers)
-            {
-                if (perm.stat != stat) continue;
-                if (isAdditive)
-                    desc += TextUtil.ColorizeAdditiveBonus(perm.value, invert: colorInvert, hardinvert: hardinvert) + " - " + perm.sourceLabel + " (permanent)\n";
-                else
-                    desc += TextUtil.ColorizeMultiplierBonus(perm.value, invert: invert) + " - " + perm.sourceLabel + " (permanent)\n";
-            }
-
-            // Decaying penalties (pawn/caravan-loss drips) — always Additive; show the per-day slice + days left
-            foreach (DecayingStatPenalty penalty in decayingPenalties)
-            {
-                if (penalty.stat != stat) continue;
-                desc += TextUtil.AdditiveBonusLine(penalty.CurrentValue,
-                    penalty.sourceLabel + " (" + "FCDecayingPenaltyDaysLeft".Translate(penalty.DaysLeft) + ")",
-                    invert: colorInvert, hardinvert: hardinvert) + "\n";
+                    desc += TextUtil.ColorizeMultiplierBonus(modValue, invert: invert) + " - " + label + "\n";
             }
 
             // IStatModifierProvider comps. Each provider joins its own lines with "\n" but

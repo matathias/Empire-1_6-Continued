@@ -149,32 +149,11 @@ public class FCCustomizeXenotypesWindow : Window
         }
         if (filter.OnlyNonViolentXenos)
         {
-            string noticeText = "FCOnlyNonViolentXenoWarning".Translate();
-            float textHeight = Text.CalcHeight(noticeText, boundingBox.width - (smallMargin * 2));
-            Rect noticeBox = new(boundingBox.x, bottomY - textHeight, boundingBox.width, textHeight);
-            Rect noticeLabel = new(noticeBox.x + smallMargin, noticeBox.y, noticeBox.width - (smallMargin * 2), textHeight);
-            noticeText = noticeText.Colorize(Color.yellow);
-
-            Widgets.DrawHighlight(noticeBox);
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(noticeLabel, noticeText);
-
-            bottomY -= (noticeBox.height + margin);
+            UIUtil.DrawNoticeAbove(boundingBox.x, boundingBox.width, ref bottomY, "FCOnlyNonViolentXenoWarning".Translate(), Color.yellow, smallMargin, padVertically: false, gap: margin);
         }
         if (FactionCache.NonViolentXenotypesExist)
         {
-            string noticeText = "* " + "FCXenoNonViolentIndicatorDesc".Translate();
-            float textHeight = Text.CalcHeight(noticeText, boundingBox.width - (smallMargin * 2));
-            Rect noticeBox = new(boundingBox.x, bottomY - textHeight, boundingBox.width, textHeight);
-            Rect noticeLabel = new(noticeBox.x + smallMargin, noticeBox.y, noticeBox.width - (smallMargin * 2), textHeight);
-
-            Widgets.DrawHighlight(noticeBox);
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(noticeLabel, noticeText);
-
-            bottomY -= (noticeBox.height + margin);
+            UIUtil.DrawNoticeAbove(boundingBox.x, boundingBox.width, ref bottomY, "* " + "FCXenoNonViolentIndicatorDesc".Translate(), null, smallMargin, padVertically: false, gap: margin);
         }
 
         Rect enableButton = new(boundingBox.x, bottomY - bigRowHeight, boundingBox.width / 2, bigRowHeight);

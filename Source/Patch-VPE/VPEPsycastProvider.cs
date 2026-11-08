@@ -203,7 +203,7 @@ public class VPEPsycastProvider : IPsycastSystemProvider
     /// clears learned psycasts/paths/foci from the <c>CompAbilities</c>, then the VPE implant and
     /// base psylink hediffs are removed. Also strips any stray base-game psycast abilities.
     /// </summary>
-    private static void Wipe(Pawn pawn)
+    internal static void Wipe(Pawn pawn)
     {
         Hediff_PsycastAbilities tracker = pawn.Psycasts();
         if (tracker is not null)

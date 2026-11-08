@@ -38,13 +38,15 @@ public class SquadDeploymentState : IExposable
         Scribe_Values.Look(ref OrderLocation, "orderLocation");
     }
 
-    /// <summary>True if any mercenary pawn is currently spawned on a map. Walks the
-    /// merc list rather than reading <c>Operation.battlefieldRef</c> so it works for
-    /// squads spawned outside an op (e.g. drop pods that haven't yet wired up their op).
+    /// <summary>True if any mercenary pawn, or any of their mechs, animals or mounts, is currently
+    /// spawned on a map. Walks the merc list rather than reading <c>Operation.battlefieldRef</c> so it
+    /// works for squads spawned outside an op (e.g. drop pods that haven't yet wired up their op).
     /// </summary>
     public bool IsPhysicallyDeployed()
     {
-        return squad?.mercenaries?.Any(m => m?.pawn?.Map is not null) ?? false;
+        if (squad?.mercenaries is null) return false;
+        return squad.mercenaries.Any(m => m?.pawn?.Map is not null)
+            || squad.AllSubPawns().Any(sub => sub?.pawn?.Map is not null);
     }
 
     /// <summary>Migration drain — adopts legacy top-level deployment fields from a pre-refactor

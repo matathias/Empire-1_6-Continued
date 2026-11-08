@@ -10,6 +10,26 @@ namespace FactionColonies;
 /// </summary>
 public static class CaravanStockMathTests
 {
+    // --- SizeFactor: sublinear growth with producing settlements ---
+
+    [EmpireTest("Caravan")]
+    public static void SizeFactor_AtReference_IsOne()
+    {
+        TestAssert.AreEqual(1f, CaravanStockMath.SizeFactor(3, 3), 0.0001f);
+    }
+
+    [EmpireTest("Caravan")]
+    public static void SizeFactor_FourTimesReference_IsTwo()
+    {
+        TestAssert.AreEqual(2f, CaravanStockMath.SizeFactor(12, 3), 0.0001f);
+    }
+
+    [EmpireTest("Caravan")]
+    public static void TargetStacks_SizeFactorScalesBaseline()
+    {
+        TestAssert.AreEqual(60, CaravanStockMath.TargetStacks(30, 3f, 3f, CaravanStockMath.SizeFactor(12, 3)));
+    }
+
     // --- TargetStacks: deterministic scaling, clamped to [0.5x, 4x] ---
 
     [EmpireTest("Caravan")]

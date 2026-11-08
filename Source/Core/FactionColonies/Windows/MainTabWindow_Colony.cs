@@ -1574,7 +1574,6 @@ public class MainTabWindow_Colony : MainTabWindow
     {
         const float headerH = 26f;
         const float slotH = 22f;
-        const float accentW = 4f;
         const float rowGap = 2f;
         const float pad = 4f;
         const float summaryH = 24f;
@@ -1640,19 +1639,13 @@ public class MainTabWindow_Colony : MainTabWindow
             float cardH = cardHeights[i];
             float ry = runningY;
             float rowW = scrollRect.width;
-            Rect cardRect = new(0f, ry, rowW, cardH);
-
-            // Alternating row background
-            bool isHighlighted = i % 2 == 0;
-            if (isHighlighted)
-                Widgets.DrawHighlight(cardRect);
 
             // Accent strip spans full card height
-            Color accent = AccentUtil.GetMilitaryAccent(milComp);
-            Widgets.DrawBoxSolid(new Rect(0f, ry, accentW, cardH), accent);
-
-            float contentX = accentW + 6f;
-            float contentW = rowW - contentX - 4f;
+            AccentRow card = UIUtil.DrawAccentRowFrame(new Rect(0f, ry, rowW, cardH), i, AccentUtil.GetMilitaryAccent(milComp));
+            bool isHighlighted = i % 2 == 0;
+            Color accent = card.Accent;
+            float contentX = card.ContentX;
+            float contentW = card.ContentW;
             float topY = ry;
             float lineH = headerH;
 
@@ -1780,21 +1773,15 @@ public class MainTabWindow_Colony : MainTabWindow
             float ry = runningY;
             float rowW = scrollRect.width;
             float rowH = externalRowH;
-            Rect rowRect = new(0f, ry, rowW, rowH);
 
+            AccentRow row = UIUtil.DrawAccentRowFrame(new Rect(0f, ry, rowW, rowH), rowIndex, entry.AccentColor);
             bool isHighlighted = rowIndex % 2 == 0;
-            if (isHighlighted)
-                Widgets.DrawHighlight(rowRect);
-
-            // Accent strip
-            Color accent = entry.AccentColor;
-            Widgets.DrawBoxSolid(new Rect(0f, ry, accentW, rowH), accent);
-
-            float contentX = accentW + 6f;
-            float contentW = rowW - contentX - 4f;
-            float topY = ry;
-            float botY = ry + rowH / 2f;
-            float lineH = rowH / 2f;
+            Color accent = row.Accent;
+            float contentX = row.ContentX;
+            float contentW = row.ContentW;
+            float topY = row.TopY;
+            float botY = row.BotY;
+            float lineH = row.LineH;
 
             // === TOP LINE ===
             float statusW = 190f;

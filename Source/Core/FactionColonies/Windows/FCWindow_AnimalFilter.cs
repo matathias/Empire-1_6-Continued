@@ -115,46 +115,19 @@ public class FCWindow_AnimalFilter : Window
         // Warnings and errors at bottom (drawn bottom-up)
         if (filter.AllowedCount == 0)
         {
-            string errorText = "FCAnimalFilterNoneError".Translate();
-            float textHeight = Text.CalcHeight(errorText, inRect.width - (smallMargin * 2));
-            Rect errorBox = new(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
-            Rect errorLabel = new(errorBox.x + smallMargin, errorBox.y + smallMargin, errorBox.width - (smallMargin * 2), textHeight);
-
-            Widgets.DrawHighlight(errorBox);
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(errorLabel, errorText.Colorize(Color.red));
-            bottomY -= (errorBox.height + margin);
+            UIUtil.DrawNoticeAbove(inRect.x, inRect.width, ref bottomY, "FCAnimalFilterNoneError".Translate(), Color.red, smallMargin, gap: margin);
         }
 
         bool noCombat = filter.AllowedCombatAnimals.Count == 0 && filter.AllowedCount > 0;
         if (noCombat)
         {
-            string warnText = "FCAnimalFilterNoCombatWarning".Translate();
-            float textHeight = Text.CalcHeight(warnText, inRect.width - (smallMargin * 2));
-            Rect warnBox = new(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
-            Rect warnLabel = new(warnBox.x + smallMargin, warnBox.y + smallMargin, warnBox.width - (smallMargin * 2), textHeight);
-
-            Widgets.DrawHighlight(warnBox);
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(warnLabel, warnText.Colorize(Color.yellow));
-            bottomY -= (warnBox.height + margin);
+            UIUtil.DrawNoticeAbove(inRect.x, inRect.width, ref bottomY, "FCAnimalFilterNoCombatWarning".Translate(), Color.yellow, smallMargin, gap: margin);
         }
 
         bool noPack = filter.AllowedPackAnimals.Count == 0 && filter.AllowedCount > 0;
         if (noPack)
         {
-            string errorText = "FCAnimalFilterNoPackError".Translate();
-            float textHeight = Text.CalcHeight(errorText, inRect.width - (smallMargin * 2));
-            Rect errorBox = new(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
-            Rect errorLabel = new(errorBox.x + smallMargin, errorBox.y + smallMargin, errorBox.width - (smallMargin * 2), textHeight);
-
-            Widgets.DrawHighlight(errorBox);
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(errorLabel, errorText.Colorize(Color.red));
-            bottomY -= (errorBox.height + margin);
+            UIUtil.DrawNoticeAbove(inRect.x, inRect.width, ref bottomY, "FCAnimalFilterNoPackError".Translate(), Color.red, smallMargin, gap: margin);
         }
 
         // Delivery biome not covered by any allowed pack animal (player has packs, but none reach it).
@@ -164,16 +137,7 @@ public class FCWindow_AnimalFilter : Window
             && !AnimalBiomeUtil.SelectionCoversBiome(filter, deliveryBiome);
         if (biomeUncovered)
         {
-            string warnText = "FCAnimalFilterBiomeUncoveredWarning".Translate(deliveryBiome.LabelCap);
-            float textHeight = Text.CalcHeight(warnText, inRect.width - (smallMargin * 2));
-            Rect warnBox = new(inRect.x, bottomY - textHeight - (smallMargin * 2), inRect.width, textHeight + (smallMargin * 2));
-            Rect warnLabel = new(warnBox.x + smallMargin, warnBox.y + smallMargin, warnBox.width - (smallMargin * 2), textHeight);
-
-            Widgets.DrawHighlight(warnBox);
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(warnLabel, warnText.Colorize(Color.red));
-            bottomY -= (warnBox.height + margin);
+            UIUtil.DrawNoticeAbove(inRect.x, inRect.width, ref bottomY, "FCAnimalFilterBiomeUncoveredWarning".Translate(deliveryBiome.LabelCap), Color.red, smallMargin, gap: margin);
         }
 
         // Enable All / Disable All / Defaults buttons

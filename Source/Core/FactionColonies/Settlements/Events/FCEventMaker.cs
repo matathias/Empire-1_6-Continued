@@ -301,8 +301,8 @@ public static class FCEventMaker
                     if (tempEvent.def.requiredResource is not null)
                     {
                         ResourceFC res = settlement.GetResource(tempEvent.def.requiredResource);
-                        // null always fails theta comparisons, so this check is safe
-                        if (res?.InstantaneousProduction <= 0) continue;
+                        // A settlement without the resource (biome or tech excluded it) doesn't qualify
+                        if (res is null || res.InstantaneousProduction <= 0) continue;
                     }
                     tempEvent.settlementTraitLocations.Add(settlement);
                 }

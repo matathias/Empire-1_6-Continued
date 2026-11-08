@@ -23,15 +23,27 @@ public static class CaravanStockMath
 
     /// <summary>
     /// Deterministic target count of total non-pawn ware stacks (silver + items) for a caravan.
-    /// Scales the per-caravan baseline by the empire's production scaling
-    /// (<paramref name="extraScale"/> relative to <paramref name="baseExtraScale"/>), clamped to
+    /// Scales the per-caravan baseline by the empire's tech scaling (<paramref name="extraScale"/>
+    /// relative to <paramref name="baseExtraScale"/>) times <paramref name="sizeFactor"/>, clamped to
     /// [<see cref="MinStackScale"/>, <see cref="MaxStackScale"/>]. Never random; never below 1.
     /// </summary>
-    public static int TargetStacks(int baseThingCount, float extraScale, float baseExtraScale)
+    public static int TargetStacks(int baseThingCount, float extraScale, float baseExtraScale, float sizeFactor = 1f)
     {
         float reference = baseExtraScale > 0f ? baseExtraScale : 1f;
-        float scale = Mathf.Clamp(extraScale / reference, MinStackScale, MaxStackScale);
+        float scale = Mathf.Clamp(extraScale / reference * sizeFactor, MinStackScale, MaxStackScale);
         return Mathf.Max(1, Mathf.RoundToInt(baseThingCount * scale));
+    }
+
+    /// <summary>
+    /// How much bigger than a "normal" empire's this caravan should be, from the number of
+    /// settlements producing its resource: the square root of that count over
+    /// <paramref name="referenceSettlements"/>, so caravans grow with the empire but sublinearly
+    /// (1 settlement ~0.58x, the reference count 1x, four times it 2x, with a reference of 3).
+    /// </summary>
+    public static float SizeFactor(int producingSettlements, int referenceSettlements)
+    {
+        if (referenceSettlements <= 0) return 1f;
+        return Mathf.Sqrt(Mathf.Max(1, producingSettlements) / (float)referenceSettlements);
     }
 
     /// <summary>

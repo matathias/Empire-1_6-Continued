@@ -107,6 +107,10 @@ public class FCWindow_VPEPsycastEditor : Window
             if (sessionPawn.Faction is null && empire is not null)
                 sessionPawn.SetFaction(empire);
 
+            // VPE's generation patch can pre-grant psylink, paths, abilities and stat points (pawn
+            // kinds with an ability extension, or the Basilicus storyteller). Wipe them, as the real
+            // reconcile does, so the editor shows only the unit's own picks and point spend.
+            VPEPsycastProvider.Wipe(sessionPawn);
             new VPEPsycastProvider().ApplyPsylink(sessionPawn, unit.psylinkLevel);
 
             hediff = sessionPawn.Psycasts();

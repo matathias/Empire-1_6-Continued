@@ -53,6 +53,11 @@ public class EmpireCaravanStockGenerator : StockGenerator
     /// </summary>
     public int baseThingCount = 30;
 
+    /// <summary>Number of settlements producing the caravan's resource at which it carries
+    /// <see cref="baseThingCount"/> stacks; more producers make it bigger, fewer smaller (see
+    /// <see cref="CaravanStockMath.SizeFactor"/>). Override per caravan kind in XML.</summary>
+    public int referenceSettlementCount = 3;
+
     /// <summary>Randomness range for per-item budget (multiplier).</summary>
     private const float BudgetRandomMin = 0.5f;
     private const float BudgetRandomMax = 1.5f;
@@ -70,6 +75,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
 
         // Aggregate budget and ThingDefs across all settlements for this resource
         double totalBudget = 0;
+        int producingSettlements = 0;
         HashSet<ThingDef> allThingDefs = [];
 
         foreach (WorldSettlementFC settlement in factionComp.settlements)
@@ -79,6 +85,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
                 continue;
 
             totalBudget += res.grossMarketValue;
+            producingSettlements++;
 
             List<ThingDef> thingDefs = res.GenerateThingDefList();
             if (!thingDefs.NullOrEmpty())
@@ -95,7 +102,8 @@ public class EmpireCaravanStockGenerator : StockGenerator
 
         /* Total non-pawn ware stacks (silver + items) this caravan emits. Bounding it keeps
            vanilla PawnGroupKindWorker_Trader's ceil(stacks / 8) carrier formula in check. */
-        int targetStacks = CaravanStockMath.TargetStacks(baseThingCount, EmpireStockGenerator.TechScaling(), EmpireStockGenerator.BaseExtraScale);
+        int targetStacks = CaravanStockMath.TargetStacks(baseThingCount, EmpireStockGenerator.TechScaling(),
+            EmpireStockGenerator.BaseExtraScale, CaravanStockMath.SizeFactor(producingSettlements, referenceSettlementCount));
         int silverStackLimit = Mathf.Max(1, ThingDefOf.Silver.stackLimit);
 
         // Silver is the trader's buying power. Scale its value by silverBudgetFraction, but

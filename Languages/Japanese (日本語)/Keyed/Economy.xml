@@ -216,7 +216,7 @@ If the lowest value item in the list has a higher value than your Random Tithe B
 	<!-- EN: Disburse Accrued Budget -->
   <FCDisburseAccruedRandomTithe>累積予算を支払う</FCDisburseAccruedRandomTithe>
 	<!-- EN: If checked, then the Accrued Budget will be disbursed as raw silver come tax time. It will not count towards the Random Tithe Budget. -->
-  <FCDisburseAccruedRandomTitheDesc>チェックを入れると、課税時に累積予算が生シルバーとして支払われます。ランダム十分の一税予算にはカウントされません。</FCDisburseAccruedRandomTitheDesc>
+  <FCDisburseAccruedRandomTitheDesc>チェックを入れると、課税時に累積予算が生シルバーとして支払われます。ランダム十分の一税予算にはカウントされません。支払われるのは、もともとこの予算のために差し引かれたシルバーのみです。十分の一税ボーナスで賄われた分は、物資にしか使えません。</FCDisburseAccruedRandomTitheDesc>
 	<!-- EN: No Tithe: {0} -->
   <FCNoTitheLetterLabel>十分の一税なし：{0}</FCNoTitheLetterLabel>
 	<!-- EN: {0} has a Random Tithe Budget for resource {1}, but no items were enabled. The Random Tithe Budget will be stored for future use.

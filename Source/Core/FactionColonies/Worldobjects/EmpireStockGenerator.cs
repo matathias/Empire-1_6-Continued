@@ -31,6 +31,11 @@ public class EmpireStockGenerator : StockGenerator
     /// </summary>
     public IntRange varietyRange = new(5, 10);
 
+    /// <summary>Most animals of one kind in the stock, and most animals in total. Each animal is a
+    /// generated pawn, so cheap animals on a big budget would otherwise flood the trade list.</summary>
+    public int maxAnimalsPerKind = 5;
+    public int maxAnimalCount = 20;
+
     /// <summary>Randomness range for per-item budget (multiplier). Prevents uniform stack sizes.</summary>
     private const float BudgetRandomMin = 0.5f;
     private const float BudgetRandomMax = 1.5f;
@@ -66,6 +71,8 @@ public class EmpireStockGenerator : StockGenerator
 
         if (totalProduction <= 0f)
             yield break;
+
+        int animalsMade = 0;
 
         // Generate goods per resource
         foreach (ResourceFC res in settlement.Resources)
@@ -111,13 +118,16 @@ public class EmpireStockGenerator : StockGenerator
 
                 if (td.race is not null && td.race.Animal)
                 {
-                    for (int i = 0; i < stackCount; i++)
+                    int animals = Mathf.Min(stackCount, maxAnimalsPerKind, maxAnimalCount - animalsMade);
+                    for (int i = 0; i < animals; i++)
                     {
                         PawnKindDef pawnKind = td.race.AnyPawnKind;
                         if (pawnKind is null) continue;
                         PawnGenerationRequest request = new(pawnKind, null, PawnGenerationContext.NonPlayer);
                         Pawn pawn = PawnGenerator.GeneratePawn(request);
-                        if (pawn is not null) yield return pawn;
+                        if (pawn is null) continue;
+                        animalsMade++;
+                        yield return pawn;
                     }
                 }
                 else

@@ -124,7 +124,7 @@ Si el objeto de menor valor de la lista tiene un valor superior a tu presupuesto
 	<FCRandomTitheAccrued>Presupuesto acumulado: ${0}</FCRandomTitheAccrued>
 	<FCRandomTitheAccruedDesc>La cantidad de presupuesto de diezmo aleatorio sobrante que se ha acumulado. Esto se añadirá a tu presupuesto de diezmo aleatorio para determinar el presupuesto total de diezmos aleatorios a la hora de los impuestos.</FCRandomTitheAccruedDesc>
 	<FCDisburseAccruedRandomTithe>Desembolsar presupuesto acumulado</FCDisburseAccruedRandomTithe>
-	<FCDisburseAccruedRandomTitheDesc>Si está marcado, el presupuesto acumulado se desembolsará como plata en bruto a la hora de los impuestos. No contará para el presupuesto de diezmo aleatorio.</FCDisburseAccruedRandomTitheDesc>
+	<FCDisburseAccruedRandomTitheDesc>Si está marcado, el presupuesto acumulado se desembolsará como plata en bruto a la hora de los impuestos. No contará para el presupuesto de diezmo aleatorio. Solo se desembolsa la plata retenida originalmente para él; cualquier parte financiada por bonificaciones de diezmo solo puede gastarse en bienes.</FCDisburseAccruedRandomTitheDesc>
 	<FCNoTitheLetterLabel>Sin diezmo: {0}</FCNoTitheLetterLabel>
 	<FCNoTitheLetterDesc>{0} tiene un presupuesto de diezmo aleatorio para el recurso {1}, pero no se activó ningún objeto. El presupuesto de diezmo aleatorio se guardará para su uso futuro.
 
