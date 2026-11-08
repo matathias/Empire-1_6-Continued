@@ -121,12 +121,14 @@ public static class MilitaryDeploymentUtil
     }
 
     /// <summary>
-    /// Deploys a <paramref name="settlement"/>'s main force, takes silver if there is an <paramref name="overrideSquad"/>
+    /// Deploys a <paramref name="settlement"/>'s main force, or <paramref name="overrideSquad"/> when given.
+    /// <paramref name="extraCost"/> is charged up front when the player confirms the drop position.
     /// </summary>
     /// <param name="settlement"></param>
     /// <param name="DropPod"></param>
     /// <param name="overrideSquad"></param>
-    public static void CallinAlliedForces(WorldSettlementFC settlement, bool DropPod, MercenarySquadFC overrideSquad = null)
+    /// <param name="extraCost"></param>
+    public static void CallinAlliedForces(WorldSettlementFC settlement, bool DropPod, MercenarySquadFC overrideSquad = null, int extraCost = 0)
     {
         MercenarySquadFC squad = overrideSquad
             ?? settlement?.FirstAvailableStationedSquad
@@ -166,6 +168,13 @@ public static class MilitaryDeploymentUtil
                 return;
             }
 
+            if (extraCost > 0 && !PaymentUtil.TryPaySilver(extraCost, PaymentUtil.Reason_SquadDeployment, settlement))
+            {
+                Messages.Message("FCNotEnoughSilverToDeploySquad".Translate(), MessageTypeDefOf.RejectInput);
+                DebugTools.curTool = null;
+                return;
+            }
+
             BillFC deploymentBill = FindFC.TaxLedger.CreateDeploymentCostBill(squad);
             SpawnSquad(settlement, squad, dropPosition, DropPod, deploymentBill);
             DebugTools.curTool = null;
@@ -180,7 +189,8 @@ public static class MilitaryDeploymentUtil
     /// </summary>
     /// <param name="settlement"></param>
     /// <param name="DropPod"></param>
-    public static void CallinExtraForces(WorldSettlementFC settlement, bool DropPod)
+    /// <param name="cost">Silver charged when the player confirms the drop position.</param>
+    public static void CallinExtraForces(WorldSettlementFC settlement, bool DropPod, int cost)
     {
         /* Morale lockout: refuse before creating the temp squad (CallinAlliedForces also gates,
          * but gating here avoids orphaning a freshly-created extra squad). */
@@ -190,13 +200,16 @@ public static class MilitaryDeploymentUtil
             return;
         }
 
-        MercenarySquadFC squad = FindFC.Military.CreateMercenarySquad(settlement, true);
-        if (squad is null) return;
+        // An extra squad whose placement tool was cancelled never got an op; clear it out first.
+        FindFC.Military.RemoveIdleExtraSquads();
+
         // Copy the outfit from the settlement's primary stationed squad (any squad with an
         // outfit will do — we just need a template to clone the gear from).
         MilSquadFC mainOutfit = settlement?.PrimaryStationedSquad?.outfit;
-        if (mainOutfit is not null) squad.Equipment.OutfitSquad(mainOutfit);
-        CallinAlliedForces(settlement, DropPod, squad);
+        if (mainOutfit is null) return;
+        MercenarySquadFC squad = FindFC.Military.CreateMercenarySquad(settlement, true, mainOutfit);
+        if (squad is null) return;
+        CallinAlliedForces(settlement, DropPod, squad, cost);
     }
     public static void FireSupport(WorldSettlementFC settlement, MilitaryFireSupport support)
     {

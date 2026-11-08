@@ -117,6 +117,7 @@ public static class TaxEconomyDestructiveTests
             // Baseline: no random tithe, so the target's production is paid entirely as silver.
             target.hasRandomTithe = false;
             target.randomTitheStock = 0;
+            target.randomTitheStockSilver = 0;
             target.disburseTitheStock = false;
             target.SetDirtyCache();
             int baselineSilver = AccrueAndTax(s, days);
@@ -127,20 +128,21 @@ public static class TaxEconomyDestructiveTests
             target.autoMaxRandomTithe = true;
             target.randomTitheFilter.SetDisallowAll();
             target.randomTitheStock = 0;
+            target.randomTitheStockSilver = 0;
             target.disburseTitheStock = false;
             target.SetDirtyCache();
             int rolloverSilver = AccrueAndTax(s, days);
 
-            double escrow = target.randomTitheStock;
-            TestAssert.GreaterThan(escrow, 0,
+            TestAssert.GreaterThan(target.randomTitheStock, 0,
                 "Empty-filter random tithe should escrow its budget into randomTitheStock");
+            double escrow = target.randomTitheStockSilver;
 
-            // The escrowed value must be WITHHELD from silver exactly once: paid silver plus the
-            // value now held in escrow reconciles to the baseline. The pre-fix bug both paid the
+            // The escrow's charged share must be WITHHELD from silver exactly once: paid silver plus the
+            // silver now held in escrow reconciles to the baseline. The pre-fix bug both paid the
             // value as silver AND stored it, so rolloverSilver would equal baselineSilver and this
             // sum would overshoot the baseline by 'escrow'.
             TestAssert.AreEqual(baselineSilver, rolloverSilver + escrow, tolerance: 3,
-                message: $"rolloverSilver({rolloverSilver}) + escrow({escrow:F0}) should equal baseline({baselineSilver})");
+                message: $"rolloverSilver({rolloverSilver}) + escrowed silver({escrow:F0}) should equal baseline({baselineSilver})");
 
             DestructiveTestUtil.AssertEmpireInvariants(f, "RandomTitheRollover_Withholds");
         }
@@ -168,6 +170,7 @@ public static class TaxEconomyDestructiveTests
             target.hasRandomTithe = false;
             target.disburseTitheStock = false;
             target.randomTitheStock = stock;
+            target.randomTitheStockSilver = stock;
             target.SetDirtyCache();
             int noDisburse = AccrueAndTax(s, days);
             TestAssert.AreEqual(stock, target.randomTitheStock, tolerance: 0.001,
@@ -175,6 +178,7 @@ public static class TaxEconomyDestructiveTests
 
             // Same state, disburse on -> the escrow is paid out once and cleared.
             target.randomTitheStock = stock;
+            target.randomTitheStockSilver = stock;
             target.disburseTitheStock = true;
             target.SetDirtyCache();
             int disbursed = AccrueAndTax(s, days);
@@ -209,12 +213,14 @@ public static class TaxEconomyDestructiveTests
 
             // One-day accrual escrow.
             target.randomTitheStock = 0;
+            target.randomTitheStockSilver = 0;
             target.SetDirtyCache();
             AccrueAndTax(s, 1);
             double oneDay = target.randomTitheStock;
 
             // Three-day accrual escrow.
             target.randomTitheStock = 0;
+            target.randomTitheStockSilver = 0;
             target.SetDirtyCache();
             AccrueAndTax(s, 3);
             double threeDay = target.randomTitheStock;
@@ -248,6 +254,7 @@ public static class TaxEconomyDestructiveTests
             target.randomTitheFilter.SetDisallowAll();
             target.disburseTitheStock = false;
             target.randomTitheStock = 0;
+            target.randomTitheStockSilver = 0;
             target.SetDirtyCache();
 
             const int days = 2;

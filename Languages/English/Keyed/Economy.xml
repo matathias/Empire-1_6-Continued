@@ -130,7 +130,7 @@ Random tithes are considered after your explicit tithe items are paid. If your e
 	<FCRandomTitheAccrued>Accrued Budget: ${0}</FCRandomTitheAccrued>
 	<FCRandomTitheAccruedDesc>The amount of leftover Random Tithe Budget that has accrued. This will be added to your Random Tithe Budget to determine the total budget for Random Tithes at tax time.</FCRandomTitheAccruedDesc>
 	<FCDisburseAccruedRandomTithe>Disburse Accrued Budget</FCDisburseAccruedRandomTithe>
-	<FCDisburseAccruedRandomTitheDesc>If checked, then the Accrued Budget will be disbursed as raw silver come tax time. It will not count towards the Random Tithe Budget.</FCDisburseAccruedRandomTitheDesc>
+	<FCDisburseAccruedRandomTitheDesc>If checked, then the Accrued Budget will be disbursed as raw silver come tax time. It will not count towards the Random Tithe Budget. Only the silver originally withheld for it is paid out; any part funded by tithe bonuses can only be spent on goods.</FCDisburseAccruedRandomTitheDesc>
 	<FCNoTitheLetterLabel>No Tithe: {0}</FCNoTitheLetterLabel>
 	<FCNoTitheLetterDesc>{0} has a Random Tithe Budget for resource {1}, but no items were enabled. The Random Tithe Budget will be stored for future use.
 

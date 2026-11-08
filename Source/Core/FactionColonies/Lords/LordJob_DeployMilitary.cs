@@ -392,6 +392,7 @@ public class LordJob_DeployMilitary : LordJob
                 }
             }
             squad.Deployment.Map = null;
+            if (squad.Deployment.Lord == lord) squad.Deployment.Lord = null;
         }
     }
 

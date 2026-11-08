@@ -393,9 +393,11 @@ public class WorldSettlementFC : Settlement
     public double ProjectedIncome => AccruedGrossIncome + totalIncome * DaysRemaining;
     public double ProjectedUpkeep => AccruedUpkeep + totalUpkeep * DaysRemaining;
 
-    /* Projected silver value of tithe goods that will be delivered this cycle: per tithing resource,
-     * the selected tithe demand capped by the projected tithe budget (accrued + daily rate * days left).
-     * Mirrors the fulfilledTitheValue deduction in CreateTax. */
+    /* Projected silver cost of tithe goods delivered this cycle: per tithing resource, the selected tithe
+     * demand capped by the projected tithe budget (accrued + daily rate * days left), of which the
+     * settlement pays only the part its own production funds (after the external budget, at most its
+     * projected taxable value). Mirrors the fulfilledTitheValue deduction in CreateTax and the credit in
+     * ResourceFC.GenerateTithe. */
     public double ProjectedTitheValue
     {
         get
@@ -404,8 +406,8 @@ public class WorldSettlementFC : Settlement
             foreach (ResourceFC r in resources)
             {
                 if (!r.canTithe || r.tithesPaused) continue;
-                double projBudget = r.GetProjectedTitheBudget();
-                total += Math.Min(r.titheTotalValue, projBudget);
+                double delivered = Math.Min(r.titheTotalValue, r.GetProjectedTitheBudget());
+                total += Math.Min(Math.Max(0, delivered - r.GetProjectedExternalTitheBudget()), r.GetProjectedTaxableValue());
             }
             return total;
         }
@@ -472,8 +474,8 @@ public class WorldSettlementFC : Settlement
         }
     }
 
-    /// <summary>Squads currently assigned to this settlement (their billet).
-    /// Lazily filtered from the faction-wide mercenary pool — pool sizes are small enough
+    /// <summary>Squads currently assigned to this settlement (their billet). Excludes temporary
+    /// Militaristic extra squads, which exist only for their one deployment. Lazily filtered from the faction-wide mercenary pool — pool sizes are small enough
     /// that a per-call scan is cheap. Add a cache only if profiling shows hot paths.</summary>
     public List<MercenarySquadFC> StationedSquads
     {
@@ -485,7 +487,7 @@ public class WorldSettlementFC : Settlement
             for (int i = 0; i < pool.Count; i++)
             {
                 MercenarySquadFC s = pool[i];
-                if (s is not null && s.settlement == this) result.Add(s);
+                if (s is not null && s.settlement == this && !s.isExtraSquad) result.Add(s);
             }
             return result;
         }

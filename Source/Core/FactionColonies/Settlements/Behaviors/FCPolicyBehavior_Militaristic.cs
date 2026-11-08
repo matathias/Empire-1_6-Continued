@@ -76,7 +76,7 @@ public class FCPolicyBehavior_Militaristic : FCPolicyBehavior
                 [
                     new FloatMenuOption("FCWalkIntoMapDeploymentOption".Translate(), delegate
                     {
-                        MilitaryDeploymentUtil.CallinExtraForces(settlement, false);
+                        MilitaryDeploymentUtil.CallinExtraForces(settlement, false, cost);
                         Find.WindowStack.currentlyDrawnWindow.Close();
                     })
                 ];
@@ -86,7 +86,7 @@ public class FCPolicyBehavior_Militaristic : FCPolicyBehavior
                 {
                     deploymentOptions.Add(new FloatMenuOption("FCDropPodDeploymentOption".Translate(), delegate
                     {
-                        MilitaryDeploymentUtil.CallinExtraForces(settlement, true);
+                        MilitaryDeploymentUtil.CallinExtraForces(settlement, true, cost);
                         Find.WindowStack.currentlyDrawnWindow.Close();
                     }));
                 }

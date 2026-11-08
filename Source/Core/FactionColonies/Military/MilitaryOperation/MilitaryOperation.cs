@@ -476,8 +476,11 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
 
         // Drive EmpireThreatAdaptation from every battle the empire participates in
         // (offensive and defensive), so raid outcomes tune the threat curve alongside
-        // defensive ones. Skip on Error results — the battle didn't really happen.
-        if (battleResult is not null && battleResult.winner != BattleWinner.Error)
+        // defensive ones. Skip on Error results — the battle didn't really happen. Skip Deploy
+        // ops too: a deploy isn't a battle (FinalizeDeployment synthesizes a placeholder result
+        // that always reads as a loss), so counting it would let deploy-and-recall weaken raids.
+        if (battleResult is not null && battleResult.winner != BattleWinner.Error
+            && kind != MilitaryJobDefOf.Deploy)
         {
             EmpireThreatAdaptation adapt = FindFC.ThreatAdaptation;
             if (adapt is not null)
@@ -637,6 +640,9 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
 
         LifecycleRegistry.InvokeOnOperationResolved(this);
         FindFC.MilitaryManager?.Unregister(this);
+
+        // A Militaristic extra squad exists only for this one deployment.
+        if (aggressor?.squad is { isExtraSquad: true } extra) mfc?.RemoveExtraSquad(extra);
     }
 
     /// <summary>

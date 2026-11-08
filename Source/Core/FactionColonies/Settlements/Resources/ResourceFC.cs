@@ -53,6 +53,9 @@ public class ResourceFC : IExposable
     /// </summary>
     // When budget rolls over (no items enabled, or budget below the cheapest item) the player is alerted via the FCNoTitheLetter letters in GenerateTithe.
     public double randomTitheStock = 0;
+    /// <summary>The silver actually withheld for <see cref="randomTitheStock"/>. Lower than the stock when
+    /// part of it came from the free share of the tithe budget; disbursing pays out only this.</summary>
+    public double randomTitheStockSilver = 0;
     public bool disburseTitheStock = false;
 
     public bool tithesPaused = false;
@@ -315,6 +318,10 @@ public class ResourceFC : IExposable
 
         //Tax Stock
         Scribe_Values.Look(ref randomTitheStock, "taxStock");
+        Scribe_Values.Look(ref randomTitheStockSilver, "taxStockSilver", -1);
+        // Older saves withheld the full stock from silver.
+        if (Scribe.mode == LoadSaveMode.LoadingVars && randomTitheStockSilver < 0)
+            randomTitheStockSilver = randomTitheStock;
         Scribe_Values.Look(ref disburseTitheStock, "disburseTaxStock");
 
         Scribe_References.Look(ref settlement, "settlement");
@@ -398,6 +405,17 @@ public class ResourceFC : IExposable
     public double GetProjectedTitheBudget()
     {
         return AccruedTitheBudget + GetTitheIncome() * (settlement?.DaysRemaining ?? 0);
+    }
+    /// <summary>Projected full-cycle taxable value: accrued so far + live per-day rate * days remaining.</summary>
+    public double GetProjectedTaxableValue()
+    {
+        return AccruedTaxableValue + taxableProductionMarketValue * (settlement?.DaysRemaining ?? 0);
+    }
+    /// <summary>Projected full-cycle external tithe budget (the <see cref="ITitheBudgetModifier"/> share of
+    /// <see cref="GetProjectedTitheBudget"/>): accrued so far + live per-day rate * days remaining.</summary>
+    public double GetProjectedExternalTitheBudget()
+    {
+        return AccruedExternalTitheBudget + DailyExternalTitheBudget * (settlement?.DaysRemaining ?? 0);
     }
     public void RefreshOnRandomTitheBudgetChange()
     {
@@ -1079,14 +1097,16 @@ public class ResourceFC : IExposable
         }
 
         // Determine random tithing budget (computed here; consumed after the specified-tithe walk below).
-        // randomTitheStock is an escrow: any value it holds was already withheld from silver when it
-        // accrued (see the rollover branches below), so releasing it must add silver exactly once.
+        // randomTitheStock is an escrow: its charged share (randomTitheStockSilver) was already withheld
+        // from silver when it accrued (see the rollover branches below), so disbursing pays exactly that
+        // back once. The free share of the budget can buy goods but never turns into silver.
         double priorStock = randomTitheStock;
         if (disburseTitheStock && priorStock > 0)
         {
-            outSilver += (int)priorStock;
+            outSilver += (int)randomTitheStockSilver;
             priorStock = 0;
             randomTitheStock = 0;
+            randomTitheStockSilver = 0;
         }
         // randomTitheBudget is a whole-cycle (tax-time) amount, consumed directly against the accrued
         // budget this cycle. Carried-over stock rides on top AFTER the cap (see below): it was already
@@ -1128,6 +1148,10 @@ public class ResourceFC : IExposable
             }
         }
 
+        double specifiedSpent = AccruedTitheBudget - budgetRemaining;
+        double randomSpent = 0; // this cycle's budget consumed by the random tithe (delivered or escrowed)
+        bool randomEscrowed = false;
+
         // Random tithe is the lowest-priority consumer; the current-cycle request draws from the
         // post-specified remainder, while prior-cycle escrow is added uncapped.
         double effectiveRandomBudget = Math.Min(randomTitheBudget, budgetRemaining) + priorStock;
@@ -1136,6 +1160,8 @@ public class ResourceFC : IExposable
             if (!randomTitheFilter.AllowedThingDefs.Any())
             {
                 outSilver -= (int)(effectiveRandomBudget - priorStock); // withhold the new production escrowed this cycle
+                randomSpent = effectiveRandomBudget - priorStock;
+                randomEscrowed = true;
                 randomTitheStock = effectiveRandomBudget;
                 Find.LetterStack.ReceiveLetter("FCNoTitheLetterLabel".Translate(settlement.Name), "FCNoTitheLetterDesc".Translate(settlement.Name, label, randomTitheStock), LetterDefOf.NeutralEvent);
             }
@@ -1183,17 +1209,33 @@ public class ResourceFC : IExposable
                         // stock-funded portion — which was already withheld when it accrued, so
                         // un-escrow priorStock here to avoid charging it twice.
                         outSilver += (int)priorStock;
+                        randomSpent = effectiveRandomBudget - priorStock;
                         randomTitheStock = 0;
+                        randomTitheStockSilver = 0;
                     }
                 }
                 else
                 {
                     outSilver -= (int)(effectiveRandomBudget - priorStock); // withhold the new production escrowed this cycle
+                    randomSpent = effectiveRandomBudget - priorStock;
+                    randomEscrowed = true;
                     randomTitheStock = effectiveRandomBudget;
                     Find.LetterStack.ReceiveLetter("FCNoTitheLetterLabel".Translate(settlement.Name), "FCNoTitheLetterDesc2".Translate(settlement.Name, label, randomTitheStock), LetterDefOf.NeutralEvent);
                 }
             }
         }
+
+        // CreateTax bills tithe goods at full value (and the escrow withholds the random share), but the
+        // settlement only pays for what its own production funded: at most its accrued taxable value,
+        // after the external budget (ITitheBudgetModifier, e.g. SupplyChain tithe injection) is used up.
+        // The rest of the budget, from titheValueMultiplier and the per-worker tithe modifier, is a free
+        // bonus, so its silver is credited back here.
+        double consumed = specifiedSpent + randomSpent;
+        double charged = Math.Min(Math.Max(0, consumed - AccruedExternalTitheBudget), AccruedTaxableValue);
+        outSilver += (int)(consumed - charged);
+        // The escrow records only its share of the charge, so disbursing it can't pay out the bonus.
+        if (randomEscrowed && consumed > 0)
+            randomTitheStockSilver += randomSpent * (charged / consumed);
 
         // Post-tax generation hook
         def.GetModExtension<ResourceTaxExtension>()?.OnPostTaxGeneration(this, settlement, titheItems, ref outSilver);

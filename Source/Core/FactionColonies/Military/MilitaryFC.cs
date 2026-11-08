@@ -657,12 +657,14 @@ public class MilitaryFC : IExposable
         return true;
     }
 
-    /// <summary>Internal squad creation factory. Used by HireSquad (settlement: null) and by
-    /// CallinExtraForces (settlement: caller, isExtra: true). Does NOT pay any silver — paying
-    /// is the caller's responsibility.</summary>
-    public MercenarySquadFC CreateMercenarySquad(WorldSettlementFC settlement, bool isExtra = false)
+    /// <summary>Internal squad creation factory. Used by CallinExtraForces (settlement: caller,
+    /// isExtra: true). The outfit must be set before InitiateSquad, which only generates and equips
+    /// pawns for a squad that has one. Does NOT pay any silver — paying is the caller's
+    /// responsibility.</summary>
+    public MercenarySquadFC CreateMercenarySquad(WorldSettlementFC settlement, bool isExtra = false, MilSquadFC outfit = null)
     {
         MercenarySquadFC squad = MilTemplateFactory.CreateMercSquad();
+        if (outfit is not null) squad.outfit = outfit;
         squad.InitiateSquad();
         mercenarySquads.Add(squad);
         squad.settlement = settlement;
@@ -670,6 +672,22 @@ public class MilitaryFC : IExposable
 
         RebuildMercenaryPawnSet();
         return FindSquad(squad);
+    }
+
+    /// <summary>Drops a Militaristic extra squad from the pool once its deployment op resolves.</summary>
+    public void RemoveExtraSquad(MercenarySquadFC squad)
+    {
+        if (squad is null || !squad.isExtraSquad) return;
+        squad.settlement = null;
+        if (mercenarySquads.Remove(squad)) RebuildMercenaryPawnSet();
+    }
+
+    /// <summary>Drops extra squads that aren't part of any operation: left behind by a cancelled
+    /// placement tool, or piled up by saves from before extra squads were cleaned up.</summary>
+    public void RemoveIdleExtraSquads()
+    {
+        if (mercenarySquads.RemoveAll(s => s is { isExtraSquad: true, IsBusy: false }) > 0)
+            RebuildMercenaryPawnSet();
     }
 
     public MercenarySquadFC FindSquad(MercenarySquadFC squad)
