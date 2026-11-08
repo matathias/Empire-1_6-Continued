@@ -97,6 +97,7 @@ public static class MilitaryDeploymentUtil
         // turn around and leave as soon as it arrived.
         squad.Deployment.MilitaryOrder = MilitaryOrder.Undefined;
         squad.Deployment.OrderLocation = dropPosition;
+        squad.Deployment.Map = currentMap;
         // Squad-first: name the deployed squad and its home settlement. When a deployment-cost
         // bill was created, also surface the cost and payment deadline; otherwise omit that
         // sentence (no bill when cost is 0% or godMode is on).

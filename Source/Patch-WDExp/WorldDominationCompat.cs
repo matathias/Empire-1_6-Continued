@@ -20,10 +20,15 @@ namespace FactionColonies.WDExp;
 [StaticConstructorOnStartup]
 public static class WorldDominationCompatInit
 {
+    private static readonly WDStrengthSettlementModifier _strengthModifier = new();
+
     static WorldDominationCompatInit()
     {
+        // Registered before PatchAll so a failing patch can't skip it. EmpireRegistry.ClearAll runs on
+        // every Game.ClearCaches (each load and new game), so the invalidator re-registers it.
+        EmpireRegistry.Register(_strengthModifier);
+        EmpireCacheUtil.RegisterCacheInvalidator("Empire.WDExp", () => EmpireRegistry.Register(_strengthModifier));
         new Harmony("com.Matathias.Empire.WDExp").PatchAll(Assembly.GetExecutingAssembly());
-        EmpireRegistry.Register(new WDStrengthSettlementModifier());
         LogUtil.MessageForce("World Domination (Experimental) compatibility module loaded.");
     }
 }

@@ -338,18 +338,22 @@ public class MilitaryFC : IExposable
         return false;
     }
 
+    /// <summary>Finds the squad holding <paramref name="unit"/> as a slot merc or a sub-pawn, regardless
+    /// of map state (mercs die off-map in auto-resolve and while healing).</summary>
     public MercenarySquadFC ReturnSquadFromUnit(Pawn unit)
     {
+        if (unit is null) return null;
         foreach (var squad in mercenarySquads)
         {
+            if (squad?.mercenaries is null) continue;
             foreach (var merc in squad.mercenaries)
             {
-                if (merc?.pawn?.Map is not null && merc.pawn == unit)
+                if (merc?.pawn == unit)
                     return squad;
             }
             foreach (var sub in squad.AllSubPawns())
             {
-                if (sub?.pawn?.Map is not null && sub.pawn == unit)
+                if (sub?.pawn == unit)
                     return squad;
             }
         }
@@ -360,7 +364,7 @@ public class MilitaryFC : IExposable
 
     public Mercenary ReturnMercenaryFromUnit(Pawn unit, MercenarySquadFC squad)
     {
-        return squad.mercenaries.FirstOrDefault(merc => merc.pawn == unit);
+        return squad.mercenaries.FirstOrDefault(merc => merc?.pawn == unit);
     }
 
     /// <summary>Finds the sub-pawn (animal/mech) wrapper holding <paramref name="unit"/>, scanning

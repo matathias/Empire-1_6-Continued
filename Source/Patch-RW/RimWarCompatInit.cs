@@ -19,10 +19,15 @@ namespace FactionColonies.RW;
 [StaticConstructorOnStartup]
 public static class RimWarCompatInit
 {
+    private static readonly RWStrengthSettlementModifier _strengthModifier = new();
+
     static RimWarCompatInit()
     {
+        // Registered before PatchAll so a failing patch can't skip it. EmpireRegistry.ClearAll runs on
+        // every Game.ClearCaches (each load and new game), so the invalidator re-registers it.
+        EmpireRegistry.Register(_strengthModifier);
+        EmpireCacheUtil.RegisterCacheInvalidator("Empire.RW", () => EmpireRegistry.Register(_strengthModifier));
         new Harmony("com.Matathias.Empire.RW").PatchAll(Assembly.GetExecutingAssembly());
-        EmpireRegistry.Register(new RWStrengthSettlementModifier());
         LogUtil.MessageForce("RimWar compatibility module loaded.");
     }
 }

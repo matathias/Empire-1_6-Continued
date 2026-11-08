@@ -156,6 +156,11 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
             _legacyAnimals = null;
             // Repair any dangling Overseer relations a broken save left in memory (and reap dead mechs).
             CleanupMechBonds();
+            // Off-map merc deaths used to leave the dead pawn in its slot; empty the slot (as the death
+            // patch now does) so Fill Empty Slots can refill it.
+            if (mercenaries is not null)
+                foreach (Mercenary merc in mercenaries)
+                    if (merc?.pawn is { Dead: true } or { Destroyed: true }) merc.pawn = null;
             Equipment ??= CreateEquipment();
             Equipment.AdoptLegacyLists(_legacyUsedWeaponList, _legacyUsedApparelList);
             _legacyUsedWeaponList = null;

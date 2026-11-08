@@ -86,7 +86,7 @@ public class FCRoadBuilder : IExposable
 
         if (!hasRoadBuildersBoost && FindFC.FactionComp.IsActionAllowed(FCActionType.BuildRoadsToAllies))
         {
-            roadQueue.shouldUpdateSettlementsToProcess = true;
+            FlagUpdateRoadQueues();
             hasRoadBuildersBoost = true;
         }
 

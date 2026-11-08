@@ -46,8 +46,7 @@ class MercenaryDied
             }
             else
             {
-                // ReturnSquadFromUnit only matches on-map pawns; a sub-pawn can die off-map.
-                // Fall back to a global, map-independent sub-pawn lookup before warning.
+                // Defensive fallback; ReturnSquadFromUnit already scans sub-pawns on and off map.
                 Mercenary sub = mfc.FindSubPawnWrapper(__instance);
                 if (sub is not null) NullDeadSubPawn(sub);
                 else LogUtil.Warning("Mercenary Errored out. Did not find squad.");

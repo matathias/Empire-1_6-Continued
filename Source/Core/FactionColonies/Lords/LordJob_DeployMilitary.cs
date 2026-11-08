@@ -380,15 +380,18 @@ public class LordJob_DeployMilitary : LordJob
                 op.CompleteBattle(new BattleResult { winner = BattleWinner.Defender });
             }
 
-            // Despawn orphaned downed/stuck mercs still on the map
-            if (currentMap is not null)
+            // Despawn orphaned downed/stuck mercs still on the map. Falls back to the lord's map for
+            // deployments saved before currentMap was populated.
+            Map deployMap = currentMap ?? lord?.Map;
+            if (deployMap is not null)
             {
                 foreach (Mercenary merc in squad.mercenaries.Concat(squad.AllSubPawns()))
                 {
-                    if (merc?.pawn is not null && merc.pawn.Spawned && merc.pawn.Map == currentMap)
+                    if (merc?.pawn is not null && merc.pawn.Spawned && merc.pawn.Map == deployMap)
                         merc.pawn.DeSpawn();
                 }
             }
+            squad.Deployment.Map = null;
         }
     }
 

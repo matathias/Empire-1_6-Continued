@@ -8,6 +8,7 @@ class ShuttleSender
     public static readonly int ShuttleRange = 70;
     public SettlementBuildingComp_Shuttles comp = null;
     public static readonly int cost = 1;
+    private bool loggedLabelFailure;
 
     public ShuttleSender(PlanetTile Tile, SettlementBuildingComp_Shuttles comp)
     {
@@ -68,10 +69,6 @@ class ShuttleSender
         {
             return null;
         }
-        if (!target.IsValid)
-        {
-            return null;
-        }
 
         int effectiveRange = Mathf.RoundToInt(shuttleRange / target.Tile.LayerDef.rangeDistanceFactor);
         if (shuttleRange > 0 && Find.WorldGrid.TraversalDistanceBetween(tile, target.Tile, true, int.MaxValue, true) > effectiveRange)
@@ -87,12 +84,14 @@ class ShuttleSender
         }
         catch (Exception ex)
         {
-            LogUtil.Warning("Shuttle launch options failed, retrying without animals: " + ex);
-            foreach (IThingHolder thingHolder in pods)
+            // This runs every frame while hovering, so it must not touch the pods' contents (they can
+            // be a live caravan); just show no label and warn once per targeting session.
+            if (!loggedLabelFailure)
             {
-                thingHolder.GetDirectlyHeldThings().RemoveAll(thing => thing.def.race?.Animal ?? false);
+                loggedLabelFailure = true;
+                LogUtil.Warning($"Shuttle launch options failed for tile {target.Tile}: {ex}");
             }
-            source = CompLaunchable.GetOptionsForTile(target.Tile, pods, launchAction).ToList();
+            return string.Empty;
         }
 
         if (!source.Any())
