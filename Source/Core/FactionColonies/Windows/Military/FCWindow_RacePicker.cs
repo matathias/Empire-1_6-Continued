@@ -45,7 +45,7 @@ public class FCWindow_RacePicker : Window
         Rect searchRect = new(0, 40f, inRect.width, SearchBarHeight);
         searchTerm = Widgets.TextField(searchRect, searchTerm);
 
-        // Build race list (same logic as DesignUnitsWindow lines 186-209)
+        // Build race list: one entry per humanlike race (Human represented by the Colonist kind)
         List<string> seenRaces = [];
         List<(PawnKindDef def, string label, double cost)> raceOptions = [];
 
@@ -53,7 +53,7 @@ public class FCWindow_RacePicker : Window
             .Where(d => d.IsHumanLikeRace()
                 && !seenRaces.Contains(d.race.label ?? d.race.defName)))
         {
-            if (def.race == ThingDefOf.Human && def.LabelCap != "Colonist") continue;
+            if (def.race == ThingDefOf.Human && def != PawnKindDefOf.Colonist) continue;
             seenRaces.Add(def.race.label ?? def.race.defName);
             double cost = Math.Floor(def.race.BaseMarketValue * FCSettings.militaryRaceCostMultiplier);
             raceOptions.Add((def, (def.race.label ?? def.race.defName).CapitalizeFirst(), cost));

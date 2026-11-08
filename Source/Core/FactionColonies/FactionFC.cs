@@ -581,6 +581,10 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         base.FinalizeInit(fromLoad);
         LogUtil.MessageForce($"Finalizing init of FactionFC. fromload: {fromLoad}");
 
+        // The PColony def is shared by every game in the session; start each one from its pristine
+        // values so a previous save's tech level, member kinds and filters can't carry over.
+        PColonyDefSnapshot.Restore(DefDatabase<FactionDef>.GetNamedSilentFail("PColony"));
+
         /* Shared init. Runs on both new-game and load paths; all idempotent. */
         RebuildFactionResources();
         EnsureCaravanTypesPopulated();
@@ -650,7 +654,8 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     {
         if (_techLevel <= TechLevel.Undefined) return;
         Faction playerColonyfaction = FindFC.EmpireFaction;
-        if (playerColonyfaction is not null && playerColonyfaction.def.techLevel < _techLevel)
+        // != rather than <: the def was just restored to its pristine level, which may be higher.
+        if (playerColonyfaction is not null && playerColonyfaction.def.techLevel != _techLevel)
         {
             UpdateFactionDef(_techLevel, ref playerColonyfaction);
         }
@@ -2128,8 +2133,9 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
             def.backstoryFilters = replacingDef.backstoryFilters;
         def.techLevel = tech;
         def.basicMemberKind = replacingDef.basicMemberKind;
+        // Copy, never alias: the SetAllow calls below would otherwise edit the other faction's filter.
         if (replacingDef.apparelStuffFilter is not null)
-            def.apparelStuffFilter = replacingDef.apparelStuffFilter;
+            def.apparelStuffFilter = PColonyDefSnapshot.CopyFilter(replacingDef.apparelStuffFilter);
 
 
         if (tech >= TechLevel.Spacer && def.apparelStuffFilter is not null)

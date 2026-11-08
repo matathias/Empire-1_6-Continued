@@ -163,10 +163,32 @@ public class EmpireStockGenerator : StockGenerator
     internal const float BaseExtraScale = 3f;
 
     /// <summary>
-    /// Provides extra scaling for the trader's wealth. Centralized for ease of editing.
+    /// Provides extra scaling for the trader's wealth: <see cref="TechScaling"/> normalized to
+    /// 100 silver per unit of production. Centralized for ease of editing.
     /// </summary>
     /// <returns></returns>
     internal static float ExtraScaling()
+    {
+        float extraScale = TechScaling();
+
+        // The stock generator currently assumes 1 production = 100 silver. If the player has set something different,
+        //   we should normalize.
+        if (FCSettings.silverPerResource != 100 && FCSettings.silverPerResource != 0)
+        {
+            extraScale *= 100 / (float)(FCSettings.silverPerResource);
+        }
+
+        return extraScale;
+    }
+
+    /// <summary>
+    /// <see cref="BaseExtraScale"/> times the empire's tech-level factor, without the silver
+    /// normalization. Use this (not <see cref="ExtraScaling"/>) for anything compared against
+    /// <see cref="BaseExtraScale"/>, such as caravan stack counts: the normalization only converts
+    /// production to a silver budget, and at the default silver-per-resource settings (2-30) it would
+    /// otherwise inflate the scale several-fold.
+    /// </summary>
+    internal static float TechScaling()
     {
         // Triple the income to start with. At default settings, a level 5 settlement will have 15 workers,
         // 20 if overmax is assigned. If we assume that each worker produces 1.5 production, and that 1 production
@@ -188,13 +210,6 @@ public class EmpireStockGenerator : StockGenerator
                 case TechLevel.Ultra: extraScale *= 3f; break;
                 case TechLevel.Archotech: extraScale *= 10f; break;
             }
-        }
-
-        // The stock generator currently assumes 1 production = 100 silver. If the player has set something different,
-        //   we should normalize.
-        if (FCSettings.silverPerResource != 100 && FCSettings.silverPerResource != 0)
-        {
-            extraScale *= 100 / (float)(FCSettings.silverPerResource);
         }
 
         return extraScale;

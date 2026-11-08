@@ -95,7 +95,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
 
         /* Total non-pawn ware stacks (silver + items) this caravan emits. Bounding it keeps
            vanilla PawnGroupKindWorker_Trader's ceil(stacks / 8) carrier formula in check. */
-        int targetStacks = CaravanStockMath.TargetStacks(baseThingCount, extraScale, EmpireStockGenerator.BaseExtraScale);
+        int targetStacks = CaravanStockMath.TargetStacks(baseThingCount, EmpireStockGenerator.TechScaling(), EmpireStockGenerator.BaseExtraScale);
         int silverStackLimit = Mathf.Max(1, ThingDefOf.Silver.stackLimit);
 
         // Silver is the trader's buying power. Scale its value by silverBudgetFraction, but

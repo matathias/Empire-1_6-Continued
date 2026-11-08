@@ -50,15 +50,8 @@ public class FactionCustomizePoliciesWindowFC : Window
                 selectedPolicies.Add(policy.def);
             }
         }
-        if (FindFC.PolicyManager.policies.Count == FCSettings.maxPolicyCount)
-        {
-            traitsChosen = true;
-        }
-        else
-        {
-            traitsChosen = false;
-            FindFC.PolicyManager.RemoveAllPolicies(FindFC.PolicyManager.policies);
-        }
+        // A partial set stays editable: selectedPolicies is a draft, applied only on Confirm.
+        traitsChosen = FindFC.PolicyManager.policies.Count == FCSettings.maxPolicyCount;
     }
 
     public override void DoWindowContents(Rect inRect)
@@ -145,14 +138,20 @@ public class FactionCustomizePoliciesWindowFC : Window
         {
             if (!traitsChosen)
             {
+                PolicyManager policyManager = FindFC.PolicyManager;
+                // Apply the draft as a diff: deselected policies are removed (firing OnRemoved), kept
+                // ones are left alone, and new ones are enacted.
+                List<FCPolicy> dropped = policyManager.policies.Where(p => !selectedPolicies.Contains(p.def)).ToList();
+                policyManager.policies.RemoveAll(dropped.Contains);
+                policyManager.RemoveAllPolicies(dropped);
                 foreach (FCPolicyDef policy in selectedPolicies)
                 {
-                    if (!FindFC.PolicyManager.policies.Any((FCPolicy p) => p.def == policy))
+                    if (!policyManager.policies.Any((FCPolicy p) => p.def == policy))
                     {
-                        FindFC.PolicyManager.policies.Add(new FCPolicy(policy));
+                        policyManager.policies.Add(new FCPolicy(policy));
                     }
                 }
-                FindFC.PolicyManager.RebuildBehaviorCache();
+                policyManager.RebuildBehaviorCache();
             }
 
             Find.WindowStack.TryRemove(this);

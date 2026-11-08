@@ -191,11 +191,16 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
             });
         }
     }
-    public void ReinitBuildings()
+    /// <summary>Resizes the slot list to <see cref="FC_MAX_BUILDINGS"/>, deconstructing buildings in
+    /// slots past the cap. With <paramref name="allowShrink"/> false (save and load) it only pads, so
+    /// no lifecycle hooks fire while Scribe is working; <see cref="CompTick"/> enforces a lowered cap
+    /// shortly afterwards.</summary>
+    public void ReinitBuildings(bool allowShrink = true)
     {
         LogUtil.Message($"Reinitializing buildings for settlement {WorldSettlement.Name}. Max buildings: {FC_MAX_BUILDINGS}. Current buildings count: {buildings.Count}");
         if (buildings.Count > FC_MAX_BUILDINGS)
         {
+            if (!allowShrink) return;
             /* Remove slots, starting at the end and working backwards */
             for (int i = buildings.Count - 1; i >= FC_MAX_BUILDINGS && i >= 0; i--)
             {
@@ -763,6 +768,10 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
         {
             comp.Tick();
         }
+
+        /* The cap can drop at runtime (settings) or be lower than the saved slot count on load */
+        if (parent.IsHashIntervalTick(250) && buildings.Count > FC_MAX_BUILDINGS)
+            ReinitBuildings();
     }
 
     public override void PostExposeData()
@@ -794,7 +803,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
             comp.RefreshBuildingSlotsWithErrorDetection();
         }
         settlementBuildingComps.RemoveAll(comp => comp.CanDestroy);
-        ReinitBuildings();
+        ReinitBuildings(allowShrink: false);
         RebuildTickingList();
     }
 
@@ -809,7 +818,7 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
         }
         settlementBuildingComps.RemoveAll(comp => comp.CanDestroy);
         RecoverMissingBuildingComps();
-        ReinitBuildings();
+        ReinitBuildings(allowShrink: false);
         RebuildTickingList();
     }
 

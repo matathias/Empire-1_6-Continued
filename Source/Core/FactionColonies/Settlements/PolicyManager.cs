@@ -62,6 +62,10 @@ public class PolicyManager : IExposable
             edicts ??= [];
             pendingEdictActivations = [];
             ScrubDeadPolicies();
+            // Not saved: re-derive it so edicts saved mid-enactment still activate.
+            foreach (KeyValuePair<FCPolicyCategory, FCPolicy> kv in edicts)
+                if (kv.Value?.def is not null && !kv.Value.IsFullyActive)
+                    pendingEdictActivations.Add(kv.Key);
         }
     }
 
@@ -129,9 +133,10 @@ public class PolicyManager : IExposable
             if (p.behavior is not null)
                 _cachedBehaviors.Add(p.behavior);
         }
+        // Edicts still being enacted have no effect yet, matching their actions, upkeep and stats.
         foreach (FCPolicy edict in edicts.Values)
         {
-            if (edict?.behavior is not null)
+            if (edict?.behavior is not null && edict.IsFullyActive)
                 _cachedBehaviors.Add(edict.behavior);
         }
 
@@ -435,9 +440,10 @@ public class PolicyManager : IExposable
 
         if (anyActivated)
         {
-            // A newly-active edict's action/job gates are only folded into the caches
-            // for IsFullyActive edicts, so rebuild now that enactment finished.
-            RebuildActionCache();
+            // A newly-active edict's behavior and action/job gates are only folded into the caches
+            // for IsFullyActive edicts, so rebuild now that enactment finished (this also rebuilds
+            // the action cache).
+            RebuildBehaviorCache();
             FactionFC faction = Faction;
             faction?.InvalidateFactionStatCache();
             faction?.DirtyFactionProfitCache();

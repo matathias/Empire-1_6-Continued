@@ -464,6 +464,7 @@ public class FCSettings : ModSettings
         Scribe_Values.Look(ref workerProductionMultBonus, "workerProductionMultBonus", DEFAULT_WORKER_PROD_MULT_BONUS);
         Scribe_Values.Look(ref buildingUpkeepDifficultyMult, "buildingUpkeepDifficultyMult", 1.0f);
         Scribe_Values.Look(ref settlementMaxLevel, "settlementMaxLevel", DEFAULT_SETTLEMENT_MAX_LEVEL);
+        settlementMaxLevel = Math.Max(1, settlementMaxLevel); // 0 would mean zero building slots
         Scribe_Values.Look(ref settlementUpgradeTimeMultiplier, "settlementUpgradeTimeMultiplier", DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER);
         Scribe_Values.Look(ref buildingConstructTimeMultiplier, "buildingConstructTimeMultiplier", DEFAULT_BUILDING_CONSTRUCT_TIME_MULTIPLIER);
         Scribe_Values.Look(ref laborerDurationDays, "laborerDurationDays", DEFAULT_LABORER_DURATION_DAYS);
@@ -1166,7 +1167,7 @@ public class FCSettings : ModSettings
         }
 
         ls.Label("FCSettingMaxSettlementLevel".Translate());
-        ls.IntEntry(ref settlementMaxLevel, ref settlementMaxLevel_buffer);
+        ls.IntEntry(ref settlementMaxLevel, ref settlementMaxLevel_buffer, min: 1);
         ls.CheckboxLabeled("FCMedievalTechOnly".Translate(), ref medievalTechOnly);
         bool prevMirrorPlayerTechLevel = mirrorPlayerTechLevel;
         ls.CheckboxLabeled("FCMirrorPlayerTechLevel".Translate(), ref mirrorPlayerTechLevel, "FCMirrorPlayerTechLevelDesc".Translate());

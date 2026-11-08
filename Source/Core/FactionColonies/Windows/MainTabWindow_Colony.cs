@@ -593,8 +593,12 @@ public class MainTabWindow_Colony : MainTabWindow
 
             Rect poolListBox = new(x, y, width, sectionHeight);
             Widgets.DrawMenuSection(poolListBox);
+            // Row origin: the panel normally, the scroll view's own 0-based space when scrolling.
+            float poolX = x, poolY = y;
             if (totalHeight > sectionHeight)
             {
+                poolX = 0f;
+                poolY = 0f;
                 //scrollbox time, baby
                 // By default, Empire only has two resource pools (research, power). But now that we can add ~more~, I'm including this code to allow the UI to gracefully handle more pools
                 Rect scrollList = ScrollUtil.BeginScrollView(poolListBox, ref poolScrollbar, totalHeight);
@@ -605,7 +609,7 @@ public class MainTabWindow_Colony : MainTabWindow
             for (int i = 0; i < faction.resourcePools.Count; i++)
             {
                 ResourcePool pool = faction.resourcePools[i];
-                Rect row = new(x, y + (i * rowSize), rowWidth, rowSize);
+                Rect row = new(poolX, poolY + (i * rowSize), rowWidth, rowSize);
                 Rect icon = new(row.x + 2f, row.y + 1, rowSize - 2, rowSize - 2);
                 Rect actions = new(row.xMax - 80f, row.y + 1, 79f, rowSize - 2);
                 Rect amount = new(icon.xMax + margin, row.y, actions.x - icon.xMax - (margin * 2), rowSize);
@@ -672,8 +676,12 @@ public class MainTabWindow_Colony : MainTabWindow
 
         Rect sectionBox = new(x, y, width, sectionHeight2);
         bool needsScroll = totalHeight2 > sectionHeight2;
+        // Row origin: the panel normally, the scroll view's own 0-based space when scrolling.
+        float prodX = x, prodY = y;
         if (needsScroll)
         {
+            prodX = 0f;
+            prodY = 0f;
             Rect scrollContent = ScrollUtil.BeginScrollView(sectionBox, ref productionScroll, totalHeight2);
             rowWidth2 = scrollContent.width;
         }
@@ -682,25 +690,25 @@ public class MainTabWindow_Colony : MainTabWindow
         Text.Font = GameFont.Tiny;
         foreach (ResourceDisplay resource in faction.FactionResources)
         {
-            float ry = y + ri * (rowHeight + rowSpacing);
-            Rect rowRect = new(x, ry, rowWidth2, rowHeight);
+            float ry = prodY + ri * (rowHeight + rowSpacing);
+            Rect rowRect = new(prodX, ry, rowWidth2, rowHeight);
 
             if (ri % 2 == 0)
             {
                 Widgets.DrawHighlight(rowRect);
             }
 
-            Widgets.DrawBoxSolid(new Rect(x, ry, 3f, rowHeight), resource.resourceDef.color);
+            Widgets.DrawBoxSolid(new Rect(prodX, ry, 3f, rowHeight), resource.resourceDef.color);
 
-            Rect iconRect = new(x + 5f, ry + (rowHeight - iconSm) / 2f, iconSm, iconSm);
+            Rect iconRect = new(prodX + 5f, ry + (rowHeight - iconSm) / 2f, iconSm, iconSm);
             Widgets.ButtonImage(iconRect, resource.Icon);
 
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new(iconRect.xMax + 4f, ry, rowWidth2 - iconRect.xMax + x - 4f - 50f, rowHeight);
+            Rect labelRect = new(iconRect.xMax + 4f, ry, rowWidth2 - iconRect.xMax + prodX - 4f - 50f, rowHeight);
             UIUtil.ClampedLabel(labelRect, resource.label);
 
             Text.Anchor = TextAnchor.MiddleRight;
-            Rect amountRect = new(x + rowWidth2 - 50f, ry, 48f, rowHeight);
+            Rect amountRect = new(prodX + rowWidth2 - 50f, ry, 48f, rowHeight);
             UIUtil.ClampedLabel(amountRect, resource.amount.ToString());
 
             TooltipHandler.TipRegion(rowRect, resource.label);

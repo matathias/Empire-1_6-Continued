@@ -29,8 +29,9 @@ public enum SettlementPowerStatus
 public class WorldSettlementFC : Settlement
 {
     private string name;
-    private string nameShort;
-    private string nameOriginal;
+    private string nameShort; // custom short name only; null means derive it from name
+    private string derivedShortNameFor;
+    private string derivedShortName;
     public string title = "FCHamlet".Translate();
     private string _description = "FCGenericError".Translate();
     private bool dirtyDescriptionCache = true;
@@ -666,17 +667,20 @@ public class WorldSettlementFC : Settlement
         {
             if (!nameShort.NullOrEmpty()) return nameShort;
 
-            nameShort = TextUtil.ToShortName(name);
-
-            return nameShort;
+            // Derived on demand (not stored), so a renamed settlement's short name follows the new name.
+            if (derivedShortNameFor != name)
+            {
+                derivedShortNameFor = name;
+                derivedShortName = TextUtil.ToShortName(name);
+            }
+            return derivedShortName;
         }
-        set => nameShort = value.NullOrEmpty() ? name : value;
-    }
-
-    public string OriginalName
-    {
-        get => nameOriginal;
-        private set => nameOriginal = value;
+        set
+        {
+            if (value.NullOrEmpty()) value = name;
+            // Matching the derived name means "not customized": keep following renames.
+            nameShort = value == TextUtil.ToShortName(name) ? null : value;
+        }
     }
 
     private string cachedlocationText = string.Empty;
@@ -922,8 +926,7 @@ public class WorldSettlementFC : Settlement
         base.ExposeData();
         Scribe_Values.Look(ref name, "name");
         Scribe_Values.Look(ref foundingTick, "foundingTick", defaultValue: 0);
-        Scribe_Values.Look(ref nameShort, "nameShort", ShortName);
-        Scribe_Values.Look(ref nameOriginal, "nameOriginal", OriginalName);
+        Scribe_Values.Look(ref nameShort, "nameShort");
         Scribe_Values.Look(ref title, "title");
         Scribe_Values.Look(ref _description, "description");
         Scribe_Values.Look(ref _workers, "workers");
