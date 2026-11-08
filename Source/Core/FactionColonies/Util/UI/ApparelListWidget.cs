@@ -17,7 +17,6 @@ public static class ApparelListWidget
 
     private const float headerHeight = 25f;
     private const float apparelRowHeight = 28f;
-    private const float removeButtonSize = 20f;
     private const float IconSize = 24f;
 
     public static void Draw(Rect rect, MilUnitFC displayUnit, ref Vector2 scrollPos, Options opts)
@@ -106,10 +105,8 @@ public static class ApparelListWidget
             Rect removeRect = Rect.zero;
             if (opts.canEdit)
             {
-                removeRect = new Rect(row.xMax - removeButtonSize - 2f, row.y + (apparelRowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
-                Text.Font = GameFont.Small;
-                Text.Anchor = TextAnchor.MiddleCenter;
-                if (UIUtil.ClampedButtonText(removeRect, "X"))
+                removeRect = LoadoutListRowUtil.RemoveButtonRect(row, row.xMax - 2f);
+                if (LoadoutListRowUtil.RemoveButton(removeRect))
                 {
                     ThingDef capturedThing = item.thing;
                     MilUnitFC target = opts.getEditTarget?.Invoke();

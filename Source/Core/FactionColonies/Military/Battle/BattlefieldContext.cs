@@ -922,12 +922,14 @@ public partial class BattlefieldContext : IExposable
         return spawned;
     }
 
-    /// <summary>Finds a spawn cell inside the base interior (mirrors the defense friendly-spawn
-    /// placement): a standable, map-edge-reachable cell within a centered square ~half the map,
-    /// falling back to any standable cell near the map center. Used to place a force-matched
-    /// garrison among its buildings rather than walking it in from a map edge.</summary>
-    private IntVec3 FindBaseInteriorCell(Map map)
+    /// <summary>Finds a spawn cell inside the base interior: a standable, map-edge-reachable cell
+    /// within a centered square ~half the map, falling back to any standable cell near the map
+    /// center. Used for defense friendlies and to place a force-matched garrison among its
+    /// buildings rather than walking it in from a map edge.</summary>
+    private static IntVec3 FindBaseInteriorCell(Map map)
     {
+        // Size the zone from the generated map itself so it can never drift from the map size
+        // the battle was generated with.
         int mapSize = map.Size.x;
         int zone = mapSize / 2;
         if (zone < 10) zone = 10;
@@ -938,8 +940,11 @@ public partial class BattlefieldContext : IExposable
             testing => testing.Standable(map) && map.reachability.CanReachMapEdge(testing,
                 TraverseParms.For(TraverseMode.PassDoors)), out IntVec3 loc);
         if (loc.x == -1000)
+        {
+            LogUtil.Message($"FindBaseInteriorCell: no reachable interior cell on {map}, falling back to the map center");
             CellFinder.TryFindRandomCellNear(map.Center, map, 75,
                 testing => testing.Standable(map), out loc);
+        }
         return loc;
     }
 
@@ -1153,14 +1158,9 @@ public partial class BattlefieldContext : IExposable
                 SquadSpawnUtil.ApplyCombatEfficiency(friendlies, force.militaryEfficiency);
 
                 // Only mounts are ridden (LordToil_DefendSelfAndMount mounts each rider). Companion
-                // animals (subPawnType == Animal) are NOT added here, so they spawn and fight on foot.
-                foreach (var sub in squad.AllSubPawns())
-                {
-                    if (sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
-                    // Skip a mount whose rider stays home (downed riders are not spawnable).
-                    if (sub.handler?.pawn is not null && friendlies.Contains(sub.handler.pawn))
-                        riders.TryAdd(sub.handler.pawn, sub.pawn);
-                }
+                // animals are left out, so they spawn and fight on foot. A mount whose rider stays
+                // home (downed riders are not spawnable) is skipped.
+                riders = squad.BuildMountMap(friendlies);
             }
             else
             {
@@ -1190,28 +1190,6 @@ public partial class BattlefieldContext : IExposable
             }
         }
 
-        void tryFindLoc(out IntVec3 loc, Pawn friendly)
-        {
-            // Source the spawn zone from the already-generated map's actual size so it
-            // can never drift from DefenseMapSize. A centered square (~half the map),
-            // clipped on-map, preserves the original "spawn near the middle" intent.
-            int mapSize = map.Size.x;
-            int zone = mapSize / 2;
-            if (zone < 10) zone = 10;
-            if (zone > mapSize - 2) zone = mapSize - 2;
-            int min = (mapSize - zone) / 2;
-            CellRect rect = new CellRect(min, min, zone, zone).ClipInsideMap(map);
-            CellFinder.TryFindRandomCellInsideWith(rect,
-                testing => testing.Standable(map) && map.reachability.CanReachMapEdge(testing,
-                    TraverseParms.For(TraverseMode.PassDoors)), out loc);
-            if (loc.x == -1000)
-            {
-                LogUtil.Message("Failed with " + friendly + ", " + loc);
-                CellFinder.TryFindRandomCellNear(map.Center, map, 75,
-                    testing => testing.Standable(map), out loc);
-            }
-        }
-
         friendlies ??= [];
 
         var spawnedFriendlies = new List<Pawn>();
@@ -1238,7 +1216,7 @@ public partial class BattlefieldContext : IExposable
                         testing => testing.Standable(map) && map.reachability.CanReachMapEdge(testing,
                             TraverseParms.For(TraverseMode.PassDoors)), out loc))
                     {
-                        tryFindLoc(out loc, friendly);
+                        loc = FindBaseInteriorCell(map);
                     }
                 }
                 else
@@ -1246,12 +1224,12 @@ public partial class BattlefieldContext : IExposable
                     // A companion animal, or a mount whose rider failed to spawn: spawns
                     // standalone and fights on foot.
                     if (rider is not null) riders.Remove(rider);
-                    tryFindLoc(out loc, friendly);
+                    loc = FindBaseInteriorCell(map);
                 }
             }
             else
             {
-                tryFindLoc(out loc, friendly);
+                loc = FindBaseInteriorCell(map);
             }
 
             if (SquadSpawnUtil.TrySpawnCombatant(friendly, loc, map, "defender"))

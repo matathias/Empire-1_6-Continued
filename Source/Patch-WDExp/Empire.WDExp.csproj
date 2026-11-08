@@ -5,6 +5,7 @@
         <BaseOutputPath>..\..\Compat\1.7\WorldDominationExperimental\Assemblies</BaseOutputPath>
         <RootNamespace>FactionColonies.WDExp</RootNamespace>
         <AssemblyName>Empire.WDExp</AssemblyName>
+        <DefineConstants>$(DefineConstants);WDEXP</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\Core\Empire.csproj">
@@ -16,5 +17,9 @@
           <HintPath>..\..\Common\References\TSA_WorldDomination.dll</HintPath>
           <Private>False</Private>
         </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <!-- Shared with the other World Domination compat project; see the file header -->
+        <Compile Include="..\Shared\WorldDominationCommon.cs" Link="WorldDominationCommon.cs" />
     </ItemGroup>
 </Project>

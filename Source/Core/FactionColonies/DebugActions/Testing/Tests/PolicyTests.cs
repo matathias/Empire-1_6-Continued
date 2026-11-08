@@ -75,7 +75,7 @@ public static class PolicyTestHelper
             if (FindFC.PolicyManager.factionTraits[i]?.behavior is not null)
             {
                 try { FindFC.PolicyManager.factionTraits[i].behavior.OnRemoved(faction); }
-                catch (Exception ex) { LogUtil.Warning($"OnRemoved threw during test cleanup: {ex}"); }
+                catch (Exception ex) { LogUtil.Warning($"OnRemoved threw while clearing traits: {ex}"); }
             }
             FindFC.PolicyManager.factionTraits[i] = new FCPolicy(FCPolicyDefOf.empty);
         }

@@ -1,13 +1,13 @@
 namespace FactionColonies;
 
-public class FCPolicyBehavior_Militaristic : FCPolicyBehavior
+public class FCPolicyBehavior_Militaristic : FCCooldownPolicyBehavior
 {
-    private CooldownAbility extraSquadCooldown = new();
+    protected override string CooldownSaveKey => "extraSquadCooldown";
 
     public override void PostInitialize()
     {
         var ext = Ext<FCPolicyBehaviorExt_Militaristic>();
-        extraSquadCooldown.SetCooldown(GenDate.TicksPerDay * ext.extraSquadCooldownDays);
+        cooldown.SetCooldown(GenDate.TicksPerDay * ext.extraSquadCooldownDays);
     }
 
     public override void OnEnacted(FactionFC faction)
@@ -47,16 +47,16 @@ public class FCPolicyBehavior_Militaristic : FCPolicyBehavior
     public override void OnSquadDeployed(FactionFC faction, MilitaryOperation op, WorldSettlementFC settlement, bool isExtraSquad)
     {
         if (isExtraSquad)
-            extraSquadCooldown.Use();
+            cooldown.Use();
     }
 
     public override IEnumerable<FloatMenuOption> GetExtraDeploymentOptions(
         FactionFC faction, WorldSettlementFC settlement, WorldObjectComp_SettlementMilitary milComp)
     {
-        if (!extraSquadCooldown.IsReady)
+        if (!cooldown.IsReady)
         {
             Messages.Message("FCXDaysToRedeploy".Translate(
-                Math.Round(extraSquadCooldown.DaysRemaining, 1)), MessageTypeDefOf.RejectInput);
+                Math.Round(cooldown.DaysRemaining, 1)), MessageTypeDefOf.RejectInput);
             yield break;
         }
 
@@ -99,15 +99,4 @@ public class FCPolicyBehavior_Militaristic : FCPolicyBehavior
             }
         });
     }
-
-    public override void ExposeData()
-    {
-        Scribe_Deep.Look(ref extraSquadCooldown, "extraSquadCooldown");
-        extraSquadCooldown = extraSquadCooldown ?? new CooldownAbility();
-    }
-
-    // Debug accessors
-    public bool DebugCooldownReady() => extraSquadCooldown.IsReady;
-    public float DebugCooldownDays() => extraSquadCooldown.DaysRemaining;
-    public void DebugResetCooldown() => extraSquadCooldown.tickLastUsed = -1;
 }

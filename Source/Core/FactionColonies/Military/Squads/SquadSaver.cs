@@ -89,56 +89,29 @@ public static class FactionColoniesMilitary
         savedSquads.Clear();
         savedUnits.Clear();
         savedFireSupports.Clear();
-        foreach (string path in Directory.EnumerateFiles(EmpireMilitarySquadFolder))
-        {
-            try
-            {
-                Scribe.loader.InitLoading(path);
-                SavedSquadFC squad = ResolveSavedType<SavedSquadFC>();
-                squad.ExposeData();
-                savedSquads.Add(squad);
-            }
-            catch (Exception e)
-            {
-                LogUtil.Error($"Failed to load squad at path {path} due to exception: {e.Message}");
-            }
-            finally
-            {
-                Scribe.loader.FinalizeLoading();
-            }
-        }
+        LoadFolder(EmpireMilitarySquadFolder, savedSquads, ResolveSavedType<SavedSquadFC>, "squad");
+        LoadFolder(EmpireMilitaryUnitFolder, savedUnits, ResolveSavedType<SavedUnitFC>, "unit");
+        LoadFolder(EmpireMilitaryFireSupportFolder, savedFireSupports, () => new SavedFireSupportFC(), "fire support");
+    }
 
-        foreach (string path in Directory.EnumerateFiles(EmpireMilitaryUnitFolder))
+    /* Loads every template file in a folder into its cache. create runs after the file is
+     * opened, so it can peek at the XML to pick the concrete type. A file that fails to load is
+     * logged and skipped. */
+    private static void LoadFolder<T>(string folder, List<T> cache, Func<T> create, string label)
+        where T : IExposable
+    {
+        foreach (string path in Directory.EnumerateFiles(folder))
         {
             try
             {
                 Scribe.loader.InitLoading(path);
-                SavedUnitFC unit = ResolveSavedType<SavedUnitFC>();
-                unit.ExposeData();
-                savedUnits.Add(unit);
+                T template = create();
+                template.ExposeData();
+                cache.Add(template);
             }
             catch (Exception e)
             {
-                LogUtil.Error($"Failed to load unit at path {path} due to exception: {e.Message}");
-            }
-            finally
-            {
-                Scribe.loader.FinalizeLoading();
-            }
-        }
-
-        foreach (string path in Directory.EnumerateFiles(EmpireMilitaryFireSupportFolder))
-        {
-            try
-            {
-                SavedFireSupportFC fs = new();
-                Scribe.loader.InitLoading(path);
-                fs.ExposeData();
-                savedFireSupports.Add(fs);
-            }
-            catch (Exception e)
-            {
-                LogUtil.Error($"Failed to load fire support at path {path} due to exception: {e.Message}");
+                LogUtil.Error($"Failed to load {label} at path {path} due to exception: {e.Message}");
             }
             finally
             {
@@ -182,94 +155,46 @@ public static class FactionColoniesMilitary
     public static string GetSquadPath(string name) => Path.Combine(EmpireMilitarySquadFolder, $"{SafeFileName(name)}.xml");
     public static string GetFireSupportPath(string name) => Path.Combine(EmpireMilitaryFireSupportFolder, $"{SafeFileName(name)}.xml");
 
-    public static void SaveSquad(SavedSquadFC squad)
+    public static void SaveSquad(SavedSquadFC squad) =>
+        SaveTemplate(squad, squad.name, GetSquadPath(squad.name), "squad", "squad", savedSquads, s => s.name);
+
+    public static void SaveUnit(SavedUnitFC unit) =>
+        SaveTemplate(unit, unit.name, GetUnitPath(unit.name), "unit", "unit", savedUnits, u => u.name);
+
+    public static void SaveFireSupport(SavedFireSupportFC fireSupport) =>
+        SaveTemplate(fireSupport, fireSupport.name, GetFireSupportPath(fireSupport.name), "fireSupport",
+            "fire support", savedFireSupports, f => f.name);
+
+    /* Writes one template to its own file under a version header, then replaces any same-named
+     * entry in the cache. The cache is left unchanged when the write fails. */
+    private static void SaveTemplate<T>(T template, string name, string path, string rootElement,
+        string label, List<T> cache, Func<T, string> nameOf) where T : IExposable
     {
         if (Scribe.mode != LoadSaveMode.Inactive)
         {
-            throw new Exception("Empire - Attempt to save squad while scribe is active");
+            throw new Exception($"Empire - Attempt to save {label} while scribe is active");
         }
 
-        string path = GetSquadPath(squad.name);
         bool saved = false;
         try
         {
-            Scribe.saver.InitSaving(path, "squad");
+            Scribe.saver.InitSaving(path, rootElement);
             int version = 0;
             Scribe_Values.Look(ref version, "version");
-            squad.ExposeData();
+            template.ExposeData();
             saved = true;
         }
         catch (Exception e)
         {
-            LogUtil.Error($"Failed to save squad {squad.name} {e}");
+            LogUtil.Error($"Failed to save {label} {name} {e}");
         }
         finally
         {
             Scribe.saver.FinalizeSaving();
         }
         if (!saved) return;
-        savedSquads.RemoveAll(s => s.name == squad.name);
-        savedSquads.Add(squad);
-    }
-
-    public static void SaveUnit(SavedUnitFC unit)
-    {
-        if (Scribe.mode != LoadSaveMode.Inactive)
-        {
-            throw new Exception("Empire - Attempt to save unit while scribe is active");
-        }
-
-        string path = GetUnitPath(unit.name);
-        bool saved = false;
-        try
-        {
-            Scribe.saver.InitSaving(path, "unit");
-            int version = 0;
-            Scribe_Values.Look(ref version, "version");
-            unit.ExposeData();
-            saved = true;
-        }
-        catch (Exception e)
-        {
-            LogUtil.Error($"Failed to save unit {unit.name} {e}");
-        }
-        finally
-        {
-            Scribe.saver.FinalizeSaving();
-        }
-        if (!saved) return;
-        savedUnits.RemoveAll(u => u.name == unit.name);
-        savedUnits.Add(unit);
-    }
-
-    public static void SaveFireSupport(SavedFireSupportFC fireSupport)
-    {
-        if (Scribe.mode != LoadSaveMode.Inactive)
-        {
-            throw new Exception("Empire - Attempt to save fire support while scribe is active");
-        }
-
-        string path = GetFireSupportPath(fireSupport.name);
-        bool saved = false;
-        try
-        {
-            Scribe.saver.InitSaving(path, "fireSupport");
-            int version = 0;
-            Scribe_Values.Look(ref version, "version");
-            fireSupport.ExposeData();
-            saved = true;
-        }
-        catch (Exception e)
-        {
-            LogUtil.Error($"Failed to save fire support {fireSupport.name} {e}");
-        }
-        finally
-        {
-            Scribe.saver.FinalizeSaving();
-        }
-        if (!saved) return;
-        savedFireSupports.RemoveAll(f => f.name == fireSupport.name);
-        savedFireSupports.Add(fireSupport);
+        cache.RemoveAll(t => nameOf(t) == name);
+        cache.Add(template);
     }
 
     // Snapshot first: each save removes and re-adds its entry in the list being iterated.

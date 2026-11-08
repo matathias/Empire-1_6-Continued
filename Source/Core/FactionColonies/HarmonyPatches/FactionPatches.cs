@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Reflection;
 using RimWorld.QuestGen;
 
 namespace FactionColonies;
@@ -105,19 +106,20 @@ class GoodwillPatchFunctionsMemberDied
     }
 }
 
-//Player traded
-[HarmonyPatch(typeof(Faction), "Notify_PlayerTraded")]
-class GoodwillPatchFunctionsPlayerTraded
+//Empire faction members/buildings never cost the player goodwill with the Empire
+[HarmonyPatch]
+class GoodwillPatchFunctionsSkipEmpire
 {
-    static bool Prefix(ref Faction __instance, float marketValueSentByPlayer, Pawn playerNegotiator)
+    static IEnumerable<MethodBase> TargetMethods()
     {
-        if (__instance == FindFC.EmpireFaction)
-        {
-            return false;
-        }
-
-        return true;
+        yield return AccessTools.Method(typeof(Faction), nameof(Faction.Notify_PlayerTraded));
+        yield return AccessTools.Method(typeof(Faction), nameof(Faction.Notify_MemberTookDamage));
+        yield return AccessTools.Method(typeof(Faction), nameof(Faction.Notify_BuildingTookDamage));
+        yield return AccessTools.Method(typeof(Faction), nameof(Faction.Notify_MemberStripped));
+        yield return AccessTools.Method(typeof(Faction), nameof(Faction.Notify_BuildingRemoved));
     }
+
+    static bool Prefix(Faction __instance) => __instance != FindFC.EmpireFaction;
 }
 
 //Player traded
@@ -132,62 +134,6 @@ class GoodwillPatchFunctionsCapturedPawn
             faction.GainUnrestForReason(new Message("FCCaptureOfFactionPawn".Translate(), MessageTypeDefOf.NegativeEvent), 15d);
             faction.GainHappiness(-10d);
 
-            return false;
-        }
-
-        return true;
-    }
-}
-
-[HarmonyPatch(typeof(Faction), "Notify_MemberTookDamage")]
-class GoodwillPatchFunctionsTookDamage
-{
-    static bool Prefix(ref Faction __instance, Pawn member, DamageInfo dinfo)
-    {
-        if (__instance == FindFC.EmpireFaction)
-        {
-            return false;
-        }
-
-        return true;
-    }
-}
-
-[HarmonyPatch(typeof(Faction), "Notify_BuildingTookDamage")]
-class GoodwillPatchFunctionsBuildingTookDamage
-{
-    static bool Prefix(ref Faction __instance, Building building, DamageInfo dinfo)
-    {
-        if (__instance == FindFC.EmpireFaction)
-        {
-            return false;
-        }
-
-        return true;
-    }
-}
-
-[HarmonyPatch(typeof(Faction), "Notify_MemberStripped")]
-class GoodwillPatchFunctionsMemberStripped
-{
-    static bool Prefix(ref Faction __instance, Pawn member, Faction violator)
-    {
-        if (__instance == FindFC.EmpireFaction)
-        {
-            return false;
-        }
-
-        return true;
-    }
-}
-
-[HarmonyPatch(typeof(Faction), "Notify_BuildingRemoved")]
-class GoodwillPatchFunctionsBuildingRemoved
-{
-    static bool Prefix(ref Faction __instance, Building building, Pawn deconstructor)
-    {
-        if (__instance == FindFC.EmpireFaction)
-        {
             return false;
         }
 
@@ -227,19 +173,8 @@ class MirrorGoodwillToEmpire
         Faction player = Find.FactionManager?.OfPlayer;
         if (player is null) return;
 
-        Faction thirdParty;
-        if (__instance == player && other != pcFaction)
-        {
-            thirdParty = other;
-        }
-        else if (other == player && __instance != pcFaction)
-        {
-            thirdParty = __instance;
-        }
-        else
-        {
+        if (!EmpireRelationMirror.TryGetThirdParty(__instance, other, player, pcFaction, out Faction thirdParty))
             return;
-        }
 
         int playerGoodwill = player.RelationWith(thirdParty).baseGoodwill;
         int empireGoodwill = pcFaction.RelationWith(thirdParty).baseGoodwill;
@@ -333,24 +268,30 @@ class MirrorRelationDirectToEmpire
 
         Faction player = Find.FactionManager.OfPlayer;
 
-        Faction thirdParty;
-        if (__instance == player && other != pcFaction)
-        {
-            thirdParty = other;
-        }
-        else if (other == player && __instance != pcFaction)
-        {
-            thirdParty = __instance;
-        }
-        else
-        {
+        if (!EmpireRelationMirror.TryGetThirdParty(__instance, other, player, pcFaction, out Faction thirdParty))
             return;
-        }
 
         if (pcFaction.RelationKindWith(thirdParty) != kind)
         {
             pcFaction.SetRelationDirect(thirdParty, kind, canSendHostilityLetter: false);
             LogUtil.Message($"SetRelationDirect Postfix: Empire faction changing relationkind with {thirdParty.Name} to {kind}");
         }
+    }
+}
+
+static class EmpireRelationMirror
+{
+    /// <summary>When a relation change between <paramref name="a"/> and <paramref name="b"/> is one
+    /// the Empire should mirror (one side is the player, the other is neither the player nor the
+    /// Empire), returns the non-player side.</summary>
+    public static bool TryGetThirdParty(Faction a, Faction b, Faction player, Faction empire, out Faction thirdParty)
+    {
+        if (a == player && b != empire)
+            thirdParty = b;
+        else if (b == player && a != empire)
+            thirdParty = a;
+        else
+            thirdParty = null;
+        return thirdParty is not null;
     }
 }

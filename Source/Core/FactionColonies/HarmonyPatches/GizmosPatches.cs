@@ -44,48 +44,7 @@ class PawnDraftGizmos
         if (__instance.Faction == playerColonyFaction && settlementFc.MilitaryComp?.isUnderAttack == true
             && defBf is not null && FindFC.Military?.FindSubPawnWrapper(__instance) is null)
         {
-            Pawn pawn = __instance;
-
-            Command_Toggle draftColonists = new()
-            {
-                hotKey = KeyBindingDefOf.Command_ColonistDraft,
-                isActive = () => false,
-                toggleAction = () =>
-                {
-                    if (pawn.Faction == Faction.OfPlayer) return;
-                    pawn.SetFaction(Faction.OfPlayer);
-                    // SetFaction → AddAndRemoveDynamicComponents creates pawn.drafter for OfPlayer pawns
-                    if (pawn.drafter is not null)
-                        pawn.drafter.Drafted = true;
-                    // Vanilla switched any bonded mechs to the player faction too, but the bandwidth
-                    // recalc can leave them "uncontrolled" — re-assign them to the (now player)
-                    // mechanitor's control groups so the player can command them.
-                    Mercenary drafted = FindFC.Military?.FindMercByPawn(pawn);
-                    if (drafted is not null)
-                    {
-                        MercenaryPawnFactory.RebindMechs(drafted);
-                        // SetFaction above cascaded to the mount and ran ClearMind, ending its Mounted
-                        // job (Giddy Up 2). Re-mount so the merc stays seated through the draft.
-                        RemountMerc(drafted);
-                    }
-                    // Track drafted NPC for faction restoration after battle
-                    if (!defBf.draftedNPCs.Contains(pawn))
-                        defBf.draftedNPCs.Add(pawn);
-                },
-                defaultDesc = "CommandToggleDraftDesc".Translate(),
-                icon = TexCommand.Draft,
-                turnOnSound = SoundDefOf.DraftOn,
-                groupKey = 81729172,
-                defaultLabel = "CommandDraftLabel".Translate()
-            };
-
-            if (pawn.Downed)
-            {
-                draftColonists.Disable("IsIncapped".Translate(pawn.LabelShort, pawn));
-            }
-
-            draftColonists.tutorTag = "Draft";
-            __result = __result.Append(draftColonists);
+            __result = __result.Append(MakeDraftToggle(__instance, defBf, DefenseDraftGroupKey));
             return;
         }
 
@@ -94,71 +53,25 @@ class PawnDraftGizmos
             && settlementFc.MilitaryComp?.isUnderAttack == true
             && settlementFc.MilitaryComp.draftedNPCs.Contains(__instance))
         {
-            Pawn found = __instance;
             var milComp = settlementFc.MilitaryComp;
-
-            List<Gizmo> output = __result.ToList();
-            foreach (Gizmo gizmo in output)
-            {
-                Command_Toggle action = gizmo as Command_Toggle;
-                if (action is not null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
+            HookUndraftToggle(ref __result, __instance, () => milComp.draftedNPCs,
+                job => job is LordJob_DefendColony,
+                rejoin =>
                 {
-                    action.toggleAction = () =>
-                    {
-                        // SetFaction cascades to sub-pawns via MercSubPawnsFollowFaction, so the
-                        // merc's animals/mechs return to the Empire faction too.
-                        found.SetFaction(FindFC.EmpireFaction);
-                        milComp.draftedNPCs.Remove(found);
-                        // Re-add the merc AND its sub-pawns to defenders + the defense lord after
-                        // undrafting, so they rejoin the fight. Routes through the BattlefieldContext
-                        // so per-op pawn lists stay aligned.
-                        Mercenary merc = FindFC.Military?.FindMercByPawn(found);
-                        // Reconnect the merc's mechs to its (now Empire) mechanitor control after the
-                        // faction swap back, else they sit uncontrolled.
-                        if (merc is not null) MercenaryPawnFactory.RebindMechs(merc);
-
-                        if (milComp.defenders.Any())
-                        {
-                            List<Pawn> rejoin = [found];
-                            if (merc is not null)
-                                foreach (Mercenary sub in merc.SubPawns())
-                                    if (sub?.pawn is not null && sub.pawn.Spawned && !sub.pawn.Dead)
-                                        rejoin.Add(sub.pawn);
-
-                            BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(milComp.WorldSettlement.Tile);
-                            bf?.RegisterPawnsAsDefenders(rejoin, assignToLord: false);
-
-                            // Find the active Empire defense lord on this map directly. Picking the
-                            // first defender's lord was fragile: `found` is itself in `defenders` and its
-                            // lord is null right after undrafting, so if it (or any lordless defender)
-                            // came first, the rejoin was silently skipped and the pawns — having no lord
-                            // — would try to leave the map instead of fighting.
-                            Lord defenderLord = found.Map?.lordManager?.lords
-                                .FirstOrDefault(l => l is not null && l.faction == FindFC.EmpireFaction
-                                                     && l.LordJob is LordJob_DefendColony);
-                            if (defenderLord is not null)
-                            {
-                                foreach (Pawn p in rejoin)
-                                    if (!defenderLord.ownedPawns.Contains(p))
-                                        defenderLord.AddPawn(p);
-                                defenderLord.CurLordToil.UpdateAllDuties();
-                                // Force each pawn off its current (wander/follow) job so it immediately
-                                // adopts the lord's combat duty instead of idling.
-                                foreach (Pawn p in rejoin)
-                                    p.jobs?.EndCurrentJob(JobCondition.InterruptForced);
-                            }
-                        }
-                        // Re-mount after the faction switch (and the rejoin's EndCurrentJob, which also
-                        // ended the mount's Mounted job) so the merc stays seated through the undraft.
-                        if (merc is not null) RemountMerc(merc);
-                    };
-                    break;
-                }
-            }
-
-            __result = output;
+                    if (!milComp.defenders.Any()) return false;
+                    // Re-add the merc AND its sub-pawns to defenders + the defense lord after
+                    // undrafting, so they rejoin the fight. Routes through the BattlefieldContext
+                    // so per-op pawn lists stay aligned.
+                    BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(milComp.WorldSettlement.Tile);
+                    bf?.RegisterPawnsAsDefenders(rejoin, assignToLord: false);
+                    return true;
+                });
         }
     }
+
+    /* Draft gizmo group keys: distinct so offense and defense draft gizmos never merge */
+    const int DefenseDraftGroupKey = 81729172;
+    const int OffenseDraftGroupKey = 81729173;
 
     /// <summary>Offense mirror of the defense draft/undraft toggle. Records drafted attackers into
     /// the offense <see cref="BattlefieldContext.draftedNPCs"/> (restored on teardown) and, on
@@ -171,78 +84,125 @@ class PawnDraftGizmos
         // Draft toggle for an Empire attacker not yet drafted (sub-pawns follow their merc's faction).
         if (pawn.Faction == empire && FindFC.Military?.FindSubPawnWrapper(pawn) is null)
         {
-            Pawn p = pawn;
-            Command_Toggle draft = new()
-            {
-                hotKey = KeyBindingDefOf.Command_ColonistDraft,
-                isActive = () => false,
-                toggleAction = () =>
-                {
-                    if (p.Faction == Faction.OfPlayer) return;
-                    p.SetFaction(Faction.OfPlayer);
-                    if (p.drafter is not null) p.drafter.Drafted = true;
-                    Mercenary drafted = FindFC.Military?.FindMercByPawn(p);
-                    if (drafted is not null)
-                    {
-                        MercenaryPawnFactory.RebindMechs(drafted);
-                        RemountMerc(drafted);
-                    }
-                    if (!bf.draftedNPCs.Contains(p)) bf.draftedNPCs.Add(p);
-                },
-                defaultDesc = "CommandToggleDraftDesc".Translate(),
-                icon = TexCommand.Draft,
-                turnOnSound = SoundDefOf.DraftOn,
-                groupKey = 81729173,
-                defaultLabel = "CommandDraftLabel".Translate()
-            };
-            if (pawn.Downed) draft.Disable("IsIncapped".Translate(pawn.LabelShort, pawn));
-            draft.tutorTag = "Draft";
-            result = result.Append(draft);
+            result = result.Append(MakeDraftToggle(pawn, bf, OffenseDraftGroupKey));
             return;
         }
 
         // Undraft toggle for a drafted Empire attacker: rejoin the assault lord.
         if (pawn.Faction == Faction.OfPlayer && pawn.Drafted && bf.draftedNPCs.Contains(pawn))
         {
-            Pawn found = pawn;
-            List<Gizmo> output = result.ToList();
-            foreach (Gizmo gizmo in output)
-            {
-                Command_Toggle action = gizmo as Command_Toggle;
-                if (action is not null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
-                {
-                    action.toggleAction = () =>
-                    {
-                        found.SetFaction(FindFC.EmpireFaction);
-                        bf.draftedNPCs.Remove(found);
-                        Mercenary merc = FindFC.Military?.FindMercByPawn(found);
-                        if (merc is not null) MercenaryPawnFactory.RebindMechs(merc);
-
-                        List<Pawn> rejoin = [found];
-                        if (merc is not null)
-                            foreach (Mercenary sub in merc.SubPawns())
-                                if (sub?.pawn is not null && sub.pawn.Spawned && !sub.pawn.Dead)
-                                    rejoin.Add(sub.pawn);
-
-                        Lord assaultLord = found.Map?.lordManager?.lords
-                            .FirstOrDefault(l => l is not null && l.faction == FindFC.EmpireFaction
-                                                 && l.LordJob is LordJob_AssaultColony);
-                        if (assaultLord is not null)
-                        {
-                            foreach (Pawn rp in rejoin)
-                                if (!assaultLord.ownedPawns.Contains(rp))
-                                    assaultLord.AddPawn(rp);
-                            assaultLord.CurLordToil?.UpdateAllDuties();
-                            foreach (Pawn rp in rejoin)
-                                rp.jobs?.EndCurrentJob(JobCondition.InterruptForced);
-                        }
-                        if (merc is not null) RemountMerc(merc);
-                    };
-                    break;
-                }
-            }
-            result = output;
+            HookUndraftToggle(ref result, pawn, () => bf.draftedNPCs,
+                job => job is LordJob_AssaultColony, beforeRejoin: null);
         }
+    }
+
+    /// <summary>Builds the draft toggle for an undrafted Empire pawn: switches it to the player
+    /// faction, drafts it, and records it in <paramref name="bf"/>'s drafted list so the battle
+    /// teardown restores it to the Empire.</summary>
+    static Command_Toggle MakeDraftToggle(Pawn pawn, BattlefieldContext bf, int groupKey)
+    {
+        Command_Toggle draft = new()
+        {
+            hotKey = KeyBindingDefOf.Command_ColonistDraft,
+            isActive = () => false,
+            toggleAction = () =>
+            {
+                if (pawn.Faction == Faction.OfPlayer) return;
+                pawn.SetFaction(Faction.OfPlayer);
+                // SetFaction -> AddAndRemoveDynamicComponents creates pawn.drafter for OfPlayer pawns
+                if (pawn.drafter is not null)
+                    pawn.drafter.Drafted = true;
+                // Vanilla switched any bonded mechs to the player faction too, but the bandwidth
+                // recalc can leave them "uncontrolled": re-assign them to the (now player)
+                // mechanitor's control groups so the player can command them.
+                Mercenary drafted = FindFC.Military?.FindMercByPawn(pawn);
+                if (drafted is not null)
+                {
+                    MercenaryPawnFactory.RebindMechs(drafted);
+                    // SetFaction above cascaded to the mount and ran ClearMind, ending its Mounted
+                    // job (Giddy Up 2). Re-mount so the merc stays seated through the draft.
+                    RemountMerc(drafted);
+                }
+                // Track drafted NPC for faction restoration after battle
+                if (!bf.draftedNPCs.Contains(pawn))
+                    bf.draftedNPCs.Add(pawn);
+            },
+            defaultDesc = "CommandToggleDraftDesc".Translate(),
+            icon = TexCommand.Draft,
+            turnOnSound = SoundDefOf.DraftOn,
+            groupKey = groupKey,
+            defaultLabel = "CommandDraftLabel".Translate()
+        };
+
+        if (pawn.Downed)
+        {
+            draft.Disable("IsIncapped".Translate(pawn.LabelShort, pawn));
+        }
+
+        draft.tutorTag = "Draft";
+        return draft;
+    }
+
+    /// <summary>Replaces the vanilla undraft action of a drafted Empire pawn: returns it (and its
+    /// sub-pawns) to the Empire faction, drops it from the drafted list, and adds them back to the
+    /// Empire lord whose job matches <paramref name="isRejoinLordJob"/>. <paramref name="beforeRejoin"/>
+    /// (optional) runs first with the rejoining pawns; returning false skips the lord rejoin.</summary>
+    static void HookUndraftToggle(ref IEnumerable<Gizmo> result, Pawn found, Func<List<Pawn>> draftedNPCs,
+        Predicate<LordJob> isRejoinLordJob, Func<List<Pawn>, bool> beforeRejoin)
+    {
+        List<Gizmo> output = result.ToList();
+        foreach (Gizmo gizmo in output)
+        {
+            Command_Toggle action = gizmo as Command_Toggle;
+            if (action is not null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
+            {
+                action.toggleAction = () =>
+                {
+                    // SetFaction cascades to sub-pawns via MercSubPawnsFollowFaction, so the
+                    // merc's animals/mechs return to the Empire faction too.
+                    found.SetFaction(FindFC.EmpireFaction);
+                    draftedNPCs().Remove(found);
+                    Mercenary merc = FindFC.Military?.FindMercByPawn(found);
+                    // Reconnect the merc's mechs to its (now Empire) mechanitor control after the
+                    // faction swap back, else they sit uncontrolled.
+                    if (merc is not null) MercenaryPawnFactory.RebindMechs(merc);
+
+                    List<Pawn> rejoin = [found];
+                    if (merc is not null)
+                        foreach (Mercenary sub in merc.SubPawns())
+                            if (sub?.pawn is not null && sub.pawn.Spawned && !sub.pawn.Dead)
+                                rejoin.Add(sub.pawn);
+
+                    if (beforeRejoin is null || beforeRejoin(rejoin))
+                    {
+                        // Find the active Empire lord on this map directly. Picking the first
+                        // defender's lord was fragile: `found` is itself in `defenders` and its
+                        // lord is null right after undrafting, so if it (or any lordless defender)
+                        // came first, the rejoin was silently skipped and the pawns: having no lord
+                        //: would try to leave the map instead of fighting.
+                        Lord rejoinLord = found.Map?.lordManager?.lords
+                            .FirstOrDefault(l => l is not null && l.faction == FindFC.EmpireFaction
+                                                 && isRejoinLordJob(l.LordJob));
+                        if (rejoinLord is not null)
+                        {
+                            foreach (Pawn p in rejoin)
+                                if (!rejoinLord.ownedPawns.Contains(p))
+                                    rejoinLord.AddPawn(p);
+                            rejoinLord.CurLordToil?.UpdateAllDuties();
+                            // Force each pawn off its current (wander/follow) job so it immediately
+                            // adopts the lord's combat duty instead of idling.
+                            foreach (Pawn p in rejoin)
+                                p.jobs?.EndCurrentJob(JobCondition.InterruptForced);
+                        }
+                    }
+                    // Re-mount after the faction switch (and the rejoin's EndCurrentJob, which also
+                    // ended the mount's Mounted job) so the merc stays seated through the undraft.
+                    if (merc is not null) RemountMerc(merc);
+                };
+                break;
+            }
+        }
+        result = output;
     }
 
     /// <summary>Re-mounts a merc on its assigned mount (Giddy Up 2) after a draft/undraft faction

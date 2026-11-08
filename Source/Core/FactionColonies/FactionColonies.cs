@@ -600,32 +600,24 @@ public class FCSettings : ModSettings
             Scribe_Values.Look(ref oldPatch, "lastSeenVersionPatch", -1);
             if (oldMajor >= 0 && !lastSeenVersions.ContainsKey("matathias.empire"))
             {
-                SetLastSeenVersion("matathias.empire", oldMajor, oldMinor, oldPatch);
+                SetLastSeenVersion("matathias.empire", new FCVersion(oldMajor, oldMinor, oldPatch));
             }
         }
     }
 
     public static string GetModVersion() => ModVersionUtil.Get<FactionColoniesMod>();
 
-    public static void GetLastSeenVersion(string modId, out int major, out int minor, out int patch)
+    /* The last patch-note version the player has seen for modId; 0.0.0 when none or unparseable. */
+    public static FCVersion GetLastSeenVersion(string modId)
     {
-        if (lastSeenVersions.TryGetValue(modId, out string v))
-        {
-            string[] parts = v.Split('.');
-            if (parts.Length == 3
-                && int.TryParse(parts[0], out major)
-                && int.TryParse(parts[1], out minor)
-                && int.TryParse(parts[2], out patch))
-                return;
-        }
-        major = 0;
-        minor = 0;
-        patch = 0;
+        lastSeenVersions.TryGetValue(modId, out string v);
+        FCVersion.TryParse(v, out FCVersion version);
+        return version;
     }
 
-    public static void SetLastSeenVersion(string modId, int major, int minor, int patch)
+    public static void SetLastSeenVersion(string modId, FCVersion version)
     {
-        lastSeenVersions[modId] = major + "." + minor + "." + patch;
+        lastSeenVersions[modId] = version.ToString();
     }
 
     /* Per-day rescale used by the 1.6.2 settings migration. Round-to-nearest (NOT floor) so a
@@ -692,68 +684,47 @@ public class FCSettings : ModSettings
         i++;
     }
 
-    // Difficulty preset values
+    /* Difficulty preset values */
+    private readonly record struct DifficultyPreset(int SilverPerResource, int TaxIntervalDays,
+        int ProductionTitheMod, int WorkerCost, float WorkerProdBaseBonus, float WorkerProdMultBonus);
+
+    /// <summary>The preset for a difficulty level, or null for <see cref="EmpireDifficultyLevel.Custom"/>
+    /// (and any unknown level), which leaves the player's values alone.</summary>
+    private static DifficultyPreset? PresetFor(EmpireDifficultyLevel difficulty) => difficulty switch
+    {
+        EmpireDifficultyLevel.Peaceful => new(DEFAULT_SILVER_PER_RESOURCE_PEACEFUL, DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL,
+            DEFAULT_PRODUCTION_TITHE_MOD_PEACEFUL, DEFAULT_WORKER_COST_PEACEFUL,
+            DEFAULT_WORKER_PROD_BASE_BONUS_PEACEFUL, DEFAULT_WORKER_PROD_MULT_BONUS_PEACEFUL),
+        EmpireDifficultyLevel.CommunityBuilder => new(DEFAULT_SILVER_PER_RESOURCE_COMMUNITYBUILDER, DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER,
+            DEFAULT_PRODUCTION_TITHE_MOD_COMMUNITYBUILDER, DEFAULT_WORKER_COST_COMMUNITYBUILDER,
+            DEFAULT_WORKER_PROD_BASE_BONUS_COMMUNITYBUILDER, DEFAULT_WORKER_PROD_MULT_BONUS_COMMUNITYBUILDER),
+        EmpireDifficultyLevel.AdventureStory => new(DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY, DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY,
+            DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY, DEFAULT_WORKER_COST_ADVENTURESTORY,
+            DEFAULT_WORKER_PROD_BASE_BONUS_ADVENTURESTORY, DEFAULT_WORKER_PROD_MULT_BONUS_ADVENTURESTORY),
+        EmpireDifficultyLevel.StriveToSurvive => new(DEFAULT_SILVER_PER_RESOURCE_STRIVETOSURVIVE, DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE,
+            DEFAULT_PRODUCTION_TITHE_MOD_STRIVETOSURVIVE, DEFAULT_WORKER_COST_STRIVETOSURVIVE,
+            DEFAULT_WORKER_PROD_BASE_BONUS_STRIVETOSURVIVE, DEFAULT_WORKER_PROD_MULT_BONUS_STRIVETOSURVIVE),
+        EmpireDifficultyLevel.BloodAndDust => new(DEFAULT_SILVER_PER_RESOURCE_BLOODANDDUST, DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST,
+            DEFAULT_PRODUCTION_TITHE_MOD_BLOODANDDUST, DEFAULT_WORKER_COST_BLOODANDDUST,
+            DEFAULT_WORKER_PROD_BASE_BONUS_BLOODANDDUST, DEFAULT_WORKER_PROD_MULT_BONUS_BLOODANDDUST),
+        EmpireDifficultyLevel.LosingIsFun => new(DEFAULT_SILVER_PER_RESOURCE_LOSINGISFUN, DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN,
+            DEFAULT_PRODUCTION_TITHE_MOD_LOSINGISFUN, DEFAULT_WORKER_COST_LOSINGISFUN,
+            DEFAULT_WORKER_PROD_BASE_BONUS_LOSINGISFUN, DEFAULT_WORKER_PROD_MULT_BONUS_LOSINGISFUN),
+        _ => null,
+    };
+
     public static void ApplyDifficultyPreset(EmpireDifficultyLevel difficulty)
     {
-        switch (difficulty)
+        // Custom has no preset: don't change anything
+        if (PresetFor(difficulty) is DifficultyPreset preset)
         {
-            case EmpireDifficultyLevel.Peaceful:
-                silverPerResource = DEFAULT_SILVER_PER_RESOURCE_PEACEFUL;
-                timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL;
-                productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_PEACEFUL;
-                workerCost = DEFAULT_WORKER_COST_PEACEFUL;
-                workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_PEACEFUL;
-                workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_PEACEFUL;
-                buildingUpkeepDifficultyMult = 1.0f;
-                break;
-            case EmpireDifficultyLevel.CommunityBuilder:
-                silverPerResource = DEFAULT_SILVER_PER_RESOURCE_COMMUNITYBUILDER;
-                timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER;
-                productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_COMMUNITYBUILDER;
-                workerCost = DEFAULT_WORKER_COST_COMMUNITYBUILDER;
-                workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_COMMUNITYBUILDER;
-                workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_COMMUNITYBUILDER;
-                buildingUpkeepDifficultyMult = 1.0f;
-                break;
-            case EmpireDifficultyLevel.AdventureStory:
-                silverPerResource = DEFAULT_SILVER_PER_RESOURCE_ADVENTURESTORY;
-                timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY;
-                productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_ADVENTURESTORY;
-                workerCost = DEFAULT_WORKER_COST_ADVENTURESTORY;
-                workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_ADVENTURESTORY;
-                workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_ADVENTURESTORY;
-                buildingUpkeepDifficultyMult = 1.0f;
-                break;
-            case EmpireDifficultyLevel.StriveToSurvive:
-                silverPerResource = DEFAULT_SILVER_PER_RESOURCE_STRIVETOSURVIVE;
-                timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE;
-                productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_STRIVETOSURVIVE;
-                workerCost = DEFAULT_WORKER_COST_STRIVETOSURVIVE;
-                workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_STRIVETOSURVIVE;
-                workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_STRIVETOSURVIVE;
-                buildingUpkeepDifficultyMult = 1.0f;
-                break;
-            case EmpireDifficultyLevel.BloodAndDust:
-                silverPerResource = DEFAULT_SILVER_PER_RESOURCE_BLOODANDDUST;
-                timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST;
-                productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_BLOODANDDUST;
-                workerCost = DEFAULT_WORKER_COST_BLOODANDDUST;
-                workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_BLOODANDDUST;
-                workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_BLOODANDDUST;
-                buildingUpkeepDifficultyMult = 1.0f;
-                break;
-            case EmpireDifficultyLevel.LosingIsFun:
-                silverPerResource = DEFAULT_SILVER_PER_RESOURCE_LOSINGISFUN;
-                timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN;
-                productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD_LOSINGISFUN;
-                workerCost = DEFAULT_WORKER_COST_LOSINGISFUN;
-                workerProductionBaseBonus = DEFAULT_WORKER_PROD_BASE_BONUS_LOSINGISFUN;
-                workerProductionMultBonus = DEFAULT_WORKER_PROD_MULT_BONUS_LOSINGISFUN;
-                buildingUpkeepDifficultyMult = 1.0f;
-                break;
-            case EmpireDifficultyLevel.Custom:
-                // Don't change anything for custom
-                break;
+            silverPerResource = preset.SilverPerResource;
+            timeBetweenTaxes_days = preset.TaxIntervalDays;
+            productionTitheMod = preset.ProductionTitheMod;
+            workerCost = preset.WorkerCost;
+            workerProductionBaseBonus = preset.WorkerProdBaseBonus;
+            workerProductionMultBonus = preset.WorkerProdMultBonus;
+            buildingUpkeepDifficultyMult = 1.0f;
         }
         LogUtil.Message($"ApplyDifficultyPreset({difficulty}): timeBetweenTaxes_days={timeBetweenTaxes_days}");
     }
@@ -918,19 +889,9 @@ public class FCSettings : ModSettings
         laborerSkillBonusCap = DEFAULT_LABORER_SKILL_BONUS_CAP;
     }
 
-    public static int DaysBetweenTaxesByDifficulty(EmpireDifficultyLevel difficulty)
-    {
-        return difficulty switch
-        {
-            EmpireDifficultyLevel.Peaceful => DEFAULT_TAX_INTERVAL_DAYS_PEACEFUL,
-            EmpireDifficultyLevel.CommunityBuilder => DEFAULT_TAX_INTERVAL_DAYS_COMMUNITYBUILDER,
-            EmpireDifficultyLevel.AdventureStory => DEFAULT_TAX_INTERVAL_DAYS_ADVENTURESTORY,
-            EmpireDifficultyLevel.StriveToSurvive => DEFAULT_TAX_INTERVAL_DAYS_STRIVETOSURVIVE,
-            EmpireDifficultyLevel.BloodAndDust => DEFAULT_TAX_INTERVAL_DAYS_BLOODANDDUST,
-            EmpireDifficultyLevel.LosingIsFun => DEFAULT_TAX_INTERVAL_DAYS_LOSINGISFUN,
-            _ => DEFAULT_TAX_INTERVAL_DAYS,
-        };
-    }
+    public static int DaysBetweenTaxesByDifficulty(EmpireDifficultyLevel difficulty) =>
+        PresetFor(difficulty)?.TaxIntervalDays ?? DEFAULT_TAX_INTERVAL_DAYS;
+
     public static int TicksBetweenTaxesByDifficulty(EmpireDifficultyLevel difficulty)
     {
         return DaysBetweenTaxesByDifficulty(difficulty) * GenDate.TicksPerDay;

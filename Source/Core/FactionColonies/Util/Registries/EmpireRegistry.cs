@@ -31,53 +31,98 @@ public static class EmpireRegistry
         Register(participant);
     }
 
+    /* One row per facade-managed registry: how to clear it, and each participant type it accepts
+     * with that type's register/unregister calls. Register and Unregister walk the rows in order;
+     * ClearAll clears each registry once. */
+    private sealed class RegistryRow
+    {
+        public readonly Action clear;
+        public readonly Binding[] bindings;
+
+        public RegistryRow(Action clear, params Binding[] bindings)
+        {
+            this.clear = clear;
+            this.bindings = bindings;
+        }
+    }
+
+    private readonly struct Binding
+    {
+        public readonly Func<object, bool> matches;
+        public readonly Action<object> register;
+        public readonly Action<object> unregister;
+
+        public Binding(Func<object, bool> matches, Action<object> register, Action<object> unregister)
+        {
+            this.matches = matches;
+            this.register = register;
+            this.unregister = unregister;
+        }
+    }
+
+    private static Binding Bind<T>(Action<T> register, Action<T> unregister) where T : class
+        => new(p => p is T, p => register((T)p), p => unregister((T)p));
+
+    private static RegistryRow Row<T>(Action<T> register, Action<T> unregister, Action clear) where T : class
+        => new(clear, Bind(register, unregister));
+
+    private static readonly RegistryRow[] rows =
+    [
+        /* Lifecycle (LifecycleRegistry.Register accepts object and probes 4 sub-interfaces;
+           it emits its own "no listener interface" warning, so it is only called when there
+           is at least one match). */
+        new(LifecycleRegistry.ClearAll, new Binding(
+            p => p is ISettlementListener || p is IMilitaryOperationListener
+                || p is IMercenarySquadListener || p is IResearchListener,
+            LifecycleRegistry.Register, LifecycleRegistry.Unregister)),
+
+        /* Validators */
+        Row<IDefenseValidator>(DefenseValidatorRegistry.Register, DefenseValidatorRegistry.Unregister, DefenseValidatorRegistry.ClearAll),
+        Row<ISquadAssignmentValidator>(SquadAssignmentRegistry.Register, SquadAssignmentRegistry.Unregister, SquadAssignmentRegistry.ClearAll),
+        Row<ISettlementFoundingValidator>(FoundingValidatorRegistry.Register, FoundingValidatorRegistry.Unregister, FoundingValidatorRegistry.ClearAll),
+
+        /* Modifiers / providers / contributors */
+        new(BattleModifierRegistry.ClearAll,
+            Bind<IBattleModifier>(BattleModifierRegistry.Register, BattleModifierRegistry.Unregister),
+            Bind<IFactionPowerModifier>(BattleModifierRegistry.Register, BattleModifierRegistry.Unregister),
+            Bind<ISettlementPowerModifier>(BattleModifierRegistry.Register, BattleModifierRegistry.Unregister)),
+        Row<ISilverPaymentModifier>(SilverPaymentRegistry.Register, SilverPaymentRegistry.Unregister, SilverPaymentRegistry.ClearAll),
+        Row<ISquadPowerModifier>(SquadPowerRegistry.Register, SquadPowerRegistry.Unregister, SquadPowerRegistry.ClearAll),
+        Row<IRaidWeightProvider>(RaidWeightRegistry.Register, RaidWeightRegistry.Unregister, RaidWeightRegistry.ClearAll),
+        Row<IThreatScalingContributor>(ThreatScalingRegistry.Register, ThreatScalingRegistry.Unregister, ThreatScalingRegistry.ClearAll),
+        Row<IMercAutoTendProvider>(MercAutoTendRegistry.Register, MercAutoTendRegistry.Unregister, MercAutoTendRegistry.ClearAll),
+
+        /* Tax cycle */
+        Row<ITaxTickParticipant>(TaxTickRegistry.Register, TaxTickRegistry.Unregister, TaxTickRegistry.ClearAll),
+        Row<IDailyAccrualParticipant>(DailyAccrualRegistry.Register, DailyAccrualRegistry.Unregister, DailyAccrualRegistry.ClearAll),
+        Row<ITaxDeliveryInterceptor>(TaxDeliveryRegistry.Register, TaxDeliveryRegistry.Unregister, TaxDeliveryRegistry.ClearAll),
+
+        /* UI / external-target collections */
+        Row<IMainTabWindowOverview>(MainTableRegistry.Register, MainTableRegistry.Unregister, MainTableRegistry.ClearAll),
+        Row<ISettlementWindowButton>(SettlementButtonRegistry.Register, SettlementButtonRegistry.Unregister, SettlementButtonRegistry.ClearAll),
+        Row<ISquadInspectionSection>(SquadInspectionRegistry.Register, SquadInspectionRegistry.Unregister, SquadInspectionRegistry.ClearAll),
+        Row<IRaidTarget>(RaidTargetRegistry.Register, RaidTargetRegistry.Unregister, RaidTargetRegistry.ClearAll),
+        Row<IAutoDefender>(AutoDefenderRegistry.Register, AutoDefenderRegistry.Unregister, AutoDefenderRegistry.ClearAll),
+        Row<IMilitaryTabEntry>(MilitaryTabRegistry.Register, MilitaryTabRegistry.Unregister, MilitaryTabRegistry.ClearAll),
+        Row<IRoadNodeProvider>(RoadNodeProviderRegistry.Register, RoadNodeProviderRegistry.Unregister, RoadNodeProviderRegistry.ClearAll),
+        Row<BuildingFilter>(BuildingFilterRegistry.Register, BuildingFilterRegistry.Unregister, BuildingFilterRegistry.ClearAll),
+        Row<IAnimalPickerFilter>(AnimalPickerFilterRegistry.Register, AnimalPickerFilterRegistry.Unregister, AnimalPickerFilterRegistry.ClearAll),
+    ];
+
     public static void Register(object participant)
     {
         if (participant is null) return;
         bool any = false;
 
-        /* Lifecycle (LifecycleRegistry.Register accepts object and probes 4 sub-interfaces;
-           it emits its own "no listener interface" warning, so we only call it when we
-           know there's at least one match — and we don't double-warn here). */
-        if (participant is ISettlementListener
-            || participant is IMilitaryOperationListener
-            || participant is IMercenarySquadListener
-            || participant is IResearchListener)
+        foreach (RegistryRow row in rows)
         {
-            LifecycleRegistry.Register(participant);
-            any = true;
+            foreach (Binding binding in row.bindings)
+            {
+                if (!binding.matches(participant)) continue;
+                binding.register(participant);
+                any = true;
+            }
         }
-
-        /* Validators */
-        if (participant is IDefenseValidator dv)            { DefenseValidatorRegistry.Register(dv);   any = true; }
-        if (participant is ISquadAssignmentValidator sav)   { SquadAssignmentRegistry.Register(sav);   any = true; }
-        if (participant is ISettlementFoundingValidator fv) { FoundingValidatorRegistry.Register(fv);  any = true; }
-
-        /* Modifiers / providers / contributors */
-        if (participant is IBattleModifier bm)              { BattleModifierRegistry.Register(bm);     any = true; }
-        if (participant is IFactionPowerModifier fpm)       { BattleModifierRegistry.Register(fpm);    any = true; }
-        if (participant is ISettlementPowerModifier spm)    { BattleModifierRegistry.Register(spm);    any = true; }
-        if (participant is ISilverPaymentModifier spy)      { SilverPaymentRegistry.Register(spy);     any = true; }
-        if (participant is ISquadPowerModifier sp)          { SquadPowerRegistry.Register(sp);         any = true; }
-        if (participant is IRaidWeightProvider rw)          { RaidWeightRegistry.Register(rw);         any = true; }
-        if (participant is IThreatScalingContributor ts)    { ThreatScalingRegistry.Register(ts);      any = true; }
-        if (participant is IMercAutoTendProvider mat)       { MercAutoTendRegistry.Register(mat);      any = true; }
-
-        /* Tax cycle */
-        if (participant is ITaxTickParticipant tt)          { TaxTickRegistry.Register(tt);            any = true; }
-        if (participant is IDailyAccrualParticipant da)     { DailyAccrualRegistry.Register(da);       any = true; }
-        if (participant is ITaxDeliveryInterceptor td)      { TaxDeliveryRegistry.Register(td);        any = true; }
-
-        /* UI / external-target collections */
-        if (participant is IMainTabWindowOverview mt)       { MainTableRegistry.Register(mt);          any = true; }
-        if (participant is ISettlementWindowButton swb)     { SettlementButtonRegistry.Register(swb);  any = true; }
-        if (participant is ISquadInspectionSection sis)     { SquadInspectionRegistry.Register(sis);   any = true; }
-        if (participant is IRaidTarget rt)                  { RaidTargetRegistry.Register(rt);         any = true; }
-        if (participant is IAutoDefender ad)                { AutoDefenderRegistry.Register(ad);       any = true; }
-        if (participant is IMilitaryTabEntry mte)           { MilitaryTabRegistry.Register(mte);       any = true; }
-        if (participant is IRoadNodeProvider rnp)           { RoadNodeProviderRegistry.Register(rnp);  any = true; }
-        if (participant is BuildingFilter bf)               { BuildingFilterRegistry.Register(bf);     any = true; }
-        if (participant is IAnimalPickerFilter apf)         { AnimalPickerFilterRegistry.Register(apf); any = true; }
 
         if (!any)
         {
@@ -90,37 +135,13 @@ public static class EmpireRegistry
         if (participant is null) return;
         persistent.Remove(participant);
 
-        if (participant is ISettlementListener
-            || participant is IMilitaryOperationListener
-            || participant is IMercenarySquadListener
-            || participant is IResearchListener)
+        foreach (RegistryRow row in rows)
         {
-            LifecycleRegistry.Unregister(participant);
+            foreach (Binding binding in row.bindings)
+            {
+                if (binding.matches(participant)) binding.unregister(participant);
+            }
         }
-
-        if (participant is IDefenseValidator dv)            DefenseValidatorRegistry.Unregister(dv);
-        if (participant is ISquadAssignmentValidator sav)   SquadAssignmentRegistry.Unregister(sav);
-        if (participant is ISettlementFoundingValidator fv) FoundingValidatorRegistry.Unregister(fv);
-        if (participant is IBattleModifier bm)              BattleModifierRegistry.Unregister(bm);
-        if (participant is IFactionPowerModifier fpm)       BattleModifierRegistry.Unregister(fpm);
-        if (participant is ISettlementPowerModifier spm)    BattleModifierRegistry.Unregister(spm);
-        if (participant is ISilverPaymentModifier spy)      SilverPaymentRegistry.Unregister(spy);
-        if (participant is ISquadPowerModifier sp)          SquadPowerRegistry.Unregister(sp);
-        if (participant is IRaidWeightProvider rw)          RaidWeightRegistry.Unregister(rw);
-        if (participant is IThreatScalingContributor ts)    ThreatScalingRegistry.Unregister(ts);
-        if (participant is IMercAutoTendProvider mat)       MercAutoTendRegistry.Unregister(mat);
-        if (participant is ITaxTickParticipant tt)          TaxTickRegistry.Unregister(tt);
-        if (participant is IDailyAccrualParticipant da)     DailyAccrualRegistry.Unregister(da);
-        if (participant is ITaxDeliveryInterceptor td)      TaxDeliveryRegistry.Unregister(td);
-        if (participant is IMainTabWindowOverview mt)       MainTableRegistry.Unregister(mt);
-        if (participant is ISettlementWindowButton swb)     SettlementButtonRegistry.Unregister(swb);
-        if (participant is ISquadInspectionSection sis)     SquadInspectionRegistry.Unregister(sis);
-        if (participant is IRaidTarget rt)                  RaidTargetRegistry.Unregister(rt);
-        if (participant is IAutoDefender ad)                AutoDefenderRegistry.Unregister(ad);
-        if (participant is IMilitaryTabEntry mte)           MilitaryTabRegistry.Unregister(mte);
-        if (participant is IRoadNodeProvider rnp)           RoadNodeProviderRegistry.Unregister(rnp);
-        if (participant is BuildingFilter bf)               BuildingFilterRegistry.Unregister(bf);
-        if (participant is IAnimalPickerFilter apf)         AnimalPickerFilterRegistry.Unregister(apf);
     }
 
     /// <summary>
@@ -132,28 +153,8 @@ public static class EmpireRegistry
     /// </summary>
     public static void ClearAll()
     {
-        LifecycleRegistry.ClearAll();
-        DefenseValidatorRegistry.ClearAll();
-        SquadAssignmentRegistry.ClearAll();
-        FoundingValidatorRegistry.ClearAll();
-        BattleModifierRegistry.ClearAll();
-        SilverPaymentRegistry.ClearAll();
-        SquadPowerRegistry.ClearAll();
-        RaidWeightRegistry.ClearAll();
-        ThreatScalingRegistry.ClearAll();
-        MercAutoTendRegistry.ClearAll();
-        TaxTickRegistry.ClearAll();
-        DailyAccrualRegistry.ClearAll();
-        TaxDeliveryRegistry.ClearAll();
-        MainTableRegistry.ClearAll();
-        SettlementButtonRegistry.ClearAll();
-        SquadInspectionRegistry.ClearAll();
-        RaidTargetRegistry.ClearAll();
-        AutoDefenderRegistry.ClearAll();
-        MilitaryTabRegistry.ClearAll();
-        RoadNodeProviderRegistry.ClearAll();
-        BuildingFilterRegistry.ClearAll();
-        AnimalPickerFilterRegistry.ClearAll();
+        foreach (RegistryRow row in rows)
+            row.clear();
 
         foreach (object participant in persistent)
             Register(participant);

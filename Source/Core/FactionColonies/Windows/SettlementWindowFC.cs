@@ -993,7 +993,7 @@ public sealed class SettlementWindowFc : Window
         string label = powStatus == SettlementPowerStatus.NoMilitary
             ? "—"
             : ((int)Math.Round(totalLevel)).ToString();
-        UIUtil.DrawColoredLabel(labelBox, label, ColorForPowerStatus(powStatus));
+        UIUtil.DrawColoredLabel(labelBox, label, AccentUtil.ColorForPowerStatus(powStatus));
 
         // Level chain — efficiency multiplies offense AND defense, so it's applied at the Offensive step:
         //   Base (squad-derived powLevel, or half-cap "ghost") -> Offensive (× efficiency) -> Defensive
@@ -1030,18 +1030,6 @@ public sealed class SettlementWindowFc : Window
         if (!milMods.NullOrEmpty()) capLines += milMods;
         tooltip += "\n  " + capLines.TrimEnd().Replace("\n", "\n  ");
         return tooltip;
-    }
-
-    private static Color ColorForPowerStatus(SettlementPowerStatus status)
-    {
-        return status switch
-        {
-            SettlementPowerStatus.UnderAttack => AccentUtil.MilUnderAttack,
-            SettlementPowerStatus.AllBusy => new Color(1f, 0.85f, 0.4f),
-            SettlementPowerStatus.Ghost => new Color(1f, 0.85f, 0.4f),
-            SettlementPowerStatus.NoMilitary => Color.gray,
-            _ => Color.white,
-        };
     }
 
     private string DrawStatWithGainBox(Rect buttonBox, Rect labelBox, Rect statGainBox,

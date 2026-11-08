@@ -110,70 +110,18 @@ public static class FCPawnGenerator
         Gender? resolvedGender = (fixedGender.HasValue && fixedGender.Value != Gender.None)
             ? fixedGender : (Gender?)null;
 
-        return new PawnGenerationRequest(
-            kind: pawnKindDef,
-            faction: FindFC.EmpireFaction,
-            context: PawnGenerationContext.NonPlayer,
-            tile: -1,
-            forceGenerateNewPawn: false,
-            allowDead: false,
-            allowDowned: false,
-            canGeneratePawnRelations: false,
-            mustBeCapableOfViolence: mustBeViolent,
-            colonistRelationChanceFactor: 0,
-            forceAddFreeWarmLayerIfNeeded: false,
-            allowGay: true,
-            allowFood: true,
-            allowAddictions: false,
-            inhabitant: false,
-            certainlyBeenInCryptosleep: false,
-            forceRedressWorldPawnIfFormerColonist: false,
-            worldPawnFactionDoesntMatter: false,
-            biocodeWeaponChance: 0,
-            extraPawnForExtraRelationChance: null,
-            relationWithExtraPawnChanceFactor: 0,
-            validatorPreGear: null,
-            validatorPostGear: null,
-            forcedTraits: null,
-            prohibitedTraits: null,
+        return BaseRequest(pawnKindDef, FindFC.EmpireFaction,
+            mustBeViolent: mustBeViolent,
             forcedXenotype: xenotypeDef,
             forcedCustomXenotype: customXenotype,
             fixedBiologicalAge: fixedAge,
             fixedChronologicalAge: fixedAge,
-            fixedGender: resolvedGender
-        );
+            fixedGender: resolvedGender);
     }
 
     public static PawnGenerationRequest AnimalRequest(PawnKindDef race)
     {
-        return new PawnGenerationRequest(
-            kind: race,
-            faction: FindFC.EmpireFaction,
-            context: PawnGenerationContext.NonPlayer,
-            tile: -1,
-            forceGenerateNewPawn: false,
-            allowDead: false,
-            allowDowned: false,
-            canGeneratePawnRelations: false,
-            mustBeCapableOfViolence: false,
-            colonistRelationChanceFactor: 0,
-            forceAddFreeWarmLayerIfNeeded: false,
-            allowGay: true,
-            allowFood: true,
-            allowAddictions: false,
-            inhabitant: false,
-            certainlyBeenInCryptosleep: false,
-            forceRedressWorldPawnIfFormerColonist: false,
-            worldPawnFactionDoesntMatter: false,
-            biocodeWeaponChance: 0,
-            extraPawnForExtraRelationChance: null,
-            relationWithExtraPawnChanceFactor: 0,
-            validatorPreGear: null,
-            validatorPostGear: null,
-            forcedTraits: null,
-            prohibitedTraits: null,
-            fixedBiologicalAge: race.GetReasonableMercenaryAge()
-        );
+        return BaseRequest(race, FindFC.EmpireFaction, fixedBiologicalAge: race.GetReasonableMercenaryAge());
     }
 
     /// <summary>
@@ -183,33 +131,7 @@ public static class FCPawnGenerator
     /// </summary>
     public static PawnGenerationRequest MechRequest(PawnKindDef mechKind)
     {
-        return new PawnGenerationRequest(
-            kind: mechKind,
-            faction: FindFC.EmpireFaction,
-            context: PawnGenerationContext.NonPlayer,
-            tile: -1,
-            forceGenerateNewPawn: false,
-            allowDead: false,
-            allowDowned: false,
-            canGeneratePawnRelations: false,
-            mustBeCapableOfViolence: false,
-            colonistRelationChanceFactor: 0,
-            forceAddFreeWarmLayerIfNeeded: false,
-            allowGay: true,
-            allowFood: true,
-            allowAddictions: false,
-            inhabitant: false,
-            certainlyBeenInCryptosleep: false,
-            forceRedressWorldPawnIfFormerColonist: false,
-            worldPawnFactionDoesntMatter: false,
-            biocodeWeaponChance: 0,
-            extraPawnForExtraRelationChance: null,
-            relationWithExtraPawnChanceFactor: 0,
-            validatorPreGear: null,
-            validatorPostGear: null,
-            forcedTraits: null,
-            prohibitedTraits: null
-        );
+        return BaseRequest(mechKind, FindFC.EmpireFaction);
     }
 
     /// <summary>
@@ -217,20 +139,32 @@ public static class FCPawnGenerator
     /// </summary>
     public static PawnGenerationRequest SimpleDeliveryRequest()
     {
+        return BaseRequest(GetDefaultFighter(), FindFC.EmpireFaction, mustBeViolent: true);
+    }
+
+    /// <summary>
+    /// The request every Empire-generated pawn starts from: a fresh-or-world pawn with no family
+    /// relations and no addictions. Callers vary only the parameters exposed here.
+    /// </summary>
+    internal static PawnGenerationRequest BaseRequest(PawnKindDef kind, Faction faction,
+        bool mustBeViolent = false, bool allowGay = true, bool allowFood = true,
+        XenotypeDef forcedXenotype = null, CustomXenotype forcedCustomXenotype = null,
+        float? fixedBiologicalAge = null, float? fixedChronologicalAge = null, Gender? fixedGender = null)
+    {
         return new PawnGenerationRequest(
-            kind: GetDefaultFighter(),
-            faction: FindFC.EmpireFaction,
+            kind: kind,
+            faction: faction,
             context: PawnGenerationContext.NonPlayer,
             tile: -1,
             forceGenerateNewPawn: false,
             allowDead: false,
             allowDowned: false,
             canGeneratePawnRelations: false,
-            mustBeCapableOfViolence: true,
+            mustBeCapableOfViolence: mustBeViolent,
             colonistRelationChanceFactor: 0,
             forceAddFreeWarmLayerIfNeeded: false,
-            allowGay: true,
-            allowFood: true,
+            allowGay: allowGay,
+            allowFood: allowFood,
             allowAddictions: false,
             inhabitant: false,
             certainlyBeenInCryptosleep: false,
@@ -242,7 +176,12 @@ public static class FCPawnGenerator
             validatorPreGear: null,
             validatorPostGear: null,
             forcedTraits: null,
-            prohibitedTraits: null
+            prohibitedTraits: null,
+            fixedBiologicalAge: fixedBiologicalAge,
+            fixedChronologicalAge: fixedChronologicalAge,
+            fixedGender: fixedGender,
+            forcedXenotype: forcedXenotype,
+            forcedCustomXenotype: forcedCustomXenotype
         );
     }
 }

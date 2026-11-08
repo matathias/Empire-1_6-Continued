@@ -241,25 +241,11 @@ public static class FCEventMaker
 
     public static FCEvent MakeRandomEvent(FCEventDef def, List<WorldSettlementFC> SettlementTraitLocations)
     {
-        if (def is null) return null;
+        FCEvent tempEvent = MakeEvent(def);
+        if (tempEvent is null) return null;
+        tempEvent.settlementTraitLocations = [];
 
         FactionFC worldcomp = FindFC.FactionComp;
-
-        int now = Find.TickManager.TicksGame;
-        int duration = def.timeTillTrigger;
-        FCEvent tempEvent = new(true)
-        {
-            def = def,
-            tickStarted = now,
-            settlementTraitLocations = []
-        };
-        if (def.HasVariableDuration)
-        {
-            duration = Rand.Range(def.timeTillTrigger, def.timeTillTriggerMax);
-            tempEvent.timeMinTrigger = now + def.timeTillTrigger;
-            tempEvent.timeMaxTrigger = now + def.timeTillTriggerMax;
-        }
-        tempEvent.timeTillTrigger = now + duration;
 
         try
         {
@@ -271,39 +257,11 @@ public static class FCEventMaker
             else if (tempEvent.def.targetAllSettlements)
             {
                 // Deterministically target every qualifying settlement
-                HashSet<WorldSettlementFC> excludedSettlements = [];
-                foreach (FCEvent activeEvt in worldcomp.Events)
-                {
-                    if (activeEvt.def is null) continue;
-                    bool isSameDef = activeEvt.def == def;
-                    bool isIncompatible = false;
-                    if (!isSameDef)
-                    {
-                        foreach (FCEventDef inEvt in activeEvt.def.incompatibleEvents)
-                        {
-                            if (inEvt == def) { isIncompatible = true; break; }
-                        }
-                    }
-                    if (isSameDef || isIncompatible)
-                    {
-                        foreach (WorldSettlementFC s in activeEvt.settlementTraitLocations)
-                        {
-                            if (s is not null) excludedSettlements.Add(s);
-                        }
-                    }
-                }
-
+                HashSet<WorldSettlementFC> excludedSettlements = BuildExcludedSettlements(worldcomp, def);
                 foreach (WorldSettlementFC settlement in worldcomp.settlements)
                 {
                     if (excludedSettlements.Contains(settlement)) continue;
-                    if (!tempEvent.def.BiomeAllowed(settlement.biome)) continue;
-                    if (!tempEvent.def.SettlementTypeAllowed(settlement.settlementDef)) continue;
-                    if (tempEvent.def.requiredResource is not null)
-                    {
-                        ResourceFC res = settlement.GetResource(tempEvent.def.requiredResource);
-                        // A settlement without the resource (biome or tech excluded it) doesn't qualify
-                        if (res is null || res.InstantaneousProduction <= 0) continue;
-                    }
+                    if (!SettlementQualifies(def, settlement)) continue;
                     tempEvent.settlementTraitLocations.Add(settlement);
                 }
 
@@ -329,43 +287,19 @@ public static class FCEventMaker
                 List<WorldSettlementFC> tmp = [];
 
                 // Exclude settlements already affected by the same or an incompatible event
-                HashSet<WorldSettlementFC> excludedSettlements = [];
-                foreach (FCEvent activeEvt in worldcomp.Events)
-                {
-                    if (activeEvt.def is null) continue;
-                    bool isSameDef = activeEvt.def == def;
-                    bool isIncompatible = false;
-                    if (!isSameDef)
-                    {
-                        foreach (FCEventDef inEvt in activeEvt.def.incompatibleEvents)
-                        {
-                            if (inEvt == def) { isIncompatible = true; break; }
-                        }
-                    }
-                    if (isSameDef || isIncompatible)
-                    {
-                        foreach (WorldSettlementFC s in activeEvt.settlementTraitLocations)
-                        {
-                            if (s is not null) excludedSettlements.Add(s);
-                        }
-                    }
-                }
+                HashSet<WorldSettlementFC> excludedSettlements = BuildExcludedSettlements(worldcomp, def);
 
                 foreach (WorldSettlementFC settlement in worldcomp.settlements.InRandomOrder())
                 {
                     if (excludedSettlements.Contains(settlement)) continue;
-                    if (!tempEvent.def.BiomeAllowed(settlement.biome)) continue;
-                    if (!tempEvent.def.SettlementTypeAllowed(settlement.settlementDef)) continue;
-                    if (tempEvent.def.requiredResource is not null)
+                    if (!SettlementQualifies(def, settlement)) continue;
+                    if (def.requiredResource is not null)
                     {
-                        ResourceFC res = settlement.GetResource(tempEvent.def.requiredResource);
-                        if (res is not null && res.InstantaneousProduction > 0)
+                        // Settlements that produce more of a resource should have a higher weight
+                        double production = settlement.GetResource(def.requiredResource).InstantaneousProduction;
+                        for (int i = 0; i < production; i++)
                         {
-                            // Settlements that produce more of a resource should have a higher weight
-                            for (int i = 0; i < Math.Max(0, res.InstantaneousProduction); i++)
-                            {
-                                tmp.Add(settlement);
-                            }
+                            tmp.Add(settlement);
                         }
                     }
                     else
@@ -437,6 +371,42 @@ public static class FCEventMaker
         return tempEvent;
     }
 
+
+    /// <summary>
+    /// Settlements already affected by an active event of the same def, or by one that lists
+    /// <paramref name="def"/> as incompatible. A new event of that def must not target them.
+    /// </summary>
+    private static HashSet<WorldSettlementFC> BuildExcludedSettlements(FactionFC faction, FCEventDef def)
+    {
+        HashSet<WorldSettlementFC> excluded = [];
+        foreach (FCEvent activeEvt in faction.Events)
+        {
+            if (activeEvt.def is null) continue;
+            if (activeEvt.def != def && !activeEvt.def.incompatibleEvents.Contains(def)) continue;
+            foreach (WorldSettlementFC s in activeEvt.settlementTraitLocations)
+            {
+                if (s is not null) excluded.Add(s);
+            }
+        }
+        return excluded;
+    }
+
+    /// <summary>
+    /// Whether a settlement passes the def's biome, settlement-type and required-resource tests.
+    /// A settlement without the required resource (biome or tech excluded it), or producing none
+    /// of it, does not qualify.
+    /// </summary>
+    private static bool SettlementQualifies(FCEventDef def, WorldSettlementFC settlement)
+    {
+        if (!def.BiomeAllowed(settlement.biome)) return false;
+        if (!def.SettlementTypeAllowed(settlement.settlementDef)) return false;
+        if (def.requiredResource is not null)
+        {
+            ResourceFC res = settlement.GetResource(def.requiredResource);
+            if (res is null || res.InstantaneousProduction <= 0) return false;
+        }
+        return true;
+    }
 
     private static WorldSettlementFC SelectByProximity(
         List<WorldSettlementFC> candidates, WorldSettlementFC anchor, float falloff)
@@ -626,7 +596,7 @@ public static class FCEventMaker
                                         evt.let = LetterMaker.MakeLetter("FCGoodsReceived".Translate(), str, LetterDefOf.PositiveEvent);
                                         if (list.Count > 0)
                                         {
-                                            if (!evt.source.IsValidTile())
+                                            if (!evt.source.Valid)
                                             {
                                                 if (evt.settlementTraitLocations.Any())
                                                 {

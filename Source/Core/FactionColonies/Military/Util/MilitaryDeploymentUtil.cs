@@ -107,13 +107,7 @@ public static class MilitaryDeploymentUtil
 
         // Mounts (Giddy Up 2): map each mounted merc to its mount animal so the deploy lord can mount
         // them once they spawn. Only mount-typed sub-pawns; companion animals deploy and fight on foot.
-        Dictionary<Pawn, Pawn> mounts = [];
-        foreach (Mercenary sub in squad.AllSubPawns())
-        {
-            if (sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
-            if (sub.handler?.pawn is not null && !mounts.ContainsKey(sub.handler.pawn))
-                mounts.Add(sub.handler.pawn, sub.pawn);
-        }
+        Dictionary<Pawn, Pawn> mounts = squad.BuildMountMap();
 
         LordMaker.MakeNewLord(FindFC.EmpireFaction, new LordJob_DeployMilitary(dropPosition, squad, mounts), currentMap, equippedPawns);
     }

@@ -20,7 +20,6 @@ public static class ImplantListWidget
 
     private const float headerHeight = 25f;
     private const float rowHeight = 28f;
-    private const float removeButtonSize = 20f;
     private const float IconSize = 24f;
 
     public static void Draw(Rect rect, MilUnitFC displayUnit, ref Vector2 scrollPos, Options opts)
@@ -72,10 +71,8 @@ public static class ImplantListWidget
             Rect removeRect = Rect.zero;
             if (opts.canEdit)
             {
-                removeRect = new Rect(row.xMax - removeButtonSize - 2f, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
-                Text.Font = GameFont.Small;
-                Text.Anchor = TextAnchor.MiddleCenter;
-                if (UIUtil.ClampedButtonText(removeRect, "X"))
+                removeRect = LoadoutListRowUtil.RemoveButtonRect(row, row.xMax - 2f);
+                if (LoadoutListRowUtil.RemoveButton(removeRect))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
                     if (target is not null) target.RemoveImplant(index);
@@ -99,11 +96,7 @@ public static class ImplantListWidget
                 ? hediffLabel + " (" + item.bodyPart.label + ")"
                 : hediffLabel;
             Rect labelRect = new(infoRect.xMax + 6f, row.y, costRect.x - infoRect.xMax - 10f, rowHeight);
-            Text.Font = GameFont.Tiny;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);
-            UIUtil.ClampedLabel(labelRect, shownLabel);
-            if (shownLabel != label) TooltipHandler.TipRegion(labelRect, label);
+            LoadoutListRowUtil.TruncatedLabel(labelRect, label);
         }
 
         ScrollUtil.EndScrollView();

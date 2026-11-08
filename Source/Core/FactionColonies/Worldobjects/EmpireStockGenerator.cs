@@ -36,10 +36,6 @@ public class EmpireStockGenerator : StockGenerator
     public int maxAnimalsPerKind = 5;
     public int maxAnimalCount = 20;
 
-    /// <summary>Randomness range for per-item budget (multiplier). Prevents uniform stack sizes.</summary>
-    private const float BudgetRandomMin = 0.5f;
-    private const float BudgetRandomMax = 1.5f;
-
     public override IEnumerable<Thing> GenerateThings(PlanetTile forTile, Faction faction = null)
     {
         if (settlement is null)
@@ -89,10 +85,7 @@ public class EmpireStockGenerator : StockGenerator
 
             // Filter & shuffle the pool first so we know how many tradeable candidates exist
             // before deciding variety.
-            List<ThingDef> candidates = thingDefs
-                .Where(td => td.tradeability.TraderCanSell())
-                .InRandomOrder()
-                .ToList();
+            List<ThingDef> candidates = EmpireStockUtil.SellableCandidates(thingDefs);
 
             if (candidates.Count == 0)
                 continue;
@@ -109,23 +102,13 @@ public class EmpireStockGenerator : StockGenerator
             foreach (ThingDef td in candidates)
             {
                 // Randomize per-item budget so stack sizes feel organic
-                float randomizedBudget = perItemBudget * Rand.Range(BudgetRandomMin, BudgetRandomMax);
-                float marketValue = td.BaseMarketValue;
-                if (marketValue <= 0f)
-                    marketValue = 1f;
-
-                int stackCount = Mathf.Max(1, Mathf.RoundToInt(randomizedBudget / marketValue));
+                int stackCount = Mathf.Max(1, EmpireStockUtil.RandomizedUnits(td, perItemBudget));
 
                 if (td.race is not null && td.race.Animal)
                 {
                     int animals = Mathf.Min(stackCount, maxAnimalsPerKind, maxAnimalCount - animalsMade);
-                    for (int i = 0; i < animals; i++)
+                    foreach (Pawn pawn in EmpireStockUtil.GenerateStockPawns(td.race.AnyPawnKind, animals))
                     {
-                        PawnKindDef pawnKind = td.race.AnyPawnKind;
-                        if (pawnKind is null) continue;
-                        PawnGenerationRequest request = new(pawnKind, null, PawnGenerationContext.NonPlayer);
-                        Pawn pawn = PawnGenerator.GeneratePawn(request);
-                        if (pawn is null) continue;
                         animalsMade++;
                         yield return pawn;
                     }

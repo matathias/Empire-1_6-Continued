@@ -533,9 +533,7 @@ public class MilitaryOperationManager : IExposable
         for (int i = 0; i < ops.Count; i++)
         {
             MilitaryOperation op = ops[i];
-            if (op is null) continue;
-            if (op.phase == MilitaryOperationPhase.CooldownPending) continue;
-            if (op.phase == MilitaryOperationPhase.Resolved) continue;
+            if (op is null || !op.IsLive) continue;
             return true;
         }
         return false;
@@ -587,9 +585,7 @@ public class MilitaryOperationManager : IExposable
         for (int i = 0; i < ops.Count; i++)
         {
             MilitaryOperation op = ops[i];
-            if (op.targetObject != settlement) continue;
-            if (op.phase == MilitaryOperationPhase.CooldownPending) continue;
-            if (op.phase == MilitaryOperationPhase.Resolved) continue;
+            if (op.targetObject != settlement || !op.IsLive) continue;
             return op;
         }
         return null;
@@ -607,9 +603,7 @@ public class MilitaryOperationManager : IExposable
         for (int i = 0; i < active.Count; i++)
         {
             MilitaryOperation op = active[i];
-            if (op is null || op.targetObject != target) continue;
-            if (op.phase == MilitaryOperationPhase.CooldownPending) continue;
-            if (op.phase == MilitaryOperationPhase.Resolved) continue;
+            if (op is null || op.targetObject != target || !op.IsLive) continue;
             return true;
         }
         return false;

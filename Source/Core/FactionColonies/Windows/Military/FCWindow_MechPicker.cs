@@ -52,7 +52,7 @@ public class FCWindow_MechPicker : FCWindow_SearchablePicker<PawnKindDef>
     protected override void DrawRow(Rect row, PawnKindDef mech)
     {
         float bandwidth = mech.race.GetStatValueAbstract(StatDefOf.BandwidthCost);
-        double cost = Math.Floor(mech.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier);
+        double cost = MilUnitFC.MechUnitCost(mech);
         DrawThingRow(row, mech.race, mech.LabelCap, "$" + cost.ToString("F0"), "BW " + bandwidth.ToString("0.#"));
     }
 

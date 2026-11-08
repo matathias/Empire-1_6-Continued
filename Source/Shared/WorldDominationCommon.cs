@@ -1,13 +1,25 @@
 using HarmonyLib;
 using System.Reflection;
+#if WDEXP
+using TSA_WorldDomination;
+#else
 using TSA_WorldDomination.WorldActions;
 using WorldDomination;
+#endif
 
+#if WDEXP
+namespace FactionColonies.WDExp;
+#else
 namespace FactionColonies.WD;
+#endif
 
 /// <summary>
-/// Compatibility patches for "World Domination" (TSA.WorldDomination).
-/// This assembly is only loaded when WD is active (via LoadFolders.xml).
+/// Compatibility patches shared by "World Domination" (TSA.WorldDomination) and
+/// "World Domination - Experimental" (TSA.WorldDominationExperimental).
+/// This file is compiled into both Empire.WD and Empire.WDExp; the two mods ship
+/// assemblies with the same name, so each build references its own DLL. Code that
+/// differs between them sits behind #if WDEXP (defined by Empire.WDExp.csproj).
+/// Each assembly is only loaded when its mod is active (via LoadFolders.xml).
 ///
 /// Fixes:
 /// 1. Excludes PColony from WD's daily action queue (prevents automated raids/growth/expansion)
@@ -15,6 +27,7 @@ namespace FactionColonies.WD;
 /// 3. Scales enemy force in Empire battles based on WD settlement strength
 /// 4. Syncs PColony diplomacy after WD allegiance changes
 /// 5. Excludes PColony from WD's leader/underdog/balance mechanics
+/// The Experimental build adds its own patches in Patch-WDExp/WorldDominationCompat.cs.
 /// </summary>
 [StaticConstructorOnStartup]
 public static class WorldDominationCompatInit
@@ -26,8 +39,13 @@ public static class WorldDominationCompatInit
         // Registered before patching so a failing patch can't skip it. Persistent, because
         // EmpireRegistry.ClearAll runs on every Game.ClearCaches (each load and new game).
         EmpireRegistry.RegisterPersistent(_strengthModifier);
+#if WDEXP
+        new Harmony("com.Matathias.Empire.WDExp").PatchEachClass(Assembly.GetExecutingAssembly());
+        LogUtil.MessageForce("World Domination (Experimental) compatibility module loaded.");
+#else
         new Harmony("com.Matathias.Empire.WD").PatchEachClass(Assembly.GetExecutingAssembly());
         LogUtil.MessageForce("World Domination compatibility module loaded.");
+#endif
     }
 }
 
@@ -68,25 +86,37 @@ public static class Patch_IsSettlementProtected
 }
 
 // ================================================================
-// Patch 3: Scale enemy settlement power based on WD CompViralSpread.
+// Patch 3: Scale enemy settlement power based on WD's CompViralSpread
+// (its strength in WD, its total local defense power in WDExp).
 // Implements ISettlementPowerModifier so the override is baked into
-// the cached EnemyPower entry at recompute time — squad-attack window
+// the cached EnemyPower entry at recompute time: squad-attack window
 // and actual battle agree without per-engagement work.
 // ================================================================
 public class WDStrengthSettlementModifier : SettlementPowerModifierBase
 {
     public const double SCALE_FACTOR = 100.0;
 
+#if WDEXP
+    protected override string LogLabel => "WD defense power";
+#else
     protected override string LogLabel => "WD strength";
+#endif
 
     protected override bool TryGetLevel(Settlement settlement, out double level)
     {
         level = 0;
         CompViralSpread comp = settlement.GetComponent<CompViralSpread>();
-        if (comp is null || comp.strength <= 0f) return false;
+        if (comp is null) return false;
+
+#if WDEXP
+        float strength = comp.GetTotalLocalDefensePower();
+#else
+        float strength = comp.strength;
+#endif
+        if (strength <= 0f) return false;
 
         // Level 1 is the floor of Empire's force scale (battles never roll below it).
-        level = Math.Max(1.0, comp.strength / SCALE_FACTOR);
+        level = Math.Max(1.0, strength / SCALE_FACTOR);
         return true;
     }
 }
@@ -127,8 +157,14 @@ public static class Patch_FormAntiLeaderCoalition
 // PColony could be selected as world leader (triggering handicap)
 // or underdog (triggering buff), both of which are inappropriate
 // for a player-controlled empire.
+// WDExp moved the method to WorldStatsUtils and also tracks
+// per-tier strength totals, which must be reduced as well.
 // ================================================================
+#if WDEXP
+[HarmonyPatch(typeof(WorldStatsUtils), "GetWorldPowerStats")]
+#else
 [HarmonyPatch(typeof(WorldActions_Utils), "GetWorldPowerStats")]
+#endif
 public static class Patch_GetWorldPowerStats
 {
     private static void Postfix(SpreadLogEntry.GlobalWorldStats __result)
@@ -151,6 +187,12 @@ public static class Patch_GetWorldPowerStats
         if (removed is not null)
         {
             __result.GlobalTotalStr -= removed.TotalStr;
+#if WDEXP
+            for (int t = 1; t <= 4; t++)
+            {
+                __result.GlobalTierStr[t] -= removed.strength[t];
+            }
+#endif
         }
     }
 }

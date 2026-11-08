@@ -42,7 +42,7 @@ public class FCWindow_MountPicker : FCWindow_SearchablePicker<PawnKindDef>
 
     protected override void DrawRow(Rect row, PawnKindDef animal)
     {
-        double cost = Math.Floor(animal.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
+        double cost = MilUnitFC.AnimalUnitCost(animal);
         DrawThingRow(row, animal.race, animal.LabelCap, "$" + cost.ToString("F0"));
     }
 

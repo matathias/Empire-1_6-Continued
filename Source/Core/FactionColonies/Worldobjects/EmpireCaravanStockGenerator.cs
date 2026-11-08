@@ -58,10 +58,6 @@ public class EmpireCaravanStockGenerator : StockGenerator
     /// <see cref="CaravanStockMath.SizeFactor"/>). Override per caravan kind in XML.</summary>
     public int referenceSettlementCount = 3;
 
-    /// <summary>Randomness range for per-item budget (multiplier).</summary>
-    private const float BudgetRandomMin = 0.5f;
-    private const float BudgetRandomMax = 1.5f;
-
     public override IEnumerable<Thing> GenerateThings(PlanetTile forTile, Faction faction = null)
     {
         FactionFC factionComp = FindFC.FactionComp;
@@ -118,10 +114,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
         }
 
         // Filter to tradeable defs
-        List<ThingDef> candidates = allThingDefs
-            .Where(td => td.tradeability.TraderCanSell())
-            .InRandomOrder()
-            .ToList();
+        List<ThingDef> candidates = EmpireStockUtil.SellableCandidates(allThingDefs);
 
         if (candidates.Count == 0)
             yield break;
@@ -168,12 +161,7 @@ public class EmpireCaravanStockGenerator : StockGenerator
 
         foreach (ThingDef td in pawnCandidates)
         {
-            float randomizedBudget = perItemBudget * Rand.Range(BudgetRandomMin, BudgetRandomMax);
-            float marketValue = td.BaseMarketValue;
-            if (marketValue <= 0f)
-                marketValue = 1f;
-
-            int desiredCount = Mathf.Max(1, Mathf.RoundToInt(randomizedBudget / marketValue));
+            int desiredCount = Mathf.Max(1, EmpireStockUtil.RandomizedUnits(td, perItemBudget));
             desiredCount = Mathf.Min(desiredCount, perTypeStackCap);   // keep within this type's share of the caravan
             int remainingCap = Mathf.Max(0, maxPawnCount - runningPawnTotal);
             int allowedCount = Mathf.Min(desiredCount, remainingCap);
@@ -193,18 +181,14 @@ public class EmpireCaravanStockGenerator : StockGenerator
                 }
             }
 
-            divertedBudget += (desiredCount - allowedCount) * marketValue;
+            divertedBudget += (desiredCount - allowedCount) * EmpireStockUtil.UnitValue(td);
         }
 
         // Emit planned pawns
         foreach (KeyValuePair<PawnKindDef, int> entry in plannedPawns)
         {
-            for (int i = 0; i < entry.Value; i++)
-            {
-                PawnGenerationRequest request = new(entry.Key, null, PawnGenerationContext.NonPlayer);
-                Pawn pawn = PawnGenerator.GeneratePawn(request);
-                if (pawn is not null) yield return pawn;
-            }
+            foreach (Pawn pawn in EmpireStockUtil.GenerateStockPawns(entry.Key, entry.Value))
+                yield return pawn;
         }
 
         /* Emit non-pawn items. Diverted budget (from capped pawns) is split evenly
@@ -214,15 +198,10 @@ public class EmpireCaravanStockGenerator : StockGenerator
 
         foreach (ThingDef td in itemCandidates)
         {
-            float randomizedBudget = perItemBudget * Rand.Range(BudgetRandomMin, BudgetRandomMax) + bonusPerItem;
-            float marketValue = td.BaseMarketValue;
-            if (marketValue <= 0f)
-                marketValue = 1f;
-
             /* Clamp the unit count to this type's stack share. Multiplying by stackLimit lets
                stackables (food, ore) still carry near-full stacks while non-stacking goods (stackLimit 1)
                are held to ~perTypeStackCap units. */
-            int desiredUnits = Mathf.RoundToInt(randomizedBudget / marketValue);
+            int desiredUnits = EmpireStockUtil.RandomizedUnits(td, perItemBudget, bonusPerItem);
             int stackCount = CaravanStockMath.ClampItemUnits(desiredUnits, perTypeStackCap, td.stackLimit);
 
             foreach (Thing thing in StockGeneratorUtility.TryMakeForStock(td, stackCount, faction))

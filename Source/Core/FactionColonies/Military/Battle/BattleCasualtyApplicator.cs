@@ -78,7 +78,7 @@ public static class BattleCasualtyApplicator
                 double victimDeathChance = deathChance;
                 if (faction is not null)
                 {
-                    double unitMult = faction.GetUnitStatValue(FCStatDefOf.mercenaryDeathChanceMultiplier, FindMercForPawn(squad, victim));
+                    double unitMult = faction.GetUnitStatValue(FCStatDefOf.mercenaryDeathChanceMultiplier, squad?.FindMercOrSubPawn(victim));
                     victimDeathChance *= (unitMult > 0 ? unitMult : 1.0);
                     if (victimDeathChance < 0) victimDeathChance = 0;
                     if (victimDeathChance > 1) victimDeathChance = 1;
@@ -90,18 +90,6 @@ public static class BattleCasualtyApplicator
                 LogUtil.Error($"BattleCasualtyApplicator: failed to apply casualty to {victim?.LabelShortCap}: {e}");
             }
         }
-    }
-
-    /// <summary>Finds the Mercenary owning <paramref name="pawn"/> within the squad (mercs or animals), or null.</summary>
-    private static Mercenary FindMercForPawn(MercenarySquadFC squad, Pawn pawn)
-    {
-        if (squad?.mercenaries is not null)
-            foreach (Mercenary m in squad.mercenaries)
-                if (m?.pawn == pawn) return m;
-        if (squad is not null)
-            foreach (Mercenary m in squad.AllSubPawns())
-                if (m?.pawn == pawn) return m;
-        return null;
     }
 
     /// <summary>

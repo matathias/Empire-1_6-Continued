@@ -18,7 +18,6 @@ public static class InventoryListWidget
 
     private const float headerHeight = 25f;
     private const float rowHeight = 28f;
-    private const float removeButtonSize = 20f;
     private const float IconSize = 24f;
 
     public static void Draw(Rect rect, MilUnitFC displayUnit, ref Vector2 scrollPos, Options opts)
@@ -90,10 +89,8 @@ public static class InventoryListWidget
             Rect removeRect = Rect.zero;
             if (opts.canEdit)
             {
-                removeRect = new Rect(row.xMax - removeButtonSize - 2f, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
-                Text.Font = GameFont.Small;
-                Text.Anchor = TextAnchor.MiddleCenter;
-                if (UIUtil.ClampedButtonText(removeRect, "X"))
+                removeRect = LoadoutListRowUtil.RemoveButtonRect(row, row.xMax - 2f);
+                if (LoadoutListRowUtil.RemoveButton(removeRect))
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
                     if (target is not null) target.RemoveInventory(index);
@@ -157,17 +154,13 @@ public static class InventoryListWidget
         UIUtil.ClampedLabel(valueRect, massVal.ToString("F1") + " kg  $" + item.MarketValue.ToString("F0"));
 
         Rect labelRect = new(infoRect.xMax + 4f, row.y, valueRect.x - infoRect.xMax - 8f, row.height);
-        Text.Font = GameFont.Tiny;
-        Text.Anchor = TextAnchor.MiddleLeft;
         string label = item.stuff is not null
             ? (string)(item.thing.LabelCap + " (" + item.stuff.LabelCap + ")")
             : item.thing.LabelCap.ToString();
         if (item.quality.HasValue)
             label = item.quality.Value.GetLabel().CapitalizeFirst() + " " + label;
         if (!string.IsNullOrEmpty(suffix)) label = label + "  " + suffix;
-        string shown = Text.ClampTextWithEllipsis(labelRect, label);
-        UIUtil.ClampedLabel(labelRect, shown);
-        if (shown != label) TooltipHandler.TipRegion(labelRect, label);
+        LoadoutListRowUtil.TruncatedLabel(labelRect, label);
     }
 
     private static void OpenInventoryPicker(MilUnitFC displayUnit, Options opts)

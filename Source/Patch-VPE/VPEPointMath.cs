@@ -99,7 +99,7 @@ public static class VPEPointMath
         return result;
     }
 
-    private static PsycasterPathDef PathOf(string psycastDefName)
+    internal static PsycasterPathDef PathOf(string psycastDefName)
     {
         if (string.IsNullOrEmpty(psycastDefName)) return null;
         AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(psycastDefName);

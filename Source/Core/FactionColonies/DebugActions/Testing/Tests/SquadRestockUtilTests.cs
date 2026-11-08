@@ -101,16 +101,8 @@ public static class SquadRestockUtilTests
     [EmpireTest("SquadRestock")]
     public static void ReconcileAndBill_GodMode_ReturnsZero()
     {
-        bool original = DebugSettings.godMode;
-        DebugSettings.godMode = true;
-        try
-        {
-            TestAssert.AreEqual(0, SquadRestockUtil.ReconcileAndBill(new MercenarySquadFC()));
-        }
-        finally
-        {
-            DebugSettings.godMode = original;
-        }
+        TestUtil.WithOverride(() => DebugSettings.godMode, v => DebugSettings.godMode = v, true, () =>
+            TestAssert.AreEqual(0, SquadRestockUtil.ReconcileAndBill(new MercenarySquadFC())));
     }
 
     // -*- ComputeEquipmentRestock: repair damaged, replace destroyed -*-

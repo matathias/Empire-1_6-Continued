@@ -12,7 +12,7 @@ public static class CraftUtil
             {
                 foreach (ResearchProjectDef research in thing.recipeMaker.researchPrerequisites)
                 {
-                    if (!(Find.ResearchManager.GetProgress(research) >= research.baseCost))
+                    if (!research.IsFinished)
                     {
                         //research is not good
                         canCraft = false;
@@ -22,8 +22,7 @@ public static class CraftUtil
 
             if (thing.recipeMaker.researchPrerequisite is not null)
             {
-                if (!(Find.ResearchManager.GetProgress(thing.recipeMaker.researchPrerequisite) >=
-                      thing.recipeMaker.researchPrerequisite.baseCost))
+                if (!thing.recipeMaker.researchPrerequisite.IsFinished)
                 {
                     //research is not good
                     canCraft = false;

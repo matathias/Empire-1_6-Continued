@@ -198,19 +198,7 @@ public static class DebugUtil
         FactionFC faction = FindFC.FactionComp;
         if (faction is null) return;
 
-        for (int i = 0; i < FindFC.PolicyManager.factionTraits.Count; i++)
-        {
-            if (FindFC.PolicyManager.factionTraits[i]?.behavior is not null)
-            {
-                try { FindFC.PolicyManager.factionTraits[i].behavior.OnRemoved(faction); }
-                catch (Exception e) { LogUtil.Error($"FCPolicyBehavior.OnRemoved error: {e}"); }
-            }
-            FindFC.PolicyManager.factionTraits[i] = new FCPolicy(FCPolicyDefOf.empty);
-        }
-
-        FindFC.PolicyManager.RemoveAllPolicies(FindFC.PolicyManager.policies);
-        FindFC.PolicyManager.RebuildBehaviorCache();
-
+        PolicyTestHelper.ClearAll(faction);
         LogUtil.Message("Cleared faction traits and policies.");
     }
 
@@ -271,19 +259,13 @@ public static class DebugUtil
                 // start immediately. Debug bypasses spawn eligibility (calls StartSituation directly).
                 if (localDef.scope == FCSituationScope.Settlement)
                 {
-                    List<DebugMenuOption> targets = [];
-                    foreach (WorldSettlementFC settlement in FindFC.Settlements)
+                    WithSettlementChoice(localSettlement =>
                     {
-                        WorldSettlementFC localSettlement = settlement;
-                        targets.Add(new DebugMenuOption(localSettlement.Name, DebugMenuOptionMode.Action, delegate
-                        {
-                            FCSituation sit = faction.situationManager.StartSituation(localDef, localSettlement);
-                            LogUtil.MessageForce(sit is not null
-                                ? $"Debug - Started situation '{localDef.defName}' on {localSettlement.Name}."
-                                : $"Debug - Failed to start situation '{localDef.defName}' on {localSettlement.Name}.");
-                        }));
-                    }
-                    Find.WindowStack.Add(new Dialog_DebugOptionListLister(targets));
+                        FCSituation sit = faction.situationManager.StartSituation(localDef, localSettlement);
+                        LogUtil.MessageForce(sit is not null
+                            ? $"Debug - Started situation '{localDef.defName}' on {localSettlement.Name}."
+                            : $"Debug - Failed to start situation '{localDef.defName}' on {localSettlement.Name}.");
+                    });
                 }
                 else
                 {
@@ -378,99 +360,76 @@ public static class DebugUtil
     [EmpireDebugAction("Empire", "Attack Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
     private static void AttackPlayerSettlement()
     {
-        List<DebugMenuOption> list = [];
-        foreach (WorldSettlementFC settlement in FindFC.Settlements)
+        WithAttackChoice("Attack Player Settlement", (settlement, enemyFaction, attackingForce) =>
         {
-            list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
+            if (!MilitaryOperationsUtil.AttackPlayerSettlement(attackingForce, settlement, enemyFaction))
             {
-                Faction enemyFaction = Find.FactionManager.RandomEnemyFaction();
-                if (enemyFaction is null)
-                {
-                    Messages.Message("No enemy faction found.", MessageTypeDefOf.RejectInput);
-                    return;
-                }
-
-                List<DebugMenuOption> levelList = [];
-                for (int level = 1; level <= 10; level++)
-                {
-                    int chosenLevel = level;
-                    levelList.Add(new DebugMenuOption($"Level {chosenLevel}", DebugMenuOptionMode.Action, delegate
-                    {
-                        MilitaryDeploymentUtil.GetTechLevelBaseline(enemyFaction.def.techLevel, out double _, out double efficiency);
-                        MilitaryForce attackingForce = new(chosenLevel, efficiency, null, enemyFaction);
-                        LogUtil.MessageForce($"Debug - Attack Player Settlement - {settlement.Name} (level {chosenLevel}, efficiency {efficiency})");
-                        if (!MilitaryOperationsUtil.AttackPlayerSettlement(attackingForce, settlement, enemyFaction))
-                        {
-                            Messages.Message($"Debug attack on {settlement.Name} failed (no MilitaryComp or MilitaryManager).", MessageTypeDefOf.RejectInput);
-                        }
-                    }));
-                }
-                Find.WindowStack.Add(new Dialog_DebugOptionListLister(levelList));
+                Messages.Message($"Debug attack on {settlement.Name} failed (no MilitaryComp or MilitaryManager).", MessageTypeDefOf.RejectInput);
             }
-            ));
-        }
-
-        Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+        });
     }
 
     [EmpireDebugAction("Empire", "Instant Attack Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
     private static void InstantAttackPlayerSettlement()
     {
-        List<DebugMenuOption> list = [];
-        foreach (WorldSettlementFC settlement in FindFC.Settlements)
+        WithAttackChoice("Instant Attack Player Settlement", (settlement, enemyFaction, attackingForce) =>
         {
-            list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
+            if (settlement.MilitaryComp is null || FindFC.MilitaryManager is null)
             {
-                Faction enemyFaction = Find.FactionManager.RandomEnemyFaction();
-                if (enemyFaction is null)
-                {
-                    Messages.Message("No enemy faction found.", MessageTypeDefOf.RejectInput);
-                    return;
-                }
-
-                List<DebugMenuOption> levelList = [];
-                for (int level = 1; level <= 10; level++)
-                {
-                    int chosenLevel = level;
-                    levelList.Add(new DebugMenuOption($"Level {chosenLevel}", DebugMenuOptionMode.Action, delegate
-                    {
-                        MilitaryDeploymentUtil.GetTechLevelBaseline(enemyFaction.def.techLevel, out double _, out double efficiency);
-                        MilitaryForce attackingForce = new(chosenLevel, efficiency, null, enemyFaction);
-                        LogUtil.MessageForce($"Debug - Instant Attack Player Settlement - {settlement.Name} (level {chosenLevel}, efficiency {efficiency})");
-                        if (settlement.MilitaryComp is null || FindFC.MilitaryManager is null)
-                        {
-                            Messages.Message($"Debug attack on {settlement.Name} failed (no MilitaryComp or MilitaryManager).", MessageTypeDefOf.RejectInput);
-                            return;
-                        }
-
-                        // Call the manager directly so we get the freshly-created op handle. Going via
-                        // MilitaryUtilFC.AttackPlayerSettlement would force a tile-wide event lookup, which
-                        // returns the FIRST settlementBeingAttacked at this tile — that can be an older,
-                        // already-stacked attack rather than the one we just queued.
-                        MilitaryOperation op = FindFC.MilitaryManager.CreateDefensiveOp(settlement, attackingForce, enemyFaction);
-                        if (op is null) return;
-
-                        FCEvent attackEvt = null;
-                        for (int i = op.sourceEvents.Count - 1; i >= 0; i--)
-                        {
-                            if (op.sourceEvents[i]?.def == FCEventDefOf.settlementBeingAttacked)
-                            {
-                                attackEvt = op.sourceEvents[i];
-                                break;
-                            }
-                        }
-                        if (attackEvt is not null)
-                        {
-                            attackEvt.timeTillTrigger = Find.TickManager.TicksGame + 1;
-                        }
-                    }));
-                }
-                Find.WindowStack.Add(new Dialog_DebugOptionListLister(levelList));
+                Messages.Message($"Debug attack on {settlement.Name} failed (no MilitaryComp or MilitaryManager).", MessageTypeDefOf.RejectInput);
+                return;
             }
-            ));
-        }
 
-        Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+            // Call the manager directly so we get the freshly-created op handle. Going via
+            // MilitaryUtilFC.AttackPlayerSettlement would force a tile-wide event lookup, which
+            // returns the FIRST settlementBeingAttacked at this tile: that can be an older,
+            // already-stacked attack rather than the one we just queued.
+            MilitaryOperation op = FindFC.MilitaryManager.CreateDefensiveOp(settlement, attackingForce, enemyFaction);
+            if (op is null) return;
+
+            FCEvent attackEvt = null;
+            for (int i = op.sourceEvents.Count - 1; i >= 0; i--)
+            {
+                if (op.sourceEvents[i]?.def == FCEventDefOf.settlementBeingAttacked)
+                {
+                    attackEvt = op.sourceEvents[i];
+                    break;
+                }
+            }
+            if (attackEvt is not null)
+            {
+                attackEvt.timeTillTrigger = Find.TickManager.TicksGame + 1;
+            }
+        });
+    }
+
+    /* Settlement -> random enemy faction -> level 1-10 menu shared by the attack actions. Builds the
+     * attacking force at the chosen level with the enemy's tech-level efficiency, then hands it on. */
+    private static void WithAttackChoice(string actionLabel, Action<WorldSettlementFC, Faction, MilitaryForce> attack)
+    {
+        WithSettlementChoice(settlement =>
+        {
+            Faction enemyFaction = Find.FactionManager.RandomEnemyFaction();
+            if (enemyFaction is null)
+            {
+                Messages.Message("No enemy faction found.", MessageTypeDefOf.RejectInput);
+                return;
+            }
+
+            List<DebugMenuOption> levelList = [];
+            for (int level = 1; level <= 10; level++)
+            {
+                int chosenLevel = level;
+                levelList.Add(new DebugMenuOption($"Level {chosenLevel}", DebugMenuOptionMode.Action, delegate
+                {
+                    MilitaryDeploymentUtil.GetTechLevelBaseline(enemyFaction.def.techLevel, out double _, out double efficiency);
+                    MilitaryForce attackingForce = new(chosenLevel, efficiency, null, enemyFaction);
+                    LogUtil.MessageForce($"Debug - {actionLabel} - {settlement.Name} (level {chosenLevel}, efficiency {efficiency})");
+                    attack(settlement, enemyFaction, attackingForce);
+                }));
+            }
+            Find.WindowStack.Add(new Dialog_DebugOptionListLister(levelList));
+        });
     }
 
     [EmpireDebugAction("Empire", "Force Attack + Event Same Tick", allowedGameStates = AllowedGameStates.Playing)]
@@ -553,25 +512,18 @@ public static class DebugUtil
 
     private static void UpgradePlayerSettlement(int times = 1)
     {
-        List<DebugMenuOption> list = [];
-        foreach (WorldSettlementFC settlement in FindFC.Settlements)
+        WithSettlementChoice(settlement =>
         {
-            list.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, delegate
+            if (times > 0)
             {
-                if (times > 0)
-                {
-                    LogUtil.MessageForce("Debug - Upgrade Player Settlement x" + times + "- " + settlement.Name);
-                }
-                else
-                {
-                    LogUtil.MessageForce("Debug - Downgrade Player Settlement x" + times + "- " + settlement.Name);
-                }
-                settlement.UpgradeSettlement(times);
+                LogUtil.MessageForce($"Debug - Upgrade Player Settlement x{times}- {settlement.Name}");
             }
-            ));
-        }
-
-        Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+            else
+            {
+                LogUtil.MessageForce($"Debug - Downgrade Player Settlement x{times}- {settlement.Name}");
+            }
+            settlement.UpgradeSettlement(times);
+        });
     }
 
     [EmpireDebugAction("Empire", "Flag Road Queue Update", allowedGameStates = AllowedGameStates.Playing)]
@@ -886,36 +838,11 @@ public static class DebugUtil
     [EmpireDebugAction("Empire", "Set Settlement Stat", allowedGameStates = AllowedGameStates.Playing)]
     private static void SetSettlementStat()
     {
-        WithSettlementChoice(settlement =>
+        WithSettlementChoice(settlement => WithStatValueChoice((stat, value) =>
         {
-            List<DebugMenuOption> stats = [];
-            string[] statNames = ["happiness", "loyalty", "unrest", "prosperity"];
-            foreach (string stat in statNames)
-            {
-                string localStat = stat;
-                stats.Add(new DebugMenuOption(localStat, DebugMenuOptionMode.Action, () =>
-                {
-                    List<DebugMenuOption> values = [];
-                    foreach (int val in new[] { 0, 25, 50, 75, 100 })
-                    {
-                        int localVal = val;
-                        values.Add(new DebugMenuOption(localVal.ToString(), DebugMenuOptionMode.Action, () =>
-                        {
-                            switch (localStat)
-                            {
-                                case "happiness": settlement.happiness = localVal; break;
-                                case "loyalty": settlement.loyalty = localVal; break;
-                                case "unrest": settlement.unrest = localVal; break;
-                                case "prosperity": settlement.prosperity = localVal; break;
-                            }
-                            LogUtil.MessageForce($"Debug - Set {settlement.Name} {localStat} = {localVal}");
-                        }));
-                    }
-                    Find.WindowStack.Add(new Dialog_DebugOptionListLister(values));
-                }));
-            }
-            Find.WindowStack.Add(new Dialog_DebugOptionListLister(stats));
-        });
+            SetSettlementStatValue(settlement, stat, value);
+            LogUtil.MessageForce($"Debug - Set {settlement.Name} {stat} = {value}");
+        }));
     }
 
     [EmpireDebugAction("Empire", "Set Settlement Stat (All Settlements)", allowedGameStates = AllowedGameStates.Playing)]
@@ -927,9 +854,25 @@ public static class DebugUtil
             return;
         }
 
+        WithStatValueChoice((stat, value) =>
+        {
+            int count = 0;
+            foreach (WorldSettlementFC settlement in FindFC.Settlements)
+            {
+                SetSettlementStatValue(settlement, stat, value);
+                count++;
+            }
+            LogUtil.MessageForce($"Debug - Set {stat} = {value} for {count} settlement(s)");
+        });
+    }
+
+    private static readonly string[] DebugSettlementStatNames = ["happiness", "loyalty", "unrest", "prosperity"];
+
+    /* Stat menu, then value menu (0-100 in steps of 25); the choice is passed to apply. */
+    private static void WithStatValueChoice(Action<string, int> apply)
+    {
         List<DebugMenuOption> stats = [];
-        string[] statNames = ["happiness", "loyalty", "unrest", "prosperity"];
-        foreach (string stat in statNames)
+        foreach (string stat in DebugSettlementStatNames)
         {
             string localStat = stat;
             stats.Add(new DebugMenuOption(localStat, DebugMenuOptionMode.Action, () =>
@@ -938,27 +881,23 @@ public static class DebugUtil
                 foreach (int val in new[] { 0, 25, 50, 75, 100 })
                 {
                     int localVal = val;
-                    values.Add(new DebugMenuOption(localVal.ToString(), DebugMenuOptionMode.Action, () =>
-                    {
-                        int count = 0;
-                        foreach (WorldSettlementFC settlement in FindFC.Settlements)
-                        {
-                            switch (localStat)
-                            {
-                                case "happiness": settlement.happiness = localVal; break;
-                                case "loyalty": settlement.loyalty = localVal; break;
-                                case "unrest": settlement.unrest = localVal; break;
-                                case "prosperity": settlement.prosperity = localVal; break;
-                            }
-                            count++;
-                        }
-                        LogUtil.MessageForce($"Debug - Set {localStat} = {localVal} for {count} settlement(s)");
-                    }));
+                    values.Add(new DebugMenuOption(localVal.ToString(), DebugMenuOptionMode.Action, () => apply(localStat, localVal)));
                 }
                 Find.WindowStack.Add(new Dialog_DebugOptionListLister(values));
             }));
         }
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(stats));
+    }
+
+    private static void SetSettlementStatValue(WorldSettlementFC settlement, string stat, int value)
+    {
+        switch (stat)
+        {
+            case "happiness": settlement.happiness = value; break;
+            case "loyalty": settlement.loyalty = value; break;
+            case "unrest": settlement.unrest = value; break;
+            case "prosperity": settlement.prosperity = value; break;
+        }
     }
 
     [EmpireDebugAction("Empire", "Create Settlement (Instant)", allowedGameStates = AllowedGameStates.PlayingOnWorld)]
@@ -1046,9 +985,7 @@ public static class DebugUtil
 
         for (int attempts = 0; attempts < maxAttempts && created < 10; attempts++)
         {
-            PlanetTile tile = TileFinder.RandomSettlementTileFor(Find.WorldGrid.Surface, FindFC.EmpireFaction);
-            if (tile == -1) continue;
-            if (!WorldTileChecker.IsValidTileForNewSettlement(tile, def)) continue;
+            if (!DestructiveTestUtil.TryFindSettleableTile(def, out PlanetTile tile)) continue;
 
             ColonyUtil.CreatePlayerColonySettlement(tile, def);
             created++;
@@ -1082,9 +1019,7 @@ public static class DebugUtil
             PlanetTile fallbackTile = PlanetTile.Invalid;
             for (int attempt = 0; attempt < maxAttempts; attempt++)
             {
-                PlanetTile tile = TileFinder.RandomSettlementTileFor(Find.WorldGrid.Surface, FindFC.EmpireFaction);
-                if (!tile.Valid) continue;
-                if (!WorldTileChecker.IsValidTileForNewSettlement(tile, def)) continue;
+                if (!DestructiveTestUtil.TryFindSettleableTile(def, out PlanetTile tile)) continue;
 
                 BiomeResourceDef bres = DefDatabase<BiomeResourceDef>.GetNamed(tile.Tile.PrimaryBiome.defName, false)
                     ?? BiomeResourceDefOf.defaultBiome;
@@ -1614,47 +1549,48 @@ public static class DebugUtil
     [EmpireDebugAction("Empire", "Build Road Segment Now", allowedGameStates = AllowedGameStates.Playing)]
     private static void BuildRoadSegmentNow()
     {
-        var rb = FindFC.RoadBuilder;
-        if (rb.roadDef is null)
-        {
-            LogUtil.MessageForce("Debug - No road research completed yet");
-            return;
-        }
-        if (rb.roadQueue is null)
-        {
-            LogUtil.MessageForce("Debug - No road queue exists");
-            return;
-        }
-        rb.roadQueue.nextRoadTick = Find.TickManager.TicksGame;
-        rb.roadQueue.ProcessOnePath();
-        bool built = rb.roadQueue.BuildRoadSegments();
+        if (!TryGetRoadQueue(out FCRoadQueue queue)) return;
+        bool built = BuildNextRoadSegment(queue);
         LogUtil.MessageForce($"Debug - Build Road Segment Now: {(built ? "segment built" : "no segment to build")}");
     }
 
     [EmpireDebugAction("Empire", "Build 10 Road Segments", allowedGameStates = AllowedGameStates.Playing)]
     private static void BuildTenRoadSegments()
     {
-        var rb = FindFC.RoadBuilder;
-        if (rb.roadDef is null)
-        {
-            LogUtil.MessageForce("Debug - No road research completed yet");
-            return;
-        }
-        if (rb.roadQueue is null)
-        {
-            LogUtil.MessageForce("Debug - No road queue exists");
-            return;
-        }
+        if (!TryGetRoadQueue(out FCRoadQueue queue)) return;
 
         int built = 0;
         for (int i = 0; i < 10; i++)
         {
-            rb.roadQueue.nextRoadTick = Find.TickManager.TicksGame;
-            rb.roadQueue.ProcessOnePath();
-            if (!rb.roadQueue.BuildRoadSegments()) break;
+            if (!BuildNextRoadSegment(queue)) break;
             built++;
         }
         LogUtil.MessageForce($"Debug - Built {built}/10 road segments.");
+    }
+
+    private static bool TryGetRoadQueue(out FCRoadQueue queue)
+    {
+        var rb = FindFC.RoadBuilder;
+        queue = rb.roadQueue;
+        if (rb.roadDef is null)
+        {
+            LogUtil.MessageForce("Debug - No road research completed yet");
+            return false;
+        }
+        if (queue is null)
+        {
+            LogUtil.MessageForce("Debug - No road queue exists");
+            return false;
+        }
+        return true;
+    }
+
+    /* Makes the queue due now, plans one path, and builds; returns whether a segment was built. */
+    private static bool BuildNextRoadSegment(FCRoadQueue queue)
+    {
+        queue.nextRoadTick = Find.TickManager.TicksGame;
+        queue.ProcessOnePath();
+        return queue.BuildRoadSegments();
     }
 
     // ============================
@@ -1682,9 +1618,7 @@ public static class DebugUtil
                     LogUtil.MessageForce($"Debug - Policy {local.defName} is already active; not enacting it again.");
                     return;
                 }
-                var policy = new FCPolicy(local);
-                FindFC.PolicyManager.policies.Add(policy);
-                FindFC.PolicyManager.RebuildBehaviorCache();
+                FCPolicy policy = PolicyTestHelper.EnactPolicy(faction, local);
                 LogUtil.MessageForce($"Debug - Enacted policy: {local.defName} (behavior: {(policy.behavior is not null ? policy.behavior.GetType().Name : "none")})");
             }));
         }
@@ -1978,16 +1912,11 @@ public static class DebugUtil
     [EmpireDebugAction("Empire", "Force Restock Settlement Trader", allowedGameStates = AllowedGameStates.Playing)]
     private static void DebugForceRestockSettlementTrader()
     {
-        List<DebugMenuOption> options = [];
-        foreach (WorldSettlementFC settlement in FindFC.Settlements)
+        WithSettlementChoice(settlement =>
         {
-            options.Add(new DebugMenuOption(settlement.Name, DebugMenuOptionMode.Action, () =>
-            {
-                settlement.trader?.TryDestroyStock();
-                LogUtil.MessageForce($"Destroyed trader stock for {settlement.Name}. Will regenerate on next trade access.");
-            }));
-        }
-        Find.WindowStack.Add(new Dialog_DebugOptionListLister(options));
+            settlement.trader?.TryDestroyStock();
+            LogUtil.MessageForce($"Destroyed trader stock for {settlement.Name}. Will regenerate on next trade access.");
+        });
     }
 
     /* Diagnostic dumps for the gene valuator. Use these to spot which genes are producing

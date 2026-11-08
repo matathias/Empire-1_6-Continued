@@ -7,48 +7,16 @@
 
 namespace FactionColonies;
 
-public class WorldObjectCompProperties_SettlementMilitary : WorldObjectCompProperties
+public class WorldObjectCompProperties_SettlementMilitary : MapParentCompProperties
 {
     public WorldObjectCompProperties_SettlementMilitary()
     {
         compClass = typeof(WorldObjectComp_SettlementMilitary);
     }
-    public override IEnumerable<string> ConfigErrors(WorldObjectDef parentDef)
-    {
-        foreach (string item in base.ConfigErrors(parentDef))
-        {
-            yield return item;
-        }
-        if (!typeof(MapParent).IsAssignableFrom(parentDef.worldObjectClass))
-        {
-            yield return parentDef.defName + " has WorldObjectCompProperties_SettlementMilitary but it's not MapParent.";
-        }
-    }
 }
 
-public class WorldObjectComp_SettlementMilitary : WorldObjectComp, ISettlementPostLoadInit
+public class WorldObjectComp_SettlementMilitary : WorldSettlementCompBase, ISettlementPostLoadInit
 {
-    private WorldSettlementFC cachedWorldSettlementParent = null;
-    public WorldSettlementFC WorldSettlement
-    {
-        get
-        {
-            if (cachedWorldSettlementParent is not null)
-            {
-                return cachedWorldSettlementParent;
-            }
-            if (parent is WorldSettlementFC ws)
-            {
-                cachedWorldSettlementParent = ws;
-            }
-            else
-            {
-                cachedWorldSettlementParent = null;
-                LogUtil.ErrorOnce($"WorldObjectComp_SettlementMilitary has a non-WorldSettlementFC parent: {parent.Label}", 93512108);
-            }
-            return cachedWorldSettlementParent;
-        }
-    }
     public Map Map => WorldSettlement.Map;
 
     public int artilleryTimer = 0;

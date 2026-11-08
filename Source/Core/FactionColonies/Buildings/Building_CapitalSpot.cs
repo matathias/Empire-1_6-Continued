@@ -1,43 +1,54 @@
+using UnityEngine;
+
 namespace FactionColonies;
 
-public class Building_CapitalSpot : Building
+public class Building_CapitalSpot : Building_ExclusiveSpot<Building_CapitalSpot>
 {
-    private bool isActiveCapitalSpot = false;
     private PlanetTile lastKnownTile = PlanetTile.Invalid; // Track the last known tile location
 
     public bool IsActiveCapitalSpot
     {
-        get => isActiveCapitalSpot;
-        set
-        {
-            if (value && isActiveCapitalSpot != value)
-            {
-                // Disable other capital spots when enabling this one
-                DisableOtherCapitalSpots();
-                // Set this location as the empire capital
-                SetAsEmpireCapital();
-            }
-            else if (!value && isActiveCapitalSpot)
-            {
-                // Turning the active spot off removes its capital, the same as destroying it.
-                ClearEmpireCapital();
-            }
-            isActiveCapitalSpot = value;
-        }
+        get => isActive;
+        set => SetActive(value);
     }
 
-    private void DisableOtherCapitalSpots()
+    protected override string ActiveSaveKey => "isActiveCapitalSpot";
+
+    protected override string GizmoLabel => "FCCapitalSpotGizmoLabel".Translate(FindFC.EmpireTitle.CapitalizeFirst());
+
+    protected override string GizmoDesc => isActive
+        ? "FCCapitalSpotGizmoDescActive".Translate(FindFC.EmpireName)
+        : "FCCapitalSpotGizmoDescInactive".Translate(FindFC.EmpireName);
+
+    protected override Texture2D GizmoIcon => TexLoad.iconCustomize; // Using existing customize icon
+
+    protected override string InspectStatus => isActive
+        ? "FCCapitalSpotInspectActive".Translate(FindFC.EmpireTitle.CapitalizeFirst())
+        : "FCCapitalSpotInspectInactive".Translate();
+
+    // Set this location as the empire capital
+    protected override void OnActivated() => SetAsEmpireCapital();
+
+    // Turning the active spot off removes its capital, the same as destroying it.
+    protected override void OnDeactivated() => ClearEmpireCapital();
+
+    protected override void OnToggledByPlayer(bool wasActive)
     {
-        // Find all other capital spots and disable them
-        foreach (Map map in Find.Maps)
+        LogUtil.Message($"Capital Building: Toggle from {wasActive} to {isActive}");
+
+        if (isActive)
         {
-            foreach (Building building in map.listerBuildings.allBuildingsColonist)
-            {
-                if (building is Building_CapitalSpot otherCapitalSpot && otherCapitalSpot != this)
-                {
-                    otherCapitalSpot.isActiveCapitalSpot = false;
-                }
-            }
+            Messages.Message(
+                "FCCapitalEstablished".Translate(Map.Parent.LabelCap, FindFC.EmpireTitle.CapitalizeFirst(), FindFC.EmpireTitle),
+                MessageTypeDefOf.PositiveEvent
+            );
+        }
+        else
+        {
+            Messages.Message(
+                "FCCapitalSeatDisabled".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
+                MessageTypeDefOf.NeutralEvent
+            );
         }
     }
 
@@ -77,7 +88,7 @@ public class Building_CapitalSpot : Building
     // Check if the map tile has changed and update capital location accordingly
     private void UpdateCapitalLocationIfMoved()
     {
-        if (isActiveCapitalSpot && Map is not null)
+        if (isActive && Map is not null)
         {
             PlanetTile currentTile = Map.Parent.Tile;
 
@@ -88,7 +99,7 @@ public class Building_CapitalSpot : Building
                 LogUtil.Message($"Capital Spot Debug: Initialized lastKnownTile to {currentTile}");
             }
 
-            LogUtil.Message($"Capital Spot Debug: Active={isActiveCapitalSpot}, CurrentTile={currentTile}, LastKnown={lastKnownTile}");
+            LogUtil.Message($"Capital Spot Debug: Active={isActive}, CurrentTile={currentTile}, LastKnown={lastKnownTile}");
 
             if (lastKnownTile != currentTile)
             {
@@ -117,7 +128,7 @@ public class Building_CapitalSpot : Building
                 }
             }
         }
-        else if (isActiveCapitalSpot)
+        else if (isActive)
         {
             LogUtil.Warning($"Capital Spot Debug: Active but Map is null!");
         }
@@ -126,11 +137,10 @@ public class Building_CapitalSpot : Building
     public override void ExposeData()
     {
         base.ExposeData();
-        Scribe_Values.Look(ref isActiveCapitalSpot, "isActiveCapitalSpot", false);
         Scribe_Values.Look(ref lastKnownTile, "lastKnownTile", PlanetTile.Invalid);
 
         // After loading, if this is the active capital spot but lastKnownTile is uninitialized, set it
-        if (Scribe.mode == LoadSaveMode.PostLoadInit && isActiveCapitalSpot && !lastKnownTile.Valid && Map is not null)
+        if (Scribe.mode == LoadSaveMode.PostLoadInit && isActive && !lastKnownTile.Valid && Map is not null)
         {
             lastKnownTile = Map.Parent.Tile;
         }
@@ -144,67 +154,12 @@ public class Building_CapitalSpot : Building
         UpdateCapitalLocationIfMoved();
     }
 
-    public override IEnumerable<Gizmo> GetGizmos()
-    {
-        foreach (Gizmo gizmo in base.GetGizmos())
-        {
-            yield return gizmo;
-        }
-
-        if (Faction == Faction.OfPlayer)
-        {
-            yield return new Command_Toggle
-            {
-                defaultLabel = "FCCapitalSpotGizmoLabel".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
-                defaultDesc = isActiveCapitalSpot
-                    ? "FCCapitalSpotGizmoDescActive".Translate(FindFC.EmpireName)
-                    : "FCCapitalSpotGizmoDescInactive".Translate(FindFC.EmpireName),
-                icon = TexLoad.iconCustomize, // Using existing customize icon
-                isActive = () => isActiveCapitalSpot,
-                toggleAction = () =>
-                {
-                    bool wasActive = IsActiveCapitalSpot;
-                    IsActiveCapitalSpot = !IsActiveCapitalSpot;
-
-                    LogUtil.Message($"Capital Building: Toggle from {wasActive} to {IsActiveCapitalSpot}");
-
-                    if (IsActiveCapitalSpot)
-                    {
-                        Messages.Message(
-                            "FCCapitalEstablished".Translate(Map.Parent.LabelCap, FindFC.EmpireTitle.CapitalizeFirst(), FindFC.EmpireTitle),
-                            MessageTypeDefOf.PositiveEvent
-                        );
-                    }
-                    else
-                    {
-                        Messages.Message(
-                            "FCCapitalSeatDisabled".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
-                            MessageTypeDefOf.NeutralEvent
-                        );
-                    }
-                }
-            };
-        }
-    }
-
-    public override string GetInspectString()
-    {
-        string baseString = base.GetInspectString();
-        string statusString = isActiveCapitalSpot
-            ? "FCCapitalSpotInspectActive".Translate(FindFC.EmpireTitle.CapitalizeFirst())
-            : "FCCapitalSpotInspectInactive".Translate();
-
-        return string.IsNullOrEmpty(baseString)
-            ? statusString
-            : baseString + "\n" + statusString;
-    }
-
     public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
     {
         // If this was the active capital spot and it's being destroyed, clear the capital.
         // Skip on WillReplace (gravship launch repositions this same instance) so the capital
         // survives the flight; TickRare re-syncs the tile after landing.
-        if (isActiveCapitalSpot && mode != DestroyMode.WillReplace)
+        if (isActive && mode != DestroyMode.WillReplace)
         {
             FactionFC faction = FindFC.FactionComp;
             if (faction is not null)

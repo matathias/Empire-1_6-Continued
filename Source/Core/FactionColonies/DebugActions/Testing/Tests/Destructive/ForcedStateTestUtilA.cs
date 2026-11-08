@@ -52,12 +52,7 @@ public static class ForcedStateTestUtilA
     /// <summary>Runs <paramref name="action"/> with the building-upkeep difficulty factor set to
     /// <paramref name="value"/>, restoring the player's setting afterwards.</summary>
     public static void WithBuildingUpkeepDifficultyMult(float value, Action action)
-    {
-        float original = FCSettings.buildingUpkeepDifficultyMult;
-        FCSettings.buildingUpkeepDifficultyMult = value;
-        try { action(); }
-        finally { FCSettings.buildingUpkeepDifficultyMult = original; }
-    }
+        => TestUtil.WithOverride(() => FCSettings.buildingUpkeepDifficultyMult, v => FCSettings.buildingUpkeepDifficultyMult = v, value, action);
 
     /// <summary>
     /// Returns the first titheable resource of <paramref name="settlement"/>. Every settlement type

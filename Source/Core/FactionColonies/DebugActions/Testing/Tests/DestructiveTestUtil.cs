@@ -4,8 +4,8 @@ namespace FactionColonies;
 /// Shared helpers for the DESTRUCTIVE test tier (see <see cref="EmpireDestructiveTestAttribute"/>).
 /// No snapshot/restore: destructive tests thrash live state and are not cleaned up. These helpers
 /// (a) FORCE preconditions (tests never skip, so missing state is created, and setup that cannot be
-/// built fails the test), (b) provide the create/destroy recipe reused from
-/// <c>DebugUtil.CreateTenRandomSettlements</c>, and (c) supply the post-mutation invariant battery
+/// built fails the test), (b) provide the create/destroy recipe (also used by
+/// <c>DebugUtil.CreateTenRandomSettlements</c>), and (c) supply the post-mutation invariant battery
 /// that asserts the faction is still internally consistent after the thrash.
 /// </summary>
 public static class DestructiveTestUtil
@@ -55,14 +55,23 @@ public static class DestructiveTestUtil
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
-            PlanetTile tile = TileFinder.RandomSettlementTileFor(Find.WorldGrid.Surface, FindFC.EmpireFaction);
-            if (!tile.Valid) continue;
-            if (!WorldTileChecker.IsValidTileForNewSettlement(tile, def)) continue;
-            if (FindFC.FactionComp.CheckSettlementCaravansList(tile)) continue;
-
-            return ColonyUtil.CreatePlayerColonySettlement(tile, def);
+            if (TryFindSettleableTile(def, out PlanetTile tile))
+                return ColonyUtil.CreatePlayerColonySettlement(tile, def);
         }
         return null;
+    }
+
+    /// <summary>
+    /// One attempt at a random surface tile where a <paramref name="def"/> settlement may be founded:
+    /// a valid settlement tile, accepted by <see cref="WorldTileChecker"/>, with no settlement caravan
+    /// already heading there. Callers loop over this for as many attempts as they allow.
+    /// </summary>
+    public static bool TryFindSettleableTile(WorldSettlementDef def, out PlanetTile tile)
+    {
+        tile = TileFinder.RandomSettlementTileFor(Find.WorldGrid.Surface, FindFC.EmpireFaction);
+        if (!tile.Valid) return false;
+        if (!WorldTileChecker.IsValidTileForNewSettlement(tile, def)) return false;
+        return FindFC.FactionComp?.CheckSettlementCaravansList(tile) != true;
     }
 
     /// <summary><see cref="CreateTransientSettlement"/> that fails the test if no settlement could be created.</summary>

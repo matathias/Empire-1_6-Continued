@@ -1,27 +1,27 @@
 namespace FactionColonies;
 
-public class FCPolicyBehavior_Feudal : FCPolicyBehavior
+public class FCPolicyBehavior_Feudal : FCCooldownPolicyBehavior
 {
-    private CooldownAbility mercenaryCooldown = new();
+    protected override string CooldownSaveKey => "mercenaryCooldown";
 
     public override void PostInitialize()
     {
         var ext = Ext<FCPolicyBehaviorExt_Feudal>();
-        mercenaryCooldown.readyLetterKey = ext.readyLetterKey;
-        mercenaryCooldown.cooldownMessageKey = ext.cooldownMessageKey;
-        mercenaryCooldown.SetCooldown(ext.mercenaryCooldownTicks);
+        cooldown.readyLetterKey = ext.readyLetterKey;
+        cooldown.cooldownMessageKey = ext.cooldownMessageKey;
+        cooldown.SetCooldown(ext.mercenaryCooldownTicks);
     }
 
     public override void Tick(FactionFC faction)
     {
-        mercenaryCooldown.TickCheckReady();
+        cooldown.TickCheckReady();
     }
 
     public override IEnumerable<(TaggedString label, Action onClick)> GetMainTabActionButtons(FactionFC faction)
     {
         yield return ("FCRequestMercenary".Translate(), () =>
         {
-            if (!mercenaryCooldown.TryUseOrShowCooldown())
+            if (!cooldown.TryUseOrShowCooldown())
                 return;
 
             Map map = Find.CurrentMap;
@@ -50,7 +50,7 @@ public class FCPolicyBehavior_Feudal : FCPolicyBehavior
             worker.TryResolveRaidSpawnCenter(parms);
             worker.Arrive([pawn], parms);
             // Consumed only once the mercenary has arrived, so a failed request keeps the cooldown.
-            mercenaryCooldown.Use();
+            cooldown.Use();
 
             Find.LetterStack.ReceiveLetter(
                 "FCMercenaryJoined".Translate(),
@@ -61,15 +61,4 @@ public class FCPolicyBehavior_Feudal : FCPolicyBehavior
         }
         );
     }
-
-    public override void ExposeData()
-    {
-        Scribe_Deep.Look(ref mercenaryCooldown, "mercenaryCooldown");
-        mercenaryCooldown = mercenaryCooldown ?? new CooldownAbility();
-    }
-
-    // Debug accessors
-    public bool DebugCooldownReady() => mercenaryCooldown.IsReady;
-    public float DebugCooldownDays() => mercenaryCooldown.DaysRemaining;
-    public void DebugResetCooldown() => mercenaryCooldown.tickLastUsed = -1;
 }

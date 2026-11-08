@@ -23,15 +23,14 @@ public static class PaymentUtil
     {
         /* Active tax delivery spot (a Building_TaxSpot the player toggled on) wins
            outright -- its position and map override the default tax map. */
-        if (CheckForActiveTaxDeliverySpot(out IntVec3 activeSpot, out Map activeMap))
+        if (TryFindActiveTaxSpot(null, out Building_TaxSpot activeSpot))
         {
-            GenPlace.TryPlaceThing(thing, activeSpot, activeMap, ThingPlaceMode.Near);
+            GenPlace.TryPlaceThing(thing, activeSpot.Position, activeSpot.Map, ThingPlaceMode.Near);
             return;
         }
 
-        /* Otherwise drop onto the canonical tax map (capital -> current -> any home).
-           Distinct out-locals above so the fallback taxMap is never clobbered. */
-        Map taxMap = GetActiveTaxDeliveryMap();
+        /* Otherwise drop onto the canonical tax map (capital -> current -> any home). */
+        Map taxMap = FindFC.TaxMap;
         if (taxMap is null)
         {
             LogUtil.Warning("PaymentUtil.PlaceThing: no tax map available; thing not placed: "
@@ -176,16 +175,43 @@ public static class PaymentUtil
             dropSpot = new IntVec3();
             return false;
         }
-        foreach (Building building in map.listerBuildings.allBuildingsColonist.Where(b => b?.def?.defName == "TaxSpot"))
+        if (TryFindActiveTaxSpot(map, out Building_TaxSpot taxSpot))
         {
-            if (building is Building_TaxSpot taxSpot && taxSpot.IsActiveTaxDeliverySpot)
-            {
-                dropSpot = taxSpot.Position;
-                return true;
-            }
+            dropSpot = taxSpot.Position;
+            return true;
         }
 
         dropSpot = new IntVec3();
+        return false;
+    }
+
+    /// <summary>Finds the tax spot the player toggled on as the active delivery spot: on
+    /// <paramref name="map"/> only, or on any player home map when <paramref name="map"/> is null.</summary>
+    public static bool TryFindActiveTaxSpot(Map map, out Building_TaxSpot spot)
+    {
+        if (map is not null) return TryFindActiveTaxSpotOn(map, out spot);
+        List<Map> maps = Find.Maps;
+        for (int i = 0; i < maps.Count; i++)
+        {
+            if (maps[i].IsPlayerHome && TryFindActiveTaxSpotOn(maps[i], out spot))
+                return true;
+        }
+        spot = null;
+        return false;
+    }
+
+    private static bool TryFindActiveTaxSpotOn(Map map, out Building_TaxSpot spot)
+    {
+        List<Building> buildings = map.listerBuildings.allBuildingsColonist;
+        for (int i = 0; i < buildings.Count; i++)
+        {
+            if (buildings[i] is Building_TaxSpot taxSpot && taxSpot.IsActiveTaxDeliverySpot)
+            {
+                spot = taxSpot;
+                return true;
+            }
+        }
+        spot = null;
         return false;
     }
 
@@ -236,14 +262,8 @@ public static class PaymentUtil
         PawnKindDef raceChoice;
         raceChoice = faction.RandomPawnKind();
 
-        pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind: raceChoice,
-            faction: faction, context: PawnGenerationContext.NonPlayer, tile: -1,
-            forceGenerateNewPawn: false, allowDead: false, allowDowned: false,
-            canGeneratePawnRelations: false, mustBeCapableOfViolence: true, colonistRelationChanceFactor: 0,
-            forceAddFreeWarmLayerIfNeeded: false, allowGay: false, allowFood: false, allowAddictions: false,
-            inhabitant: false, certainlyBeenInCryptosleep: false, forceRedressWorldPawnIfFormerColonist: false,
-            worldPawnFactionDoesntMatter: false, biocodeWeaponChance: 0, extraPawnForExtraRelationChance: null,
-            relationWithExtraPawnChanceFactor: 0));
+        pawn = PawnGenerator.GeneratePawn(FCPawnGenerator.BaseRequest(raceChoice, faction,
+            mustBeViolent: true, allowGay: false, allowFood: false));
         pawn.equipment.DestroyAllEquipment();
         pawn.apparel.DestroyAll();
         pawn.SetFaction(faction);
@@ -286,46 +306,4 @@ public static class PaymentUtil
         return totalValue;
     }
 
-    private static Map GetActiveTaxDeliveryMap()
-    {
-        // First try to find a map with an active tax delivery spot
-        foreach (Map map in Find.Maps)
-        {
-            if (!map.IsPlayerHome) continue;
-
-            foreach (Building building in map.listerBuildings.allBuildingsColonist)
-            {
-                if (building is Building_TaxSpot taxSpot && taxSpot.IsActiveTaxDeliverySpot)
-                {
-                    return map;
-                }
-            }
-        }
-
-        // Fallback to existing tax map logic
-        return FindFC.TaxMap;
-    }
-
-    public static bool CheckForActiveTaxDeliverySpot(out IntVec3 dropSpot, out Map taxMap)
-    {
-        // Search all player home maps for an active tax delivery spot
-        foreach (Map map in Find.Maps)
-        {
-            if (!map.IsPlayerHome) continue;
-
-            foreach (Building building in map.listerBuildings.allBuildingsColonist)
-            {
-                if (building is Building_TaxSpot taxSpot && taxSpot.IsActiveTaxDeliverySpot)
-                {
-                    dropSpot = building.Position;
-                    taxMap = map;
-                    return true;
-                }
-            }
-        }
-
-        dropSpot = IntVec3.Invalid;
-        taxMap = null;
-        return false;
-    }
 }

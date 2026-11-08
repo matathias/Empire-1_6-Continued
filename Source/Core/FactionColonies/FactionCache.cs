@@ -16,6 +16,7 @@ public static class FactionCache
     private static List<CustomXenotype> _cachedViolentCustomXenotypeList = null;
     private static Dictionary<string, CustomXenotype> _cachedCustomXenotypeDecoder = null;
     private static List<ThingDef> _cachedRaceList = null;
+    private static List<PawnKindDef> _cachedHumanlikeRaceKinds = null;
     private static List<PawnKindDef> _cachedAnimalKinds = null;
     private static List<PawnKindDef> _cachedCombatAnimalKinds = null;
     private static List<PawnKindDef> _cachedPackAnimalKinds = null;
@@ -241,6 +242,31 @@ public static class FactionCache
                 }
             }
             return _cachedRaceList;
+        }
+    }
+    /// <summary>One representative PawnKindDef per humanlike race (Human is represented by the
+    /// Colonist kind), deduplicated by race label and sorted by it.</summary>
+    public static List<PawnKindDef> HumanlikeRaceKinds
+    {
+        get
+        {
+            if (_cachedHumanlikeRaceKinds is null)
+            {
+                static string RaceLabel(PawnKindDef def) => (def.race.label ?? def.race.defName).CapitalizeFirst();
+
+                HashSet<string> seenRaces = [];
+                List<PawnKindDef> races = [];
+                foreach (PawnKindDef def in AllPawnKindDefs)
+                {
+                    if (!def.IsHumanLikeRace()) continue;
+                    if (def.race == ThingDefOf.Human && def != PawnKindDefOf.Colonist) continue;
+                    if (seenRaces.Add(def.race.label ?? def.race.defName))
+                        races.Add(def);
+                }
+                races.Sort((a, b) => string.Compare(RaceLabel(a), RaceLabel(b), StringComparison.OrdinalIgnoreCase));
+                _cachedHumanlikeRaceKinds = races;
+            }
+            return _cachedHumanlikeRaceKinds;
         }
     }
     // Technically there should *always* be at least one race: ThingDefOf.Human. But it probably can't hurt to null-check, just in case of edge cases...
@@ -971,6 +997,7 @@ public static class FactionCache
         LogUtil.Message("Invalidating FactionCache...");
         _cachedPawnKindDefs = null;
         _cachedRaceList = null;
+        _cachedHumanlikeRaceKinds = null;
         _cachedXenotypeList = null;
         _cachedViolentXenotypeList = null;
         _cachedAnimalKinds = null;

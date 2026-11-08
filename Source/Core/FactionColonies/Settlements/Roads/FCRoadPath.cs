@@ -110,35 +110,23 @@ public class FCRoadPath : IExposable
         return builtForward || builtBackward;
     }
 
-    bool BuildForward(RoadDef roadDef)
+    bool BuildForward(RoadDef roadDef) => BuildStep(ref forwardIndex, 1, roadDef);
+
+    bool BuildBackward(RoadDef roadDef) => BuildStep(ref backwardIndex, -1, roadDef);
+
+    /// <summary>
+    /// Walks one end of the road toward the other (step +1 from the start, -1 from the end),
+    /// skipping segments that already carry an equal or better road, and overlays the first
+    /// segment that does not. Returns true if a segment was built.
+    /// </summary>
+    bool BuildStep(ref int index, int step, RoadDef roadDef)
     {
         WorldGrid grid = Find.WorldGrid;
         while (forwardIndex < backwardIndex)
         {
-            int from = nodeIds[forwardIndex];
-            int to = nodeIds[forwardIndex + 1];
-            forwardIndex++;
-
-            RoadDef existingRoad = grid.GetRoadDef(from, to);
-            if (IsNewRoadBetter(existingRoad, roadDef))
-            {
-                grid.OverlayRoad(from, to, roadDef);
-                Find.WorldPathGrid.RecalculatePerceivedMovementDifficultyAt(from, out _);
-                Find.WorldPathGrid.RecalculatePerceivedMovementDifficultyAt(to, out _);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool BuildBackward(RoadDef roadDef)
-    {
-        WorldGrid grid = Find.WorldGrid;
-        while (backwardIndex > forwardIndex)
-        {
-            int from = nodeIds[backwardIndex];
-            int to = nodeIds[backwardIndex - 1];
-            backwardIndex--;
+            int from = nodeIds[index];
+            int to = nodeIds[index + step];
+            index += step;
 
             RoadDef existingRoad = grid.GetRoadDef(from, to);
             if (IsNewRoadBetter(existingRoad, roadDef))

@@ -483,13 +483,8 @@ public class WorldSettlementFC : Settlement
         get
         {
             List<MercenarySquadFC> result = [];
-            List<MercenarySquadFC> pool = FindFC.Military?.mercenarySquads;
-            if (pool is null) return result;
-            for (int i = 0; i < pool.Count; i++)
-            {
-                MercenarySquadFC s = pool[i];
-                if (s is not null && s.settlement == this && !s.isExtraSquad) result.Add(s);
-            }
+            foreach (MercenarySquadFC s in BilletedSquads())
+                if (!s.isExtraSquad) result.Add(s);
             return result;
         }
     }
@@ -498,36 +493,23 @@ public class WorldSettlementFC : Settlement
     /// need any squad reference (loadout outfit, status icon, cost basis). For deploy /
     /// reinforcement / actions that consume a squad, prefer
     /// <see cref="FirstAvailableStationedSquad"/>.</summary>
-    public MercenarySquadFC PrimaryStationedSquad
-    {
-        get
-        {
-            List<MercenarySquadFC> pool = FindFC.Military?.mercenarySquads;
-            if (pool is null) return null;
-            for (int i = 0; i < pool.Count; i++)
-            {
-                MercenarySquadFC s = pool[i];
-                if (s is not null && s.settlement == this) return s;
-            }
-            return null;
-        }
-    }
+    public MercenarySquadFC PrimaryStationedSquad => BilletedSquads().FirstOrDefault();
 
     /// <summary>The first stationed squad with <see cref="MercenarySquadFC.IsAvailable"/> true
     /// (assigned, not in any active op, past cooldown), or null. Use for deploy / foreign-
     /// defender reinforcement / extra-deployment paths that need a squad ready to act.</summary>
-    public MercenarySquadFC FirstAvailableStationedSquad
+    public MercenarySquadFC FirstAvailableStationedSquad => BilletedSquads().FirstOrDefault(s => s.IsAvailable);
+
+    /// <summary>Every non-null squad in the faction-wide pool whose billet is this settlement,
+    /// in pool order, including temporary extra squads.</summary>
+    private IEnumerable<MercenarySquadFC> BilletedSquads()
     {
-        get
+        List<MercenarySquadFC> pool = FindFC.Military?.mercenarySquads;
+        if (pool is null) yield break;
+        for (int i = 0; i < pool.Count; i++)
         {
-            List<MercenarySquadFC> pool = FindFC.Military?.mercenarySquads;
-            if (pool is null) return null;
-            for (int i = 0; i < pool.Count; i++)
-            {
-                MercenarySquadFC s = pool[i];
-                if (s is not null && s.settlement == this && s.IsAvailable) return s;
-            }
-            return null;
+            MercenarySquadFC s = pool[i];
+            if (s is not null && s.settlement == this) yield return s;
         }
     }
 
@@ -596,12 +578,11 @@ public class WorldSettlementFC : Settlement
     public MercenarySquadFC GetPowerSourceSquad()
     {
         if (SquadCap <= 0) return null;
-        List<MercenarySquadFC> stationed = StationedSquads;
         MercenarySquadFC bestAvailable = null;
         double bestAvailableLevel = -1;
-        foreach (MercenarySquadFC s in stationed)
+        foreach (MercenarySquadFC s in BilletedSquads())
         {
-            if (s is null || !s.IsAvailable) continue;
+            if (s.isExtraSquad || !s.IsAvailable) continue;
             double level = SquadPowerRegistry.Resolve(s).militaryLevel;
             if (level > bestAvailableLevel)
             {
@@ -834,8 +815,7 @@ public class WorldSettlementFC : Settlement
         Name = settlementDef.GetSettlementTypeExtension().GetSettlementName();
 
         UpdateTechIcon();
-        def.expandingIconTexture = "FactionIcons/" + faction.factionIconPath;
-        PrivateFieldUtil.ExpandingIconCache(def) = ContentFinder<Texture2D>.Get(def.expandingIconTexture);
+        SetExpandingIcon(def, $"FactionIcons/{faction.factionIconPath}");
         base.PostMake();
 
         LogUtil.Message($"Created world settlement {Name} with def {def}");
@@ -1073,6 +1053,16 @@ public class WorldSettlementFC : Settlement
                 catch (Exception e) { LogUtil.Error($"ISettlementPostLoadInit {comp.GetType().Name} threw: {e}"); }
             }
         }
+    }
+
+    /// <summary>Points a settlement def's expanding (zoomed-out) icon at <paramref name="texPath"/> and
+    /// replaces the def's cached texture, which vanilla loads once and never re-reads. Off the main
+    /// thread the texture can't be loaded, so the old cache is left in place.</summary>
+    internal static void SetExpandingIcon(WorldObjectDef def, string texPath)
+    {
+        def.expandingIconTexture = texPath;
+        if (UnityData.IsInMainThread)
+            PrivateFieldUtil.ExpandingIconCache(def) = ContentFinder<Texture2D>.Get(texPath);
     }
 
     public void UpdateTechIcon()
@@ -1338,8 +1328,7 @@ public class WorldSettlementFC : Settlement
 
         // --- Update icon/texture ---
         UpdateTechIcon();
-        def.expandingIconTexture = "FactionIcons/" + FindFC.FactionComp.factionIconPath;
-        PrivateFieldUtil.ExpandingIconCache(def) = ContentFinder<Texture2D>.Get(def.expandingIconTexture);
+        SetExpandingIcon(def, $"FactionIcons/{FindFC.FactionComp.factionIconPath}");
 
         // --- Invalidate all caches ---
         InvalidateCache();
@@ -2174,21 +2163,15 @@ public class WorldSettlementFC : Settlement
 
         foreach ((double modValue, _, bool decaying) in ListedStatModifiers(stat))
         {
-            if (decaying || stat.aggregation == FCStatAggregation.Additive)
-                value += modValue;
-            else
-                value *= modValue;
+            // Decaying penalties are per-day additive slices regardless of the stat's aggregation
+            value = decaying ? value + modValue : stat.Combine(value, modValue);
         }
 
         foreach (WorldObjectComp comp in AllComps)
         {
             if (comp is IStatModifierProvider provider)
             {
-                double compValue = provider.GetStatModifier(stat);
-                if (stat.aggregation == FCStatAggregation.Additive)
-                    value += compValue;
-                else
-                    value *= compValue;
+                value = stat.Combine(value, provider.GetStatModifier(stat));
             }
         }
 

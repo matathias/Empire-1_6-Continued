@@ -51,8 +51,7 @@ public static class AnimalBiomeUtil
     public static BiomeDef GetCaravanDeliveryBiome()
     {
         // 1. Active tax spot (where tithes/caravans are actually delivered)
-        Map taxSpotMap = ActiveTaxSpotMap();
-        if (taxSpotMap is not null) return taxSpotMap.Biome;
+        if (PaymentUtil.TryFindActiveTaxSpot(null, out Building_TaxSpot taxSpot)) return taxSpot.Map.Biome;
 
         // 2. Capital location - tile-based, so it works even when the capital's map isn't loaded
         PlanetTile capital = FindFC.CapitalLocation;
@@ -60,23 +59,6 @@ public static class AnimalBiomeUtil
 
         // 3. Main colony
         return Find.AnyPlayerHomeMap?.Biome;
-    }
-
-    private static Map ActiveTaxSpotMap()
-    {
-        List<Map> maps = Find.Maps;
-        for (int i = 0; i < maps.Count; i++)
-        {
-            Map map = maps[i];
-            if (!map.IsPlayerHome) continue;
-            List<Building> buildings = map.listerBuildings.allBuildingsColonist;
-            for (int j = 0; j < buildings.Count; j++)
-            {
-                if (buildings[j] is Building_TaxSpot spot && spot.IsActiveTaxDeliverySpot)
-                    return map;
-            }
-        }
-        return null;
     }
 
     /// <summary>True if at least one allowed pack animal can serve as a carrier in the given biome.</summary>

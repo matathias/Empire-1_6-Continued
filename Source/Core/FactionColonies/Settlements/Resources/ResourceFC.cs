@@ -118,8 +118,7 @@ public class ResourceFC : IExposable
             if (!hasRandomTithe) return 0;
             if (autoMaxRandomTithe)
             {
-                RefreshTitheCacheIfDirty();
-                return Math.Max(0, (int)(GetProjectedTitheBudget() - cachedTitheTotalValue));
+                return Math.Max(0, (int)AvailableTitheBudget());
             }
             return storedRandomTitheBudget;
         }
@@ -230,15 +229,19 @@ public class ResourceFC : IExposable
         get
         {
             double total = 0;
-            if (settlement is not null)
-            {
-                foreach (WorldObjectComp comp in settlement.AllComps)
-                {
-                    if (comp is ITitheBudgetModifier provider)
-                        total += provider.GetDailyExternalTitheBudget(this);
-                }
-            }
+            foreach (ITitheBudgetModifier provider in SettlementComps<ITitheBudgetModifier>())
+                total += provider.GetDailyExternalTitheBudget(this);
             return total;
+        }
+    }
+    /// <summary>The comps on this resource's settlement that implement <typeparamref name="T"/>; none without a settlement.</summary>
+    private IEnumerable<T> SettlementComps<T>() where T : class
+    {
+        if (settlement is null) yield break;
+        foreach (WorldObjectComp comp in settlement.AllComps)
+        {
+            if (comp is T provider)
+                yield return provider;
         }
     }
     public bool canTithe => !def.isPoolResource && def.canTithe;
@@ -345,14 +348,8 @@ public class ResourceFC : IExposable
         double statBase = (settlement is not null && def.productionAdditiveStat is not null)
             ? settlement.GetStatValue(def.productionAdditiveStat) : 0;
         double compBase = 0;
-        if (settlement is not null)
-        {
-            foreach (WorldObjectComp comp in settlement.AllComps)
-            {
-                if (comp is IResourceProductionModifier provider)
-                    compBase += provider.GetResourceAdditiveModifier(this);
-            }
-        }
+        foreach (IResourceProductionModifier provider in SettlementComps<IResourceProductionModifier>())
+            compBase += provider.GetResourceAdditiveModifier(this);
         double workerBase = (settlement is not null)
             ? settlement.GetStatValue(FCStatDefOf.workerProductionBase) + FCSettings.workerProductionBaseBonus : 0;
         return dictBase + statBase + compBase + workerBase;
@@ -371,14 +368,8 @@ public class ResourceFC : IExposable
         double statMult = (settlement is not null && def.productionMultiplierStat is not null)
             ? settlement.GetStatValue(def.productionMultiplierStat) : 1;
         double compMult = 1;
-        if (settlement is not null)
-        {
-            foreach (WorldObjectComp comp in settlement.AllComps)
-            {
-                if (comp is IResourceProductionModifier provider)
-                    compMult *= provider.GetResourceMultiplierModifier(this);
-            }
-        }
+        foreach (IResourceProductionModifier provider in SettlementComps<IResourceProductionModifier>())
+            compMult *= provider.GetResourceMultiplierModifier(this);
         double prosperityMult = (settlement is not null) ? (settlement.prosperity / 100.0) : 1.0;
         double workerMult = (settlement is not null)
             ? settlement.GetStatValue(FCStatDefOf.workerProductionMultiplier) * FCSettings.workerProductionMultBonus : 1;
@@ -452,14 +443,13 @@ public class ResourceFC : IExposable
     public void SetAutoMaxRandomTithe(bool enabled)
     {
         if (autoMaxRandomTithe == enabled) return;
-        bool wasEnabled = autoMaxRandomTithe;
-        autoMaxRandomTithe = enabled;
-        // When toggling auto-max off, snap stored budget to current effective max.
-        if (!enabled && wasEnabled)
+        // When toggling auto-max off, snap stored budget to the effective max auto-max was using.
+        if (!enabled)
         {
-            storedRandomTitheBudget = Math.Max(0, (int)(GetProjectedTitheBudget() - titheTotalValueNoRandom));
+            storedRandomTitheBudget = Math.Max(0, (int)AvailableTitheBudget());
             storedRandomTitheBudgetBuffer = storedRandomTitheBudget.ToString();
         }
+        autoMaxRandomTithe = enabled;
         settlement?.DirtyProfitCache();
     }
 
@@ -577,10 +567,7 @@ public class ResourceFC : IExposable
         else
         {
             string biomeId = $"{def.defName}_biome_{settlement.biomeDef.defName}_{settlementId}";
-            if (biomeRes.additive != 0)
-                AddProductionAdditive(biomeId, biomeRes.additive, settlement.biomeDef.LabelCap);
-            if (biomeRes.multiplier != 1)
-                AddProductionMultiplier(biomeId, biomeRes.multiplier, settlement.biomeDef.LabelCap);
+            AddBonusPair(biomeId, biomeRes.additive, biomeRes.multiplier, settlement.biomeDef.LabelCap);
         }
 
         // --- Settlement type bonuses ---
@@ -588,10 +575,7 @@ public class ResourceFC : IExposable
         if (settleRes is not null)
         {
             string settleId = $"{def.defName}_settle_{settlement.settlementDef.defName}_{settlementId}";
-            if (settleRes.additive != 0)
-                AddProductionAdditive(settleId, settleRes.additive, settlement.settlementDef.LabelCap);
-            if (settleRes.multiplier != 1)
-                AddProductionMultiplier(settleId, settleRes.multiplier, settlement.settlementDef.LabelCap);
+            AddBonusPair(settleId, settleRes.additive, settleRes.multiplier, settlement.settlementDef.LabelCap);
         }
 
         // --- ResourceProductionExtension bonuses ---
@@ -617,10 +601,7 @@ public class ResourceFC : IExposable
                 if (entry.resource != def) continue;
                 string lmId = $"{def.defName}_landmark_{landmark.def.defName}_{settlementId}";
                 string lmLabel = entry.label.NullOrEmpty() ? landmark.def.LabelCap.ToString() : entry.label;
-                if (entry.additive != 0)
-                    AddProductionAdditive(lmId, entry.additive, lmLabel);
-                if (entry.multiplier != 1)
-                    AddProductionMultiplier(lmId, entry.multiplier, lmLabel);
+                AddBonusPair(lmId, entry.additive, entry.multiplier, lmLabel);
             }
         }
 
@@ -637,13 +618,19 @@ public class ResourceFC : IExposable
                     if (entry.resource != def) continue;
                     string mutId = $"{def.defName}_mutator_{mut.defName}_{settlementId}";
                     string mutLabel = entry.label.NullOrEmpty() ? mut.LabelCap.ToString() : entry.label;
-                    if (entry.additive != 0)
-                        AddProductionAdditive(mutId, entry.additive, mutLabel);
-                    if (entry.multiplier != 1)
-                        AddProductionMultiplier(mutId, entry.multiplier, mutLabel);
+                    AddBonusPair(mutId, entry.additive, entry.multiplier, mutLabel);
                 }
             }
         }
+    }
+
+    /// <summary>Registers an additive and a multiplier under the same id, skipping the neutral one(s).</summary>
+    private void AddBonusPair(string id, double additive, double multiplier, string label)
+    {
+        if (additive != 0)
+            AddProductionAdditive(id, additive, label);
+        if (multiplier != 1)
+            AddProductionMultiplier(id, multiplier, label);
     }
 
     /// <summary>
@@ -717,17 +704,11 @@ public class ResourceFC : IExposable
             {
                 desc += settlement.GetStatDesc(def.productionAdditiveStat);
             }
-            if (settlement is not null)
+            foreach (IResourceProductionModifier provider in SettlementComps<IResourceProductionModifier>())
             {
-                foreach (WorldObjectComp comp in settlement.AllComps)
-                {
-                    if (comp is IResourceProductionModifier provider)
-                    {
-                        string compDesc = provider.GetResourceAdditiveDesc(this);
-                        if (!compDesc.NullOrEmpty())
-                            desc += compDesc + "\n";
-                    }
-                }
+                string compDesc = provider.GetResourceAdditiveDesc(this);
+                if (!compDesc.NullOrEmpty())
+                    desc += $"{compDesc}\n";
             }
             if (settlement is not null)
             {
@@ -785,17 +766,11 @@ public class ResourceFC : IExposable
             {
                 desc += settlement.GetStatDesc(def.productionMultiplierStat);
             }
-            if (settlement is not null)
+            foreach (IResourceProductionModifier provider in SettlementComps<IResourceProductionModifier>())
             {
-                foreach (WorldObjectComp comp in settlement.AllComps)
-                {
-                    if (comp is IResourceProductionModifier provider)
-                    {
-                        string compDesc = provider.GetResourceMultiplierDesc(this);
-                        if (!compDesc.NullOrEmpty())
-                            desc += compDesc + "\n";
-                    }
-                }
+                string compDesc = provider.GetResourceMultiplierDesc(this);
+                if (!compDesc.NullOrEmpty())
+                    desc += $"{compDesc}\n";
             }
             if (settlement is not null)
             {
@@ -846,26 +821,13 @@ public class ResourceFC : IExposable
         }
         if (dirtyRandomTitheCache)
         {
-            if (randomTitheFilter is null)
-            {
-                randomTitheFilter = new ThingFilter();
-                ResetThingFilter();
-            }
+            EnsureRandomTitheFilter();
 
             FactionFC faction = FindFC.FactionComp;
-            ThingSetMaker thingSetMaker = new ThingSetMaker_Count();
             ThingSetMakerParams param = new();
             param.filter = new ThingFilter();
-            param.techLevel = FindFC.EmpireFaction.def.techLevel;
             param.countRange = new IntRange(1, 1);
-
-            TechLevel tmplevel = TechLevel.Undefined;
-            ThingSetMaker tmp = def.GetModExtension<ResourceFilterExtension>()?.GetThingSetMaker(out tmplevel, this);
-            if (tmp is not null)
-            {
-                thingSetMaker = tmp;
-                param.techLevel = tmplevel;
-            }
+            ThingSetMaker thingSetMaker = CreateTitheThingSetMaker(new ThingSetMaker_Count(), ref param);
 
             def.FilterResource(param.filter, faction.techLevel, this);
 
@@ -876,15 +838,34 @@ public class ResourceFC : IExposable
         }
         return thingsForRandomTithes;
     }
+    /// <summary>
+    /// Picks the ThingSetMaker for this resource's tithes: the <see cref="ResourceFilterExtension"/>
+    /// override with its tech level if the def has one, else <paramref name="defaultMaker"/> at the
+    /// empire's tech level.
+    /// </summary>
+    private ThingSetMaker CreateTitheThingSetMaker(ThingSetMaker defaultMaker, ref ThingSetMakerParams param)
+    {
+        param.techLevel = FindFC.EmpireFaction.def.techLevel;
+        TechLevel overrideLevel = TechLevel.Undefined;
+        ThingSetMaker overrideMaker = def.GetModExtension<ResourceFilterExtension>()?.GetThingSetMaker(out overrideLevel, this);
+        if (overrideMaker is null)
+            return defaultMaker;
+        param.techLevel = overrideLevel;
+        return overrideMaker;
+    }
+    /// <summary>Recreates a missing random-tithe filter at its defaults. Returns true if it had to.</summary>
+    private bool EnsureRandomTitheFilter()
+    {
+        if (randomTitheFilter is not null) return false;
+        randomTitheFilter = new ThingFilter();
+        ResetThingFilter();
+        return true;
+    }
     public List<ThingDef> GetRandomTitheFilterThings()
     {
         if (dirtyFilteredRandomTitheCache)
         {
-            if (randomTitheFilter is null)
-            {
-                randomTitheFilter = new ThingFilter();
-                ResetThingFilter();
-            }
+            EnsureRandomTitheFilter();
 
             filteredThingsForRandomTithes = [];
             List<ThingDef> possibleThings = GenerateThingDefList();
@@ -917,12 +898,8 @@ public class ResourceFC : IExposable
     }
     public void SetRandomTitheFilterAllow(ThingDef thing, bool allow)
     {
-        if (randomTitheFilter is null)
-        {
-            randomTitheFilter = new ThingFilter();
-            ResetThingFilter();
+        if (EnsureRandomTitheFilter())
             SetDirtyRandomTitheCache();
-        }
 
         randomTitheFilter.SetAllow(thing, allow);
         dirtyFilteredRandomTitheCache = true;
@@ -1040,31 +1017,27 @@ public class ResourceFC : IExposable
     }
     public bool CanAffordThingAmount(ThingQualityTuple thing, int quanity)
     {
-        double available;
-        if (autoMaxRandomTithe)
-        {
-            RefreshTitheCacheIfDirty();
-            available = GetProjectedTitheBudget() - cachedTitheTotalValue;
-        }
-        else
-        {
-            available = GetProjectedTitheBudget() - titheTotalValue;
-        }
+        double available = AvailableTitheBudget();
         return ResourceFormulas.CanAffordThingAmount(TitheThingTotalValue(thing, quanity), available);
     }
     public int MaxThingCanAfford(ThingQualityTuple thing)
     {
-        double available;
+        double available = AvailableTitheBudget();
+        return MaxThingCanAfford(thing, available);
+    }
+    /// <summary>
+    /// Projected full-cycle tithe budget not yet claimed by tithes. With auto-max random tithe on,
+    /// the random tithe is the remainder itself, so only the specified tithes count against it;
+    /// otherwise the player's stored random tithe budget counts too.
+    /// </summary>
+    public double AvailableTitheBudget()
+    {
         if (autoMaxRandomTithe)
         {
             RefreshTitheCacheIfDirty();
-            available = GetProjectedTitheBudget() - cachedTitheTotalValue;
+            return GetProjectedTitheBudget() - cachedTitheTotalValue;
         }
-        else
-        {
-            available = GetProjectedTitheBudget() - titheTotalValue;
-        }
-        return MaxThingCanAfford(thing, available);
+        return GetProjectedTitheBudget() - titheTotalValue;
     }
     public int MaxThingCanAfford(ThingQualityTuple thing, double budget)
     {
@@ -1127,11 +1100,7 @@ public class ResourceFC : IExposable
         def.GetModExtension<ResourceTaxExtension>()?.OnPreTaxGeneration(this, settlement);
 
         // Prepare the tithe filter. I don't think it should ever be null here, but we'll account for that, just in case.
-        if (randomTitheFilter is null)
-        {
-            randomTitheFilter = new ThingFilter();
-            ResetThingFilter();
-        }
+        EnsureRandomTitheFilter();
 
         // Determine random tithing budget (computed here; consumed after the specified-tithe walk below).
         // randomTitheStock is an escrow: its charged share (randomTitheStockSilver) was already withheld
@@ -1210,24 +1179,17 @@ public class ResourceFC : IExposable
                 if (minimum <= effectiveRandomBudget)
                 {
                     List<Thing> randomTitheList = [];
-                    ThingSetMaker thingSetMaker = new ThingSetMaker_MarketValue();
                     ThingSetMakerParams param = new();
                     // Aim at the budget itself: CreateTax bills the delivered market value, so any value
                     // generated above the budget would be charged in silver.
                     param.totalMarketValueRange = new FloatRange((float)effectiveRandomBudget, (float)effectiveRandomBudget);
                     param.filter = randomTitheFilter;
-                    param.techLevel = FindFC.EmpireFaction.def.techLevel;
 
                     LogUtil.Message($"  randomTitheFilter has {randomTitheFilter.AllowedDefCount} allowed items");
 
-                    TechLevel tmplevel = TechLevel.Undefined;
-                    ThingSetMaker tmp = def.GetModExtension<ResourceFilterExtension>()?.GetThingSetMaker(out tmplevel, this);
-                    if (tmp is not null)
-                    {
-                        thingSetMaker = tmp;
-                        param.techLevel = tmplevel;
-                    }
-                    else
+                    ThingSetMaker defaultMaker = new ThingSetMaker_MarketValue();
+                    ThingSetMaker thingSetMaker = CreateTitheThingSetMaker(defaultMaker, ref param);
+                    if (thingSetMaker == defaultMaker)
                     {
                         param.countRange = new IntRange(def.titheMinCount, def.titheMaxCountBase + (def.titheMaxCountScaler * assignedWorkers));
                     }

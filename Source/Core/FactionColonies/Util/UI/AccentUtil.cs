@@ -37,6 +37,19 @@ public static class AccentUtil
         return s.settlementDef.accentColor ?? (s.ProjectedProfit >= 0 ? Income : Expense);
     }
 
+    // Color for a settlement's military power status label.
+    public static Color ColorForPowerStatus(SettlementPowerStatus status)
+    {
+        return status switch
+        {
+            SettlementPowerStatus.UnderAttack => MilUnderAttack,
+            SettlementPowerStatus.AllBusy => new Color(1f, 0.85f, 0.4f),
+            SettlementPowerStatus.Ghost => new Color(1f, 0.85f, 0.4f),
+            SettlementPowerStatus.NoMilitary => Color.gray,
+            _ => Color.white,
+        };
+    }
+
     public static Color GetStatColor(float value, bool inverted)
     {
         if (inverted)

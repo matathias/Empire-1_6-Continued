@@ -150,10 +150,15 @@ public class FCEventManager : IExposable
         EnqueueInternal(evt);
 
         /* Post-enqueue lifecycle hook (default: applies stat + permanent modifiers). */
-        FCEventHandlerExtension ext = evt.def?.GetModExtension<FCEventHandlerExtension>();
-        if (ext is not null) ext.OnEventQueued(evt, faction);
-        else EventStatModifierApplier.Apply(evt, faction);
+        HandlerFor(evt).OnEventQueued(evt, faction);
     }
+
+    /* Stands in for events whose def has no handler extension, so its default
+     * lifecycle bodies are the only copy of that behavior. */
+    private static readonly FCEventHandlerExtension DefaultHandler = new();
+
+    private static FCEventHandlerExtension HandlerFor(FCEvent evt)
+        => evt.def?.GetModExtension<FCEventHandlerExtension>() ?? DefaultHandler;
 
     /* Raw append. Used by AddEvent and SeedFromLegacy; intentionally has no
      * cascade side effects — load-path stat-modifier reapply lives in
@@ -196,10 +201,7 @@ public class FCEventManager : IExposable
 
     private static void DispatchOnEventExpired(FCEvent evt)
     {
-        FactionFC faction = FindFC.FactionComp;
-        FCEventHandlerExtension ext = evt.def?.GetModExtension<FCEventHandlerExtension>();
-        if (ext is not null) ext.OnEventExpired(evt, faction);
-        else EventStatModifierApplier.Remove(evt, faction);
+        HandlerFor(evt).OnEventExpired(evt, FindFC.FactionComp);
     }
 
     /// <summary>Returns the next unique event ID, used by FCEvent's load-id constructor.</summary>

@@ -7,7 +7,7 @@ public class FCPolicyBehavior_RoadBuilders : FCPolicyBehavior
         ResearchProjectDef researchDef = Ext<FCPolicyBehaviorExt_RoadBuilders>().autoUnlockResearch;
         if (researchDef is null)
             LogUtil.Error("Road research returned Null");
-        else if (Find.ResearchManager.GetProgress(researchDef) != researchDef.baseCost)
+        else if (!researchDef.IsFinished)
             Find.ResearchManager.FinishProject(researchDef);
     }
 }

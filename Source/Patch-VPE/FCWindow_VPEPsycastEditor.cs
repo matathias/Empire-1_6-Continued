@@ -33,11 +33,9 @@ public class FCWindow_VPEPsycastEditor : Window
     private readonly Dictionary<AbilityDef, Vector2> abilityPos = [];
     private bool useAltBackgrounds;
 
-    // Meditation foci the player can buy with points, plus a local tally of psycaster-stat points
-    // spent (Hediff_PsycastAbilities.statPoints is private, so we track our own spends here and
-    // replay/snapshot from it). Foci and stat points consume points exactly like path abilities.
+    // Meditation foci the player can buy with points. Foci and stat points consume points exactly
+    // like path abilities.
     private readonly List<MeditationFocusDef> foci;
-    private int sessionStatPoints;
 
     // The authoritative, ORDERED list of the player's picks for this editing session. Each pick
     // (psycast, focus, or a single stat purchase) is appended in order, so trimming on a psylink
@@ -45,25 +43,48 @@ public class FCWindow_VPEPsycastEditor : Window
     // selections and only written back to the unit on Apply (Cancel/X discards it).
     private readonly List<SavedPsycast> selections = [];
 
-    // Budget/spent are OUR authoritative numbers, derived from the psylink level and the live session
-    // pawn state — never from VPE's mutable hediff.points (which desyncs across generate/replay).
-    // Spent counts the same things VPE charges a point for: unlocked paths, learned psycasts,
-    // unlocked meditation foci, and stat points.
+    // Budget/spent are OUR authoritative numbers, derived from the psylink level and the working
+    // selections: never from VPE's mutable hediff.points (which desyncs across generate/replay).
+    // Spent is the same point math the provider uses for the saved unit, plus one point for each
+    // path unlocked this session that has no chosen ability yet (an unlock alone is not a selection,
+    // but VPE still charges for it). Cached, because every drawn ability and focus reads Available.
     private int Budget => VPEPointMath.Budget(unit?.psylinkLevel ?? 0);
+
+    private int spentCache = -1;
 
     private int Spent
     {
         get
         {
-            int s = sessionStatPoints;
-            if (hediff is not null) s += hediff.unlockedPaths.Count + hediff.unlockedMeditationFoci.Count;
-            if (compAbilities is not null)
-                s += compAbilities.LearnedAbilities.Count(a => a.def is not null && a.def.Psycast() is not null);
+            if (spentCache >= 0) return spentCache;
+            int s = VPEPointMath.SpentPoints(selections);
+            if (hediff is not null)
+            {
+                HashSet<PsycasterPathDef> chosenPaths = [];
+                foreach (SavedPsycast saved in selections)
+                {
+                    if (saved.kind == VPEPsycastProvider.KindStatUpgrade || saved.kind == VPEPsycastProvider.KindMeditationFocus) continue;
+                    PsycasterPathDef path = VPEPointMath.PathOf(saved.psycastDef);
+                    if (path is not null) chosenPaths.Add(path);
+                }
+                s += hediff.unlockedPaths.Count(p => !chosenPaths.Contains(p));
+            }
+            spentCache = s;
             return s;
         }
     }
 
     private int Available => Budget - Spent;
+
+    private int SessionStatPoints => selections
+        .Where(a => a.kind == VPEPsycastProvider.KindStatUpgrade)
+        .Sum(a => a.count > 0 ? a.count : 1);
+
+    private void AddSelection(SavedPsycast pick)
+    {
+        selections.Add(pick);
+        spentCache = -1;
+    }
 
     public override Vector2 InitialSize => new(1000f, 720f);
 
@@ -97,7 +118,7 @@ public class FCWindow_VPEPsycastEditor : Window
     private void SetupSessionPawn()
     {
         setupFailed = false;
-        sessionStatPoints = 0;
+        spentCache = -1;
         try
         {
             sessionPawn = FCPawnGenerator.GenerateWithForcedXenotype(FCPawnGenerator.WorkerOrMilitaryRequestForUnit(unit));
@@ -110,40 +131,19 @@ public class FCWindow_VPEPsycastEditor : Window
             // VPE's generation patch can pre-grant psylink, paths, abilities and stat points (pawn
             // kinds with an ability extension, or the Basilicus storyteller). Wipe them, as the real
             // reconcile does, so the editor shows only the unit's own picks and point spend.
+            VPEPsycastProvider provider = new();
             VPEPsycastProvider.Wipe(sessionPawn);
-            new VPEPsycastProvider().ApplyPsylink(sessionPawn, unit.psylinkLevel);
+            provider.ApplyPsylink(sessionPawn, unit.psylinkLevel);
 
             hediff = sessionPawn.Psycasts();
             compAbilities = sessionPawn.GetComp<CompAbilities>();
             if (hediff is null || compAbilities is null) { setupFailed = true; return; }
 
-            // Replay the working selection list onto the session pawn so the tree shows them as
-            // owned. We do NOT touch VPE's point counter — our own Budget/Spent are authoritative.
-            foreach (SavedPsycast saved in selections.Where(a => a.systemKey == VPEPsycastProvider.ProviderKey))
-            {
-                if (saved.kind == VPEPsycastProvider.KindStatUpgrade)
-                {
-                    int n = saved.count > 0 ? saved.count : 1;
-                    hediff.ImproveStats(n);
-                    sessionStatPoints += n;
-                    continue;
-                }
-
-                if (saved.kind == VPEPsycastProvider.KindMeditationFocus)
-                {
-                    MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(saved.psycastDef);
-                    if (focus is null || hediff.unlockedMeditationFoci.Contains(focus)) continue;
-                    hediff.UnlockMeditationFocus(focus);
-                    continue;
-                }
-
-                AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(saved.psycastDef);
-                if (def is null || compAbilities.HasAbility(def)) continue;
-                AbilityExtension_Psycast psycast = def.Psycast();
-                if (psycast is not null && psycast.path is not null && !hediff.unlockedPaths.Contains(psycast.path))
-                    hediff.UnlockPath(psycast.path);
-                compAbilities.GiveAbility(def);
-            }
+            // Replay the working selection list onto the session pawn with the provider's own grant,
+            // so the tree shows them as owned exactly as the built unit will. We do NOT touch VPE's
+            // point counter: our own Budget/Spent are authoritative.
+            foreach (SavedPsycast saved in selections)
+                provider.GrantPsycast(sessionPawn, saved);
         }
         catch (Exception ex)
         {
@@ -198,8 +198,7 @@ public class FCWindow_VPEPsycastEditor : Window
             if (Available >= num)
             {
                 hediff.ImproveStats(num);
-                sessionStatPoints += num;
-                selections.Add(new SavedPsycast(VPEPsycastProvider.ProviderKey, "", VPEPsycastProvider.KindStatUpgrade, num));
+                AddSelection(new SavedPsycast(VPEPsycastProvider.ProviderKey, "", VPEPsycastProvider.KindStatUpgrade, num));
             }
             else
             {
@@ -208,7 +207,7 @@ public class FCWindow_VPEPsycastEditor : Window
         }
         Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.UpperLeft;
-        listing.Label("fcVPEStatPointsSpent".Translate(sessionStatPoints));
+        listing.Label("fcVPEStatPointsSpent".Translate(SessionStatPoints));
         listing.Gap(8f);
 
         // Meditation focus types — buy with points (mirrors ITab_Pawn_Psycasts focus grid).
@@ -324,6 +323,7 @@ public class FCWindow_VPEPsycastEditor : Window
                         if (Widgets.ButtonText(centerRect, "VPE.Unlock".Translate()))
                         {
                             hediff.UnlockPath(def);
+                            spentCache = -1;
                         }
                     }
                     else
@@ -383,7 +383,7 @@ public class FCWindow_VPEPsycastEditor : Window
         if (unlockable && Widgets.ButtonInvisible(inRect))
         {
             compAbilities.GiveAbility(ability);
-            selections.Add(new SavedPsycast(VPEPsycastProvider.ProviderKey, ability.defName));
+            AddSelection(new SavedPsycast(VPEPsycastProvider.ProviderKey, ability.defName));
         }
     }
 
@@ -409,7 +409,7 @@ public class FCWindow_VPEPsycastEditor : Window
             if (Widgets.ButtonText(new Rect(inRect.xMax - 13f, inRect.yMax - 13f, 12f, 12f), "▲"))
             {
                 hediff.UnlockMeditationFocus(def);
-                selections.Add(new SavedPsycast(VPEPsycastProvider.ProviderKey, def.defName, VPEPsycastProvider.KindMeditationFocus, 1));
+                AddSelection(new SavedPsycast(VPEPsycastProvider.ProviderKey, def.defName, VPEPsycastProvider.KindMeditationFocus, 1));
             }
         }
     }

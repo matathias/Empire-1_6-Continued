@@ -1,95 +1,50 @@
+using UnityEngine;
+
 namespace FactionColonies;
 
-public class Building_TaxSpot : Building
+public class Building_TaxSpot : Building_ExclusiveSpot<Building_TaxSpot>
 {
-    private bool isActiveTaxDeliverySpot = false;
-
     public bool IsActiveTaxDeliverySpot
     {
-        get => isActiveTaxDeliverySpot;
-        set
-        {
-            if (value && isActiveTaxDeliverySpot != value)
-            {
-                // Disable other tax spots when enabling this one
-                DisableOtherTaxSpots();
-                // Warn if no allowed pack animal can reach this new delivery biome.
-                AnimalBiomeUtil.WarnIfDeliveryBiomeUncovered(Map?.Biome, "FCAnimalBiomeLetterDescTaxSpot");
-            }
-            isActiveTaxDeliverySpot = value;
-        }
+        get => isActive;
+        set => SetActive(value);
     }
 
-    private void DisableOtherTaxSpots()
+    protected override string ActiveSaveKey => "isActiveTaxDeliverySpot";
+
+    protected override string GizmoLabel => "FCTaxSpotGizmoLabel".Translate();
+
+    protected override string GizmoDesc => isActive
+        ? "FCTaxSpotGizmoDescActive".Translate()
+        : "FCTaxSpotGizmoDescInactive".Translate(FindFC.EmpireName);
+
+    protected override Texture2D GizmoIcon => TexLoad.iconTrade; // Using existing trade icon
+
+    protected override string InspectStatus => isActive
+        ? "FCTaxSpotInspectActive".Translate()
+        : "FCTaxSpotInspectInactive".Translate();
+
+    protected override void OnActivated()
     {
-        // Find all other tax spots and disable their delivery function
-        foreach (Map map in Find.Maps)
-        {
-            foreach (Building building in map.listerBuildings.allBuildingsColonist)
-            {
-                if (building is Building_TaxSpot otherTaxSpot && otherTaxSpot != this)
-                {
-                    otherTaxSpot.isActiveTaxDeliverySpot = false;
-                }
-            }
-        }
+        // Warn if no allowed pack animal can reach this new delivery biome.
+        AnimalBiomeUtil.WarnIfDeliveryBiomeUncovered(Map?.Biome, "FCAnimalBiomeLetterDescTaxSpot");
     }
 
-    public override void ExposeData()
+    protected override void OnToggledByPlayer(bool wasActive)
     {
-        base.ExposeData();
-        Scribe_Values.Look(ref isActiveTaxDeliverySpot, "isActiveTaxDeliverySpot", false);
-    }
-
-    public override IEnumerable<Gizmo> GetGizmos()
-    {
-        foreach (Gizmo gizmo in base.GetGizmos())
+        if (isActive)
         {
-            yield return gizmo;
+            Messages.Message(
+                "FCTaxSpotEnabledMessage".Translate(),
+                MessageTypeDefOf.PositiveEvent
+            );
         }
-
-        if (Faction == Faction.OfPlayer)
+        else
         {
-            yield return new Command_Toggle
-            {
-                defaultLabel = "FCTaxSpotGizmoLabel".Translate(),
-                defaultDesc = isActiveTaxDeliverySpot
-                    ? "FCTaxSpotGizmoDescActive".Translate()
-                    : "FCTaxSpotGizmoDescInactive".Translate(FindFC.EmpireName),
-                icon = TexLoad.iconTrade, // Using existing trade icon
-                isActive = () => isActiveTaxDeliverySpot,
-                toggleAction = () =>
-                {
-                    IsActiveTaxDeliverySpot = !IsActiveTaxDeliverySpot;
-                    if (IsActiveTaxDeliverySpot)
-                    {
-                        Messages.Message(
-                            "FCTaxSpotEnabledMessage".Translate(),
-                            MessageTypeDefOf.PositiveEvent
-                        );
-                    }
-                    else
-                    {
-                        Messages.Message(
-                            "FCTaxSpotDisabledMessage".Translate(),
-                            MessageTypeDefOf.NeutralEvent
-                        );
-                    }
-                }
-            };
+            Messages.Message(
+                "FCTaxSpotDisabledMessage".Translate(),
+                MessageTypeDefOf.NeutralEvent
+            );
         }
-    }
-
-    public override string GetInspectString()
-    {
-        string baseString = base.GetInspectString();
-        string statusString = isActiveTaxDeliverySpot
-            ? "FCTaxSpotInspectActive".Translate()
-            : "FCTaxSpotInspectInactive".Translate();
-
-        return string.IsNullOrEmpty(baseString)
-            ? statusString
-            : baseString + "\n" + statusString;
     }
 }
-

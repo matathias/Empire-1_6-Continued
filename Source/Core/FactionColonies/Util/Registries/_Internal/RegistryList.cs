@@ -10,17 +10,29 @@ internal class RegistryList<T> where T : class
 {
     private readonly List<T> _items = [];
 
+    /// <summary>Bumped on every change to the list, so a registry can cache a derived view
+    /// (e.g. a sorted copy) and rebuild it only when this differs from the value it cached at.</summary>
+    public int Version { get; private set; }
+
     public void Register(T item)
     {
-        if (item is not null && !_items.Contains(item)) _items.Add(item);
+        if (item is not null && !_items.Contains(item))
+        {
+            _items.Add(item);
+            Version++;
+        }
     }
 
     public void Unregister(T item)
     {
-        if (item is not null) _items.Remove(item);
+        if (item is not null && _items.Remove(item)) Version++;
     }
 
-    public void ClearAll() => _items.Clear();
+    public void ClearAll()
+    {
+        _items.Clear();
+        Version++;
+    }
 
     public IReadOnlyList<T> Items => _items;
 

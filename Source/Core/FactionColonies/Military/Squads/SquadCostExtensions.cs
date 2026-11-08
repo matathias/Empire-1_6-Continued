@@ -81,10 +81,9 @@ public static class SquadCostExtensions
     public static int SubPawnReplaceCost(Mercenary sub)
     {
         if (sub?.subPawnKind?.race is null) return 0;
-        double mult = sub.subPawnType == Mercenary.SubPawnType.Mech
-            ? FCSettings.militaryMechCostMultiplier
-            : FCSettings.militaryAnimalCostMultiplier;
-        double raw = Math.Floor(sub.subPawnKind.race.BaseMarketValue * mult);
+        double raw = sub.subPawnType == Mercenary.SubPawnType.Mech
+            ? MilUnitFC.MechUnitCost(sub.subPawnKind)
+            : MilUnitFC.AnimalUnitCost(sub.subPawnKind);
         return (int)Math.Round(raw * FCSettings.squadHireCostMultiplier);
     }
 }

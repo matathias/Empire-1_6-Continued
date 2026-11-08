@@ -69,8 +69,8 @@ public class PatchNotesDisplayWindow : Window
         this.modId = modId;
         List<PatchNote> notes = PatchNoteDatabase.ForMod(modId);
 
-        FCSettings.GetLastSeenVersion(modId, out int lsMajor, out int lsMinor, out int lsPatch);
-        groups = BuildGroups(notes, lsMajor, lsMinor, lsPatch);
+        FCVersion lastSeen = FCSettings.GetLastSeenVersion(modId);
+        groups = BuildGroups(notes, lastSeen);
 
         // Auto-expand groups with new entries, and individual new entries within them
         for (int gi = 0; gi < groups.Count; gi++)
@@ -80,7 +80,7 @@ public class PatchNotesDisplayWindow : Window
                 expandedGroups.Add(gi);
                 foreach (PatchNote def in groups[gi].entries)
                 {
-                    if (def.IsNewerThan(lsMajor, lsMinor, lsPatch))
+                    if (def.IsNewerThan(lastSeen))
                     {
                         expandedEntries.Add(def.VersionSortKey);
                     }
@@ -91,7 +91,7 @@ public class PatchNotesDisplayWindow : Window
 
     public PatchNotesDisplayWindow(string modId, string title) : this(modId) => this.title = title;
 
-    private List<PatchNoteGroup> BuildGroups(List<PatchNote> sortedDefs, int lsMajor, int lsMinor, int lsPatch)
+    private List<PatchNoteGroup> BuildGroups(List<PatchNote> sortedDefs, FCVersion lastSeen)
     {
         var result = new List<PatchNoteGroup>();
         if (sortedDefs.Count == 0) return result;
@@ -122,7 +122,7 @@ public class PatchNotesDisplayWindow : Window
             if (def.GetPatchNoteType > current.highestSeverity)
                 current.highestSeverity = def.GetPatchNoteType;
 
-            if (def.IsNewerThan(lsMajor, lsMinor, lsPatch))
+            if (def.IsNewerThan(lastSeen))
                 current.hasNewEntries = true;
         }
         if (current is not null) result.Add(current);
@@ -147,7 +147,7 @@ public class PatchNotesDisplayWindow : Window
         if (groups.Count > 0 && groups[0].entries.Count > 0)
         {
             PatchNote latest = groups[0].entries[0];
-            FCSettings.SetLastSeenVersion(modId, latest.Major, latest.Minor, latest.Patch);
+            FCSettings.SetLastSeenVersion(modId, latest.Version);
             LoadedModManager.GetMod<FactionColoniesMod>().WriteSettings();
         }
     }
@@ -273,8 +273,7 @@ public class PatchNotesDisplayWindow : Window
                     PatchNote def = group.entries[ei];
                     int entryKey = def.VersionSortKey;
                     bool entryExpanded = expandedEntries.Contains(entryKey);
-                    FCSettings.GetLastSeenVersion(modId, out int lsMaj, out int lsMin, out int lsPat);
-                    bool isNew = def.IsNewerThan(lsMaj, lsMin, lsPat);
+                    bool isNew = def.IsNewerThan(FCSettings.GetLastSeenVersion(modId));
 
                     // Entry header (indented)
                     Rect headerRect = new(EntryIndent, curY, scrollContentWidth - EntryIndent, HeaderHeight);

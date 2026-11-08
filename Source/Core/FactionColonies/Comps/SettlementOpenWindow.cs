@@ -2,22 +2,11 @@
 
 namespace FactionColonies;
 
-public class WorldObjectCompProperties_SettlementOpenWindow : WorldObjectCompProperties
+public class WorldObjectCompProperties_SettlementOpenWindow : MapParentCompProperties
 {
     public WorldObjectCompProperties_SettlementOpenWindow()
     {
         compClass = typeof(WorldObjectComp_SettlementOpenWindow);
-    }
-    public override IEnumerable<string> ConfigErrors(WorldObjectDef parentDef)
-    {
-        foreach (string item in base.ConfigErrors(parentDef))
-        {
-            yield return item;
-        }
-        if (!typeof(MapParent).IsAssignableFrom(parentDef.worldObjectClass))
-        {
-            yield return parentDef.defName + " has WorldObjectCompProperties_SettlementOpenWindow but it's not MapParent.";
-        }
     }
 }
 

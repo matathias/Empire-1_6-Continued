@@ -889,42 +889,23 @@ public partial class XenotypeFilter : IExposable
         List<XenotypeDef> validXenotypes = GetValidXenotypesForRequest(request);
         List<string> validCustomXenotypes = GetValidCustomXenotypesForRequest(request);
 
-        float cumulative = 0;
-        float weightTotal = GetTotalWeightForXenotypeList(validXenotypes) + GetTotalWeightForCustomXenotypeList(validCustomXenotypes);
-        float xenoRand = Rand.Value;
-
-        if (validXenotypes.Count > 0)
+        // One weighted draw over both pools. A custom xenotype missing from the decoder can't be
+        // generated, so it is left out of the draw.
+        List<(XenotypeDef def, string custom, float weight)> candidates = new(validXenotypes.Count + validCustomXenotypes.Count);
+        foreach (XenotypeDef allowedXenotype in validXenotypes)
+            candidates.Add((allowedXenotype, null, GetXenotypeWeight(allowedXenotype)));
+        foreach (string allowedXenotype in validCustomXenotypes)
         {
-            foreach (XenotypeDef allowedXenotype in validXenotypes)
-            {
-                float thisWeight = GetXenotypeWeight(allowedXenotype);
-                float thisChance = (cumulative + thisWeight) / weightTotal;
-
-                if (xenoRand < thisChance)
-                {
-                    chosenXenotype = allowedXenotype;
-                    break;
-                }
-                cumulative += thisWeight;
-            }
+            if (FactionCache.CustomXenotypesDecoder.ContainsKey(allowedXenotype))
+                candidates.Add((null, allowedXenotype, GetCustomXenotypeWeight(allowedXenotype)));
         }
-        if (chosenXenotype is null && validCustomXenotypes.Count > 0)
-        {
-            foreach (string allowedXenotype in validCustomXenotypes)
-            {
-                float thisWeight = GetCustomXenotypeWeight(allowedXenotype);
-                float thisChance = (cumulative + thisWeight) / weightTotal;
 
-                if (xenoRand < thisChance)
-                {
-                    chosenCustomXenotype = FactionCache.GetCustomXenotype(allowedXenotype);
-                    if (chosenCustomXenotype is not null)
-                    {
-                        break;
-                    }
-                }
-                cumulative += thisWeight;
-            }
+        if (candidates.TryRandomElementByWeight(c => c.weight, out var picked))
+        {
+            if (picked.def is not null)
+                chosenXenotype = picked.def;
+            else
+                chosenCustomXenotype = FactionCache.GetCustomXenotype(picked.custom);
         }
 
         if (chosenXenotype is null && chosenCustomXenotype is null)
@@ -944,29 +925,7 @@ public partial class XenotypeFilter : IExposable
     }
     public ThingDef GetRandomRace()
     {
-        ThingDef outputRace = null;
-        float cumulative = 0;
-        float weightTotal = RaceTotalWeight;
-        float raceRand = Rand.Value;
-
-        if (races.Count > 0)
-        {
-            foreach (ThingDef race in races.Weights.Keys)
-            {
-                float thisWeight = races.Get(race);
-                if (thisWeight == 0)
-                {
-                    continue;
-                }
-                if (raceRand < (cumulative + thisWeight) / weightTotal)
-                {
-                    outputRace = race;
-                    break;
-                }
-                cumulative += thisWeight;
-            }
-        }
-
+        races.Weights.Keys.TryRandomElementByWeight(race => races.Get(race), out ThingDef outputRace);
         return outputRace;
     }
 

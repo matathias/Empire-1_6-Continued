@@ -317,10 +317,7 @@ public class LordJob_DeployMilitary : LordJob
                 new Trigger_Custom((TriggerSignal _) =>
                 {
                     if (squad is null) return false;
-                    MilitaryOperation op = squad.Operation;
-                    return op is not null
-                        && op.kind == MilitaryJobDefOf.Deploy
-                        && op.phase == MilitaryOperationPhase.Engaged
+                    return squad.Operation?.IsEngagedDeploy == true
                         && squad.Deployment.OrderLocation != currentOrderPosition;
                 })
             ],
@@ -374,8 +371,7 @@ public class LordJob_DeployMilitary : LordJob
             // to the op (which on fire transitions the op to Resolved and unregisters it),
             // and fires LifecycleRegistry.OnBattleResolved -> OnOperationResolved.
             MilitaryOperation op = squad.Operation;
-            if (op is not null && op.kind == MilitaryJobDefOf.Deploy
-                && op.phase == MilitaryOperationPhase.Engaged)
+            if (op?.IsEngagedDeploy == true)
             {
                 // Deploy isn't a battle — synthesize a result so CompleteBattle's
                 // victory-flag computation has something to read. CompleteBattle now also

@@ -49,17 +49,7 @@ static class PawnExtensions
 
     public static void Scarify(this Pawn pawn)
     {
-        int num = 0;
-        using (List<Hediff>.Enumerator enumerator = pawn.health.hediffSet.hediffs.GetEnumerator())
-        {
-            while (enumerator.MoveNext())
-            {
-                if (enumerator.Current?.def == HediffDefOf.Scarification)
-                {
-                    num++;
-                }
-            }
-        }
+        int num = pawn.health.hediffSet.GetHediffCount(HediffDefOf.Scarification);
 
         for (int i = num; i < pawn.ideo.Ideo.RequiredScars; i++)
         {

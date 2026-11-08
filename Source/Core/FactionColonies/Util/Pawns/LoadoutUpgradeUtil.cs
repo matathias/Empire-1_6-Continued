@@ -10,13 +10,17 @@ namespace FactionColonies;
 /// </summary>
 public static class LoadoutUpgradeUtil
 {
-    /// <summary>Equipment-only market value for a loadout (apparel + weapons). Race base
-    /// cost is excluded so a pawnKind mismatch between assigned and equipped snapshots
-    /// doesn't leak a phantom race-cost diff (the pawn doesn't change race on an upgrade).</summary>
-    public static double SumEquipmentCost(MilUnitFC unit)
+    /// <summary>Equipment-only market value for a loadout (apparel, weapons, inventory, implants,
+    /// psycasts, companion animals, mount, mechlink and mechs). Race base cost is excluded so a
+    /// pawnKind mismatch between assigned and equipped snapshots doesn't leak a phantom race-cost
+    /// diff (the pawn doesn't change race on an upgrade). <see cref="MilUnitFC.UpdateEquipmentTotalCost"/>
+    /// builds the full design cost on top of this.</summary>
+    public static double SumEquipmentCost(MilUnitFC unit) => SumEquipmentCost(unit, 0);
+
+    /* Adds the equipment cost of unit onto total (the design-cost path seeds it with the race cost). */
+    internal static double SumEquipmentCost(MilUnitFC unit, double total)
     {
-        if (unit is null) return 0;
-        double total = 0;
+        if (unit is null) return total;
         if (unit.apparel is not null)
             foreach (SavedThing a in unit.apparel) total += a.MarketValue;
         if (unit.weapons is not null)
@@ -30,23 +34,22 @@ public static class LoadoutUpgradeUtil
         total += PsycastSystemRegistry.Active?.PsylinkCost(unit.psylinkLevel) ?? 0;
         if (unit.psycasts is not null)
             foreach (SavedPsycast a in unit.psycasts) total += MilUnitFC.PsycastCost(a);
-        // Companion animals + mount: market value times count, mirroring the design-side cost in
-        // MilUnitFC.UpdateEquipmentTotalCost so the upgrade diff is non-zero when animals/mount change.
+        // Companion animals + mount: per-unit cost times count. The spawned animal/mount pawns are
+        // never re-counted by squad cost/power math, so their entire cost lives here.
         if (unit.animals is not null)
             foreach (SavedAnimal a in unit.animals)
                 if (a.kind?.race is not null)
-                    total += Math.Floor(a.kind.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier) * Math.Max(1, a.count);
+                    total += MilUnitFC.AnimalUnitCost(a.kind) * Math.Max(1, a.count);
         if (unit.mount?.race is not null)
-            total += Math.Floor(unit.mount.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
-        // Mechanitor: flat mechlink surcharge + each bonded mech's market value. Matches the
-        // design-side cost in MilUnitFC.UpdateEquipmentTotalCost so the upgrade diff stays in sync.
+            total += MilUnitFC.AnimalUnitCost(unit.mount);
+        // Mechanitor: flat mechlink surcharge + each bonded mech's per-unit cost times count.
         if (ModsConfig.BiotechActive && unit.IsMechanitorDesign)
         {
             total += FCSettings.militaryMechlinkCost;
             if (unit.mechs is not null)
                 foreach (SavedMech m in unit.mechs)
                     if (m.kind?.race is not null)
-                        total += Math.Floor(m.kind.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier) * Math.Max(1, m.count);
+                        total += MilUnitFC.MechUnitCost(m.kind) * Math.Max(1, m.count);
         }
         return total;
     }
@@ -103,31 +106,11 @@ public static class LoadoutUpgradeUtil
 
     /* Order-independent equality over companion-animal rows (kind + count). */
     public static bool AnimalsEquivalent(List<SavedAnimal> a, List<SavedAnimal> b)
-    {
-        int an = a is null ? 0 : a.Count(x => x.kind is not null);
-        int bn = b is null ? 0 : b.Count(x => x.kind is not null);
-        if (an != bn) return false;
-        if (an == 0) return true;
-        List<string> sa = a.Where(x => x.kind is not null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
-        List<string> sb = b.Where(x => x.kind is not null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
-        for (int i = 0; i < an; i++)
-            if (sa[i] != sb[i]) return false;
-        return true;
-    }
+        => MultisetEqual(a, b, x => x.kind is not null, x => $"{x.kind.defName}|{Math.Max(1, x.count)}");
 
     /* Order-independent equality over mech rows (kind + count + group). */
     public static bool MechsEquivalent(List<SavedMech> a, List<SavedMech> b)
-    {
-        int an = a is null ? 0 : a.Count(x => x.kind is not null);
-        int bn = b is null ? 0 : b.Count(x => x.kind is not null);
-        if (an != bn) return false;
-        if (an == 0) return true;
-        List<string> sa = a.Where(x => x.kind is not null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count) + "|" + x.group).OrderBy(s => s).ToList();
-        List<string> sb = b.Where(x => x.kind is not null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count) + "|" + x.group).OrderBy(s => s).ToList();
-        for (int i = 0; i < an; i++)
-            if (sa[i] != sb[i]) return false;
-        return true;
-    }
+        => MultisetEqual(a, b, x => x.kind is not null, x => $"{x.kind.defName}|{Math.Max(1, x.count)}|{x.group}");
 
     /* Per-group work mode equality. Missing and null entries resolve to Escort (as in
      * MilUnitFC.GetGroupWorkMode), so a longer-but-equivalent list still matches. */
@@ -165,19 +148,9 @@ public static class LoadoutUpgradeUtil
     }
 
     private static bool PsycastsEquivalent(List<SavedPsycast> a, List<SavedPsycast> b)
-    {
-        int an = a?.Count ?? 0;
-        int bn = b?.Count ?? 0;
-        if (an != bn) return false;
-        if (an == 0) return true;
         // Key on every meaningful field so a changed focus or stat-point count (not just a
         // changed psycast) registers as a difference and offers an upgrade.
-        List<string> sa = a.Select(x => x.systemKey + "|" + x.kind + "|" + x.psycastDef + "|" + x.count).OrderBy(s => s).ToList();
-        List<string> sb = b.Select(x => x.systemKey + "|" + x.kind + "|" + x.psycastDef + "|" + x.count).OrderBy(s => s).ToList();
-        for (int i = 0; i < an; i++)
-            if (sa[i] != sb[i]) return false;
-        return true;
-    }
+        => MultisetEqual(a, b, _ => true, x => $"{x.systemKey}|{x.kind}|{x.psycastDef}|{x.count}");
 
     /// <summary>True when the implant set differs between <paramref name="target"/> and
     /// <paramref name="current"/>. Re-equipping (apparel/weapons/inventory) doesn't touch
@@ -193,62 +166,27 @@ public static class LoadoutUpgradeUtil
 
     /* Order-independent equality over inventory rows (thing + stuff + quality + count). */
     public static bool InventoryEquivalent(List<SavedThing> a, List<SavedThing> b)
-    {
-        int an = a is null ? 0 : a.Count(x => x.thing is not null);
-        int bn = b is null ? 0 : b.Count(x => x.thing is not null);
-        if (an != bn) return false;
-        if (an == 0) return true;
         // Sort on a fully-discriminating key (every field SavedThingEquivalent inspects, incl. count),
-        // so same-def rows differing only in stuff/quality/count still land in matching positions and
-        // the positional pairing below is valid.
-        List<SavedThing> sa = a.Where(x => x.thing is not null).OrderBy(SavedThingSortKey, StringComparer.Ordinal).ToList();
-        List<SavedThing> sb = b.Where(x => x.thing is not null).OrderBy(SavedThingSortKey, StringComparer.Ordinal).ToList();
-        for (int i = 0; i < an; i++)
-        {
-            if (!SavedThingEquivalent(sa[i], sb[i])) return false;
-            if (sa[i].count != sb[i].count) return false;
-        }
-        return true;
-    }
+        // so same-def rows differing only in stuff/quality/count still land in matching positions.
+        => MultisetEqual(a, b, x => x.thing is not null, SavedThingSortKey,
+            (x, y) => SavedThingEquivalent(x, y) && x.count == y.count);
 
     /* Order-independent equality over implants (install source + body part + occurrence index).
      * Covers both surgery (recipe) and self-install (selfInstallThing) entries — a leveled
      * self-install implant appears once per level, so count matters and is captured by the key. */
     public static bool ImplantsEquivalent(List<SavedImplant> a, List<SavedImplant> b)
-    {
-        int an = a is null ? 0 : a.Count(x => x.IsValid);
-        int bn = b is null ? 0 : b.Count(x => x.IsValid);
-        if (an != bn) return false;
-        if (an == 0) return true;
-        List<string> sa = a.Where(x => x.IsValid).Select(ImplantKey).OrderBy(s => s).ToList();
-        List<string> sb = b.Where(x => x.IsValid).Select(ImplantKey).OrderBy(s => s).ToList();
-        for (int i = 0; i < an; i++)
-            if (sa[i] != sb[i]) return false;
-        return true;
-    }
+        => MultisetEqual(a, b, x => x.IsValid, ImplantKey);
 
     private static string ImplantKey(SavedImplant im)
     {
         string src = im.recipe?.defName ?? im.selfInstallThing?.defName ?? "";
-        return src + "|" + (im.bodyPart?.defName ?? "") + "|" + im.bodyPartIndex;
+        return $"{src}|{im.bodyPart?.defName ?? ""}|{im.bodyPartIndex}";
     }
 
     public static bool ApparelEquivalent(List<SavedThing> a, List<SavedThing> b)
-    {
-        int an = a is null ? 0 : a.Count(x => x.thing is not null);
-        int bn = b is null ? 0 : b.Count(x => x.thing is not null);
-        if (an != bn) return false;
-        if (an == 0) return true;
         // Fully-discriminating sort key (see InventoryEquivalent): same-def apparel differing only in
         // stuff/quality/color must sort into matching positions for the positional pairing to hold.
-        List<SavedThing> sa = a.Where(x => x.thing is not null).OrderBy(SavedThingSortKey, StringComparer.Ordinal).ToList();
-        List<SavedThing> sb = b.Where(x => x.thing is not null).OrderBy(SavedThingSortKey, StringComparer.Ordinal).ToList();
-        for (int i = 0; i < an; i++)
-        {
-            if (!SavedThingEquivalent(sa[i], sb[i])) return false;
-        }
-        return true;
-    }
+        => MultisetEqual(a, b, x => x.thing is not null, SavedThingSortKey, SavedThingEquivalent);
 
     /* Compares only the first non-null weapon in each list — matches the rest of the
      * military system, which treats a unit as single-weapon. Kept deliberately as-is so
@@ -268,9 +206,33 @@ public static class LoadoutUpgradeUtil
     private static string SavedThingSortKey(SavedThing t)
     {
         string q = t.quality.HasValue ? ((int)t.quality.Value).ToString() : "-1";
-        string col = t.hasColor ? ("|" + t.color.r + "," + t.color.g + "," + t.color.b + "," + t.color.a) : "|-";
-        return (t.thing?.defName ?? "") + "|" + (t.stuff?.defName ?? "") + "|" + q + "|"
-            + (t.hasColor ? "1" : "0") + col + "|" + t.count;
+        string col = t.hasColor ? $"|{t.color.r},{t.color.g},{t.color.b},{t.color.a}" : "|-";
+        return $"{t.thing?.defName ?? ""}|{t.stuff?.defName ?? ""}|{q}|{(t.hasColor ? "1" : "0")}{col}|{t.count}";
+    }
+
+    /* Order-independent multiset equality: rows failing include are ignored, the rest are sorted by
+     * key and paired by position. Rows match when equal says so, or by key when equal is null; equal
+     * must agree with key (equal rows have equal keys) for the pairing to hold. Null lists count as empty. */
+    private static bool MultisetEqual<T>(List<T> a, List<T> b, Func<T, bool> include, Func<T, string> key,
+        Func<T, T, bool> equal = null)
+    {
+        int an = a is null ? 0 : a.Count(include);
+        int bn = b is null ? 0 : b.Count(include);
+        if (an != bn) return false;
+        if (an == 0) return true;
+        if (equal is null)
+        {
+            List<string> ka = a.Where(include).Select(key).OrderBy(k => k, StringComparer.Ordinal).ToList();
+            List<string> kb = b.Where(include).Select(key).OrderBy(k => k, StringComparer.Ordinal).ToList();
+            for (int i = 0; i < an; i++)
+                if (ka[i] != kb[i]) return false;
+            return true;
+        }
+        List<T> sa = a.Where(include).OrderBy(key, StringComparer.Ordinal).ToList();
+        List<T> sb = b.Where(include).OrderBy(key, StringComparer.Ordinal).ToList();
+        for (int i = 0; i < an; i++)
+            if (!equal(sa[i], sb[i])) return false;
+        return true;
     }
 
     public static bool SavedThingEquivalent(SavedThing a, SavedThing b)

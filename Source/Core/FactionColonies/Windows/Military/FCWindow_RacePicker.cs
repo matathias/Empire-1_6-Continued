@@ -20,20 +20,7 @@ public class FCWindow_RacePicker : FCWindow_SearchablePicker<PawnKindDef>
     private static string RaceLabel(PawnKindDef def) => (def.race.label ?? def.race.defName).CapitalizeFirst();
 
     // One entry per humanlike race (Human represented by the Colonist kind)
-    protected override List<PawnKindDef> Items()
-    {
-        HashSet<string> seenRaces = [];
-        List<PawnKindDef> races = [];
-        foreach (PawnKindDef def in FactionCache.AllPawnKindDefs)
-        {
-            if (!def.IsHumanLikeRace()) continue;
-            if (def.race == ThingDefOf.Human && def != PawnKindDefOf.Colonist) continue;
-            if (seenRaces.Add(def.race.label ?? def.race.defName))
-                races.Add(def);
-        }
-        races.Sort((a, b) => string.Compare(RaceLabel(a), RaceLabel(b), StringComparison.OrdinalIgnoreCase));
-        return races;
-    }
+    protected override List<PawnKindDef> Items() => FactionCache.HumanlikeRaceKinds;
 
     protected override string SearchText(PawnKindDef def) => RaceLabel(def);
 

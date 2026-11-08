@@ -287,12 +287,7 @@ public class FCRoadQueue : IExposable
                     if (generation != mstGeneration || Current.Game is null)
                         return;
 
-                    var fromTile = new PlanetTile(key.lo, layer);
-                    var toTile = new PlanetTile(key.hi, layer);
-                    WorldPath path = pathing.FindPath(fromTile, toTile, null);
-                    float cost = path.Found ? path.TotalCost : float.MaxValue;
-                    path.Dispose();
-                    newEdges[key] = cost;
+                    newEdges[key] = EdgeCost(pathing, key, layer);
                 }
             }
 
@@ -345,17 +340,24 @@ public class FCRoadQueue : IExposable
         {
             foreach (TileEdgeKey key in edgesToCompute)
             {
-                var fromTile = new PlanetTile(key.lo, layer);
-                var toTile = new PlanetTile(key.hi, layer);
-                WorldPath path = pathing.FindPath(fromTile, toTile, null);
-                float cost = path.Found ? path.TotalCost : float.MaxValue;
-                path.Dispose();
-                edgeCostCache[key] = cost;
+                edgeCostCache[key] = EdgeCost(pathing, key, layer);
             }
         }
 
         List<Edge> edges = BuildEdgeListFromCache(currentCandidateEdges);
         FinishMSTFromEdges(edges, allTiles, mstGeneration, "synchronously");
+    }
+
+    /// <summary>
+    /// Path cost between the two surface tiles of an edge on the given layer, or float.MaxValue
+    /// when no path exists (Kruskal stops at the first such edge).
+    /// </summary>
+    static float EdgeCost(WorldPathing pathing, TileEdgeKey key, PlanetLayer layer)
+    {
+        WorldPath path = pathing.FindPath(new PlanetTile(key.lo, layer), new PlanetTile(key.hi, layer), null);
+        float cost = path.Found ? path.TotalCost : float.MaxValue;
+        path.Dispose();
+        return cost;
     }
 
     /// <summary>
@@ -440,12 +442,7 @@ public class FCRoadQueue : IExposable
         while (incrementalEdgeIndex < incrementalEdgeKeys.Count && computed < edgesPerTick)
         {
             TileEdgeKey key = incrementalEdgeKeys[incrementalEdgeIndex];
-            var fromTile = new PlanetTile(key.lo, incrementalLayer);
-            var toTile = new PlanetTile(key.hi, incrementalLayer);
-            WorldPath path = incrementalPathing.FindPath(fromTile, toTile, null);
-            float cost = path.Found ? path.TotalCost : float.MaxValue;
-            path.Dispose();
-            edgeCostCache[key] = cost;
+            edgeCostCache[key] = EdgeCost(incrementalPathing, key, incrementalLayer);
             computed++;
             incrementalEdgeIndex++;
         }

@@ -1523,6 +1523,30 @@ public class MainTabWindow_Colony : MainTabWindow
     private MainTabWindow_Squads _bySquadRenderer;
     private MainTabWindow_BattleReports _battleReportsRenderer;
 
+    /// <summary>Draws the faction icon and highlighted Medium faction name across the top of a tab,
+    /// leaving <paramref name="buttonsWidth"/> free at the right edge. Restores font and anchor.
+    /// Returns the x where the right-aligned header buttons start.</summary>
+    private float DrawFactionHeader(Rect rect, float buttonsWidth, float height)
+    {
+        float bx = rect.xMax - buttonsWidth - margin;
+
+        Rect iconRect = new(rect.x + margin, rect.y + margin, height, height);
+        Widgets.ButtonImage(iconRect, faction.factionIcon);
+
+        Rect labelBox = new(iconRect.xMax + margin, rect.y + margin, bx - iconRect.xMax - (margin * 2), height);
+        Rect labelTextBox = new(labelBox.x + margin, labelBox.y, labelBox.width - (margin * 2), labelBox.height);
+
+        GameFont fontBefore = Text.Font;
+        TextAnchor anchorBefore = Text.Anchor;
+        Text.Font = GameFont.Medium;
+        Text.Anchor = TextAnchor.MiddleLeft;
+        Widgets.DrawHighlight(labelBox);
+        UIUtil.ClampedLabel(labelTextBox, faction.name ?? "");
+        Text.Font = fontBefore;
+        Text.Anchor = anchorBefore;
+        return bx;
+    }
+
     private void DrawMilitaryTab(Rect rect)
     {
         float x = rect.x;
@@ -1532,22 +1556,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // --- Create buttons (right-aligned) ---
         float buttonWidth = 187f;
         float buttonHeight = 35f;
-        float bx = rect.xMax - buttonWidth * 3 - margin;
-
-        Rect iconRect = new(x + margin, y + margin, buttonHeight, buttonHeight);
-        Widgets.ButtonImage(iconRect, faction.factionIcon);
-
-        Rect labelBox = new(iconRect.xMax + margin, y + margin, bx - iconRect.xMax - (margin * 2), buttonHeight);
-        Rect labelTextBox = new(labelBox.x + margin, labelBox.y, labelBox.width - (margin * 2), labelBox.height);
-
-        GameFont headerFontBefore = Text.Font;
-        TextAnchor headerAnchorBefore = Text.Anchor;
-        Text.Font = GameFont.Medium;
-        Text.Anchor = TextAnchor.MiddleLeft;
-        Widgets.DrawHighlight(labelBox);
-        UIUtil.ClampedLabel(labelTextBox, faction.name ?? "");
-        Text.Font = headerFontBefore;
-        Text.Anchor = headerAnchorBefore;
+        float bx = DrawFactionHeader(rect, buttonWidth * 3, buttonHeight);
 
         if (faction.settlements?.Count > 0)
         {
@@ -1720,7 +1729,7 @@ public class MainTabWindow_Colony : MainTabWindow
             UIUtil.DrawColoredLabel(
                 new Rect(contentX + nameW, topY, badgeW, lineH),
                 badgeStr,
-                ColorForPowerStatus(powStatus));
+                AccentUtil.ColorForPowerStatus(powStatus));
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
             Rect badgeRect = new(contentX + nameW, topY, badgeW, lineH);
@@ -2041,29 +2050,6 @@ public class MainTabWindow_Colony : MainTabWindow
         Text.Anchor = anchorBefore;
     }
 
-    private void HandleDeployClick(WorldSettlementFC settlement, WorldObjectComp_SettlementMilitary milComp)
-    {
-        if (!milComp.IsMilitaryBusy(true) && milComp.IsMilitarySquadValid())
-        {
-            Find.WindowStack.Add(new FloatMenu(DeploymentOptions(settlement)));
-        }
-        else if (milComp.IsMilitaryBusy(true) && milComp.IsMilitarySquadValid() && FindFC.FactionComp.IsActionAllowed(FCActionType.DeployExtraSquad))
-        {
-            List<FloatMenuOption> extraOptions = [];
-            FindFC.PolicyManager.ForEachBehavior(b =>
-            {
-                var options = b.GetExtraDeploymentOptions(faction, settlement, milComp);
-                if (options is not null) extraOptions.AddRange(options);
-            });
-            if (extraOptions.Any())
-                Find.WindowStack.Add(new FloatMenu(extraOptions));
-        }
-        else
-        {
-            milComp.IsMilitaryBusy();
-        }
-    }
-
     private void HandleFireSupportClick(WorldSettlementFC settlement, WorldObjectComp_SettlementMilitary milComp)
     {
         List<FloatMenuOption> list = [];
@@ -2121,27 +2107,7 @@ public class MainTabWindow_Colony : MainTabWindow
         Find.WindowStack.Add(new Searchable_FloatMenu(list));
     }
 
-    private List<FloatMenuOption> DeploymentOptions(WorldSettlementFC settlement)
-    {
-        /* Morale lockout: present a single disabled option explaining why deploys are blocked. */
-        if (settlement is not null && settlement.TryGetSquadDeploymentBlock(out string lockReason))
-            return [new(lockReason, null)];
-
-        MercenarySquadFC primary = settlement?.FirstAvailableStationedSquad
-                                ?? settlement?.PrimaryStationedSquad;
-        int cost = primary.DeploymentCost();
-        string costSuffix = cost > 0 ? " ($" + cost + ")" : "";
-        return
-        [
-            new("FCWalkIntoMapDeploymentOption".Translate() + costSuffix, delegate
-            {
-                MilitaryDeploymentUtil.CallinAlliedForces(settlement, false);
-            }),
-            DropPodDeploymentOption(settlement)
-        ];
-    }
-
-    /// <summary>Same shape as <see cref="DeploymentOptions"/> but routes to a specific squad
+    /// <summary>Walk-in and drop-pod deploy options for a specific squad, routed
     /// via <see cref="MilitaryDeploymentUtil.CallinAlliedForces"/>'s overrideSquad parameter. Used by
     /// the per-slot Deploy button on the 1+N settlement card layout.</summary>
     private List<FloatMenuOption> SquadDeploymentOptions(WorldSettlementFC settlement, MercenarySquadFC squad)
@@ -2177,28 +2143,6 @@ public class MainTabWindow_Colony : MainTabWindow
         return opts;
     }
 
-    private FloatMenuOption DropPodDeploymentOption(WorldSettlementFC settlement)
-    {
-        MercenarySquadFC primary = settlement?.FirstAvailableStationedSquad
-                                ?? settlement?.PrimaryStationedSquad;
-        int cost = primary.DeploymentCost();
-        string costSuffix = cost > 0 ? " ($" + cost + ")" : "";
-
-        bool medievalOnly = FCSettings.medievalTechOnly;
-        if (!medievalOnly && (FactionCache.TechTransportPods?.IsFinished ?? false))
-        {
-            return new FloatMenuOption("FCDropPodDeploymentOption".Translate() + costSuffix,
-                delegate { MilitaryDeploymentUtil.CallinAlliedForces(settlement, true); });
-        }
-
-        return new FloatMenuOption(
-            "FCDropPodDeploymentOption".Translate() + (medievalOnly
-                ? "FCDropPodDeploymentOptionUnavailableReasonMedieval".Translate()
-                : "FCDropPodDeploymentOptionUnavailableReasonTech".Translate(
-                    FactionCache.TechTransportPods?.label ??
-                    "FCErrorDropPodResearchCouldNotBeFound".Translate())), null);
-    }
-
     private void OpenMilitaryWindow(MilitaryWindow content, string title)
     {
         Window toRemove = Find.WindowStack.Windows.FirstOrDefault(
@@ -2211,18 +2155,6 @@ public class MainTabWindow_Colony : MainTabWindow
         }
 
         Find.WindowStack.Add(new FCWindow_Military(content, title));
-    }
-
-    private static Color ColorForPowerStatus(SettlementPowerStatus status)
-    {
-        return status switch
-        {
-            SettlementPowerStatus.UnderAttack => AccentUtil.MilUnderAttack,
-            SettlementPowerStatus.AllBusy => new Color(1f, 0.85f, 0.4f),
-            SettlementPowerStatus.Ghost => new Color(1f, 0.85f, 0.4f),
-            SettlementPowerStatus.NoMilitary => Color.gray,
-            _ => Color.white,
-        };
     }
 
     private static string TooltipForPowerStatus(SettlementPowerStatus status,
@@ -2265,22 +2197,15 @@ public class MainTabWindow_Colony : MainTabWindow
         float buttonWidth = 210f;
         float buttonHeight = 35f;
         bool hasSettlements = faction.settlements?.Count > 0;
-        float bx = hasSettlements ? rect.xMax - buttonWidth * 2 - margin : rect.xMax - margin;
-
-        Rect iconRect = new(x + margin, y + margin, buttonHeight, buttonHeight);
-        Widgets.ButtonImage(iconRect, faction.factionIcon);
-
-        Rect labelBox = new(iconRect.xMax + margin, y + margin, bx - iconRect.xMax - (margin * 2), buttonHeight);
-        Rect labelTextBox = new(labelBox.x + margin, labelBox.y, labelBox.width - (margin * 2), labelBox.height);
-
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
         Color origColor = GUI.color;
 
+        float bx = DrawFactionHeader(rect, hasSettlements ? buttonWidth * 2 : 0f, buttonHeight);
+
+        // The workload buttons below are drawn in the header's Medium font.
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Widgets.DrawHighlight(labelBox);
-        UIUtil.ClampedLabel(labelTextBox, faction.name ?? "");
 
         if (hasSettlements)
         {

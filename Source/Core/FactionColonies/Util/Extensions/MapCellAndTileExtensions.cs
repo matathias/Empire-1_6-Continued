@@ -54,18 +54,11 @@ static class MapCellAndTileExtensions
     public static bool HasDownedForFaction(this Map map, Faction faction) => map.mapPawns.SpawnedDownedPawns.Any(pawn => pawn.Faction == faction && !pawn.IsPrisoner);
 
     /// <summary>
-    /// Checks if a <paramref name="tile"/> is valid
-    /// </summary>
-    /// <param name="tile"></param>
-    /// <returns>true if the tile >= 0, false otherwise</returns>
-    public static bool IsValidTile(this PlanetTile tile) => tile.Valid;
-
-    /// <summary>
     /// Checks if all <paramref name="tiles"/> in a touple are valid tiles
     /// </summary>
     /// <param name="tiles"></param>
     /// <returns>true if all tiles are >= 0, false otherwise</returns>
-    public static bool AreValidTiles(this (PlanetTile, PlanetTile) tiles) => tiles.Item1.IsValidTile() && tiles.Item2.IsValidTile();
+    public static bool AreValidTiles(this (PlanetTile, PlanetTile) tiles) => tiles.Item1.Valid && tiles.Item2.Valid;
 
     /// <summary>
     /// Checks if the given <paramref name="tile"/> is inside a shuttle ports range
@@ -73,7 +66,7 @@ static class MapCellAndTileExtensions
     /// <param name="tile"></param>
     /// <returns>true if it is, false otherwise</returns>
     public static bool IsInAnyShuttleRange(this PlanetTile tile) =>
-        tile.IsValidTile() &&
+        tile.Valid &&
 FindFC.Settlements.Any(settlement =>
             settlement.BuildingsComp?.HasBuilding(BuildingFCDefOf.shuttlePort) == true &&
             Find.WorldGrid.TraversalDistanceBetween(settlement.Tile, tile, canTraverseLayers: true) <= ShuttleSender.EffectiveRange(tile.Layer)

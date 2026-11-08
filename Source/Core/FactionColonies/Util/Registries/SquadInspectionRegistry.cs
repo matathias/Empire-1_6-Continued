@@ -5,63 +5,26 @@ namespace FactionColonies;
 /// firstTick / FinalizeInit hook; cleared on game dispose / load via <see cref="EmpireCacheUtil.InvalidateAll"/>.</summary>
 public static class SquadInspectionRegistry
 {
-    // Stored alongside a registration index so we can stable-sort by (Order, regIndex).
-    private struct Entry
-    {
-        public ISquadInspectionSection section;
-        public int regIndex;
-    }
-    private static readonly List<Entry> _entries = [];
-    private static int _nextRegIndex = 0;
+    private static readonly RegistryList<ISquadInspectionSection> _sections = new();
     private static List<ISquadInspectionSection> _sortedCache;
+    private static int _sortedVersion;
 
-    internal static void Register(ISquadInspectionSection section)
-    {
-        if (section is null) return;
-        for (int i = 0; i < _entries.Count; i++)
-        {
-            if (_entries[i].section == section) return;
-        }
-        _entries.Add(new Entry { section = section, regIndex = _nextRegIndex++ });
-        _sortedCache = null;
-    }
+    internal static void Register(ISquadInspectionSection section) => _sections.Register(section);
 
-    internal static void Unregister(ISquadInspectionSection section)
-    {
-        for (int i = 0; i < _entries.Count; i++)
-        {
-            if (_entries[i].section == section)
-            {
-                _entries.RemoveAt(i);
-                _sortedCache = null;
-                return;
-            }
-        }
-    }
+    internal static void Unregister(ISquadInspectionSection section) => _sections.Unregister(section);
 
-    internal static void ClearAll()
-    {
-        _entries.Clear();
-        _nextRegIndex = 0;
-        _sortedCache = null;
-    }
+    internal static void ClearAll() => _sections.ClearAll();
 
+    /// <summary>Sections sorted by <see cref="ISquadInspectionSection.Order"/>; equal orders keep
+    /// registration order (the backing list is in registration order and the sort is stable).</summary>
     public static IReadOnlyList<ISquadInspectionSection> Sections
     {
         get
         {
-            if (_sortedCache is null)
+            if (_sortedCache is null || _sortedVersion != _sections.Version)
             {
-                List<Entry> copy = new(_entries);
-                copy.Sort((a, b) =>
-                {
-                    int byOrder = a.section.Order.CompareTo(b.section.Order);
-                    if (byOrder != 0) return byOrder;
-                    return a.regIndex.CompareTo(b.regIndex);
-                });
-                List<ISquadInspectionSection> result = new(copy.Count);
-                for (int i = 0; i < copy.Count; i++) result.Add(copy[i].section);
-                _sortedCache = result;
+                _sortedCache = _sections.Items.OrderBy(s => s.Order).ToList();
+                _sortedVersion = _sections.Version;
             }
             return _sortedCache;
         }

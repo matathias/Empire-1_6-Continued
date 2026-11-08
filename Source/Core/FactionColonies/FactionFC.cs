@@ -847,8 +847,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
             {
                 PatchNote latest = PatchNoteDatabase.LatestForMod(modId);
                 if (latest is null) continue;
-                FCSettings.GetLastSeenVersion(modId, out int maj, out int min, out int pat);
-                if (latest.IsNewerThan(maj, min, pat)
+                if (latest.IsNewerThan(FCSettings.GetLastSeenVersion(modId))
                     && latest.GetPatchNoteType >= FCSettings.patchNoteAutoOpenThreshold)
                 {
                     Find.WindowStack.Add(new PatchNotesDisplayWindow(modId));
@@ -1311,11 +1310,11 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         // Scope chain: faction (cached) -> settlement (cached) -> squad-instance -> unit-instance.
         // Each scope folds in only if the stat opts into it and context is supplied.
         if (settlement is not null && stat.appliesToSettlements)
-            value = CombineScoped(value, settlement.GetSettlementStatValue(stat), stat);
+            value = stat.Combine(value, settlement.GetSettlementStatValue(stat));
         if (squad is not null && stat.appliesToSquads)
-            value = CombineScoped(value, AccumulatePermanentModifiers(stat.IdentityValue, stat, squad.statModifiers), stat);
+            value = stat.Combine(value, AccumulatePermanentModifiers(stat.IdentityValue, stat, squad.statModifiers));
         if (unit is not null && stat.appliesToUnits)
-            value = CombineScoped(value, AccumulatePermanentModifiers(stat.IdentityValue, stat, unit.statModifiers), stat);
+            value = stat.Combine(value, AccumulatePermanentModifiers(stat.IdentityValue, stat, unit.statModifiers));
 
         // Apply runtime-dependent behavior modifiers (uncached — may depend on settlement state)
         foreach (FCPolicyBehavior b in policyManager.CachedBehaviors)
@@ -1333,17 +1332,13 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         return value;
     }
 
-    /// <summary>Combines two scope values per the stat's aggregation (sum or product).</summary>
-    private static double CombineScoped(double a, double b, FCStatDef stat) =>
-        stat.aggregation == FCStatAggregation.Additive ? a + b : a * b;
-
     /// <summary>Folds a per-entity PermanentStatModifier list (squad/unit scope) into a running value.</summary>
     private double AccumulatePermanentModifiers(double value, FCStatDef stat, List<PermanentStatModifier> mods)
     {
         if (mods is null) return value;
         foreach (PermanentStatModifier mod in mods)
             if (mod.stat == stat)
-                value = CombineScoped(value, mod.value, stat);
+                value = stat.Combine(value, mod.value);
         return value;
     }
 
@@ -1372,14 +1367,8 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
     {
         foreach (FCStatModifier mod in statModifiers)
         {
-            bool isAdditive = stat.aggregation == FCStatAggregation.Additive;
             if (mod.stat == stat)
-            {
-                if (isAdditive)
-                    value += mod.value;
-                else
-                    value *= mod.value;
-            }
+                value = stat.Combine(value, mod.value);
         }
 
         return value;
@@ -2055,15 +2044,10 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
             PrivateFieldUtil.FactionIconCache(faction.def) = null;
         }
         // Settlement types (surface, orbital, submod types) each have their own def and icon cache.
-        Texture2D icon = settlements.Any() && UnityData.IsInMainThread ? ContentFinder<Texture2D>.Get(iconPath) : null;
         foreach (WorldSettlementFC settlement in settlements)
         {
             if (settlement?.def is not null)
-            {
-                settlement.def.expandingIconTexture = iconPath;
-                if (icon != null)
-                    PrivateFieldUtil.ExpandingIconCache(settlement.def) = icon;
-            }
+                WorldSettlementFC.SetExpandingIcon(settlement.def, iconPath);
             if (settlement?.Faction?.def is not null)
             {
                 settlement.Faction.def.factionIconPath = iconPath;

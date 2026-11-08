@@ -22,6 +22,10 @@ public class FCStatDef : Def
     /// </summary>
     public FCStatAggregation aggregation = FCStatAggregation.Additive;
 
+    /// <summary>Combines two values per this stat's aggregation (sum or product).</summary>
+    public double Combine(double a, double b) =>
+        aggregation == FCStatAggregation.Additive ? a + b : a * b;
+
     /// <summary>
     /// Whether this stat applies at the settlement level (propagated to settlements).
     /// If false, it's faction-level only.

@@ -1,26 +1,26 @@
 namespace FactionColonies;
 
-public class FCPolicyBehavior_Pacifist : FCPolicyBehavior
+public class FCPolicyBehavior_Pacifist : FCCooldownPolicyBehavior
 {
-    private CooldownAbility diplomatCooldown = new();
+    protected override string CooldownSaveKey => "diplomatCooldown";
 
     public override void PostInitialize()
     {
         var ext = Ext<FCPolicyBehaviorExt_Pacifist>();
-        diplomatCooldown.SetCooldown(GenDate.TicksPerDay * ext.diplomatCooldownDays);
+        cooldown.SetCooldown(GenDate.TicksPerDay * ext.diplomatCooldownDays);
     }
 
     public override bool HandleDiplomaticEnvoy(FactionFC faction, Faction targetFaction)
     {
-        if (!diplomatCooldown.IsReady)
+        if (!cooldown.IsReady)
         {
             Messages.Message(
-                "FCXDaysToSendDiplomat".Translate(Math.Round(diplomatCooldown.DaysRemaining, 1)),
+                "FCXDaysToSendDiplomat".Translate(Math.Round(cooldown.DaysRemaining, 1)),
                 MessageTypeDefOf.RejectInput);
             return false;
         }
 
-        diplomatCooldown.Use();
+        cooldown.Use();
 
         var ext = Ext<FCPolicyBehaviorExt_Pacifist>();
         int random = Rand.RangeInclusive(1, ext.successRollMax);
@@ -40,15 +40,4 @@ public class FCPolicyBehavior_Pacifist : FCPolicyBehavior
 
         return true;
     }
-
-    public override void ExposeData()
-    {
-        Scribe_Deep.Look(ref diplomatCooldown, "diplomatCooldown");
-        diplomatCooldown = diplomatCooldown ?? new CooldownAbility();
-    }
-
-    // Debug accessors
-    public bool DebugCooldownReady() => diplomatCooldown.IsReady;
-    public float DebugCooldownDays() => diplomatCooldown.DaysRemaining;
-    public void DebugResetCooldown() => diplomatCooldown.tickLastUsed = -1;
 }

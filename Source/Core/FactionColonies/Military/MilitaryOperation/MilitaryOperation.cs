@@ -66,6 +66,16 @@ public class MilitaryOperation : IExposable, ILoadReferenceable
 
     public bool HasMapPresence => battlefieldRef.Valid;
 
+    /// <summary>True while the op is still in play (Scheduled, Traveling or Engaged): its battle is
+    /// not over yet. False once it is winding down (CooldownPending) or finished (Resolved).</summary>
+    public bool IsLive => phase != MilitaryOperationPhase.CooldownPending
+                       && phase != MilitaryOperationPhase.Resolved;
+
+    /// <summary>True for a Deploy op that is Engaged: the squad is out on (or dropping onto) the
+    /// player's map and has not been recalled yet.</summary>
+    public bool IsEngagedDeploy => kind == MilitaryJobDefOf.Deploy
+                                && phase == MilitaryOperationPhase.Engaged;
+
     /// <summary>True when the player's empire is on the defending side (settlement under attack).</summary>
     public bool IsDefensive => defender?.faction is not null
                             && FindFC.EmpireFaction is not null

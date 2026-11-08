@@ -131,17 +131,9 @@ public static class BattleCasualtyApplicatorTests
         // Verify the early-return in ApplyCasualtiesToSquad honors the setting.
         // Doesn't actually need a real squad — passing null short-circuits at the next
         // guard, but we want to prove the setting is read first. Confirm via DoesNotThrow.
-        bool original = FCSettings.applyAutoResolveInjuries;
-        FCSettings.applyAutoResolveInjuries = false;
-        try
-        {
+        TestUtil.WithOverride(() => FCSettings.applyAutoResolveInjuries, v => FCSettings.applyAutoResolveInjuries = v, false, () =>
             TestAssert.DoesNotThrow(() =>
-                BattleCasualtyApplicator.ApplyCasualtiesToSquad(null, 10, 5, null));
-        }
-        finally
-        {
-            FCSettings.applyAutoResolveInjuries = original;
-        }
+                BattleCasualtyApplicator.ApplyCasualtiesToSquad(null, 10, 5, null)));
     }
 
     [EmpireTest("BattleCasualty")]

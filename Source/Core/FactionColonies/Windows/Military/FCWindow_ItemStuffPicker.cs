@@ -27,22 +27,10 @@ public class FCWindow_ItemStuffPicker : Window
     private string itemSearchTerm = "";
     private string stuffSearchTerm = "";
 
-    private int itemSortIndex = 0;
-    private int stuffSortIndex = 0;
-
-    // Filtered+sorted view caches, rebuilt only when their inputs change (not every frame). Without
-    // these the panels re-sort and re-allocate the whole list every frame, which could make the
-    // designer lag with thousands of modded defs. Cache keys track the inputs each view depends on.
-    private List<ThingDef> itemFilteredCache;
-    private string itemFilterCacheTerm;
-    private int itemFilterCacheSort = -1;
-
-    private List<ThingDef> stuffFilteredCache;
-    private string stuffFilterCacheTerm;
-    private int stuffFilterCacheSort = -1;
-    private ThingDef stuffCacheItem;
-    private QualityCategory? stuffCacheQuality;
-    private static readonly string[] sortLabelKeys = ["FCTitheSortNameAZ", "FCTitheSortNameZA", "FCTitheSortPriceLow", "FCTitheSortPriceHigh"];
+    // Filtered+sorted views, rebuilt only when their inputs change (not every frame), so the
+    // designer does not lag re-sorting thousands of modded defs.
+    private readonly ThingDefPickerView itemView = new();
+    private readonly ThingDefPickerView stuffView = new();
 
     private Vector2 itemScrollPos;
     private Vector2 stuffScrollPos;
@@ -156,20 +144,8 @@ public class FCWindow_ItemStuffPicker : Window
         UIUtil.ClampedLabel(new Rect(titleBox.x + margin, titleBox.y, 60f, titleBox.height), "FCItem".Translate());
         float sortBtnW = 120f;
         Rect sortBtn = new(titleBox.xMax - margin - 75f - margin - sortBtnW, titleBox.y + 2, sortBtnW, titleBox.height - 4);
-        if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[itemSortIndex].Translate())))
-        {
-            List<FloatMenuOption> options = [];
-            for (int s = 0; s < sortLabelKeys.Length; s++)
-            {
-                int captured = s;
-                options.Add(new FloatMenuOption(sortLabelKeys[s].Translate(), () =>
-                {
-                    itemSortIndex = captured;
-                    itemScrollPos = Vector2.zero;
-                }));
-            }
-            Find.WindowStack.Add(new FloatMenu(options));
-        }
+        if (UIUtil.ClampedButtonText(sortBtn, itemView.SortButtonLabel))
+            itemView.OpenSortMenu(() => itemScrollPos = Vector2.zero);
 
         Text.Anchor = TextAnchor.MiddleLeft;
         // Search bar
@@ -189,8 +165,7 @@ public class FCWindow_ItemStuffPicker : Window
             panelRect.width, panelRect.height - (SearchBarHeight * 2) - (margin * 2));
         Widgets.DrawMenuSection(scrollOutRect);
 
-        EnsureItemFilter();
-        List<ThingDef> filtered = itemFilteredCache;
+        List<ThingDef> filtered = itemView.Get(items, itemSearchTerm);
 
         float viewHeight = filtered.Count * RowHeight;
         float scrollMargin = viewHeight > scrollOutRect.height ? ScrollUtil.ScrollbarWidth : 0f;
@@ -273,20 +248,8 @@ public class FCWindow_ItemStuffPicker : Window
         UIUtil.ClampedLabel(new Rect(titleBox.x + margin, titleBox.y, 60f, titleBox.height), "FCStuff".Translate());
         float sortBtnW = 120f;
         Rect sortBtn = new(titleBox.xMax - margin - 75f - margin - sortBtnW, titleBox.y + 2, sortBtnW, titleBox.height - 4);
-        if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[stuffSortIndex].Translate())))
-        {
-            List<FloatMenuOption> options = [];
-            for (int s = 0; s < sortLabelKeys.Length; s++)
-            {
-                int captured = s;
-                options.Add(new FloatMenuOption(sortLabelKeys[s].Translate(), () =>
-                {
-                    stuffSortIndex = captured;
-                    stuffScrollPos = Vector2.zero;
-                }));
-            }
-            Find.WindowStack.Add(new FloatMenu(options));
-        }
+        if (UIUtil.ClampedButtonText(sortBtn, stuffView.SortButtonLabel))
+            stuffView.OpenSortMenu(() => stuffScrollPos = Vector2.zero);
 
         Text.Anchor = TextAnchor.MiddleLeft;
         // Search bar
@@ -306,8 +269,7 @@ public class FCWindow_ItemStuffPicker : Window
             panelRect.width, panelRect.height - (SearchBarHeight * 2) - (margin * 2));
         Widgets.DrawMenuSection(scrollOutRect);
 
-        EnsureStuffFilter();
-        List<ThingDef> filtered = stuffFilteredCache;
+        List<ThingDef> filtered = stuffView.Get(currentStuffs, stuffSearchTerm, selectedItem, SelectedQuality);
 
         float viewHeight = filtered.Count * RowHeight;
         float scrollMargin = viewHeight > scrollOutRect.height ? ScrollUtil.ScrollbarWidth : 0f;
@@ -476,71 +438,6 @@ public class FCWindow_ItemStuffPicker : Window
                     onConfirm(selectedItem, selectedStuff, qualityToEmit);
                 Close();
             }
-        }
-    }
-
-    /// <summary>Rebuilds the item view (filter + sort) only when the search term or sort index has
-    /// changed since the last build. The draw loop reads <see cref="itemFilteredCache"/>, so the
-    /// full sort/allocation no longer runs every frame.</summary>
-    private void EnsureItemFilter()
-    {
-        if (itemFilteredCache is not null
-            && itemFilterCacheTerm == itemSearchTerm
-            && itemFilterCacheSort == itemSortIndex)
-        {
-            return;
-        }
-
-        List<ThingDef> filtered = string.IsNullOrEmpty(itemSearchTerm)
-            ? items
-            : items.Where(t => (t.label ?? t.defName).IndexOf(itemSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-
-        itemFilteredCache = ApplySort(filtered, itemSortIndex);
-        itemFilterCacheTerm = itemSearchTerm;
-        itemFilterCacheSort = itemSortIndex;
-    }
-
-    /// <summary>Rebuilds the stuff view only when its inputs change. The key also tracks the selected
-    /// item and quality because the price sort keys off <see cref="CraftUtil.ThingValue"/> and the
-    /// source list (<see cref="currentStuffs"/>) is rebuilt whenever a new item is selected.</summary>
-    private void EnsureStuffFilter()
-    {
-        if (stuffFilteredCache is not null
-            && stuffFilterCacheTerm == stuffSearchTerm
-            && stuffFilterCacheSort == stuffSortIndex
-            && stuffCacheItem == selectedItem
-            && stuffCacheQuality == selectedQuality)
-        {
-            return;
-        }
-
-        List<ThingDef> filtered = string.IsNullOrEmpty(stuffSearchTerm)
-            ? currentStuffs
-            : currentStuffs.Where(s => (s.label ?? s.defName).IndexOf(stuffSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-
-        stuffFilteredCache = ApplySort(filtered, stuffSortIndex, isStuffList: true);
-        stuffFilterCacheTerm = stuffSearchTerm;
-        stuffFilterCacheSort = stuffSortIndex;
-        stuffCacheItem = selectedItem;
-        stuffCacheQuality = selectedQuality;
-    }
-
-    private List<ThingDef> ApplySort(List<ThingDef> list, int sortIndex, bool isStuffList = false)
-    {
-        switch (sortIndex)
-        {
-            case 1: // Name Z-A
-                return list.OrderByDescending(t => t.label, StringComparer.OrdinalIgnoreCase).ToList();
-            case 2: // Price Low-High
-                if (isStuffList && selectedItem is not null)
-                    return list.OrderBy(t => CraftUtil.ThingValue(selectedItem, t, SelectedQuality)).ToList();
-                return list.OrderBy(t => t.BaseMarketValue).ToList();
-            case 3: // Price High-Low
-                if (isStuffList && selectedItem is not null)
-                    return list.OrderByDescending(t => CraftUtil.ThingValue(selectedItem, t, SelectedQuality)).ToList();
-                return list.OrderByDescending(t => t.BaseMarketValue).ToList();
-            default: // 0: Name A-Z
-                return list.OrderBy(t => t.label, StringComparer.OrdinalIgnoreCase).ToList();
         }
     }
 }

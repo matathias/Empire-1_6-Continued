@@ -196,6 +196,23 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
         }
     }
 
+    /// <summary>Maps each rider pawn to its mount pawn, for lords that mount riders on spawn. Only
+    /// mount-typed sub-pawns count; companion animals are left out. When a rider owns several
+    /// mounts the first one wins. When <paramref name="riders"/> is given, mounts whose rider is
+    /// not in it are skipped.</summary>
+    public Dictionary<Pawn, Pawn> BuildMountMap(ICollection<Pawn> riders = null)
+    {
+        Dictionary<Pawn, Pawn> mounts = [];
+        foreach (Mercenary sub in AllSubPawns())
+        {
+            if (sub is null || sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
+            Pawn rider = sub.handler?.pawn;
+            if (rider is null || (riders is not null && !riders.Contains(rider))) continue;
+            mounts.TryAdd(rider, sub.pawn);
+        }
+        return mounts;
+    }
+
     private IEnumerable<Mercenary> SubPawnsOfType(Mercenary.SubPawnType type) =>
         AllSubPawns().Where(s => s is not null && s.subPawnType == type);
 
@@ -594,14 +611,32 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
         }
     }
 
+    /// <summary>Finds the slot merc whose pawn is <paramref name="pawn"/>. Sub-pawns are not
+    /// searched. Returns null for a null pawn, so an empty slot is never matched.</summary>
     public Mercenary ReturnPawn(Pawn pawn)
     {
+        if (pawn is null || mercenaries is null) return null;
         foreach (Mercenary merc in mercenaries)
         {
             if (merc?.pawn == pawn) return merc;
         }
         return null;
     }
+
+    /// <summary>Finds the sub-pawn wrapper (companion animal, mount or mech) whose pawn is
+    /// <paramref name="pawn"/>. Slot mercs are not searched.</summary>
+    public Mercenary FindSubPawn(Pawn pawn)
+    {
+        if (pawn is null) return null;
+        foreach (Mercenary sub in AllSubPawns())
+        {
+            if (sub?.pawn == pawn) return sub;
+        }
+        return null;
+    }
+
+    /// <summary>Finds the slot merc or sub-pawn wrapper whose pawn is <paramref name="pawn"/>.</summary>
+    public Mercenary FindMercOrSubPawn(Pawn pawn) => ReturnPawn(pawn) ?? FindSubPawn(pawn);
 
     /// <summary>Destroys and drops every bonded mech owned by <paramref name="owner"/>. A
     /// mechanitor can own several mechs, so this clears them all. Used by Dismiss and the upgrade
@@ -649,21 +684,11 @@ public class MercenarySquadFC : IExposable, ILoadReferenceable
                 }
             }
 
-            // Strip broken / dangling Overseer relations DIRECTLY from the list. We can't use
-            // TryRemoveDirectRelation here: it dereferences otherPawn.relations, which is null for a
-            // destroyed mech → NRE (the whole reason this cleanup exists). Live mechs keep their
-            // relation (otherPawn alive, tracker present).
-            List<DirectPawnRelation> rels = overseer.relations?.DirectRelations;
-            if (rels is null) continue;
-            for (int i = rels.Count - 1; i >= 0; i--)
-            {
-                DirectPawnRelation r = rels[i];
-                if (r is null || r.def is null) { rels.RemoveAt(i); continue; }
-                if (r.def != PawnRelationDefOf.Overseer) continue;
-                Pawn other = r.otherPawn;
-                if (other is null || other.Dead || other.Destroyed || other.relations is null)
-                    rels.RemoveAt(i);
-            }
+            // Strip broken / dangling Overseer relations, plus malformed entries. Live mechs keep
+            // their relation (otherPawn alive, tracker present).
+            MercenaryPawnFactory.StripOverseerRelations(overseer,
+                other => other is null || other.Dead || other.Destroyed || other.relations is null,
+                dropMalformed: true);
         }
     }
 

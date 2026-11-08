@@ -5,6 +5,63 @@ namespace FactionColonies;
 public static class RegistryTests
 {
     // ============================
+    // Helpers
+    // ============================
+
+    /// <summary>
+    /// Registers <paramref name="item"/> for the duration of <paramref name="body"/>. Unregisters
+    /// twice: if dedup regresses, both copies must be removed so a failing run can't leak a test
+    /// double into the live session.
+    /// </summary>
+    private static void WithRegistered<T>(T item, Action<T> register, Action<T> unregister, Action body)
+    {
+        register(item);
+        try { body(); }
+        finally { unregister(item); unregister(item); }
+    }
+
+    /// <summary>
+    /// Checks one registry's Register/Unregister wiring through its public API: a registered item is
+    /// reached once, registering it again is ignored, and after Unregister it is no longer reached.
+    /// <paramref name="timesReached"/> runs the registry's dispatch (or scans its exposed list) and
+    /// returns how many times the item was reached by that single call.
+    /// </summary>
+    private static void AssertRegistrationContract<T>(T item, Action<T> register, Action<T> unregister, Func<int> timesReached)
+    {
+        try
+        {
+            register(item);
+            TestAssert.AreEqual(1, timesReached(), "A registered item should be reached once");
+            register(item);
+            TestAssert.AreEqual(1, timesReached(), "A duplicate registration should be ignored");
+            unregister(item);
+            TestAssert.AreEqual(0, timesReached(), "An unregistered item should no longer be reached");
+        }
+        finally { unregister(item); unregister(item); }
+    }
+
+    /// <summary>Registers a throwing double and asserts the registry's dispatch swallows the exception.</summary>
+    private static void AssertDispatchIsolatesThrowing<T>(T bad, Action<T> register, Action<T> unregister, params Action[] dispatches)
+    {
+        WithRegistered(bad, register, unregister, () =>
+        {
+            foreach (Action dispatch in dispatches)
+                TestAssert.DoesNotThrow(dispatch);
+        });
+    }
+
+    /// <summary>Runs <paramref name="dispatch"/> and returns how much <paramref name="read"/> grew.</summary>
+    private static int CountDuring(Func<int> read, Action dispatch)
+    {
+        int before = read();
+        dispatch();
+        return read() - before;
+    }
+
+    private static int Occurrences<T>(IEnumerable<T> items, T item) where T : class
+        => items.Count(x => ReferenceEquals(x, item));
+
+    // ============================
     // Test Doubles
     // ============================
 
@@ -38,7 +95,12 @@ public static class RegistryTests
     private class TestBattleModifier : IBattleModifier
     {
         public double LevelBonus;
-        public void ModifyForce(BattleForceContext ctx, MilitaryForce force, bool isAttacker) => force.militaryLevel += LevelBonus;
+        public int InvokeCount;
+        public void ModifyForce(BattleForceContext ctx, MilitaryForce force, bool isAttacker)
+        {
+            InvokeCount++;
+            force.militaryLevel += LevelBonus;
+        }
     }
 
     private class ThrowingBattleModifier : IBattleModifier
@@ -81,7 +143,12 @@ public static class RegistryTests
     private class TestPaymentModifier : ISilverPaymentModifier
     {
         public int Discount;
-        public void ModifyPayment(SilverPaymentContext context) => context.Amount -= Discount;
+        public int InvokeCount;
+        public void ModifyPayment(SilverPaymentContext context)
+        {
+            InvokeCount++;
+            context.Amount -= Discount;
+        }
     }
 
     private class ThrowingPaymentModifier : ISilverPaymentModifier
@@ -92,7 +159,12 @@ public static class RegistryTests
     private class TestDefenseValidator : IDefenseValidator
     {
         public bool Allow = true;
-        public bool CanDefend(WorldSettlementFC defender, WorldSettlementFC target) => Allow;
+        public int InvokeCount;
+        public bool CanDefend(WorldSettlementFC defender, WorldSettlementFC target)
+        {
+            InvokeCount++;
+            return Allow;
+        }
     }
 
     private class ThrowingDefenseValidator : IDefenseValidator
@@ -120,8 +192,10 @@ public static class RegistryTests
     {
         public bool Allow = true;
         public string RejectReason = "test reject";
+        public int InvokeCount;
         public bool CanAssign(WorldSettlementFC s, MercenarySquadFC sq, out string reason)
         {
+            InvokeCount++;
             reason = Allow ? null : RejectReason;
             return Allow;
         }
@@ -150,69 +224,149 @@ public static class RegistryTests
     }
 
     // ============================
+    // RegistryList / RegistryDispatch contract
+    // ============================
+    // Every per-domain registry stores its participants in a RegistryList and dispatches through
+    // RegistryDispatch, so dedup, unregister and exception isolation are tested here once, against
+    // a private list that no live game code reads. Per-registry tests below only check each
+    // registry's wiring and its own dispatch semantics.
+
+    private class ContractItem
+    {
+        public bool Throws;
+        public bool Verdict = true;
+        public string Result = "x";
+        public int InvokeCount;
+
+        public bool Fire()
+        {
+            InvokeCount++;
+            if (Throws) throw new InvalidOperationException("test");
+            return Verdict;
+        }
+    }
+
+    [EmpireTest("Registry")]
+    public static void RegistryList_RegisterUnregister_DedupsAndIgnoresNull()
+    {
+        var list = new RegistryList<ContractItem>();
+        var a = new ContractItem();
+        var b = new ContractItem();
+
+        list.Register(null);
+        TestAssert.AreEqual(0, list.Count, "Registering null should be ignored");
+
+        list.Register(a);
+        list.Register(a);
+        list.Register(b);
+        TestAssert.AreEqual(2, list.Count, "A duplicate registration should be ignored");
+        TestAssert.IsTrue(ReferenceEquals(a, list.Items[0]) && ReferenceEquals(b, list.Items[1]),
+            "Items keep registration order");
+
+        TestAssert.DoesNotThrow(() => list.Unregister(null), "Unregistering null should be a no-op");
+        list.Unregister(a);
+        TestAssert.AreEqual(1, list.Count);
+        TestAssert.IsFalse(list.Items.Contains(a), "Unregistered item should be removed");
+        list.Unregister(a);
+        TestAssert.AreEqual(1, list.Count, "Unregistering an absent item should be a no-op");
+
+        list.ClearAll();
+        TestAssert.AreEqual(0, list.Count, "ClearAll should empty the list");
+    }
+
+    [EmpireTest("Registry")]
+    public static void RegistryList_Valid_SkipsInvalidAndThrowingItems()
+    {
+        var list = new RegistryList<ContractItem>();
+        var good = new ContractItem();
+        var invalid = new ContractItem { Verdict = false };
+        var throwing = new ContractItem { Throws = true };
+        list.Register(good);
+
+        TestAssert.IsTrue(ReferenceEquals(list.Items, list.Valid(i => i.Fire(), "test")),
+            "When every item passes, the backing list itself is returned");
+
+        list.Register(invalid);
+        list.Register(throwing);
+        IReadOnlyList<ContractItem> valid = list.Valid(i => i.Fire(), "test");
+        TestAssert.AreEqual(1, valid.Count, "Invalid and throwing items should be skipped");
+        TestAssert.IsTrue(ReferenceEquals(good, valid[0]));
+        TestAssert.AreEqual(3, list.Count, "Valid does not unregister anything");
+    }
+
+    [EmpireTest("Registry")]
+    public static void RegistryDispatch_Each_ThrowingItemDoesNotBlockOthers()
+    {
+        var list = new RegistryList<ContractItem>();
+        var bad = new ContractItem { Throws = true };
+        var good1 = new ContractItem();
+        var good2 = new ContractItem();
+        list.Register(bad);
+        list.Register(good1);
+        list.Register(good2);
+
+        TestAssert.DoesNotThrow(() => RegistryDispatch.Each(list.Items, i => i.Fire(), "Fire"));
+        TestAssert.AreEqual(1, good1.InvokeCount, "Items after a throwing one should still run");
+        TestAssert.AreEqual(1, good2.InvokeCount, "Every registered item should run once");
+
+        int invalidations = 0;
+        TestAssert.DoesNotThrow(() => RegistryDispatch.EachInvalidating(list.Items, i => i.Fire(), () => invalidations++, "Fire"));
+        TestAssert.AreEqual(2, good2.InvokeCount, "EachInvalidating should run every item");
+        TestAssert.AreEqual(3, invalidations, "EachInvalidating should invalidate after every item, including a throwing one");
+    }
+
+    [EmpireTest("Registry")]
+    public static void RegistryDispatch_All_ShortCircuitsAndFailsOpen()
+    {
+        var empty = new RegistryList<ContractItem>();
+        TestAssert.IsTrue(RegistryDispatch.All(empty.Items, i => i.Fire(), "Fire"), "No items means default allow");
+
+        var list = new RegistryList<ContractItem>();
+        var bad = new ContractItem { Throws = true };
+        var allow = new ContractItem();
+        list.Register(bad);
+        list.Register(allow);
+        bool result = false;
+        TestAssert.DoesNotThrow(() => result = RegistryDispatch.All(list.Items, i => i.Fire(), "Fire"));
+        TestAssert.IsTrue(result, "A throwing predicate is skipped (fail open)");
+        TestAssert.AreEqual(1, allow.InvokeCount, "Predicates after a throwing one should still run");
+
+        var reject = new ContractItem { Verdict = false };
+        var after = new ContractItem();
+        list.Register(reject);
+        list.Register(after);
+        TestAssert.IsFalse(RegistryDispatch.All(list.Items, i => i.Fire(), "Fire"), "One rejection should return false");
+        TestAssert.AreEqual(0, after.InvokeCount, "The walk should stop at the first rejection");
+    }
+
+    [EmpireTest("Registry")]
+    public static void RegistryDispatch_AggregateAndFind_SkipThrowingItems()
+    {
+        var list = new RegistryList<ContractItem>();
+        var bad = new ContractItem { Throws = true, Result = null };
+        var miss = new ContractItem { Verdict = false, Result = null };
+        var hit = new ContractItem();
+        list.Register(bad);
+        list.Register(miss);
+        list.Register(hit);
+
+        int sum = 0;
+        TestAssert.DoesNotThrow(() => sum = RegistryDispatch.Aggregate(list.Items, 10, (acc, i) => i.Fire() ? acc + 1 : acc, "Fire"));
+        TestAssert.AreEqual(11, sum, "A throwing reducer is skipped and keeps the running value");
+
+        ContractItem first = null;
+        TestAssert.DoesNotThrow(() => first = RegistryDispatch.First(list.Items, i => i.Fire(), "Fire"));
+        TestAssert.IsTrue(ReferenceEquals(hit, first), "First skips throwing and non-matching items");
+        TestAssert.IsNull(RegistryDispatch.First(list.Items, _ => false, "Fire"), "First returns null when nothing matches");
+
+        ContractItem nonNull = null;
+        TestAssert.DoesNotThrow(() => nonNull = RegistryDispatch.FirstNonNull(list.Items, i => { i.Fire(); return i.Result; }, "Fire"));
+        TestAssert.IsTrue(ReferenceEquals(hit, nonNull), "FirstNonNull skips throwing and null-yielding items");
+    }
+
+    // ============================
     // LifecycleRegistry
     // ============================
-
-    [EmpireDestructiveTest("Registry")]
-    public static void Lifecycle_Register_InvokesSettlementCreated()
-    {
-        var settlement = DestructiveTestUtil.EnsureSettlement();
-
-        var p = new TestLifecycleParticipant();
-        LifecycleRegistry.Register(p);
-        try
-        {
-            LifecycleRegistry.InvokeOnSettlementCreated(settlement);
-            TestAssert.AreEqual(1, p.SettlementCreatedCount);
-        }
-        finally { LifecycleRegistry.Unregister(p); }
-    }
-
-    [EmpireDestructiveTest("Registry")]
-    public static void Lifecycle_Register_InvokesSettlementRemoved()
-    {
-        var settlement = DestructiveTestUtil.EnsureSettlement();
-
-        var p = new TestLifecycleParticipant();
-        LifecycleRegistry.Register(p);
-        try
-        {
-            LifecycleRegistry.InvokeOnSettlementRemoved(settlement);
-            TestAssert.AreEqual(1, p.SettlementRemovedCount);
-        }
-        finally { LifecycleRegistry.Unregister(p); }
-    }
-
-    [EmpireDestructiveTest("Registry")]
-    public static void Lifecycle_Register_InvokesBuildingConstructed()
-    {
-        var settlement = DestructiveTestUtil.EnsureSettlement();
-
-        var p = new TestLifecycleParticipant();
-        LifecycleRegistry.Register(p);
-        try
-        {
-            LifecycleRegistry.InvokeOnBuildingConstructed(settlement, null, 0);
-            TestAssert.AreEqual(1, p.BuildingConstructedCount);
-        }
-        finally { LifecycleRegistry.Unregister(p); }
-    }
-
-    [EmpireDestructiveTest("Registry")]
-    public static void Lifecycle_Register_InvokesBattleResolved()
-    {
-        var settlement = DestructiveTestUtil.EnsureSettlement();
-
-        var p = new TestLifecycleParticipant();
-        LifecycleRegistry.Register(p);
-        try
-        {
-            MilitaryOperation op = MakeSyntheticOp(settlement);
-            LifecycleRegistry.InvokeOnBattleResolved(op, true, null);
-            TestAssert.AreEqual(1, p.BattleResolvedCount);
-        }
-        finally { LifecycleRegistry.Unregister(p); }
-    }
 
     /// <summary>
     /// Builds a minimal <see cref="MilitaryOperation"/> for tests that exercise the op-aware
@@ -227,149 +381,76 @@ public static class RegistryTests
     }
 
     [EmpireDestructiveTest("Registry")]
-    public static void Lifecycle_Unregister_StopsInvocations()
+    public static void Lifecycle_RegistrationContract()
     {
         var settlement = DestructiveTestUtil.EnsureSettlement();
-
         var p = new TestLifecycleParticipant();
-        LifecycleRegistry.Register(p);
-        LifecycleRegistry.Unregister(p);
-        LifecycleRegistry.InvokeOnSettlementCreated(settlement);
-        TestAssert.AreEqual(0, p.SettlementCreatedCount);
+        AssertRegistrationContract(p, LifecycleRegistry.Register, LifecycleRegistry.Unregister,
+            () => CountDuring(() => p.SettlementCreatedCount, () => LifecycleRegistry.InvokeOnSettlementCreated(settlement)));
     }
 
     [EmpireDestructiveTest("Registry")]
-    public static void Lifecycle_DuplicateRegister_Ignored()
+    public static void Lifecycle_Invoke_ReachesEachHook()
     {
         var settlement = DestructiveTestUtil.EnsureSettlement();
-
         var p = new TestLifecycleParticipant();
-        LifecycleRegistry.Register(p);
-        LifecycleRegistry.Register(p); // duplicate
-        try
+        WithRegistered(p, LifecycleRegistry.Register, LifecycleRegistry.Unregister, () =>
         {
             LifecycleRegistry.InvokeOnSettlementCreated(settlement);
-            TestAssert.AreEqual(1, p.SettlementCreatedCount, "Duplicate should be ignored");
-        }
-        // Unregister twice so a dedup regression can't leak a test double for the session.
-        finally { LifecycleRegistry.Unregister(p); LifecycleRegistry.Unregister(p); }
+            TestAssert.AreEqual(1, p.SettlementCreatedCount, "OnSettlementCreated");
+            LifecycleRegistry.InvokeOnSettlementRemoved(settlement);
+            TestAssert.AreEqual(1, p.SettlementRemovedCount, "OnSettlementRemoved");
+            LifecycleRegistry.InvokeOnBuildingConstructed(settlement, null, 0);
+            TestAssert.AreEqual(1, p.BuildingConstructedCount, "OnBuildingConstructed");
+            LifecycleRegistry.InvokeOnBattleResolved(MakeSyntheticOp(settlement), true, null);
+            TestAssert.AreEqual(1, p.BattleResolvedCount, "OnBattleResolved");
+        });
     }
 
     [EmpireDestructiveTest("Registry")]
-    public static void Lifecycle_Exception_DoesNotCrash()
+    public static void Lifecycle_ThrowingParticipant_DoesNotBlockOthers()
     {
         var settlement = DestructiveTestUtil.EnsureSettlement();
-
         var bad = new ThrowingLifecycleParticipant();
-        LifecycleRegistry.Register(bad);
-        try
+        var good1 = new TestLifecycleParticipant();
+        var good2 = new TestLifecycleParticipant();
+        WithRegistered(bad, LifecycleRegistry.Register, LifecycleRegistry.Unregister, () =>
+        WithRegistered(good1, LifecycleRegistry.Register, LifecycleRegistry.Unregister, () =>
+        WithRegistered(good2, LifecycleRegistry.Register, LifecycleRegistry.Unregister, () =>
         {
             TestAssert.DoesNotThrow(() => LifecycleRegistry.InvokeOnSettlementCreated(settlement));
-        }
-        finally { LifecycleRegistry.Unregister(bad); }
-    }
-
-    [EmpireDestructiveTest("Registry")]
-    public static void Lifecycle_MultipleParticipants_AllInvoked()
-    {
-        var settlement = DestructiveTestUtil.EnsureSettlement();
-
-        var p1 = new TestLifecycleParticipant();
-        var p2 = new TestLifecycleParticipant();
-        LifecycleRegistry.Register(p1);
-        LifecycleRegistry.Register(p2);
-        try
-        {
-            LifecycleRegistry.InvokeOnSettlementCreated(settlement);
-            TestAssert.AreEqual(1, p1.SettlementCreatedCount, "First participant should be invoked");
-            TestAssert.AreEqual(1, p2.SettlementCreatedCount, "Second participant should be invoked");
-        }
-        finally
-        {
-            LifecycleRegistry.Unregister(p1);
-            LifecycleRegistry.Unregister(p2);
-        }
-    }
-
-    [EmpireDestructiveTest("Registry")]
-    public static void Lifecycle_ExceptionDoesNotBlockOthers()
-    {
-        var settlement = DestructiveTestUtil.EnsureSettlement();
-
-        var bad = new ThrowingLifecycleParticipant();
-        var good = new TestLifecycleParticipant();
-        LifecycleRegistry.Register(bad);
-        LifecycleRegistry.Register(good);
-        try
-        {
-            LifecycleRegistry.InvokeOnSettlementCreated(settlement);
-            TestAssert.AreEqual(1, good.SettlementCreatedCount,
+            TestAssert.AreEqual(1, good1.SettlementCreatedCount,
                 "Good participant should still be invoked after bad one throws");
-        }
-        finally
-        {
-            LifecycleRegistry.Unregister(bad);
-            LifecycleRegistry.Unregister(good);
-        }
+            TestAssert.AreEqual(1, good2.SettlementCreatedCount, "Every participant should be invoked");
+        })));
     }
 
     // ============================
     // BattleModifierRegistry
     // ============================
 
+    private static MilitaryForce MakeForce() => new() { militaryLevel = 5, militaryEfficiency = 1.0, forceRemaining = 5 };
+
+    [EmpireTest("Registry")]
+    public static void BattleModifier_RegistrationContract()
+    {
+        var c = new TestBattleModifier();
+        AssertRegistrationContract(c, BattleModifierRegistry.Register, BattleModifierRegistry.Unregister,
+            () => CountDuring(() => c.InvokeCount, () => BattleModifierRegistry.InvokeBattleModifiers(null, MakeForce(), true)));
+        AssertDispatchIsolatesThrowing(new ThrowingBattleModifier(), BattleModifierRegistry.Register, BattleModifierRegistry.Unregister,
+            () => BattleModifierRegistry.InvokeBattleModifiers(null, MakeForce(), true));
+    }
+
     [EmpireTest("Registry")]
     public static void BattleModifier_Register_ModifiesForce()
     {
         var c = new TestBattleModifier { LevelBonus = 2.0 };
-        BattleModifierRegistry.Register(c);
-        try
+        WithRegistered(c, BattleModifierRegistry.Register, BattleModifierRegistry.Unregister, () =>
         {
-            var force = new MilitaryForce { militaryLevel = 5, militaryEfficiency = 1.0, forceRemaining = 5 };
+            MilitaryForce force = MakeForce();
             BattleModifierRegistry.InvokeBattleModifiers(null, force, true);
             TestAssert.AreEqual(7.0, force.militaryLevel, message: "Level should increase by 2");
-        }
-        finally { BattleModifierRegistry.Unregister(c); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void BattleModifier_Unregister_NoEffect()
-    {
-        var c = new TestBattleModifier { LevelBonus = 2.0 };
-        BattleModifierRegistry.Register(c);
-        BattleModifierRegistry.Unregister(c);
-        var force = new MilitaryForce { militaryLevel = 5, militaryEfficiency = 1.0, forceRemaining = 5 };
-        BattleModifierRegistry.InvokeBattleModifiers(null, force, true);
-        TestAssert.AreEqual(5.0, force.militaryLevel, message: "Level should be unchanged");
-    }
-
-    [EmpireTest("Registry")]
-    public static void BattleModifier_DuplicateRegister_Ignored()
-    {
-        var c = new TestBattleModifier { LevelBonus = 2.0 };
-        BattleModifierRegistry.Register(c);
-        BattleModifierRegistry.Register(c);
-        try
-        {
-            var force = new MilitaryForce { militaryLevel = 5, militaryEfficiency = 1.0, forceRemaining = 5 };
-            BattleModifierRegistry.InvokeBattleModifiers(null, force, true);
-            TestAssert.AreEqual(7.0, force.militaryLevel, message: "Should only apply once");
-        }
-        // Unregister twice: if dedup regresses (the condition under test), both copies must
-        // be removed so a failing run can't leak a test double for the rest of the session.
-        finally { BattleModifierRegistry.Unregister(c); BattleModifierRegistry.Unregister(c); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void BattleModifier_Exception_DoesNotCrash()
-    {
-        var bad = new ThrowingBattleModifier();
-        BattleModifierRegistry.Register(bad);
-        try
-        {
-            var force = new MilitaryForce { militaryLevel = 5, militaryEfficiency = 1.0, forceRemaining = 5 };
-            TestAssert.DoesNotThrow(() => BattleModifierRegistry.InvokeBattleModifiers(null, force, true));
-        }
-        finally { BattleModifierRegistry.Unregister(bad); }
+        });
     }
 
     // ============================
@@ -377,50 +458,29 @@ public static class RegistryTests
     // ============================
 
     [EmpireTest("Registry")]
+    public static void FactionPowerModifier_RegistrationContract()
+    {
+        RimWorld.Faction faction = Find.FactionManager.OfPlayer;
+        var modifier = new TestFactionPowerModifier();
+        AssertRegistrationContract(modifier, BattleModifierRegistry.Register, BattleModifierRegistry.Unregister,
+            () => CountDuring(() => modifier.InvokeCount,
+                () => BattleModifierRegistry.InvokeFactionPowerModifiers(faction, new EnemyPower { level = 5, efficiency = 1.0 })));
+        AssertDispatchIsolatesThrowing(new ThrowingFactionPowerModifier(), BattleModifierRegistry.Register, BattleModifierRegistry.Unregister,
+            () => BattleModifierRegistry.InvokeFactionPowerModifiers(faction, new EnemyPower { level = 5, efficiency = 1.0 }));
+    }
+
+    [EmpireTest("Registry")]
     public static void FactionPowerModifier_RegistersAndInvokes()
     {
         RimWorld.Faction faction = Find.FactionManager.OfPlayer;
-
         var modifier = new TestFactionPowerModifier { LevelBonus = 3.0 };
-        BattleModifierRegistry.Register(modifier);
-        try
+        WithRegistered(modifier, BattleModifierRegistry.Register, BattleModifierRegistry.Unregister, () =>
         {
             var power = new EnemyPower { level = 5, efficiency = 1.0 };
             BattleModifierRegistry.InvokeFactionPowerModifiers(faction, power);
             TestAssert.AreEqual(1, modifier.InvokeCount);
             TestAssert.AreEqual(8.0, power.level, message: "Level should increase by 3");
-        }
-        finally { BattleModifierRegistry.Unregister(modifier); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void FactionPowerModifier_Unregister_NoEffect()
-    {
-        RimWorld.Faction faction = Find.FactionManager.OfPlayer;
-
-        var modifier = new TestFactionPowerModifier { LevelBonus = 3.0 };
-        BattleModifierRegistry.Register(modifier);
-        BattleModifierRegistry.Unregister(modifier);
-
-        var power = new EnemyPower { level = 5, efficiency = 1.0 };
-        BattleModifierRegistry.InvokeFactionPowerModifiers(faction, power);
-        TestAssert.AreEqual(0, modifier.InvokeCount);
-        TestAssert.AreEqual(5.0, power.level, message: "Level should be unchanged");
-    }
-
-    [EmpireTest("Registry")]
-    public static void FactionPowerModifier_Exception_DoesNotCrash()
-    {
-        RimWorld.Faction faction = Find.FactionManager.OfPlayer;
-
-        var bad = new ThrowingFactionPowerModifier();
-        BattleModifierRegistry.Register(bad);
-        try
-        {
-            var power = new EnemyPower { level = 5, efficiency = 1.0 };
-            TestAssert.DoesNotThrow(() => BattleModifierRegistry.InvokeFactionPowerModifiers(faction, power));
-        }
-        finally { BattleModifierRegistry.Unregister(bad); }
+        });
     }
 
     // ============================
@@ -428,46 +488,29 @@ public static class RegistryTests
     // ============================
 
     [EmpireTest("Registry")]
+    public static void SettlementPowerModifier_RegistrationContract()
+    {
+        var modifier = new TestSettlementPowerModifier();
+        AssertRegistrationContract(modifier, BattleModifierRegistry.Register, BattleModifierRegistry.Unregister,
+            () => CountDuring(() => modifier.InvokeCount,
+                () => BattleModifierRegistry.InvokeSettlementPowerModifiers(null, new EnemyPower { level = 4, efficiency = 1.0 })));
+        AssertDispatchIsolatesThrowing(new ThrowingSettlementPowerModifier(), BattleModifierRegistry.Register, BattleModifierRegistry.Unregister,
+            () => BattleModifierRegistry.InvokeSettlementPowerModifiers(null, new EnemyPower { level = 4, efficiency = 1.0 }));
+    }
+
+    [EmpireTest("Registry")]
     public static void SettlementPowerModifier_RegistersAndInvokes()
     {
         // Settlement parameter can be null — the registry just forwards it to the modifier,
         // which here doesn't dereference it.
         var modifier = new TestSettlementPowerModifier { LevelBonus = 2.5 };
-        BattleModifierRegistry.Register(modifier);
-        try
+        WithRegistered(modifier, BattleModifierRegistry.Register, BattleModifierRegistry.Unregister, () =>
         {
             var power = new EnemyPower { level = 4, efficiency = 1.0 };
             BattleModifierRegistry.InvokeSettlementPowerModifiers(null, power);
             TestAssert.AreEqual(1, modifier.InvokeCount);
             TestAssert.AreEqual(6.5, power.level, message: "Level should increase by 2.5");
-        }
-        finally { BattleModifierRegistry.Unregister(modifier); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void SettlementPowerModifier_Unregister_NoEffect()
-    {
-        var modifier = new TestSettlementPowerModifier { LevelBonus = 2.5 };
-        BattleModifierRegistry.Register(modifier);
-        BattleModifierRegistry.Unregister(modifier);
-
-        var power = new EnemyPower { level = 4, efficiency = 1.0 };
-        BattleModifierRegistry.InvokeSettlementPowerModifiers(null, power);
-        TestAssert.AreEqual(0, modifier.InvokeCount);
-        TestAssert.AreEqual(4.0, power.level);
-    }
-
-    [EmpireTest("Registry")]
-    public static void SettlementPowerModifier_Exception_DoesNotCrash()
-    {
-        var bad = new ThrowingSettlementPowerModifier();
-        BattleModifierRegistry.Register(bad);
-        try
-        {
-            var power = new EnemyPower { level = 4, efficiency = 1.0 };
-            TestAssert.DoesNotThrow(() => BattleModifierRegistry.InvokeSettlementPowerModifiers(null, power));
-        }
-        finally { BattleModifierRegistry.Unregister(bad); }
+        });
     }
 
     // ============================
@@ -488,11 +531,10 @@ public static class RegistryTests
 
         var battleMod = new TestBattleModifier { LevelBonus = 1 };
         var factionMod = new TestFactionPowerModifier { LevelBonus = 2 };
-        BattleModifierRegistry.Register(battleMod);
-        BattleModifierRegistry.Register(factionMod);
-        try
+        WithRegistered(battleMod, BattleModifierRegistry.Register, BattleModifierRegistry.Unregister, () =>
+        WithRegistered(factionMod, BattleModifierRegistry.Register, BattleModifierRegistry.Unregister, () =>
         {
-            var battleForce = new MilitaryForce { militaryLevel = 5, militaryEfficiency = 1.0, forceRemaining = 5 };
+            MilitaryForce battleForce = MakeForce();
             var factionPower = new EnemyPower { level = 5, efficiency = 1.0 };
 
             BattleModifierRegistry.InvokeBattleModifiers(null, battleForce, true);
@@ -502,12 +544,7 @@ public static class RegistryTests
             TestAssert.AreEqual(7.0, factionPower.level, message: "Faction chain ran");
             TestAssert.AreEqual(1, factionMod.InvokeCount,
                 "Faction modifier should fire exactly once per InvokeFactionPowerModifiers call");
-        }
-        finally
-        {
-            BattleModifierRegistry.Unregister(battleMod);
-            BattleModifierRegistry.Unregister(factionMod);
-        }
+        }));
     }
 
     // ============================
@@ -515,57 +552,25 @@ public static class RegistryTests
     // ============================
 
     [EmpireTest("Registry")]
+    public static void SilverPayment_RegistrationContract()
+    {
+        var c = new TestPaymentModifier();
+        AssertRegistrationContract(c, SilverPaymentRegistry.Register, SilverPaymentRegistry.Unregister,
+            () => CountDuring(() => c.InvokeCount, () => SilverPaymentRegistry.InvokeModifiers(new SilverPaymentContext(200, "test"))));
+        AssertDispatchIsolatesThrowing(new ThrowingPaymentModifier(), SilverPaymentRegistry.Register, SilverPaymentRegistry.Unregister,
+            () => SilverPaymentRegistry.InvokeModifiers(new SilverPaymentContext(200, "test")));
+    }
+
+    [EmpireTest("Registry")]
     public static void SilverPayment_Register_ModifiesAmount()
     {
         var c = new TestPaymentModifier { Discount = 50 };
-        SilverPaymentRegistry.Register(c);
-        try
+        WithRegistered(c, SilverPaymentRegistry.Register, SilverPaymentRegistry.Unregister, () =>
         {
             var ctx = new SilverPaymentContext(200, "test");
             SilverPaymentRegistry.InvokeModifiers(ctx);
             TestAssert.AreEqual(150, ctx.Amount, message: "Amount should be reduced by 50");
-        }
-        finally { SilverPaymentRegistry.Unregister(c); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void SilverPayment_Unregister_NoEffect()
-    {
-        var c = new TestPaymentModifier { Discount = 50 };
-        SilverPaymentRegistry.Register(c);
-        SilverPaymentRegistry.Unregister(c);
-        var ctx = new SilverPaymentContext(200, "test");
-        SilverPaymentRegistry.InvokeModifiers(ctx);
-        TestAssert.AreEqual(200, ctx.Amount, message: "Amount should be unchanged");
-    }
-
-    [EmpireTest("Registry")]
-    public static void SilverPayment_DuplicateRegister_Ignored()
-    {
-        var c = new TestPaymentModifier { Discount = 50 };
-        SilverPaymentRegistry.Register(c);
-        SilverPaymentRegistry.Register(c);
-        try
-        {
-            var ctx = new SilverPaymentContext(200, "test");
-            SilverPaymentRegistry.InvokeModifiers(ctx);
-            TestAssert.AreEqual(150, ctx.Amount, message: "Should only apply once");
-        }
-        // Unregister twice so a dedup regression can't leak a test double for the session.
-        finally { SilverPaymentRegistry.Unregister(c); SilverPaymentRegistry.Unregister(c); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void SilverPayment_Exception_DoesNotCrash()
-    {
-        var bad = new ThrowingPaymentModifier();
-        SilverPaymentRegistry.Register(bad);
-        try
-        {
-            var ctx = new SilverPaymentContext(200, "test");
-            TestAssert.DoesNotThrow(() => SilverPaymentRegistry.InvokeModifiers(ctx));
-        }
-        finally { SilverPaymentRegistry.Unregister(bad); }
+        });
     }
 
     [EmpireTest("Registry")]
@@ -581,56 +586,27 @@ public static class RegistryTests
     // ============================
 
     [EmpireTest("Registry")]
-    public static void DefenseValidator_AllAllow_ReturnsTrue()
+    public static void DefenseValidator_RegistrationContract()
     {
         var c = new TestDefenseValidator { Allow = true };
-        DefenseValidatorRegistry.Register(c);
-        try
-        {
-            TestAssert.IsTrue(DefenseValidatorRegistry.CanDefend(null, null));
-        }
-        finally { DefenseValidatorRegistry.Unregister(c); }
+        AssertRegistrationContract(c, DefenseValidatorRegistry.Register, DefenseValidatorRegistry.Unregister,
+            () => CountDuring(() => c.InvokeCount, () => DefenseValidatorRegistry.CanDefend(null, null)));
+        AssertDispatchIsolatesThrowing(new ThrowingDefenseValidator(), DefenseValidatorRegistry.Register, DefenseValidatorRegistry.Unregister,
+            () => DefenseValidatorRegistry.CanDefend(null, null));
     }
 
     [EmpireTest("Registry")]
-    public static void DefenseValidator_OneRejects_ReturnsFalse()
+    public static void DefenseValidator_Verdicts()
     {
-        var c = new TestDefenseValidator { Allow = false };
-        DefenseValidatorRegistry.Register(c);
-        try
-        {
-            TestAssert.IsFalse(DefenseValidatorRegistry.CanDefend(null, null));
-        }
-        finally { DefenseValidatorRegistry.Unregister(c); }
-    }
+        TestAssert.IsTrue(DefenseValidatorRegistry.CanDefend(null, null), "No validators means default allow");
 
-    [EmpireTest("Registry")]
-    public static void DefenseValidator_EmptyRegistry_ReturnsTrue()
-    {
-        TestAssert.IsTrue(DefenseValidatorRegistry.CanDefend(null, null),
-            "No validators means default allow");
-    }
+        WithRegistered(new TestDefenseValidator { Allow = true }, DefenseValidatorRegistry.Register, DefenseValidatorRegistry.Unregister,
+            () => TestAssert.IsTrue(DefenseValidatorRegistry.CanDefend(null, null), "An allowing validator should allow"));
 
-    [EmpireTest("Registry")]
-    public static void DefenseValidator_Exception_DoesNotCrash()
-    {
-        var bad = new ThrowingDefenseValidator();
-        DefenseValidatorRegistry.Register(bad);
-        try
-        {
-            TestAssert.DoesNotThrow(() => DefenseValidatorRegistry.CanDefend(null, null));
-        }
-        finally { DefenseValidatorRegistry.Unregister(bad); }
-    }
+        WithRegistered(new TestDefenseValidator { Allow = false }, DefenseValidatorRegistry.Register, DefenseValidatorRegistry.Unregister,
+            () => TestAssert.IsFalse(DefenseValidatorRegistry.CanDefend(null, null), "A rejecting validator should reject"));
 
-    [EmpireTest("Registry")]
-    public static void DefenseValidator_Unregister_StopsRejection()
-    {
-        var c = new TestDefenseValidator { Allow = false };
-        DefenseValidatorRegistry.Register(c);
-        DefenseValidatorRegistry.Unregister(c);
-        TestAssert.IsTrue(DefenseValidatorRegistry.CanDefend(null, null),
-            "After unregister, should allow again");
+        TestAssert.IsTrue(DefenseValidatorRegistry.CanDefend(null, null), "After unregister, should allow again");
     }
 
     // ============================
@@ -638,67 +614,28 @@ public static class RegistryTests
     // ============================
 
     [EmpireDestructiveTest("Registry")]
-    public static void TaxTick_Register_InvokesPreTax()
+    public static void TaxTick_RegistrationContract()
     {
         var c = new TestTaxTicker();
-        TaxTickRegistry.Register(c);
-        try
-        {
-            TaxTickRegistry.InvokePreTaxResolution(null);
-            TestAssert.AreEqual(1, c.PreTaxCount);
-        }
-        finally { TaxTickRegistry.Unregister(c); }
+        AssertRegistrationContract(c, TaxTickRegistry.Register, TaxTickRegistry.Unregister,
+            () => CountDuring(() => c.PreTaxCount, () => TaxTickRegistry.InvokePreTaxResolution(null)));
+        AssertDispatchIsolatesThrowing(new ThrowingTaxTicker(), TaxTickRegistry.Register, TaxTickRegistry.Unregister,
+            () => TaxTickRegistry.InvokePreTaxResolution(null),
+            () => TaxTickRegistry.InvokePostTaxResolution(null));
     }
 
     [EmpireDestructiveTest("Registry")]
-    public static void TaxTick_Register_InvokesPostTax()
+    public static void TaxTick_Invoke_ReachesPreAndPostTax()
     {
         var c = new TestTaxTicker();
-        TaxTickRegistry.Register(c);
-        try
+        WithRegistered(c, TaxTickRegistry.Register, TaxTickRegistry.Unregister, () =>
         {
+            TaxTickRegistry.InvokePreTaxResolution(null);
+            TestAssert.AreEqual(1, c.PreTaxCount, "PreTaxResolution");
+            TestAssert.AreEqual(0, c.PostTaxCount, "PreTax dispatch should not reach PostTaxResolution");
             TaxTickRegistry.InvokePostTaxResolution(null);
-            TestAssert.AreEqual(1, c.PostTaxCount);
-        }
-        finally { TaxTickRegistry.Unregister(c); }
-    }
-
-    [EmpireDestructiveTest("Registry")]
-    public static void TaxTick_Unregister_StopsInvocations()
-    {
-        var c = new TestTaxTicker();
-        TaxTickRegistry.Register(c);
-        TaxTickRegistry.Unregister(c);
-        TaxTickRegistry.InvokePreTaxResolution(null);
-        TestAssert.AreEqual(0, c.PreTaxCount);
-    }
-
-    [EmpireDestructiveTest("Registry")]
-    public static void TaxTick_DuplicateRegister_Ignored()
-    {
-        var c = new TestTaxTicker();
-        TaxTickRegistry.Register(c);
-        TaxTickRegistry.Register(c);
-        try
-        {
-            TaxTickRegistry.InvokePreTaxResolution(null);
-            TestAssert.AreEqual(1, c.PreTaxCount, "Should only invoke once");
-        }
-        // Unregister twice so a dedup regression can't leak a test double for the session.
-        finally { TaxTickRegistry.Unregister(c); TaxTickRegistry.Unregister(c); }
-    }
-
-    [EmpireDestructiveTest("Registry")]
-    public static void TaxTick_Exception_DoesNotCrash()
-    {
-        var bad = new ThrowingTaxTicker();
-        TaxTickRegistry.Register(bad);
-        try
-        {
-            TestAssert.DoesNotThrow(() => TaxTickRegistry.InvokePreTaxResolution(null));
-            TestAssert.DoesNotThrow(() => TaxTickRegistry.InvokePostTaxResolution(null));
-        }
-        finally { TaxTickRegistry.Unregister(bad); }
+            TestAssert.AreEqual(1, c.PostTaxCount, "PostTaxResolution");
+        });
     }
 
     // ============================
@@ -706,51 +643,33 @@ public static class RegistryTests
     // ============================
 
     [EmpireTest("Registry")]
-    public static void SquadAssignment_AllAllow_ReturnsTrue()
+    public static void SquadAssignment_RegistrationContract()
     {
         var c = new TestSquadValidator { Allow = true };
-        SquadAssignmentRegistry.Register(c);
-        try
-        {
-            bool result = SquadAssignmentRegistry.CanAssign(null, null, out string reason);
-            TestAssert.IsTrue(result);
-            TestAssert.IsNull(reason, "Reason should be null on allow");
-        }
-        finally { SquadAssignmentRegistry.Unregister(c); }
+        AssertRegistrationContract(c, SquadAssignmentRegistry.Register, SquadAssignmentRegistry.Unregister,
+            () => CountDuring(() => c.InvokeCount, () => SquadAssignmentRegistry.CanAssign(null, null, out _)));
+        AssertDispatchIsolatesThrowing(new ThrowingSquadValidator(), SquadAssignmentRegistry.Register, SquadAssignmentRegistry.Unregister,
+            () => SquadAssignmentRegistry.CanAssign(null, null, out _));
     }
 
     [EmpireTest("Registry")]
-    public static void SquadAssignment_OneRejects_ReturnsFalseWithReason()
-    {
-        var c = new TestSquadValidator { Allow = false, RejectReason = "too expensive" };
-        SquadAssignmentRegistry.Register(c);
-        try
-        {
-            bool result = SquadAssignmentRegistry.CanAssign(null, null, out string reason);
-            TestAssert.IsFalse(result);
-            TestAssert.AreEqual((object)"too expensive", (object)reason);
-        }
-        finally { SquadAssignmentRegistry.Unregister(c); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void SquadAssignment_EmptyRegistry_ReturnsTrue()
+    public static void SquadAssignment_Verdicts()
     {
         bool result = SquadAssignmentRegistry.CanAssign(null, null, out string reason);
         TestAssert.IsTrue(result, "No validators means default allow");
         TestAssert.IsNull(reason);
-    }
 
-    [EmpireTest("Registry")]
-    public static void SquadAssignment_Exception_DoesNotCrash()
-    {
-        var bad = new ThrowingSquadValidator();
-        SquadAssignmentRegistry.Register(bad);
-        try
+        WithRegistered(new TestSquadValidator { Allow = true }, SquadAssignmentRegistry.Register, SquadAssignmentRegistry.Unregister, () =>
         {
-            TestAssert.DoesNotThrow(() => SquadAssignmentRegistry.CanAssign(null, null, out string reason));
-        }
-        finally { SquadAssignmentRegistry.Unregister(bad); }
+            TestAssert.IsTrue(SquadAssignmentRegistry.CanAssign(null, null, out string allowReason));
+            TestAssert.IsNull(allowReason, "Reason should be null on allow");
+        });
+
+        WithRegistered(new TestSquadValidator { Allow = false, RejectReason = "too expensive" }, SquadAssignmentRegistry.Register, SquadAssignmentRegistry.Unregister, () =>
+        {
+            TestAssert.IsFalse(SquadAssignmentRegistry.CanAssign(null, null, out string rejectReason));
+            TestAssert.AreEqual((object)"too expensive", (object)rejectReason);
+        });
     }
 
     // ============================
@@ -758,64 +677,15 @@ public static class RegistryTests
     // ============================
 
     [EmpireTest("Registry")]
-    public static void MainTable_Register_AppearsInTabs()
+    public static void MainTable_RegistrationContract()
     {
         var tab = new TestMainTab();
-        MainTableRegistry.Register(tab);
-        try
-        {
-            TestAssert.Contains(MainTableRegistry.Tabs, tab);
-        }
-        finally { MainTableRegistry.Unregister(tab); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void MainTable_Unregister_RemovedFromTabs()
-    {
-        var tab = new TestMainTab();
-        MainTableRegistry.Register(tab);
-        MainTableRegistry.Unregister(tab);
-        TestAssert.IsFalse(MainTableRegistry.Tabs.Contains(tab), "Tab should be removed");
-    }
-
-    [EmpireTest("Registry")]
-    public static void MainTable_InvokesPostClose()
-    {
-        var tab = new TestMainTab();
-        MainTableRegistry.Register(tab);
-        try
-        {
-            MainTableRegistry.InvokePostCloseWindow();
-            TestAssert.AreEqual(1, tab.PostCloseCount);
-        }
-        finally { MainTableRegistry.Unregister(tab); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void MainTable_DuplicateRegister_Ignored()
-    {
-        var tab = new TestMainTab();
-        MainTableRegistry.Register(tab);
-        MainTableRegistry.Register(tab);
-        try
-        {
-            MainTableRegistry.InvokePostCloseWindow();
-            TestAssert.AreEqual(1, tab.PostCloseCount, "Should only invoke once");
-        }
-        // Unregister twice so a dedup regression can't leak a test double for the session.
-        finally { MainTableRegistry.Unregister(tab); MainTableRegistry.Unregister(tab); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void MainTable_Exception_DoesNotCrash()
-    {
-        var bad = new ThrowingMainTab();
-        MainTableRegistry.Register(bad);
-        try
-        {
-            TestAssert.DoesNotThrow(() => MainTableRegistry.InvokePostCloseWindow());
-        }
-        finally { MainTableRegistry.Unregister(bad); }
+        AssertRegistrationContract(tab, MainTableRegistry.Register, MainTableRegistry.Unregister,
+            () => Occurrences(MainTableRegistry.Tabs, tab));
+        AssertRegistrationContract(tab, MainTableRegistry.Register, MainTableRegistry.Unregister,
+            () => CountDuring(() => tab.PostCloseCount, MainTableRegistry.InvokePostCloseWindow));
+        AssertDispatchIsolatesThrowing(new ThrowingMainTab(), MainTableRegistry.Register, MainTableRegistry.Unregister,
+            MainTableRegistry.InvokePostCloseWindow);
     }
 
     // ============================
@@ -823,41 +693,11 @@ public static class RegistryTests
     // ============================
 
     [EmpireTest("Registry")]
-    public static void BuildingFilter_Register_AppearsInFilters()
+    public static void BuildingFilter_RegistrationContract()
     {
         var filter = new BuildingFilter("Test", null, def => true);
-        BuildingFilterRegistry.Register(filter);
-        try
-        {
-            TestAssert.Contains(BuildingFilterRegistry.Filters, filter);
-        }
-        finally { BuildingFilterRegistry.Unregister(filter); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void BuildingFilter_Unregister_RemovedFromFilters()
-    {
-        var filter = new BuildingFilter("Test", null, def => true);
-        BuildingFilterRegistry.Register(filter);
-        BuildingFilterRegistry.Unregister(filter);
-        TestAssert.IsFalse(BuildingFilterRegistry.Filters.Contains(filter), "Filter should be removed");
-    }
-
-    [EmpireTest("Registry")]
-    public static void BuildingFilter_DuplicateRegister_Ignored()
-    {
-        var filter = new BuildingFilter("Test", null, def => true);
-        BuildingFilterRegistry.Register(filter);
-        BuildingFilterRegistry.Register(filter);
-        try
-        {
-            int count = 0;
-            foreach (BuildingFilter f in BuildingFilterRegistry.Filters)
-                if (ReferenceEquals(f, filter)) count++;
-            TestAssert.AreEqual(1, count, "Should only appear once");
-        }
-        // Unregister twice so a dedup regression can't leak a test double for the session.
-        finally { BuildingFilterRegistry.Unregister(filter); BuildingFilterRegistry.Unregister(filter); }
+        AssertRegistrationContract(filter, BuildingFilterRegistry.Register, BuildingFilterRegistry.Unregister,
+            () => Occurrences(BuildingFilterRegistry.Filters, filter));
     }
 
     // ============================
@@ -872,15 +712,11 @@ public static class RegistryTests
     }
 
     [EmpireTest("Registry")]
-    public static void AnimalPickerFilter_Register_AppearsInFilters()
+    public static void AnimalPickerFilter_RegistrationContract()
     {
         StubAnimalPickerFilter filter = new();
-        EmpireRegistry.Register(filter);
-        try
-        {
-            TestAssert.Contains(AnimalPickerFilterRegistry.Filters, filter);
-        }
-        finally { EmpireRegistry.Unregister(filter); }
+        AssertRegistrationContract(filter, f => EmpireRegistry.Register(f), f => EmpireRegistry.Unregister(f),
+            () => Occurrences(AnimalPickerFilterRegistry.Filters, filter));
     }
 
     [EmpireTest("Registry")]
@@ -889,13 +725,8 @@ public static class RegistryTests
         // AND semantics: one disallowing filter gates the kind regardless of any others.
         bool baseline = AnimalPickerFilterRegistry.IsAllowed(null);
         StubAnimalPickerFilter filter = new() { Allow = false };
-        EmpireRegistry.Register(filter);
-        try
-        {
-            TestAssert.IsFalse(AnimalPickerFilterRegistry.IsAllowed(null),
-                "A disallowing filter should gate the kind");
-        }
-        finally { EmpireRegistry.Unregister(filter); }
+        WithRegistered(filter, f => EmpireRegistry.Register(f), f => EmpireRegistry.Unregister(f),
+            () => TestAssert.IsFalse(AnimalPickerFilterRegistry.IsAllowed(null), "A disallowing filter should gate the kind"));
 
         TestAssert.AreEqual(baseline, AnimalPickerFilterRegistry.IsAllowed(null),
             "Unregistering should restore the prior verdict");
@@ -987,8 +818,13 @@ public static class RegistryTests
     private class FixedRaidWeightProvider : IRaidWeightProvider
     {
         private readonly float _weight;
+        public int InvokeCount;
         public FixedRaidWeightProvider(float weight) { _weight = weight; }
-        public float GetSettlementRaidWeight(WorldSettlementFC settlement, RimWorld.Faction attackingFaction) => _weight;
+        public float GetSettlementRaidWeight(WorldSettlementFC settlement, RimWorld.Faction attackingFaction)
+        {
+            InvokeCount++;
+            return _weight;
+        }
     }
 
     private class ThrowingRaidWeightProvider : IRaidWeightProvider
@@ -998,74 +834,29 @@ public static class RegistryTests
     }
 
     [EmpireTest("Registry")]
-    public static void RaidWeight_SingleProvider_Multiplies()
-    {
-        var p = new FixedRaidWeightProvider(2.5f);
-        RaidWeightRegistry.Register(p);
-        try
-        {
-            TestAssert.AreEqual(2.5, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001);
-        }
-        finally { RaidWeightRegistry.Unregister(p); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void RaidWeight_MultipleProviders_ProductCombines()
-    {
-        var p1 = new FixedRaidWeightProvider(2.0f);
-        var p2 = new FixedRaidWeightProvider(1.5f);
-        RaidWeightRegistry.Register(p1);
-        RaidWeightRegistry.Register(p2);
-        try
-        {
-            TestAssert.AreEqual(3.0, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001,
-                "Combined weight should be the product (2.0 * 1.5)");
-        }
-        finally
-        {
-            RaidWeightRegistry.Unregister(p1);
-            RaidWeightRegistry.Unregister(p2);
-        }
-    }
-
-    [EmpireTest("Registry")]
-    public static void RaidWeight_ZeroWeight_ProducesZero()
-    {
-        var p = new FixedRaidWeightProvider(0f);
-        RaidWeightRegistry.Register(p);
-        try
-        {
-            TestAssert.AreEqual(0.0, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001,
-                "Returning 0 should exclude the settlement");
-        }
-        finally { RaidWeightRegistry.Unregister(p); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void RaidWeight_DuplicateRegister_Ignored()
+    public static void RaidWeight_RegistrationContract()
     {
         var p = new FixedRaidWeightProvider(2.0f);
-        RaidWeightRegistry.Register(p);
-        RaidWeightRegistry.Register(p);
-        try
-        {
-            TestAssert.AreEqual(2.0, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001,
-                "Duplicate should be ignored");
-        }
-        // Unregister twice so a dedup regression can't leak a test double for the session.
-        finally { RaidWeightRegistry.Unregister(p); RaidWeightRegistry.Unregister(p); }
+        AssertRegistrationContract(p, RaidWeightRegistry.Register, RaidWeightRegistry.Unregister,
+            () => CountDuring(() => p.InvokeCount, () => RaidWeightRegistry.GetCombinedWeight(null, null)));
+        AssertDispatchIsolatesThrowing(new ThrowingRaidWeightProvider(), RaidWeightRegistry.Register, RaidWeightRegistry.Unregister,
+            () => RaidWeightRegistry.GetCombinedWeight(null, null));
     }
 
     [EmpireTest("Registry")]
-    public static void RaidWeight_Exception_DoesNotCrash()
+    public static void RaidWeight_CombinesAsProduct()
     {
-        var bad = new ThrowingRaidWeightProvider();
-        RaidWeightRegistry.Register(bad);
-        try
-        {
-            TestAssert.DoesNotThrow(() => RaidWeightRegistry.GetCombinedWeight(null, null));
-        }
-        finally { RaidWeightRegistry.Unregister(bad); }
+        WithRegistered(new FixedRaidWeightProvider(2.5f), RaidWeightRegistry.Register, RaidWeightRegistry.Unregister,
+            () => TestAssert.AreEqual(2.5, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001, "A single provider's weight"));
+
+        WithRegistered(new FixedRaidWeightProvider(2.0f), RaidWeightRegistry.Register, RaidWeightRegistry.Unregister, () =>
+        WithRegistered(new FixedRaidWeightProvider(1.5f), RaidWeightRegistry.Register, RaidWeightRegistry.Unregister,
+            () => TestAssert.AreEqual(3.0, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001,
+                "Combined weight should be the product (2.0 * 1.5)")));
+
+        WithRegistered(new FixedRaidWeightProvider(0f), RaidWeightRegistry.Register, RaidWeightRegistry.Unregister,
+            () => TestAssert.AreEqual(0.0, RaidWeightRegistry.GetCombinedWeight(null, null), 0.0001,
+                "Returning 0 should exclude the settlement"));
     }
 
     // ============================
@@ -1094,67 +885,30 @@ public static class RegistryTests
     }
 
     [EmpireTest("Registry")]
-    public static void RaidTarget_Register_AppearsInTargets()
+    public static void RaidTarget_RegistrationContract()
     {
         var t = new StubRaidTarget();
-        RaidTargetRegistry.Register(t);
-        try
-        {
-            TestAssert.Contains(RaidTargetRegistry.Targets, (IRaidTarget)t);
-        }
-        finally { RaidTargetRegistry.Unregister(t); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void RaidTarget_Unregister_RemovedFromTargets()
-    {
-        var t = new StubRaidTarget();
-        RaidTargetRegistry.Register(t);
-        RaidTargetRegistry.Unregister(t);
-        TestAssert.IsFalse(RaidTargetRegistry.Targets.Contains(t));
-    }
-
-    [EmpireTest("Registry")]
-    public static void RaidTarget_DuplicateRegister_Ignored()
-    {
-        var t = new StubRaidTarget();
-        RaidTargetRegistry.Register(t);
-        RaidTargetRegistry.Register(t);
-        try
-        {
-            int count = 0;
-            foreach (IRaidTarget r in RaidTargetRegistry.Targets)
-                if (System.Object.ReferenceEquals(r, t)) count++;
-            TestAssert.AreEqual(1, count, "Duplicate should be ignored");
-        }
-        // Unregister twice so a dedup regression can't leak a test double for the session.
-        finally { RaidTargetRegistry.Unregister(t); RaidTargetRegistry.Unregister(t); }
+        AssertRegistrationContract(t, RaidTargetRegistry.Register, RaidTargetRegistry.Unregister,
+            () => Occurrences<IRaidTarget>(RaidTargetRegistry.Targets, t));
     }
 
     [EmpireTest("Registry")]
     public static void RaidTarget_FindByWorldObject_NullObj_ReturnsNull()
     {
         // A target that leaves WorldObject at its null default must not match a null lookup.
-        var t = new BareParticipant();
-        RaidTargetRegistry.Register(t);
-        try
-        {
-            TestAssert.IsNull(RaidTargetRegistry.FindByWorldObject(null));
-        }
-        finally { RaidTargetRegistry.Unregister(t); }
+        WithRegistered(new BareParticipant(), RaidTargetRegistry.Register, RaidTargetRegistry.Unregister,
+            () => TestAssert.IsNull(RaidTargetRegistry.FindByWorldObject(null)));
     }
 
     [EmpireTest("Registry")]
     public static void RaidTarget_FindByWorldObject_Exception_DoesNotCrash()
     {
         var bad = new ThrowingRaidTarget();
-        RaidTargetRegistry.Register(bad);
-        try
+        WithRegistered(bad, RaidTargetRegistry.Register, RaidTargetRegistry.Unregister, () =>
         {
             TestAssert.DoesNotThrow(() => RaidTargetRegistry.FindByWorldObject(new WorldObject()));
             TestAssert.IsFalse(RaidTargetRegistry.Targets.Contains(bad), "A target whose identity check throws is skipped");
-        }
-        finally { RaidTargetRegistry.Unregister(bad); }
+        });
     }
 
     // ============================
@@ -1176,41 +930,11 @@ public static class RegistryTests
     }
 
     [EmpireTest("Registry")]
-    public static void AutoDefender_Register_AppearsInDefenders()
+    public static void AutoDefender_RegistrationContract()
     {
         var d = new StubAutoDefender();
-        AutoDefenderRegistry.Register(d);
-        try
-        {
-            TestAssert.Contains(AutoDefenderRegistry.Defenders, (IAutoDefender)d);
-        }
-        finally { AutoDefenderRegistry.Unregister(d); }
-    }
-
-    [EmpireTest("Registry")]
-    public static void AutoDefender_Unregister_RemovedFromDefenders()
-    {
-        var d = new StubAutoDefender();
-        AutoDefenderRegistry.Register(d);
-        AutoDefenderRegistry.Unregister(d);
-        TestAssert.IsFalse(AutoDefenderRegistry.Defenders.Contains(d));
-    }
-
-    [EmpireTest("Registry")]
-    public static void AutoDefender_DuplicateRegister_Ignored()
-    {
-        var d = new StubAutoDefender();
-        AutoDefenderRegistry.Register(d);
-        AutoDefenderRegistry.Register(d);
-        try
-        {
-            int count = 0;
-            foreach (IAutoDefender def in AutoDefenderRegistry.Defenders)
-                if (System.Object.ReferenceEquals(def, d)) count++;
-            TestAssert.AreEqual(1, count, "Duplicate should be ignored");
-        }
-        // Unregister twice so a dedup regression can't leak a test double for the session.
-        finally { AutoDefenderRegistry.Unregister(d); AutoDefenderRegistry.Unregister(d); }
+        AssertRegistrationContract(d, AutoDefenderRegistry.Register, AutoDefenderRegistry.Unregister,
+            () => Occurrences<IAutoDefender>(AutoDefenderRegistry.Defenders, d));
     }
 
     [EmpireTest("Registry")]
@@ -1221,32 +945,17 @@ public static class RegistryTests
     }
 
     [EmpireTest("Registry")]
-    public static void AutoDefender_FindBestDefender_CannotAutoDefend_Skipped()
+    public static void AutoDefender_FindBestDefender_IneligibleDefenders_Skipped()
     {
-        // The CanAutoDefend == false branch short-circuits before any tile lookup, so this
-        // is safe to test without real world geometry.
-        var d = new StubAutoDefender { _militaryLevel = 10, _canAutoDefend = false };
-        AutoDefenderRegistry.Register(d);
-        try
-        {
-            IAutoDefender result = AutoDefenderRegistry.FindBestDefender(RimWorld.Planet.PlanetTile.Invalid, 0);
-            TestAssert.IsNull(result, "Disabled defender should not be selected");
-        }
-        finally { AutoDefenderRegistry.Unregister(d); }
-    }
+        // The CanAutoDefend == false and below-minimum-level branches short-circuit before any
+        // tile lookup, so this is safe to test without real world geometry.
+        WithRegistered(new StubAutoDefender { _militaryLevel = 10, _canAutoDefend = false }, AutoDefenderRegistry.Register, AutoDefenderRegistry.Unregister,
+            () => TestAssert.IsNull(AutoDefenderRegistry.FindBestDefender(RimWorld.Planet.PlanetTile.Invalid, 0),
+                "Disabled defender should not be selected"));
 
-    [EmpireTest("Registry")]
-    public static void AutoDefender_FindBestDefender_BelowMinLevel_Skipped()
-    {
-        // Same early-return path: skip without touching WorldObject.Tile.
-        var d = new StubAutoDefender { _militaryLevel = 3, _canAutoDefend = true };
-        AutoDefenderRegistry.Register(d);
-        try
-        {
-            IAutoDefender result = AutoDefenderRegistry.FindBestDefender(RimWorld.Planet.PlanetTile.Invalid, 5);
-            TestAssert.IsNull(result, "Defender below minMilitaryLevel should not be selected");
-        }
-        finally { AutoDefenderRegistry.Unregister(d); }
+        WithRegistered(new StubAutoDefender { _militaryLevel = 3, _canAutoDefend = true }, AutoDefenderRegistry.Register, AutoDefenderRegistry.Unregister,
+            () => TestAssert.IsNull(AutoDefenderRegistry.FindBestDefender(RimWorld.Planet.PlanetTile.Invalid, 5),
+                "Defender below minMilitaryLevel should not be selected"));
     }
 
     // ============================

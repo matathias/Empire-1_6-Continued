@@ -2,23 +2,11 @@ using System.Text;
 
 namespace FactionColonies;
 
-public class WorldObjectCompProperties_SettlementPrisoners : WorldObjectCompProperties
+public class WorldObjectCompProperties_SettlementPrisoners : MapParentCompProperties
 {
     public WorldObjectCompProperties_SettlementPrisoners()
     {
         compClass = typeof(WorldObjectComp_SettlementPrisoners);
-    }
-
-    public override IEnumerable<string> ConfigErrors(WorldObjectDef parentDef)
-    {
-        foreach (string item in base.ConfigErrors(parentDef))
-        {
-            yield return item;
-        }
-        if (!typeof(MapParent).IsAssignableFrom(parentDef.worldObjectClass))
-        {
-            yield return parentDef.defName + " has WorldObjectCompProperties_SettlementPrisoners but it's not MapParent.";
-        }
     }
 }
 

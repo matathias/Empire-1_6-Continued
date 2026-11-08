@@ -77,16 +77,7 @@ public static class DeliveryLogistics
                 return;
             }
 
-            if (!evt.isDelayed)
-            {
-                Messages.Message(((string)"FCShuttleLandingBlockedWithItems".Translate(evt.goods.ToLetterString())).Replace("\n", " "), MessageTypeDefOf.RejectInput);
-                evt.isDelayed = true;
-            }
-
-            if (!evt.source.Valid) evt.source = playerHomeMap.Tile;
-
-            evt.timeTillTrigger = Find.TickManager.TicksGame + 1000;
-            DeliveryEvent.CreateDeliveryEvent(evt);
+            Reschedule(evt, "FCShuttleLandingBlockedWithItems", playerHomeMap);
         }
     }
 
@@ -107,21 +98,34 @@ public static class DeliveryLogistics
         Map playerHomeMap = FindFC.TaxMap;
         if (playerHomeMap.dangerWatcher.DangerRating != StoryDanger.None)
         {
-
-            if (!evt.isDelayed)
-            {
-                Messages.Message(((string)"FCCaravanDangerTooHighWithItems".Translate(evt.goods.ToLetterString())).Replace("\n", " "), MessageTypeDefOf.RejectInput);
-                evt.isDelayed = true;
-            }
-
-            if (!evt.source.Valid) evt.source = playerHomeMap.Tile;
-
-            evt.timeTillTrigger = Find.TickManager.TicksGame + 1000;
-            DeliveryEvent.CreateDeliveryEvent(evt);
+            Reschedule(evt, "FCCaravanDangerTooHighWithItems", playerHomeMap);
             return true;
         }
 
         return false;
+    }
+
+    /* Marks the delivery delayed (messaging the player the first time) and re-queues it 1000 ticks out. */
+    private static void Reschedule(FCEvent evt, string delayMessageKey, Map playerHomeMap)
+    {
+        if (!evt.isDelayed)
+        {
+            Messages.Message(((string)delayMessageKey.Translate(evt.goods.ToLetterString())).Replace("\n", " "), MessageTypeDefOf.RejectInput);
+            evt.isDelayed = true;
+        }
+
+        if (!evt.source.Valid) evt.source = playerHomeMap.Tile;
+
+        evt.timeTillTrigger = Find.TickManager.TicksGame + 1000;
+        DeliveryEvent.CreateDeliveryEvent(evt);
+    }
+
+    /* Takes the first remaining good off the delivery and drops it at the tax spot. */
+    private static void PlaceFirstGood(FCEvent evt)
+    {
+        Thing good = evt.goods[0];
+        evt.goods.RemoveAt(0);
+        PaymentUtil.PlaceThing(good);
     }
 
     public static void SendCaravan(FCEvent evt)
@@ -158,9 +162,7 @@ public static class DeliveryLogistics
                 {
                     // Guarantee progress so the loop can't spin: place this good directly rather than retrying.
                     LogUtil.Warning($"Failed to generate pawn with civilian request: {ex.Message}");
-                    Thing lostItem = evt.goods[0];
-                    evt.goods.RemoveAt(0);
-                    PaymentUtil.PlaceThing(lostItem);
+                    PlaceFirstGood(evt);
                     continue;
                 }
 
@@ -191,9 +193,7 @@ public static class DeliveryLogistics
                 if (deliveryPawn is null)
                 {
                     LogUtil.Error("Could not generate any pawn for delivery, placing item on tax spot");
-                    Thing lostItem = evt.goods[0];
-                    evt.goods.RemoveAt(0);
-                    PaymentUtil.PlaceThing(lostItem);
+                    PlaceFirstGood(evt);
                     continue;
                 }
 
@@ -218,9 +218,7 @@ public static class DeliveryLogistics
                 LogUtil.Error($"Error generating pawn for delivery: {ex.Message}");
                 if (evt.goods.Count > 0)
                 {
-                    Thing lostItem = evt.goods[0];
-                    evt.goods.RemoveAt(0);
-                    PaymentUtil.PlaceThing(lostItem);
+                    PlaceFirstGood(evt);
                 }
             }
         }

@@ -2,8 +2,9 @@ namespace FactionColonies.util;
 
 /// <summary>
 /// Minimal comparable semantic version (major.minor.patch) value type.
-/// Used by the save-format version stamp (see <see cref="FactionFC"/>) to gate save migrations
-/// on an ordered comparison of the version that wrote a save against the active mod version.
+/// Used by the save-format version stamp (see <see cref="FactionFC"/>) to gate save migrations,
+/// by the settings-file version check, and by patch notes (<see cref="PatchNote.Version"/> and the
+/// last-seen version in <see cref="FCSettings.GetLastSeenVersion"/>).
 /// </summary>
 public readonly record struct FCVersion : IComparable<FCVersion>
 {
@@ -20,7 +21,7 @@ public readonly record struct FCVersion : IComparable<FCVersion>
 
     /// <summary>
     /// Parses a "major.minor.patch" string (e.g. "1.5.43"). Returns false and 0.0.0 on
-    /// null/malformed input. Mirrors the parsing used by FCSettings.GetLastSeenVersion.
+    /// null/malformed input.
     /// </summary>
     public static bool TryParse(string s, out FCVersion version)
     {

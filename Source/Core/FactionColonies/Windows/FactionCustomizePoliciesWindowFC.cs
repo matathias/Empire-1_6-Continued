@@ -2,27 +2,19 @@ using UnityEngine;
 
 namespace FactionColonies;
 
-public class FactionCustomizePoliciesWindowFC : Window
+public class FactionCustomizePoliciesWindowFC : FCWindow_PolicySelectionBase
 {
     private const float fullwidth = 900f;
     private const float fullheight = 600f;
-    private const float margin = 5f;
-    private const float smallMargin = 3f;
-    private const float policyRowHeight = 30f;
     private const float iconSize = 30f;
     private const float cardGap = 6f;
     private const float cardPadding = 8f;
     private const float removeButtonSize = 24f;
     public override Vector2 InitialSize => new(fullwidth, fullheight);
 
-    private FactionFC faction;
-    public string header;
-    string alertText = "";
-
     bool traitsChosen;
 
     List<FCPolicyDef> selectedPolicies = [];
-    private FCPolicyDef hoveredPolicy;
 
     private Vector2 availableListScroll;
     private Vector2[] cardScrollPositions;
@@ -31,14 +23,8 @@ public class FactionCustomizePoliciesWindowFC : Window
     private List<FCPolicyDef> allCorePolicies;
 
     public FactionCustomizePoliciesWindowFC(FactionFC faction)
+        : base(faction, "FCPolicySelection".Translate())
     {
-        forcePause = false;
-        draggable = true;
-        doCloseX = true;
-        preventCameraMotion = false;
-        this.faction = faction;
-        header = "FCPolicySelection".Translate();
-
         allCorePolicies = FactionCache.GetPoliciesByCategory(FCPolicyCategory.Core);
 
         cardScrollPositions = new Vector2[FCSettings.maxPolicyCount];
@@ -54,24 +40,8 @@ public class FactionCustomizePoliciesWindowFC : Window
         traitsChosen = FindFC.PolicyManager.policies.Count == FCSettings.maxPolicyCount;
     }
 
-    public override void DoWindowContents(Rect inRect)
+    protected override void DrawHeaderExtras(Rect inRect)
     {
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-
-        hoveredPolicy = null;
-
-        // Header
-        Rect labelHeader = new(0, 0, 200, 40);
-        float headerHeight = labelHeader.yMax + (margin * 4);
-
-        Text.Anchor = TextAnchor.MiddleLeft;
-        Text.Font = GameFont.Medium;
-        UIUtil.ClampedLabel(labelHeader, header);
-        Widgets.DrawLineHorizontal(labelHeader.x, labelHeader.yMax + margin, fullwidth - (Margin * 2));
-
-        Text.Font = GameFont.Small;
-
         // Clear Policies button (top-right, only when policies are locked-in)
         if (traitsChosen)
         {
@@ -93,16 +63,11 @@ public class FactionCustomizePoliciesWindowFC : Window
             GUI.color = savedColor;
             TooltipHandler.TipRegion(clearBtn, "FCClearPoliciesTooltip".Translate(FindFC.EmpireName));
         }
+    }
 
-        // Confirm button
-        Rect buttonConfirm = new((inRect.xMax - 200) / 2f, inRect.yMax - 50, 200, 30);
-
-        // Alert text
-        Rect alertRect = new(inRect.x + margin, buttonConfirm.y - 25, inRect.width - (margin * 2), 20);
-
+    protected override void DrawPanels(Rect inRect, float panelTop, float panelBottom)
+    {
         // Two-panel layout: cards (left) + picker (right)
-        float panelTop = headerHeight;
-        float panelBottom = alertRect.y - margin;
         float panelHeight = panelBottom - panelTop;
         float cardsWidth = inRect.width * 0.58f;
         float pickerWidth = inRect.width - cardsWidth - margin;
@@ -110,55 +75,39 @@ public class FactionCustomizePoliciesWindowFC : Window
         Rect cardsPanel = new(inRect.x, panelTop, cardsWidth, panelHeight);
         Rect pickerPanel = new(cardsPanel.xMax + margin, panelTop, pickerWidth, panelHeight);
 
-        // Draw picker first so hoveredPolicy is set before cards read it
-        DrawAvailablePolicies(pickerPanel);
+        // Draw picker first so the hovered policy is set before cards read it
+        DrawAvailableList(pickerPanel, "FCAvailablePolicies".Translate(), allCorePolicies, ref availableListScroll,
+            selectedPolicies, IsBlockedByIncompatible, !traitsChosen, HandlePolicySelection);
         DrawPolicyCards(cardsPanel);
+    }
 
-        // Alert text
+    protected override string ComputeAlertText()
+    {
         if (traitsChosen)
-        {
-            alertText = "FCTraitsChosen".Translate();
-        }
-        else if (selectedPolicies.Count < FCSettings.maxPolicyCount)
-        {
-            alertText = "FCSelectTraits0".Translate(FCSettings.maxPolicyCount);
-        }
-        else
-        {
-            alertText = "FCSelectTraits2".Translate();
-        }
+            return "FCTraitsChosen".Translate();
+        if (selectedPolicies.Count < FCSettings.maxPolicyCount)
+            return "FCSelectTraits0".Translate(FCSettings.maxPolicyCount);
+        return "FCSelectTraits2".Translate();
+    }
 
-        Text.Font = GameFont.Tiny;
-        Text.Anchor = TextAnchor.MiddleCenter;
-        UIUtil.ClampedLabel(alertRect, alertText);
+    protected override void ApplySelection()
+    {
+        if (traitsChosen) return;
 
-        // Confirm button
-        Text.Font = GameFont.Small;
-        if (UIUtil.ClampedButtonText(buttonConfirm, "FCConfirmChanges".Translate()))
+        PolicyManager policyManager = FindFC.PolicyManager;
+        // Apply the draft as a diff: deselected policies are removed (firing OnRemoved), kept
+        // ones are left alone, and new ones are enacted.
+        List<FCPolicy> dropped = policyManager.policies.Where(p => !selectedPolicies.Contains(p.def)).ToList();
+        policyManager.policies.RemoveAll(dropped.Contains);
+        policyManager.RemoveAllPolicies(dropped);
+        foreach (FCPolicyDef policy in selectedPolicies)
         {
-            if (!traitsChosen)
+            if (!policyManager.policies.Any((FCPolicy p) => p.def == policy))
             {
-                PolicyManager policyManager = FindFC.PolicyManager;
-                // Apply the draft as a diff: deselected policies are removed (firing OnRemoved), kept
-                // ones are left alone, and new ones are enacted.
-                List<FCPolicy> dropped = policyManager.policies.Where(p => !selectedPolicies.Contains(p.def)).ToList();
-                policyManager.policies.RemoveAll(dropped.Contains);
-                policyManager.RemoveAllPolicies(dropped);
-                foreach (FCPolicyDef policy in selectedPolicies)
-                {
-                    if (!policyManager.policies.Any((FCPolicy p) => p.def == policy))
-                    {
-                        policyManager.policies.Add(new FCPolicy(policy));
-                    }
-                }
-                policyManager.RebuildBehaviorCache();
+                policyManager.policies.Add(new FCPolicy(policy));
             }
-
-            Find.WindowStack.TryRemove(this);
         }
-
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+        policyManager.RebuildBehaviorCache();
     }
 
     private void DrawPolicyCards(Rect inRect)
@@ -174,9 +123,9 @@ public class FactionCustomizePoliciesWindowFC : Window
             {
                 DrawSingleCard(cardRect, selectedPolicies[i], i, false);
             }
-            else if (!usedPreview && hoveredPolicy is not null && !selectedPolicies.Contains(hoveredPolicy))
+            else if (!usedPreview && hovered is not null && !selectedPolicies.Contains(hovered))
             {
-                DrawSingleCard(cardRect, hoveredPolicy, i, true);
+                DrawSingleCard(cardRect, hovered, i, true);
                 usedPreview = true;
             }
             else
@@ -247,7 +196,7 @@ public class FactionCustomizePoliciesWindowFC : Window
         Rect descRect = new(inner.x, y, inner.width, inner.yMax - y);
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.UpperLeft;
-        string desc = returnPolicyDesc(policy);
+        string desc = PolicyDescription(policy);
         float textHeight = Text.CalcHeight(desc, descRect.width);
 
         if (textHeight > descRect.height)
@@ -273,58 +222,6 @@ public class FactionCustomizePoliciesWindowFC : Window
         UIUtil.DrawColoredLabel(cardRect,
             (slotIndex + 1) + ". " + "FCSelectANewTrait".Translate(),
             Color.gray);
-    }
-
-    private void DrawAvailablePolicies(Rect inRect)
-    {
-        Rect listHeader = new(inRect.x, inRect.y, inRect.width, 22f);
-        Widgets.DrawHighlight(listHeader);
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleLeft;
-        UIUtil.ClampedLabel(new Rect(listHeader.x + margin, listHeader.y, listHeader.width - margin, listHeader.height),
-            "FCAvailablePolicies".Translate());
-
-        float listY = listHeader.yMax + smallMargin;
-        float listHeight = inRect.yMax - listY;
-        float contentHeight = allCorePolicies.Count * (policyRowHeight + smallMargin);
-
-        Rect viewRect = new(inRect.x, listY, inRect.width, listHeight);
-
-        Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref availableListScroll, Mathf.Max(contentHeight, listHeight));
-
-        for (int i = 0; i < allCorePolicies.Count; i++)
-        {
-            FCPolicyDef policy = allCorePolicies[i];
-            bool isSelected = selectedPolicies.Contains(policy);
-            bool isBlocked = IsBlockedByIncompatible(policy);
-            Rect row = new(scrollRect.x, scrollRect.y + i * (policyRowHeight + smallMargin), scrollRect.width, policyRowHeight);
-
-            // Determine label style
-            string buttonLabel;
-            if (isSelected)
-                buttonLabel = ">> " + policy.LabelCap + " <<";
-            else if (isBlocked)
-                buttonLabel = policy.LabelCap + " (!)";
-            else
-                buttonLabel = policy.LabelCap;
-
-            if (isBlocked && !isSelected)
-                GUI.color = new Color(1f, 1f, 1f, 0.5f);
-
-            if (Widgets.ButtonTextSubtle(row, buttonLabel, highlight: isSelected) && !traitsChosen)
-            {
-                HandlePolicySelection(policy);
-            }
-
-            GUI.color = Color.white;
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-
-            if (Mouse.IsOver(row))
-                hoveredPolicy = policy;
-        }
-
-        ScrollUtil.EndScrollView();
     }
 
     /// <summary>
@@ -385,10 +282,5 @@ public class FactionCustomizePoliciesWindowFC : Window
         selectedPolicies.Clear();
         traitsChosen = false;
         ResetCardScrollPositions();
-    }
-
-    string returnPolicyDesc(FCPolicyDef def)
-    {
-        return FactionCache.FCPolicyDescs?[def] ?? def.PolicyDesc();
     }
 }

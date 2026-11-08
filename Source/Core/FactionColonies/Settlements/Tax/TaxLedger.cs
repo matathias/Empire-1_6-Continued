@@ -310,28 +310,7 @@ public class TaxLedger : IExposable
     public BillFC CreateDeploymentCostBill(MercenarySquadFC squad)
     {
         if (squad is null) return null;
-        int cost = squad.DeploymentCost();
-        if (cost <= 0 || DebugSettings.godMode) return null;
-
-        WorldSettlementFC home = squad.settlement;
-        if (home is null)
-        {
-            LogUtil.Warning($"TaxLedger.CreateDeploymentCostBill: squad {squad.GetUniqueLoadID()} has no home settlement; skipping bill.");
-            return null;
-        }
-
-        int lifespanTicks = Math.Max(1, FCSettings.deploymentBillLifespan_days) * GenDate.TicksPerDay;
-        BillFC bill = new(home, lifespanTicks);
-        bill.label = "FCBillKindSquadDeployment".Translate();
-        bill.taxes.silverAmount = -cost;
-        /* silverAmount must be set BEFORE the Scaled helpers — they read it for
-         * the linear scaling computation. */
-        bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Unrest, 25);
-        bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Happiness, 25);
-        bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Unrest, 5);
-        bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Happiness, 5);
-        AddBill(bill);
-        return bill;
+        return CreateSquadCostBill(squad, squad.DeploymentCost(), "FCBillKindSquadDeployment", 25, 5, nameof(CreateDeploymentCostBill));
     }
 
     /// <summary>Creates a restock-cost bill against the squad's home settlement for carried
@@ -340,25 +319,35 @@ public class TaxLedger : IExposable
     /// settlement. Cost is computed by the caller; this just authors the bill.</summary>
     public BillFC CreateRestockCostBill(MercenarySquadFC squad, int cost)
     {
-        if (squad is null || cost <= 0 || DebugSettings.godMode) return null;
+        if (squad is null) return null;
+        return CreateSquadCostBill(squad, cost, "FCBillKindSquadRestock", 15, 3, nameof(CreateRestockCostBill));
+    }
+
+    /// <summary>Shared body of the squad cost bills: a silver charge against the squad's home
+    /// settlement with unrest and happiness penalties scaled by <paramref name="kUnpaid"/> when left
+    /// unpaid and by <paramref name="kLate"/> when paid late. No-op when cost is non-positive,
+    /// godMode is on, or the squad has no home settlement.</summary>
+    private BillFC CreateSquadCostBill(MercenarySquadFC squad, int cost, string labelKey, double kUnpaid, double kLate, string caller)
+    {
+        if (cost <= 0 || DebugSettings.godMode) return null;
 
         WorldSettlementFC home = squad.settlement;
         if (home is null)
         {
-            LogUtil.Warning($"TaxLedger.CreateRestockCostBill: squad {squad.GetUniqueLoadID()} has no home settlement; skipping bill.");
+            LogUtil.Warning($"TaxLedger.{caller}: squad {squad.GetUniqueLoadID()} has no home settlement; skipping bill.");
             return null;
         }
 
         int lifespanTicks = Math.Max(1, FCSettings.deploymentBillLifespan_days) * GenDate.TicksPerDay;
         BillFC bill = new(home, lifespanTicks);
-        bill.label = "FCBillKindSquadRestock".Translate();
+        bill.label = labelKey.Translate();
         bill.taxes.silverAmount = -cost;
         /* silverAmount must be set BEFORE the Scaled helpers — they read it for
          * the linear scaling computation. */
-        bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Unrest, 15);
-        bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Happiness, 15);
-        bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Unrest, 3);
-        bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Happiness, 3);
+        bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Unrest, kUnpaid);
+        bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Happiness, kUnpaid);
+        bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Unrest, kLate);
+        bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Happiness, kLate);
         AddBill(bill);
         return bill;
     }

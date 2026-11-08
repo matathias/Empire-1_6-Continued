@@ -10,37 +10,20 @@ namespace FactionColonies;
 /// <see cref="ISquadPowerModifier.Priority"/> order. Each modifier receives
 /// the running power and returns the modified value, so multiple submods
 /// compose (veterancy + specialist + augmentation each contribute).</para>
-/// <para>Storage is a raw <see cref="List{T}"/> rather than <see cref="RegistryList{T}"/>
-/// because Register/Unregister/ClearAll must invalidate the cached priority-sorted
-/// view; the standard wrapper has no hook for that.</para>
 /// </summary>
 public static class SquadPowerRegistry
 {
-    private static readonly List<ISquadPowerModifier> _modifiers = [];
+    private static readonly RegistryList<ISquadPowerModifier> _modifiers = new();
     private static List<ISquadPowerModifier> _sortedCache;
+    private static int _sortedVersion;
 
-    internal static void Register(ISquadPowerModifier modifier)
-    {
-        if (modifier is null) return;
-        if (!_modifiers.Contains(modifier))
-        {
-            _modifiers.Add(modifier);
-            _sortedCache = null;
-        }
-    }
+    internal static void Register(ISquadPowerModifier modifier) => _modifiers.Register(modifier);
 
-    internal static void Unregister(ISquadPowerModifier modifier)
-    {
-        if (_modifiers.Remove(modifier)) _sortedCache = null;
-    }
+    internal static void Unregister(ISquadPowerModifier modifier) => _modifiers.Unregister(modifier);
 
-    internal static void ClearAll()
-    {
-        _modifiers.Clear();
-        _sortedCache = null;
-    }
+    internal static void ClearAll() => _modifiers.ClearAll();
 
-    public static IReadOnlyList<ISquadPowerModifier> Modifiers => _modifiers;
+    public static IReadOnlyList<ISquadPowerModifier> Modifiers => _modifiers.Items;
 
     /// <summary>Resolves <paramref name="squad"/> to its projected combat power.
     /// Returns a sensible default (level 1, efficiency 1) only for a null squad — callers
@@ -123,10 +106,11 @@ public static class SquadPowerRegistry
 
     private static List<ISquadPowerModifier> GetSortedModifiers()
     {
-        if (_sortedCache is not null) return _sortedCache;
-        List<ISquadPowerModifier> copy = new(_modifiers);
+        if (_sortedCache is not null && _sortedVersion == _modifiers.Version) return _sortedCache;
+        List<ISquadPowerModifier> copy = new(_modifiers.Items);
         copy.Sort((a, b) => b.Priority.CompareTo(a.Priority)); // highest first
         _sortedCache = copy;
+        _sortedVersion = _modifiers.Version;
         return _sortedCache;
     }
 }

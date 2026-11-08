@@ -598,11 +598,7 @@ public partial class BattlefieldContext
         if (enemy is not null && !enemy.Destroyed)
             enemy.Destroy();
 
-        // Mark the faction defeated if it has no settlements left (mirrors ApplyCaptureSuccess /
-        // ApplyRazeSuccess).
-        if (enemyFaction is not null &&
-            !Find.WorldObjects.Settlements.Any(s => s.Faction is not null && s.Faction == enemyFaction))
-            enemyFaction.defeated = true;
+        SettlementFateUtil.MarkDefeatedIfNoSettlementsLeft(enemyFaction);
 
         if (capture)
             ColonyUtil.SetupCapturedSettlement(tile, pendingCaptureName, pendingCaptureTech);

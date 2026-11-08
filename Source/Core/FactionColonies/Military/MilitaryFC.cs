@@ -346,26 +346,16 @@ public class MilitaryFC : IExposable
         foreach (var squad in mercenarySquads)
         {
             if (squad?.mercenaries is null) continue;
-            foreach (var merc in squad.mercenaries)
-            {
-                if (merc?.pawn == unit)
-                    return squad;
-            }
-            foreach (var sub in squad.AllSubPawns())
-            {
-                if (sub?.pawn == unit)
-                    return squad;
-            }
+            if (squad.FindMercOrSubPawn(unit) is not null) return squad;
         }
 
         LogUtil.Message("MercenarySquadFC - ReturnSquadFromUnit - Did not find squad.");
         return null;
     }
 
-    public Mercenary ReturnMercenaryFromUnit(Pawn unit, MercenarySquadFC squad)
-    {
-        return squad.mercenaries.FirstOrDefault(merc => merc?.pawn == unit);
-    }
+    /// <summary>Finds the slot merc in <paramref name="squad"/> whose pawn is <paramref name="unit"/>;
+    /// null for a sub-pawn or a null squad.</summary>
+    public Mercenary ReturnMercenaryFromUnit(Pawn unit, MercenarySquadFC squad) => squad?.ReturnPawn(unit);
 
     /// <summary>Finds the sub-pawn (animal/mech) wrapper holding <paramref name="unit"/>, scanning
     /// every squad regardless of map state (a mech can die off-map). Returns null if not a sub-pawn.</summary>
@@ -373,8 +363,10 @@ public class MilitaryFC : IExposable
     {
         if (unit is null) return null;
         foreach (var squad in mercenarySquads)
-            foreach (var sub in squad.AllSubPawns())
-                if (sub?.pawn == unit) return sub;
+        {
+            Mercenary sub = squad?.FindSubPawn(unit);
+            if (sub is not null) return sub;
+        }
         return null;
     }
 
@@ -386,9 +378,8 @@ public class MilitaryFC : IExposable
         if (unit is null) return null;
         foreach (var squad in mercenarySquads)
         {
-            if (squad?.mercenaries is null) continue;
-            foreach (var merc in squad.mercenaries)
-                if (merc?.pawn == unit) return merc;
+            Mercenary merc = squad?.ReturnPawn(unit);
+            if (merc is not null) return merc;
         }
         return null;
     }
@@ -412,13 +403,8 @@ public class MilitaryFC : IExposable
             if (FindFC.MilitaryManager is null) yield break;
             foreach (MercenarySquadFC squad in mercenarySquads)
             {
-                MilitaryOperation op = squad?.Operation;
-                if (op is not null
-                    && op.kind == MilitaryJobDefOf.Deploy
-                    && op.phase == MilitaryOperationPhase.Engaged)
-                {
+                if (squad?.Operation?.IsEngagedDeploy == true)
                     yield return squad;
-                }
             }
         }
     }
@@ -426,11 +412,7 @@ public class MilitaryFC : IExposable
     /// <summary>True if <paramref name="squad"/> is currently in an Engaged Deploy op.</summary>
     public static bool IsInDeployOp(MercenarySquadFC squad)
     {
-        if (squad is null) return false;
-        MilitaryOperation op = squad.Operation;
-        return op is not null
-            && op.kind == MilitaryJobDefOf.Deploy
-            && op.phase == MilitaryOperationPhase.Engaged;
+        return squad?.Operation?.IsEngagedDeploy == true;
     }
 
     public IEnumerable<Pawn> AllMercenaryPawns =>

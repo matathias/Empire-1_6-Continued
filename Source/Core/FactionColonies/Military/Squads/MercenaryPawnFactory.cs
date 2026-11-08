@@ -170,18 +170,34 @@ public static class MercenaryPawnFactory
             }
             else
             {
-                List<DirectPawnRelation> rels = rel.DirectRelations;
-                for (int i = rels.Count - 1; i >= 0; i--)
-                {
-                    DirectPawnRelation r = rels[i];
-                    if (r is not null && r.def == PawnRelationDefOf.Overseer && r.otherPawn == mech)
-                        rels.RemoveAt(i);
-                }
+                StripOverseerRelations(overseer, other => other == mech);
             }
         }
         catch (Exception ex)
         {
             LogUtil.Warning($"Failed to unbond mech from {overseer.LabelShortCap}: {ex.Message}");
+        }
+    }
+
+    /// <summary>Removes the Overseer relations whose other pawn matches <paramref name="otherMatches"/>
+    /// straight from <paramref name="overseer"/>'s direct-relation list. Used instead of
+    /// <c>TryRemoveDirectRelation</c>, which dereferences <c>otherPawn.relations</c> and throws for a
+    /// destroyed mech. With <paramref name="dropMalformed"/>, null entries and entries without a def
+    /// are removed too.</summary>
+    internal static void StripOverseerRelations(Pawn overseer, Predicate<Pawn> otherMatches, bool dropMalformed = false)
+    {
+        List<DirectPawnRelation> rels = overseer?.relations?.DirectRelations;
+        if (rels is null) return;
+        for (int i = rels.Count - 1; i >= 0; i--)
+        {
+            DirectPawnRelation r = rels[i];
+            if (r is null || r.def is null)
+            {
+                if (dropMalformed) rels.RemoveAt(i);
+                continue;
+            }
+            if (r.def == PawnRelationDefOf.Overseer && otherMatches(r.otherPawn))
+                rels.RemoveAt(i);
         }
     }
 

@@ -37,7 +37,9 @@ public class PatchNote
     public string Description => description;
 
     /// <summary>The version formatted like "1.6.4"</summary>
-    public string VersionNumber => $"{major}.{minor}.{patch}";
+    public string VersionNumber => Version.ToString();
+
+    public FCVersion Version => new(major, minor, patch);
 
     public int Major => major;
 
@@ -93,10 +95,5 @@ public class PatchNote
     }
 
     /// <summary>Returns true if this patch note's version is newer than the given version.</summary>
-    public bool IsNewerThan(int maj, int min, int pat)
-    {
-        if (major != maj) return major > maj;
-        if (minor != min) return minor > min;
-        return patch > pat;
-    }
+    public bool IsNewerThan(FCVersion version) => Version.IsNewerThan(version);
 }

@@ -6,12 +6,7 @@ namespace FactionColonies;
 public static class WorldComponentArchiveDestructiveTests
 {
     private static void WithArchiveUnlimited(bool unlimited, Action body)
-    {
-        bool saved = FCSettings.battleArchiveUnlimited;
-        FCSettings.battleArchiveUnlimited = unlimited;
-        try { body(); }
-        finally { FCSettings.battleArchiveUnlimited = saved; }
-    }
+        => TestUtil.WithOverride(() => FCSettings.battleArchiveUnlimited, v => FCSettings.battleArchiveUnlimited = v, unlimited, body);
 
     [EmpireDestructiveTest("Destructive.Military")]
     public static void BattleReportCount_MatchesRecorded() => WithArchiveUnlimited(false, () =>

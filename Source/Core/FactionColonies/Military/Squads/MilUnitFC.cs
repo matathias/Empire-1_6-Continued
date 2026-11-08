@@ -1303,57 +1303,33 @@ public class MilUnitFC : IExposable, ILoadReferenceable
             return;
         }
 
-        double totalCost = 0;
+        // The race term is the only part of the design cost that an upgrade can't change (the pawn
+        // keeps its race), so it lives here; everything else is the shared equipment sum.
+        equipmentTotalCost = Math.Ceiling(LoadoutUpgradeUtil.SumEquipmentCost(this, RaceCost()));
+    }
 
-        if (pawnKind?.race is not null)
-        {
-            float xenoFactor = xenotype is not null
-                ? GeneValuationUtil.XenotypeFactor(xenotype)
-                : GeneValuationUtil.XenotypeFactor(ResolveCustomXenotype());
-            totalCost += Math.Floor(pawnKind.race.BaseMarketValue * FCSettings.militaryRaceCostMultiplier * xenoFactor);
-        }
+    /* Race base cost, scaled by the race multiplier and the xenotype's gene valuation. */
+    public double RaceCost()
+    {
+        if (pawnKind?.race is null) return 0;
+        float xenoFactor = xenotype is not null
+            ? GeneValuationUtil.XenotypeFactor(xenotype)
+            : GeneValuationUtil.XenotypeFactor(ResolveCustomXenotype());
+        return Math.Floor(pawnKind.race.BaseMarketValue * FCSettings.militaryRaceCostMultiplier * xenoFactor);
+    }
 
-        foreach (SavedThing a in apparel)
-            totalCost += a.MarketValue;
+    /* Silver cost of one companion animal or mount of this kind (before any hire multiplier). */
+    public static double AnimalUnitCost(PawnKindDef kind)
+    {
+        if (kind?.race is null) return 0;
+        return Math.Floor(kind.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
+    }
 
-        foreach (SavedThing w in weapons)
-            totalCost += w.MarketValue;
-
-        foreach (SavedThing inv in inventory)
-            totalCost += inv.MarketValue;
-
-        foreach (SavedImplant im in implants)
-            totalCost += ImplantCost(im);
-
-        // Psylink-level cost is owned by the active psycast system (base game charges per level;
-        // VPE returns 0 and balances via per-psycast cost instead).
-        totalCost += PsycastSystemRegistry.Active?.PsylinkCost(psylinkLevel) ?? 0;
-        foreach (SavedPsycast a in psycasts)
-            totalCost += PsycastCost(a);
-
-        // Companion animals: each row's market value times its count. The mount (if any) reuses the
-        // same multiplier. The spawned animal/mount pawns are never re-counted by squad cost/power
-        // math, so their entire cost lives here on the design (mirrors the mech cost path below).
-        if (animals is not null)
-            foreach (SavedAnimal a in animals)
-                if (a.kind?.race is not null)
-                    totalCost += Math.Floor(a.kind.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier) * Mathf.Max(1, a.count);
-        if (mount?.race is not null)
-            totalCost += Math.Floor(mount.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
-
-        // Mechanitor cost: a flat surcharge for the mechlink itself, plus each bonded mech's
-        // market value. Mirrors the animal cost path — the spawned mech pawns are never re-counted
-        // by squad cost/power math, so their entire cost lives here on the design.
-        if (ModsConfig.BiotechActive && IsMechanitorDesign)
-        {
-            totalCost += FCSettings.militaryMechlinkCost;
-            if (mechs is not null)
-                foreach (SavedMech m in mechs)
-                    if (m.kind?.race is not null)
-                        totalCost += Math.Floor(m.kind.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier) * Mathf.Max(1, m.count);
-        }
-
-        equipmentTotalCost = Math.Ceiling(totalCost);
+    /* Silver cost of one bonded mech of this kind (before any hire multiplier). */
+    public static double MechUnitCost(PawnKindDef kind)
+    {
+        if (kind?.race is null) return 0;
+        return Math.Floor(kind.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier);
     }
 
     /* Cost of a chosen psycast, resolved from its owning provider's display entry (which already

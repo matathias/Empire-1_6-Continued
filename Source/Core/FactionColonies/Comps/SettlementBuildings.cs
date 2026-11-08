@@ -2,22 +2,11 @@
 
 namespace FactionColonies;
 
-public class WorldObjectCompProperties_SettlementBuildings : WorldObjectCompProperties
+public class WorldObjectCompProperties_SettlementBuildings : MapParentCompProperties
 {
     public WorldObjectCompProperties_SettlementBuildings()
     {
         compClass = typeof(WorldObjectComp_SettlementBuildings);
-    }
-    public override IEnumerable<string> ConfigErrors(WorldObjectDef parentDef)
-    {
-        foreach (string item in base.ConfigErrors(parentDef))
-        {
-            yield return item;
-        }
-        if (!typeof(MapParent).IsAssignableFrom(parentDef.worldObjectClass))
-        {
-            yield return parentDef.defName + " has WorldObjectCompProperties_SettlementBuildings but it's not MapParent.";
-        }
     }
 }
 public class BuildingFilter
@@ -38,7 +27,7 @@ public class BuildingFilter
 /// A WorldObjectComp class for use with BuildingFCDefs. When a building is constructed, if it has a SettlementBuildingComp, then
 /// the comp is added to this comp's list and tracked.
 /// </summary>
-public class WorldObjectComp_SettlementBuildings : WorldObjectComp
+public class WorldObjectComp_SettlementBuildings : WorldSettlementCompBase
 {
     public int FC_MAX_BUILDINGS
     {
@@ -64,27 +53,6 @@ public class WorldObjectComp_SettlementBuildings : WorldObjectComp
     private bool dirtyConstructionCache = true;
     private List<BuildingFC> constructionCache = [];
 
-    private WorldSettlementFC cachedWorldSettlementParent = null;
-    public WorldSettlementFC WorldSettlement
-    {
-        get
-        {
-            if (cachedWorldSettlementParent is not null)
-            {
-                return cachedWorldSettlementParent;
-            }
-            if (parent is WorldSettlementFC ws)
-            {
-                cachedWorldSettlementParent = ws;
-            }
-            else
-            {
-                cachedWorldSettlementParent = null;
-                LogUtil.ErrorOnce($"WorldObjectComp_SettlementMilitary has a non-WorldSettlementFC parent", 93512107);
-            }
-            return cachedWorldSettlementParent;
-        }
-    }
 
     public string BuildingID(int buildingSlot)
     {

@@ -23,8 +23,6 @@ public static class MechListWidget
 
     private const float headerHeight = 25f;
     private const float rowHeight = 28f;
-    private const float removeButtonSize = 20f;
-    private const float stepperButtonW = 20f;
     private const float IconSize = 24f;
     private const float groupGap = 12f;
     private static readonly Color separatorColor = new(0.6f, 0.6f, 0.6f, 0.85f);
@@ -190,10 +188,8 @@ public static class MechListWidget
                 // Remove button (far right)
                 if (editable)
                 {
-                    Rect removeRect = new(cursorRight - removeButtonSize, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
-                    Text.Font = GameFont.Small;
-                    Text.Anchor = TextAnchor.MiddleCenter;
-                    if (UIUtil.ClampedButtonText(removeRect, "X"))
+                    Rect removeRect = LoadoutListRowUtil.RemoveButtonRect(row, cursorRight);
+                    if (LoadoutListRowUtil.RemoveButton(removeRect))
                     {
                         MilUnitFC target = opts.getEditTarget?.Invoke();
                         if (target is not null) target.RemoveMech(index);
@@ -201,34 +197,16 @@ public static class MechListWidget
                     cursorRight = removeRect.x - 6f;
                 }
 
-                // Count steppers ( - N + )
-                if (editable)
+                // Count steppers ( - N + ), or a plain count when read-only
+                int step = LoadoutListRowUtil.CountStepper(row, ref cursorRight, item.count, editable);
+                if (step != 0)
                 {
-                    Rect plusRect = new(cursorRight - stepperButtonW, row.y + (rowHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
-                    Rect countRect = new(plusRect.x - 26f, row.y, 26f, rowHeight);
-                    Rect minusRect = new(countRect.x - stepperButtonW, plusRect.y, stepperButtonW, stepperButtonW);
-                    Text.Font = GameFont.Tiny;
-                    Text.Anchor = TextAnchor.MiddleCenter;
-                    if (UIUtil.ClampedButtonText(minusRect, "-"))
+                    MilUnitFC target = opts.getEditTarget?.Invoke();
+                    if (target is not null)
                     {
-                        MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target is not null) target.DecrementMech(index);
+                        if (step < 0) target.DecrementMech(index);
+                        else target.AddMech(item.kind, item.group);   // hard-blocks on bandwidth
                     }
-                    UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
-                    if (UIUtil.ClampedButtonText(plusRect, "+"))
-                    {
-                        MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target is not null) target.AddMech(item.kind, item.group);   // hard-blocks on bandwidth
-                    }
-                    cursorRight = minusRect.x - 6f;
-                }
-                else
-                {
-                    Rect countRect = new(cursorRight - 30f, row.y, 30f, rowHeight);
-                    Text.Font = GameFont.Tiny;
-                    Text.Anchor = TextAnchor.MiddleRight;
-                    UIUtil.ClampedLabel(countRect, "x" + Mathf.Max(1, item.count));
-                    cursorRight = countRect.x - 6f;
                 }
 
                 // Group selector ( G2 ) — only useful when there's more than one group.
@@ -265,11 +243,7 @@ public static class MechListWidget
                 // Label
                 string label = item.kind.LabelCap;
                 Rect labelRect = new(infoRect.xMax + 6f, row.y, bwCostRect.x - infoRect.xMax - 10f, rowHeight);
-                Text.Font = GameFont.Tiny;
-                Text.Anchor = TextAnchor.MiddleLeft;
-                string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);
-                UIUtil.ClampedLabel(labelRect, shownLabel);
-                if (shownLabel != label) TooltipHandler.TipRegion(labelRect, label);
+                LoadoutListRowUtil.TruncatedLabel(labelRect, label);
 
                 y += rowHeight;
             }

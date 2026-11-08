@@ -7,12 +7,7 @@ public static class EventCostDestructiveTests
 {
     /* Snapshot/restore the global event-cost multiplier so a test never leaks it into the next one. */
     private static void WithEventCostMultiplier(float value, Action action)
-    {
-        float original = FCSettings.eventSilverCostMultiplier;
-        FCSettings.eventSilverCostMultiplier = value;
-        try { action(); }
-        finally { FCSettings.eventSilverCostMultiplier = original; }
-    }
+        => TestUtil.WithOverride(() => FCSettings.eventSilverCostMultiplier, v => FCSettings.eventSilverCostMultiplier = v, value, action);
 
     // ============================
     // FCEventScalingUtil.CountAffectedSettlements

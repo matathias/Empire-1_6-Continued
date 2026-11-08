@@ -25,9 +25,8 @@ public class SettlementWindowFC_AddTithe : Window
     private string thingSearchTerm = "";
     private string stuffSearchTerm = "";
 
-    private int itemSortIndex = 0;
-    private int stuffSortIndex = 0;
-    private static readonly string[] sortLabelKeys = ["FCTitheSortNameAZ", "FCTitheSortNameZA", "FCTitheSortPriceLow", "FCTitheSortPriceHigh"];
+    private readonly ThingDefPickerView itemView = new();
+    private readonly ThingDefPickerView stuffView = new();
 
     public override Vector2 InitialSize
     {
@@ -249,20 +248,8 @@ public class SettlementWindowFC_AddTithe : Window
         UIUtil.ClampedLabel(new Rect(headerRow.x + margin, headerRow.y, 60f, headerRow.height), "FCTitheItems".Translate());
         float sortBtnW = 120f;
         Rect sortBtn = new(headerRow.xMax - margin - 65f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
-        if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[itemSortIndex].Translate())))
-        {
-            List<FloatMenuOption> options = [];
-            for (int s = 0; s < sortLabelKeys.Length; s++)
-            {
-                int captured = s;
-                options.Add(new FloatMenuOption(sortLabelKeys[s].Translate(), () =>
-                {
-                    itemSortIndex = captured;
-                    scrollBarLeft = Vector2.zero;
-                }));
-            }
-            Find.WindowStack.Add(new FloatMenu(options));
-        }
+        if (UIUtil.ClampedButtonText(sortBtn, itemView.SortButtonLabel))
+            itemView.OpenSortMenu(() => scrollBarLeft = Vector2.zero);
         curY = headerRow.yMax;
 
         // Search bar
@@ -279,12 +266,7 @@ public class SettlementWindowFC_AddTithe : Window
         }
         curY = searchRect.yMax;
 
-        List<ThingDef> thingsList = string.IsNullOrEmpty(thingSearchTerm)
-            ? resource.GenerateThingDefList()
-            : resource.GenerateThingDefList().Where(t => (t.label ?? t.defName).IndexOf(thingSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-
-        // Apply sort
-        thingsList = ApplySort(thingsList, itemSortIndex);
+        List<ThingDef> thingsList = itemView.Get(resource.GenerateThingDefList(), thingSearchTerm);
 
         // Actual scrollbox
         Rect drawBox = new(boundingBox.x, curY + margin, boundingBox.width, boundingBox.yMax - curY - margin);
@@ -365,20 +347,8 @@ public class SettlementWindowFC_AddTithe : Window
         UIUtil.ClampedLabel(new Rect(headerRow.x + margin, headerRow.y, 80f, headerRow.height), "FCTitheStuff".Translate());
         float sortBtnW = 120f;
         Rect sortBtn = new(headerRow.xMax - margin - 75f - margin - sortBtnW, headerRow.y + 2, sortBtnW, headerRow.height - 4);
-        if (UIUtil.ClampedButtonText(sortBtn, "FCSortBy".Translate(sortLabelKeys[stuffSortIndex].Translate())))
-        {
-            List<FloatMenuOption> options = [];
-            for (int s = 0; s < sortLabelKeys.Length; s++)
-            {
-                int captured = s;
-                options.Add(new FloatMenuOption(sortLabelKeys[s].Translate(), () =>
-                {
-                    stuffSortIndex = captured;
-                    scrollBarRight = Vector2.zero;
-                }));
-            }
-            Find.WindowStack.Add(new FloatMenu(options));
-        }
+        if (UIUtil.ClampedButtonText(sortBtn, stuffView.SortButtonLabel))
+            stuffView.OpenSortMenu(() => scrollBarRight = Vector2.zero);
         curY = headerRow.yMax;
 
         // Search bar
@@ -395,12 +365,7 @@ public class SettlementWindowFC_AddTithe : Window
         }
         curY = searchRect.yMax;
 
-        List<ThingDef> stuffList = string.IsNullOrEmpty(stuffSearchTerm)
-            ? currentStuffs
-            : currentStuffs.Where(t => (t.label ?? t.defName).IndexOf(stuffSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-
-        // Apply sort
-        stuffList = ApplySort(stuffList, stuffSortIndex, isStuffList: true);
+        List<ThingDef> stuffList = stuffView.Get(currentStuffs, stuffSearchTerm, selectedThing, SelectedQuality);
 
         // Actual scrollbox
         Rect drawBox = new(boundingBox.x, curY + margin, boundingBox.width, boundingBox.yMax - curY - margin);
@@ -448,24 +413,5 @@ public class SettlementWindowFC_AddTithe : Window
         }
 
         ScrollUtil.EndScrollView();
-    }
-
-    private List<ThingDef> ApplySort(List<ThingDef> list, int sortIndex, bool isStuffList = false)
-    {
-        switch (sortIndex)
-        {
-            case 1: // Name Z-A
-                return list.OrderByDescending(t => t.label, StringComparer.OrdinalIgnoreCase).ToList();
-            case 2: // Price Low-High
-                if (isStuffList && selectedThing is not null)
-                    return list.OrderBy(t => CraftUtil.ThingValue(selectedThing, t, SelectedQuality)).ToList();
-                return list.OrderBy(t => t.BaseMarketValue).ToList();
-            case 3: // Price High-Low
-                if (isStuffList && selectedThing is not null)
-                    return list.OrderByDescending(t => CraftUtil.ThingValue(selectedThing, t, SelectedQuality)).ToList();
-                return list.OrderByDescending(t => t.BaseMarketValue).ToList();
-            default: // 0: Name A-Z
-                return list.OrderBy(t => t.label, StringComparer.OrdinalIgnoreCase).ToList();
-        }
     }
 }
