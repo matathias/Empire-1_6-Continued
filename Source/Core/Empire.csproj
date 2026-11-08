@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputPath>..\..\1.7\Assemblies</OutputPath>
         <BaseOutputPath>..\..\1.7\Assemblies</BaseOutputPath>
-        <AssemblyVersion>1.6.36.0</AssemblyVersion>
-        <FileVersion>1.6.36.0</FileVersion>
+        <AssemblyVersion>1.7.0.0</AssemblyVersion>
+        <FileVersion>1.7.0.0</FileVersion>
     </PropertyGroup>
 </Project>
