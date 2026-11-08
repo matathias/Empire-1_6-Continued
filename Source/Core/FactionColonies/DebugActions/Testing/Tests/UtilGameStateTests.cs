@@ -104,8 +104,15 @@ public static class UtilGameStateTests
         PawnKindDef animal = PawnKindDefOf.Muffalo;
         PawnGenerationRequest animalRequest = FCPawnGenerator.AnimalRequest(animal);
         TestAssert.AreEqual(FindFC.EmpireFaction, animalRequest.Faction, "Animals belong to the Empire");
-        TestAssert.AreEqual((double)animal.GetReasonableMercenaryAge(), animalRequest.FixedBiologicalAge ?? -1f, 0.0001,
-            "Animals get a reasonable fixed age");
+        // The age is a random draw, so check it lies in the range GetReasonableMercenaryAge draws from
+        // (Rand.Range: min inclusive, max exclusive), not that it equals a second draw.
+        float lifeExpectancy = animal.race.race.lifeExpectancy;
+        int minAge = (int)Math.Ceiling(lifeExpectancy * 0.2625d);
+        int maxAge = (int)Math.Floor(lifeExpectancy * 0.625d);
+        TestAssert.IsTrue(animalRequest.FixedBiologicalAge.HasValue, "Animals get a fixed age");
+        float age = animalRequest.FixedBiologicalAge.Value;
+        TestAssert.IsTrue(age >= minAge && age < Math.Max(minAge + 1, maxAge),
+            $"Animals get a reasonable fixed age: {age} should be in [{minAge}, {maxAge})");
         TestAssert.IsFalse(animalRequest.MustBeCapableOfViolence, "Animals need not be violent");
         TestAssert.IsFalse(animalRequest.CanGeneratePawnRelations, "No relations for animals");
 
