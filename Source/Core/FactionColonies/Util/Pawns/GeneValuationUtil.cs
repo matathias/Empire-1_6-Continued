@@ -204,7 +204,7 @@ public static class GeneValuationUtil
         return BuildProfile(new GeneDef[] { gene });
     }
 
-    private static float ApplyCap(float factor)
+    internal static float ApplyCap(float factor)
     {
         /* Round to nearest 0.25 so xenotype prices snap to clean quarter steps, then clamp,
          * so the configured ceiling is never exceeded by rounding up past it. */

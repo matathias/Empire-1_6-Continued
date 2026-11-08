@@ -15,6 +15,7 @@ public class FCWindow_UnitPicker : FCWindow_SearchablePicker<MilUnitFC>
 
     protected override string Title => "FCAddUnit".Translate();
     protected override string EmptyText => "FCSelectAUnitButton".Translate();
+    protected override bool EmptyTextInScrollView => true;
 
     protected override List<MilUnitFC> Items() => units;
 

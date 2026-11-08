@@ -134,7 +134,7 @@ public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPaw
     /* Removes the prisoner and returns the data the death-letter builder needs.
      * homeFaction is the prisoner's original faction (pawn.guest.HomeFaction) — used
      * by the caller to apply a goodwill penalty against the player. */
-    private void DropDeadPrisoner(FCPrisoner p, out string pawnName, out Faction homeFaction)
+    internal void DropDeadPrisoner(FCPrisoner p, out string pawnName, out Faction homeFaction)
     {
         pawnName    = p.prisoner?.Name?.ToString() ?? "";
         homeFaction = p.prisoner?.Faction;

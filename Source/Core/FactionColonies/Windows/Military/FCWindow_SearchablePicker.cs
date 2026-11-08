@@ -61,6 +61,17 @@ public abstract class FCWindow_SearchablePicker<T> : Window
     /// <summary>In <see cref="PicksOnClick"/> mode, shows a Close button at the bottom right.</summary>
     protected virtual bool ShowCloseButton => false;
 
+    /// <summary>True: the empty-state label is drawn inside the scroll view, in its translated
+    /// space, so it sits lower than the box's center by the list's top offset. False: it is
+    /// centered in the visible box.</summary>
+    protected virtual bool EmptyTextInScrollView => false;
+
+    /// <summary>Space kept free below the list box, for the button bar and the gap above it.</summary>
+    protected virtual float ListBottomReserve => (ShowsButtonBar ? ButtonHeight : 0f) + 15f;
+
+    /// <summary>The Confirm/Cancel (or Close) button bar.</summary>
+    protected virtual Rect ButtonBarRect(Rect inRect) => new(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
+
     /// <summary>Draws an optional line under the title, such as a count or a budget. Returns false
     /// when there is none.</summary>
     protected virtual bool DrawHeader(Rect rect) => false;
@@ -107,8 +118,7 @@ public abstract class FCWindow_SearchablePicker<T> : Window
             items = items.Where(i => (SearchText(i) ?? "").IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
 
         float listTop = searchRect.yMax + margin;
-        float bottomH = ShowsButtonBar ? ButtonHeight : 0f;
-        Rect scrollOutRect = new(0, listTop, inRect.width, inRect.height - listTop - bottomH - 15f);
+        Rect scrollOutRect = new(0, listTop, inRect.width, inRect.height - listTop - ListBottomReserve);
         Widgets.DrawMenuSection(scrollOutRect);
 
         Rect scrollViewRect = ScrollUtil.BeginScrollView(scrollOutRect, ref scrollPos, items.Count * RowHeight);
@@ -131,21 +141,27 @@ public abstract class FCWindow_SearchablePicker<T> : Window
                 else Select(item);
             }
         }
+        if (EmptyTextInScrollView)
+            DrawEmptyText(scrollOutRect, items.Count);
         ScrollUtil.EndScrollView();
 
-        // Drawn after EndScrollView so it centers in the visible box, not the scrolled content.
+        if (!EmptyTextInScrollView)
+            DrawEmptyText(scrollOutRect, items.Count);
         Text.Font = GameFont.Small;
-        if (items.Count == 0 && EmptyText is string emptyText)
-        {
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.ClampedLabel(scrollOutRect, emptyText);
-        }
 
         if (ShowsButtonBar)
-            DrawButtonBar(new Rect(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight));
+            DrawButtonBar(ButtonBarRect(inRect));
 
         Text.Font = fontBefore;
         Text.Anchor = anchorBefore;
+    }
+
+    private void DrawEmptyText(Rect rect, int itemCount)
+    {
+        if (itemCount != 0 || EmptyText is not string emptyText) return;
+        Text.Font = GameFont.Small;
+        Text.Anchor = TextAnchor.MiddleCenter;
+        UIUtil.ClampedLabel(rect, emptyText);
     }
 
     private void DrawButtonBar(Rect bar)
@@ -174,13 +190,15 @@ public abstract class FCWindow_SearchablePicker<T> : Window
 
     /// <summary>
     /// The common row layout: icon | info card | label | optional extra column | cost. A null
-    /// <paramref name="thing"/> leaves the icon and info card blank.
+    /// <paramref name="thing"/> leaves the icon and info card blank. <paramref name="costInset"/> and
+    /// <paramref name="costFont"/> let a picker keep its own cost column position and size.
     /// </summary>
-    protected static void DrawThingRow(Rect row, ThingDef thing, string label, string cost, string extra = null)
+    protected static void DrawThingRow(Rect row, ThingDef thing, string label, string cost, string extra = null,
+        float costInset = 70f, GameFont costFont = GameFont.Tiny)
     {
         Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
         Rect infoRect = new(iconRect.xMax, row.y + 2f, RowHeight - 4f, RowHeight - 4f);
-        Rect costRect = new(row.xMax - margin - 70f, row.y, 60f, RowHeight);
+        Rect costRect = new(row.xMax - margin - costInset, row.y, 60f, RowHeight);
         Rect extraRect = new(costRect.x - 50f, row.y, 50f, RowHeight);
         float labelRight = extra is null ? costRect.x : extraRect.x;
         Rect labelRect = new(infoRect.xMax + margin, row.y, labelRight - infoRect.xMax - margin * 2, RowHeight);
@@ -195,10 +213,13 @@ public abstract class FCWindow_SearchablePicker<T> : Window
         Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.ClampedLabel(labelRect, label);
 
-        Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleRight;
         if (extra is not null)
+        {
+            Text.Font = GameFont.Tiny;
             UIUtil.ClampedLabel(extraRect, extra);
+        }
+        Text.Font = costFont;
         UIUtil.ClampedLabel(costRect, cost);
     }
 }

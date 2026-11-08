@@ -139,7 +139,7 @@ public static class FactionColoniesMilitary
     // Names are player-entered: replace characters the OS rejects in file names (including path
     // separators, so a name cannot point outside the folder). Names that were already valid map
     // to the same file as before.
-    private static string SafeFileName(string name)
+    internal static string SafeFileName(string name)
     {
         if (string.IsNullOrEmpty(name)) return name;
         char[] invalid = Path.GetInvalidFileNameChars();

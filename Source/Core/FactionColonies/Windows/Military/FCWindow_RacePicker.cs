@@ -16,6 +16,7 @@ public class FCWindow_RacePicker : FCWindow_SearchablePicker<PawnKindDef>
 
     protected override string Title => "FCChangeUnitRaceButton".Translate();
     protected override string EmptyText => "FCChangeUnitRaceNoRaces".Translate();
+    protected override bool EmptyTextInScrollView => true;
 
     private static string RaceLabel(PawnKindDef def) => (def.race.label ?? def.race.defName).CapitalizeFirst();
 

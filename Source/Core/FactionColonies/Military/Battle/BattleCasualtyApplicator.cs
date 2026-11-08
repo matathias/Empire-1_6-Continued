@@ -291,7 +291,7 @@ public static class BattleCasualtyApplicator
     /// with a vital tag, or a part with such a part below it. Mirrors the check vanilla uses
     /// to keep random surgery injuries from destroying parts.
     /// </summary>
-    private static bool ShouldAvoidDestroyingPart(BodyPartRecord part, Pawn pawn)
+    internal static bool ShouldAvoidDestroyingPart(BodyPartRecord part, Pawn pawn)
     {
         if (part == pawn.RaceProps.body.corePart) return true;
         if (part.def?.tags is not null && part.def.tags.Any(t => t.vital)) return true;

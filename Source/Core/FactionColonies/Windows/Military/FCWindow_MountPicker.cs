@@ -30,6 +30,7 @@ public class FCWindow_MountPicker : FCWindow_SearchablePicker<PawnKindDef>
 
     protected override string Title => "fcPickMount".Translate();
     protected override string EmptyText => "fcNoMountsAvailable".Translate();
+    protected override bool EmptyTextInScrollView => true;
 
     // Mountable animal kinds (GU2 rules), gated by any submod animal filter (e.g. Herds & Fisheries
     // stocking). No filter registered => only the GU2 mountable check applies.
@@ -43,7 +44,7 @@ public class FCWindow_MountPicker : FCWindow_SearchablePicker<PawnKindDef>
     protected override void DrawRow(Rect row, PawnKindDef animal)
     {
         double cost = MilUnitFC.AnimalUnitCost(animal);
-        DrawThingRow(row, animal.race, animal.LabelCap, "$" + cost.ToString("F0"));
+        DrawThingRow(row, animal.race, animal.LabelCap, $"${cost:F0}", costFont: GameFont.Small);
     }
 
     protected override void Pick(PawnKindDef animal) => onConfirm?.Invoke(animal);

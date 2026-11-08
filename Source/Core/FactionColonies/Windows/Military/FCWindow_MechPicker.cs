@@ -53,7 +53,7 @@ public class FCWindow_MechPicker : FCWindow_SearchablePicker<PawnKindDef>
     {
         float bandwidth = mech.race.GetStatValueAbstract(StatDefOf.BandwidthCost);
         double cost = MilUnitFC.MechUnitCost(mech);
-        DrawThingRow(row, mech.race, mech.LabelCap, "$" + cost.ToString("F0"), "BW " + bandwidth.ToString("0.#"));
+        DrawThingRow(row, mech.race, mech.LabelCap, $"${cost:F0}", $"BW {bandwidth:0.#}", costInset: 60f);
     }
 
     // Adds to this picker's group; hard-blocks on bandwidth.

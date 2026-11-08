@@ -524,7 +524,7 @@ public static class FactionCache
 
     // ancestors holds the defs on the current path, so a cyclic upgrade chain (already reported
     // by BuildingFCDef.ConfigErrors) is cut instead of recursing until the stack overflows.
-    private static void CollectUpgradeTree(BuildingFCDef building, int depth, BuildingFCDef parent,
+    internal static void CollectUpgradeTree(BuildingFCDef building, int depth, BuildingFCDef parent,
         List<BuildingUpgradeEntry> result, HashSet<BuildingFCDef> ancestors)
     {
         if (building.upgrades is null) return;

@@ -43,6 +43,10 @@ public class FCWindow_ImplantPicker : FCWindow_SearchablePicker<FCWindow_Implant
     protected override bool PicksOnClick => true;
     protected override bool ShowCloseButton => true;
 
+    // A shorter Close button, flush with the bottom edge, and a list box that ends 40px above it.
+    protected override float ListBottomReserve => 40f;
+    protected override Rect ButtonBarRect(Rect inRect) => new(0, inRect.height - 35f, inRect.width, 30f);
+
     protected override List<Option> Items()
     {
         RebuildIfStale();
@@ -56,7 +60,7 @@ public class FCWindow_ImplantPicker : FCWindow_SearchablePicker<FCWindow_Implant
         float optCost = opt.recipe is not null
             ? MilUnitFC.ImplantCost(opt.recipe)
             : (opt.selfInstallThing?.BaseMarketValue ?? 0f);
-        DrawThingRow(row, opt.IconThing, opt.label, "$" + optCost.ToString("F0"));
+        DrawThingRow(row, opt.IconThing, opt.label, $"${optCost:F0}", costInset: 65f);
     }
 
     protected override void Pick(Option opt)

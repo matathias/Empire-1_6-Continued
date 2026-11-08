@@ -35,6 +35,7 @@ public class FCWindow_XenoPicker : FCWindow_SearchablePicker<FCWindow_XenoPicker
 
     protected override string Title => "FCChangeUnitXenoButton".Translate();
     protected override string EmptyText => "FCChangeUnitXenoNoXenos".Translate();
+    protected override bool EmptyTextInScrollView => true;
 
     protected override List<XenoOption> Items()
     {

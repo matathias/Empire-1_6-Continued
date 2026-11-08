@@ -178,8 +178,8 @@ class PawnDraftGizmos
                         // Find the active Empire lord on this map directly. Picking the first
                         // defender's lord was fragile: `found` is itself in `defenders` and its
                         // lord is null right after undrafting, so if it (or any lordless defender)
-                        // came first, the rejoin was silently skipped and the pawns: having no lord
-                        //: would try to leave the map instead of fighting.
+                        // came first, the rejoin was silently skipped and the pawns (having no lord)
+                        // would try to leave the map instead of fighting.
                         Lord rejoinLord = found.Map?.lordManager?.lords
                             .FirstOrDefault(l => l is not null && l.faction == FindFC.EmpireFaction
                                                  && isRejoinLordJob(l.LordJob));

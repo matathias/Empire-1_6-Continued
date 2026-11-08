@@ -21,5 +21,6 @@
     <ItemGroup>
         <!-- Shared with the other World Domination compat project; see the file header -->
         <Compile Include="..\Shared\WorldDominationCommon.cs" Link="WorldDominationCommon.cs" />
+        <Compile Include="..\Shared\WorldDominationTests.cs" Link="WorldDominationTests.cs" />
     </ItemGroup>
 </Project>

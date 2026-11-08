@@ -910,7 +910,7 @@ public class FCSettings : ModSettings
     int laborerCostPerDay_synced, silverPerResource_synced, timeBetweenTaxes_synced,
         productionTitheMod_synced, workerCost_synced, settlementMaxLevel_synced;
 
-    private static void SyncIntBuffer(int value, ref int synced, ref string buffer)
+    internal static void SyncIntBuffer(int value, ref int synced, ref string buffer)
     {
         if (buffer is not null && value == synced) return;
         buffer = value.ToString();

@@ -15,6 +15,7 @@ public class FCWindow_ProjectilePicker : FCWindow_SearchablePicker<ThingDef>
 
     protected override string Title => "FCAddNewProjectile".Translate();
     protected override string EmptyText => "FCNoProjectilesFound".Translate();
+    protected override bool EmptyTextInScrollView => true;
 
     protected override List<ThingDef> Items() => projectiles;
 
