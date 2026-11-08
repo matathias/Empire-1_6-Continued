@@ -83,13 +83,11 @@ public static class MilitaryDeploymentUtil
         // manual-battle pipeline (BattlefieldContext). The hediff is stripped automatically
         // on every map-exit path by the StripCombatEfficiencyOnDeSpawn patch on Pawn.DeSpawn,
         // so no explicit recall cleanup is needed.
-        double efficiency = MilitaryForce.CreateMilitaryForceFromSquad(squad)?.militaryEfficiency ?? 1.0;
+        SquadSpawnUtil.ApplyCombatEfficiency(equippedPawns,
+            MilitaryForce.CreateMilitaryForceFromSquad(squad)?.militaryEfficiency ?? 1.0);
+        // Load reloadable-weapon magazines from carried ammo (e.g. Yayo's Combat); no-op otherwise.
         foreach (Pawn pawn in equippedPawns)
-        {
-            MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(pawn, efficiency);
-            // Load reloadable-weapon magazines from carried ammo (e.g. Yayo's Combat); no-op otherwise.
             ReloadableWeaponUtil.LoadMagazinesFromInventory(pawn);
-        }
 
         // Start the deployment from a clean order. MilitaryOrder is persistent squad state, so
         // a leftover order from a PRIOR deployment (e.g. RecoverWoundedAndLeave from a dismiss)
@@ -147,9 +145,7 @@ public static class MilitaryDeploymentUtil
             return;
         }
 
-        squad.CheckInitialization();
-        squad.UpdateSquadStats(settlement.settlementMilitaryLevel);
-        SquadHealthUtil.ResetNeeds(squad);
+        SquadSpawnUtil.PrepareSquad(squad, settlement);
 
         IntVec3 dropPosition;
         DebugTool tool = new("FCSelectDeploymentPosition".Translate(), delegate

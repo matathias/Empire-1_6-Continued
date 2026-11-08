@@ -135,11 +135,7 @@ public class Dialog_HireSquadsPool : Window
             string msg = templates.Count == 0
                 ? (string)"FCHireSquadsPoolEmpty".Translate()
                 : (string)"FCHireSquadsPoolNoneAffordable".Translate();
-            TextAnchor anchorBefore = Text.Anchor;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.DrawColoredLabel(new Rect(listRect.x, listRect.y + listRect.height * 0.35f,
-                listRect.width, 40f), msg, Color.gray);
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawEmptyState(listRect, msg, Text.Font);
             return;
         }
 

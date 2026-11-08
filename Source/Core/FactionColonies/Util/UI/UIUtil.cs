@@ -164,6 +164,50 @@ public static class UIUtil
         GUI.color = origColor;
     }
 
+    /// <summary>Draws a colored label in <paramref name="font"/> and <paramref name="anchor"/>, then
+    /// restores the previous font and anchor.</summary>
+    public static void DrawColoredLabel(Rect rect, string text, Color color, GameFont font, TextAnchor anchor, bool clamp = true)
+    {
+        GameFont fontBefore = Text.Font;
+        TextAnchor anchorBefore = Text.Anchor;
+        Text.Font = font;
+        Text.Anchor = anchor;
+        DrawColoredLabel(rect, text, color, clamp);
+        Text.Font = fontBefore;
+        Text.Anchor = anchorBefore;
+    }
+
+    /// <summary>
+    /// Draws a scrolling list of fixed-height rows with alternating highlights and a colored accent
+    /// strip on each row's left edge. <paramref name="drawRow"/> draws the rest of each row, in
+    /// scroll-view coordinates, and returns false to stop drawing the list (for example after an
+    /// action that changed it).
+    /// </summary>
+    public static void DrawAccentRowList<T>(Rect viewRect, IReadOnlyList<T> items, float rowH, float rowGap,
+        ref Vector2 scroll, Func<T, Color> accent, Func<T, AccentRow, bool> drawRow)
+    {
+        Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref scroll, items.Count * (rowH + rowGap));
+        for (int i = 0; i < items.Count; i++)
+        {
+            T item = items[i];
+            Rect rowRect = new(0f, i * (rowH + rowGap), scrollRect.width, rowH);
+            if (i % 2 == 0)
+                Widgets.DrawHighlight(rowRect);
+            Color color = accent(item);
+            Widgets.DrawBoxSolid(new Rect(0f, rowRect.y, AccentRow.AccentW, rowH), color);
+            if (!drawRow(item, new AccentRow(rowRect, i, color)))
+                break;
+        }
+        ScrollUtil.EndScrollView();
+    }
+
+    /// <summary>Draws the gray, centered "nothing here" message used by empty lists and tables.</summary>
+    public static void DrawEmptyState(Rect rect, string text, GameFont font = GameFont.Medium)
+    {
+        DrawColoredLabel(new Rect(rect.x, rect.y + rect.height * 0.35f, rect.width, 40f), text, Color.gray,
+            font, TextAnchor.MiddleCenter);
+    }
+
     public static void DrawColoredVerticalLine(float x, float y, float len, Color color)
     {
         Color origColor = GUI.color;
@@ -561,4 +605,22 @@ public static class UIUtil
         UIHighlighter.HighlightOpportunity(rect, "InfoCard");
         return result;
     }
+}
+
+/// <summary>
+/// One row of <see cref="UIUtil.DrawAccentRowList{T}"/>: the row rect, its accent color, and the
+/// content area right of the accent strip, split into a top and a bottom line.
+/// </summary>
+public readonly struct AccentRow(Rect rect, int index, Color accent)
+{
+    public const float AccentW = 4f;
+
+    public Rect Rect { get; } = rect;
+    public int Index { get; } = index;
+    public Color Accent { get; } = accent;
+    public float ContentX => AccentW + 6f;
+    public float ContentW => Rect.width - ContentX - 4f;
+    public float TopY => Rect.y;
+    public float LineH => Rect.height / 2f;
+    public float BotY => Rect.y + LineH;
 }

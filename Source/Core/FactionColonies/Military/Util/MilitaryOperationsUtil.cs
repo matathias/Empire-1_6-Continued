@@ -9,6 +9,29 @@ public static class MilitaryOperationsUtil
     /// to the op. Returns true on success, false if the attack was rejected
     /// (no MilitaryComp or MilitaryManager unavailable).
     /// </summary>
+    /// <summary>
+    /// An attack force for <paramref name="faction"/> at military <paramref name="level"/>, for
+    /// attacks whose strength comes from another mod (RimWar points, World Domination traveler
+    /// strength). Samples the faction's force through EnemyPower so faction-level efficiency
+    /// modifiers apply, falls back to the tech-level baseline, then sets the level and recomputes the
+    /// remaining force.
+    /// </summary>
+    public static MilitaryForce BuildAttackForce(Faction faction, double level)
+    {
+        MilitaryForce force = FindFC.EnemyPower?.GetOrCompute(faction)?.SampleBattleForce(faction);
+        if (force is null)
+        {
+            double efficiency = 1.0;
+            if (faction.def is not null)
+                MilitaryDeploymentUtil.GetTechLevelBaseline(faction.def.techLevel, out double _, out efficiency);
+            force = new MilitaryForce(1, efficiency, null, faction);
+        }
+
+        force.militaryLevel = level;
+        force.forceRemaining = Math.Max(1, Math.Round(force.militaryLevel * force.militaryEfficiency));
+        return force;
+    }
+
     public static bool AttackPlayerSettlement(MilitaryForce attackingForce, WorldSettlementFC settlement, Faction enemyFaction)
     {
         if (settlement?.MilitaryComp is null)

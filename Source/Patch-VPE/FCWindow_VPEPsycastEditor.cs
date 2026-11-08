@@ -423,17 +423,7 @@ public class FCWindow_VPEPsycastEditor : Window
 
     private void DestroySessionPawn()
     {
-        if (sessionPawn is null) return;
-        try
-        {
-            sessionPawn.apparel?.DestroyAll();
-            sessionPawn.equipment?.DestroyAllEquipment();
-            if (!sessionPawn.Destroyed) sessionPawn.Destroy();
-        }
-        catch (Exception ex)
-        {
-            LogUtil.Warning($"VPE psycast editor: failed to discard session pawn: {ex.Message}");
-        }
+        PawnUtil.DiscardPreviewPawn(sessionPawn, "VPE psycast editor");
         sessionPawn = null;
     }
 }

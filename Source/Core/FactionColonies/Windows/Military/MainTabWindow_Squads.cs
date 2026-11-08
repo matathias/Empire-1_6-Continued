@@ -89,9 +89,7 @@ public class MainTabWindow_Squads : Window
 
         if (pool.Count == 0)
         {
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.DrawColoredLabel(new Rect(tableRect.x, tableRect.y + tableRect.height * 0.35f,
-                tableRect.width, 40f), "FCHireSquadsEmpty".Translate(), Color.gray);
+            UIUtil.DrawEmptyState(tableRect, "FCHireSquadsEmpty".Translate(), GameFont.Small);
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
             return;

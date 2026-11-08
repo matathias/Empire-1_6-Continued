@@ -10,9 +10,9 @@ namespace FactionColonies;
 /// Stays open so multiple implants can be added; the option list rebuilds whenever the unit's
 /// editVersion changes (each add regenerates the preview pawn).
 /// </summary>
-public class FCWindow_ImplantPicker : Window
+public class FCWindow_ImplantPicker : FCWindow_SearchablePicker<FCWindow_ImplantPicker.Option>
 {
-    private struct Option
+    public struct Option
     {
         public RecipeDef recipe;             // surgery install (null for self-install)
         public ThingDef selfInstallThing;    // self-install item (null for surgery)
@@ -29,12 +29,6 @@ public class FCWindow_ImplantPicker : Window
     private List<Option> options = [];
     private int builtForVersion = int.MinValue;
     private MilUnitFC builtForUnit;
-    private string searchTerm = "";
-    private Vector2 scrollPos;
-
-    private const float RowHeight = 30f;
-    private const float SearchBarHeight = 28f;
-    private const float margin = 5f;
 
     public override Vector2 InitialSize => new(540f, 620f);
 
@@ -42,92 +36,38 @@ public class FCWindow_ImplantPicker : Window
     {
         this.getDisplayUnit = getDisplayUnit;
         this.getEditTarget = getEditTarget;
-        forcePause = false;
-        draggable = true;
-        doCloseX = true;
-        absorbInputAroundWindow = true;
     }
 
-    public override void DoWindowContents(Rect inRect)
+    protected override string Title => "fcPickImplant".Translate();
+    protected override string EmptyText => null;
+    protected override bool PicksOnClick => true;
+    protected override bool ShowCloseButton => true;
+
+    protected override List<Option> Items()
     {
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-
-        Text.Font = GameFont.Medium;
-        Text.Anchor = TextAnchor.UpperLeft;
-        UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f), "fcPickImplant".Translate());
-
         RebuildIfStale();
+        return options;
+    }
 
-        Rect searchRect = new(0, 40f, inRect.width, SearchBarHeight);
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.UpperLeft;
-        searchTerm = Widgets.TextField(searchRect, searchTerm);
+    protected override string SearchText(Option opt) => opt.label;
 
-        Rect listOut = new(0, searchRect.yMax + margin, inRect.width, inRect.height - searchRect.yMax - margin - 40f);
-        Widgets.DrawMenuSection(listOut);
+    protected override void DrawRow(Rect row, Option opt)
+    {
+        float optCost = opt.recipe is not null
+            ? MilUnitFC.ImplantCost(opt.recipe)
+            : (opt.selfInstallThing?.BaseMarketValue ?? 0f);
+        DrawThingRow(row, opt.IconThing, opt.label, "$" + optCost.ToString("F0"));
+    }
 
-        List<Option> filtered = string.IsNullOrEmpty(searchTerm)
-            ? options
-            : options.Where(o => o.label.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-
-        float viewHeight = filtered.Count * RowHeight;
-        Rect scrollView = ScrollUtil.BeginScrollView(listOut, ref scrollPos, viewHeight);
-
-        for (int i = 0; i < filtered.Count; i++)
-        {
-            Option opt = filtered[i];
-            Rect row = new(scrollView.x, scrollView.y + i * RowHeight, scrollView.width, RowHeight);
-            if (i % 2 == 0) Widgets.DrawHighlight(row);
-
-            ThingDef iconThing = opt.IconThing;
-            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
-            if (iconThing is not null)
-                Widgets.ThingIcon(iconRect, iconThing);
-
-            Rect infoRect = new(iconRect.xMax, row.y + 2f, RowHeight - 4f, RowHeight - 4f);
-            if (iconThing is not null)
-                Widgets.InfoCardButton(infoRect, iconThing);
-
-            float optCost = opt.recipe is not null
-                ? MilUnitFC.ImplantCost(opt.recipe)
-                : (opt.selfInstallThing?.BaseMarketValue ?? 0f);
-            Rect costRect = new(row.xMax - margin - 65f, row.y, 60f, RowHeight);
-            Text.Font = GameFont.Tiny;
-            Text.Anchor = TextAnchor.MiddleRight;
-            UIUtil.ClampedLabel(costRect, "$" + optCost.ToString("F0"));
-
-            Rect labelRect = new(infoRect.xMax + margin, row.y, costRect.x - infoRect.xMax - 2 * margin, RowHeight);
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            UIUtil.ClampedLabel(labelRect, opt.label);
-
-            if (Widgets.ButtonInvisible(row))
-            {
-                MilUnitFC target = getEditTarget?.Invoke();
-                if (target is not null)
-                {
-                    if (opt.recipe is not null)
-                        target.AddImplant(opt.recipe, opt.bodyPartDef, opt.bodyPartIndex);
-                    else if (opt.selfInstallThing is not null)
-                        target.AddImplant(opt.selfInstallThing, opt.bodyPartDef, opt.bodyPartIndex);
-                    builtForVersion = int.MinValue; // force rebuild against the updated preview
-                }
-            }
-        }
-
-        ScrollUtil.EndScrollView();
-
-        // Reset font explicitly: when the list is empty the row loop (which would have left it
-        // at Small) never ran, so the Close button would otherwise inherit the title's Medium font.
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleCenter;
-        Rect closeRect = new(inRect.width - 120f, inRect.height - 35f, 120f, 30f);
-        if (UIUtil.ClampedButtonText(closeRect, "FCDialogPawnLoadoutClose".Translate()))
-            Close();
-
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+    protected override void Pick(Option opt)
+    {
+        MilUnitFC target = getEditTarget?.Invoke();
+        if (target is null) return;
+        if (opt.recipe is not null)
+            target.AddImplant(opt.recipe, opt.bodyPartDef, opt.bodyPartIndex);
+        else if (opt.selfInstallThing is not null)
+            target.AddImplant(opt.selfInstallThing, opt.bodyPartDef, opt.bodyPartIndex);
+        builtForVersion = int.MinValue; // force rebuild against the updated preview
     }
 
     private void RebuildIfStale()

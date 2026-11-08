@@ -114,6 +114,29 @@ public class PolicyManager : IExposable
     #region Behavior System
 
     /// <summary>
+    /// Every policy, trait and edict currently in effect, in order: policies, traits, edicts.
+    /// Skips null defs, empty trait slots, and edicts still being enacted (which have no effect yet).
+    /// </summary>
+    public IEnumerable<FCPolicy> ActivePolicies()
+    {
+        foreach (FCPolicy p in policies)
+        {
+            if (p?.def is not null)
+                yield return p;
+        }
+        foreach (FCPolicy p in factionTraits)
+        {
+            if (p?.def is not null && p.def != FCPolicyDefOf.empty)
+                yield return p;
+        }
+        foreach (FCPolicy edict in edicts.Values)
+        {
+            if (edict?.def is not null && edict.IsFullyActive)
+                yield return edict;
+        }
+    }
+
+    /// <summary>
     /// Rebuilds the cached behavior list from active policies and traits.
     /// Order: policies first (in list order), then traits (in slot order).
     /// This order determines ModifyStat chaining — currently no two behaviors modify the same stat.
@@ -122,22 +145,10 @@ public class PolicyManager : IExposable
     {
         LogUtil.Message("Rebuilding faction behavior cache");
         _cachedBehaviors = [];
-        foreach (FCPolicy p in policies)
+        foreach (FCPolicy p in ActivePolicies())
         {
-            if (p?.behavior is not null)
-                _cachedBehaviors.Add(p.behavior);
-        }
-        foreach (FCPolicy p in factionTraits)
-        {
-            if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
             if (p.behavior is not null)
                 _cachedBehaviors.Add(p.behavior);
-        }
-        // Edicts still being enacted have no effect yet, matching their actions, upkeep and stats.
-        foreach (FCPolicy edict in edicts.Values)
-        {
-            if (edict?.behavior is not null && edict.IsFullyActive)
-                _cachedBehaviors.Add(edict.behavior);
         }
 
         // Cache the subset that actually overrides Tick, so the per-tick dispatch skips no-op behaviors.
@@ -160,29 +171,12 @@ public class PolicyManager : IExposable
         _cachedEnabledActions = [];
         _cachedBlockedJobs = [];
         _cachedEnabledJobs = [];
-        foreach (FCPolicy p in policies)
+        foreach (FCPolicy p in ActivePolicies())
         {
-            if (p?.def is null) continue;
-            if (p.def.blockedActions is not null) foreach (var a in p.def.blockedActions) _cachedBlockedActions.Add(a);
-            if (p.def.enabledActions is not null) foreach (var a in p.def.enabledActions) _cachedEnabledActions.Add(a);
-            if (p.def.blockedMilitaryJobs is not null) foreach (var j in p.def.blockedMilitaryJobs) _cachedBlockedJobs.Add(j);
-            if (p.def.enabledMilitaryJobs is not null) foreach (var j in p.def.enabledMilitaryJobs) _cachedEnabledJobs.Add(j);
-        }
-        foreach (FCPolicy p in factionTraits)
-        {
-            if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
-            if (p.def.blockedActions is not null) foreach (var a in p.def.blockedActions) _cachedBlockedActions.Add(a);
-            if (p.def.enabledActions is not null) foreach (var a in p.def.enabledActions) _cachedEnabledActions.Add(a);
-            if (p.def.blockedMilitaryJobs is not null) foreach (var j in p.def.blockedMilitaryJobs) _cachedBlockedJobs.Add(j);
-            if (p.def.enabledMilitaryJobs is not null) foreach (var j in p.def.enabledMilitaryJobs) _cachedEnabledJobs.Add(j);
-        }
-        foreach (FCPolicy edict in edicts.Values)
-        {
-            if (edict?.def is null || !edict.IsFullyActive) continue;
-            if (edict.def.blockedActions is not null) foreach (var a in edict.def.blockedActions) _cachedBlockedActions.Add(a);
-            if (edict.def.enabledActions is not null) foreach (var a in edict.def.enabledActions) _cachedEnabledActions.Add(a);
-            if (edict.def.blockedMilitaryJobs is not null) foreach (var j in edict.def.blockedMilitaryJobs) _cachedBlockedJobs.Add(j);
-            if (edict.def.enabledMilitaryJobs is not null) foreach (var j in edict.def.enabledMilitaryJobs) _cachedEnabledJobs.Add(j);
+            if (p.def.blockedActions is not null) _cachedBlockedActions.UnionWith(p.def.blockedActions);
+            if (p.def.enabledActions is not null) _cachedEnabledActions.UnionWith(p.def.enabledActions);
+            if (p.def.blockedMilitaryJobs is not null) _cachedBlockedJobs.UnionWith(p.def.blockedMilitaryJobs);
+            if (p.def.enabledMilitaryJobs is not null) _cachedEnabledJobs.UnionWith(p.def.enabledMilitaryJobs);
         }
         _cachedEnabledActions.ExceptWith(_cachedBlockedActions);
         _cachedEnabledJobs.ExceptWith(_cachedBlockedJobs);
@@ -482,20 +476,9 @@ public class PolicyManager : IExposable
     /// </summary>
     public bool AnyPolicyPreventsBuildingDestruction()
     {
-        foreach (FCPolicy p in policies)
+        foreach (FCPolicy p in ActivePolicies())
         {
-            if (p?.def is not null && p.def.preventBuildingDestruction)
-                return true;
-        }
-        foreach (FCPolicy p in factionTraits)
-        {
-            if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
             if (p.def.preventBuildingDestruction)
-                return true;
-        }
-        foreach (FCPolicy edict in edicts.Values)
-        {
-            if (edict?.def is not null && edict.IsFullyActive && edict.def.preventBuildingDestruction)
                 return true;
         }
         return false;
@@ -506,20 +489,9 @@ public class PolicyManager : IExposable
     /// </summary>
     public bool AnyPolicySuppressesMemberDeathPenalty()
     {
-        foreach (FCPolicy p in policies)
+        foreach (FCPolicy p in ActivePolicies())
         {
-            if (p?.def is not null && p.def.suppressMemberDeathPenalty)
-                return true;
-        }
-        foreach (FCPolicy p in factionTraits)
-        {
-            if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
             if (p.def.suppressMemberDeathPenalty)
-                return true;
-        }
-        foreach (FCPolicy edict in edicts.Values)
-        {
-            if (edict?.def is not null && edict.IsFullyActive && edict.def.suppressMemberDeathPenalty)
                 return true;
         }
         return false;

@@ -16,7 +16,7 @@ public static class KCSGCompatInit
 {
     static KCSGCompatInit()
     {
-        new Harmony("com.Matathias.Empire.KCSG").PatchAll(Assembly.GetExecutingAssembly());
+        new Harmony("com.Matathias.Empire.KCSG").PatchEachClass(Assembly.GetExecutingAssembly());
         LogUtil.MessageForce("KCSG compatibility module loaded.");
     }
 }

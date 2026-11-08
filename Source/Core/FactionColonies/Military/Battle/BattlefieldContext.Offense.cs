@@ -188,39 +188,19 @@ public partial class BattlefieldContext
             return;
         }
 
-        squad.CheckInitialization();
-        if (op.aggressor?.homeSettlement is not null)
-            squad.UpdateSquadStats(op.aggressor.homeSettlement.settlementMilitaryLevel);
-        SquadHealthUtil.ResetNeeds(squad);
+        SquadSpawnUtil.PrepareSquad(squad, op.aggressor?.homeSettlement);
 
-        double efficiency = op.aggressor?.force?.militaryEfficiency ?? 1.0;
         List<Pawn> mercs = squad.SpawnableMercenaryPawns.ToList();
-        foreach (Pawn merc in mercs)
-        {
-            MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(merc, efficiency);
-        }
+        SquadSpawnUtil.ApplyCombatEfficiency(mercs, op.aggressor?.force?.militaryEfficiency ?? 1.0);
 
         IntVec3 edge = FindNearEdgeCell(map);
         List<Pawn> spawned = [];
         foreach (Pawn merc in mercs)
         {
             if (merc.IsWildMan()) continue;
-            merc.ApplyIdeologyRitualWounds();
             IntVec3 loc = CellFinder.RandomClosewalkCellNear(edge, map, 8);
-            try
-            {
-                GenSpawn.Spawn(merc, loc, map, new Rot4());
-                // Give a draft controller so the player can optionally draft this attacker; the
-                // pawn stays Empire faction until actually drafted (drafting flips it to OfPlayer).
-                merc.drafter = new Pawn_DraftController(merc);
-                map.mapPawns.RegisterPawn(merc);
-                ReloadableWeaponUtil.LoadMagazinesFromInventory(merc);
+            if (SquadSpawnUtil.TrySpawnCombatant(merc, loc, map, "attacker"))
                 spawned.Add(merc);
-            }
-            catch (Exception e)
-            {
-                LogUtil.Warning($"SpawnPlayerSquad: failed to spawn {merc.LabelShort} (likely a mod conflict): {e}");
-            }
         }
 
         op.aggressor.pawns.AddRange(spawned);
@@ -380,15 +360,11 @@ public partial class BattlefieldContext
     /// voluntary retreat, which is a failed op but never a crushing defeat.</summary>
     public void EndOffense(bool won, bool withdrawn = false)
     {
-        Faction empire = FindFC.EmpireFaction;
         offenseWon = won;
 
         // Restore faction on Empire attackers the player drafted, before resolving -- so the
         // squad reconcile in CompleteBattle sees Empire pawns and drafted mercs rejoin Empire.
-        foreach (Pawn npc in draftedNPCs)
-            if (npc is not null && !npc.Dead && !npc.Destroyed && npc.Faction == Faction.OfPlayer)
-                npc.SetFaction(empire);
-        draftedNPCs.Clear();
+        RestoreDraftedNPCs();
 
         // Strip combat-efficiency hediffs from every surviving combatant (both sides).
         foreach (Pawn p in attackerPawns.Concat(defenderPawns).ToList())
@@ -488,12 +464,7 @@ public partial class BattlefieldContext
             {
                 // Won: the garrison is cleared; idle the surviving Empire mercs as loot-phase
                 // guards until the player leaves.
-                List<Pawn> idlers = [];
-                foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
-                    if (pawn.Faction == empire && !pawn.Dead && !pawn.Downed) idlers.Add(pawn);
-                foreach (Pawn p in idlers) p.jobs?.StopAll();
-                if (idlers.Any())
-                    LordMaker.MakeNewLord(empire, new LordJob_ColonistsIdle(null), map, idlers);
+                IdleEmpirePawns(null);
             }
             else
             {
@@ -586,16 +557,9 @@ public partial class BattlefieldContext
         Map homeMap = Find.AnyPlayerHomeMap;
         CameraJumper.TryJump(tile);
         if (Find.CurrentMap == map && homeMap is not null) Current.Game.CurrentMap = homeMap;
-        // Clear the marker before removal, then remove defensively: if vanilla (or another mod)
-        // already removed the map, DeinitAndRemoveMap would Log.Error "map ... not here" -- warn
-        // and skip so the rest of teardown (CompletePendingSettlementFate) still runs.
-        Map toRemove = map;
-        FindFC.MilitaryManager?.UnregisterBattleMap(toRemove);
-        if (toRemove is not null && Current.Game.Maps.Contains(toRemove))
-            Current.Game.DeinitAndRemoveMap(toRemove, false);
-        else
-            LogUtil.Warning($"CloseOffenseMap: offense map at tile {tile} already gone before teardown; skipping DeinitAndRemoveMap.");
-        map = null;
+        // Removed defensively, so the rest of teardown (CompletePendingSettlementFate) still runs
+        // if the map is already gone.
+        RemoveBattleMap("offense");
         battleMapInitialized = false;
 
         CompletePendingSettlementFate();
@@ -646,48 +610,13 @@ public partial class BattlefieldContext
         pendingCaptureTech = TechLevel.Undefined;
     }
 
-    /// <summary>Despawns the given player colonists, tends the injured, and delivers them back to
-    /// the home settlement via a DeliveryEvent (the DeleteMap injured-return recipe, reimplemented
-    /// against <c>tile</c> and the op's home settlement). A loss adds a one-day return penalty,
-    /// matching defense. Empire squad mercs are handled separately by the preserve helper.</summary>
+    /// <summary>Despawns the given player colonists, tends the injured, and delivers them home from
+    /// the battle site (this tile -- the pawns are physically at the enemy settlement, not at the
+    /// squad's home billet). Empire squad mercs are handled separately by the preserve helper.</summary>
     private void ReturnPlayerColonistsHome(bool won, List<Pawn> pawns)
     {
-        if (pawns is null || pawns.Count == 0) return;
-
-        foreach (Pawn pawn in pawns)
-            if (pawn.Spawned) pawn.DeSpawn();
-        foreach (Pawn pawn in pawns)
-            if (!pawn.Dead)
-            {
-                int guard = 0;
-                while (pawn.health.HasHediffsNeedingTend())
-                {
-                    if (++guard > 10000) { LogUtil.Error("ReturnPlayerColonistsHome: too many tend iterations."); break; }
-                    TendUtility.DoTend(null, pawn, null);
-                }
-            }
-
-        Map home = Find.AnyPlayerHomeMap;
-        if (home is null) return;
-        // Travel is from the battle site (this tile) -- the pawns are physically at the enemy
-        // settlement, not at the squad's home billet.
-        int travelTicks = TravelUtil.ReturnTicksToArrive(tile, home.Tile);
-        if (!won) travelTicks += GenDate.TicksPerDay;
-
-        List<Thing> goods = [.. pawns];
-
-        DeliveryEvent.CreateDeliveryEvent(new FCEvent
-        {
-            location = home.Tile,
-            source = tile,
-            goods = goods,
-            customDescription = won
-                ? DeliveryNotification.ShuttleEventInjuredString
-                : DeliveryNotification.ShuttleEventInjuredLostString,
-            timeTillTrigger = Find.TickManager.TicksGame + travelTicks
-        });
-        string travelDays = ((float)travelTicks / GenDate.TicksPerDay).ToString("0.#");
-        Messages.Message("FCInjuredCaravanMembersReturning".Translate(pawns.Count, travelDays),
-            MessageTypeDefOf.NeutralEvent);
+        string returning = SquadMapTeardownUtil.ReturnPlayerPawnsHome(pawns, tile, won);
+        if (returning is not null)
+            Messages.Message(returning, MessageTypeDefOf.NeutralEvent);
     }
 }

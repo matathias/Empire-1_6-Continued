@@ -23,7 +23,7 @@ public static class PRDCompatInit
 {
     static PRDCompatInit()
     {
-        new Harmony("com.Matathias.Empire.PRD").PatchAll(Assembly.GetExecutingAssembly());
+        new Harmony("com.Matathias.Empire.PRD").PatchEachClass(Assembly.GetExecutingAssembly());
         LogUtil.MessageForce("Pawnkind Race Diversification compatibility patched");
     }
 }

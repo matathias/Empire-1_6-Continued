@@ -16,17 +16,16 @@ namespace FactionColonies.FTV;
 /// 2. Vassalage interception — FTV's CheckDefeated prefix could attempt to
 ///    vassalize the player's own Empire settlements.
 ///
-/// The static constructor deliberately avoids referencing any FTV types directly.
-/// All FTV type access is in ApplyPatches(), which is marked NoInlining so the
-/// JIT compiler resolves FTV types only when that method is actually called
-/// (inside a try/catch), rather than when the constructor is JIT-compiled.
+/// The static constructor references no FTV types directly; the patch classes do, and each
+/// class is applied on its own, so one that no longer resolves against a newer FTV is logged
+/// and skipped without stopping the others.
 /// </summary>
 [StaticConstructorOnStartup]
 public static class FactionTerritoriesCompatInit
 {
     static FactionTerritoriesCompatInit()
     {
-        new Harmony("com.Matathias.Empire.FTV").PatchAll(Assembly.GetExecutingAssembly());
+        new Harmony("com.Matathias.Empire.FTV").PatchEachClass(Assembly.GetExecutingAssembly());
         LogUtil.MessageForce("Faction Territories & Vassalage patched");
     }
 }

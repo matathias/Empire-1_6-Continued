@@ -11,19 +11,11 @@ namespace FactionColonies;
 /// "used / total bandwidth" header reflects each add (every add regenerates the preview pawn used
 /// to read the bandwidth stat). Biotech-only — the Mechs tab only opens it when Biotech is active.
 /// </summary>
-public class FCWindow_MechPicker : Window
+public class FCWindow_MechPicker : FCWindow_SearchablePicker<PawnKindDef>
 {
     private readonly Func<MilUnitFC> getDisplayUnit;
     private readonly Func<MilUnitFC> getEditTarget;
     private readonly int group;
-
-    private string searchTerm = "";
-    private Vector2 scrollPos;
-
-    private const float RowHeight = 30f;
-    private const float SearchBarHeight = 28f;
-    private const float HeaderHeight = 24f;
-    private const float margin = 5f;
 
     public override Vector2 InitialSize => new(480f, 600f);
 
@@ -32,104 +24,38 @@ public class FCWindow_MechPicker : Window
         this.getDisplayUnit = getDisplayUnit;
         this.getEditTarget = getEditTarget;
         this.group = group;
-        forcePause = false;
-        draggable = true;
-        doCloseX = true;
-        absorbInputAroundWindow = true;
     }
 
-    public override void DoWindowContents(Rect inRect)
+    // Names the group the picked mech will be added to.
+    protected override string Title => "fcPickMech".Translate() + " — " + "fcMechGroup".Translate(group + 1);
+    protected override string EmptyText => "fcNoMechsAvailable".Translate();
+    protected override bool PicksOnClick => true;
+
+    // Bandwidth header: "used / total"
+    protected override bool DrawHeader(Rect rect)
     {
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-
         MilUnitFC displayUnit = getDisplayUnit?.Invoke();
-
-        // Title — names the group the picked mech will be added to.
-        Text.Font = GameFont.Medium;
-        Text.Anchor = TextAnchor.UpperLeft;
-        UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f),
-            "fcPickMech".Translate() + " — " + "fcMechGroup".Translate(group + 1));
-
-        // Bandwidth header
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleLeft;
         float used = displayUnit?.UsedMechBandwidth ?? 0f;
         float total = displayUnit?.TotalMechBandwidth ?? 0f;
-        Rect bwRect = new(0, 38f, inRect.width, HeaderHeight);
         if (used > total + 0.0001f) GUI.color = ColorLibrary.RedReadable;
-        UIUtil.ClampedLabel(bwRect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
-        GUI.color = Color.white;
-
-        // Search bar
-        Rect searchRect = new(0, bwRect.yMax + 2f, inRect.width, SearchBarHeight);
-        searchTerm = Widgets.TextField(searchRect, searchTerm);
-
-        // Build mech list — only mechs the player has actually unlocked through research.
-        List<PawnKindDef> mechKinds = FactionCache.UnlockedControllableMechKinds
-            .OrderBy(m => m.label ?? m.defName, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-
-        if (!string.IsNullOrEmpty(searchTerm))
-            mechKinds = mechKinds.Where(m => (m.label ?? m.defName).IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-
-        // Scroll view
-        float listTop = searchRect.yMax + margin;
-        float listHeight = inRect.height - listTop - 15f;
-        Rect scrollOutRect = new(0, listTop, inRect.width, listHeight);
-        Widgets.DrawMenuSection(scrollOutRect);
-
-        float viewHeight = mechKinds.Count * RowHeight;
-        Rect scrollViewRect = ScrollUtil.BeginScrollView(scrollOutRect, ref scrollPos, viewHeight);
-
-        for (int i = 0; i < mechKinds.Count; i++)
-        {
-            PawnKindDef mech = mechKinds[i];
-            Rect row = new(0, i * RowHeight, scrollViewRect.width, RowHeight);
-            if (i % 2 == 0) Widgets.DrawHighlight(row);
-
-            // Row layout: Icon | Info | Label | Bandwidth | Cost
-            Rect iconRect = new(row.x + margin, row.y, RowHeight, RowHeight);
-            Rect infoRect = new(iconRect.xMax, row.y + 2, RowHeight - 4, RowHeight - 4);
-            Rect costRect = new(row.xMax - margin - 60f, row.y, 60f, RowHeight);
-            Rect bwCostRect = new(costRect.x - 50f, row.y, 50f, RowHeight);
-            Rect labelRect = new(infoRect.xMax + margin, row.y,
-                bwCostRect.x - infoRect.xMax - (margin * 2), RowHeight);
-
-            Widgets.ThingIcon(iconRect, mech.race);
-            Widgets.InfoCardButton(infoRect, mech.race);
-
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Text.Font = GameFont.Small;
-            UIUtil.ClampedLabel(labelRect, mech.LabelCap);
-
-            float bandwidth = mech.race.GetStatValueAbstract(StatDefOf.BandwidthCost);
-            Text.Anchor = TextAnchor.MiddleRight;
-            Text.Font = GameFont.Tiny;
-            UIUtil.ClampedLabel(bwCostRect, "BW " + bandwidth.ToString("0.#"));
-
-            double cost = Math.Floor(mech.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier);
-            UIUtil.ClampedLabel(costRect, "$" + cost.ToString("F0"));
-
-            if (Widgets.ButtonInvisible(row))
-            {
-                MilUnitFC target = getEditTarget?.Invoke();
-                target?.AddMech(mech, group);   // adds to this picker's group; hard-blocks on bandwidth
-            }
-        }
-
-        ScrollUtil.EndScrollView();
-
-        // Empty-state label: drawn AFTER EndScrollView so it centers in the visible box
-        // (drawing it inside the scroll view's translated space pushes it awkwardly low).
-        if (mechKinds.Count == 0)
-        {
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.ClampedLabel(scrollOutRect, "fcNoMechsAvailable".Translate());
-        }
-
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+        UIUtil.ClampedLabel(rect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
+        return true;
     }
+
+    // Only mechs the player has actually unlocked through research.
+    protected override List<PawnKindDef> Items() => FactionCache.UnlockedControllableMechKinds
+        .OrderBy(m => m.label ?? m.defName, StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    protected override string SearchText(PawnKindDef mech) => mech.label ?? mech.defName;
+
+    protected override void DrawRow(Rect row, PawnKindDef mech)
+    {
+        float bandwidth = mech.race.GetStatValueAbstract(StatDefOf.BandwidthCost);
+        double cost = Math.Floor(mech.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier);
+        DrawThingRow(row, mech.race, mech.LabelCap, "$" + cost.ToString("F0"), "BW " + bandwidth.ToString("0.#"));
+    }
+
+    // Adds to this picker's group; hard-blocks on bandwidth.
+    protected override void Pick(PawnKindDef mech) => getEditTarget?.Invoke()?.AddMech(mech, group);
 }

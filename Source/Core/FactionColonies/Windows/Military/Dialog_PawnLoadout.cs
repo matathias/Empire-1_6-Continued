@@ -482,21 +482,9 @@ public class Dialog_PawnLoadout : Window
     private void DestroyPreviewPawn()
     {
         if (previewPawn is null) return;
-        try
-        {
-            previewPawn.apparel?.DestroyAll();
-            previewPawn.equipment?.DestroyAllEquipment();
-            if (!previewPawn.Destroyed) previewPawn.Destroy();
-        }
-        catch (System.Exception ex)
-        {
-            LogUtil.Warning($"Dialog_PawnLoadout: failed to destroy preview pawn: {ex.Message}");
-        }
-        finally
-        {
-            previewPawn = null;
-            lastEquippedLoadoutRef = null;
-            lastEquippedVersion = int.MinValue;
-        }
+        PawnUtil.DiscardPreviewPawn(previewPawn, "Dialog_PawnLoadout");
+        previewPawn = null;
+        lastEquippedLoadoutRef = null;
+        lastEquippedVersion = int.MinValue;
     }
 }

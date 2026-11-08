@@ -100,193 +100,127 @@ public abstract class Dialog_ManageExportsFC : Window
     protected virtual string GetDegradedTooltip(string name) => null;
 }
 
-public class Dialog_ManageSquadExportsFC : Dialog_ManageExportsFC
+/// <summary>
+/// An export manager over one kind of saved military template. Deleting asks for confirmation;
+/// importing loads the template into the matching military designer window, opening one if none
+/// is open.
+/// </summary>
+public abstract class Dialog_ManageExportsFC<TSaved> : Dialog_ManageExportsFC where TSaved : class
 {
-    private List<SavedSquadFC> squads;
-    public Dialog_ManageSquadExportsFC(List<SavedSquadFC> elements)
+    private readonly List<TSaved> saved;
+
+    protected Dialog_ManageExportsFC(List<TSaved> saved)
     {
-        squads = elements;
+        this.saved = saved;
     }
+
+    protected abstract string NameOf(TSaved entry);
+    /// <summary>Removes the named template from the saved-template store.</summary>
+    protected abstract void RemoveSaved(string name);
+    /// <summary>Loads the named template from the saved-template store as a live template.</summary>
+    protected abstract IExposable ImportSaved(string name);
+    /// <summary>The designer window slot that edits this kind of template.</summary>
+    protected abstract MilitaryWindowSlot Slot { get; }
+    protected abstract FCWindow_Military CreateDesignerWindow(FactionFC fc);
+    protected abstract bool IsDegraded(TSaved entry);
+    protected abstract IEnumerable<string> MissingDefs(TSaved entry);
+    /// <summary>The last sentence of the degraded tooltip: what importing does with missing defs.</summary>
+    protected virtual string DegradedImportNote => "Importing will substitute defaults for missing items.";
+
+    private TSaved Entry(string name) => saved.FirstOrDefault(e => NameOf(e) == name);
+
+    protected override IEnumerable<string> GetAll() => saved.Select(NameOf);
 
     protected override void OnDelete(string name)
     {
         Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
             "FCConfirmDelete".Translate((NamedArgument)name), () =>
         {
-            FactionColoniesMilitary.RemoveSquad(name);
-            this.squads.RemoveAll(squads => squads.name == name);
+            RemoveSaved(name);
+            saved.RemoveAll(e => NameOf(e) == name);
             Messages.Message("FCDeleted".Translate((NamedArgument)name), MessageTypeDefOf.PositiveEvent);
         }));
     }
 
     protected override void OnImport(string name)
     {
-        FactionFC fc = FindFC.FactionComp;
-        MilSquadFC squad = FactionColoniesMilitary.GetSquad(name).Import();
+        IExposable template = ImportSaved(name);
 
         FCWindow_Military milWindow = (FCWindow_Military)Find.WindowStack.Windows.FirstOrDefault(
-            window => window is FCWindow_Military fcw &&
-                      fcw.GetMilitaryWindow().Slot == MilitaryWindowSlot.Squads);
+            window => window is FCWindow_Military fcw && fcw.GetMilitaryWindow().Slot == Slot);
 
         if (milWindow is not null)
         {
-            milWindow.SetActive(squad);
+            milWindow.SetActive(template);
         }
         else
         {
-            MilitaryWindow dsw = MilitaryWindowRegistry.CreateSquads(fc.military, fc);
-            FCWindow_Military newWindow = new(dsw, "Create Squads");
+            FCWindow_Military newWindow = CreateDesignerWindow(FindFC.FactionComp);
             Find.WindowStack.Add(newWindow);
-            newWindow.SetActive(squad);
+            newWindow.SetActive(template);
         }
 
         MessageTypeDefOf.PositiveEvent.sound.PlayOneShotOnCamera();
         Messages.Message("FCImported".Translate((NamedArgument)name), MessageTypeDefOf.PositiveEvent);
-        this.Close();
+        Close();
     }
-    protected override IEnumerable<string> GetAll() => squads.Select(squad => squad.name);
 
     protected override bool IsEntryDegraded(string name)
     {
-        SavedSquadFC squad = squads.FirstOrDefault(s => s.name == name);
-        return squad is not null && squad.IsDegraded;
+        TSaved entry = Entry(name);
+        return entry is not null && IsDegraded(entry);
     }
 
     protected override string GetDegradedTooltip(string name)
     {
-        SavedSquadFC squad = squads.FirstOrDefault(s => s.name == name);
-        if (squad is null || !squad.IsDegraded) return null;
-        List<string> allMissing = squad.unitTemplates
-            .Where(u => u.isDegraded)
-            .SelectMany(u => u.missingDefs)
-            .ToList();
+        TSaved entry = Entry(name);
+        if (entry is null || !IsDegraded(entry)) return null;
         return "This template references defs from unloaded mods: "
-            + string.Join(", ", allMissing)
-            + ".\nImporting will substitute defaults for missing items.";
-    }
-}
-public class Dialog_ManageUnitExportsFC : Dialog_ManageExportsFC
-{
-    private List<SavedUnitFC> units;
-    public Dialog_ManageUnitExportsFC(List<SavedUnitFC> elements)
-    {
-        units = elements;
-    }
-
-    protected override void OnDelete(string name)
-    {
-        Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-            "FCConfirmDelete".Translate((NamedArgument)name), () =>
-        {
-            FactionColoniesMilitary.RemoveUnit(name);
-            this.units.RemoveAll(unit => unit.name == name);
-            Messages.Message("FCDeleted".Translate((NamedArgument)name), MessageTypeDefOf.PositiveEvent);
-        }));
-    }
-
-    protected override void OnImport(string name)
-    {
-        FactionFC fc = FindFC.FactionComp;
-        MilUnitFC unit = FactionColoniesMilitary.GetUnit(name).Import();
-
-        FCWindow_Military milWindow = (FCWindow_Military)Find.WindowStack.Windows.FirstOrDefault(
-            window => window is FCWindow_Military fcw &&
-                      fcw.GetMilitaryWindow().Slot == MilitaryWindowSlot.Units);
-
-        if (milWindow is not null)
-        {
-            milWindow.SetActive(unit);
-        }
-        else
-        {
-            MilitaryWindow duw = MilitaryWindowRegistry.CreateUnits(fc.military, fc);
-            FCWindow_Military newWindow = new(duw, "Create Units");
-            Find.WindowStack.Add(newWindow);
-            newWindow.SetActive(unit);
-        }
-
-        MessageTypeDefOf.PositiveEvent.sound.PlayOneShotOnCamera();
-        Messages.Message("FCImported".Translate((NamedArgument)name), MessageTypeDefOf.PositiveEvent);
-        this.Close();
-    }
-    protected override IEnumerable<string> GetAll() => units.Select(unit => unit.name);
-
-    protected override bool IsEntryDegraded(string name)
-    {
-        SavedUnitFC unit = units.FirstOrDefault(u => u.name == name);
-        return unit is not null && unit.isDegraded;
-    }
-
-    protected override string GetDegradedTooltip(string name)
-    {
-        SavedUnitFC unit = units.FirstOrDefault(u => u.name == name);
-        if (unit is null || !unit.isDegraded) return null;
-        return "This template references defs from unloaded mods: "
-            + string.Join(", ", unit.missingDefs)
-            + ".\nImporting will substitute defaults for missing items.";
+            + string.Join(", ", MissingDefs(entry))
+            + ".\n" + DegradedImportNote;
     }
 }
 
-public class Dialog_ManageFireSupportExportsFC : Dialog_ManageExportsFC
+public class Dialog_ManageSquadExportsFC : Dialog_ManageExportsFC<SavedSquadFC>
 {
-    private List<SavedFireSupportFC> fireSupports;
+    public Dialog_ManageSquadExportsFC(List<SavedSquadFC> elements) : base(elements) { }
 
-    public Dialog_ManageFireSupportExportsFC(List<SavedFireSupportFC> elements)
-    {
-        fireSupports = elements;
-    }
+    protected override string NameOf(SavedSquadFC squad) => squad.name;
+    protected override void RemoveSaved(string name) => FactionColoniesMilitary.RemoveSquad(name);
+    protected override IExposable ImportSaved(string name) => FactionColoniesMilitary.GetSquad(name).Import();
+    protected override MilitaryWindowSlot Slot => MilitaryWindowSlot.Squads;
+    protected override FCWindow_Military CreateDesignerWindow(FactionFC fc) =>
+        new(MilitaryWindowRegistry.CreateSquads(fc.military, fc), "Create Squads");
+    protected override bool IsDegraded(SavedSquadFC squad) => squad.IsDegraded;
+    protected override IEnumerable<string> MissingDefs(SavedSquadFC squad) =>
+        squad.unitTemplates.Where(u => u.isDegraded).SelectMany(u => u.missingDefs);
+}
 
-    protected override void OnDelete(string name)
-    {
-        Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-            "FCConfirmDelete".Translate((NamedArgument)name), () =>
-        {
-            FactionColoniesMilitary.RemoveFireSupport(name);
-            this.fireSupports.RemoveAll(f => f.name == name);
-            Messages.Message("FCDeleted".Translate((NamedArgument)name), MessageTypeDefOf.PositiveEvent);
-        }));
-    }
+public class Dialog_ManageUnitExportsFC : Dialog_ManageExportsFC<SavedUnitFC>
+{
+    public Dialog_ManageUnitExportsFC(List<SavedUnitFC> elements) : base(elements) { }
 
-    protected override void OnImport(string name)
-    {
-        MilitaryFireSupport fs = FactionColoniesMilitary.GetFireSupport(name).Import();
+    protected override string NameOf(SavedUnitFC unit) => unit.name;
+    protected override void RemoveSaved(string name) => FactionColoniesMilitary.RemoveUnit(name);
+    protected override IExposable ImportSaved(string name) => FactionColoniesMilitary.GetUnit(name).Import();
+    protected override MilitaryWindowSlot Slot => MilitaryWindowSlot.Units;
+    protected override FCWindow_Military CreateDesignerWindow(FactionFC fc) =>
+        new(MilitaryWindowRegistry.CreateUnits(fc.military, fc), "Create Units");
+    protected override bool IsDegraded(SavedUnitFC unit) => unit.isDegraded;
+    protected override IEnumerable<string> MissingDefs(SavedUnitFC unit) => unit.missingDefs;
+}
 
-        FCWindow_Military milWindow = (FCWindow_Military)Find.WindowStack.Windows.FirstOrDefault(
-            window => window is FCWindow_Military fcw &&
-                      fcw.GetMilitaryWindow().Slot == MilitaryWindowSlot.FireSupport);
+public class Dialog_ManageFireSupportExportsFC : Dialog_ManageExportsFC<SavedFireSupportFC>
+{
+    public Dialog_ManageFireSupportExportsFC(List<SavedFireSupportFC> elements) : base(elements) { }
 
-        if (milWindow is not null)
-        {
-            milWindow.SetActive(fs);
-        }
-        else
-        {
-            FactionFC fc = FindFC.FactionComp;
-            MilitaryWindow fsw = MilitaryWindowRegistry.CreateFireSupport(fc.military, fc);
-            FCWindow_Military newWindow = new(fsw, "FCMilitaryTableButtonCreateFireSupport".Translate());
-            Find.WindowStack.Add(newWindow);
-            newWindow.SetActive(fs);
-        }
-
-        MessageTypeDefOf.PositiveEvent.sound.PlayOneShotOnCamera();
-        Messages.Message("FCImported".Translate((NamedArgument)name), MessageTypeDefOf.PositiveEvent);
-        this.Close();
-    }
-
-    protected override IEnumerable<string> GetAll() => fireSupports.Select(f => f.name);
-
-    protected override bool IsEntryDegraded(string name)
-    {
-        SavedFireSupportFC fs = fireSupports.FirstOrDefault(f => f.name == name);
-        return fs is not null && fs.isDegraded;
-    }
-
-    protected override string GetDegradedTooltip(string name)
-    {
-        SavedFireSupportFC fs = fireSupports.FirstOrDefault(f => f.name == name);
-        if (fs is null || !fs.isDegraded) return null;
-        return "This template references defs from unloaded mods: "
-            + string.Join(", ", fs.missingDefs)
-            + ".\nImporting will drop missing projectiles.";
-    }
+    protected override string NameOf(SavedFireSupportFC fs) => fs.name;
+    protected override void RemoveSaved(string name) => FactionColoniesMilitary.RemoveFireSupport(name);
+    protected override IExposable ImportSaved(string name) => FactionColoniesMilitary.GetFireSupport(name).Import();
+    protected override MilitaryWindowSlot Slot => MilitaryWindowSlot.FireSupport;
+    protected override FCWindow_Military CreateDesignerWindow(FactionFC fc) =>
+        new(MilitaryWindowRegistry.CreateFireSupport(fc.military, fc), "FCMilitaryTableButtonCreateFireSupport".Translate());
+    protected override bool IsDegraded(SavedFireSupportFC fs) => fs.isDegraded;
+    protected override IEnumerable<string> MissingDefs(SavedFireSupportFC fs) => fs.missingDefs;
+    protected override string DegradedImportNote => "Importing will drop missing projectiles.";
 }

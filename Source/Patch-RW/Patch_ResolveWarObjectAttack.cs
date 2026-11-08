@@ -32,23 +32,9 @@ public static class Patch_ResolveWarObjectAttack
             return false; // invalid attacker, skip
         }
 
-        // Sample the baseline through the worldcomp so faction-level efficiency modifiers apply.
-        // RimWarPoints dictates militaryLevel, so we override the sampled level with it.
-        EnemyPower entry = FindFC.EnemyPower?.GetOrCompute(attacker.Faction);
-        MilitaryForce attackingForce = entry?.SampleBattleForce(attacker.Faction);
-        if (attackingForce is null)
-        {
-            double efficiency = 1.0;
-            if (attacker.Faction.def is not null)
-            {
-                MilitaryDeploymentUtil.GetTechLevelBaseline(attacker.Faction.def.techLevel, out double _, out efficiency);
-            }
-            attackingForce = new MilitaryForce(1, efficiency, null, attacker.Faction);
-        }
-
+        // RimWarPoints dictates the military level
         double level = Math.Max(1.0, Math.Sqrt(attacker.RimWarPoints) / 20.0);
-        attackingForce.militaryLevel = level;
-        attackingForce.forceRemaining = Math.Max(1, Math.Round(attackingForce.militaryLevel * attackingForce.militaryEfficiency));
+        MilitaryForce attackingForce = MilitaryOperationsUtil.BuildAttackForce(attacker.Faction, level);
 
         MilitaryOperationsUtil.AttackPlayerSettlement(attackingForce, empireSettlement, attacker.Faction);
 

@@ -25,11 +25,17 @@ public static class FCEventMaker
         FCEvent tempEvent = MakeRandomEvent(chosen, settlements);
 
         if (tempEvent is not null)
-        {
-            FindFC.EventManager.AddEvent(tempEvent);
+            QueueAndAnnounce(tempEvent);
+    }
 
-            Find.LetterStack.ReceiveLetter(tempEvent.def.label, BuildEventLetterBody(tempEvent), LetterDefOf.NeutralEvent);
-        }
+    /// <summary>
+    /// Queues <paramref name="evt"/> on <paramref name="manager"/> (the player faction's by default)
+    /// and sends its neutral letter, titled <paramref name="letterLabel"/> or else the event's label.
+    /// </summary>
+    public static void QueueAndAnnounce(FCEvent evt, FCEventManager manager = null, string letterLabel = null)
+    {
+        (manager ?? FindFC.EventManager).AddEvent(evt);
+        Find.LetterStack.ReceiveLetter(letterLabel ?? evt.def.label, BuildEventLetterBody(evt), LetterDefOf.NeutralEvent);
     }
 
     /// <summary>
@@ -685,11 +691,7 @@ public static class FCEventMaker
                         FCEvent tempEvent = MakeRandomEvent(target, settlements);
 
                         if (tempEvent is not null)
-                        {
-                            faction.eventManager.AddEvent(tempEvent);
-
-                            Find.LetterStack.ReceiveLetter(tempEvent.def.label, BuildEventLetterBody(tempEvent), LetterDefOf.NeutralEvent);
-                        }
+                            QueueAndAnnounce(tempEvent, faction.eventManager);
                     }
                 }
 

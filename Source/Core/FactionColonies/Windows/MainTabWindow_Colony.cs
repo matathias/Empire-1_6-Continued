@@ -750,7 +750,6 @@ public class MainTabWindow_Colony : MainTabWindow
     private void DrawSettlementsTable(Rect tableRect)
     {
         const float rowH = 44f;
-        const float accentW = 4f;
         const float rowGap = 2f;
         const float pad = 4f;
         const float summaryH = 24f;
@@ -791,14 +790,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Empty state
         if (faction.settlements.Count == 0)
         {
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Medium;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.DrawColoredLabel(new Rect(tableRect.x, tableRect.y + tableRect.height * 0.35f, tableRect.width, 40f),
-                "FCNoSettlements".Translate(), Color.gray);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawEmptyState(tableRect, "FCNoSettlements".Translate());
             return;
         }
 
@@ -806,43 +798,26 @@ public class MainTabWindow_Colony : MainTabWindow
         float listY = tableRect.y + pad + summaryH + 4f;
         float viewH = tableRect.yMax - listY - pad;
         Rect viewRect = new(innerX, listY, innerW, viewH);
-        float contentH = faction.settlements.Count * (rowH + rowGap);
-        Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref settlementScroll, contentH);
-
-        for (int i = 0; i < faction.settlements.Count; i++)
+        // Accent strip: green = profit, red = loss
+        UIUtil.DrawAccentRowList(viewRect, faction.settlements, rowH, rowGap, ref settlementScroll,
+            AccentUtil.GetSettlementAccent, (s, row) =>
         {
-            WorldSettlementFC s = faction.settlements[i];
-            float ry = i * (rowH + rowGap);
-            float rowW = scrollRect.width;
-            Rect rowRect = new(0f, ry, rowW, rowH);
-
-            // Alternating row background
-            if (i % 2 == 0)
-                Widgets.DrawHighlight(rowRect);
-
-            // Accent strip (green = profit, red = loss)
-            Color accent = AccentUtil.GetSettlementAccent(s);
-            Widgets.DrawBoxSolid(new Rect(0f, ry, accentW, rowH), accent);
-
-            float contentX = accentW + 6f;
-            float contentW = rowW - contentX - 4f;
-            float topY = ry;
-            float botY = ry + rowH / 2f;
-            float lineH = rowH / 2f;
+            int i = row.Index;
+            Rect rowRect = row.Rect;
+            Color accent = row.Accent;
+            float contentX = row.ContentX;
+            float contentW = row.ContentW;
+            float topY = row.TopY;
+            float botY = row.BotY;
+            float lineH = row.LineH;
 
             // Top-left: Settlement name (clickable, accent-colored)
             float profitDisplayW = 80f;
             float badgeW = 110f;
             float nameW = contentW - profitDisplayW - badgeW;
 
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
             Rect nameRect = new(contentX, topY, nameW, lineH);
-            UIUtil.DrawColoredLabel(nameRect, s.Name, accent);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawColoredLabel(nameRect, s.Name, accent, GameFont.Small, TextAnchor.MiddleLeft);
             if (Widgets.ButtonInvisible(nameRect))
                 Find.WindowStack.Add(new SettlementWindowFc(s));
             if (Mouse.IsOver(nameRect))
@@ -865,14 +840,8 @@ public class MainTabWindow_Colony : MainTabWindow
             bool hasAvg = s.TaxAccrualDays > 0;
             int displayProfit = (int)(hasAvg ? s.ProjectedProfit : s.totalProfit);
             string profitStr = "$" + (displayProfit >= 0 ? "+" : "") + displayProfit;
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleRight;
             Rect profitRect = new(contentX + contentW - profitDisplayW, topY, profitDisplayW, lineH);
-            UIUtil.DrawColoredLabel(profitRect, profitStr, displayProfit >= 0 ? AccentUtil.Income : AccentUtil.Expense);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawColoredLabel(profitRect, profitStr, displayProfit >= 0 ? AccentUtil.Income : AccentUtil.Expense, GameFont.Small, TextAnchor.MiddleRight);
             TooltipHandler.TipRegion(profitRect, TextUtil.BuildProjectedTooltip());
 
             // Bottom-left: Town title + free workers
@@ -894,17 +863,11 @@ public class MainTabWindow_Colony : MainTabWindow
             if (s.IsUpgrading)
             {
                 // "Upgrading..." label
-                fontBefore = Text.Font;
-                anchorBefore = Text.Anchor;
-                Text.Font = GameFont.Tiny;
-                Text.Anchor = TextAnchor.MiddleLeft;
                 float labelW = 67f;
                 UIUtil.DrawColoredLabel(
                     new Rect(upgradeBadgeX, botY, labelW, lineH),
                     "FCSettlementUpgradeInProgress".Translate(),
-                    Color.gray);
-                Text.Font = fontBefore;
-                Text.Anchor = anchorBefore;
+                    Color.gray, GameFont.Tiny, TextAnchor.MiddleLeft);
 
                 // Progress bar
                 float progress = UIUtil.NormalizeProgress(s.StartUpgradeTick, s.FinishUpgradeTick);
@@ -958,9 +921,8 @@ public class MainTabWindow_Colony : MainTabWindow
                 tooltip += "\n" + "FCUpgradeBadgeInProgress".Translate(ttTicksLeft.ToStringTicksToPeriod());
             }
             TooltipHandler.TipRegion(rowRect, tooltip);
-        }
-
-        ScrollUtil.EndScrollView();
+            return true;
+        });
     }
 
 
@@ -969,13 +931,7 @@ public class MainTabWindow_Colony : MainTabWindow
         float iconY = y + (lineH - iconSz) / 2f;
         GUI.DrawTexture(new Rect(x, iconY, iconSz, iconSz), icon);
 
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-        Text.Font = GameFont.Tiny;
-        Text.Anchor = TextAnchor.MiddleLeft;
-        UIUtil.DrawColoredLabel(new Rect(x + iconSz + 2f, y, 28f, lineH), value, color);
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+        UIUtil.DrawColoredLabel(new Rect(x + iconSz + 2f, y, 28f, lineH), value, color, GameFont.Tiny, TextAnchor.MiddleLeft);
     }
 
     // ===== BILLS TAB =====
@@ -985,7 +941,6 @@ public class MainTabWindow_Colony : MainTabWindow
         IReadOnlyList<BillFC> bills = faction.taxLedger.Bills;
         const float pad = 8f;
         const float rowH = 44f;
-        const float accentW = 4f;
         const float rowGap = 2f;
         const float resolveW = 100f;
         const float summaryH = 24f;
@@ -994,29 +949,17 @@ public class MainTabWindow_Colony : MainTabWindow
         float innerW = rect.width - pad * 2f;
 
         // Summary line (left): bill count + tax countdown | auto-resolve toggle (right)
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleLeft;
         string taxCountdown = "FCTimeTillTax".Translate() + ": "
             + Math.Max(0, faction.taxLedger.nextTaxDueTick - Find.TickManager.TicksGame).ToTimeString();
         UIUtil.DrawColoredLabel(
             new Rect(innerX, rect.y + pad, innerW * 0.6f, summaryH),
             "FCPendingBillsCount".Translate(bills.Count) + "    |    " + taxCountdown,
-            Color.gray);
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+            Color.gray, GameFont.Small, TextAnchor.MiddleLeft);
 
         // Auto-resolve checkbox (right side of summary)
         float autoX = innerX + innerW - 180f;
-        fontBefore = Text.Font;
-        anchorBefore = Text.Anchor;
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleRight;
         Rect autoResolveRectLabel = new(autoX, rect.y + pad, 150f, summaryH);
-        UIUtil.DrawColoredLabel(autoResolveRectLabel, "FCAutoResolve".Translate(), Color.gray);
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+        UIUtil.DrawColoredLabel(autoResolveRectLabel, "FCAutoResolve".Translate(), Color.gray, GameFont.Small, TextAnchor.MiddleRight);
         bool prevAutoResolve = faction.taxLedger.autoResolve;
         Widgets.Checkbox(new Vector2(autoX + 153f, rect.y + pad + 1f), ref faction.taxLedger.autoResolve, 22);
         if (faction.taxLedger.autoResolve && !prevAutoResolve)
@@ -1032,14 +975,8 @@ public class MainTabWindow_Colony : MainTabWindow
         // Allow late payments checkbox (second row, below auto-resolve)
         float lateY = autoResolveRectLabel.y;
         float lateX = autoResolveRectLabel.x - 150f;
-        fontBefore = Text.Font;
-        anchorBefore = Text.Anchor;
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleRight;
         Rect latePaymentRectLabel = new(lateX, lateY, 150f, summaryH);
-        UIUtil.DrawColoredLabel(latePaymentRectLabel, "FCAllowLatePayments".Translate(), Color.gray);
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+        UIUtil.DrawColoredLabel(latePaymentRectLabel, "FCAllowLatePayments".Translate(), Color.gray, GameFont.Small, TextAnchor.MiddleRight);
         bool prevAllowLate = faction.taxLedger.allowLatePayments;
         Widgets.Checkbox(new Vector2(lateX + 153f, lateY + 1f), ref faction.taxLedger.allowLatePayments, 22);
         if (faction.taxLedger.allowLatePayments && !prevAllowLate)
@@ -1054,16 +991,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Empty state
         if (bills.Count == 0)
         {
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Medium;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.DrawColoredLabel(
-                new Rect(rect.x, rect.y + rect.height * 0.35f, rect.width, 40f),
-                "FCNoPendingBills".Translate(),
-                Color.gray);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawEmptyState(rect, "FCNoPendingBills".Translate());
             return;
         }
 
@@ -1071,47 +999,29 @@ public class MainTabWindow_Colony : MainTabWindow
         float listY = rect.y + pad + summaryH + 4f;
         float viewH = rect.yMax - listY - pad;
         Rect viewRect = new(innerX, listY, innerW, viewH);
-        float contentH = bills.Count * (rowH + rowGap);
-        Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref billsScroll, contentH);
-
         // Sort the live ledger list every frame (tiny list). Caching by count let stale
         // bills linger when AutoresolveBills removed one while AddTax added another in the
         // same cycle, which allowed resolving an already-removed bill twice.
         List<BillFC> sorted = bills.OrderBy(b => b.dueTick).ToList();
-        for (int i = 0; i < sorted.Count; i++)
+        // Accent strip: green = income, red = expense. Resolving a bill stops the list, since the
+        // ledger changed under it.
+        UIUtil.DrawAccentRowList(viewRect, sorted, rowH, rowGap, ref billsScroll, GetBillAccentColor, (bill, row) =>
         {
-            BillFC bill = sorted[i];
-            float ry = i * (rowH + rowGap);
-            float rowW = scrollRect.width;
-            Rect rowRect = new(0f, ry, rowW, rowH);
-
-            // Alternating row background
-            if (i % 2 == 0)
-                Widgets.DrawHighlight(rowRect);
-
-            // Accent strip (green = income, red = expense)
-            Color accent = GetBillAccentColor(bill);
-            Widgets.DrawBoxSolid(new Rect(0f, ry, accentW, rowH), accent);
-
-            float contentX = accentW + 6f;
-            float contentW = rowW - contentX - 4f;
-            float topY = ry;
-            float botY = ry + rowH / 2f;
-            float lineH = rowH / 2f;
+            Rect rowRect = row.Rect;
+            Color accent = row.Accent;
+            float contentX = row.ContentX;
+            float contentW = row.ContentW;
+            float topY = row.TopY;
+            float botY = row.BotY;
+            float lineH = row.LineH;
 
             // Top-left: Settlement name + bill kind (clickable, colored by bill type)
             string settleName = bill.settlement is not null ? bill.settlement.Name : "Null";
             string kindLabel = string.IsNullOrEmpty(bill.label) ? "" : bill.label;
             string headerLabel = settleName + " - " + kindLabel;
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
             float nameW = contentW - resolveW - 160f;
             Rect nameRect = new(contentX, topY, nameW, lineH);
-            UIUtil.DrawColoredLabel(nameRect, headerLabel, accent);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawColoredLabel(nameRect, headerLabel, accent, GameFont.Small, TextAnchor.MiddleLeft);
             if (Widgets.ButtonInvisible(nameRect) && bill.settlement is not null)
                 Find.WindowStack.Add(new SettlementWindowFc(bill.settlement));
             if (Mouse.IsOver(nameRect))
@@ -1121,19 +1031,13 @@ public class MainTabWindow_Colony : MainTabWindow
             float silverW = 140f;
             float silverX = contentX + contentW - resolveW - silverW - 6f;
             string silverStr = bill.taxes.silverAmount.ToString("F0") + " " + "FCSilver".Translate();
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleRight;
             UIUtil.DrawColoredLabel(
                 new Rect(silverX, topY, silverW, lineH),
                 silverStr,
-                bill.taxes.silverAmount >= 0 ? AccentUtil.Income : AccentUtil.Expense);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+                bill.taxes.silverAmount >= 0 ? AccentUtil.Income : AccentUtil.Expense, GameFont.Small, TextAnchor.MiddleRight);
 
             // Resolve button (right side, full row height)
-            Rect resolveRect = new(contentX + contentW - resolveW, ry + 4f, resolveW, rowH - 8f);
+            Rect resolveRect = new(contentX + contentW - resolveW, topY + 4f, resolveW, rowH - 8f);
             if (UIUtil.ClampedButtonText(resolveRect, "FCResolveBill".Translate()))
             {
                 if (bill.AttemptResolve())
@@ -1148,13 +1052,13 @@ public class MainTabWindow_Colony : MainTabWindow
                         $"{"FCNotEnoughSilverOnMapToPayBill".Translate()} ({available} / {needed} {"FCSilver".Translate()})",
                         MessageTypeDefOf.RejectInput);
                 }
-                break;
+                return false;
             }
 
             // Bottom-left: Tithe summary
             string titheSummary = GetBillTitheSummary(bill);
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
+            GameFont fontBefore = Text.Font;
+            TextAnchor anchorBefore = Text.Anchor;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             UIUtil.ClampedLabel(new Rect(contentX, botY, contentW - 160f, lineH), titheSummary);
@@ -1167,16 +1071,10 @@ public class MainTabWindow_Colony : MainTabWindow
             Color dueColor = ticksLeft <= 0 ? new Color(1f, 0.3f, 0.3f)
                 : ticksLeft < GenDate.TicksPerDay ? new Color(1f, 0.7f, 0.2f)
                 : Color.white;
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Tiny;
-            Text.Anchor = TextAnchor.MiddleRight;
             UIUtil.DrawColoredLabel(
                 new Rect(contentX + contentW - resolveW - 166f, botY, 160f, lineH),
                 dueStr,
-                dueColor);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+                dueColor, GameFont.Tiny, TextAnchor.MiddleRight);
 
             // Tooltip
             string tooltip = settleName + "\n\n"
@@ -1184,9 +1082,8 @@ public class MainTabWindow_Colony : MainTabWindow
                 + titheSummary + "\n"
                 + "FCDueFC".Translate() + ": " + dueStr;
             TooltipHandler.TipRegion(rowRect, tooltip);
-        }
-
-        ScrollUtil.EndScrollView();
+            return true;
+        });
     }
 
     private static Color GetBillAccentColor(BillFC bill)
@@ -1257,23 +1154,12 @@ public class MainTabWindow_Colony : MainTabWindow
         float innerX = rect.x + pad;
         float innerW = rect.width - pad * 2f;
 
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleLeft;
         UIUtil.DrawColoredLabel(new Rect(innerX, rect.y + pad, innerW, 24f),
-            "FCActiveSituationsCount".Translate(sits.Count), Color.gray);
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+            "FCActiveSituationsCount".Translate(sits.Count), Color.gray, GameFont.Small, TextAnchor.MiddleLeft);
 
         if (sits.Count == 0)
         {
-            Text.Font = GameFont.Medium;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.DrawColoredLabel(new Rect(rect.x, rect.y + rect.height * 0.35f, rect.width, 40f),
-                "FCNoActiveSituations".Translate(), Color.gray);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawEmptyState(rect, "FCNoActiveSituations".Translate());
             return;
         }
 
@@ -1328,7 +1214,6 @@ public class MainTabWindow_Colony : MainTabWindow
         IReadOnlyList<FCEvent> events = faction.Events;
         const float pad = 8f;
         const float rowH = 44f;
-        const float accentW = 4f;
         const float rowGap = 2f;
         const float progressW = 160f;
         const float progressH = 16f;
@@ -1358,10 +1243,6 @@ public class MainTabWindow_Colony : MainTabWindow
         List<FCEvent> sorted = cachedSortedEvents;
 
         // Summary line
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleLeft;
         int filteredCount = filtering ? sorted.Count : events.Count;
         string summaryText = filtering
             ? "FCActiveEventsFiltered".Translate(filteredCount, events.Count)
@@ -1369,9 +1250,7 @@ public class MainTabWindow_Colony : MainTabWindow
         UIUtil.DrawColoredLabel(
             new Rect(innerX, rect.y + pad, innerW, summaryH),
             summaryText,
-            Color.gray);
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+            Color.gray, GameFont.Small, TextAnchor.MiddleLeft);
 
         // Filter bar
         Rect filterBar = new(innerX, rect.y + pad + summaryH + 2f, innerW, filterH);
@@ -1380,16 +1259,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Empty state
         if (events.Count == 0)
         {
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Medium;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.DrawColoredLabel(
-                new Rect(rect.x, rect.y + rect.height * 0.35f, rect.width, 40f),
-                "FCNoActiveEvents".Translate(),
-                Color.gray);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawEmptyState(rect, "FCNoActiveEvents".Translate());
             return;
         }
 
@@ -1397,58 +1267,33 @@ public class MainTabWindow_Colony : MainTabWindow
         float listY = rect.y + pad + summaryH + filterH + 6f;
         float viewH = rect.yMax - listY - pad;
         Rect viewRect = new(innerX, listY, innerW, viewH);
-        float contentH = sorted.Count * (rowH + rowGap);
 
         // Filtered empty state
         if (sorted.Count == 0)
         {
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Medium;
-            Text.Anchor = TextAnchor.MiddleCenter;
             UIUtil.DrawColoredLabel(
                 new Rect(rect.x, listY + viewH * 0.25f, rect.width, 40f),
                 "FCNoEventsMatchFilter".Translate(),
-                Color.gray);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+                Color.gray, GameFont.Medium, TextAnchor.MiddleCenter);
             return;
         }
 
-        Rect scrollRect = ScrollUtil.BeginScrollView(viewRect, ref eventsScroll, contentH);
-
-        for (int i = 0; i < sorted.Count; i++)
+        // Accent strip: the event's category color
+        UIUtil.DrawAccentRowList(viewRect, sorted, rowH, rowGap, ref eventsScroll, AccentUtil.GetEventCategoryColor, (evt, row) =>
         {
-            FCEvent evt = sorted[i];
-            float ry = i * (rowH + rowGap);
-            float rowW = scrollRect.width;
-            Rect rowRect = new(0f, ry, rowW, rowH);
-
-            // Alternating row background
-            if (i % 2 == 0)
-                Widgets.DrawHighlight(rowRect);
-
-            // Category accent strip
-            Color catColor = AccentUtil.GetEventCategoryColor(evt);
-            Widgets.DrawBoxSolid(new Rect(0f, ry, accentW, rowH), catColor);
-
-            float contentX = accentW + 6f;
-            float contentW = rowW - contentX - 4f;
-            float topY = ry;
-            float botY = ry + rowH / 2f;
-            float lineH = rowH / 2f;
+            Rect rowRect = row.Rect;
+            Color catColor = row.Accent;
+            float contentX = row.ContentX;
+            float contentW = row.ContentW;
+            float topY = row.TopY;
+            float botY = row.BotY;
+            float lineH = row.LineH;
 
             // Top-left: Event name (colored by category for emphasis)
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
             UIUtil.DrawColoredLabel(
                 new Rect(contentX, topY, contentW - progressW - 10f, lineH),
                 evt.Label,
-                catColor);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+                catColor, GameFont.Small, TextAnchor.MiddleLeft);
 
             // Top-right: Clickable location label
             string locLabel = GetEventLocationLabel(evt);
@@ -1456,8 +1301,8 @@ public class MainTabWindow_Colony : MainTabWindow
             Rect locRect = default(Rect);
             if (locLabel is not null)
             {
-                fontBefore = Text.Font;
-                anchorBefore = Text.Anchor;
+                GameFont locFontBefore = Text.Font;
+                TextAnchor locAnchorBefore = Text.Anchor;
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
                 float locW = Mathf.Min(Text.CalcSize(locLabel).x + 8f, contentW * 0.4f);
@@ -1468,13 +1313,13 @@ public class MainTabWindow_Colony : MainTabWindow
                     HandleLocationClick(evt);
                 if (Mouse.IsOver(locRect))
                     Widgets.DrawHighlight(locRect);
-                Text.Font = fontBefore;
-                Text.Anchor = anchorBefore;
+                Text.Font = locFontBefore;
+                Text.Anchor = locAnchorBefore;
             }
 
             // Bottom-left: Description text (white, truncated with ellipsis)
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
+            GameFont fontBefore = Text.Font;
+            TextAnchor anchorBefore = Text.Anchor;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             float descW = contentW - progressW - 10f;
@@ -1540,9 +1385,8 @@ public class MainTabWindow_Colony : MainTabWindow
             // Row tooltip
             string tooltip = GetEventFullTooltip(evt);
             TooltipHandler.TipRegion(rowRect, tooltip);
-        }
-
-        ScrollUtil.EndScrollView();
+            return true;
+        });
     }
 
 
@@ -1763,16 +1607,7 @@ public class MainTabWindow_Colony : MainTabWindow
         // Empty state
         if (totalMilitaryCount == 0)
         {
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Medium;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.DrawColoredLabel(
-                new Rect(tableRect.x, tableRect.y + tableRect.height * 0.35f, tableRect.width, 40f),
-                "FCNoMilitarySettlements".Translate(),
-                Color.gray);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawEmptyState(tableRect, "FCNoMilitarySettlements".Translate());
             return;
         }
 
@@ -1830,14 +1665,8 @@ public class MainTabWindow_Colony : MainTabWindow
             float nameW = contentW - fsBtnW - counterW - badgeW - 12f;
 
             // Header-left: Settlement name (clickable, accent-colored)
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
             Rect nameRect = new(contentX, topY, nameW, lineH);
-            UIUtil.DrawColoredLabel(nameRect, settlement.Name, accent);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawColoredLabel(nameRect, settlement.Name, accent, GameFont.Small, TextAnchor.MiddleLeft);
             if (Widgets.ButtonInvisible(nameRect))
                 Find.WindowStack.Add(new SettlementWindowFc(settlement));
             if (Mouse.IsOver(nameRect))
@@ -1973,14 +1802,8 @@ public class MainTabWindow_Colony : MainTabWindow
             float nameW = contentW - statusW - badgeW;
 
             // Top-left: Entry name (clickable, accent-colored — zooms to world object)
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
             Rect nameRect = new(contentX, topY, nameW, lineH);
-            UIUtil.DrawColoredLabel(nameRect, entry.Name, accent);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawColoredLabel(nameRect, entry.Name, accent, GameFont.Small, TextAnchor.MiddleLeft);
             if (Widgets.ButtonInvisible(nameRect))
                 CameraJumper.TryJumpAndSelect(new GlobalTargetInfo(entry.WorldObject));
             if (Mouse.IsOver(nameRect))
@@ -1998,16 +1821,10 @@ public class MainTabWindow_Colony : MainTabWindow
             Text.Anchor = anchorBefore;
 
             // Top-right: Status label
-            fontBefore = Text.Font;
-            anchorBefore = Text.Anchor;
-            Text.Font = GameFont.Tiny;
-            Text.Anchor = TextAnchor.MiddleRight;
             UIUtil.DrawColoredLabel(
                 new Rect(contentX + contentW - statusW, topY, statusW, lineH),
                 entry.StatusLabel,
-                accent);
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+                accent, GameFont.Tiny, TextAnchor.MiddleRight);
 
             // === BOTTOM LINE ===
             float btnW = 80f;

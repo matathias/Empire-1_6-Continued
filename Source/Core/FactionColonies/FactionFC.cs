@@ -1394,21 +1394,8 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
         double value = stat.IdentityValue;
 
-        foreach (FCPolicy p in policyManager.policies)
-        {
-            if (p?.def is null) continue;
+        foreach (FCPolicy p in policyManager.ActivePolicies())
             value = AccumulateStatModifiersValue(value, stat, p.def.statModifiers);
-        }
-        foreach (FCPolicy p in policyManager.factionTraits)
-        {
-            if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
-            value = AccumulateStatModifiersValue(value, stat, p.def.statModifiers);
-        }
-        foreach (FCPolicy edict in policyManager.edicts.Values)
-        {
-            if (edict?.def is null || !edict.IsFullyActive) continue;
-            value = AccumulateStatModifiersValue(value, stat, edict.def.statModifiers);
-        }
         foreach (FCEvent evt in Events)
         {
             if (evt?.def is null) continue;
@@ -1448,20 +1435,10 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
         bool isAdditive = stat.aggregation == FCStatAggregation.Additive;
         bool invert = stat.invertedForDisplay;
 
-        foreach (FCPolicy p in policyManager.policies)
+        foreach (FCPolicy p in policyManager.ActivePolicies())
         {
-            if (p?.def is null) continue;
-            desc = AccumulateStatModifiersDesc(desc, stat, p.def.statModifiers, p.def.LabelCap, hardinvert);
-        }
-        foreach (FCPolicy p in policyManager.factionTraits)
-        {
-            if (p?.def is null || p.def == FCPolicyDefOf.empty) continue;
-            desc = AccumulateStatModifiersDesc(desc, stat, p.def.statModifiers, p.def.LabelCap, hardinvert);
-        }
-        foreach (FCPolicy edict in policyManager.edicts.Values)
-        {
-            if (edict?.def is null || !edict.IsFullyActive) continue;
-            desc = AccumulateStatModifiersDesc(desc, stat, edict.def.statModifiers, $"{edict.def.LabelCap} ({"FCEdict".Translate()})", hardinvert);
+            string label = p.def.IsEdict ? $"{p.def.LabelCap} ({"FCEdict".Translate()})" : p.def.LabelCap.ToString();
+            desc = AccumulateStatModifiersDesc(desc, stat, p.def.statModifiers, label, hardinvert);
         }
         foreach (FCEvent evt in Events)
         {
@@ -1778,11 +1755,7 @@ public class FactionFC : WorldComponent, ISettlementListener, IMilitaryOperation
 
                 FCEvent tmpEvt = FCEventMaker.MakeRandomEvent(picked, null);
                 if (tmpEvt is not null)
-                {
-                    eventManager.AddEvent(tmpEvt);
-
-                    Find.LetterStack.ReceiveLetter("FCRandomEventLetterLabel".Translate(), FCEventMaker.BuildEventLetterBody(tmpEvt), LetterDefOf.NeutralEvent);
-                }
+                    FCEventMaker.QueueAndAnnounce(tmpEvt, eventManager, "FCRandomEventLetterLabel".Translate());
             }
         }
     }

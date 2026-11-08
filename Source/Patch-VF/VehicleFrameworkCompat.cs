@@ -10,7 +10,7 @@ public static class VehicleFrameworkCompatInit
 {
     static VehicleFrameworkCompatInit()
     {
-        new Harmony("com.Matathias.Empire.VF").PatchAll(Assembly.GetExecutingAssembly());
+        new Harmony("com.Matathias.Empire.VF").PatchEachClass(Assembly.GetExecutingAssembly());
         LogUtil.MessageForce("Vehicle Framework patched");
     }
 }

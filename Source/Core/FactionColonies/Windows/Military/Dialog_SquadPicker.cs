@@ -183,11 +183,7 @@ public abstract class Dialog_SquadPicker : Window
     {
         if (rows.Count == 0 && ExtraRowsHeight <= 0f)
         {
-            TextAnchor anchorBefore = Text.Anchor;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.DrawColoredLabel(new Rect(listRect.x, listRect.y + listRect.height * 0.35f,
-                listRect.width, 40f), "FCHireSquadsEmpty".Translate(), Color.gray);
-            Text.Anchor = anchorBefore;
+            UIUtil.DrawEmptyState(listRect, "FCHireSquadsEmpty".Translate(), Text.Font);
             return;
         }
 

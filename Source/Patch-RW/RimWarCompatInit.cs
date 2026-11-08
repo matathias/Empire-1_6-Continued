@@ -23,11 +23,10 @@ public static class RimWarCompatInit
 
     static RimWarCompatInit()
     {
-        // Registered before PatchAll so a failing patch can't skip it. EmpireRegistry.ClearAll runs on
-        // every Game.ClearCaches (each load and new game), so the invalidator re-registers it.
-        EmpireRegistry.Register(_strengthModifier);
-        EmpireCacheUtil.RegisterCacheInvalidator("Empire.RW", () => EmpireRegistry.Register(_strengthModifier));
-        new Harmony("com.Matathias.Empire.RW").PatchAll(Assembly.GetExecutingAssembly());
+        // Registered before patching so a failing patch can't skip it. Persistent, because
+        // EmpireRegistry.ClearAll runs on every Game.ClearCaches (each load and new game).
+        EmpireRegistry.RegisterPersistent(_strengthModifier);
+        new Harmony("com.Matathias.Empire.RW").PatchEachClass(Assembly.GetExecutingAssembly());
         LogUtil.MessageForce("RimWar compatibility module loaded.");
     }
 }

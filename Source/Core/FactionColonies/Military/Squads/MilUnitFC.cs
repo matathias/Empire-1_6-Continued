@@ -313,12 +313,7 @@ public class MilUnitFC : IExposable, ILoadReferenceable
     {
         try
         {
-            if (previewPawn is not null)
-            {
-                previewPawn.apparel?.DestroyAll();
-                previewPawn.equipment?.DestroyAllEquipment();
-                previewPawn.Destroy();
-            }
+            PawnUtil.DiscardPreviewPawn(previewPawn, "MilUnitFC");
 
             previewPawn = FCPawnGenerator.GenerateWithForcedXenotype(FCPawnGenerator.WorkerOrMilitaryRequestForUnit(this));
 

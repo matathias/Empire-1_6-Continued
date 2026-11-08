@@ -2,23 +2,13 @@ using UnityEngine;
 
 namespace FactionColonies;
 
-public class FCWindow_XenoPicker : Window
+public class FCWindow_XenoPicker : FCWindow_SearchablePicker<FCWindow_XenoPicker.XenoOption>
 {
     private readonly MilUnitFC unit;
-    private string searchTerm = "";
-    private Vector2 scrollPos;
 
     // Selection state — exactly one of these is non-null
     private XenotypeDef selectedDef;
     private string selectedCustomName;
-
-    private const float RowHeight = 30f;
-    private const float IconSize = 24f;
-    private const float SearchBarHeight = 28f;
-    private const float ButtonHeight = 35f;
-    private const float margin = 5f;
-
-    public override Vector2 InitialSize => new(450f, 550f);
 
     public FCWindow_XenoPicker(MilUnitFC unit)
     {
@@ -27,16 +17,12 @@ public class FCWindow_XenoPicker : Window
             selectedCustomName = unit.customXenotypeName;
         else
             selectedDef = unit.xenotype;
-        draggable = true;
-        doCloseX = true;
-        absorbInputAroundWindow = true;
-        forcePause = false;
 
         // Rebuild cache so newly created xenotypes (including disk-only) appear
         FactionCache.InvalidateCustomXenotypeCache();
     }
 
-    private struct XenoOption
+    public struct XenoOption
     {
         public XenotypeDef def;
         public CustomXenotype custom;
@@ -47,23 +33,11 @@ public class FCWindow_XenoPicker : Window
         public bool IsCustom => custom is not null;
     }
 
-    public override void DoWindowContents(Rect inRect)
+    protected override string Title => "FCChangeUnitXenoButton".Translate();
+    protected override string EmptyText => "FCChangeUnitXenoNoXenos".Translate();
+
+    protected override List<XenoOption> Items()
     {
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-
-        // Title
-        Text.Font = GameFont.Medium;
-        Text.Anchor = TextAnchor.UpperLeft;
-        UIUtil.ClampedLabel(new Rect(0, 0, inRect.width, 35f), "FCChangeUnitXenoButton".Translate());
-
-        // Search bar
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new(0, 40f, inRect.width, SearchBarHeight);
-        searchTerm = Widgets.TextField(searchRect, searchTerm);
-
-        // Build unified xeno list
         List<XenoOption> xenoOptions = [];
 
         foreach (XenotypeDef def in FactionCache.ViolentXenotypeDefs)
@@ -97,101 +71,60 @@ public class FCWindow_XenoPicker : Window
         }
 
         xenoOptions.Sort((a, b) => string.Compare(a.label, b.label, StringComparison.OrdinalIgnoreCase));
+        return xenoOptions;
+    }
 
-        // Filter by search
-        List<XenoOption> filtered = string.IsNullOrEmpty(searchTerm)
-            ? xenoOptions
-            : xenoOptions.Where(x => x.label.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+    protected override string SearchText(XenoOption opt) => opt.label;
 
-        // Scroll view
-        float listTop = searchRect.yMax + margin;
-        float listHeight = inRect.height - listTop - ButtonHeight - 15f;
-        Rect scrollOutRect = new(0, listTop, inRect.width, listHeight);
-        Widgets.DrawMenuSection(scrollOutRect);
+    protected override void DrawRow(Rect row, XenoOption opt)
+    {
+        Rect iconRect = new(row.x + 2f, row.y + 3f, IconSize, IconSize);
+        if (opt.icon != null)
+            GUI.DrawTexture(iconRect, opt.icon);
 
-        float viewHeight = filtered.Count * RowHeight;
-        Rect scrollViewRect = ScrollUtil.BeginScrollView(scrollOutRect, ref scrollPos, viewHeight);
+        Rect labelRect = new(iconRect.xMax + 5f, row.y, row.width - IconSize - 10f, RowHeight);
+        string costText = opt.costFactor != 1f ? " (x" + opt.costFactor.ToString("F2") + $" {"FCCost".Translate()})" : "";
+        UIUtil.ClampedLabel(labelRect, opt.label + costText);
+    }
 
-        for (int i = 0; i < filtered.Count; i++)
+    protected override bool IsSelected(XenoOption opt) => opt.IsCustom
+        ? opt.custom.name == selectedCustomName
+        : opt.def == selectedDef;
+
+    protected override void Select(XenoOption opt)
+    {
+        if (opt.IsCustom)
         {
-            XenoOption opt = filtered[i];
-            Rect row = new(0, i * RowHeight, scrollViewRect.width, RowHeight);
-
-            bool isSelected = opt.IsCustom
-                ? opt.custom.name == selectedCustomName
-                : opt.def == selectedDef;
-
-            if (isSelected)
-                Widgets.DrawHighlightSelected(row);
-            else if (i % 2 == 0)
-                Widgets.DrawHighlight(row);
-
-            Rect iconRect = new(row.x + 2f, row.y + 3f, IconSize, IconSize);
-            if (opt.icon != null)
-                GUI.DrawTexture(iconRect, opt.icon);
-
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new(iconRect.xMax + 5f, row.y, row.width - IconSize - 10f, RowHeight);
-            string costText = opt.costFactor != 1f ? " (x" + opt.costFactor.ToString("F2") + $" {"FCCost".Translate()})" : "";
-            UIUtil.ClampedLabel(labelRect, opt.label + costText);
-
-            if (Widgets.ButtonInvisible(row))
-            {
-                if (opt.IsCustom)
-                {
-                    selectedCustomName = opt.custom.name;
-                    selectedDef = null;
-                }
-                else
-                {
-                    selectedDef = opt.def;
-                    selectedCustomName = null;
-                }
-            }
+            selectedCustomName = opt.custom.name;
+            selectedDef = null;
         }
-
-        if (filtered.Count == 0)
+        else
         {
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.ClampedLabel(scrollOutRect, "FCChangeUnitXenoNoXenos".Translate());
+            selectedDef = opt.def;
+            selectedCustomName = null;
         }
+    }
 
-        ScrollUtil.EndScrollView();
+    protected override bool CanConfirm => selectedDef is not null || selectedCustomName is not null;
 
-        // Bottom buttons
-        float buttonWidth = 120f;
-        Rect buttonBar = new(0, inRect.height - ButtonHeight - 5f, inRect.width, ButtonHeight);
-
-        Rect cancelRect = new(buttonBar.xMax - buttonWidth, buttonBar.y, buttonWidth, buttonBar.height);
-        if (UIUtil.ClampedButtonText(cancelRect, "CancelButton".Translate()))
+    // The selection is kept by name, so look the custom xenotype up again on confirm.
+    protected override void Confirm()
+    {
+        if (selectedCustomName is not null)
         {
-            Close();
+            var decoder = FactionCache.CustomXenotypesDecoder;
+            if (decoder is not null && decoder.TryGetValue(selectedCustomName, out CustomXenotype custom))
+                unit.SetCustomXenotype(custom);
         }
-
-        bool canConfirm = selectedDef is not null || selectedCustomName is not null;
-        Rect confirmRect = new(cancelRect.x - buttonWidth - 10f, buttonBar.y, buttonWidth, buttonBar.height);
-        if (UIUtil.ClampedButtonText(confirmRect, "FCConfirm".Translate(), active: canConfirm))
+        else
         {
-            if (canConfirm)
-            {
-                if (selectedCustomName is not null)
-                {
-                    var decoder = FactionCache.CustomXenotypesDecoder;
-                    CustomXenotype custom;
-                    if (decoder is not null && decoder.TryGetValue(selectedCustomName, out custom))
-                        unit.SetCustomXenotype(custom);
-                }
-                else
-                {
-                    unit.SetXenotype(selectedDef);
-                }
-                Close();
-            }
+            unit.SetXenotype(selectedDef);
         }
+    }
 
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+    protected override void Pick(XenoOption opt)
+    {
+        if (opt.IsCustom) unit.SetCustomXenotype(opt.custom);
+        else unit.SetXenotype(opt.def);
     }
 }

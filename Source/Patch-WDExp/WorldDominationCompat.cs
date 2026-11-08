@@ -24,11 +24,10 @@ public static class WorldDominationCompatInit
 
     static WorldDominationCompatInit()
     {
-        // Registered before PatchAll so a failing patch can't skip it. EmpireRegistry.ClearAll runs on
-        // every Game.ClearCaches (each load and new game), so the invalidator re-registers it.
-        EmpireRegistry.Register(_strengthModifier);
-        EmpireCacheUtil.RegisterCacheInvalidator("Empire.WDExp", () => EmpireRegistry.Register(_strengthModifier));
-        new Harmony("com.Matathias.Empire.WDExp").PatchAll(Assembly.GetExecutingAssembly());
+        // Registered before patching so a failing patch can't skip it. Persistent, because
+        // EmpireRegistry.ClearAll runs on every Game.ClearCaches (each load and new game).
+        EmpireRegistry.RegisterPersistent(_strengthModifier);
+        new Harmony("com.Matathias.Empire.WDExp").PatchEachClass(Assembly.GetExecutingAssembly());
         LogUtil.MessageForce("World Domination (Experimental) compatibility module loaded.");
     }
 }
@@ -67,19 +66,9 @@ public static class Patch_ExecuteTravelerRaid
         if (empireSettlement is null) return true;
         if (traveler.Faction is null) return true;
 
-        // Sample the baseline through the worldcomp so faction-level efficiency modifiers apply.
-        // WD's traveler strength dictates militaryLevel, so we override the sampled level with it.
-        EnemyPower entry = FindFC.EnemyPower?.GetOrCompute(traveler.Faction);
-        MilitaryForce attackingForce = entry?.SampleBattleForce(traveler.Faction);
-        if (attackingForce is null)
-        {
-            MilitaryDeploymentUtil.GetTechLevelBaseline(traveler.Faction.def.techLevel, out double _, out double efficiency);
-            attackingForce = new MilitaryForce(1, efficiency, null, traveler.Faction);
-        }
-
+        // WD's traveler strength dictates the military level
         double wdMilitaryLevel = traveler.travelerStrength / WDStrengthSettlementModifier.SCALE_FACTOR;
-        attackingForce.militaryLevel = wdMilitaryLevel;
-        attackingForce.forceRemaining = Math.Max(1, Math.Round(attackingForce.militaryLevel * attackingForce.militaryEfficiency));
+        MilitaryForce attackingForce = MilitaryOperationsUtil.BuildAttackForce(traveler.Faction, wdMilitaryLevel);
 
         // Route through Empire's defense system (1-day warning + auto-battle/manual)
         bool queued = MilitaryOperationsUtil.AttackPlayerSettlement(attackingForce, empireSettlement, traveler.Faction);

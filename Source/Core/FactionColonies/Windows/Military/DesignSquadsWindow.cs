@@ -16,8 +16,6 @@ public class DesignSquadsWindow : MilitaryWindow
 
     // Layout constants (matching DesignUnitsWindow)
     private const float SidebarWidth = 250f;
-    private const float RowHeight = 30f;
-    private const float SearchBarHeight = 28f;
     private const float IconSize = 24f;
     private const float margin = 5f;
     private const float ButtonHeight = 30f;
@@ -88,93 +86,31 @@ public class DesignSquadsWindow : MilitaryWindow
 
     private void DrawSidebar(Rect rect)
     {
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-
-        // Search bar
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new(rect.x, rect.y, rect.width, SearchBarHeight);
-        squadSearchTerm = Widgets.TextField(searchRect, squadSearchTerm);
-
-        // Squad list (fills space between search bar and buttons)
-        float buttonsHeight = ButtonHeight * 2 + margin;
-        float listHeight = rect.yMax - searchRect.yMax - margin - buttonsHeight - margin;
-        Rect listOutRect = new(rect.x, searchRect.yMax + margin, rect.width, listHeight);
-        Widgets.DrawMenuSection(listOutRect);
-
-        List<MilSquadFC> filteredSquads = string.IsNullOrEmpty(squadSearchTerm)
-            ? mfc.squads ?? []
-            : (mfc.squads ?? [])
-                .Where(s => (s.name ?? "").IndexOf(squadSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0)
-                .ToList();
-
-        float viewHeight = filteredSquads.Count * RowHeight;
-        Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref squadListScrollPos, viewHeight);
-
-        for (int i = 0; i < filteredSquads.Count; i++)
-        {
-            MilSquadFC squad = filteredSquads[i];
-            Rect row = new(scrollViewRect.x, scrollViewRect.y + i * RowHeight,
-                scrollViewRect.width, RowHeight);
-
-            if (squad == selectedSquad)
-                Widgets.DrawHighlightSelected(row);
-            else if (i % 2 == 0)
-                Widgets.DrawHighlight(row);
-
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new(row.x + 4f, row.y, row.width - 6f, RowHeight);
-            UIUtil.ClampedLabel(labelRect, squad.name);
-
-            if (Widgets.ButtonInvisible(row))
+        DrawTemplateSidebar(rect, ref squadSearchTerm, ref squadListScrollPos, mfc.squads, selectedSquad,
+            s => s.name,
+            squad =>
             {
                 selectedSquad = squad;
                 selectedText = squad.name;
                 selectedSquad.UpdateEquipmentTotalCost();
-            }
-        }
-
-        ScrollUtil.EndScrollView();
-
-        // CRUD buttons (2x2 grid)
-        float btnY = listOutRect.yMax + margin;
-        float buttonW = (rect.width - margin) / 2f;
-
-        Text.Font = GameFont.Tiny;
-        Text.Anchor = TextAnchor.MiddleCenter;
-
-        Rect createBtn = new(rect.x, btnY, buttonW, ButtonHeight);
-        Rect importBtn = new(rect.x + buttonW + margin, btnY, buttonW, ButtonHeight);
-        Rect deleteBtn = new(rect.x, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
-        Rect exportBtn = new(rect.x + buttonW + margin, btnY + ButtonHeight + margin,
-            buttonW, ButtonHeight);
-
-        if (UIUtil.ClampedButtonText(createBtn, "FCCreateNewSquad".Translate()))
-        {
-            if (mfc.squads is null)
+            },
+            create: ("FCCreateNewSquad".Translate(), () =>
             {
-                mfc.ResetSquads();
-            }
+                if (mfc.squads is null)
+                {
+                    mfc.ResetSquads();
+                }
 
-            MilSquadFC newSquad = MilTemplateFactory.CreateSquad(true);
-            newSquad.name = $"New Squad {(mfc.squads.Count + 1).ToString()}";
-            selectedText = newSquad.name;
-            selectedSquad = newSquad;
-            selectedSquad.NewSquad();
-            mfc.squads.Add(newSquad);
-        }
-
-        if (UIUtil.ClampedButtonText(importBtn, "FCImportSquad".Translate()))
-        {
-            Find.WindowStack.Add(new Dialog_ManageSquadExportsFC(
-                FactionColoniesMilitary.SavedSquads.ToList()));
-        }
-
-        if (selectedSquad is not null)
-        {
-            if (UIUtil.ClampedButtonText(deleteBtn, "FCDeleteSquadButton".Translate()))
+                MilSquadFC newSquad = MilTemplateFactory.CreateSquad(true);
+                newSquad.name = $"New Squad {(mfc.squads.Count + 1).ToString()}";
+                selectedText = newSquad.name;
+                selectedSquad = newSquad;
+                selectedSquad.NewSquad();
+                mfc.squads.Add(newSquad);
+            }),
+            import: ("FCImportSquad".Translate(), () =>
+                Find.WindowStack.Add(new Dialog_ManageSquadExportsFC(FactionColoniesMilitary.SavedSquads.ToList()))),
+            delete: ("FCDeleteSquadButton".Translate(), () =>
             {
                 MilSquadFC squadToDelete = selectedSquad;
                 Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
@@ -191,17 +127,12 @@ public class DesignSquadsWindow : MilitaryWindow
                             selectedText = "FCSelectASquad".Translate();
                         }
                     }));
-            }
-
-            if (UIUtil.ClampedButtonText(exportBtn, "FCExportSquadButton".Translate()))
+            }),
+            export: ("FCExportSquadButton".Translate(), () =>
             {
                 FactionColoniesMilitary.SaveSquad(selectedSquad.ToSavedSquad());
                 Messages.Message("FCExportSquad".Translate(), MessageTypeDefOf.TaskCompletion);
-            }
-        }
-
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+            }));
     }
 
     // --- Squad Header ---

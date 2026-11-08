@@ -26,7 +26,7 @@ The facade routes that single call to `LifecycleRegistry`, `TaxTickRegistry`, an
 
 **`EmpireRegistry` is the only public registration path.** The per-domain typed `XxxRegistry.Register(IXxx)` methods that documented this in the past are now `internal` to the base mod — submods cannot reach them. Any registration from a submod must go through `EmpireRegistry.Register(object)`. (The base mod itself and `RegistryTests` still see the typed methods because they share an assembly.)
 
-`EmpireRegistry.ClearAll()` is called from `EmpireCacheUtil.InvalidateAll` (on `Game.Dispose` / `Game.ClearCaches`). Submods needing to re-register after invalidation should hook `EmpireCacheUtil.RegisterCacheInvalidator(key, callback)` and call `EmpireRegistry.Register(...)` from the callback.
+`EmpireRegistry.ClearAll()` is called from `EmpireCacheUtil.InvalidateAll` (on `Game.Dispose` / `Game.ClearCaches`). A participant that should stay registered for the whole session (a singleton registered from a `[StaticConstructorOnStartup]`) should use `EmpireRegistry.RegisterPersistent(obj)`: `ClearAll()` re-registers it afterwards, and `EmpireRegistry.Unregister(obj)` drops it for good. Per-game participants register on load as usual.
 
 **Exception — `MilitaryWindowRegistry`**: its slot-keyed `Register(SlotKey, factory)` API doesn't fit the interface-probe pattern. Its `Register` stays `public` and is called directly. `EmpireRegistry.ClearAll()` does not clear it.
 

@@ -1344,6 +1344,25 @@ public static class RegistryTests
         TestAssert.AreEqual(0, p.CanDefendCalls, "Defense validator cleared");
     }
 
+    [EmpireDestructiveTest("Registry")]
+    public static void EmpireRegistry_RegisterPersistent_SurvivesClearAll()
+    {
+        WorldSettlementFC settlement = DestructiveTestUtil.EnsureSettlement();
+        MultiInterfaceParticipant p = new();
+        EmpireRegistry.RegisterPersistent(p);
+        try
+        {
+            EmpireRegistry.ClearAll();
+            LifecycleRegistry.InvokeOnSettlementCreated(settlement);
+            TestAssert.AreEqual(1, p.SettlementCreated, "Persistent participant re-registered after ClearAll");
+        }
+        finally { EmpireRegistry.Unregister(p); }
+
+        EmpireRegistry.ClearAll();
+        LifecycleRegistry.InvokeOnSettlementCreated(settlement);
+        TestAssert.AreEqual(1, p.SettlementCreated, "Unregister drops the persistent hold");
+    }
+
     [EmpireTest("Registry")]
     public static void EmpireRegistry_Register_NonParticipant_NoOp()
     {

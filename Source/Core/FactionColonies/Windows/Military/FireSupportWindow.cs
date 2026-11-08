@@ -18,9 +18,6 @@ public class FireSupportWindow : MilitaryWindow
 
     // Layout constants (matching DesignUnitsWindow/DesignSquadsWindow)
     private const float SidebarWidth = 250f;
-    private const float RowHeight = 30f;
-    private const float SearchBarHeight = 28f;
-    private const float IconSize = 24f;
     private const float margin = 5f;
     private const float ButtonHeight = 30f;
     private const float ProjectileRowHeight = 30f;
@@ -88,89 +85,26 @@ public class FireSupportWindow : MilitaryWindow
 
     private void DrawSidebar(Rect rect)
     {
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-
-        // Search bar
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new(rect.x, rect.y, rect.width, SearchBarHeight);
-        supportSearchTerm = Widgets.TextField(searchRect, supportSearchTerm);
-
-        // Button area: 2x2 grid (Create/Import, Delete/Export)
-        float buttonsHeight = ButtonHeight * 2 + margin;
-
-        // Support list (fills space between search bar and buttons)
-        float listHeight = rect.yMax - searchRect.yMax - margin - buttonsHeight - margin;
-        Rect listOutRect = new(rect.x, searchRect.yMax + margin, rect.width, listHeight);
-        Widgets.DrawMenuSection(listOutRect);
-
-        List<MilitaryFireSupport> filteredSupports = string.IsNullOrEmpty(supportSearchTerm)
-            ? mfc.fireSupportDefs ?? []
-            : (mfc.fireSupportDefs ?? [])
-                .Where(s => (s.name ?? "").IndexOf(supportSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0)
-                .ToList();
-
-        float viewHeight = filteredSupports.Count * RowHeight;
-        Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref supportListScrollPos, viewHeight);
-
-        for (int i = 0; i < filteredSupports.Count; i++)
-        {
-            MilitaryFireSupport support = filteredSupports[i];
-            Rect row = new(scrollViewRect.x, scrollViewRect.y + i * RowHeight,
-                scrollViewRect.width, RowHeight);
-
-            if (support == selectedSupport)
-                Widgets.DrawHighlightSelected(row);
-            else if (i % 2 == 0)
-                Widgets.DrawHighlight(row);
-
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new(row.x + 4f, row.y, row.width - 6f, RowHeight);
-            UIUtil.ClampedLabel(labelRect, support.name);
-
-            if (Widgets.ButtonInvisible(row))
+        DrawTemplateSidebar(rect, ref supportSearchTerm, ref supportListScrollPos, mfc.fireSupportDefs, selectedSupport,
+            s => s.name,
+            support =>
             {
                 selectedSupport = support;
                 selectedText = support.name;
-            }
-        }
-
-        ScrollUtil.EndScrollView();
-
-        // Buttons (2x2 grid)
-        float btnY = listOutRect.yMax + margin;
-        float buttonW = (rect.width - margin) / 2f;
-
-        Text.Font = GameFont.Tiny;
-        Text.Anchor = TextAnchor.MiddleCenter;
-
-        Rect createBtn = new(rect.x, btnY, buttonW, ButtonHeight);
-        Rect importBtn = new(rect.x + buttonW + margin, btnY, buttonW, ButtonHeight);
-        Rect deleteBtn = new(rect.x, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
-        Rect exportBtn = new(rect.x + buttonW + margin, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
-
-        if (UIUtil.ClampedButtonText(createBtn, "FCCreateNewFireSupport".Translate()))
-        {
-            MilitaryFireSupport newSupport = new();
-            newSupport.name = "New Fire Support " + (mfc.fireSupportDefs.Count + 1);
-            newSupport.SetLoadID();
-            newSupport.projectiles = [];
-            selectedText = newSupport.name;
-            selectedSupport = newSupport;
-            mfc.fireSupportDefs.Add(newSupport);
-        }
-
-        if (UIUtil.ClampedButtonText(importBtn, "FCImportFireSupport".Translate()))
-        {
-            Find.WindowStack.Add(new Dialog_ManageFireSupportExportsFC(
-                FactionColoniesMilitary.SavedFireSupports.ToList()));
-        }
-
-        if (selectedSupport is not null)
-        {
-            if (UIUtil.ClampedButtonText(deleteBtn, "FCDeleteFireSupportButton".Translate()))
+            },
+            create: ("FCCreateNewFireSupport".Translate(), () =>
+            {
+                MilitaryFireSupport newSupport = new();
+                newSupport.name = "New Fire Support " + (mfc.fireSupportDefs.Count + 1);
+                newSupport.SetLoadID();
+                newSupport.projectiles = [];
+                selectedText = newSupport.name;
+                selectedSupport = newSupport;
+                mfc.fireSupportDefs.Add(newSupport);
+            }),
+            import: ("FCImportFireSupport".Translate(), () =>
+                Find.WindowStack.Add(new Dialog_ManageFireSupportExportsFC(FactionColoniesMilitary.SavedFireSupports.ToList()))),
+            delete: ("FCDeleteFireSupportButton".Translate(), () =>
             {
                 MilitaryFireSupport supportToDelete = selectedSupport;
                 Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
@@ -185,17 +119,12 @@ public class FireSupportWindow : MilitaryWindow
                             selectedText = "FCSelectAFireSupport".Translate();
                         }
                     }));
-            }
-
-            if (UIUtil.ClampedButtonText(exportBtn, "FCExportFireSupportButton".Translate()))
+            }),
+            export: ("FCExportFireSupportButton".Translate(), () =>
             {
                 FactionColoniesMilitary.SaveFireSupport(new SavedFireSupportFC(selectedSupport));
                 Messages.Message("FCExportFireSupport".Translate(), MessageTypeDefOf.TaskCompletion);
-            }
-        }
-
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+            }));
     }
 
     // --- Header ---

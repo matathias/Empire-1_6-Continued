@@ -23,11 +23,10 @@ public static class WorldDominationCompatInit
 
     static WorldDominationCompatInit()
     {
-        // Registered before PatchAll so a failing patch can't skip it. EmpireRegistry.ClearAll runs on
-        // every Game.ClearCaches (each load and new game), so the invalidator re-registers it.
-        EmpireRegistry.Register(_strengthModifier);
-        EmpireCacheUtil.RegisterCacheInvalidator("Empire.WD", () => EmpireRegistry.Register(_strengthModifier));
-        new Harmony("com.Matathias.Empire.WD").PatchAll(Assembly.GetExecutingAssembly());
+        // Registered before patching so a failing patch can't skip it. Persistent, because
+        // EmpireRegistry.ClearAll runs on every Game.ClearCaches (each load and new game).
+        EmpireRegistry.RegisterPersistent(_strengthModifier);
+        new Harmony("com.Matathias.Empire.WD").PatchEachClass(Assembly.GetExecutingAssembly());
         LogUtil.MessageForce("World Domination compatibility module loaded.");
     }
 }

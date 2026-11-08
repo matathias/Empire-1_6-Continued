@@ -63,11 +63,7 @@ public class MainTabWindow_BattleReports : Window
 
         if (archive is null || count == 0)
         {
-            Text.Anchor = TextAnchor.MiddleCenter;
-            UIUtil.DrawColoredLabel(
-                new Rect(tableRect.x, tableRect.y + tableRect.height * 0.35f, tableRect.width, 40f),
-                "FCBattleArchiveEmpty".Translate(),
-                Color.gray);
+            UIUtil.DrawEmptyState(tableRect, "FCBattleArchiveEmpty".Translate(), GameFont.Small);
             Text.Anchor = anchorBefore;
             Text.Font = fontBefore;
             return;

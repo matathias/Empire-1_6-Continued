@@ -3,8 +3,51 @@ using System.Reflection;
 
 namespace FactionColonies;
 
+/// <summary>
+/// One mod's test suite for <see cref="EmpireTestRunner"/>: the assembly its tests live in, how it
+/// logs, and the text of its destructive-run warnings. A submod builds one and keeps only its four
+/// [DebugAction] stubs, which must stay in the submod because the debug category is a constant.
+/// </summary>
+public sealed class EmpireTestSuite
+{
+    public readonly Assembly assembly;
+    /// <summary>Names the suite in the destructive-run confirmation title.</summary>
+    public readonly string name;
+    /// <summary>What the destructive tests change; the confirmation adds the save-first advice.</summary>
+    public readonly string destructiveWarning;
+    /// <summary>Logged after a destructive run: what the run may have left behind.</summary>
+    public readonly string residueNote;
+    public readonly Action<string> log;
+    public readonly Action<string> logError;
+    public readonly Action<string> logForce;
+
+    public EmpireTestSuite(Assembly assembly, string name, string destructiveWarning, string residueNote,
+        Action<string> log, Action<string> logError, Action<string> logForce)
+    {
+        this.assembly = assembly;
+        this.name = name;
+        this.destructiveWarning = destructiveWarning;
+        this.residueNote = residueNote;
+        this.log = log;
+        this.logError = logError;
+        this.logForce = logForce;
+    }
+}
+
 public static class EmpireTestRunner
 {
+    private static readonly EmpireTestSuite Suite = new(
+        Assembly.GetExecutingAssembly(),
+        "Empire",
+        "DESTRUCTIVE TESTS mutate live game state (create/destroy settlements, run tax "
+            + "cycles, hire/dismiss squads, create & resolve battles, fire events, level the "
+            + "faction, enact/revoke edicts). They are NOT cleaned up afterward.",
+        "Destructive tests left residue that is NOT auto-reverted: "
+            + "silver spent, faction XP/level gained, bills/events created, letters & "
+            + "messages fired, and any settlements/squads created if teardown was skipped. "
+            + "Reload your pre-test save to restore the prior state.",
+        LogUtil.Message, LogUtil.Error, LogUtil.MessageForce);
+
     // The debug actions use AllowedGameStates.Invalid (no constraint) so they are listed both on
     // the main menu and in a loaded game; the runner then skips tests whose TestGameState does
     // not match. AllowedGameStates flags are ANDed, so Entry | Playing would never be allowed.
@@ -12,35 +55,35 @@ public static class EmpireTestRunner
     /*-*-*- Standard (non-destructive) tier -*-*-*/
 
     [DebugAction("Empire", "Run All Tests", allowedGameStates = AllowedGameStates.Invalid)]
-    public static void RunAll() => RunTests(null, destructive: false);
+    public static void RunAll() => RunTests(Suite, null, destructive: false);
 
     [DebugAction("Empire", "Run Tests by Category", allowedGameStates = AllowedGameStates.Invalid)]
-    public static void RunByCategory() => ShowCategoryMenu(destructive: false);
+    public static void RunByCategory() => ShowCategoryMenu(Suite, destructive: false);
 
     /*-*-*- Destructive tier (save-first, mutates live state) -*-*-*/
 
     [DebugAction("Empire", "Run Destructive Tests", allowedGameStates = AllowedGameStates.Invalid)]
     public static void RunAllDestructive() =>
-        ConfirmDestructive(() => RunTests(null, destructive: true));
+        ConfirmDestructive(Suite, () => RunTests(Suite, null, destructive: true));
 
     [DebugAction("Empire", "Run Destructive Tests by Category", allowedGameStates = AllowedGameStates.Invalid)]
     public static void RunDestructiveByCategory() =>
-        ConfirmDestructive(() => ShowCategoryMenu(destructive: true));
+        ConfirmDestructive(Suite, () => ShowCategoryMenu(Suite, destructive: true));
 
-    private static void ConfirmDestructive(Action confirmedAct)
+    /// <summary>Asks the player to confirm a destructive run of <paramref name="suite"/> first.</summary>
+    public static void ConfirmDestructive(EmpireTestSuite suite, Action confirmedAct)
     {
         Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-            "DESTRUCTIVE TESTS mutate live game state (create/destroy settlements, run tax "
-            + "cycles, hire/dismiss squads, create & resolve battles, fire events, level the "
-            + "faction, enact/revoke edicts). They are NOT cleaned up afterward.\n\n"
-            + "SAVE FIRST. The runner will not crash, but your game state will be thrashed.\n\n"
+            suite.destructiveWarning + "\n\n"
+            + "SAVE FIRST. The runner will not crash, but your game state may be thrashed.\n\n"
             + "Continue?",
-            confirmedAct, destructive: true, title: "Run Destructive Empire Tests"));
+            confirmedAct, destructive: true, title: $"Run Destructive {suite.name} Tests"));
     }
 
-    private static void ShowCategoryMenu(bool destructive)
+    /// <summary>Lists <paramref name="suite"/>'s test categories in the tier; picking one runs it.</summary>
+    public static void ShowCategoryMenu(EmpireTestSuite suite, bool destructive)
     {
-        var categories = DiscoverTests()
+        var categories = DiscoverTests(suite.assembly)
             .Where(t => t.attr.Destructive == destructive)
             .Select(t => t.attr.Category)
             .Distinct()
@@ -52,15 +95,14 @@ public static class EmpireTestRunner
         {
             string local = cat;
             options.Add(new DebugMenuOption(local, DebugMenuOptionMode.Action,
-                () => RunTests(local, destructive)));
+                () => RunTests(suite, local, destructive)));
         }
         Find.WindowStack.Add(new Dialog_DebugOptionListLister(options));
     }
 
     /// <summary>
     /// The skip reason for running a test in the current program state, or null if it may run.
-    /// A game-state mismatch is the only valid reason to skip a test; the submod runners call this
-    /// too so the rule is enforced in one place.
+    /// A game-state mismatch is the only valid reason to skip a test.
     /// </summary>
     public static string GameStateSkipReason(EmpireTestAttribute attr)
     {
@@ -74,13 +116,15 @@ public static class EmpireTestRunner
     }
 
     /// <summary>False when the test is about a DLC or mod that is not active, so it is left out of the
-    /// suite entirely. The submod runners' discovery calls this too.</summary>
+    /// suite entirely.</summary>
     public static bool IsInSuite(EmpireTestAttribute attr) =>
         attr.RequiresPackageId is null || ModsConfig.IsActive(attr.RequiresPackageId);
 
-    public static void RunTests(string category, bool destructive = false)
+    /// <summary>Runs <paramref name="suite"/>'s tests in the tier (all of them, or one
+    /// <paramref name="category"/>) and logs a summary.</summary>
+    public static void RunTests(EmpireTestSuite suite, string category, bool destructive = false)
     {
-        var tests = DiscoverTests().Where(t => t.attr.Destructive == destructive);
+        var tests = DiscoverTests(suite.assembly).Where(t => t.attr.Destructive == destructive);
         if (category is not null)
             tests = tests.Where(t => t.attr.Category == category);
         var list = tests.ToList();
@@ -96,7 +140,7 @@ public static class EmpireTestRunner
             if (skipReason is not null)
             {
                 skipped++;
-                LogUtil.Message($"SKIP: {testName} -- {skipReason}");
+                suite.log($"SKIP: {testName} -- {skipReason}");
                 skipDetails.Add($"  SKIP: {testName} -- {skipReason}");
                 continue;
             }
@@ -104,50 +148,47 @@ public static class EmpireTestRunner
             {
                 method.Invoke(null, null);
                 passed++;
-                LogUtil.Message($"PASS: {testName}");
+                suite.log($"PASS: {testName}");
             }
             catch (TargetInvocationException tie) when (tie.InnerException is TestFailedException tfe)
             {
                 failed++;
-                LogUtil.Error($"FAIL: {testName} -- {tfe.Message}");
+                suite.logError($"FAIL: {testName} -- {tfe.Message}");
                 failDetails.Add($"  FAIL: {testName} -- {tfe.Message}");
             }
             catch (Exception ex)
             {
                 errors++;
                 var inner = ex is TargetInvocationException t ? t.InnerException : ex;
-                LogUtil.Error($"ERROR: {testName} -- {inner.GetType().Name}: {inner.Message}");
+                suite.logError($"ERROR: {testName} -- {inner.GetType().Name}: {inner.Message}");
                 errorDetails.Add($"  ERROR: {testName} -- {inner.GetType().Name}: {inner.Message}");
             }
         }
 
         string label = (category is not null ? $"[{category}]" : "[All]")
             + (destructive ? " DESTRUCTIVE" : "");
-        LogUtil.MessageForce($"Test results {label}: {passed} passed, {failed} failed, {errors} errors, {skipped} skipped (of {list.Count} total)");
+        suite.logForce($"Test results {label}: {passed} passed, {failed} failed, {errors} errors, {skipped} skipped (of {list.Count} total)");
         if (failDetails.Count > 0)
         {
-            LogUtil.MessageForce("Failed tests:\n" + string.Join("\n", failDetails));
+            suite.logForce("Failed tests:\n" + string.Join("\n", failDetails));
         }
         if (errorDetails.Count > 0)
         {
-            LogUtil.MessageForce("Errored tests:\n" + string.Join("\n", errorDetails));
+            suite.logForce("Errored tests:\n" + string.Join("\n", errorDetails));
         }
         if (skipDetails.Count > 0)
         {
-            LogUtil.MessageForce("Skipped tests:\n" + string.Join("\n", skipDetails));
+            suite.logForce("Skipped tests:\n" + string.Join("\n", skipDetails));
         }
         if (destructive && list.Count > 0)
         {
-            LogUtil.MessageForce("Destructive tests left residue that is NOT auto-reverted: "
-                + "silver spent, faction XP/level gained, bills/events created, letters & "
-                + "messages fired, and any settlements/squads created if teardown was skipped. "
-                + "Reload your pre-test save to restore the prior state.");
+            suite.logForce(suite.residueNote);
         }
     }
 
-    private static List<(MethodInfo method, EmpireTestAttribute attr)> DiscoverTests()
+    private static List<(MethodInfo method, EmpireTestAttribute attr)> DiscoverTests(Assembly assembly)
     {
-        return Assembly.GetExecutingAssembly()
+        return assembly
             .GetTypes()
             .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.Static))
             .Select(m => (method: m, attr: m.GetCustomAttribute<EmpireTestAttribute>()))

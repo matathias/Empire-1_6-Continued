@@ -605,12 +605,7 @@ public class FCSettings : ModSettings
         }
     }
 
-    public static string GetModVersion()
-    {
-        var mod = LoadedModManager.GetMod<FactionColoniesMod>();
-        string version = mod?.Content?.ModMetaData?.ModVersion;
-        return version.NullOrEmpty() ? "Unknown" : version;
-    }
+    public static string GetModVersion() => ModVersionUtil.Get<FactionColoniesMod>();
 
     public static void GetLastSeenVersion(string modId, out int major, out int minor, out int patch)
     {
@@ -1770,18 +1765,11 @@ public class FactionColoniesMod : Mod
     {
         settings = GetSettings<FCSettings>();
 
-        string modVersion = content?.ModMetaData?.ModVersion;
-        if (modVersion.NullOrEmpty())
-        {
-            LogUtil.MessageForce("Did not load a mod version");
-        }
-        else
-        {
-            LogUtil.MessageForce($"v{modVersion}");
-        }
+        ModVersionUtil.LogLoaded(content, LogUtil.MessageForce);
 
         // Reliable active version for the settings-format stamp/migration (set before any WriteSettings,
         // which stamps settingsModVersion from activeModVersion via FCSettings.ExposeData's Saving branch).
+        string modVersion = content?.ModMetaData?.ModVersion;
         FCSettings.activeModVersion = modVersion.NullOrEmpty() ? null : modVersion;
         if (FCSettings.MigrateSettingsFormat()) WriteSettings();
 

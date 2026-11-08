@@ -966,44 +966,25 @@ public partial class BattlefieldContext : IExposable
             || !squad.mercenaries.Any()
             || squad.Deployment.IsPhysicallyDeployed()) return;
 
-        squad.CheckInitialization();
-        squad.UpdateSquadStats(op.defender.force.homeSettlement.settlementMilitaryLevel);
-        SquadHealthUtil.ResetNeeds(squad);
+        SquadSpawnUtil.PrepareSquad(squad, op.defender.force.homeSettlement);
 
         // SpawnableMercenaryPawns filters downed mercs out of the reinforcement wave —
         // they stay at base to recover from the previous engagement.
         List<Pawn> reinforcements = squad.SpawnableMercenaryPawns.ToList();
-
-        double efficiency = op.defender.force.militaryEfficiency;
-        foreach (Pawn merc in reinforcements)
-        {
-            MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(merc, efficiency);
-        }
+        SquadSpawnUtil.ApplyCombatEfficiency(reinforcements, op.defender.force.militaryEfficiency);
         Lord defenseLord = defenderPawns.FirstOrDefault()?.GetLord();
         var spawnedReinforcements = new List<Pawn>();
 
         foreach (Pawn friendly in reinforcements)
         {
             if (friendly.IsWildMan()) continue;
-            friendly.ApplyIdeologyRitualWounds();
 
             IntVec3 loc;
             if (!CellFinder.TryFindRandomCellNear(map.Center, map, 20, c => c.Standable(map), out loc))
                 loc = map.Center;
 
-            try
-            {
-                GenSpawn.Spawn(friendly, loc, map, new Rot4());
-                friendly.drafter = new Pawn_DraftController(friendly);
-                map.mapPawns.RegisterPawn(friendly);
-                // Load reloadable-weapon magazines from carried ammo (e.g. Yayo's Combat); no-op otherwise.
-                ReloadableWeaponUtil.LoadMagazinesFromInventory(friendly);
+            if (SquadSpawnUtil.TrySpawnCombatant(friendly, loc, map, "reinforcement"))
                 spawnedReinforcements.Add(friendly);
-            }
-            catch (Exception e)
-            {
-                LogUtil.Warning($"Failed to spawn reinforcement {friendly.LabelShort}: {e}");
-            }
         }
 
         if (spawnedReinforcements.Any())
@@ -1161,9 +1142,7 @@ public partial class BattlefieldContext : IExposable
 
             if (hasSquad)
             {
-                squad.CheckInitialization();
-                squad.UpdateSquadStats(homeSettlement.settlementMilitaryLevel);
-                SquadHealthUtil.ResetNeeds(squad);
+                SquadSpawnUtil.PrepareSquad(squad, homeSettlement);
 
                 // SpawnableMercenaryPawns filters downed mercs out of the initial defender
                 // wave — they stay at base instead of being dropped into a fight they can't
@@ -1241,7 +1220,6 @@ public partial class BattlefieldContext : IExposable
         foreach (var friendly in friendlies)
         {
             if (friendly.IsWildMan()) continue;
-            friendly.ApplyIdeologyRitualWounds();
 
             IntVec3 loc;
             if (friendly.AnimalOrWildMan())
@@ -1272,19 +1250,8 @@ public partial class BattlefieldContext : IExposable
                 tryFindLoc(out loc, friendly);
             }
 
-            try
-            {
-                GenSpawn.Spawn(friendly, loc, map, new Rot4());
-                friendly.drafter = new Pawn_DraftController(friendly);
-                map.mapPawns.RegisterPawn(friendly);
-                // Load reloadable-weapon magazines from carried ammo (e.g. Yayo's Combat); no-op otherwise.
-                ReloadableWeaponUtil.LoadMagazinesFromInventory(friendly);
+            if (SquadSpawnUtil.TrySpawnCombatant(friendly, loc, map, "defender"))
                 spawnedFriendlies.Add(friendly);
-            }
-            catch (Exception e)
-            {
-                LogUtil.Warning($"Failed to spawn defender {friendly.LabelShort} (likely a mod conflict): {e}");
-            }
         }
 
         LordMaker.MakeNewLord(FindFC.EmpireFaction, new LordJob_DefendColony(settlement, riders), map, spawnedFriendlies);
@@ -1544,15 +1511,7 @@ public partial class BattlefieldContext : IExposable
         WorldSettlementFC settlement = ParentSettlement;
         if (settlement is null) return;
 
-        // Restore faction on Empire defenders the player drafted during battle.
-        Faction empireFaction = FindFC.EmpireFaction;
-        foreach (Pawn npc in draftedNPCs)
-        {
-            if (npc is null || npc.Dead || npc.Destroyed) continue;
-            if (npc.Faction == Faction.OfPlayer)
-                npc.SetFaction(empireFaction);
-        }
-        draftedNPCs.Clear();
+        RestoreDraftedNPCs();
 
         // Check for player units on the map. Use AllPawnsSpawned + faction filter
         // instead of FreeColonistsSpawned so VehiclePawns (and player animals) count.
@@ -1581,18 +1540,7 @@ public partial class BattlefieldContext : IExposable
             // Mobile player pawns (or shuttles) exist — keep the map alive.
             foreach (var lord in map.lordManager.lords.ListFullCopy())
                 map.lordManager.RemoveLord(lord);
-
-            List<Pawn> empireDefenders = [];
-            foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
-                if (pawn.Faction == empireFaction && !pawn.Dead && !pawn.Downed)
-                    empireDefenders.Add(pawn);
-
-            foreach (Pawn pawn in empireDefenders)
-                pawn.jobs.StopAll();
-
-            if (empireDefenders.Any())
-                LordMaker.MakeNewLord(empireFaction, new LordJob_ColonistsIdle(settlement), map, empireDefenders);
-
+            IdleEmpirePawns(settlement);
             return;
         }
 
@@ -1604,60 +1552,54 @@ public partial class BattlefieldContext : IExposable
         // and the post-teardown camera/map switch below are skipped when it is null.
         Map playerHome = Find.AnyPlayerHomeMap;
 
-        if (playerPawns.Count > 0)
-        {
-            foreach (Pawn pawn in playerPawns)
-                if (pawn.Spawned) pawn.DeSpawn();
-
-            foreach (Pawn pawn in playerPawns)
-                if (!pawn.Dead)
-                {
-                    int iterations = 0;
-                    while (pawn.health.HasHediffsNeedingTend())
-                    {
-                        iterations++;
-                        if (iterations > 10000)
-                        {
-                            LogUtil.Error("BattlefieldContext.DeleteMap: Too many tend iterations.");
-                            break;
-                        }
-                        TendUtility.DoTend(null, pawn, null);
-                    }
-                }
-
-            if (playerHome is not null)
-            {
-                string eventText = won
-                    ? DeliveryNotification.ShuttleEventInjuredString
-                    : DeliveryNotification.ShuttleEventInjuredLostString;
-                int travelTicks = TravelUtil.ReturnTicksToArrive(settlement.Tile, playerHome.Tile);
-                if (!won) travelTicks += GenDate.TicksPerDay;
-
-                var goods = new List<Thing>(playerPawns.Count);
-                foreach (Pawn pawn in playerPawns) goods.Add(pawn);
-
-                var eventParams = new FCEvent
-                {
-                    location = playerHome.Tile,
-                    source = settlement.Tile,
-                    goods = goods,
-                    customDescription = eventText,
-                    timeTillTrigger = Find.TickManager.TicksGame + travelTicks
-                };
-                DeliveryEvent.CreateDeliveryEvent(eventParams);
-                string travelDays = ((float)travelTicks / GenDate.TicksPerDay).ToString("0.#");
-                pendingDeliveryMessage = "FCInjuredCaravanMembersReturning".Translate(playerPawns.Count, travelDays);
-            }
-        }
+        string returning = SquadMapTeardownUtil.ReturnPlayerPawnsHome(playerPawns, settlement.Tile, won);
+        if (returning is not null) pendingDeliveryMessage = returning;
 
         CameraJumper.TryJump(settlement.Tile);
         if (playerHome is not null) Current.Game.CurrentMap = playerHome;
+        RemoveBattleMap("defense");
+    }
+
+    /* Teardown steps shared by defense (DeleteMap) and offense (EndOffense / CloseOffenseMap) */
+
+    /// <summary>Hands the Empire pawns the player drafted during the battle back to the Empire.</summary>
+    private void RestoreDraftedNPCs()
+    {
+        Faction empire = FindFC.EmpireFaction;
+        foreach (Pawn npc in draftedNPCs)
+        {
+            if (npc is null || npc.Dead || npc.Destroyed) continue;
+            if (npc.Faction == Faction.OfPlayer)
+                npc.SetFaction(empire);
+        }
+        draftedNPCs.Clear();
+    }
+
+    /// <summary>Stops the standing Empire pawns on the map and puts them under one idle lord,
+    /// for a map that lingers while the player's pawns are still on it.</summary>
+    private void IdleEmpirePawns(WorldSettlementFC settlement)
+    {
+        Faction empire = FindFC.EmpireFaction;
+        List<Pawn> idlers = [];
+        foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
+            if (pawn.Faction == empire && !pawn.Dead && !pawn.Downed)
+                idlers.Add(pawn);
+        foreach (Pawn pawn in idlers)
+            pawn.jobs?.StopAll();
+        if (idlers.Any())
+            LordMaker.MakeNewLord(empire, new LordJob_ColonistsIdle(settlement), map, idlers);
+    }
+
+    /// <summary>Unregisters and removes the battle map. If vanilla (or another mod) already removed
+    /// it, DeinitAndRemoveMap would log an error, so this warns and skips instead.</summary>
+    private void RemoveBattleMap(string kind)
+    {
         Map toRemove = map;
         FindFC.MilitaryManager?.UnregisterBattleMap(toRemove);
         if (toRemove is not null && Current.Game.Maps.Contains(toRemove))
             Current.Game.DeinitAndRemoveMap(toRemove, false);
         else
-            LogUtil.Warning($"DeleteMap: defense map at tile {tile} already gone before teardown; skipping DeinitAndRemoveMap.");
+            LogUtil.Warning($"The {kind} map at tile {tile} was already gone before teardown; skipping DeinitAndRemoveMap.");
         map = null;
     }
 

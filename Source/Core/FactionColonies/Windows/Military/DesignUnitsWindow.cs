@@ -23,11 +23,7 @@ public class DesignUnitsWindow : MilitaryWindow
     // Layout sizing constants
     private const float SidebarWidth = 250f;
     private const float GearWidth = 310f;
-    private const float RowHeight = 30f;
-    private const float SearchBarHeight = 28f;
-    private const float IconSize = 24f;
     private const float margin = 5f;
-    private const float ButtonHeight = 30f;
 
     public DesignUnitsWindow(MilitaryFC mfc, FactionFC faction)
     {
@@ -99,87 +95,24 @@ public class DesignUnitsWindow : MilitaryWindow
 
     private void DrawSidebar(Rect rect)
     {
-        GameFont fontBefore = Text.Font;
-        TextAnchor anchorBefore = Text.Anchor;
-
-        // Search bar
-        Text.Font = GameFont.Small;
-        Text.Anchor = TextAnchor.MiddleLeft;
-        Rect searchRect = new(rect.x, rect.y, rect.width, SearchBarHeight);
-        unitSearchTerm = Widgets.TextField(searchRect, unitSearchTerm);
-
-        // Unit list (fills space between search bar and buttons)
-        float buttonsHeight = ButtonHeight * 2 + margin;
-        float listHeight = rect.yMax - searchRect.yMax - margin - buttonsHeight - margin;
-        Rect listOutRect = new(rect.x, searchRect.yMax + margin, rect.width, listHeight);
-        Widgets.DrawMenuSection(listOutRect);
-
-        List<MilUnitFC> filteredUnits = string.IsNullOrEmpty(unitSearchTerm)
-            ? mfc.units
-            : mfc.units.Where(u => (u.name ?? "").IndexOf(unitSearchTerm, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-
-        float viewHeight = filteredUnits.Count * RowHeight;
-        Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref unitListScrollPos, viewHeight);
-
-        for (int i = 0; i < filteredUnits.Count; i++)
-        {
-            MilUnitFC unit = filteredUnits[i];
-            Rect row = new(scrollViewRect.x, scrollViewRect.y + i * RowHeight, scrollViewRect.width, RowHeight);
-
-            if (unit == selectedUnit)
-                Widgets.DrawHighlightSelected(row);
-            else if (i % 2 == 0)
-                Widgets.DrawHighlight(row);
-
-            // Weapon icon
-            Rect iconRect = new(row.x + 2f, row.y + 3f, IconSize, IconSize);
-            if (unit.HasWeapon)
-                Widgets.DefIcon(iconRect, unit.weapons[0].thing, unit.weapons[0].stuff);
-            // Name label
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Rect labelRect = new(iconRect.xMax + 4f, row.y, row.xMax - iconRect.xMax - 6f, RowHeight);
-            UIUtil.ClampedLabel(labelRect, unit.name);
-
-            if (Widgets.ButtonInvisible(row))
+        DrawTemplateSidebar(rect, ref unitSearchTerm, ref unitListScrollPos, mfc.units, selectedUnit,
+            u => u.name,
+            unit =>
             {
                 selectedUnit = unit;
                 selectedText = unit.name;
-            }
-        }
-
-        ScrollUtil.EndScrollView();
-
-        // Action buttons (2x2 grid)
-        float btnY = listOutRect.yMax + margin;
-        float buttonW = (rect.width - margin) / 2f;
-
-        Text.Font = GameFont.Tiny;
-        Text.Anchor = TextAnchor.MiddleCenter;
-
-        Rect createBtn = new(rect.x, btnY, buttonW, ButtonHeight);
-        Rect importBtn = new(rect.x + buttonW + margin, btnY, buttonW, ButtonHeight);
-        Rect deleteBtn = new(rect.x, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
-        Rect exportBtn = new(rect.x + buttonW + margin, btnY + ButtonHeight + margin, buttonW, ButtonHeight);
-
-        if (UIUtil.ClampedButtonText(createBtn, "FCCreateNewUnit".Translate()))
-        {
-            MilUnitFC newUnit = MilTemplateFactory.CreateUnit(false);
-            newUnit.name = $"New Unit {mfc.units.Count + 1}";
-            selectedText = newUnit.name;
-            selectedUnit = newUnit;
-            mfc.units.Add(newUnit);
-        }
-
-        if (UIUtil.ClampedButtonText(importBtn, "FCImportUnit".Translate()))
-        {
-            Find.WindowStack.Add(new Dialog_ManageUnitExportsFC(
-                FactionColoniesMilitary.SavedUnits.ToList()));
-        }
-
-        if (selectedUnit is not null)
-        {
-            if (UIUtil.ClampedButtonText(deleteBtn, "FCDeleteUnitButton".Translate()))
+            },
+            create: ("FCCreateNewUnit".Translate(), () =>
+            {
+                MilUnitFC newUnit = MilTemplateFactory.CreateUnit(false);
+                newUnit.name = $"New Unit {mfc.units.Count + 1}";
+                selectedText = newUnit.name;
+                selectedUnit = newUnit;
+                mfc.units.Add(newUnit);
+            }),
+            import: ("FCImportUnit".Translate(), () =>
+                Find.WindowStack.Add(new Dialog_ManageUnitExportsFC(FactionColoniesMilitary.SavedUnits.ToList()))),
+            delete: ("FCDeleteUnitButton".Translate(), () =>
             {
                 MilUnitFC unitToDelete = selectedUnit;
                 Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
@@ -196,17 +129,17 @@ public class DesignUnitsWindow : MilitaryWindow
                             selectedText = "FCSelectAUnitButton".Translate();
                         }
                     }));
-            }
-
-            if (UIUtil.ClampedButtonText(exportBtn, "FCExportUnitButton".Translate()))
+            }),
+            export: ("FCExportUnitButton".Translate(), () =>
             {
                 FactionColoniesMilitary.SaveUnit(selectedUnit.ToSavedUnit());
                 Messages.Message("FCExportUnit".Translate(), MessageTypeDefOf.TaskCompletion);
-            }
-        }
-
-        Text.Font = fontBefore;
-        Text.Anchor = anchorBefore;
+            }),
+            drawIcon: (iconRect, unit) =>
+            {
+                if (unit.HasWeapon)
+                    Widgets.DefIcon(iconRect, unit.weapons[0].thing, unit.weapons[0].stuff);
+            });
     }
 
     // --- Unit Header ---

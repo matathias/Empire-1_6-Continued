@@ -14,6 +14,23 @@ namespace FactionColonies;
 /// </summary>
 public static class EmpireRegistry
 {
+    // Participants re-registered after every ClearAll; see RegisterPersistent.
+    private static readonly List<object> persistent = [];
+
+    /// <summary>
+    /// Registers <paramref name="participant"/> and keeps it registered for the rest of the session:
+    /// <see cref="ClearAll"/> (which runs on every new game and load) re-registers it afterwards.
+    /// For app-lifetime participants registered at startup, such as a submod's singletons.
+    /// <see cref="Unregister"/> drops it for good.
+    /// </summary>
+    public static void RegisterPersistent(object participant)
+    {
+        if (participant is null) return;
+        if (!persistent.Contains(participant))
+            persistent.Add(participant);
+        Register(participant);
+    }
+
     public static void Register(object participant)
     {
         if (participant is null) return;
@@ -71,6 +88,7 @@ public static class EmpireRegistry
     public static void Unregister(object participant)
     {
         if (participant is null) return;
+        persistent.Remove(participant);
 
         if (participant is ISettlementListener
             || participant is IMilitaryOperationListener
@@ -106,7 +124,8 @@ public static class EmpireRegistry
     }
 
     /// <summary>
-    /// Clears every facade-managed registry. Called from
+    /// Clears every facade-managed registry, then re-registers the participants added with
+    /// <see cref="RegisterPersistent"/>. Called from
     /// <see cref="EmpireCacheUtil.InvalidateAll"/> on game dispose / ClearCaches.
     /// <see cref="MilitaryWindowRegistry"/> is not facade-managed; its <c>ClearAll</c>
     /// (if needed) is called separately.
@@ -135,5 +154,8 @@ public static class EmpireRegistry
         RoadNodeProviderRegistry.ClearAll();
         BuildingFilterRegistry.ClearAll();
         AnimalPickerFilterRegistry.ClearAll();
+
+        foreach (object participant in persistent)
+            Register(participant);
     }
 }

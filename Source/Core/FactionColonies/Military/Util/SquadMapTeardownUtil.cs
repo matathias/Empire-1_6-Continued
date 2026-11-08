@@ -43,6 +43,54 @@ public static class SquadMapTeardownUtil
     }
 
     /// <summary>
+    /// Despawns <paramref name="pawns"/>, tends every injury, and sends them to the player's home
+    /// map as an injured-return delivery from <paramref name="from"/>; a loss adds a day to the
+    /// trip. Returns the "returning home" message for the caller to show, or null when there is
+    /// no home map (nomad play), in which case nothing is delivered.
+    /// </summary>
+    public static string ReturnPlayerPawnsHome(List<Pawn> pawns, PlanetTile from, bool won)
+    {
+        if (pawns is null || pawns.Count == 0) return null;
+
+        foreach (Pawn pawn in pawns)
+            if (pawn.Spawned) pawn.DeSpawn();
+        foreach (Pawn pawn in pawns)
+            if (!pawn.Dead) TendFully(pawn);
+
+        Map home = Find.AnyPlayerHomeMap;
+        if (home is null) return null;
+        int travelTicks = TravelUtil.ReturnTicksToArrive(from, home.Tile);
+        if (!won) travelTicks += GenDate.TicksPerDay;
+
+        DeliveryEvent.CreateDeliveryEvent(new FCEvent
+        {
+            location = home.Tile,
+            source = from,
+            goods = [.. pawns],
+            customDescription = won
+                ? DeliveryNotification.ShuttleEventInjuredString
+                : DeliveryNotification.ShuttleEventInjuredLostString,
+            timeTillTrigger = Find.TickManager.TicksGame + travelTicks
+        });
+        string travelDays = ((float)travelTicks / GenDate.TicksPerDay).ToString("0.#");
+        return "FCInjuredCaravanMembersReturning".Translate(pawns.Count, travelDays);
+    }
+
+    private static void TendFully(Pawn pawn)
+    {
+        int iterations = 0;
+        while (pawn.health.HasHediffsNeedingTend())
+        {
+            if (++iterations > 10000)
+            {
+                LogUtil.Error($"SquadMapTeardownUtil: too many tend iterations on {pawn.LabelShort}.");
+                break;
+            }
+            TendUtility.DoTend(null, pawn, null);
+        }
+    }
+
+    /// <summary>
     /// Last-resort safety net: a battle map is about to be removed but still has live player pawns
     /// spawned on it. The keep-map-open mechanism (<see cref="BattlefieldContext.DeleteMap"/>'s
     /// container-aware check plus <c>WorldSettlementFC.ShouldRemoveMapNow</c>) is supposed to keep
